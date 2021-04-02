@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>{{ config('app.name', 'Laravel') }} | Login</title>
+        <title>{{ config('app.name', 'Laravel') }}| Login</title>
 
         <!-- Google Font: Source Sans Pro -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -18,7 +18,7 @@
     <body class="hold-transition login-page">
         <div class="login-box">
             <div class="login-logo">
-                <a href="{{url('/')}}"><b>{{ config('app.name', 'Laravel') }}</b></a>
+                <a href="{{url('/assert/admin/')}}/index2.html"><b>Admin</b>LTE</a>
             </div>
             <!-- /.login-logo -->
             <div class="card">

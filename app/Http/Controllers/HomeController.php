@@ -20,6 +20,7 @@ class HomeController extends Controller {
         } else if (Auth::check() && (Auth::user()->role == 2)) {
             return redirect()->route('admin.dashboard');
         }
+        return view('welcome');
     }
 
 }

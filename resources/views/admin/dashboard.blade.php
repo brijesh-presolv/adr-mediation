@@ -1,4 +1,11 @@
 @extends('admin.layouts.app')
+@section('title', 'Dashboard')
+@section('breadcrumb')
+<ol class="breadcrumb float-sm-right">
+    <li class="breadcrumb-item"><a href="{{url("/")}}">Home</a></li>
+    <li class="breadcrumb-item active">Dashboard</li>
+</ol>
+@endsection
 @section('content')
 <!-- Info boxes -->
 <div class="row">
@@ -829,4 +836,8 @@
     <!-- /.col -->
 </div>
 <!-- /.row -->
+@endsection
+@section('head')
+@endsection
+@section('footer')
 @endsection
