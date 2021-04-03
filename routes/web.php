@@ -23,4 +23,5 @@ Route::prefix('arbitrator')->middleware(['auth', 'arbitrator'])->group(function 
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('users/list', [App\Http\Controllers\Admin\UsersController::class, 'index'])->name('admin.users.list');
 });

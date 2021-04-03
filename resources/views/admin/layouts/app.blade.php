@@ -13,8 +13,9 @@
         <!-- overlayScrollbars -->
         <link rel="stylesheet" href="{{url('/assert/admin/')}}/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
         <!-- Theme style -->
-        <link rel="stylesheet" href="{{url('/assert/admin/')}}/dist/css/adminlte.min.css">
         @yield('head')
+        <link rel="stylesheet" href="{{url('/assert/admin/')}}/dist/css/adminlte.min.css">
+
     </head>
     <body class="hold-transition  sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
         <div class="wrapper">
@@ -68,7 +69,7 @@
                         <a class="nav-link" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                                    document.getElementById('logout-form').submit();">
-                                <i class="fas fa-power-off" title="{{ __('Logout') }}"></i>
+                            <i class="fas fa-power-off" title="{{ __('Logout') }}"></i>
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf
@@ -102,7 +103,7 @@
                             </div><!-- /.col -->
                             <div class="col-sm-6">
                                 @yield('breadcrumb')
-                                
+
                             </div><!-- /.col -->
                         </div><!-- /.row -->
                     </div><!-- /.container-fluid -->
@@ -119,7 +120,7 @@
             </div>
             <!-- /.content-wrapper -->
 
-           
+
 
             <!-- Main Footer -->
             <footer class="main-footer">
