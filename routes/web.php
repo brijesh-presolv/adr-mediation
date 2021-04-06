@@ -35,4 +35,6 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('users/list', [App\Http\Controllers\Admin\UsersController::class, 'index'])->name('admin.users.list');
+    Route::get('users/json', [App\Http\Controllers\Admin\UsersController::class, 'json'])->name('admin.users.json');
+    Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
 });

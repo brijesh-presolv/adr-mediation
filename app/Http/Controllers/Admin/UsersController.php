@@ -31,8 +31,20 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    public function statusChange(Request $request) {
+        $user = User::find($request->id);
+        $user->status = $request->status;
+        $user->save();
+        return response()->json(["msg" => "Category Name Update"]);
+    }
+
+    /**
+     * Show the application users.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
     public function json() {
-        $users = User::get();
+        $users = User::all();
         return response()->json(["data" => $users]);
     }
 
