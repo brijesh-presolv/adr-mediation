@@ -1,64 +1,65 @@
-<div class="sidebar">
-    <!-- Sidebar user panel (optional) -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-            <img src="{{url('/assert/admin/')}}/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
-            <a href="#" class="d-block">Alexander Pierce</a>
-        </div>
-    </div>
-    <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-item">
-                <a href="{{url("/")}}" class="nav-link">
-                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                    <p>
-                        Dashboard                        
-                    </p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{route("admin.users.list")}}" class="nav-link">
-                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                    <p>
-                        Users                        
-                    </p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{url("admin/new")}}" class="nav-link">
-                    <i class="nav-icon fa fa-caret-square-o-right"></i>
-                    <p>
-                        New Request                        
-                    </p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{url("admin/ongoing")}}" class="nav-link">
-                    <i class="nav-icon fas fa fa-pencil-square-o"></i>
-                    <p>
-                        Ongoing                        
-                    </p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{url("admin/closed")}}" class="nav-link">
-                    <i class="nav-icon fa fa-file-text-o"></i>
-                    <p>
-                        Closed                        
-                    </p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{url("admin/profile")}}" class="nav-link">
-                    <i class="nav-icon fas fa fa-file-text-o"></i>
-                    <p>
-                        Profile                        
-                    </p>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <!-- /.sidebar-menu -->
-</div>
+<div class="left-side-menu">
+
+                <div class="slimscroll-menu">
+    
+                    <!--- Sidemenu -->
+                    <div id="sidebar-menu">
+    
+                        <ul class="metismenu" id="side-menu">
+    
+                            <li class="menu-title">Navigation</li>
+    
+                            <li>
+                                <a  href="{{url('/')}}" class="waves-effect waves-light">
+                                    <i class="mdi mdi-view-dashboard"></i>
+                                    <span>  Dashboard  </span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a  href="{{route('admin.users.list')}}"  class="waves-effect waves-light">
+                                    <i class="fas fa-user-friends"></i>
+                                    <span>  Users  </span>
+                                </a>
+                            </li>
+                             
+                            <li>
+                                <a  href="{{url('admin/new')}}"  class="waves-effect waves-light">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    <span>  New Request  </span>
+                                </a>
+                            </li>
+                             
+                            <li>
+                                <a  href="{{url('admin/ongoing')}}"  class="waves-effect waves-light">
+                                    <i class="fab fa-delicious"></i>
+                                    <span>  Ongoing  </span>
+                                </a>
+                            </li>
+                             
+                            <li>
+                                <a  href="{{url('admin/closed')}}"  class="waves-effect waves-light">
+                                    <i class=" far fa-lightbulb"></i>
+                                    <span>  Closed  </span>
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a href="{{url('admin/profile')}}" class="waves-effect waves-light">
+                                    <i class=" fas fa-user-tie"></i>
+                                    <span> Profile </span>
+                                </a>
+                            </li>
+    
+    
+                        </ul>
+    
+                    </div>
+                    <!-- End Sidebar -->
+    
+                    <div class="clearfix"></div>
+    
+                </div>
+                <!-- Sidebar -left -->
+    
+            </div>
