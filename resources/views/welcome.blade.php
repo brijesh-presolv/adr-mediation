@@ -1,18 +1,6 @@
-
-
-
-
-
 <!DOCTYPE html>
-
-
-
-
-
-
-
-    <head>
-<title> Presolv360 | Dispute resolution made easy | ODR | ODR India</title>
+<head>
+<title> {{ config('app.name', 'Medtiator') }} | Dispute resolution made easy | ODR | ODR India</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="msapplication-TileImage" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
 
@@ -25,17 +13,17 @@
 <meta property="og:image" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
 <meta property="og:image:secure_url" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
 <meta property="og:url" content="https://www.presolv360.com">
-<meta property="og:title" content=" Presolv360 | Dispute resolution made easy" />
+<meta property="og:title" content=" {{ config('app.name', 'Medtiator') }} | Dispute resolution made easy" />
 <meta property="og:type" content="article" />
 	
 <!-- Standard Favicon -->
-<link rel="icon" type="image/x-icon" href="{{url('/assert/')}}/images/icon.png" />
+<link rel="icon" type="image/x-icon" href="https://www.presolv360.com/presolv360/images/icon.png" />
 
 <link rel="stylesheet" type="text/css" href="https://presolv360.com/asset/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="css/home.css">
+  <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/home.css">
   <link rel="stylesheet" type="text/css" href="https://presolv360.com/asset/fontawesome/css/all.min.css">
-  <link rel="stylesheet" href="{{url('/assert/')}}/js/sweetalert2.css">
-  <link rel="stylesheet" href="{{url('/assert/')}}/css/style_slide.css">
+  <link rel="stylesheet" href="https://www.presolv360.com/presolv360/js/sweetalert2.css">
+  <link rel="stylesheet" href="https://www.presolv360.com/presolv360/css/style_slide.css">
 
   
 
@@ -82,12 +70,12 @@
 
   <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{url('/assert/')}}/js/sweetalert2.css">
+<link rel="stylesheet" href="https://www.presolv360.com/presolv360/js/sweetalert2.css">
 
 <!--[if lt IE 9]>
-        <script src="{{url('/assert/')}}/js/html5/respond.min.js"></script>
+        <script src="https://www.presolv360.com/presolv360/js/html5/respond.min.js"></script>
 <![endif]-->
-<!-- <link href="{{url('/assert/')}}/presolvuser/plugins/bower_components/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"> -->
+<!-- <link href="https://www.presolv360.com/presolv360/presolvuser/plugins/bower_components/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"> -->
 
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -154,7 +142,7 @@ margin-left: -5px;
 	<div class="container">
 		  <a class="navbar-brand" href="https://presolv360.com/">
 		  	
-		  	<img src="img/logo_mediacje.png" class="img-fluid home-logo">
+		  	<img src="{{url('/assert/')}}/img/logo_mediacje.png" class="img-fluid home-logo">
 		  </a>
 		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		    <span class="navbar-toggler-icon"></span>
@@ -193,7 +181,7 @@ margin-left: -5px;
 
   <div class="container bannersectiontext">
 
-    <div class="col-7">
+    <div class="col-12">
 
       <div class="row">
         <div class="col-12">
@@ -235,8 +223,8 @@ która może zastąpić orzeczenie sądu</h1>
     <div class="row">
 
       <div class="col-12 tsection">
-        <img src="https://presolv360.com/asset/img/logo-21.png">
-        <p>Recognised by the Ministry of Law and Justice, Government of India</p>
+        <!-- <img src="https://presolv360.com/asset/img/logo-21.png"> -->
+        <p>Nasz portal jest uznany przez Sądy Powszechne</p>
       </div>
     </div>
   </div>
@@ -253,7 +241,9 @@ która może zastąpić orzeczenie sądu</h1>
       
 
       <div class="col-12 tabcentertext" id="howitworks">
-         <center><h2>Our Services</h2></center>
+         <center><h2>OFERUJEMY MEDIACJE ONLINE</h2></center>
+         <center><p>Korzystając z nowatorskich rozwiązań technologicznych umożliwiamy stronom bezpieczną, poufną
+i efektywną komunikację wraz z uzgodnieniem i podpisaniem warunków ugody online.</p></center>
       </div>
 
     </div>
@@ -267,11 +257,11 @@ która może zastąpić orzeczenie sądu</h1>
 <!-- jQuery first, then Bootstrap JS. -->
 <!-- Nav tabs -->
 
-      <ul class="nav nav-tabs justify-content-center" role="tablist">
+<!--       <ul class="nav nav-tabs justify-content-center" role="tablist">
         <li class="nav-item nav-2">
           <a class="nav-link active" href="#resolve" role="tab" data-toggle="tab">Resolve Disputes</a>
         </li>
-      </ul>
+      </ul> -->
 
 <!-- Tab panes -->
 <div class="tab-content">
@@ -279,27 +269,51 @@ która może zastąpić orzeczenie sądu</h1>
     
       <div class="row">
         <div class="col-md-4 imgtxtbox">
+          <div class="card">
+            <div class="card-body">
           <img src="https://presolv360.com/asset/img/test2111.png" style="max-width: 150px;">
-        <p>Register an existing dispute and opt for e-arbitration or e-mediation</p>
+        <p>1. Zgłoś do nas sprawę do
+rozwiązania, a my udzielimy Ci
+wsparcia na każdym etapie aż
+do zakończenia ugodą.</p>
+
+        </div>
+        </div>
         </div>
        
         <div class="col-md-4 imgtxtbox">
+          <div class="card">
+            <div class="card-body">
           <img src="https://presolv360.com/asset/img/test12.png">
-                <p>The other party is invited to register on the platform
+                <p>2. Wspólnie opracujemy
+i wyślemy zaproszenie do
+mediacji drugiej stronie
+konfliktu.
 </p>
+<br>
+
+</div>
+</div>
         </div>
       
         <div class="col-md-4 imgtxtbox">
+          <div class="card">
+            <div class="card-body">
           <img src="https://presolv360.com/asset/img/test111.png">
-                <p>Achieve a timely resolution with the help of Presolv360's experts</p>
+                <p>3. Wspólnie z naszym
+mediatorem pomożemy
+zakończyć spór ugodą.</p>
+<br>
         </div>
        </div>
+     </div>
+   </div>
        <div class="row ">
         <div class="col-12 btnsection">
-                <a href="" class="btn btn-circle-y" data-toggle="modal" id="" data-target="#myModalResolve">Get Started </span></a>
-                <a href="" class="btn btn-circle-y ml-2 resolvideomodal" data-toggle="modal" id="" data-target="#myModal2">Watch Video </span></a>
-                <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Fees</button>
-                <!--<a href="https://presolv360.com/arbitrator" class="btn btn-circle-y ml-2 clse" target="_blank">Panel of Experts </span></a>-->
+                <a href="" class="btn btn-circle-y" data-toggle="modal" id="" data-target="#myModalResolve">Rozpocznij </span></a>
+                <a href="" class="btn btn-circle-y ml-2 resolvideomodal" data-toggle="modal" id="" data-target="#myModal2">Zobacz wideo </span></a>
+                <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Opłaty</button>
+                <a href="https://presolv360.com/arbitrator" class="btn btn-circle-y ml-2 clse" target="_blank">Nasi eksperci </span></a>
               </div>
          </div>
 
@@ -321,7 +335,7 @@ która może zastąpić orzeczenie sądu</h1>
   <div class="container">
     <div class="row">
       <div class="col-12">
-         <center><h2 class="mb-5" style="color: #0e5587;">Experts’ Views </h2></center>
+         <center><h2 class="mb-5" style="color: #0e5587;">Wypowiedzi ekspertów </h2></center>
       </div>
     </div>
     
@@ -345,7 +359,7 @@ która może zastąpić orzeczenie sądu</h1>
                           </style>
         <div class="col-sm-12">
 
-           <!-- <div class="owl-carousel vowl owl-theme">
+           <div class="owl-carousel vowl owl-theme">
                         <div class="owl-item">
 
                           
@@ -374,7 +388,7 @@ która może zastąpić orzeczenie sądu</h1>
                 <div class="owl-item">
                     <iframe class="ifr" width="350" height="220" src="https://www.youtube.com/embed/ni-k3Oj2G_M" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
-          </div> -->
+          </div>
           
         </div>
         
@@ -393,7 +407,7 @@ która może zastąpić orzeczenie sądu</h1>
   <div class="container">
     
 
-    <h2>Awards and Recognition</h2>
+    <h2>Partnerzy i Sponsorzy</h2>
 
 <div class="brands">
     <div class="container">
@@ -533,7 +547,7 @@ która może zastąpić orzeczenie sądu</h1>
             </div>
 
       <div class="modal-body">
-        The fees will be determined on the basis of the nature and quantum of the dispute. To know the fee applicable to you, contact us at <a href="mailto:info@presolv360.com" target="_top">info@presolv360.com</a> or call us on .<a href="tel:+91-7710048834" target="_top">+91-7710048834</a>
+        The fees will be determined on the basis of the nature and quantum of the dispute. To know the fee applicable to you, contact us at  <a href="mailto:info@presolv360.com" target="_top">info@presolv360.com</a> or call us on .<a href="tel:+91-7710048834" target="_top">+91-7710048834</a>
       </div>
     </div>
   </div>
@@ -1096,7 +1110,66 @@ function resolvsubmit(){
 
 
     </script>
-  <link rel="stylesheet" href="https://presolv360.com/asset/css/plyr.css" /><div class="container-fluid contactsection">
+  <link rel="stylesheet" href="https://presolv360.com/asset/css/plyr.css" />
+
+  <div class="contact-section">
+    <div class="container">
+  
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="section-title text-center pb-25">
+<h2 class="title">Get In Touch</h2><p></p>
+<p>Nunc id dui at sapien faucibus fermentum ut vel diam. Nullam tempus, nunc id efficitur sagittis, urna est ultricies eros, ac porta sem turpis quis leo.</p>
+</div>
+    </div>
+<div class="col-lg-4 col-md-6 col-sm-7">
+<div class="card text-center mt-30">
+  <div class="card-body">
+      <div class="contact-icon">
+      <i class="fa fa-hand-pointer"></i>
+      </div>
+      <div class="contact-content">
+      <h4>Locate us</h4>
+      <p>Mumbai, India</p>
+      </div>
+    </div>
+</div> 
+</div>
+<div class="col-lg-4 col-md-6 col-sm-7">
+<div class="card text-center mt-30">
+  <div class="card-body">
+
+<div class="contact-icon">
+<i class="fa fa-hand-pointer"></i>
+</div>
+<div class="contact-content">
+<h4>Zadzwoń do nas</h4>
+<p><a href="tel:022-20821102" target="_top">Tel 721 782 222</a></p>
+</div>
+</div>
+</div> 
+</div>
+<div class="col-lg-4 col-md-6 col-sm-7">
+<div class="card text-center mt-30">
+  <div class="card-body">
+
+    <div class="contact-icon">
+    <i class="fa fa-hand-pointer"></i>
+    </div>
+    <div class="contact-content">
+    <h4> Napisz do nas</h4>
+    <p><a href="mailto:info@presolv360.com" target="_top">info@pdmo24.pl</a></p>
+    </div>
+  </div>
+</div> 
+</div>
+</div>
+</div>
+        
+  </div>
+
+
+  <!-- <div class="container-fluid contactsection">
 
 	<div class="container">
 		
@@ -1135,30 +1208,39 @@ function resolvsubmit(){
 	</div>
 
 	
-</div>
+</div> -->
 <div class="container-fluid footersection">
 
 	<div class="container">
 	    <div class="row pb-5">
 			<div class="col-md-7">
-				 <h5 class="mb-3">Disclaimer</h5>
-				 <p>Presolv360 is owned by Edgecraft Solutions Private Limited, an Indian
-Company incorporated under the provisions of the Companies Act, 2013. It is
-not a law firm and does not provide legal advice. The use of any materials or
-services is not a substitute for legal advice. Only a legal practitioner can provide
-legal advice. A legal practitioner should be consulted for any legal advice or matter.
-No Attorney-Client relationship is created by use of these materials or services.</p>
+				 <h5 class="mb-3">PORTAL DLA MEDIACJI ONLINE</h5>
+				 <p>jest nowatorskim rozwiązaniem
+technologicznym, które jest dedykowane dla
+stron konfliktu i profesjonalnych mediatorów,
+żeby ułatwić ugodowe rozwiązywanie sporów
+online w łatwy, poufny i bezpieczny sposób z
+dostępem przez całą dobę.
+Portal Dla Mediacji Online powstał dzięki
+współpracy z firmą Edgecraft Solutions Private
+Limited z Indii prowadzonej przez Urszulę
+Ciołeszyńską - Prezes fundacji Polska Sieć
+Ambasadorów Przedsiębiorczości Kobiet oraz
+Henryka Stężałę - Prezesa Zarządu TENSOFT w
+konsultacji z ekspertem mediacji –
+doświadczoną Adwokat i Mediator Anetą
+Gibek-Wiśniewską.</p>
 			</div>
 			<div class="col-md-2">
-				 <h5 class="mb-3">Important Links</h5>
-				 <a href="https://presolv360.com/faqs" target="_blank"><p>FAQs</p></a>
-				 <a href="https://presolv360.com/terms_conditions" target="_blank"><p>Terms & Conditions</p></a>
-				 <a href="https://presolv360.com/privacy_policy" target="_blank"><p>Privacy Policy</p></a>
-				 <a href="https://presolv360.com/odr_standard" target="_blank"><p>Standards</p></a>
+				 <h5 class="mb-3">Ważne linki</h5>
+				 <a href="https://presolv360.com/faqs" target="_blank"><p>Pytania i odpowiedzi</p></a>
+				 <a href="https://presolv360.com/terms_conditions" target="_blank"><p>Regulamin i warunki</p></a>
+				 <a href="https://presolv360.com/privacy_policy" target="_blank"><p>Polityka prywatności</p></a>
+				 <a href="https://presolv360.com/odr_standard" target="_blank"><p>Nasze standardy</p></a>
 
 			</div>
 			<div class="col-md-3">
-				 <h5 class="mb-3">Stay Connected</h5>
+				 <h5 class="mb-3">Bądźmy w kontakcie</h5>
 				 <div class="social">
 				 	<a href="https://www.linkedin.com/company/presolv360/" target="_blank"><i class="fab fa-linkedin"></i></a> 
                     <a href="https://twitter.com/presolv360" target="_blank"><i class="fab fa-twitter" ></i></a>

@@ -18,7 +18,7 @@
     <body class="hold-transition login-page">
         <div class="login-box">
             <div class="login-logo">
-                <a href="{{url('/assert/admin/')}}/index2.html"><b>{{ config('app.name', 'Medtiator') }}</b> Admin</a>
+                <a href="{{url('/assert/admin/')}}/index2.html"><b>{{ config('app.name', 'Medtiator') }}</b> User</a>
             </div>
             <!-- /.login-logo -->
             <div class="card">

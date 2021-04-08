@@ -18,6 +18,46 @@
                     </p>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{route("admin.users.list")}}" class="nav-link">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <p>
+                        Users                        
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{url("admin/new")}}" class="nav-link">
+                    <i class="nav-icon fa fa-caret-square-o-right"></i>
+                    <p>
+                        New Request                        
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{url("admin/ongoing")}}" class="nav-link">
+                    <i class="nav-icon fas fa fa-pencil-square-o"></i>
+                    <p>
+                        Ongoing                        
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{url("admin/closed")}}" class="nav-link">
+                    <i class="nav-icon fa fa-file-text-o"></i>
+                    <p>
+                        Closed                        
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{url("admin/profile")}}" class="nav-link">
+                    <i class="nav-icon fas fa fa-file-text-o"></i>
+                    <p>
+                        Profile                        
+                    </p>
+                </a>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->

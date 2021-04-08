@@ -37,4 +37,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('users/list', [App\Http\Controllers\Admin\UsersController::class, 'index'])->name('admin.users.list');
     Route::get('users/json', [App\Http\Controllers\Admin\UsersController::class, 'json'])->name('admin.users.json');
     Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
+    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
+    Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
+    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
+    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
 });
