@@ -15,6 +15,7 @@
     <link href="{{url('assets/')}}/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
     <link href="{{url('assets/')}}/css/icons.min.css" rel="stylesheet" type="text/css" />
     <link href="{{url('assets/')}}/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+    <link href="{{url('assets/')}}/css/custom.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
 
     <!-- Dynamic pages css comes -->
     @yield('head')
@@ -192,7 +193,7 @@
                         </div>
 
                         <!-- item-->
-                        <a href="{{url('admin/profile')}}" class="dropdown-item notify-item">
+                        <a href="#" class="dropdown-item notify-item">
                             <i class="mdi mdi-account-outline"></i>
                             <span>Profile</span>
                         </a>
@@ -239,10 +240,10 @@
 
             <!-- LOGO -->
             <div class="logo-box">
-                <a href="{{ url('/') }}" class="logo text-center">
+                <a href="{{ url('/') }}" class="logo text-center" style="background-color:#fdfdfd ">
                     <span class="logo-lg">
                         <!-- <img src="{{ url('/') }}/assets/images/logo-light.png" alt="" height="18"> -->
-                        <span class="logo-lg-text-light">Mediation</span>
+                        <span class="logo-lg-text-light" style="color: #575a65 ">Mediation</span>
                     </span>
                     <span class="logo-sm">
                         <!-- <span class="logo-sm-text-dark">Z</span> -->
@@ -318,7 +319,7 @@
         <!-- Start Page Content here -->
         <!-- ============================================================== -->
 
-        <div class="content-page">
+        <div class="content-page" style="background-color: #e1e1e1;">
             <div class="content">
 
                 <!-- Start Content-->
