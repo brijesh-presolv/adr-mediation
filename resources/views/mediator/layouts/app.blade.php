@@ -192,7 +192,7 @@
                         </div>
 
                         <!-- item-->
-                        <a href="{{url('admin/profile')}}" class="dropdown-item notify-item">
+                        <a href="{{url('mediator/profile')}}" class="dropdown-item notify-item">
                             <i class="mdi mdi-account-outline"></i>
                             <span>Profile</span>
                         </a>
