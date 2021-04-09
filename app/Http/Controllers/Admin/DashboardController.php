@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller {
 
-    
     /**
      * Create a new controller instance.
      *
