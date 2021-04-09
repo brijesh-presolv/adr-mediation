@@ -1,32 +1,65 @@
-<div class="sidebar">
-    <!-- Sidebar user panel (optional) -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-            <img src="{{url('/assert/admin/')}}/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+<div class="left-side-menu" style="background-color: #fdfdfd; " >
+
+    <div class="slimscroll-menu">
+
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+
+            <ul class="metismenu" id="side-menu">
+
+                <li class="menu-title">Navigation</li>
+
+                <li>
+                    <a  href="{{url('/')}}" class="waves-effect waves-light" style="color: #575a65;" >
+                        <i class="mdi mdi-view-dashboard"></i>
+                        <span  style="color: #000000;"> <b>  Dashboard  </b></span>
+                    </a>
+                </li>
+
+                <li>
+                    <a  href="#"  class="waves-effect waves-light" style="color: #575a65;" >
+                        <i class="fas fa-user-friends"></i>
+                        <span  style="color: #000000;"> <b>  Users  </b></span>
+                    </a>
+                </li>
+                 
+                <li>
+                    <a  href="#"  class="waves-effect waves-light" style="color: #575a65;" >
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span  style="color: #000000;">  <b> New Request  </b></span>
+                    </a>
+                </li>
+                 
+                <li>
+                    <a  href="#"  class="waves-effect waves-light" style="color: #575a65;" >
+                        <i class="fab fa-delicious"></i>
+                        <span  style="color: #000000;"> <b>  Ongoing  </b></span>
+                    </a>
+                </li>
+                 
+                <li>
+                    <a  href="#"  class="waves-effect waves-light" style="color: #575a65;" >
+                        <i class=" far fa-lightbulb"></i>
+                        <span  style="color: #000000;"> <b>  Closed  </b></span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="#" class="waves-effect waves-light" style="color: #575a65;" >
+                        <i class=" fas fa-user-tie"></i>
+                        <span  style="color: #000000;"> <b> Profile </b></span>
+                    </a>
+                </li>
+
+
+            </ul>
+
         </div>
-        <div class="info">
-            <a href="#" class="d-block">Alexander Pierce</a>
-        </div>
+        <!-- End Sidebar -->
+
+        <div class="clearfix"></div>
+
     </div>
-    <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-item">
-                <a href="{{url("/")}}" class="nav-link">
-                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                    <p>
-                        Dashboard                        
-                    </p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{route("admin.users.list")}}" class="nav-link">
-                    <i class="nav-icon fas fa-tachometer-alt"></i>
-                    <p>
-                        Users                        
-                    </p>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <!-- /.sidebar-menu -->
-</div>
+                <!-- Sidebar -left -->
+    
+            </div>
