@@ -311,7 +311,7 @@
         <!-- end Topbar --> 
         
         <!-- ========== Left Sidebar Start ========== -->
-         @include('admin.layouts.sidebar')
+         @include('mediator.layouts.sidebar')
             <!-- Left Sidebar End -->
 
         <!-- ============================================================== -->

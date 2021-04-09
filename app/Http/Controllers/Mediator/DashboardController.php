@@ -37,5 +37,8 @@ class DashboardController extends Controller {
     public function profile() {
         return view('mediator.profile');
     }
+    public function users() {
+        return view('mediator.users');
+    }
 
 }
