@@ -22,7 +22,6 @@ class StatusMediatorMediationCase extends Migration
 			$table->tinyInteger("status")->default(0)->comment("New request=0,Accepte=1,Reject=2");
 			$table->tinyInteger("user_type")->default(0)->comment("mediators=1,other_user=0");
 			$table->longText('description')->default(null)->nullable();
-            $table->rememberToken();
             $table->timestamps();
         });
     }
