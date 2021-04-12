@@ -18,9 +18,14 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/login', [App\Http\Controllers\HomeController::class, 'login'])->name('login');
 
 
+
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('user.dashboard');
     Route::match(['post','get'],'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
+    Route::match(['post','get'],'newcase', [App\Http\Controllers\User\MediationController::class, 'newcase'])->name('user.newcase');
+    Route::match(['get'],'newrequest', [App\Http\Controllers\User\MediationController::class, 'newrequest'])->name('user.newrequest');
+
+
 
 });
 

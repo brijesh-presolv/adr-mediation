@@ -260,7 +260,7 @@ function earbsubmit(){
 
 function resolvsubmit(){
 
-    $('.resarbform').attr('action','savedirect');
+    $('.resarbform').attr('action','user/newcase');
 
 }
 
