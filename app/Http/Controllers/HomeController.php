@@ -14,14 +14,13 @@ class HomeController extends Controller {
      */
     public function index() {
         
-        if (Auth::check() && (Auth::user()->role == 0)) {
-           return redirect()->route('user.dashboard');
-        } else if (Auth::check() && (Auth::user()->role == 1)) {
-           return redirect()->route('mediator.dashboard');
-        } else if (Auth::check() && (Auth::user()->role == 2)) {
-            return redirect()->route('admin.dashboard');
-        }
         return view('welcome');
+    }
+
+
+    public function login(){
+
+        return view('login');
     }
 
 }

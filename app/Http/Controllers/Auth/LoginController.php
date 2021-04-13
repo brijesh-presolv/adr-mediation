@@ -29,7 +29,20 @@ use AuthenticatesUsers;
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    //protected $redirectTo = RouteServiceProvider::HOME;
+
+
+    protected function redirectTo(){
+
+       if (Auth::check() && (Auth::user()->role == 0)) {
+           return redirect()->route('user.dashboard');
+        } else if (Auth::check() && (Auth::user()->role == 1)) {
+           return redirect()->route('mediator.dashboard');
+        } else if (Auth::check() && (Auth::user()->role == 2)) {
+            return redirect()->route('admin.dashboard');
+        }
+
+    }
 
     /**
      * Create a new controller instance.

@@ -15,16 +15,8 @@
                         <span  style="color: #000000;"> <b>  Dashboard  </b></span>
                     </a>
                 </li>
-
                 <li>
-                    <a  href="#"  class="waves-effect waves-light" style="color: #575a65;" >
-                        <i class="fas fa-user-friends"></i>
-                        <span  style="color: #000000;"> <b>  Users  </b></span>
-                    </a>
-                </li>
-                 
-                <li>
-                    <a  href="#"  class="waves-effect waves-light" style="color: #575a65;" >
+                    <a  href="{{route('user.newrequest')}}"  class="waves-effect waves-light" style="color: #575a65;" >
                         <i class="fas fa-chalkboard-teacher"></i>
                         <span  style="color: #000000;">  <b> New Request  </b></span>
                     </a>

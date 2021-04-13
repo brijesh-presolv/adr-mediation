@@ -398,6 +398,43 @@
     <!-- Dynamic pages js comes and other files-->
 
     @yield('footer')
+
+    <script type="text/javascript">
+    
+
+    $(document).ready(function(){
+
+
+        var rowid=1;
+
+        $(document).on('click','#addmore',function(e){
+
+            rowid++;
+
+            e.preventDefault();
+
+            var resp=$('.respondent').clone();
+            resp.prepend('<hr><p>#Respondent '+rowid+'</p>');
+            resp.removeClass('respondent');
+            resp.attr('id','rowid'+rowid);
+
+            resp.find('.form-control').val('');
+
+            $('.respondents').append(resp);
+
+        });
+
+        $(document).on('click','#removeresp',function(e){
+
+            e.preventDefault();
+
+            $('#rowid'+rowid).remove();
+
+            rowid--;
+
+        });
+    });
+</script>
 </body>
 
 </html>
