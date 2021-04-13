@@ -35,7 +35,9 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
 Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\Mediator\DashboardController::class, 'index'])->name('mediator.dashboard');
     Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('mediator.newrequest');
+    Route::get('newjson', [App\Http\Controllers\Mediator\DashboardController::class, 'newjson'])->name('mediator.newjson');
     Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('mediator.ongoing');
+    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('mediator.profile');
     Route::get('users', [App\Http\Controllers\Mediator\DashboardController::class, 'users'])->name('mediator.users');
@@ -43,6 +45,7 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::post('edit-profile/{id}', [App\Http\Controllers\Mediator\ProfileController::class, 'updateProfile'])->name('mediator.profile.update');
 
     Route::get('change-password/{id}', [App\Http\Controllers\Mediator\ProfileController::class, 'changePassword'])->name('mediator.change.password');
+    Route::post('activate-deactivate', [App\Http\Controllers\Mediator\DashboardController::class, 'statusChange'])->name('mediator.activeDeactive');
 
 });
 

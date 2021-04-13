@@ -12,42 +12,17 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
-            <h4 class="header-title"><b>New Request</b></h4>
-            <table  id="datatable" id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <h4 class="header-title"><b>User's Data</b></h4>
+            <table  id="request" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
                         <th>Sr. No</th>
                         <th>Case Id</th>
                         <th>Party Details</th>
-                        <th>Party Details</th>
                         <th>Commets</th>
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                     <tr>
-                        <td>1</td>
-                        <td>MD000200</td>
-                        <td><button class="btn   btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',1,'425')">Case details</td>
-
-                        <td>Party 1 <br>
-                        Party 2 <br>
-                        Party 3 <br>
-                        </td>
-                        <td>
-
-                        <button class="btn   btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',1,'425')">Private
-
-                        </button>
-                        <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',2,'a')">Shared</button>
-
-                        </td>
-                        <td><!-- <button class="btn btn-inline btn-primary label label-success arbacceptbtn1" data-toggle="modal" data-target="#myModal53" data-cid="1243" >Accept</button> -->
-                        <a href="/arbitrator/disclosure?id=1243" class="btn btn-primary btn-sm"> Accept</a>
-                        <button onclick="rejectarbcase('1243')" class="btn btn-sm btn-inline btn-danger label label-success">Reject</button>
-                        <br></td>
-                        </tr>
-                </tbody>
             </table>
         </div>
     </div>
@@ -69,11 +44,67 @@
     <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
 
  <!-- Datatables init -->
-    <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
+<script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
+
+<script>
+
+var userTable = $('#request').DataTable({
+"ajax": '{{ route('mediator.newjson') }}',
+        "responsive": true,
+        "columns": [
+        {"data": "id"},
+        {"data": "id",
+                render: function (data, type, row) {
+                return "MD00"+data
+                }
+        },
+        {"data": "party",
+                render: function (data, type, row) {
+                    var d=[];
+                    for(i in data){
+                        d[i]=data[i].name;
+                    }
+                     return d.join(',');
+                    
+                }
+        },
+        {"data": "comments",
+                render: function (data, type, row) {
+                return data;
+                }
+        },
+        {"data": "status",
+                render: function (data, type, row) {
+                    var button = `<div class="form-group">
+                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                      <input type="checkbox" name=="user_status" id="customSwitch` + row.id + `" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
+                      <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
+                    </div>
+                  </div>`;
+                    return button;
+                }
+        }
+        ],
+});
+    $(document).on('change', ".statuschang", function () {
+    var id = $(this).val();
+    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+    if ($(this).is(':checked')){
+    var status = 1;
+    } else{
+    var status = 0;
+    }
+    $.ajax({
+    url: '{{ route('mediator.activeDeactive') }}',
+            method: "post",
+            data: {id:id, status:status, '_token': csrf},
+            }).done(function (data) {
+            userTable.ajax.reload()
+        });
+    });
+</script>
 
 @endsection
-
-
 
 
 
