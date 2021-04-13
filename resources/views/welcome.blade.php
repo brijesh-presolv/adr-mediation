@@ -755,7 +755,7 @@ zakończyć spór ugodą.</p>
                             </div>
                         </div>
                         <!-- Select Basic -->
-                        <div class="form-group row" style="display: none;">
+                        <div class="form-group row">
                             <label class="col-md-12 control-label" style="text-align:left;">Number of parties involved in the dispute (including you)*</label>
                             <div class="col-md-12 selectContainer" id="npd_div">
                                 <div class="input-group">
@@ -765,8 +765,8 @@ zakończyć spór ugodą.</p>
                                      <optgroup>
                                         <!-- <option value="">Please select option</option> -->
                                         <option value="2" selected>2</option>
-                                        <!-- <option value="3">3</option>
-                                        <option value="more_than_3">More than 3</option> -->
+                                        <option value="3">3</option>
+                                        <option value="more_than_3">More than 3</option>
                                       </optgroup>
                                         
                                     </select>
@@ -839,7 +839,7 @@ zakończyć spór ugodą.</p>
                         </div>
                         <div class="alert alert-danger" id="error" style="display:none;">
                     </fieldset>
- 
+                  @csrf
                 </form>
 
    </div>
