@@ -53,8 +53,10 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-    Route::get('users/list', [App\Http\Controllers\Admin\UsersController::class, 'index'])->name('admin.users.list');
-    Route::get('users/json', [App\Http\Controllers\Admin\UsersController::class, 'json'])->name('admin.users.json');
+    Route::get('users/list/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'index'])->defaults('role',"user")->name('admin.users.list');
+    Route::post('users/edit', [App\Http\Controllers\Admin\UsersController::class, 'edit'])->name('admin.users.edit');
+    Route::post('users/update', [App\Http\Controllers\Admin\UsersController::class, 'update'])->name('admin.users.update');
+    Route::get('users/json/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'json'])->defaults('role',0)->name('admin.users.json');
     Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
     Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
     Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');

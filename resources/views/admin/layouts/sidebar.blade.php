@@ -17,7 +17,13 @@
                             </li>
 
                             <li>
-                                <a  href="{{route('admin.users.list')}}"  class="waves-effect waves-light">
+                                <a  href="{{route('admin.users.list',"mediator")}}"  class="waves-effect waves-light">
+                                    <i class="fas fa-user-friends"></i>
+                                    <span>  Users  </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a  href="{{route('admin.users.list',"user")}}"  class="waves-effect waves-light">
                                     <i class="fas fa-user-friends"></i>
                                     <span>  Users  </span>
                                 </a>
