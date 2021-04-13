@@ -75,25 +75,49 @@ var userTable = $('#request').DataTable({
         },
         {"data": "status",
                 render: function (data, type, row) {
-                    var button = `<div class="form-group">
-                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                      <input type="checkbox" name=="user_status" id="customSwitch` + row.id + `" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
-                      <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
-                    </div>
-                  </div>`;
-                    return button;
+
+                    if(data==1){
+                      var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
+                        return button;  
+                    }else{
+                      var button = `<button class="btn-sm btn-success" value="`+data.id+`" id="statuschang" >Accept</button>`;
+                     
+                        return button;
+                    }
+
+
+
+                  //   var button = `<div class="form-group">
+                  //   <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                  //     <input type="checkbox" name=="user_status" id="customSwitch` + row.id + `" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
+                  //     <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
+                  //   </div>
+                  // </div>`;
+                  //   return button;
                 }
         }
         ],
 });
-    $(document).on('change', ".statuschang", function () {
+    $(document).on('click', "#statuschang", function () {
+
+
+    var do_action = $(this).html();
     var id = $(this).val();
-    var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    if ($(this).is(':checked')){
-    var status = 1;
-    } else{
-    var status = 0;
+
+    if(do_action == 'Accept'){
+        status = 1;
     }
+
+    if(do_action == 'Reject'){
+        status = 2
+    }
+
+    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+    // if ($(this).is(':checked')){
+    // var status = 1;
+    // } else{
+    // var status = 0;
+    // }
     $.ajax({
     url: '{{ route('mediator.activeDeactive') }}',
             method: "post",
