@@ -35,7 +35,7 @@ class DashboardController extends Controller {
 
         $loginUser = Auth::user()->id;
         $newrequestData = DB::table('mediators_mediation_cases_status')
-            // ->select('mediation_case.*')
+            ->select('mediation_case.*')
             ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
             ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
             ->join('user_involved_in_agreement', 'user_involved_in_agreement.id', '=', 'mediation_case.userid')
