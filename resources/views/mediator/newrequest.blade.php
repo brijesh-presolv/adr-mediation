@@ -9,10 +9,16 @@
 @endsection
 
 @section('content')
+
+
+@section('pageTitleOnDashboard')
+    <h4 class="page-title">New Request</h4>
+@endsection
+
+
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
-            <h4 class="header-title"><b>User's Data</b></h4>
             <table  id="request" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
