@@ -22,44 +22,55 @@
             </div>
             <!-- /.login-logo -->
             <div class="card">
-                <div class="card-body login-card-body">
-                    <p class="login-box-msg">Sign in to start your session</p>
+                  <div class="card">
 
-                    <form method="POST" action="{{ route('login') }}">
+                        <div class="text-center btn-dark">
+                            <div class="mt-2 mb-2">
+                                <a href="index.html" class="text-yellow">
+                                   <b>ADMIN-LOGIN</b>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+
+                        <form method="POST" action="{{ route('login') }}">
                         @csrf
-                        <div class="input-group mb-3">
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-                            <div class="input-group-append">
-                                <div class="input-group-text">
-                                    <span class="fas fa-envelope"></span>
+
+                                <div class="form-group">
+                                    <input class="form-control @error('email') is-invalid @enderror" type="email" id="email" placeholder="Username" value="{{ old('email') }}" required autocomplete="email" autofocus>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="input-group mb-3">
-                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-                            <div class="input-group-append">
-                                <div class="input-group-text">
-                                    <span class="fas fa-lock"></span>
+
+                                <div class="form-group">
+                                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-8">
-                                <div class="icheck-primary">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                    <label for="remember">
-                                        Remember Me
-                                    </label>
+
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox checkbox-success">
+                                        <input type="checkbox" class="custom-control-input" id="checkbox-signin" checked="{{ old('remember') ? 'checked' : '' }}">
+                                        <label class="custom-control-label" for="checkbox-signin">Remember me</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <!-- /.col -->
-                            <div class="col-4">
-                                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-                            </div>
-                            <!-- /.col -->
+
+                                <div class="form-group text-center mt-4 pt-2">
+                                    <div class="col-sm-12">
+                                        <a href="page-recoverpw.html" class="text-muted"><i class="fa fa-lock mr-1"></i> Forgot your password?</a>
+                                    </div>
+                                </div>
+
+                                <div class="form-group account-btn text-center mt-2">
+                                    <div class="col-12">
+                                        <button class="btn width-md btn-bordered btn-danger waves-effect waves-light" type="submit">Log In</button>
+                                    </div>
+                                </div>
+
+                            </form>
+
                         </div>
-                    </form>
-                </div>
+                        <!-- end card-body -->
+                    </div>
+                    <!-- end card -->
+
                 <!-- /.login-card-body -->
             </div>
         </div>
