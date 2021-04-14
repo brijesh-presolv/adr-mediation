@@ -18,10 +18,10 @@
     <body class="hold-transition login-page">
         <div class="login-box">
             <div class="login-logo">
-                <a href="{{url('/assert/admin/')}}/index2.html"><b>{{ config('app.name', 'Medtiator') }}</b> Admin</a>
+                <a href="{{url('/assert/admin/')}}/index2.html"><b>Mediation</b> Admin</a>
             </div>
             <!-- /.login-logo -->
-            <div class="card">
+            <!-- <div class="card"> -->
                   <div class="card">
 
                         <div class="text-center btn-dark">
@@ -52,13 +52,13 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group text-center mt-4 pt-2">
+                                <div class="form-group text-center mt-4 pt-0">
                                     <div class="col-sm-12">
                                         <a href="page-recoverpw.html" class="text-muted"><i class="fa fa-lock mr-1"></i> Forgot your password?</a>
                                     </div>
                                 </div>
 
-                                <div class="form-group account-btn text-center mt-2">
+                                <div class="form-group account-btn text-center mt-0">
                                     <div class="col-12">
                                         <button class="btn width-md btn-bordered btn-danger waves-effect waves-light" type="submit">Log In</button>
                                     </div>
@@ -73,7 +73,7 @@
 
                 <!-- /.login-card-body -->
             </div>
-        </div>
+        <!-- </div> -->
         <!-- /.login-box -->
 
         <!-- jQuery -->

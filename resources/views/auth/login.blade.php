@@ -18,7 +18,7 @@
     <body class="hold-transition login-page">
         <div class="login-box">
             <div class="login-logo">
-                <a href="{{url('/')}}"><b>{{ config('app.name', 'Laravel') }}</b></a>
+                <a href="{{url('/')}}"><b>{{ config('app.name', 'Mediation') }}</b></a>
             </div>
             <!-- /.login-logo -->
             <div class="card">
