@@ -38,7 +38,7 @@ class UsersController extends Controller {
      */
     public function statusChange(Request $request) {
         $user = User::find($request->id);
-        $user->status = $request->status;
+        $user->isActive = $request->status;
         $user->save();
         return response()->json(["msg" => "Category Name Update"]);
     }

@@ -51,17 +51,24 @@ class CaseController extends Controller {
     }
 
     public function midaterAdd(Request $request) {
-        return Mediators_mediation_cases_status::create([
-                    'mediator_id' => $request->midater,
-                    'mediation_case_id' => $request->id,
-                    'status' => 0,
-                    'user_type' => 1,
-        ]);
+        $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $request->id)->count();
+        if ($data == 0) {
+            Mediators_mediation_cases_status::create([
+                'mediator_id' => $request->midater,
+                'mediation_case_id' => $request->id,
+                'status' => 0,
+                'user_type' => 1,
+            ]);
+        } else {
+            $MedCaseStatus = Mediators_mediation_cases_status::where("status", "=", 0)->where("mediation_case_id", "=", $request->id)->first();
+            $MedCaseStatus->mediator_id = $request->midater;
+            $MedCaseStatus->save();
+        }
         return response()->json(["msg" => "midater Added"]);
     }
 
     public function json($role = 0) {
-        $case = MedCase::select("user_involved_in_agreement.username", "mediation_case.*","users.username as mediator_username")
+        $case = MedCase::select("user_involved_in_agreement.username", "mediation_case.*", "users.username as mediator_username")
                 ->join("user_involved_in_agreement", "user_involved_in_agreement.userPlanId", "=", "mediation_case.id")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")

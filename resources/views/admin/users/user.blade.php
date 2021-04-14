@@ -76,7 +76,7 @@ var userTable = $('#users').DataTable({
                 return role;
             }
         },
-        {"data": "status",
+        {"data": "isActive",
             render: function (data, type, row) {
                 var button = `<div class="form-group">
                 <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
