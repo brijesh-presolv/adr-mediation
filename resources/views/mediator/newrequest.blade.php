@@ -61,7 +61,7 @@ var userTable = $('#request').DataTable({
         {"data": "id"},
         {"data": "id",
                 render: function (data, type, row) {
-                return "M0000"+data
+                return "MD00"+data
                 }
         },
         {"data": "party",
@@ -82,13 +82,14 @@ var userTable = $('#request').DataTable({
         {"data": "status",
                 render: function (data, type, row) {
 
-                    // if(data==1){
-                      var button = `<button class="btn-sm btn-success" value="`+data.id+`" id="statuschang" >Accept</button><button class="btn-sm btn-danger mx-2" value="`+data.id+`" id="statuschang">Reject</button>`;
+                    if(data==1){
+                      var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
                         return button;  
-                    // }else{
-                    //   var button = `<button class="btn-sm btn-success" value="`+data.id+`" id="statuschang" >Accept</button>`;
-                    //     return button;
-                    // }
+                    }else{
+                      var button = `<button class="btn-sm btn-success" value="`+data.id+`" id="statuschang" >Accept</button>`;
+                     
+                        return button;
+                    }
 
 
 
