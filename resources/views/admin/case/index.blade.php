@@ -159,7 +159,8 @@ $(document).on('submit', "#MidaterForm", function () {
         method: "post",
         data: {id: id, midater: midater, '_token': csrf},
     }).done(function (data) {
-        userTable.ajax.reload()
+        userTable.ajax.reload();
+        $('#midaterAdd').modal("hide");
     });
     return false;
 });
