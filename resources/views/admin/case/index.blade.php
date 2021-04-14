@@ -18,7 +18,7 @@
                     <tr>
                         <th>Sr. No</th>
                         <th>Case Id</th>
-                        <th>Party Details</th>
+                        <th>Date</th>
                         <th>Party Details</th>
                         <th>Commets</th>
                         <th>Assign Mediator</th>
@@ -54,11 +54,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
+                    <button type="submit" class="btn btn-primary">Accept</button>
+                </div>
             </form>
         </div>
     </div>
-</div>
 </div>
 @endsection
 
@@ -78,50 +78,70 @@
 
 <!-- Datatables init -->
 <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
 
 var userTable = $('#users').DataTable({
     "ajax": '{{ route("admin.case.json",$confirm_status) }}',
     "responsive": true,
     "columns": [
-        {"data": "id",
+        {"data": "case.id",
             render: function (data, type, row, meta) {
                 return meta.row + meta.settings._iDisplayStart + 1;
             }
         },
-        {"data": "id",
+        {"data": "case.id",
             render: function (data) {
                 return "MD000" + data;
             }
         },
-        {"data": "username"},
-        {"data": "username"},
-        {"data": "documentPath"},
-        {"data": "confirm_status",
+        {"data": "case.created_at"},
+        {"data": "party",
             render: function (data, type, row) {
-                if (row.confirm_status == 1) {
-                    if (row.mediator_username == null) {
-                        var button = ` <button  data-id="` + row.id + `" value="` + row.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-success midater-add">Midater Add</button>`;
+                var d = "";
+                for (i in data) {
+                    if (data[i].isOnboarded == 1) {
+                        d = d + `<p class="text-success">` + data[i].name + `</p>`;
                     } else {
-                        var button = ` <button  data-id="` + row.id + `" value="` + row.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-success midater-add">`+row.mediator_username+`</button>`;
+                        d = d + `<p class="text-danger">` + data[i].name + `</p>`;
+                    }
+                }
+                return d;
+            }
+        },
+        {"data": "case.id",
+            render: function (data, type, row) {
+                var button = `<button type="button" class="btn btn-primary waves-effect  waves-light">Private</button> `;
+                button = button + `<button type="button" class="btn btn-teal waves-light waves-effect ">Share</button> `;
+                return button;
+            }
+        },
+        {"data": "case.confirm_status",
+            render: function (data, type, row) {
+                var button = "";
+                if (data == 1) {
+                    if (row.case.mediator_username != null) {
+                        button = ` <button  data-id="` + row.case.id + `" value="` + row.case.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-success midater-add">` + row.case.mediator_username + `</button>`;
                     }
                     //console.log(row.mediator_username);
                 } else {
-                    var button = `-`;
+                    button = `-`;
                 }
                 return button;
             }
         },
-        {"data": "id",
+        {"data": "case.id",
             render: function (data, type, row) {
-                if (row.confirm_status == 0) {
-                    var button = `<button value="` + data + `" class="btn btn-info confirm">confirm</button>`;
+                var button = "";
+                if (row.case.confirm_status == 0) {
+                    button = button + `<button value="` + data + `" class="btn btn-info confirm">confirm</button>`;
                     button = button + ` <button value="` + data + `" class="btn btn-danger reject">Reject</button>`;
-                } else if (row.confirm_status == 1) {
-                    var button = ` <button value="` + data + `" class="btn btn-danger reject">Reject</button>`;
                 } else {
-                    var button = `<button value="` + data + `" class="btn btn-info confirm">confirm</button>`;
+                    if (row.case.mediator_username == null) {
+                        button = button + ` <button  data-id="` + row.case.id + `" value="` + row.case.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info waves-effect width-md waves-light">Accept</button>`;
+                    } else {
+                        button = button + ` <button  data-id="` + row.case.id + `" value="` + row.case.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info waves-effect width-md waves-light disabled" disabled>Accept</button>`;
+                    }
                 }
                 return button;
             }
@@ -131,23 +151,54 @@ var userTable = $('#users').DataTable({
 $(document).on('click', ".confirm", function () {
     var id = $(this).val();
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    $.ajax({
-        url: '{{ route("admin.case.confirm_status") }}',
-        method: "post",
-        data: {id: id, '_token': csrf},
-    }).done(function (data) {
-        userTable.ajax.reload()
+    swal({
+        title: "Are you sure?",
+        text: "Canform this request!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            $.ajax({
+                url: '{{ route("admin.case.confirm_status") }}',
+                method: "post",
+                data: {id: id, '_token': csrf},
+            }).done(function (data) {
+                userTable.ajax.reload()
+                swal("conform successfully!", {
+                    icon: "success",
+                });
+            });
+
+        } else {
+            swal("Your imaginary file is safe!");
+        }
     });
 });
 $(document).on('click', ".reject", function () {
     var id = $(this).val();
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    $.ajax({
-        url: '{{ route("admin.case.reject_status") }}',
-        method: "post",
-        data: {id: id, '_token': csrf},
-    }).done(function (data) {
-        userTable.ajax.reload()
+    swal({
+        title: "Are you sure?",
+        text: "Reject this request!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            $.ajax({
+                url: '{{ route("admin.case.reject_status") }}',
+                method: "post",
+                data: {id: id, '_token': csrf},
+            }).done(function (data) {
+                userTable.ajax.reload();
+                swal("Reject successfully!", {
+                    icon: "success",
+                });
+            });
+        } else {
+            swal("Your imaginary file is safe!");
+        }
     });
 });
 $(document).on('submit', "#MidaterForm", function () {
@@ -164,7 +215,6 @@ $(document).on('submit', "#MidaterForm", function () {
     });
     return false;
 });
-
 $('#midaterAdd').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
     var recipient = button.data('id') // Extract info from data-* attributes

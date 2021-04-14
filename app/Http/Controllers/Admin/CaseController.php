@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MedCase;
+use App\Models\InvoledUser;
 use App\Models\User;
 use App\Models\Mediators_mediation_cases_status;
 
@@ -68,14 +69,19 @@ class CaseController extends Controller {
     }
 
     public function json($role = 0) {
-        $case = MedCase::select("user_involved_in_agreement.username", "mediation_case.*", "users.username as mediator_username")
-                ->join("user_involved_in_agreement", "user_involved_in_agreement.userPlanId", "=", "mediation_case.id")
+        $cases = MedCase::select("mediation_case.*", "users.username as mediator_username")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediation_case.confirm_status", "=", $role)
-                ->where("user_involved_in_agreement.isClaimant", "=", 1)
                 ->get();
-        return response()->json(["data" => $case]);
+        $arraydata = array();
+        foreach ($cases as $d) {
+            $arraydata[] = [
+                "case" => $d,
+                "party" => InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $d->id])->get(),
+            ];
+        }
+        return response()->json(["data" => $arraydata]);
     }
 
 }
