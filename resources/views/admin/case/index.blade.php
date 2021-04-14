@@ -101,8 +101,12 @@ var userTable = $('#users').DataTable({
         {"data": "confirm_status",
             render: function (data, type, row) {
                 if (row.confirm_status == 1) {
+                    if (row.mediator_username == null) {
                         var button = ` <button  data-id="` + row.id + `" value="` + row.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-success midater-add">Midater Add</button>`;
-                    console.log(row.mediator_id);
+                    } else {
+                        var button = ` <button  data-id="` + row.id + `" value="` + row.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-success midater-add">`+row.mediator_username+`</button>`;
+                    }
+                    //console.log(row.mediator_username);
                 } else {
                     var button = `-`;
                 }

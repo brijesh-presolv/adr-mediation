@@ -61,9 +61,10 @@ class CaseController extends Controller {
     }
 
     public function json($role = 0) {
-        $case = MedCase::select("user_involved_in_agreement.username", "mediation_case.*","mediators_mediation_cases_status.mediator_id")
+        $case = MedCase::select("user_involved_in_agreement.username", "mediation_case.*","users.username as mediator_username")
                 ->join("user_involved_in_agreement", "user_involved_in_agreement.userPlanId", "=", "mediation_case.id")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediation_case.confirm_status", "=", $role)
                 ->where("user_involved_in_agreement.isClaimant", "=", 1)
                 ->get();
