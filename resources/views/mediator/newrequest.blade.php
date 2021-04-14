@@ -9,10 +9,16 @@
 @endsection
 
 @section('content')
+
+
+@section('pageTitleOnDashboard')
+    <h4 class="page-title">New Request</h4>
+@endsection
+
+
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
-            <h4 class="header-title"><b>User's Data</b></h4>
             <table  id="request" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -76,14 +82,13 @@ var userTable = $('#request').DataTable({
         {"data": "status",
                 render: function (data, type, row) {
 
-                    if(data==1){
-                      var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
+                    // if(data==1){
+                      var button = `<button class="btn-sm btn-success" value="`+data.id+`" id="statuschang" >Accept</button><button class="btn-sm btn-danger mx-2" value="`+data.id+`" id="statuschang">Reject</button>`;
                         return button;  
-                    }else{
-                      var button = `<button class="btn-sm btn-success" value="`+data.id+`" id="statuschang" >Accept</button>`;
-                     
-                        return button;
-                    }
+                    // }else{
+                    //   var button = `<button class="btn-sm btn-success" value="`+data.id+`" id="statuschang" >Accept</button>`;
+                    //     return button;
+                    // }
 
 
 

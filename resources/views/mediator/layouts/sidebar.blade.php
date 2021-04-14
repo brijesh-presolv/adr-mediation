@@ -10,19 +10,11 @@
                             <li class="menu-title">Navigation</li>
     
                             <li>
-                                <a  href="{{url('/')}}" class="waves-effect waves-light">
+                                <a  href="{{route('mediator.dashboard')}}" class="waves-effect waves-light">
                                     <i class="mdi mdi-view-dashboard"></i>
                                     <span>  Dashboard  </span>
                                 </a>
                             </li>
-
-                            <li>
-                                <a  href="{{route('mediator.users')}}"  class="waves-effect waves-light">
-                                    <i class="fas fa-user-friends"></i>
-                                    <span>  Users  </span>
-                                </a>
-                            </li>
-                             
                             <li>
                                 <a  href="{{url('mediator/new')}}"  class="waves-effect waves-light">
                                     <i class="fas fa-chalkboard-teacher"></i>
