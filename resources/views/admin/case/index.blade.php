@@ -22,7 +22,7 @@
                         <th>Party Details</th>
                         <th>Commets</th>
                         <th>Assign Mediator</th>
-                        <th>Acttion</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
             </table>
@@ -95,15 +95,15 @@ var userTable = $('#users').DataTable({
                 return "MD000" + data;
             }
         },
-        {"data": "case.created_at"},
+        {"data": "date"},
         {"data": "party",
             render: function (data, type, row) {
                 var d = "";
                 for (i in data) {
                     if (data[i].isOnboarded == 1) {
-                        d = d + `<p class="text-success">` + data[i].name + `</p>`;
+                        d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
                     } else {
-                        d = d + `<p class="text-danger">` + data[i].name + `</p>`;
+                        d = d + `<span class="text-danger">` + data[i].name + `</span>`;
                     }
                 }
                 return d;

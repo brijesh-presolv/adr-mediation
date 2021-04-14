@@ -77,6 +77,7 @@ class CaseController extends Controller {
         $arraydata = array();
         foreach ($cases as $d) {
             $arraydata[] = [
+                "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
                 "party" => InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $d->id])->get(),
             ];
