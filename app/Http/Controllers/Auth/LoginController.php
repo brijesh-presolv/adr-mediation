@@ -55,7 +55,7 @@ use AuthenticatesUsers;
 
     protected function credentials(\Illuminate\Http\Request $request) {
         //return $request->only($this->username(), 'password');
-        return ['email' => $request->{$this->username()}, 'password' => $request->password, 'status' => 1];
+        return ['email' => $request->{$this->username()}, 'password' => $request->password, 'isActive' => 1];
     }
 
     public function logout(Request $request) {
