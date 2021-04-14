@@ -55,8 +55,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('users/update', [App\Http\Controllers\Admin\UsersController::class, 'update'])->name('admin.users.update');
     Route::get('users/json/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'json'])->defaults('role',0)->name('admin.users.json');
     Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
-    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
+//    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
     Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
     Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
+    Route::get('case/{confirm_status?}', [App\Http\Controllers\Admin\CaseController::class, 'index'])->defaults('confirm_status',"newrequest")->name('admin.case.index');
+    Route::get('case/json/{confirm_status?}', [App\Http\Controllers\Admin\CaseController::class, 'json'])->defaults('confirm_status',0)->name('admin.case.json');
+    Route::post('case/confirm-status', [App\Http\Controllers\Admin\CaseController::class, 'confirmStatus'])->name('admin.case.confirm_status');
+    Route::post('case/reject-status', [App\Http\Controllers\Admin\CaseController::class, 'rejectStatus'])->name('admin.case.reject_status');
+    Route::post('case/midater-add', [App\Http\Controllers\Admin\CaseController::class, 'midaterAdd'])->name('admin.case.midater_add');
 });
