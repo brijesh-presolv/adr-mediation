@@ -34,11 +34,11 @@
 
                         <div class="card-body">
 
-                        <form method="POST" action="{{ route('login') }}">
+                        <form method="post" action="{{ route('login') }}">
                         @csrf
 
                                 <div class="form-group">
-                                    <input class="form-control @error('email') is-invalid @enderror" type="email" id="email" placeholder="Username" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                                    <input class="form-control @error('email') is-invalid @enderror" type="email" id="email" placeholder="Username" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                                 </div>
 
                                 <div class="form-group">

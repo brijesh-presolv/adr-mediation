@@ -33,7 +33,6 @@ use AuthenticatesUsers;
 
 
     protected function redirectTo(){
-
        if (Auth::check() && (Auth::user()->role == 0)) {
            return redirect()->route('user.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 1)) {
