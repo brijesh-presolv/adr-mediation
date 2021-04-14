@@ -15,32 +15,28 @@
                         <span>  Dashboard  </span>
                     </a>
                 </li>
-
                 <li>
-                    <a  href="{{route('admin.users.list',"mediator")}}"  class="waves-effect waves-light">
+                    <a href="javascript: void(0);" class="waves-effect waves-light">
                         <i class="fas fa-user-friends"></i>
-                        <span>  Users  </span>
+                        <span>Users</span>
+                        <span class="menu-arrow"></span>
                     </a>
+                    <ul class="nav-second-level" aria-expanded="false">
+                        <li><a href="{{route('admin.users.list',"mediator")}}">Mediator</a></li>
+                        <li><a href="{{route('admin.users.list',"user")}}">Users</a></li>
+                    </ul>
                 </li>
                 <li>
-                    <a  href="{{route('admin.users.list',"user")}}"  class="waves-effect waves-light">
-                        <i class="fas fa-user-friends"></i>
-                        <span>  Users  </span>
-                    </a>
-                </li>
-                <li>
-                    <a  href="{{route('admin.case.index',"newrequest")}}"  class="waves-effect waves-light">
+                    <a href="javascript: void(0);" class="waves-effect waves-light">
                         <i class="fas fa-chalkboard-teacher"></i>
-                        <span> New Request </span>
+                        <span>Case</span>
+                        <span class="menu-arrow"></span>
                     </a>
+                    <ul class="nav-second-level" aria-expanded="false">
+                        <li><a href="{{route('admin.case.index',"newrequest")}}">New Request</a></li>
+                        <li><a href="{{route('admin.case.index',"confirmrequest")}}">Confirm Request</a></li>
+                    </ul>
                 </li>
-                <li>
-                    <a  href="{{route('admin.case.index',"confirmrequest")}}"  class="waves-effect waves-light">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <span> Confirm Request </span>
-                    </a>
-                </li>
-               
 
 
             </ul>
