@@ -25,7 +25,7 @@
                         <th>Sr. No</th>
                         <th>Case Id</th>
                         <th>Party Details</th>
-                        <th>Commets</th>
+                        <th>Comments</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -51,6 +51,8 @@
 
  <!-- Datatables init -->
 <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 
 <script>
 
@@ -59,37 +61,43 @@ var userTable = $('#request').DataTable({
         "responsive": true,
         "columns": [
         {"data": "id"},
-        {"data": "id",
+        {"data": "mediation_case_id",
                 render: function (data, type, row) {
-                return "MD00"+data
+                return "M0000"+row.caseId
                 }
         },
         {"data": "party",
                 render: function (data, type, row) {
-                    var d=[];
-                    for(i in data){
-                        d[i]=data[i].name;
+                var d = "";
+                for (i in data) {
+                    if (data[i].isOnboarded == 1) {
+                        d = d + `<p class="text-success">` + data[i].name + `</p>`;
+                    } else {
+                        d = d + `<p class="text-danger">` + data[i].name + `</p>`;
                     }
-                     return d.join(',');
-                    
                 }
+                return d;
+            }
         },
         {"data": "comments",
                 render: function (data, type, row) {
-                return data;
+
+                    var button = `<button class="btn   btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',1,'425')">Private</button>
+                            <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',2,'a')">Shared</button>`;
+                    return button; 
                 }
         },
         {"data": "status",
                 render: function (data, type, row) {
 
-                    if(data==1){
-                      var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
-                        return button;  
-                    }else{
-                      var button = `<button class="btn-sm btn-success" value="`+data.id+`" id="statuschang" >Accept</button>`;
+                    // if(data==1){
+                    //   var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
+                    //     return button;  
+                    // }else{
+                    // }
                      
+                      var button = `<button class="btn-sm btn-success" id="statuschang"  >Accept</button>`;
                         return button;
-                    }
 
 
 
@@ -104,34 +112,78 @@ var userTable = $('#request').DataTable({
         }
         ],
 });
-    $(document).on('click', "#statuschang", function () {
+    // $(document).on('click', "#statuschang", function () {
 
 
-    var do_action = $(this).html();
+    // var do_action = $(this).html();
+    // var id = $(this).val();
+
+    // console.log(id);
+
+    // if(do_action == 'Accept'){
+    //     status = 1;
+    // }
+
+    // if(do_action == 'Reject'){
+    //     status = 2
+    // }
+
+    // var csrf = document.querySelector('meta[name="csrf-token"]').content;
+    // // if ($(this).is(':checked')){
+    // // var status = 1;
+    // // } else{
+    // // var status = 0;
+    // // }
+    // $.ajax({
+    // url: '{{ route('mediator.activeDeactive') }}',
+    //         method: "post",
+    //         data: {id:id, status:status, '_token': csrf},
+    //         }).done(function (data) {
+
+                
+    //         userTable.ajax.reload()
+    //     });
+    // });
+
+
+
+$(document).on('click', "#statuschang", function () {
     var id = $(this).val();
-
+    var do_action = $(this).html();
     if(do_action == 'Accept'){
         status = 1;
     }
-
-    if(do_action == 'Reject'){
-        status = 2
-    }
-
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    // if ($(this).is(':checked')){
-    // var status = 1;
-    // } else{
-    // var status = 0;
-    // }
-    $.ajax({
-    url: '{{ route('mediator.activeDeactive') }}',
-            method: "post",
-            data: {id:id, status:status, '_token': csrf},
+    swal({
+        title: "Are you sure?",
+        text: "to accept these request!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            $.ajax({
+                url: '{{ route("mediator.activeDeactive") }}',
+                method: "post",
+                data: {id:id, status:status, '_token': csrf},
             }).done(function (data) {
-            userTable.ajax.reload()
-        });
+                userTable.ajax.reload()
+                swal("Request Accepted!", {
+                    icon: "success",
+                });
+            });
+
+        } else {
+            swal("Your imaginary file is safe!");
+        }
     });
+});
+
+
+
+
+
+
 </script>
 
 @endsection
