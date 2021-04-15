@@ -19,9 +19,8 @@
                         <th>Sr. No</th>
                         <th>Case Id</th>
                         <th>Date</th>
+                        <th>Case Details</th>
                         <th>Party Details</th>
-                        <th>Commets</th>
-                        <th>Assign Mediator</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -80,6 +79,10 @@
 <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
+function pad(str, max) {
+    str = str.toString();
+    return str.length < max ? pad("0" + str, max) : str;
+}
 
 var userTable = $('#users').DataTable({
     "ajax": '{{ route("admin.case.json",$confirm_status) }}',
@@ -92,10 +95,16 @@ var userTable = $('#users').DataTable({
         },
         {"data": "case.id",
             render: function (data) {
-                return "MD000" + data;
+                return "M" + pad(data, 6);
             }
         },
         {"data": "date"},
+        {"data": "case.id",
+            render: function (data) {
+                var button = `<button type="button" class="btn btn-primary waves-effect  waves-light">case details</button> `;
+                return button;
+            }
+        },
         {"data": "party",
             render: function (data, type, row) {
                 var d = "";
@@ -111,69 +120,13 @@ var userTable = $('#users').DataTable({
         },
         {"data": "case.id",
             render: function (data, type, row) {
-                var button = `<button type="button" class="btn btn-primary waves-effect  waves-light">Private</button> `;
-                button = button + `<button type="button" class="btn btn-teal waves-light waves-effect ">Share</button> `;
-                return button;
-            }
-        },
-        {"data": "case.confirm_status",
-            render: function (data, type, row) {
                 var button = "";
-                if (data == 1) {
-                    if (row.case.mediator_username != null) {
-                        button = ` <button  data-id="` + row.case.id + `" value="` + row.case.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-success midater-add">` + row.case.mediator_username + `</button>`;
-                    }
-                    //console.log(row.mediator_username);
-                } else {
-                    button = `-`;
-                }
-                return button;
-            }
-        },
-        {"data": "case.id",
-            render: function (data, type, row) {
-                var button = "";
-                if (row.case.confirm_status == 0) {
-                    button = button + `<button value="` + data + `" class="btn btn-info confirm">confirm</button>`;
-                    button = button + ` <button value="` + data + `" class="btn btn-danger reject">Reject</button>`;
-                } else {
-                    if (row.case.mediator_username == null) {
-                        button = button + ` <button  data-id="` + row.case.id + `" value="` + row.case.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info waves-effect width-md waves-light">Accept</button>`;
-                    } else {
-                        button = button + ` <button  data-id="` + row.case.id + `" value="` + row.case.id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info waves-effect width-md waves-light disabled" disabled>Accept</button>`;
-                    }
-                }
+                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info">confirm</button>`;
+                button = button + ` <button value="` + data + `" class="btn btn-danger reject">Reject</button>`;
                 return button;
             }
         },
     ],
-});
-$(document).on('click', ".confirm", function () {
-    var id = $(this).val();
-    var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    swal({
-        title: "Are you sure?",
-        text: "Canform this request!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-    }).then((willDelete) => {
-        if (willDelete) {
-            $.ajax({
-                url: '{{ route("admin.case.confirm_status") }}',
-                method: "post",
-                data: {id: id, '_token': csrf},
-            }).done(function (data) {
-                userTable.ajax.reload()
-                swal("conform successfully!", {
-                    icon: "success",
-                });
-            });
-
-        } else {
-            swal("Your imaginary file is safe!");
-        }
-    });
 });
 $(document).on('click', ".reject", function () {
     var id = $(this).val();
@@ -197,7 +150,7 @@ $(document).on('click', ".reject", function () {
                 });
             });
         } else {
-            swal("Your imaginary file is safe!");
+            swal("Cansel Reject Request!");
         }
     });
 });
@@ -205,13 +158,40 @@ $(document).on('submit', "#MidaterForm", function () {
     var id = $(this).find("input[name='id']").val();
     var midater = $(this).find("select[name='midater']").val();
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    $.ajax({
-        url: '{{ route("admin.case.midater_add") }}',
-        method: "post",
-        data: {id: id, midater: midater, '_token': csrf},
-    }).done(function (data) {
-        userTable.ajax.reload();
-        $('#midaterAdd').modal("hide");
+    swal({
+        title: "Are you sure?",
+        text: "Canform this request!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            $.ajax({
+                url: '{{ route("admin.case.midater_add") }}',
+                method: "post",
+                data: {id: id, midater: midater, '_token': csrf},
+            }).done(function (data) {
+                swal("mediator assigned successfully!", {
+                    icon: "success",
+                });
+                $.ajax({
+                    url: '{{ route("admin.case.confirm_status") }}',
+                    method: "post",
+                    data: {id: id, '_token': csrf},
+                }).done(function (data) {
+                    userTable.ajax.reload()
+                    swal("conform successfully!", {
+                        icon: "success",
+                    });
+                });
+                //userTable.ajax.reload();
+                $('#midaterAdd').modal("hide");
+            });
+
+
+        } else {
+            swal("Cansel Confirm Request!");
+        }
     });
     return false;
 });
