@@ -25,15 +25,27 @@ class CaseController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index($confirm_status = "newrequest") {
+    public function index() {
         $users = User::where("role", "=", 1)->get();
-        if ($confirm_status == "rejectrequest") {
-            $confirm_status = 2;
-        } else if ($confirm_status == "confirmrequest") {
-            $confirm_status = 1;
-        } else {
-            $confirm_status = 0;
-        }
+        $confirm_status = 0;
+        return view('admin.case.index', compact("confirm_status", "users"));
+    }
+
+    public function ongoingRequest() {
+        $users = User::where("role", "=", 1)->get();
+        $confirm_status = 1;
+        return view('admin.case.index', compact("confirm_status", "users"));
+    }
+
+    public function closedRequest() {
+        $users = User::where("role", "=", 1)->get();
+        $confirm_status = 2;
+        return view('admin.case.index', compact("confirm_status", "users"));
+    }
+
+    public function rjectedRequest() {
+        $users = User::where("role", "=", 1)->get();
+        $confirm_status = 3;
         return view('admin.case.index', compact("confirm_status", "users"));
     }
 
@@ -41,14 +53,21 @@ class CaseController extends Controller {
         $user = MedCase::find($request->id);
         $user->confirm_status = 1;
         $user->save();
-        return response()->json(["msg" => "Category Name Update"]);
+        return response()->json(["msg" => "Onging Case"]);
+    }
+
+    public function closeStatus(Request $request) {
+        $user = MedCase::find($request->id);
+        $user->confirm_status = 2;
+        $user->save();
+        return response()->json(["msg" =>"Closed Case"]);
     }
 
     public function rejectStatus(Request $request) {
         $user = MedCase::find($request->id);
-        $user->confirm_status = 2;
+        $user->confirm_status = 3;
         $user->save();
-        return response()->json(["msg" => "Category Name Update"]);
+        return response()->json(["msg" => "Rejected Case"]);
     }
 
     public function midaterAdd(Request $request) {
