@@ -23,9 +23,10 @@ use App\Models\InvoledUser;
                         <th>Sr. No</th>
                         <th>Case Id</th>
                         <th>Party Details</th>
-                        <!-- <th>Party Details</th> -->
-
+                        <th>Date</th>
+                        <th>Case Detail</th>
                         <th>Commets</th>
+                        <th>Session</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -50,9 +51,16 @@ use App\Models\InvoledUser;
                         }
                          ?>
                          </td>
+                        <td>{{ date('d-m-Y', strtotime($data->created_at))}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment">Case Detail</button>
+                        </td>
                         <td>
                             <button class="btn   btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment">Private</button>
                             <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment">Shared</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm  btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment">Create Session</button>
                         </td>
                         <td>
                             <a href="#" class="btn btn-primary btn-sm">Agreement</a>

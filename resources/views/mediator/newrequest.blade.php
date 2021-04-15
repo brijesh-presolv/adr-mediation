@@ -24,6 +24,7 @@
                     <tr>
                         <th>Sr. No</th>
                         <th>Case Id</th>
+                        <th>Date</th>
                         <th>Party Details</th>
                         <th>Comments</th>
                         <th>Action</th>
@@ -66,6 +67,11 @@ var userTable = $('#request').DataTable({
                 return "M0000"+row.caseId
                 }
         },
+        {"data": "date",
+                render: function (data, type, row) {
+                return row.date
+                }
+        },
         {"data": "party",
                 render: function (data, type, row) {
                 var d = "";
@@ -96,7 +102,8 @@ var userTable = $('#request').DataTable({
                     // }else{
                     // }
                      
-                      var button = `<button class="btn-sm btn-success" id="statuschang"  >Accept</button>`;
+                      var button = `<button class="btn-sm btn-success" id="statuschang"  >Accept</button>
+                                    <button class="btn-sm btn-danger" id="statuschang">Reject</button>`;
                         return button;
 
 
@@ -150,13 +157,44 @@ var userTable = $('#request').DataTable({
 $(document).on('click', "#statuschang", function () {
     var id = $(this).val();
     var do_action = $(this).html();
-    if(do_action == 'Accept'){
-        status = 1;
-    }
+
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    swal({
+
+    if(do_action == 'Accept'){
+        
+        status = 1;
+
+        swal({
+            title: "Are you sure?",
+            text: "to accept these request!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: '{{ route("mediator.activeDeactive") }}',
+                    method: "post",
+                    data: {id:id, status:status, '_token': csrf},
+                }).done(function (data) {
+                    userTable.ajax.reload()
+                    swal("Request Accepted!", {
+                        icon: "success",
+                    });
+                });
+
+        } else {
+            swal("Your imaginary file is safe!");
+        }
+     });
+
+    }
+if(do_action == 'Reject'){
+status = 2;
+
+swal({
         title: "Are you sure?",
-        text: "to accept these request!",
+        text: "to Reject these request!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -168,7 +206,7 @@ $(document).on('click', "#statuschang", function () {
                 data: {id:id, status:status, '_token': csrf},
             }).done(function (data) {
                 userTable.ajax.reload()
-                swal("Request Accepted!", {
+                swal("Request Rejected!", {
                     icon: "success",
                 });
             });
@@ -177,6 +215,15 @@ $(document).on('click', "#statuschang", function () {
             swal("Your imaginary file is safe!");
         }
     });
+
+
+
+
+}
+
+
+    // var csrf = document.querySelector('meta[name="csrf-token"]').content;
+    
 });
 
 
