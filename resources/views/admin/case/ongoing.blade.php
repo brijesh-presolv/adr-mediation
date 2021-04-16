@@ -1,10 +1,10 @@
 @extends('admin.layouts.app')
-@section('title', "New Request")
+@section('title',"Ongoing Request")
 
 @section('breadcrumb')
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">New Request</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">Ongoing Request</a></li>
 <!-- end page title -->
 @endsection
 
@@ -20,7 +20,11 @@
                         <th>Date</th>
                         <th>Case Details</th>
                         <th>Party Details</th>
+                        <th>Mediator</th>
+                        <th>Comment</th>
+                        <th>Session</th>
                         <th>Action</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
             </table>
@@ -31,7 +35,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Mediator Add</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Midater Add</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -41,9 +45,9 @@
                     <input type="hidden" name="id" class="form-control" id="recipient-name">
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Mediator:</label>
+                        <label for="message-text" class="col-form-label">Midater:</label>
                         <select class="form-control" name="midater"  required>
-                            <option value="">select Mediator</option>
+                            <option value="">select Midater</option>
                             @foreach($users as $user)
                             <option value="{{$user->id}}">{{$user->username}}</option>
                             @endforeach
@@ -100,7 +104,7 @@ var userTable = $('#users').DataTable({
         {"data": "date"},
         {"data": "case.id",
             render: function (data) {
-                var button = `<button type="button" class="btn btn-primary waves-effect  waves-light">case details</button> `;
+                var button = `<button type="button" class="btn btn-primary waves-effect  waves-light btn-sm">case details</button> `;
                 return button;
             }
         },
@@ -117,42 +121,45 @@ var userTable = $('#users').DataTable({
                 return d;
             }
         },
-        {"data": "case.id",
+        {"data": "case.mediator_username",
             render: function (data, type, row) {
                 var button = "";
-                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info">confirm</button>`;
-                button = button + ` <button value="` + data + `" class="btn btn-danger reject">Reject</button>`;
+                button = button + `<button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-mediator="` + row.case.mediator_id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info btn-sm">` + data + ` </button>`;
+                if (row.case.mediator_status == 0) {
+                    button = button + `<br><span class="badge badge-warning">pandding</span>`;
+                } else if (row.case.mediator_status == 1) {
+                    button = button + `<br><span class="badge badge-success">Accepted</span>`;
+                }
                 return button;
             }
         },
+        {"data": "case.id",
+            render: function (data, type, row) {
+                var button = "";
+                button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                return button;
+            }
+        },
+        {"data": "case.id",
+            render: function (data, type, row) {
+                var button = "";
+                button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-warning waves-effect btn-sm"><span class="mdi mdi-file-eye-outline"></span></button>`;
+                button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-pink waves-effect waves-light btn-sm"><span class="mdi mdi-pencil-plus"></span></button>`;
+                return button;
+            }
+        },
+        {"data": "case.id",
+            render: function (data, type, row) {
+                var button = "";
+                button = button + `<button value="` + data + `"  data-id="` + data + `"   class="btn btn-success waves-effect btn-sm">Withdraw</button>`;
+                return button;
+            }
+        },
+        {"data": "case.id"},
     ],
 });
-$(document).on('click', ".reject", function () {
-    var id = $(this).val();
-    var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    swal({
-        title: "Are you sure?",
-        text: "Reject this request!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-    }).then((willDelete) => {
-        if (willDelete) {
-            $.ajax({
-                url: '{{ route("admin.case.reject_status") }}',
-                method: "post",
-                data: {id: id, '_token': csrf},
-            }).done(function (data) {
-                userTable.ajax.reload();
-                swal("Reject successfully!", {
-                    icon: "success",
-                });
-            });
-        } else {
-            swal("Cansel Reject Request!");
-        }
-    });
-});
+
 $(document).on('submit', "#MidaterForm", function () {
     var id = $(this).find("input[name='id']").val();
     var midater = $(this).find("select[name='midater']").val();
@@ -173,16 +180,7 @@ $(document).on('submit', "#MidaterForm", function () {
                 swal("mediator assigned successfully!", {
                     icon: "success",
                 });
-                $.ajax({
-                    url: '{{ route("admin.case.confirm_status") }}',
-                    method: "post",
-                    data: {id: id, '_token': csrf},
-                }).done(function (data) {
-                    userTable.ajax.reload()
-                    swal("conform successfully!", {
-                        icon: "success",
-                    });
-                });
+                userTable.ajax.reload();
                 //userTable.ajax.reload();
                 $('#midaterAdd').modal("hide");
             });
@@ -197,10 +195,12 @@ $(document).on('submit', "#MidaterForm", function () {
 $('#midaterAdd').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
     var recipient = button.data('id') // Extract info from data-* attributes
+    var mediator = button.data('mediator') // Extract info from data-* attributes
     // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
     // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
     var modal = $(this)
     modal.find('.modal-body input[name="id"]').val(recipient)
+    modal.find('.modal-body select[name="midater"]').val(mediator)
 })
 </script>
 @endsection

@@ -1,10 +1,10 @@
 @extends('admin.layouts.app')
-@section('title', "New Request")
+@section('title', "Rejected Request")
 
 @section('breadcrumb')
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">New Request</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">Rejected Request</a></li>
 <!-- end page title -->
 @endsection
 
@@ -12,6 +12,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
+            
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -20,7 +21,7 @@
                         <th>Date</th>
                         <th>Case Details</th>
                         <th>Party Details</th>
-                        <th>Action</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
             </table>
@@ -31,7 +32,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Mediator Add</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Midater Add</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -41,9 +42,9 @@
                     <input type="hidden" name="id" class="form-control" id="recipient-name">
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Mediator:</label>
+                        <label for="message-text" class="col-form-label">Midater:</label>
                         <select class="form-control" name="midater"  required>
-                            <option value="">select Mediator</option>
+                            <option value="">select Midater</option>
                             @foreach($users as $user)
                             <option value="{{$user->id}}">{{$user->username}}</option>
                             @endforeach
@@ -117,14 +118,7 @@ var userTable = $('#users').DataTable({
                 return d;
             }
         },
-        {"data": "case.id",
-            render: function (data, type, row) {
-                var button = "";
-                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info">confirm</button>`;
-                button = button + ` <button value="` + data + `" class="btn btn-danger reject">Reject</button>`;
-                return button;
-            }
-        },
+        {"data": "case.id"},
     ],
 });
 $(document).on('click', ".reject", function () {
