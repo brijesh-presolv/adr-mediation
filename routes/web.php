@@ -37,14 +37,18 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('mediator.profile');
-    Route::get('users', [App\Http\Controllers\Mediator\DashboardController::class, 'users'])->name('mediator.users');
 
     Route::post('edit-profile/{id}', [App\Http\Controllers\Mediator\ProfileController::class, 'updateProfile'])->name('mediator.profile.update');
 
     Route::get('change-password/{id}', [App\Http\Controllers\Mediator\ProfileController::class, 'changePassword'])->name('mediator.change.password');
+
     Route::post('activate-deactivate', [App\Http\Controllers\Mediator\DashboardController::class, 'statusChange'])->name('mediator.activeDeactive');
+
     Route::post('add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'addSession'])->name('mediator.addSession');
+
     Route::post('get-add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'getAddedSesion'])->name('mediator.getAddedSesion');
+
+    Route::get('rejected-case', [App\Http\Controllers\Mediator\DashboardController::class, 'rejectedCaseView'])->name('mediator.rejectCase');
 });
 
 

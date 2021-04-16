@@ -62,9 +62,9 @@ use App\Models\InvoledUser;
                             <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment">Shared</button>
                         </td>
                         <td>
-                            <a href="#addSession-modal" class="btn btn-warning waves-effect btn-sm" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="addReqData()" ><span class="mdi mdi-pencil-plus"></span></a>
+                            <a href="#addSession-modal" id="tooltip-animation" title="Add new Session!" class="btn btn-warning waves-effect btn-sm" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="addReqData()" ><span class="mdi mdi-pencil-plus"></span></a>
                             <!-- <a href="#viewSession-modal" class="btn-sm btn-success waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="getSessionData()" >View Session</a> -->
-                            <a href="#" class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="getSessionData()" ><span class="mdi mdi-file-eye-outline"></span></a>
+                            <a href="#" id="tooltip-animation" title="View added Sessions!" class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="getSessionData()" ><span class="mdi mdi-file-eye-outline"></span></a>
                         </td>
                         <td>
                             <div>
@@ -233,6 +233,7 @@ use App\Models\InvoledUser;
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <link href="{{ url('/') }}/assets/libs/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('/') }}/assets/libs/tooltipster/tooltipster.bundle.min.css" rel="stylesheet" type="text/css">
 
 
 
@@ -257,7 +258,8 @@ use App\Models\InvoledUser;
     <script src="{{ url('/') }}/assets/libs/dropify/dropify.min.js"></script>
     <script src="{{ url('/') }}/assets/js/pages/form-fileuploads.init.js"></script>
 
-
+   <script src="{{ url('/') }}/assets/libs/tooltipster/tooltipster.bundle.min.js"></script>
+    <script src="{{ url('/') }}/assets/js/pages/tooltipster.init.js"></script>
 
 <script type="text/javascript">
     $(function() {
