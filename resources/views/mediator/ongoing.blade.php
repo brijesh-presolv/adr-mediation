@@ -22,8 +22,8 @@ use App\Models\InvoledUser;
                     <tr>
                         <th>Sr. No</th>
                         <th>Case Id</th>
-                        <th>Party Details</th>
                         <th>Date</th>
+                        <th>Party Details</th>
                         <th>Case Detail</th>
                         <th>Commets</th>
                         <th>Session</th>
@@ -36,6 +36,7 @@ use App\Models\InvoledUser;
                     <tr>
                         <td>{{ $sno }}</td>
                         <td>M00000{{ $data->mediation_case_id  }}</td>
+                        <td>{{ date('d-m-Y', strtotime($data->created_at))}}</td>
                         
                         <td><?php 
                             $invuser=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$data->userid])->get();
@@ -51,7 +52,6 @@ use App\Models\InvoledUser;
                         }
                          ?>
                          </td>
-                        <td>{{ date('d-m-Y', strtotime($data->created_at))}}</td>
                         <td>
                             <button class="btn btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment">Case Detail</button>
                         </td>
@@ -60,7 +60,7 @@ use App\Models\InvoledUser;
                             <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment">Shared</button>
                         </td>
                         <td>
-                            <button class="btn btn-sm  btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment">Create Session</button>
+                            <a href="#addSession-modal" class="btn-sm btn-primary waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a">Add Session</a>
                         </td>
                         <td>
                             <a href="#" class="btn btn-primary btn-sm">Agreement</a>
@@ -87,6 +87,38 @@ use App\Models\InvoledUser;
         </div>
     </div>
 </div>
+
+   <!-- Modal Start -->
+    <div id="addSession-modal" class="modal-demo">
+
+        <button type="button" class="close" onclick="Custombox.modal.close();">
+            <span>&times;</span><span class="sr-only">Close</span>
+        </button>
+        <form id="addSessionForm">
+            <h4 class="custom-modal-title bg-dark">Add Session</h4>
+            <div class="custom-modal-text ">
+                
+                <span>Session Date :</span>
+                <input type="text" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date">
+
+                <span>Session Time :</span>
+                <input type="time" id="sessionTime" class="form-control" name="sessionTime" placeholder="Select session Time">
+
+                <span>Zoom Id :</span>
+                <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id">
+
+                <span>Note :</span>
+                <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
+                
+                <div class="text-center">    
+                    <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
+                </div>
+            </div>
+        </form>
+    </div>
+
+   <!-- Modal End -->
+
 @endsection
 
  <!-- Table datatable css -->
@@ -94,7 +126,11 @@ use App\Models\InvoledUser;
   
     <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('/') }}/assets/libs/custombox/custombox.min.css" rel="stylesheet" type="text/css">
     
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
 @endsection
 
 
@@ -105,6 +141,39 @@ use App\Models\InvoledUser;
 
  <!-- Datatables init -->
     <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
+
+    <script src="{{ url('/') }}/assets/libs/custombox/custombox.min.js"></script>
+
+      <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script type="text/javascript">
+    $(function() {
+    $( "#sessionDate").datepicker({ minDate: 0});
+  });
+</script>
+
+ <script>
+      $(function () {
+
+        $('form').on('submit', function (e) {
+
+          e.preventDefault();
+
+          $.ajax({
+            type: 'post',
+            url: '{{ route("mediator.addSession") }}',
+            data: $('form').serialize(),
+            success: function () {
+              alert('form was submitted');
+            }
+          });
+
+        });
+
+      });
+    </script>
+
 
 @endsection
 

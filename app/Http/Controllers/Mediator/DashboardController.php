@@ -131,5 +131,10 @@ class DashboardController extends Controller {
     return response()->json(["msg" => "staus Update"]);
     }
 
+    public function addSession(Request $request){
+        echo $request->zoomId;
+
+    }
+
 
 }

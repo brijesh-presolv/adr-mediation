@@ -160,6 +160,7 @@ $(document).on('click', "#statuschang", function () {
 
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
+/*on accept case*/
     if(do_action == 'Accept'){
         
         status = 1;
@@ -189,6 +190,8 @@ $(document).on('click', "#statuschang", function () {
      });
 
     }
+
+/*on reject case*/
 if(do_action == 'Reject'){
 status = 2;
 
