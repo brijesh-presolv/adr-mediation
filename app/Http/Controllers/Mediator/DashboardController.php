@@ -51,7 +51,8 @@ class DashboardController extends Controller {
                 "party" =>InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$d->id])->get(), 
                 "comments" => "tesr", 
                 "status"=>$d->status,
-                "caseId"=>$d->mediation_case_id ,
+                "caseId"=>$d->mediation_case_id,
+                "date"=>date('d-m-Y', strtotime($d->created_at)),
              ]; 
         }
             // dd($arraydata);
@@ -63,7 +64,7 @@ class DashboardController extends Controller {
 
 
     }
-    
+
     public function ongoing() {
         $loginUser = Auth::user()->id;
         $ongoingData = DB::table('mediators_mediation_cases_status')
@@ -128,6 +129,11 @@ class DashboardController extends Controller {
             ->where('mediator_id', 3)
             ->update(['status' =>$request->status]);
     return response()->json(["msg" => "staus Update"]);
+    }
+
+    public function addSession(Request $request){
+        echo $request->zoomId;
+
     }
 
 
