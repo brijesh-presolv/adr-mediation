@@ -12,7 +12,6 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
-            <h4 class="header-title"><b>{{($confirm_status==0)?"newrequest":"Mediators" }}'s Data</b></h4>
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -32,7 +31,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Midater Add</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Mediator Add</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -42,9 +41,9 @@
                     <input type="hidden" name="id" class="form-control" id="recipient-name">
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Midater:</label>
+                        <label for="message-text" class="col-form-label">Mediator:</label>
                         <select class="form-control" name="midater"  required>
-                            <option value="">select Midater</option>
+                            <option value="">select Mediator</option>
                             @foreach($users as $user)
                             <option value="{{$user->id}}">{{$user->username}}</option>
                             @endforeach

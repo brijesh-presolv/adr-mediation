@@ -103,7 +103,6 @@ class CaseController extends Controller {
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediation_case.confirm_status", "=", $role)
-                ->where("mediators_mediation_cases_status.status", "!=", 2)
                 ->get();
         $arraydata = array();
         foreach ($cases as $d) {

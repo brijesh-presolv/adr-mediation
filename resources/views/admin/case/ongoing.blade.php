@@ -144,7 +144,8 @@ var userTable = $('#users').DataTable({
         {"data": "case.id",
             render: function (data, type, row) {
                 var button = "";
-                button = button + `<button value="` + data + `"  data-id="` + data + `"   class="btn btn-warning waves-effect btn-sm">Session</button>`;
+                button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-warning waves-effect btn-sm"><span class="mdi mdi-file-eye-outline"></span></button>`;
+                button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-pink waves-effect waves-light btn-sm"><span class="mdi mdi-pencil-plus"></span></button>`;
                 return button;
             }
         },
