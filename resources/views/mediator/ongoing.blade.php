@@ -33,9 +33,11 @@ use App\Models\InvoledUser;
                 <tbody>
                     <?php $sno = 1; ?>
                     @foreach($ongoingData as $data)  
+                    <input type="hidden" name="" id="createdBy" value="{{ $data->mediator_id }}">
+
                     <tr>
                         <td>{{ $sno }}</td>
-                        <td>M00000{{ $data->mediation_case_id  }}</td>
+                        <td>M00000<span id="caseId">{{ $data->mediation_case_id  }}</span></td>
                         <td>{{ date('d-m-Y', strtotime($data->created_at))}}</td>
                         
                         <td><?php 
@@ -50,8 +52,8 @@ use App\Models\InvoledUser;
                             }
                             
                         }
-                         ?>
-                         </td>
+                        ?>
+                        </td>
                         <td>
                             <button class="btn btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment">Case Detail</button>
                         </td>
@@ -60,11 +62,19 @@ use App\Models\InvoledUser;
                             <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment">Shared</button>
                         </td>
                         <td>
-                            <a href="#addSession-modal" class="btn-sm btn-primary waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a">Add Session</a>
+                            <a href="#addSession-modal" class="btn-sm btn-primary waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="addReqData()" >Add Session</a>
+                            <!-- <a href="#viewSession-modal" class="btn-sm btn-success waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="getSessionData()" >View Session</a> -->
+                            <a href="#" class="btn-sm btn-success waves-effect waves-light text-white" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="getSessionData()" >View Session</a>
                         </td>
                         <td>
-                            <a href="#" class="btn btn-primary btn-sm">Agreement</a>
-                            <br>
+                            <div>
+                                <a href="#uploadSupportingDocs-modal" class="btn-sm btn-primary waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" >Upload Supporting</a>
+                            </div>
+                            <div>
+                                <a href="#" class="btn btn-success btn-sm mt-2">Upload Settelment</a>
+                            </div>
+                            <!-- <a href="#" class="btn btn-primary btn-sm">Upload Settelment</a> -->
+                            <!-- <br> -->
                         </td>
                         <!-- <td>MD000200</td>
                         <td><button class="btn   btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',1,'425')">Case details</td>
@@ -95,14 +105,18 @@ use App\Models\InvoledUser;
             <span>&times;</span><span class="sr-only">Close</span>
         </button>
         <form id="addSessionForm">
+
+            <input type="hidden" name="createdBy" id="createdByF" value="">
+            <input type="hidden" name="caseId" id="caseIdF" value="">
+
             <h4 class="custom-modal-title bg-dark">Add Session</h4>
             <div class="custom-modal-text ">
-                
+
                 <span>Session Date :</span>
-                <input type="text" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date">
+                <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date">
 
                 <span>Session Time :</span>
-                <input type="time" id="sessionTime" class="form-control" name="sessionTime" placeholder="Select session Time">
+                <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time">
 
                 <span>Zoom Id :</span>
                 <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id">
@@ -119,6 +133,94 @@ use App\Models\InvoledUser;
 
    <!-- Modal End -->
 
+
+<!-- Modal get addded session data Start -->
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark">
+                    <h4 class="modal-title text-white">Session Records</h4>
+                    <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" id="sessRecId">
+                        <thead>
+                            <th scope="col">S.No. </th>
+                            <th scope="col">Session Date :</th>
+                            <th scope="col">Session Time :</th>
+                            <th scope="col">Zoom Id :</th>
+                            <th scope="col">Note :</th>
+                        </thead>
+                        <tbody>
+                       <!--  <tr>
+                            <td><span class="form-control" id="db_sessionDate" ></span></td>
+                            <td><span class="form-control" id="db_sessionTime" ></span></td>
+                            <td><span class="form-control" id="db_sessionZoomId" ></span></td>
+                            <td><span class="form-control" id="db_sessionNote" ></span></td>
+                        </tr> -->
+                        </tbody>
+                    </table>
+                    <hr>    
+                    <div class="text-center">
+                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                        <span>Close</span>
+                    </button>  
+                </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+<!-- Modal End -->
+
+<!-- Modal for updload supporting documnets Start -->
+
+    <div id="uploadSupportingDocs-modal" class="modal-demo">
+
+        <button type="button" class="close" onclick="Custombox.modal.close();">
+            <span>&times;</span><span class="sr-only">Close</span>
+        </button>
+        <form id="addSessionForm">
+
+            <input type="hidden" name="createdBy" id="createdByF" value="">
+            <input type="hidden" name="caseId" id="caseIdF" value="">
+
+            <h4 class="custom-modal-title bg-dark">Upload Supporting Documnet's</h4>
+            <div class="custom-modal-text ">
+
+               <!-- <div class="row"> -->
+                <div class="col-sm-12">
+                    <div>
+                        <!-- <h4 class="header-title mb-4">Default</h4> -->
+
+                        <input type="file" class="dropify" data-height="150" />
+                    </div>
+                </div>
+                <!-- end col -->
+                <div class="text-center">    
+                    <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
+                </div>
+            </div>
+                
+            </div>
+        </form>
+    </div>
+
+   <!-- Modal End -->
+
+
+
+
+
+
+
+
 @endsection
 
  <!-- Table datatable css -->
@@ -129,6 +231,9 @@ use App\Models\InvoledUser;
     <link href="{{ url('/') }}/assets/libs/custombox/custombox.min.css" rel="stylesheet" type="text/css">
     
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <link href="{{ url('/') }}/assets/libs/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+
 
 
 @endsection
@@ -147,6 +252,13 @@ use App\Models\InvoledUser;
       <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script src="{{ url('/') }}/assets/libs/dropify/dropify.min.js"></script>
+    <script src="{{ url('/') }}/assets/js/pages/form-fileuploads.init.js"></script>
+
+
+
 <script type="text/javascript">
     $(function() {
     $( "#sessionDate").datepicker({ minDate: 0});
@@ -154,6 +266,16 @@ use App\Models\InvoledUser;
 </script>
 
  <script>
+
+    function addReqData(){
+        var caseId = $('#caseId').html();
+            $('#caseIdF').val(caseId);
+        var createdBy = $('#createdBy').val();
+            $('#createdByF').val(createdBy);
+    }
+
+
+// create new session
       $(function () {
 
         $('form').on('submit', function (e) {
@@ -165,14 +287,40 @@ use App\Models\InvoledUser;
             url: '{{ route("mediator.addSession") }}',
             data: $('form').serialize(),
             success: function () {
-              alert('form was submitted');
+              // alert('form was submitted');
+              swal("session created!", {
+                        icon: "success",
+                });
             }
           });
 
         });
 
       });
+
+// <!-- if already set a session a session update -->
+function getSessionData(){
+    var sheduledBy_Id = $('#createdBy').val();
+    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+    $.ajax({
+            type: 'post',
+            url: '{{ route("mediator.getAddedSesion") }}',
+            data: {mediator_id: sheduledBy_Id, '_token': csrf},
+            success: function (data) {
+                $('#sessRecId tbody').html(data);
+            }
+
+          });
+}
+
+
+
+
+
     </script>
+
+
 
 
 @endsection

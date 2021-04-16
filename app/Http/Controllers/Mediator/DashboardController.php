@@ -76,27 +76,6 @@ class DashboardController extends Controller {
         return view('mediator.ongoing',compact('ongoingData'));
     }
 
-    // public function newOngoingjson() {
-    //     $loginUser = Auth::user()->id;
-    //     $ongoingData = DB::table('mediators_mediation_cases_status')
-    //                 ->where(['mediator_id'=>$loginUser,'status'=>1])->get();
-    //                 // dd($ongoingData);
-
-    //     $dataArray = array();            
-    //     foreach ($ongoingData as $value) {
-    //         $dataArray = [
-    //              'mediation_case_id' => $value->mediation_case_id,
-    //              'status' => $value->status,
-    //              'party' => 'testing party',
-    //              'comments' => 'ss'
-
-    //         ];                    
-    //     }            
-    //     return response()->json(["data" => $dataArray]);
-
-    // }
-
-
     public function closed() {
         return view('mediator.closed');
     }
@@ -132,7 +111,40 @@ class DashboardController extends Controller {
     }
 
     public function addSession(Request $request){
-        echo $request->zoomId;
+        // echo $request->zoomId;
+
+        $dataToInsert =  [
+            'case_id' => $request->caseId,
+            'session_date' => $request->sessionDate."/".$request->sessionTime,
+            'note' => $request->note,
+            'zoom_id' => $request->zoomId,
+            'scheduled_by' => $request->createdBy,
+        ];
+
+        DB::table('manage_session')->insert($dataToInsert);  
+
+        return true;
+
+
+    }
+
+    public function getAddedSesion(Request $request){
+
+    
+        $sessionData = DB::table('manage_session')->where('scheduled_by',$request->mediator_id)->get();
+        $sn = 1;
+        foreach ($sessionData as $value) {
+            echo "<tr>";
+            echo "<td>".$sn."</td>";
+            echo "<td>".$value->created_at."</td>";
+            echo "<td>".$value->session_date."</td>";
+            echo "<td>".$value->zoom_id."</td>";
+            echo "<td>".$value->note."</td>";
+            echo "</tr>";
+            
+            $sn++;
+        }
+        // return $sessionData;
 
     }
 

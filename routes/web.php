@@ -44,6 +44,7 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('change-password/{id}', [App\Http\Controllers\Mediator\ProfileController::class, 'changePassword'])->name('mediator.change.password');
     Route::post('activate-deactivate', [App\Http\Controllers\Mediator\DashboardController::class, 'statusChange'])->name('mediator.activeDeactive');
     Route::post('add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'addSession'])->name('mediator.addSession');
+    Route::post('get-add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'getAddedSesion'])->name('mediator.getAddedSesion');
 });
 
 
