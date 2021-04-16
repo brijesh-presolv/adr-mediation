@@ -62,9 +62,9 @@ use App\Models\InvoledUser;
                             <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment">Shared</button>
                         </td>
                         <td>
-                            <a href="#addSession-modal" class="btn-sm btn-primary waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="addReqData()" >Add Session</a>
+                            <a href="#addSession-modal" class="btn btn-warning waves-effect btn-sm" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="addReqData()" ><span class="mdi mdi-pencil-plus"></span></a>
                             <!-- <a href="#viewSession-modal" class="btn-sm btn-success waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="getSessionData()" >View Session</a> -->
-                            <a href="#" class="btn-sm btn-success waves-effect waves-light text-white" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="getSessionData()" >View Session</a>
+                            <a href="#" class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="getSessionData()" ><span class="mdi mdi-file-eye-outline"></span></a>
                         </td>
                         <td>
                             <div>

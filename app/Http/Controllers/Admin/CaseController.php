@@ -98,6 +98,41 @@ class CaseController extends Controller {
         return response()->json(["msg" => "midater Added"]);
     }
 
+    public function addSession(Request $request) {
+        // echo $request->zoomId;
+
+        $dataToInsert = [
+            'case_id' => $request->caseId,
+            'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+            'note' => $request->note,
+            'zoom_id' => $request->zoomId,
+            'scheduled_by' => $request->createdBy,
+        ];
+
+        DB::table('manage_session')->insert($dataToInsert);
+
+        return true;
+    }
+
+    public function getAddedSesion(Request $request) {
+
+
+        $sessionData = DB::table('manage_session')->where('scheduled_by', $request->mediator_id)->get();
+        $sn = 1;
+        foreach ($sessionData as $value) {
+            echo "<tr>";
+            echo "<td>" . $sn . "</td>";
+            echo "<td>" . $value->created_at . "</td>";
+            echo "<td>" . $value->session_date . "</td>";
+            echo "<td>" . $value->zoom_id . "</td>";
+            echo "<td>" . $value->note . "</td>";
+            echo "</tr>";
+
+            $sn++;
+        }
+        // return $sessionData;
+    }
+
     public function json($role = 0) {
         $cases = MedCase::select("mediation_case.*", "users.username as mediator_username", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")

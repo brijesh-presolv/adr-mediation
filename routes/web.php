@@ -70,4 +70,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('case/confirm-status', [App\Http\Controllers\Admin\CaseController::class, 'confirmStatus'])->name('admin.case.confirm_status');
     Route::post('case/reject-status', [App\Http\Controllers\Admin\CaseController::class, 'rejectStatus'])->name('admin.case.reject_status');
     Route::post('case/midater-add', [App\Http\Controllers\Admin\CaseController::class, 'midaterAdd'])->name('admin.case.midater_add');
+    Route::post('case/add-session', [App\Http\Controllers\Admin\CaseController::class, 'addSession'])->name('admin.case.addSession');
+    Route::post('case/get-add-session', [App\Http\Controllers\Admin\CaseController::class, 'getAddedSesion'])->name('admin.case.getAddedSesion');
 });
