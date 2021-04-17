@@ -49,6 +49,8 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::post('get-add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'getAddedSesion'])->name('mediator.getAddedSesion');
 
     Route::get('rejected-case', [App\Http\Controllers\Mediator\DashboardController::class, 'rejectedCaseView'])->name('mediator.rejectCase');
+
+    Route::post('upload-files',[App\Http\Controllers\Mediator\DashboardController::class, 'storeMultiFile'])->name('mediator.storeMultiFile');
 });
 
 

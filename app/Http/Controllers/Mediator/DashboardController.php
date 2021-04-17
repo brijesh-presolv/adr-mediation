@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\InvoledUser;
 use DB;
+
 class DashboardController extends Controller {
 
     /**
@@ -190,6 +191,58 @@ class DashboardController extends Controller {
         return view('mediator.reject', compact("rejected_case"));
     }
 
+        /**
+    * upload supporting Documents.
+    *
+    * @return \Illuminate\Contracts\Support\Renderable
+    */
+    public function storeMultiFile(Request $request)
+    {
+
+       $validatedData = $request->validate([
+        'files' => 'required',
+        'files.*' => 'mimes:csv,txt,xlx,xls,pdf',
+        ]);
+
+        if($request->TotalFiles > 0)
+        {
+               
+           for ($x = 0; $x < $request->TotalFiles; $x++) 
+           {
+
+               if ($request->hasFile('files'.$x)) 
+                {
+                    $file      = $request->file('files'.$x);
+
+                   echo $path = $file->store('/');
+
+                    $name = $file->getClientOriginalName();
+
+                    $insert[$x]['file_name'] = $name;
+                    $insert[$x]['uploaded_by'] = $request->createdBy;
+                    $insert[$x]['case_id'] = $request->caseId;
+                    // $insert[$x]['path'] = $path;
+                }
+           }
+        // dd($insert);
+           // die();
+
+            // File::insert($insert);
+            DB::table('manage_files')->insert($insert);  
+
+            // return response()->json(['success'=>'Ajax Multiple fIle has been uploaded']);
+
+         
+        }
+        else
+        {
+           return response()->json(["message" => "Please try again."]);
+        }
+
+    }
+
+
+    
 
 
 }
