@@ -62,13 +62,13 @@ use App\Models\InvoledUser;
                             <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment">Shared</button>
                         </td>
                         <td>
-                            <a href="#addSession-modal" class="btn btn-warning waves-effect btn-sm" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="addReqData()" ><span class="mdi mdi-pencil-plus"></span></a>
+                            <a href="#addSession-modal" id="tooltip-animation" title="Add new Session!" class="btn btn-warning waves-effect btn-sm" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="addReqData()" ><span class="mdi mdi-pencil-plus"></span></a>
                             <!-- <a href="#viewSession-modal" class="btn-sm btn-success waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="getSessionData()" >View Session</a> -->
-                            <a href="#" class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="getSessionData()" ><span class="mdi mdi-file-eye-outline"></span></a>
+                            <a href="#" id="tooltip-animation" title="View added Sessions!" class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target=".bs-example-modal-lg" onclick="getSessionData()" ><span class="mdi mdi-file-eye-outline"></span></a>
                         </td>
                         <td>
                             <div>
-                                <a href="#uploadSupportingDocs-modal" class="btn-sm btn-primary waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" >Upload Supporting</a>
+                                <a href="#uploadSupportingDocs-modal" class="btn-sm btn-primary waves-effect waves-light" data-animation="swell" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" onclick="addReqData()"  >Upload Supporting</a>
                             </div>
                             <div>
                                 <a href="#" class="btn btn-success btn-sm mt-2">Upload Settelment</a>
@@ -186,10 +186,10 @@ use App\Models\InvoledUser;
         <button type="button" class="close" onclick="Custombox.modal.close();">
             <span>&times;</span><span class="sr-only">Close</span>
         </button>
-        <form id="addSessionForm">
-
-            <input type="hidden" name="createdBy" id="createdByF" value="">
-            <input type="hidden" name="caseId" id="caseIdF" value="">
+        <form id="multi-file-upload-ajax" method="POST"  action="javascript:void(0)" accept-charset="utf-8" enctype="multipart/form-data" >
+            @csrf
+            <input type="hidden" name="createdBy" id="createdByF1" value="">
+            <input type="hidden" name="caseId" id="caseIdF1" value="">
 
             <h4 class="custom-modal-title bg-dark">Upload Supporting Documnet's</h4>
             <div class="custom-modal-text ">
@@ -199,12 +199,12 @@ use App\Models\InvoledUser;
                     <div>
                         <!-- <h4 class="header-title mb-4">Default</h4> -->
 
-                        <input type="file" class="dropify" data-height="150" />
+                        <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple  />
                     </div>
                 </div>
                 <!-- end col -->
                 <div class="text-center">    
-                    <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
+                    <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
                 </div>
             </div>
                 
@@ -233,6 +233,7 @@ use App\Models\InvoledUser;
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <link href="{{ url('/') }}/assets/libs/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('/') }}/assets/libs/tooltipster/tooltipster.bundle.min.css" rel="stylesheet" type="text/css">
 
 
 
@@ -257,7 +258,8 @@ use App\Models\InvoledUser;
     <script src="{{ url('/') }}/assets/libs/dropify/dropify.min.js"></script>
     <script src="{{ url('/') }}/assets/js/pages/form-fileuploads.init.js"></script>
 
-
+   <script src="{{ url('/') }}/assets/libs/tooltipster/tooltipster.bundle.min.js"></script>
+    <script src="{{ url('/') }}/assets/js/pages/tooltipster.init.js"></script>
 
 <script type="text/javascript">
     $(function() {
@@ -270,15 +272,17 @@ use App\Models\InvoledUser;
     function addReqData(){
         var caseId = $('#caseId').html();
             $('#caseIdF').val(caseId);
+            $('#caseIdF1').val(caseId);
         var createdBy = $('#createdBy').val();
             $('#createdByF').val(createdBy);
+            $('#createdByF1').val(createdBy);
     }
 
 
 // create new session
       $(function () {
 
-        $('form').on('submit', function (e) {
+        $('#addSessionForm').on('submit', function (e) {
 
           e.preventDefault();
 
@@ -314,10 +318,42 @@ function getSessionData(){
           });
 }
 
+// <!-- upload supporing documnets multiple files -->
 
-
-
-
+$(document).ready(function (e) {
+    $.ajaxSetup({
+        headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $('#multi-file-upload-ajax').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        let TotalFiles = $('#files')[0].files.length; //Total files
+        let files = $('#files')[0];
+        for (let i = 0; i < TotalFiles; i++) {
+            formData.append('files' + i, files.files[i]);
+        }
+        formData.append('TotalFiles', TotalFiles);
+        $.ajax({
+            type:'POST',
+            url: '{{ route("mediator.storeMultiFile") }}',
+            data: formData,
+            cache:false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: (data) => {
+                this.reset();
+                alert('Files has been uploaded using jQuery ajax');
+            },
+            error: function(data){
+                alert(data.responseJSON.errors.files[0]);
+                console.log(data.responseJSON.errors);
+            }
+        });
+    });
+});
     </script>
 
 

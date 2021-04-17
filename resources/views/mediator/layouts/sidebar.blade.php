@@ -37,7 +37,7 @@
                             </li>
 
                             <li>
-                                <a  href="{{url('mediator/Reject')}}"  class="waves-effect waves-light">
+                                <a  href="{{route('mediator.rejectCase')}}"  class="waves-effect waves-light">
                                     <i class=" fas fa-comment-slash"></i>
                                     <span>  Reject Case  </span>
                                 </a>
