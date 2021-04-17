@@ -2,12 +2,12 @@
 use App\Models\InvoledUser;
 ?>
 @extends('user.layouts.app')
-@section('title', 'Pending')
+@section('title', 'New request')
 
 @section('breadcrumb')
       <!-- start page title -->
        <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Pending </a></li>
+       <li class="breadcrumb-item"><a href="javascript: void(0);">New request </a></li>
     <!-- end page title -->
 @endsection
 
@@ -15,7 +15,7 @@ use App\Models\InvoledUser;
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
-            <!-- <h4 class="header-title"><b>New Request</b></h4> -->
+            <h4 class="header-title"><b>New Request</b></h4>
             <table  id="datatable" id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -33,7 +33,7 @@ use App\Models\InvoledUser;
                     $i=1;
                     $id='';
 
-                    foreach ($pending as $key => $value) { ?>
+                    foreach ($ongoing as $key => $value) { ?>
                      <tr>
 
                         <?php 
@@ -104,20 +104,7 @@ use App\Models\InvoledUser;
 
 @endsection
 
-<?php if($response=='success'){ ?>
 
-@section('footer')
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-<script type="text/javascript">
-    swal("Success", "Form has been submitted", "success").then(function() {
-    window.location ="{{route('user.newrequest')}}"
-});
-</script>
-
-@endsection('footer')
-
-<?php } ?>
 
 
 

@@ -2,12 +2,20 @@
 
 function isreadonly($rows) {
 
-    if ($rows > 0) {
+    if ($rows > 0 ) {
+        echo "readonly";
+    }
+}
+
+function isreadonlys($rows) {
+
+
+    if ($rows!='NULL') {
         echo "readonly";
     }
 }
 ?>
-
+@section('title', 'Invoke mediation')
 @extends('user.layouts.app')
 
 
@@ -44,7 +52,7 @@ function isreadonly($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Name<span style="color:red; ">*</span></label>
-                            <input type="text" class="form-control" value="<?= $user->first_name . ' ' . $user->last_name ?>"readonly>
+                            <input type="text" class="form-control" value="<?= $user->first_name . ' ' . $user->last_name ?>" readonly>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -64,19 +72,19 @@ function isreadonly($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Address line 1 <span style="color:red; ">*</span></label>
-                            <input type="text" name="" class="form-control" value="<?= $user->address ?>"readonly>
+                            <input type="text" name="useraddress" class="form-control" value="<?= ($user->address1 !='NULL') ? $user->address : ''; ?>" <?= isreadonlys($user->address) ?> required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Address line 2</label>
-                            <input type="text" name="" class="form-control" value="<?= $user->address1 ?>"readonly>
+                            <input type="text" name="useraddress1" class="form-control" value="<?= ($user->address1 !='NULL') ? $user->address1 : ''; ?>" <?= isreadonlys($user->address1) ?> >
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>City <span style="color:red; ">*</span></label>
-                            <input type="text" name="" class="form-control" value="<?= $user->city ?>"readonly>
+                            <input type="text" name="usercity" class="form-control" value="<?= ($user->city !='NULL') ? $user->city : ''; ?>" <?= isreadonlys($user->city) ?> required>
                         </div>
                     </div>
                 </div>
@@ -84,19 +92,19 @@ function isreadonly($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Pincode <span style="color:red; ">*</span></label>
-                            <input type="text" name="" class="form-control" value="<?= $user->pincode ?>"readonly>
+                            <input type="text" name="userpincode" class="form-control" value="<?= ($user->pincode !='NULL') ? $user->pincode : ''; ?>" <?= isreadonlys($user->pincode) ?> required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
-                            <input type="text" name="" class="form-control" value="<?= $user->state ?>"readonly>
+                            <input type="text" name="userstate" class="form-control" value="<?= ($user->state !='NULL') ? $user->state : ''; ?>" <?= isreadonlys($user->state) ?> required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Country <span style="color:red; ">*</span></label>
-                            <input type="text" name="" class="form-control" value="<?= $user->country ?>"readonly>
+                            <input type="text" name="usercountry" class="form-control" value="<?= ($user->country !='NULL') ? $user->country : ''; ?>" <?= isreadonlys($user->country) ?> required>
                         </div>
                     </div>
                 </div>
@@ -216,7 +224,7 @@ function isreadonly($rows) {
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label>Suppoting document</label><br>
+                            <label>Supporting document</label><br>
                             <?php if ($rows == 0) { ?>
                                 <input class="form-control" type="file" name="document"></input>
                             <?php } else {
@@ -242,5 +250,9 @@ function isreadonly($rows) {
     </div>
 </div>
 @endsection
+
+
+
+
 
 

@@ -258,9 +258,10 @@ function earbsubmit(){
 
 }
 
+
 function resolvsubmit(){
 
-    $('.resarbform').attr('action','user/newcase');
+    $('.resarbform').attr('action','mediation');
 
 }
 

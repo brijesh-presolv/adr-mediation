@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Auth;
 use Illuminate\Http\Request;
+use Session;
 
 class LoginController extends Controller {
     /*
@@ -33,15 +34,24 @@ use AuthenticatesUsers;
 
 
     protected function redirectTo(){
+
+      if(Auth::user()->emailotp!=null or Auth::user()->smsotp!=null ){
+          
+          return route('verify');
+        } else
        if (Auth::check() && (Auth::user()->role == 0)) {
+
+          if(Session::has('newcase')){
+             return route('user.newcase');
+          }
            return route('user.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 1)) {
            return route('mediator.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 2)) {
             return route('admin.dashboard');
         }
-
     }
+
 
     /**
      * Create a new controller instance.
@@ -54,7 +64,7 @@ use AuthenticatesUsers;
 
     protected function credentials(\Illuminate\Http\Request $request) {
         //return $request->only($this->username(), 'password');
-        return ['email' => $request->{$this->username()}, 'password' => $request->password, 'isActive' => 1];
+        return ['email' => $request->{$this->username()}, 'password' => $request->password, 'status' => 1];
     }
 
     public function logout(Request $request) {
