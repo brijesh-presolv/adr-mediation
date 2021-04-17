@@ -62,7 +62,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark">
@@ -137,15 +137,15 @@
 
 <!-- Table datatable css -->
 @section('head')
-
 <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 @endsection
 
 
 @section('footer')
-<!-- Datatable plugin js -->
+
+
 
 <script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
 <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
@@ -154,18 +154,14 @@
 <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{ url('/') }}/assets/libs/custombox/custombox.min.js"></script>
-
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
 $(function () {
-$("#sessionDate").datepicker({minDate: 0});
-});
-</script>
+    $("#sessionDate").datepicker({minDate: 0});
+});</script>
 
 <script>
-    function addReqData() {
-        var caseId = $('#caseId').html();
-        $('#caseIdF').val(caseId);
-    }
+
     function pad(str, max) {
         str = str.toString();
         return str.length < max ? pad("0" + str, max) : str;
@@ -228,8 +224,8 @@ $("#sessionDate").datepicker({minDate: 0});
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-warning waves-effect btn-sm" onclick="addReqData()" data-toggle="modal" data-target="#addSession-modal"><span class="mdi mdi-file-eye-outline"></span></button>`;
-                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target=".bs-example-modal-lg"  onclick="getSessionData()" ><span class="mdi mdi-pencil-plus"></span></button>`;
+                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button>`;
+                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target="#addSession-modal" ><span class="mdi mdi-pencil-plus"></span></button>`;
                     return button;
                 }
             },
@@ -243,7 +239,6 @@ $("#sessionDate").datepicker({minDate: 0});
             {"data": "case.id"},
         ],
     });
-
     $(document).on('submit', "#MidaterForm", function () {
         var id = $(this).find("input[name='id']").val();
         var midater = $(this).find("select[name='midater']").val();
@@ -268,8 +263,6 @@ $("#sessionDate").datepicker({minDate: 0});
                     //userTable.ajax.reload();
                     $('#midaterAdd').modal("hide");
                 });
-
-
             } else {
                 swal("Cansel Confirm Request!");
             }
@@ -286,10 +279,16 @@ $("#sessionDate").datepicker({minDate: 0});
         modal.find('.modal-body input[name="id"]').val(recipient)
         modal.find('.modal-body select[name="midater"]').val(mediator)
     })
+    $('#addSession-modal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('id') // Extract info from data-* attributes
+        var mediator = button.data('mediator') // Extract info from data-* attributes
+
+        $('#caseIdF').val(recipient);
+    })
     $('#addSessionForm').on('submit', function (e) {
 
         e.preventDefault();
-
         $.ajax({
             type: 'post',
             url: '{{ route("admin.case.addSession") }}',
@@ -301,22 +300,23 @@ $("#sessionDate").datepicker({minDate: 0});
                 });
             }
         });
-
     });
-    function getSessionData() {
-        var sheduledBy_Id = $('#createdBy').val();
-        var csrf = document.querySelector('meta[name="csrf-token"]').content;
-
-        $.ajax({
-            type: 'post',
-            url: '{{ route("mediator.getAddedSesion") }}',
-            data: {mediator_id: sheduledBy_Id, '_token': csrf},
+    $('#viewSession-modal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+            var caseid = button.data('id')
+            var sheduledBy_Id = {{Auth::id()}};
+    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+    $.ajax({
+    type: 'post',
+            url: '{{ route("admin.case.getAddedSesion") }}',
+            data: {mediator_id: sheduledBy_Id,caseid:caseid, '_token': csrf},
             success: function (data) {
-                $('#sessRecId tbody').html(data);
+            $('#sessRecId tbody').html(data);
             }
 
-        });
+    });
     }
+    );
 </script>
 @endsection
 

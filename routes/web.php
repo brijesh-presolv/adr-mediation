@@ -63,7 +63,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 //    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
     //case
     Route::get('case/new-request', [App\Http\Controllers\Admin\CaseController::class, 'index'])->name('admin.case.newrequest');
-    Route::get('case/8ngoing-request', [App\Http\Controllers\Admin\CaseController::class, 'ongoingRequest'])->name('admin.case.ongoingrequest');
+    Route::get('case/ongoing-request', [App\Http\Controllers\Admin\CaseController::class, 'ongoingRequest'])->name('admin.case.ongoingrequest');
     Route::get('case/closed-request', [App\Http\Controllers\Admin\CaseController::class, 'closedRequest'])->name('admin.case.closedrequest');
     Route::get('case/rjected-request', [App\Http\Controllers\Admin\CaseController::class, 'rjectedRequest'])->name('admin.case.rjectedrequest');
     Route::get('case/json/{confirm_status?}', [App\Http\Controllers\Admin\CaseController::class, 'json'])->defaults('confirm_status', 0)->name('admin.case.json');

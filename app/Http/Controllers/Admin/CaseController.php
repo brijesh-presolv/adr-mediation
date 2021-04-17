@@ -8,6 +8,7 @@ use App\Models\MedCase;
 use App\Models\InvoledUser;
 use App\Models\User;
 use App\Models\Mediators_mediation_cases_status;
+use DB;
 
 class CaseController extends Controller {
 
@@ -117,7 +118,7 @@ class CaseController extends Controller {
     public function getAddedSesion(Request $request) {
 
 
-        $sessionData = DB::table('manage_session')->where('scheduled_by', $request->mediator_id)->get();
+        $sessionData = DB::table('manage_session')->where('scheduled_by', $request->mediator_id)->where('case_id', $request->caseid)->get();
         $sn = 1;
         foreach ($sessionData as $value) {
             echo "<tr>";
