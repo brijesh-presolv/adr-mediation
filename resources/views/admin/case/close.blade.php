@@ -54,7 +54,35 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Share</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="commentForm" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="case_id" class="form-control" >
+                    <input type="hidden" name="type" class="form-control" >
 
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Comment:</label>
+                        <textarea class="form-control" name="comment"  required></textarea>
+                    </div>
+                    <div class="row" id="commentView">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">save comment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -209,8 +237,8 @@ $(function () {
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-purple waves-effect btn-sm">Private</button>`;
-                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                    button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
                     return button;
                 }
             },
@@ -252,7 +280,61 @@ $(function () {
             },
         ],
     });
+    $('#commentModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var typename = button.data('typename');
+        var type = button.data('type');
+        var modal = $(this)
+        $("#commentView").html("");
+        $.ajax({
+            type: 'post',
+            url: '{{ route("admin.case.comment_view") }}',
+            data: {type: type, case_id: id},
+            success: function (data) {
+                for (i in data) {
+                    //console.log(data[0]);
+                    if (data[i].username == '{{Auth::user()->username}}') {
+                        $("#commentView").append(`<div class="col-md-12 text-right border-bottom"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
+                    } else {
+                        $("#commentView").append(`<div class="col-md-12 text-left border-bottom"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
+                    }
+                }
+            }
+        });
 
+        modal.find('#commentModalLabel').text(typename);
+        modal.find('.modal-body input[name="type"]').val(type);
+        modal.find('.modal-body input[name="case_id"]').val(id);
+    });
+    $('#commentForm').on('submit', function (e) {
+        e.preventDefault();
+        swal({
+            title: "Are you sure?",
+            text: "add this comment!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route("admin.case.comment") }}',
+                    data: $('#commentForm').serialize(),
+                    success: function () {
+                        swal("comment save successfully!", {
+                            icon: "success",
+                        });
+                        $('#commentForm')[0].reset();
+                        $('#commentModal').modal("hide");
+                    }
+                });
+            } else {
+                swal("comment not added!");
+            }
+        });
+        return false;
+    });
     $('#withdrawModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var withdraw = button.data('withdraw');

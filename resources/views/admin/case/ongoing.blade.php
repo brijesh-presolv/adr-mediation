@@ -356,11 +356,15 @@ $(function () {
         $.ajax({
             type: 'post',
             url: '{{ route("admin.case.comment_view") }}',
-            data: {type:type,case_id:id},
+            data: {type: type, case_id: id},
             success: function (data) {
                 for (i in data) {
                     //console.log(data[0]);
-                    $("#commentView").append(`<div class="col-md-12 text-right"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
+                    if (data[i].username == '{{Auth::user()->username}}') {
+                        $("#commentView").append(`<div class="col-md-12 text-right border-bottom"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
+                    } else {
+                        $("#commentView").append(`<div class="col-md-12 text-left border-bottom"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
+                    }
                 }
             }
         });
@@ -384,6 +388,7 @@ $(function () {
                     url: '{{ route("admin.case.comment") }}',
                     data: $('#commentForm').serialize(),
                     success: function () {
+                        $('#commentForm')[0].reset();
                         swal("comment save successfully!", {
                             icon: "success",
                         });
