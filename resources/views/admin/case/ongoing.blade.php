@@ -270,22 +270,19 @@ $(function () {
         return false;
     });
     $('#midaterAdd').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var recipient = button.data('id') // Extract info from data-* attributes
-        var mediator = button.data('mediator') // Extract info from data-* attributes
-        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var button = $(event.relatedTarget);
+        var recipient = button.data('id');
+        var mediator = button.data('mediator');
         var modal = $(this)
-        modal.find('.modal-body input[name="id"]').val(recipient)
-        modal.find('.modal-body select[name="midater"]').val(mediator)
-    })
+        modal.find('.modal-body input[name="id"]').val(recipient);
+        modal.find('.modal-body select[name="midater"]').val(mediator);
+    });
     $('#addSession-modal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var recipient = button.data('id') // Extract info from data-* attributes
-        var mediator = button.data('mediator') // Extract info from data-* attributes
-
+        var button = $(event.relatedTarget);
+        var recipient = button.data('id');
+        var mediator = button.data('mediator');
         $('#caseIdF').val(recipient);
-    })
+    });
     $('#addSessionForm').on('submit', function (e) {
 
         e.preventDefault();
@@ -298,47 +295,24 @@ $(function () {
                 swal("session created!", {
                     icon: "success",
                 });
+                $('#addSession-modal').modal("hide");
             }
         });
     });
     $('#viewSession-modal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-            var caseid = button.data('id')
-            var sheduledBy_Id = {{Auth::id()}};
-    var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    $.ajax({
-    type: 'post',
+        var button = $(event.relatedTarget);
+        var caseid = button.data('id')
+        var sheduledBy_Id = '{{Auth::id()}}';
+        var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        $.ajax({
+            type: 'post',
             url: '{{ route("admin.case.getAddedSesion") }}',
-            data: {mediator_id: sheduledBy_Id,caseid:caseid, '_token': csrf},
+            data: {mediator_id: sheduledBy_Id, caseid: caseid, '_token': csrf},
             success: function (data) {
-            $('#sessRecId tbody').html(data);
+                $('#sessRecId tbody').html(data);
             }
 
+        });
     });
-    }
-    );
 </script>
 @endsection
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
