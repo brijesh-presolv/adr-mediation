@@ -15,15 +15,33 @@ Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::match(['POST'],'/mediation', [App\Http\Controllers\HomeController::class, 'mediation'])->name('mediation');
+
+
+Route::match(['GET','POST'],'/verify', [App\Http\Controllers\HomeController::class, 'verify'])->name('verify');
+
+
 //Route::get('/login', [App\Http\Controllers\HomeController::class, 'login'])->name('login');
 
 
 
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('user.dashboard');
-    Route::match(['post', 'get'], 'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
-    Route::match(['post', 'get'], 'newcase', [App\Http\Controllers\User\MediationController::class, 'newcase'])->name('user.newcase');
-    Route::match(['get'], 'newrequest', [App\Http\Controllers\User\MediationController::class, 'newrequest'])->name('user.newrequest');
+    Route::match(['post','get'],'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
+    Route::match(['post','get'],'newcase', [App\Http\Controllers\User\MediationController::class, 'newcase'])->name('user.newcase');
+    Route::match(['get'],'newrequest', [App\Http\Controllers\User\MediationController::class, 'newrequest'])->name('user.newrequest');
+    Route::match(['get'],'ongoing', [App\Http\Controllers\User\MediationController::class, 'ongoing'])->name('user.ongoing');
+
+    //profile
+
+     Route::get('profile', [App\Http\Controllers\User\ProfileController::class, 'profile'])->name('user.profile');
+
+    Route::post('edit-profile/{id}', [App\Http\Controllers\User\ProfileController::class, 'updateProfile'])->name('user.profile.update');
+
+    Route::get('change-password/{id}', [App\Http\Controllers\User\ProfileController::class, 'changePassword'])->name('user.change.password');
+
+
+
 });
 
 

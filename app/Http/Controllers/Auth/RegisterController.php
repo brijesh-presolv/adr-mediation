@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use Auth;
 class RegisterController extends Controller
 {
     /*
@@ -29,7 +29,26 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    //protected $redirectTo = RouteServiceProvider::HOME;
+
+     protected function redirectTo(){
+
+       if (Auth::check() && (Auth::user()->role == 0)) {
+
+        if(Auth::user()->emailotp!=null){
+          
+          return route('verify');
+      } else{
+           return route('user.dashboard');
+      }
+
+      
+        } else if (Auth::check() && (Auth::user()->role == 1)) {
+           return route('mediator.dashboard');
+        } else if (Auth::check() && (Auth::user()->role == 2)) {
+            return route('admin.dashboard');
+        }
+    }
 
     /**
      * Create a new controller instance.
@@ -57,6 +76,8 @@ class RegisterController extends Controller
             'organization' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'actype'=>['required'],
+
         ]);
     }
 
@@ -68,6 +89,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+
+        //check if user role
+
+        if($data['actype']==1){
+
+            $role=0;
+        } else if($data['actype']==2){
+            $role=1;
+        }
         return User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
@@ -76,6 +106,13 @@ class RegisterController extends Controller
             'organization' => $data['organization'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role'=>$role,
+            'emailotp'=>rand('100000','999999'),
+            'smsotp'=>rand('100000','999999'),
+
         ]);
     }
+
+
+   
 }
