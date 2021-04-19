@@ -23,40 +23,11 @@
                         <th>Mediator</th>
                         <th>Comment</th>
                         <th>Session</th>
-                        <th>Action</th>
+                        <th>Settlement Agreement</th>
                         <th>Status</th>
                     </tr>
                 </thead>
             </table>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">Share</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="commentForm" method="post">
-                <div class="modal-body">
-                    <input type="hidden" name="case_id" class="form-control" >
-                    <input type="hidden" name="type" class="form-control" >
-
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Comment:</label>
-                        <textarea class="form-control" name="comment"  required></textarea>
-                    </div>
-                    <div class="row" id="commentView">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">save comment</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
@@ -71,52 +42,19 @@
             </div>
             <form id="withdrawForm" method="post">
                 <div class="modal-body">
-                    <input type="hidden" name="case_id" class="form-control" >
-
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Withdraw Comment:</label>
-                        <textarea class="form-control" name="withdraw_comment"  required></textarea>
+                        <textarea class="form-control" name="withdraw_comment"  readonly></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Close Request</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<div class="modal fade" id="midaterAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Midater Add</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="MidaterForm" method="post">
-                <div class="modal-body">
-                    <input type="hidden" name="id" class="form-control" id="recipient-name">
 
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Midater:</label>
-                        <select class="form-control" name="midater"  required>
-                            <option value="">select Midater</option>
-                            @foreach($users as $user)
-                            <option value="{{$user->id}}">{{$user->username}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Accept</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 <div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -259,7 +197,7 @@ $(function () {
             {"data": "case.mediator_username",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + `<button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-mediator="` + row.case.mediator_id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info btn-sm">` + data + ` </button>`;
+                    button = button + `<button value="` + row.case.id + `"  data-id="` + row.case.id + `" class="btn btn-info btn-sm disabled" disabled>` + data + ` </button>`;
                     if (row.case.mediator_status == 0) {
                         button = button + `<br><span class="badge badge-warning">pandding</span>`;
                     } else if (row.case.mediator_status == 1) {
@@ -271,8 +209,8 @@ $(function () {
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
-                    button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-dark waves-effect btn-sm">Share</button>`;
                     return button;
                 }
             },
@@ -280,14 +218,17 @@ $(function () {
                 render: function (data, type, row) {
                     var button = "";
                     button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button>`;
-                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target="#addSession-modal" ><span class="mdi mdi-pencil-plus"></span></button>`;
                     return button;
                 }
             },
-            {"data": "case.id",
+            {"data": "case.withdraw",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdraw</button>`;
+                    if (data != null) {
+                        button = button + `<button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">N/A</button>`;
+                    } else {
+                        button = button + `<button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdraw</button>`;
+                    }
                     return button;
                 }
             },
@@ -311,90 +252,12 @@ $(function () {
             },
         ],
     });
-    $(document).on('submit', "#MidaterForm", function () {
-        var id = $(this).find("input[name='id']").val();
-        var midater = $(this).find("select[name='midater']").val();
-        var csrf = document.querySelector('meta[name="csrf-token"]').content;
-        swal({
-            title: "Are you sure?",
-            text: "Canform this request!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then((willDelete) => {
-            if (willDelete) {
-                $.ajax({
-                    url: '{{ route("admin.case.midater_add") }}',
-                    method: "post",
-                    data: {id: id, midater: midater, '_token': csrf},
-                }).done(function (data) {
-                    swal("mediator assigned successfully!", {
-                        icon: "success",
-                    });
-                    userTable.ajax.reload();
-                    $('#midaterAdd').modal("hide");
-                });
-            } else {
-                swal("Cansel Confirm Request!");
-            }
-        });
-        return false;
-    });
+
     $('#withdrawModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
-        var recipient = button.data('id');
+        var withdraw = button.data('withdraw');
         var modal = $(this)
-        modal.find('.modal-body input[name="case_id"]').val(recipient);
-    });
-    $('#commentModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var typename = button.data('typename');
-        var type = button.data('type');
-        var modal = $(this)
-        $("#commentView").html("");
-        $.ajax({
-            type: 'post',
-            url: '{{ route("admin.case.comment_view") }}',
-            data: {type:type,case_id:id},
-            success: function (data) {
-                for (i in data) {
-                    //console.log(data[0]);
-                    $("#commentView").append(`<div class="col-md-12 text-right"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
-                }
-            }
-        });
-
-        modal.find('#commentModalLabel').text(typename);
-        modal.find('.modal-body input[name="type"]').val(type);
-        modal.find('.modal-body input[name="case_id"]').val(id);
-    });
-    $('#commentForm').on('submit', function (e) {
-        e.preventDefault();
-        swal({
-            title: "Are you sure?",
-            text: "add this comment!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then((willDelete) => {
-            if (willDelete) {
-                $.ajax({
-                    type: 'post',
-                    url: '{{ route("admin.case.comment") }}',
-                    data: $('#commentForm').serialize(),
-                    success: function () {
-                        swal("comment save successfully!", {
-                            icon: "success",
-                        });
-                        $('#commentModal').modal("hide");
-                    }
-                });
-            } else {
-                swal("comment not added!");
-            }
-        });
-        return false;
+        modal.find('.modal-body textarea[name="withdraw_comment"]').text(withdraw);
     });
     $('#withdrawForm').on('submit', function (e) {
         e.preventDefault();
@@ -424,15 +287,6 @@ $(function () {
             }
         });
         return false;
-    });
-
-    $('#midaterAdd').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var recipient = button.data('id');
-        var mediator = button.data('mediator');
-        var modal = $(this)
-        modal.find('.modal-body input[name="id"]').val(recipient);
-        modal.find('.modal-body select[name="midater"]').val(mediator);
     });
     $('#addSession-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);

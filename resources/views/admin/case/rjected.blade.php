@@ -12,7 +12,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
-            
+
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -118,7 +118,24 @@ var userTable = $('#users').DataTable({
                 return d;
             }
         },
-        {"data": "case.id"},
+        {"data": "status_log",
+            render: function (data, type, row) {
+                var button = "";
+                for (i in data) {
+                    console.log(data[i].status);
+                    if (data[i].status == 1) {
+                        button = button + `<span class="badge badge-success">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
+                    }
+                    if (data[i].status == 2) {
+                        button = button + `<span class="badge badge-info ">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
+                    }
+                    if (data[i].status == 3) {
+                        button = button + `<span class="badge badge-danger">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
+                    }
+                }
+                return button;
+            }
+        },
     ],
 });
 $(document).on('click', ".reject", function () {
