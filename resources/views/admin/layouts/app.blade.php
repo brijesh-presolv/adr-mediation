@@ -31,12 +31,11 @@
             <div class="navbar-custom">
                 <ul class="list-unstyled topnav-menu float-right mb-0">
 
-                    
+
 
                     <li class="dropdown notification-list">
                         <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                            <img src="{{ url('/') }}/assets/images/users/avatar-1.jpg" alt="user-image" class="rounded-circle">
-                            <span class="d-none d-sm-inline-block ml-1">Alex M.</span>
+                            <span class="d-none d-sm-inline-block ml-1">Admin</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
                             <!-- item-->
@@ -48,18 +47,6 @@
                             <a href="{{url('admin/profile')}}" class="dropdown-item notify-item">
                                 <i class="mdi mdi-account-outline"></i>
                                 <span>Profile</span>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <i class="mdi mdi-settings-outline"></i>
-                                <span>Settings</span>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <i class="mdi mdi-lock-outline"></i>
-                                <span>Lock Screen</span>
                             </a>
 
                             <div class="dropdown-divider"></div>
