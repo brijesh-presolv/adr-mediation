@@ -22,7 +22,6 @@ use App\Models\InvoledUser;
                         <th>Sr. No</th>
                         <th>Case Id</th>
                         <th>Date</th>
-                        <th>Case Details</th>
                         <th>Party Details</th>
                         <th>Action</th>
                     </tr>
@@ -48,7 +47,6 @@ use App\Models\InvoledUser;
                         <td>{{$i++}}</td>
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
-                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.invoke','id='. $value->caseid)}}">Case details</a></td>
 
                         <td><?php
 

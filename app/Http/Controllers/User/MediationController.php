@@ -220,7 +220,7 @@ class MediationController extends Controller
        // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new=MedCase::select('user_involved_in_agreement.*','mediation_case.id as caseid','mediation_case.created_at as date')->where(['mediation_case.userid'=>Auth::user()->id,'mediation_case.confirm_status'=>0])->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')->get();
+        $new=MedCase::select('user_involved_in_agreement.*','mediation_case.id as caseid','mediation_case.created_at as date')->where(['mediation_case.userid'=>Auth::user()->id,'mediation_case.confirm_status'=>0])->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')->orderby('mediation_case.id')->get();
 
 
         return view('user.newrequest',['pending'=>$new,'response'=>Session::get('response')]);
@@ -236,6 +236,41 @@ class MediationController extends Controller
 
 
         return view('user.ongoing',['ongoing'=>$new]);
+    }
+
+    public function sessions(Request $request) {
+
+
+        $sessionData = DB::table('manage_session')->where('case_id', $request->caseid)->get();
+        $sn = 1;
+        foreach ($sessionData as $value) {
+            echo "<tr>";
+            echo "<td>" . $sn . "</td>";
+            echo "<td>" . $value->created_at . "</td>";
+            echo "<td>" . $value->session_date . "</td>";
+            echo "<td>" . $value->zoom_id . "</td>";
+            echo "<td>" . $value->note . "</td>";
+            echo "</tr>";
+
+            $sn++;
+        }
+        // return $sessionData;
+    }
+
+    public function casedetails($id){
+
+
+
+        $case= MedCase::select("mediation_case.*", "users.username as mediator", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where('mediation_case.id','=',$id)
+                ->first();
+
+        $case->party=InvoledUser::where(['userPlanid' => $case->id])->get();
+
+        
+       return view('user.casedetails',compact("case"));
     }
 }
 
