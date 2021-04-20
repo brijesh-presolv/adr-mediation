@@ -261,7 +261,7 @@ $(function () {
                     var button = "";
                     button = button + `<button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-mediator="` + row.case.mediator_id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info btn-sm">` + data + ` </button>`;
                     if (row.case.mediator_status == 0) {
-                        button = button + `<br><span class="badge badge-warning">pandding</span>`;
+                        button = button + `<br><span class="badge badge-warning">pending</span>`;
                     } else if (row.case.mediator_status == 1) {
                         button = button + `<br><span class="badge badge-success">Accepted</span>`;
                     }

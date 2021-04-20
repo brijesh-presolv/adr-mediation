@@ -227,7 +227,7 @@ $(function () {
                     var button = "";
                     button = button + `<button value="` + row.case.id + `"  data-id="` + row.case.id + `" class="btn btn-info btn-sm disabled" disabled>` + data + ` </button>`;
                     if (row.case.mediator_status == 0) {
-                        button = button + `<br><span class="badge badge-warning">pandding</span>`;
+                        button = button + `<br><span class="badge badge-warning">pending</span>`;
                     } else if (row.case.mediator_status == 1) {
                         button = button + `<br><span class="badge badge-success">Accepted</span>`;
                     }
