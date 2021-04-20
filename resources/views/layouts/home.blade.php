@@ -161,10 +161,6 @@ margin-left: -5px;
 <div class="loader">
 </div><!-- Header -->
 
-<!DOCTYPE html>
-<html>
-<body>
-<div class="loader"></div>
 
 
 
