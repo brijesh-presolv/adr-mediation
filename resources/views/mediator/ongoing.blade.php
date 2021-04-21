@@ -37,7 +37,7 @@ use App\Models\InvoledUser;
 
                     <tr>
                         <td>{{ $sno }}</td>
-                        <td>M00000<span id="caseId">{{ $data->mediation_case_id  }}</span></td>
+                        <td>M<span id="caseId">{{ sprintf("%06d",$data->mediation_case_id)  }}</span></td>
                         <td>{{ date('d-m-Y', strtotime($data->created_at))}}</td>
                         
                         <td><?php 
