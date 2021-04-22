@@ -194,6 +194,11 @@
                                                 <label for="email" class="control-label" style="margin-right: 20px;">Email
                                                 </label>
                                                 <input type="email" class="form-control txtmobile" id="email1" placeholder="Email" name="email" value="prashant.blokess@gmail.com"required/>
+                                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                                             </div>
                                         </div>
                                         <div class="form-group formmobile row">
@@ -203,6 +208,11 @@
                                                 <label for="exampleInputPassword1" class="control-label" style="margin-right: 20px;">
                                                 Password</label>
                                                 <input type="password" class="form-control txtmobile mb-2" id="exampleInputPassword1" placeholder="Password" name="password" value="User@123" required/>
+                                                @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                                             </div>
                                         </div>
                                     

@@ -34,7 +34,9 @@ use App\Models\InvoledUser;
                     $i=1;
                     $id='';
 
-                    foreach ($ongoing as $key => $value) { ?>
+                    foreach ($ongoing as $key => $value) {
+
+                     ?>
                      <tr>
 
                         <?php 
@@ -61,12 +63,12 @@ use App\Models\InvoledUser;
 
                         <?php } 
 
-                        foreach ($invuser as $key => $value) {
+                        foreach ($invuser as $key => $v) {
 
-                            if($value->isOnboarded==1){
-                                echo '<span class="text-success">'.$value->name.'</span></br>';
+                            if($v->isOnboarded==1){
+                                echo '<span class="text-success">'.$v->name.'</span></br>';
                             } else{
-                                echo '<span class="text-danger">'.$value->name.'</span></br>';
+                                echo '<span class="text-danger">'.$v->name.'</span></br>';
                             }
                             
                         }
@@ -74,7 +76,7 @@ use App\Models\InvoledUser;
 
 
                         ?></td>
-                        <td><button value=""  data-id="{{ $value->caseid }}"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
+                        <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
                         <td>
                         <button onclick="withdraw('1243')" class="btn btn-sm btn-inline btn-danger label label-success">Withdraw</button>
                         <br></td>
@@ -149,13 +151,18 @@ use App\Models\InvoledUser;
 
 
             $('#viewSession-modal').on('show.bs.modal', function (event) {
+
         
 
          var button = $(event.relatedTarget);
 
          
-            var caseid = button.data('id')
+            var caseid = button.data('id');
+
+
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+
     $.ajax({
     type: 'post',
             url: '{{ route("user.sessions") }}',
