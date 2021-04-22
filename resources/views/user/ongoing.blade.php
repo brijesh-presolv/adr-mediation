@@ -16,7 +16,7 @@ use App\Models\InvoledUser;
     <div class="col-sm-12">
         <div class="card-box table-responsive">
             <h4 class="header-title"><b>Ongoing </b></h4>
-            <table  id="datatable" id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
                         <th>Sr. No</th>
@@ -24,6 +24,8 @@ use App\Models\InvoledUser;
                         <th>Date</th>
                         <th>Case Details</th>
                         <th>Party Details</th>
+                        <th>Mediator</th>
+
                         <th>Session</th>
                         <th>Action</th>
                     </tr>
@@ -76,6 +78,7 @@ use App\Models\InvoledUser;
 
 
                         ?></td>
+                        <td><?=  $value->mediator  ?></td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
                         <td>
                         <button onclick="withdraw('1243')" class="btn btn-sm btn-inline btn-danger label label-success">Withdraw</button>
@@ -147,6 +150,8 @@ use App\Models\InvoledUser;
 
 
         $(document).ready(function(){
+
+          // $('#users').DataTable();
 
 
 

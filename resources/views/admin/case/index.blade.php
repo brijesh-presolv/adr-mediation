@@ -159,7 +159,7 @@ $(document).on('submit', "#MidaterForm", function () {
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
     swal({
         title: "Are you sure?",
-        text: "Canform this request!",
+        text: "Confirm this request!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -179,7 +179,7 @@ $(document).on('submit', "#MidaterForm", function () {
                     data: {id: id, '_token': csrf},
                 }).done(function (data) {
                     userTable.ajax.reload()
-                    swal("conform successfully!", {
+                    swal("Confirm successfully!", {
                         icon: "success",
                     });
                 });

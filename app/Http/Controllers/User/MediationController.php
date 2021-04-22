@@ -12,6 +12,7 @@ use Session;
 use Auth;
 
 use Validator;
+use DB;
 
 class MediationController extends Controller
 {
@@ -232,8 +233,13 @@ class MediationController extends Controller
        // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new=MedCase::select('user_involved_in_agreement.*','mediation_case.id as caseid','mediation_case.created_at as date')->where(['mediation_case.userid'=>Auth::user()->id,'mediation_case.confirm_status'=>1])->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')->get();
+        $new=MedCase::select('user_involved_in_agreement.*','mediation_case.id as caseid','mediation_case.created_at as date',DB::raw('concat(users.first_name) as mediator'))
+        ->where(['mediation_case.userid'=>Auth::user()->id,'mediation_case.confirm_status'=>1])
+        ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
 
+        ->get();
 
         return view('user.ongoing',['ongoing'=>$new]);
     }
