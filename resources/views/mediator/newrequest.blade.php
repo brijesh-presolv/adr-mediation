@@ -2,17 +2,17 @@
 @section('title', 'Users')
 
 @section('breadcrumb')
-      <!-- start page title -->
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-       <li class="breadcrumb-item"><a href="javascript: void(0);">New request </a></li>
-    <!-- end page title -->
+<!-- start page title -->
+<li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">New request </a></li>
+<!-- end page title -->
 @endsection
 
 @section('content')
 
 
 @section('pageTitleOnDashboard')
-    <h4 class="page-title">New Request</h4>
+<h4 class="page-title">New Request</h4>
 @endsection
 
 
@@ -36,44 +36,47 @@
 </div>
 @endsection
 
- <!-- Table datatable css -->
+<!-- Table datatable css -->
 @section('head')
-  
-    <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    
+
+<link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
 @endsection
 
 
 @section('footer')
- <!-- Datatable plugin js -->
-    <script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Datatable plugin js -->
+<script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
+<script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
 
- <!-- Datatables init -->
+<!-- Datatables init -->
 <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
 <script>
-
+function pad(str, max) {
+    str = str.toString();
+    return str.length < max ? pad("0" + str, max) : str;
+}
 var userTable = $('#request').DataTable({
-"ajax": '{{ route('mediator.newjson') }}',
-        "responsive": true,
-        "columns": [
+    "ajax": '{{ route('mediator.newjson') }}',
+    "responsive": true,
+    "columns": [
         {"data": "id"},
-        {"data": "mediation_case_id",
-                render: function (data, type, row) {
-                return "M0000"+row.caseId
-                }
+        {"data": "caseId",
+            render: function (data, type, row) {
+                return "M" + pad(data, 6)
+            }
         },
         {"data": "date",
-                render: function (data, type, row) {
+            render: function (data, type, row) {
                 return row.date
-                }
+            }
         },
         {"data": "party",
-                render: function (data, type, row) {
+            render: function (data, type, row) {
                 var d = "";
                 for (i in data) {
                     if (data[i].isOnboarded == 1) {
@@ -86,84 +89,85 @@ var userTable = $('#request').DataTable({
             }
         },
         {"data": "comments",
-                render: function (data, type, row) {
+            render: function (data, type, row) {
 
-                    var button = `<button class="btn   btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',1,'425')">Private</button>
+                var button = `<button class="btn   btn-sm btn-primary label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',1,'425')">Private</button>
                             <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',2,'a')">Shared</button>`;
-                    return button; 
-                }
+                return button;
+            }
         },
         {"data": "status",
-                render: function (data, type, row) {
+            render: function (data, type, row) {
 
-                    // if(data==1){
-                    //   var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
-                    //     return button;  
-                    // }else{
-                    // }
-                     
-                      var button = `<button class="btn-sm btn-success" id="statuschang"  >Accept</button>
-                                    <button class="btn-sm btn-danger" id="statuschang">Reject</button>`;
-                        return button;
+                // if(data==1){
+                //   var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
+                //     return button;  
+                // }else{
+                // }
+
+                var button = `<button class="btn-sm btn-success" id="statuschang" data-caseid="`+row.caseId+`" data-mediatorId="`+row.mediator_id+`">Accept</button>
+                                    <button class="btn-sm btn-danger" id="statuschang" data-caseid="`+row.caseId+`" data-mediatorId="`+row.mediator_id+`">Reject</button>`;
+                return button;
 
 
 
-                  //   var button = `<div class="form-group">
-                  //   <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                  //     <input type="checkbox" name=="user_status" id="customSwitch` + row.id + `" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
-                  //     <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
-                  //   </div>
-                  // </div>`;
-                  //   return button;
-                }
+                //   var button = `<div class="form-group">
+                //   <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                //     <input type="checkbox" name=="user_status" id="customSwitch` + row.id + `" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
+                //     <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
+                //   </div>
+                // </div>`;
+                //   return button;
+            }
         }
-        ],
+    ],
 });
-    // $(document).on('click', "#statuschang", function () {
+// $(document).on('click', "#statuschang", function () {
 
 
-    // var do_action = $(this).html();
-    // var id = $(this).val();
+// var do_action = $(this).html();
+// var id = $(this).val();
 
-    // console.log(id);
+// console.log(id);
 
-    // if(do_action == 'Accept'){
-    //     status = 1;
-    // }
+// if(do_action == 'Accept'){
+//     status = 1;
+// }
 
-    // if(do_action == 'Reject'){
-    //     status = 2
-    // }
+// if(do_action == 'Reject'){
+//     status = 2
+// }
 
-    // var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    // // if ($(this).is(':checked')){
-    // // var status = 1;
-    // // } else{
-    // // var status = 0;
-    // // }
-    // $.ajax({
-    // url: '{{ route('mediator.activeDeactive') }}',
-    //         method: "post",
-    //         data: {id:id, status:status, '_token': csrf},
-    //         }).done(function (data) {
+// var csrf = document.querySelector('meta[name="csrf-token"]').content;
+// // if ($(this).is(':checked')){
+// // var status = 1;
+// // } else{
+// // var status = 0;
+// // }
+// $.ajax({
+// url: '{{ route('mediator.activeDeactive') }}',
+//         method: "post",
+//         data: {id:id, status:status, '_token': csrf},
+//         }).done(function (data) {
 
-                
-    //         userTable.ajax.reload()
-    //     });
-    // });
+
+//         userTable.ajax.reload()
+//     });
+// });
 
 
 
 $(document).on('click', "#statuschang", function () {
-    var id = $(this).val();
+    var caseid = $(this).data('caseid');
+    var mediatorid = $(this).data('mediatorid');
     var do_action = $(this).html();
 
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
-/*on accept case*/
-    if(do_action == 'Accept'){
-        
-        status = 1;
+    /*on accept case*/
+    if (do_action == 'Accept') {
+
+       var status = 1;
 
         swal({
             title: "Are you sure?",
@@ -176,7 +180,7 @@ $(document).on('click', "#statuschang", function () {
                 $.ajax({
                     url: '{{ route("mediator.activeDeactive") }}',
                     method: "post",
-                    data: {id:id, status:status, '_token': csrf},
+                    data: {caseid: caseid,mediator_id:mediatorid,status: status, '_token': csrf},
                 }).done(function (data) {
                     userTable.ajax.reload()
                     swal("Request Accepted!", {
@@ -184,49 +188,49 @@ $(document).on('click', "#statuschang", function () {
                     });
                 });
 
-        } else {
-            swal("Your imaginary file is safe!");
-        }
-     });
+            } else {
+                swal("Your imaginary file is safe!");
+            }
+        });
 
     }
 
-/*on reject case*/
-if(do_action == 'Reject'){
-status = 2;
+    /*on reject case*/
+    if (do_action == 'Reject') {
+       var status = 2;
 
-swal({
-        title: "Are you sure?",
-        text: "to Reject these request!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-    }).then((willDelete) => {
-        if (willDelete) {
-            $.ajax({
-                url: '{{ route("mediator.activeDeactive") }}',
-                method: "post",
-                data: {id:id, status:status, '_token': csrf},
-            }).done(function (data) {
-                userTable.ajax.reload()
-                swal("Request Rejected!", {
-                    icon: "success",
+        swal({
+            title: "Are you sure?",
+            text: "to Reject these request!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: '{{ route("mediator.activeDeactive") }}',
+                    method: "post",
+                    data: {caseid: caseid,mediator_id:mediatorid,status: status, '_token': csrf},
+                }).done(function (data) {
+                    userTable.ajax.reload()
+                    swal("Request Rejected!", {
+                        icon: "success",
+                    });
                 });
-            });
 
-        } else {
-            swal("Your imaginary file is safe!");
-        }
-    });
-
+            } else {
+                swal("Your imaginary file is safe!");
+            }
+        });
 
 
 
-}
+
+    }
 
 
     // var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    
+
 });
 
 
