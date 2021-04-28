@@ -4,7 +4,7 @@
 @section('breadcrumb')
       <!-- start page title -->
        <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-       <li class="breadcrumb-item"><a href="javascript: void(0);">New request </a></li>
+       <li class="breadcrumb-item"><a href="javascript: void(0);">Update password </a></li>
     <!-- end page title -->
 @endsection
 

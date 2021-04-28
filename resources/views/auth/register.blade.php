@@ -529,4 +529,4 @@ function setResponse(response) {
 }
         </script> -->
         
-@section('content')
+@endsection('content')

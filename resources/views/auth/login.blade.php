@@ -194,6 +194,11 @@
                                                 <label for="email" class="control-label" style="margin-right: 20px;">Email
                                                 </label>
                                                 <input type="email" class="form-control txtmobile" id="email1" placeholder="Email" name="email" value="prashant.blokess@gmail.com"required/>
+                                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                                             </div>
                                         </div>
                                         <div class="form-group formmobile row">
@@ -203,6 +208,11 @@
                                                 <label for="exampleInputPassword1" class="control-label" style="margin-right: 20px;">
                                                 Password</label>
                                                 <input type="password" class="form-control txtmobile mb-2" id="exampleInputPassword1" placeholder="Password" name="password" value="User@123" required/>
+                                                @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                                             </div>
                                         </div>
                                     
@@ -210,8 +220,6 @@
                                             <div class="col-md-12" style="display:inline-block; text-align: center;">
                                                 <button type="submit" class="btn btn-warning btn-lg btnmobile mt-2 dwidth" style="background-color: #FFA600;border: 1px;">
                                                     Submit</button>
-                                                <button type="button" class="btn btn-warning btn-lg btnmobile mt-2 dwidth2" style="background-color:#0B5386;border: 1px;" data-toggle="modal" data-target="#myModal">Forgot Password?</button>
-                                                 <button type="button" class="btn btn-warning btn-lg btnmobile mt-2 dwidth" style="background-color: #0B5386;border: 1px;width:188px;"data-toggle="modal" data-target="#myModal2">Forgot Username?</button>
                                             </div>
                                             <div class="col-xs-12 d-sm-none d-md-none d-lg-none btnmobile btnmobiles">
                                              <button type="submit" class="btn btn-warning btn-block btnmobile" style="background-color: #FFA600;border: 1px;width:100%;">
@@ -529,4 +537,4 @@ function setResponse(response) {
 }
         </script> -->
         
-@section('content')
+@endsection('content')

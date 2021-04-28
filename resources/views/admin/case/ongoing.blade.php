@@ -90,7 +90,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Midater Add</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Mediator Add</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -100,9 +100,9 @@
                     <input type="hidden" name="id" class="form-control" id="recipient-name">
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Midater:</label>
+                        <label for="message-text" class="col-form-label">Mediator:</label>
                         <select class="form-control" name="midater"  required>
-                            <option value="">select Midater</option>
+                            <option value="">select Mediator</option>
                             @foreach($users as $user)
                             <option value="{{$user->id}}">{{$user->username}}</option>
                             @endforeach

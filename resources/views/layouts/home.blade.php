@@ -153,7 +153,12 @@ margin-left: -5px;
 		      <li class="nav-item active">
 		        <a class="nav-link abtbtn" href="about_us">O mediacji<span class="sr-only">(current)</span></a>
 		      </li>
+
+          <?php if(Auth::user()){ ?>
+              <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="user/dashboard">Dashboard</a>
+          <?php } else{ ?>
 		      			        <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="login">Zaloguj się</a>
+                      <?php } ?>
 		       		    </ul>
 		  </div>
 	</div>
@@ -161,10 +166,6 @@ margin-left: -5px;
 <div class="loader">
 </div><!-- Header -->
 
-<!DOCTYPE html>
-<html>
-<body>
-<div class="loader"></div>
 
 
 

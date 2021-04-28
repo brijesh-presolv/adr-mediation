@@ -23,9 +23,9 @@
                     </a>
                     <ul class="nav-second-level" aria-expanded="false">
                         <li><a href="{{route('admin.case.newrequest')}}">New Request</a></li>
-                        <li><a href="{{route('admin.case.ongoingrequest')}}">Ongoing Request</a></li>
-                        <li><a href="{{route('admin.case.closedrequest')}}">Closed Request</a></li>
-                        <li><a href="{{route('admin.case.rjectedrequest')}}">Rjected Request</a></li>
+                        <li><a href="{{route('admin.case.ongoingrequest')}}">Ongoing </a></li>
+                        <li><a href="{{route('admin.case.closedrequest')}}">Closed </a></li>
+                        <li><a href="{{route('admin.case.rjectedrequest')}}">Rejected </a></li>
                     </ul>
                 </li>
                 <li>
@@ -37,6 +37,7 @@
                     <ul class="nav-second-level" aria-expanded="false">
                         <li><a href="{{route('admin.users.list',"mediator")}}">Mediator</a></li>
                         <li><a href="{{route('admin.users.list',"user")}}">Users</a></li>
+                        
                     </ul>
                 </li>
 

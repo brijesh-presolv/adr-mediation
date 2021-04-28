@@ -171,7 +171,7 @@ $(document).on('click', "#statuschang", function () {
 
         swal({
             title: "Are you sure?",
-            text: "to accept these request!",
+            text: "to accept this request!",
             icon: "warning",
             buttons: true,
             dangerMode: true,

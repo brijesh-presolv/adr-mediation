@@ -148,7 +148,6 @@ zakończyć spór ugodą.</p>
                 <a href="" class="btn btn-circle-y" data-toggle="modal" id="" data-target="#myModalResolve">Rozpocznij </span></a>
                 <a href="" class="btn btn-circle-y ml-2 resolvideomodal" data-toggle="modal" id="" data-target="#myModal2">Zobacz wideo </span></a>
                 <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Opłaty</button>
-                <a href="https://presolv360.com/arbitrator" class="btn btn-circle-y ml-2 clse" target="_blank">Nasi eksperci </span></a>
               </div>
          </div>
 
@@ -382,7 +381,7 @@ zakończyć spór ugodą.</p>
             </div>
 
       <div class="modal-body">
-        The fees will be determined on the basis of the nature and quantum of the dispute. To know the fee applicable to you, contact us at  <a href="mailto:info@presolv360.com" target="_top">info@presolv360.com</a> or call us on .<a href="tel:+91-7710048834" target="_top">+91-7710048834</a>
+        
       </div>
     </div>
   </div>
@@ -810,26 +809,16 @@ zakończyć spór ugodą.</p>
 
 </div>
 
-<div class="col-md-12">
-  <center>
-            
-            <small>By choosing <b><i>Arbitration360</i></b> the parties are bound by an award made by the arbitrator. You should opt for arbitration in the event you desire a decision by an independent adjudicator.</small><p></p>
-            <small>By choosing <b><i>Mediation360</i></b> the parties mutually opt to settle the dispute with the help of an independent expert. You should opt for mediation in the event you desire a negotiated settlement.</small>
-  </center>
-
-
-
-</div>
                         <div class="form-group">
                             <label class="col-md-4 control-label"></label>
                             <div class="col-md-12">
 
                                 <center>
                             
-                                 <label class="cntctus"><h6>Email us at <span style="color: #ffa600;">info@presolv360.com</span></h6></label>
+                                 <label class="cntctus"><h6>Email us at <span style="color: #ffa600;">admin@gmail.com</span></h6></label>
                                <!--  <button type="button" class="btn btn-warning cntctus" id="cnn" >Contact Us</button> -->
 
-                                <button type="submit" id="send_submit" name="send_submit" class="btn btn-warning sbmtt" onclick="resolvsubmit()" >Mediation360</button>
+                                <button type="submit" id="send_submit" name="send_submit" class="btn btn-warning sbmtt" onclick="resolvsubmit()" >Mediation</button>
 
 							
                             </center>

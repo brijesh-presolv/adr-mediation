@@ -28,10 +28,14 @@ Route::match(['GET', 'POST'], '/verify', [App\Http\Controllers\HomeController::c
 
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('user.dashboard');
-    Route::match(['post', 'get'], 'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
-    Route::match(['post', 'get'], 'newcase', [App\Http\Controllers\User\MediationController::class, 'newcase'])->name('user.newcase');
-    Route::match(['get'], 'newrequest', [App\Http\Controllers\User\MediationController::class, 'newrequest'])->name('user.newrequest');
-    Route::match(['get'], 'ongoing', [App\Http\Controllers\User\MediationController::class, 'ongoing'])->name('user.ongoing');
+    Route::match(['post','get'],'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
+    Route::match(['post','get'],'newcase', [App\Http\Controllers\User\MediationController::class, 'newcase'])->name('user.newcase');
+    Route::match(['get'],'newrequest', [App\Http\Controllers\User\MediationController::class, 'newrequest'])->name('user.newrequest');
+    Route::match(['get'],'ongoing', [App\Http\Controllers\User\MediationController::class, 'ongoing'])->name('user.ongoing');
+    Route::match(['post','get'],'sessions', [App\Http\Controllers\User\MediationController::class, 'sessions'])->name('user.sessions');
+
+    Route::get('casedetails/{id}', [App\Http\Controllers\User\MediationController::class, 'casedetails'])->name('user.casedetails');
+
 
     //profile
 

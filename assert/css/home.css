@@ -16,7 +16,7 @@
 
 body{
 
-	font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 
@@ -33,16 +33,16 @@ body{
 }
 
 .home-logo{
-	width: 170px;
+  width: 170px;
 }
 
 .nav-link{
 
-	font-weight: 600;
+  font-weight: 600;
 
-	color: #0e5688 !important;
+  color: #0e5688 !important;
 
-	font-size: 16px;
+  font-size: 16px;
 
 }
 
@@ -50,51 +50,68 @@ body{
 
 
 .loginbtn{
-	padding: 5px 20px !important;
+  padding: 5px 20px !important;
     margin-left: 10px;
     color: #ffffff ! important;
 }
 
 .loginbtn:focus{
-	box-shadow: none;
+  box-shadow: none;
 }
 
 .bannersection {
     /*margin-top:57px;*/
-	position: relative;
+  position: relative;
 }
 
 .bannersection h1{
-	font-size: 54px;
-	font-weight: 700;
-	color: #fff;
+  font-size: 54px;
+  font-weight: 700;
+  color: #fff;
 }
 
 .bannersection h2{
-	margin-top: 50px;
-	font-size: 36px;
-	color: #fff;
+  margin-top: 50px;
+  font-size: 36px;
+  color: #fff;
 }
 
 .bannersection p{
-	color: #fff;
+  color: #fff;
 }
 
 .btn-circle-y{
-	background: #ffa600;
-	border-radius: 18px;
-	color: #fff;
-	padding: 8px 28px;
+  background: #ffa600;
+  /*background: #b3b3fb;*/
+  border-radius: 18px;
+  color: #fff;
+  padding: 8px 28px;
 }
 
 .bannerbtn{
-	margin-top: 15px;
+  margin-top: 15px;
 }
 
 .bannersectiontext{
-	position: absolute;
-	top: 20%;
-	left: 7.8%;
+  position: absolute;
+  top: 15%;
+  left: 7.8%;
+      text-align: center;
+}
+
+.bannersectiontext{
+
+  position: absolute;
+    top: 15%;
+    left: 7.8%;
+    text-align: center;
+    padding: 50px;
+    padding-bottom: 10px;
+    z-index: 11;
+    box-shadow: 0px 5px 10px 0px rgb(32 37 49 / 50%);
+    backdrop-filter: blur(5px);
+    background-color: rgba(32,37,49,.5607843137254902);
+        background-color: rgb(0 41 138 / 56%);
 }
 
 #howitwork{
@@ -102,9 +119,9 @@ body{
 }
 
 .tabcentertext h2{
-	font-size: 36px;
-	padding: 34px 0px;
-	color: #0e5587;
+  font-size: 36px;
+  padding: 34px 0px;
+  color: #0e5587;
 }
 
 .buttonsection .nav-tabs .nav-item.nav-1 .nav-link.active {
@@ -160,20 +177,20 @@ body{
 
 
 .imgtxtbox{
-	padding: 90px 15px;
-	padding-bottom: 20px;
-	text-align: center;
+  padding: 90px 15px;
+  padding-bottom: 20px;
+  text-align: center;
 }
 
 .imgtxtbox i{
-	font-size: 170px;
+  font-size: 170px;
     padding-bottom: 20px;
 }
 
 .imgtxtbox p{
-	font-weight: 500;
-	text-align: center;
-	font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  font-size: 18px;
 }
 
 .imgtxtbox img{
@@ -184,14 +201,24 @@ margin-bottom:15px;
 
 }
 
+.imgtxtbox .card {
+  /*z-index: 11;
+    box-shadow: 0px 5px 10px 0px rgb(32 37 49 / 50%);
+    backdrop-filter: blur(5px);
+    background-color: rgba(32,37,49,.5607843137254902);
+    background-color: rgb(0 41 138 / 56%);
+    color: white;*/
+    border-bottom: solid 3px #0d5587;
+}
+
 .tab-content .btnsection{
-	text-align: center;
-	margin-bottom: 50px;
+  text-align: center;
+  margin-bottom: 50px;
 }
 
 .numbersection{
-	padding-top: 35px;
-	background: #0e5587;
+  padding-top: 35px;
+  background: #0e5587;
 }
 
 
@@ -199,24 +226,24 @@ margin-bottom:15px;
 
 .numbersection h2{
 
-	    font-size: 36px;
+      font-size: 36px;
 
-	    color: #ffffff;
+      color: #ffffff;
 
 }
 
 .numbersection h1{
 
-	    font-size: 50px;
+      font-size: 50px;
 
-	    color: #ffffff;
+      color: #ffffff;
 
 }
 
 .numbersection p{
 
-	color: #ffffff;
-	    margin-top: -15px;
+  color: #ffffff;
+      margin-top: -15px;
 }
 
 .numbersection .numbercount {
@@ -228,47 +255,47 @@ margin-bottom:15px;
 
 .numbersection .numbercount i{
 
-	font-size: 40px;
+  font-size: 40px;
 }
 
 .numbersection .numbcountsec{
-	max-width: 300px;
-	margin: 0 auto;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 .awardsection{
-	padding-top: 35px;
-	color: #0e5587;
+  padding-top: 35px;
+  color: #0e5587;
 }
 
 .awardsection h2{
 
-	    font-size: 36px;
+      font-size: 36px;
     color: #0e5587;
     text-align: center;
     padding-bottom: 15px;
 }
 
 .contactsection{
-	background: #ffa600;
-	padding: 15px 0px;
+  background: #ffa600;
+  padding: 15px 0px;
 }
 
 .contactsection .consection {
-	max-width: 222px;
-	margin: 0 auto;
+  max-width: 222px;
+  margin: 0 auto;
 }
 
 .contactsection h2{
-	font-size: 28px;
-	color: #0e5587;
+  font-size: 28px;
+  color: #0e5587;
 
 }
 
 .contactsection p{
 
-	margin-bottom: 0px;
-	color: #0e5587;
+  margin-bottom: 0px;
+  color: #0e5587;
 }
 
 .contactsection a:hover{
@@ -282,18 +309,28 @@ margin-bottom:15px;
 }
 
 .footersection{
-	padding-top: 90px;
-	background: #0e5587;
+  padding-top: 90px;
+  background: #0e5587;
+      background: #1d1d1d;
+      /*background: #737373;*/
 
+}
+
+.contact-content p, .contact-content a{
+  color: gray;
+}
+.contact-icon .fa{
+  font-size: 24px;
+  color: #0e5587;
 }
 
 .footersection p, .footersection h5{
-	color: #ffffff;
+  color: #ffffff;
 }
 
 .footersection .social{
-	/*margin-left: 40px;*/
-	font-size: 38px;
+  /*margin-left: 40px;*/
+  font-size: 38px;
     color: #ffffff;
 
 }
@@ -304,40 +341,42 @@ margin-bottom:15px;
 }
 
 .footersection .social .fa-twitter{
-	margin-left: 10px;
+  margin-left: 10px;
 }
 
     
 
 .recongnitionsec{
-	padding: 20px 0px;
-	background: #ffa600;
-	text-align: center;
+  padding: 20px 0px;
+  background: #ffa600;
+
+  text-align: center;
+      margin-top: -8px;
 }
 
 .recongnitionsec p{
-	margin: 0px;
-	float: left;
+  margin: 0px;
+
 }
 
 .recongnitionsec img{
-	float: left;
+  float: left;
     width: 25px;
     margin-right: 6px;
 }
 
 .recongnitionsec .tsection{
-	max-width: 650px;
+  max-width: 650px;
   margin: 0 auto;
 }
 
 .videomodal .modal-body{
-	padding: 0px;
+  padding: 0px;
 }
 
 .videomodal .modal-content{
-	background: none;
-	border: none;
+  background: none;
+  border: none;
 }
 
 .videosection {
@@ -352,11 +391,11 @@ margin-bottom:15px;
 }
 
 .ml--15{
-	margin-left: -15px;
+  margin-left: -15px;
 }
 
 .rupeesicon{
-	top: 12%;
+  top: 12%;
     border: solid 4px white;
     border-radius: 24px;
     padding-left: 10px;
@@ -882,6 +921,7 @@ input[type=number] {
 .footer{
   background: #1d1d1d;
   color: #ffffff;
+  background: #0a5386;
 }
 
 .videomodal .close{
@@ -1117,6 +1157,10 @@ width: 195px;
     padding: 30px 15px;
 
 }
+
+
+
+
 
 .clse{
         margin-top: 20px;
@@ -1675,6 +1719,11 @@ width: 195px;
 
 
 
+ }
+
+ .contact-section{
+  background: #f9f9f9;
+  padding: 50px 0;
  }
 
 

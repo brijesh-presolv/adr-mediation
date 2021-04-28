@@ -230,7 +230,7 @@ function isreadonlys($rows) {
                             <?php } else {
                                 if ($medcase->documentPath != '') { ?>
 
-                                    <a href="" class="btn btn-success btn-sm" >Supporting Document</a> 
+                                    <a href="<?= public_path('mediation').'/'.$medcase->id.'/'.$medcase->documentPath ?>" class="btn btn-success btn-sm" >Supporting Document</a> 
 
                                 <?php } else {
                                     echo "Not avalable";
