@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Mediator;
 use Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\MedCase;
+use App\Models\Mediation_status_log;
+use App\Models\Mediation_case_comment;
 use Illuminate\Http\Request;
 use App\Models\InvoledUser;
 use DB;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller {
 
@@ -83,6 +87,7 @@ class DashboardController extends Controller {
                         ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
                         ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
                         ->join('user_involved_in_agreement', 'user_involved_in_agreement.id', '=', 'mediation_case.userid')
+                        ->where(['confirm_status' => 1])
                         ->where(['mediator_id' => $loginUser, 'status' => 1])->get();
 
         return view('mediator.ongoing', compact('ongoingData'));
@@ -94,7 +99,8 @@ class DashboardController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function closed() {
-        return view('mediator.closed');
+        $confirm_status = 2;
+        return view('mediator.close', compact("confirm_status"));
     }
 
     /**
@@ -118,7 +124,7 @@ class DashboardController extends Controller {
 
         DB::table('mediators_mediation_cases_status')
                 ->where('mediator_id', $request->mediator_id)
-                ->where('mediation_case_id', $request->caseId)
+                ->where('mediation_case_id', $request->caseid)
                 ->update(['status' => $request->status, 'updated_at' => now()]);
         return response()->json(["msg" => "staus Update"]);
     }
@@ -134,7 +140,7 @@ class DashboardController extends Controller {
             'session_date' => $request->sessionDate . "/" . $request->sessionTime,
             'note' => $request->note,
             'zoom_id' => $request->zoomId,
-            'scheduled_by' => $request->createdBy,
+            'scheduled_by' => Auth::user()->id,
         ];
 
         DB::table('manage_session')->insert($dataToInsert);
@@ -167,6 +173,31 @@ class DashboardController extends Controller {
     }
 
     /**
+     * get added session data to view on ongoing.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function viewSupporting(Request $request) {
+
+        $sessionData = DB::table('manage_files')
+                ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
+                ->where('manage_files.case_id', $request->id)
+                ->get();
+        $sn = 1;
+        foreach ($sessionData as $value) {
+
+            echo "<tr>";
+            echo "<td>" . $sn . "</td>";
+            echo "<td><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+            echo "<td>" . $value->username . "</td>";
+            echo "</tr>";
+
+            $sn++;
+        }
+        return;
+    }
+
+    /**
      * show the rejected case.
      *
      * @return \Illuminate\Contracts\Support\Renderable
@@ -178,10 +209,29 @@ class DashboardController extends Controller {
                         ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
                         ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
                         ->join('user_involved_in_agreement', 'user_involved_in_agreement.id', '=', 'mediation_case.userid')
-                        ->where(['mediator_id' => $loginUser, 'status' => 2])->get();
+                        ->where(['mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->get();
 
         // dd($rejected_case);
         return view('mediator.reject', compact("rejected_case"));
+    }
+
+    public function json($role = 0) {
+        $cases = MedCase::select("mediation_case.*", "users.username as mediator_username", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediation_case.confirm_status", "=", $role)
+                ->where('mediator_id', "=", Auth::user()->id)
+                ->get();
+        $arraydata = array();
+        foreach ($cases as $d) {
+            $arraydata[] = [
+                "date" => date('d-m-Y', strtotime($d->created_at)),
+                "case" => $d,
+                "party" => InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $d->id])->get(),
+                "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->get(),
+            ];
+        }
+        return response()->json(["data" => $arraydata]);
     }
 
     /**
@@ -203,12 +253,9 @@ class DashboardController extends Controller {
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
 
-                    echo $path = $file->store('/');
-
-                    $name = $file->getClientOriginalName();
-
-                    $insert[$x]['file_name'] = $name;
-                    $insert[$x]['uploaded_by'] = $request->createdBy;
+                    $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                    $insert[$x]['file_name'] = $path;
+                    $insert[$x]['uploaded_by'] = Auth::user()->id;
                     $insert[$x]['case_id'] = $request->caseId;
                     // $insert[$x]['path'] = $path;
                 }
@@ -219,6 +266,36 @@ class DashboardController extends Controller {
             DB::table('manage_files')->insert($insert);
 
             // return response()->json(['success'=>'Ajax Multiple fIle has been uploaded']);
+        } else {
+            return response()->json(["message" => "Please try again."]);
+        }
+    }
+
+    /**
+     * upload supporting Documents.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function settelmenSaveClose(Request $request) {
+
+        $validatedData = $request->validate([
+            'Settelmentfiles' => 'required',
+            'Settelmentfiles.*' => 'mimes:csv,txt,xlx,xls,pdf',
+        ]);
+
+        if ($request->TotalFiles > 0) {
+
+            for ($x = 0; $x < $request->TotalFiles; $x++) {
+
+                if ($request->hasFile('Settelmentfiles' . $x)) {
+                    $file = $request->file('Settelmentfiles' . $x);
+                    $path = $file->storeAs('/supporting/' . $request->case_id, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                    $insert[$x]['file_name'] = $path;
+                    MedCase::where('id', $request->case_id)
+                            ->update(['documentPath' => $path, "confirm_status" => 2]);
+                }
+            }
+            //DB::table('manage_files')->insert($insert);
         } else {
             return response()->json(["message" => "Please try again."]);
         }
