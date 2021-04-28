@@ -37,33 +37,31 @@ use App\Models\InvoledUser;
 
                         <?php 
 
-                        if($value->caseid==$id){
+                        if($value->id==$id){
                             continue;
                         }
 
-                        $id=$value->caseid;
+                        $id=$value->id;
 
                         ?>
                         <td>{{$i++}}</td>
-                        <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
-                        <td><?= date('d-m-Y',strtotime($value->date))?></td>
+                        <td><?= 'M'.sprintf('%06d',$value->id) ?></td>
+                        <td><?= date('d-m-Y',strtotime($value->created_at))?></td>
 
                         <td><?php
 
-                        $invuser=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$value->caseid])->get();
+                        if(count($value->party)==0){ ?>
 
-                        if(count($invuser)==0){ ?>
-
-                            <a href="invoke?id=<?= $value->caseid ?>" class="btn btn-sm btn-danger">Pending</a>
+                            <a href="invoke?id=<?= $value->id ?>" class="btn btn-sm btn-danger">Pending</a>
 
                         <?php } 
 
-                        foreach ($invuser as $key => $value) {
+                        foreach ($value->party as $key => $v) {
 
-                            if($value->isOnboarded==1){
-                                echo '<span class="text-success">'.$value->name.'</span></br>';
+                            if($v->isOnboarded==1){
+                                echo '<span class="text-success">'.$v->name.'</span></br>';
                             } else{
-                                echo '<span class="text-danger">'.$value->name.'</span></br>';
+                                echo '<span class="text-danger">'.$v->name.'</span></br>';
                             }
                             
                         }
@@ -72,12 +70,40 @@ use App\Models\InvoledUser;
 
                         ?></td>
                         <td>
-                        <button onclick="withdraw('1243')" class="btn btn-sm btn-inline btn-danger label label-success">Withdraw</button>
+                        <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->id ?>" >Withdraw</button>
                         <br></td>
                         </tr>
                     <?php } ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="withdrawModalLabel">Withdraw</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="withdrawForm" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="case_id" class="form-control" >
+                    @csrf
+
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Withdraw Comment:</label>
+                        <textarea class="form-control" name="withdraw_comment"  required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Close Request</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -100,22 +126,82 @@ use App\Models\InvoledUser;
  <!-- Datatables init -->
     <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
 
-@endsection
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-<?php if($response=='success'){ ?>
+    <script type="text/javascript">
+        
+     $(document).ready(function(){
 
-@section('footer')
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-<script type="text/javascript">
-    swal("Success", "Form has been submitted", "success").then(function() {
+        <?php if($response=='success'){ ?>
+
+             swal("Success", "Form has been submitted", "success").then(function() {
     window.location ="{{route('user.newrequest')}}"
-});
-</script>
+
+<?php } ?>
+
+        
+
+    //withdraw the case
+
+            $('#withdrawForm').on('submit', function (e) {
+        e.preventDefault();
+        swal({
+            title: "Are you sure?",
+            text: "Withdraw case!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route("user.case.withdraw") }}',
+                    data: $('#withdrawForm').serialize(),
+                    success: function (data) {
+
+
+                        console.log(data);
+                        // alert('form was submitted');
+                        //userTable.ajax.reload();
+
+
+                        swal("withdraw successfully!", {
+                            icon: "success",
+                        });
+                        $('#withdrawModal').modal("hide");
+                    },
+                    error:function(err){
+
+                        console.log(err);
+                    }
+                });
+            } else {
+                swal("Cancle Withdraw Request!");
+            }
+        });
+        return false;
+    });
+
+            $('#withdrawModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var recipient = button.data('id');
+        var modal = $(this)
+        modal.find('.modal-body input[name="case_id"]').val(recipient);
+    });
+
+            });
+    </script>
+
+
 
 @endsection('footer')
 
-<?php } ?>
+
+
+
+
+
 
 
 

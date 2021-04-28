@@ -4,10 +4,14 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\InvoledUser;
-use App\Models\User;
 
 use App\Models\MedCase;
+use App\Models\Mediation_status_log;
+use App\Models\Mediation_case_comment;
+use App\Models\InvoledUser;
+use App\Models\User;
+use App\Models\Mediators_mediation_cases_status;
+
 use Session;
 use Auth;
 
@@ -213,6 +217,54 @@ class MediationController extends Controller
         return $string;
     }
 
+    public function join(Request $request){
+
+
+
+        if($request->post()){
+
+            $r=$request->post();
+
+            $code=$r['joincode'];
+
+            $email=Auth::user()->email;
+
+
+            $InvoledUser=InvoledUser::where(['joincode'=>$code,'userEmail'=>$email])->first();
+
+
+            if(!$InvoledUser){
+
+                return response()->json(['response'=>'Invalid']);
+            }
+
+            $case=MedCase::where(['id'=>$InvoledUser->userPlanId,'confirm_status'=>1])->first();
+
+            if(!$case){
+
+                return response()->json(['response'=>'Invalid']);
+            }
+
+            $InvoledUser->joincode='';
+            $InvoledUser->userid=Auth::user()->id;
+
+            if($InvoledUser->save()){
+
+                return response()->json(['response'=>'success','code'=>201]);
+            }
+
+
+
+
+        } else{
+
+            return response()->json(['response'=>'error','code'=>404]);
+        }
+
+
+
+    }
+
 
     public function newrequest(Request $request){
 
@@ -221,10 +273,20 @@ class MediationController extends Controller
        // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new=MedCase::select('user_involved_in_agreement.*','mediation_case.id as caseid','mediation_case.created_at as date')->where(['mediation_case.userid'=>Auth::user()->id,'mediation_case.confirm_status'=>0])->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')->orderby('mediation_case.id')->get();
+        $new=MedCase::Where(['userid'=>Auth::user()->id,'confirm_status'=>0])->orderby('id')->get();
+
+        $pending=[];
+
+        foreach ($new as $key => $value) {
+            $in=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$value->id])->get();
+            $value->party=$in;
+
+            $pending[]=$value;
+
+        }
 
 
-        return view('user.newrequest',['pending'=>$new,'response'=>Session::get('response')]);
+       return view('user.newrequest',['pending'=>$pending,'response'=>Session::get('response')]);
     }
 
      public function ongoing(){
@@ -234,14 +296,47 @@ class MediationController extends Controller
 
 
         $new=MedCase::select('user_involved_in_agreement.*','mediation_case.id as caseid','mediation_case.created_at as date',DB::raw('concat(users.first_name) as mediator'))
-        ->where(['mediation_case.userid'=>Auth::user()->id,'mediation_case.confirm_status'=>1])
+        ->where(['user_involved_in_agreement.userid'=>Auth::user()->id,'mediation_case.confirm_status'=>1])
         ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
         ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
 
         ->get();
 
-        return view('user.ongoing',['ongoing'=>$new]);
+        $ongoing=[];
+
+        foreach ($new as $key => $value) {
+            $in=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$value->caseid])->get();
+            $value->party=$in;
+
+            $ongoing[]=$value;
+
+        }
+
+        return view('user.ongoing',['ongoing'=>$ongoing]);
+    }
+
+    public function closed(){
+
+        $new=MedCase::select('user_involved_in_agreement.*','mediation_case.id as caseid','mediation_case.created_at as date',DB::raw('concat(users.first_name) as mediator'))
+        ->where(['user_involved_in_agreement.userid'=>Auth::user()->id,'mediation_case.confirm_status'=>2])
+        ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+        ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+
+        ->get();
+
+        $closed=[];
+
+        foreach ($new as $key => $value) {
+            $in=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$value->caseid])->get();
+            $value->party=$in;
+
+            $closed[]=$value;
+
+        }
+
+        return view('user.closed',['closed'=>$closed]);
     }
 
     public function sessions(Request $request) {
@@ -277,6 +372,32 @@ class MediationController extends Controller
 
         
        return view('user.casedetails',compact("case"));
+    }
+
+     public function withdraw(Request $request) {
+
+
+
+        $user = MedCase::find($request->case_id);
+        $user->confirm_status = 2;
+        $user->withdraw = $request->withdraw_comment;
+        $user->save();
+
+        $mediation_status_log = new Mediation_status_log;
+        $mediation_status_log->user_id = Auth::user()->id;
+        $mediation_status_log->mediation_case_id = $request->case_id;
+        $mediation_status_log->status = 2;
+        $mediation_status_log->description = "Request Withdraw";
+        $mediation_status_log->save();
+
+        $mediation_status_log = new Mediation_status_log;
+        $mediation_status_log->user_id = Auth::user()->id;
+        $mediation_status_log->mediation_case_id = $request->case_id;
+        $mediation_status_log->status = 2;
+        $mediation_status_log->description = "Request Colse";
+        $mediation_status_log->save();
+
+        return response()->json(["msg" => "withdraw Case"]);
     }
 }
 
