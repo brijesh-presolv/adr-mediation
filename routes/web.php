@@ -75,6 +75,7 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::post('upload-files', [App\Http\Controllers\Mediator\DashboardController::class, 'storeMultiFile'])->name('mediator.storeMultiFile');
 
     Route::get('case/json/{confirm_status?}', [App\Http\Controllers\Mediator\DashboardController::class, 'json'])->defaults('confirm_status', 0)->name('mediator.case.json');
+    Route::get('case/json-ongoing/{confirm_status?}', [App\Http\Controllers\Mediator\DashboardController::class, 'jsonOngoing'])->defaults('confirm_status', 0)->name('mediator.case.jsonOngoing');
     Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('mediator.case.comment_view');
     Route::post('case/comment-action', [App\Http\Controllers\Admin\CaseController::class, 'commentAction'])->name('mediator.case.comment');
     Route::post('case/add-session', [App\Http\Controllers\Admin\CaseController::class, 'addSession'])->name('mediator.case.addSession');
