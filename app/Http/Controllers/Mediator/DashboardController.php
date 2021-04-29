@@ -133,6 +133,7 @@ class DashboardController extends Controller {
             'session_date' => $request->sessionDate . "/" . $request->sessionTime,
             'note' => $request->note,
             'zoom_id' => $request->zoomId,
+            'session_party_ids' => json_encode($request->session_party_ids),
             'scheduled_by' => Auth::user()->id,
         ];
 
