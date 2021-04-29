@@ -28,20 +28,20 @@ Route::match(['GET', 'POST'], '/verify', [App\Http\Controllers\HomeController::c
 
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('user.dashboard');
-    Route::match(['post','get'],'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
-    Route::match(['post','get'],'newcase', [App\Http\Controllers\User\MediationController::class, 'newcase'])->name('user.newcase');
-    Route::match(['get'],'newrequest', [App\Http\Controllers\User\MediationController::class, 'newrequest'])->name('user.newrequest');
-    Route::match(['get'],'ongoing', [App\Http\Controllers\User\MediationController::class, 'ongoing'])->name('user.ongoing');
-    Route::match(['get'],'closed', [App\Http\Controllers\User\MediationController::class, 'closed'])->name('user.closed');
-    Route::match(['post','get'],'sessions', [App\Http\Controllers\User\MediationController::class, 'sessions'])->name('user.sessions');
-    Route::match(['post','get'],'join', [App\Http\Controllers\User\MediationController::class, 'join'])->name('user.join');
-    
+    Route::match(['post', 'get'], 'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
+    Route::match(['post', 'get'], 'newcase', [App\Http\Controllers\User\MediationController::class, 'newcase'])->name('user.newcase');
+    Route::match(['get'], 'newrequest', [App\Http\Controllers\User\MediationController::class, 'newrequest'])->name('user.newrequest');
+    Route::match(['get'], 'ongoing', [App\Http\Controllers\User\MediationController::class, 'ongoing'])->name('user.ongoing');
+    Route::match(['get'], 'closed', [App\Http\Controllers\User\MediationController::class, 'closed'])->name('user.closed');
+    Route::match(['post', 'get'], 'sessions', [App\Http\Controllers\User\MediationController::class, 'sessions'])->name('user.sessions');
+    Route::match(['post', 'get'], 'join', [App\Http\Controllers\User\MediationController::class, 'join'])->name('user.join');
+
 
 
     Route::get('casedetails/{id}', [App\Http\Controllers\User\MediationController::class, 'casedetails'])->name('user.casedetails');
 
     Route::post('withdraw', [App\Http\Controllers\User\MediationController::class, 'withdraw'])->name('user.case.withdraw');
-    
+
 
 
     //profile
@@ -64,6 +64,8 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('mediator.profile');
+    Route::get('casedetails/{id}', [App\Http\Controllers\Mediator\DashboardController::class, 'casedetails'])->name('mediator.casedetails');
+
 
     Route::post('edit-profile/{id}', [App\Http\Controllers\Mediator\ProfileController::class, 'updateProfile'])->name('mediator.profile.update');
 
@@ -105,6 +107,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 //    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
 //    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
     //case
+    Route::get('casedetails/{id}', [App\Http\Controllers\Admin\CaseController::class, 'casedetails'])->name('admin.case.casedetails');
     Route::get('case/new-request', [App\Http\Controllers\Admin\CaseController::class, 'index'])->name('admin.case.newrequest');
     Route::get('case/ongoing-request', [App\Http\Controllers\Admin\CaseController::class, 'ongoingRequest'])->name('admin.case.ongoingrequest');
     Route::get('case/closed-request', [App\Http\Controllers\Admin\CaseController::class, 'closedRequest'])->name('admin.case.closedrequest');

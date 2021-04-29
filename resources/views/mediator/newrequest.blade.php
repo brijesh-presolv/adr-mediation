@@ -96,7 +96,7 @@ var userTable = $('#request').DataTable({
                 return button;
             }
         },
-        {"data": "status",
+        {"data": "caseId",
             render: function (data, type, row) {
 
                 // if(data==1){

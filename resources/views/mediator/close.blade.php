@@ -30,6 +30,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -237,7 +238,7 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<button type="button" class="btn btn-primary waves-effect  waves-light btn-sm">case details</button> `;
+                    var button = `<a href="{{ url('mediator/casedetails/') }}/`+data+`" class="btn btn-primary waves-effect  waves-light btn-sm">case details</a> `;
                     return button;
                 }
             },

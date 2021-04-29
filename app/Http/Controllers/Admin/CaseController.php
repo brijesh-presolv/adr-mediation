@@ -52,6 +52,19 @@ class CaseController extends Controller {
         return view('admin.case.rjected', compact("confirm_status", "users"));
     }
 
+    public function casedetails($id) {
+        $case = MedCase::select("mediation_case.*", "users.username as mediator", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where('mediation_case.id', '=', $id)
+                ->first();
+
+        $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
+
+
+        return view('admin.case.casedetails', compact("case"));
+    }
+
     public function confirmStatus(Request $request) {
         $user = MedCase::find($request->id);
         $user->confirm_status = 1;
@@ -210,7 +223,7 @@ class CaseController extends Controller {
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded',"id")->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('name', 'isOnboarded', "id")->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }

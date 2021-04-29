@@ -50,12 +50,10 @@ class DashboardController extends Controller {
     public function newjson() {
 
         $loginUser = Auth::user()->id;
-        $newrequestData = DB::table('mediators_mediation_cases_status')
+        $newrequestData = DB::table('mediation_case')
                 // ->select('mediation_case.*')
-                ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
-                ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
-                ->join('user_involved_in_agreement', 'user_involved_in_agreement.id', '=', 'mediation_case.userid')
-                ->where(['users.id' => $loginUser, 'mediators_mediation_cases_status.status' => 0])
+                ->join('mediators_mediation_cases_status', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
+                ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 0])
                 ->get();
         // dd($newrequestData);
         $arraydata = array();
@@ -66,8 +64,7 @@ class DashboardController extends Controller {
                 "id" => $d->id,
                 "party" => InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $d->id])->get(),
                 "comments" => "tesr",
-                "status" => $d->status,
-                "caseId" => $d->mediation_case_id,
+                "caseId" => $d->id,
                 "mediator_id" => $d->mediator_id,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
             ];
@@ -221,11 +218,24 @@ class DashboardController extends Controller {
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded','id')->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('name', 'isOnboarded', 'id')->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }
         return response()->json(["data" => $arraydata]);
+    }
+
+    public function casedetails($id) {
+        $case = MedCase::select("mediation_case.*", "users.username as mediator", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where('mediation_case.id', '=', $id)
+                ->first();
+
+        $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
+
+
+        return view('mediator.casedetails', compact("case"));
     }
 
     public function jsonOngoing($role = 0) {
@@ -233,7 +243,6 @@ class DashboardController extends Controller {
                         ->select("mediation_case.*")
                         ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
                         ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
-                        ->join('user_involved_in_agreement', 'user_involved_in_agreement.id', '=', 'mediation_case.userid')
                         ->where('confirm_status', "=", 1)
                         ->where(['mediator_id' => Auth::user()->id, 'status' => 1])->get();
         $arraydata = array();
@@ -241,7 +250,7 @@ class DashboardController extends Controller {
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded','id')->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('name', 'isOnboarded', 'id')->where(['userPlanid' => $d->id])->get(),
             ];
         }
         return response()->json(["data" => $arraydata]);

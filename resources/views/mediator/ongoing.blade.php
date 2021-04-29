@@ -288,7 +288,7 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<button type="button" class="btn btn-primary waves-effect  waves-light btn-sm">case details</button> `;
+                    var button = `<a href="{{ url('mediator/casedetails/') }}/`+data+`" class="btn btn-primary waves-effect  waves-light btn-sm">case details</a> `;
                     return button;
                 }
             },
@@ -557,7 +557,7 @@ $(function () {
         e.preventDefault();
         $.ajax({
             type: 'post',
-            url: '{{ route("admin.case.addSession") }}',
+            url: '{{ route("mediator.case.addSession") }}',
             data: $('#addSessionForm').serialize(),
             success: function () {
                 // alert('form was submitted');
@@ -575,7 +575,7 @@ $(function () {
         var csrf = document.querySelector('meta[name="csrf-token"]').content;
         $.ajax({
             type: 'post',
-            url: '{{ route("admin.case.getAddedSesion") }}',
+            url: '{{ route("mediator.case.getAddedSesion") }}',
             data: {mediator_id: sheduledBy_Id, caseid: caseid, '_token': csrf},
             success: function (data) {
                 $('#sessRecId tbody').html(data);
