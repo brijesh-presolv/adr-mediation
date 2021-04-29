@@ -30,7 +30,7 @@
                 </li>
                  
                 <li>
-                    <a  href="#"  class="waves-effect waves-light" style="color: #575a65;" >
+                    <a  href="{{route('user.closed')}}"  class="waves-effect waves-light" style="color: #575a65;" >
                         <i class=" far fa-lightbulb"></i>
                         <span  style="color: #000000;"> <b>  Closed  </b></span>
                     </a>

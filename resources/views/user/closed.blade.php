@@ -2,40 +2,19 @@
 use App\Models\InvoledUser;
 ?>
 @extends('user.layouts.app')
-@section('title', 'Ongoing')
+@section('title', 'Closed')
 
 @section('breadcrumb')
       <!-- start page title -->
        <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Ongoing </a></li>
+       <li class="breadcrumb-item"><a href="javascript: void(0);">Closed </a></li>
     <!-- end page title -->
 @endsection
 
 @section('content')
 <div class="row">
     <div class="col-sm-12">
-        <div class="row">
-            <div class="col-md-3">
-
-                <form id="joincode">
-                    <div class="form-group">
-
-                                                <div class="input-group mt-3">
-                                                    @csrf
-                                                    <input type="text" id="joincode" name="joincode" class="form-control" placeholder="Enter the joincode" required>
-                                                    <span class="input-group-append">
-                                                            <button type="submit" class="btn waves-effect waves-light btn-primary">GO</button>
-                                                        </span>
-                                                </div>
-
-                                            </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-12">
         <div class="card-box table-responsive">
-            <h4 class="header-title"><b>Ongoing </b></h4>
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -47,7 +26,7 @@ use App\Models\InvoledUser;
                         <th>Mediator</th>
 
                         <th>Session</th>
-                        <th>Action</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,7 +35,7 @@ use App\Models\InvoledUser;
                     $i=1;
                     $id='';
 
-                    foreach ($ongoing as $key => $value) {
+                    foreach ($closed as $key => $value) {
 
                      ?>
                      <tr>
@@ -75,6 +54,7 @@ use App\Models\InvoledUser;
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
                         <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->caseid)}}">Case details</a></td>
 
+                        
                         <td><?php
 
 
@@ -99,9 +79,7 @@ use App\Models\InvoledUser;
                         ?></td>
                         <td><?=  $value->mediator  ?></td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
-                        <td>
-                        <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->caseid?>">Withdraw</button>
-                        <br></td>
+                        <td>Closed</td>
                         </tr>
                     <?php } ?>
                 </tbody>
@@ -201,10 +179,7 @@ use App\Models\InvoledUser;
 
         $(document).ready(function(){
 
-
           // $('#users').DataTable();
-
-
 
 
 
@@ -233,107 +208,8 @@ use App\Models\InvoledUser;
 
     });
 
-          //join the case
 
-
-          $('#joincode').on('submit',function(e){
-
-        
-                e.preventDefault();
-
-
-                $.ajax({
-
-
-                    type: 'post',
-                    url: '{{ route("user.join") }}',
-                    data: $('#joincode').serialize(),
-                    success: function (res) {
-
-                      
-                        
-
-
-
-
-                        if(res.response=='success'){
-
-                            swal("Joined successfully!", {
-                            icon: "success",
-                        }).then(function(){
-
-                            location.reload();
-                        })
-                        } else if(res.response=='Invalid'){
-
-                            swal("Invalid joincode", {
-                            icon: "error",
-                        });
-                        } else {
-
-                            swal("Please Try Again", {
-                            icon: "error",
-                        });
-                        }
-
-                    },
-                    error:function(err){
-
-                        console.log(err);
-
-                    }
-                });
-
-
-
-          });
-            //withdraw the case
-
-            $('#withdrawForm').on('submit', function (e) {
-        e.preventDefault();
-        swal({
-            title: "Are you sure?",
-            text: "Withdraw case!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then((willDelete) => {
-            if (willDelete) {
-                $.ajax({
-                    type: 'post',
-                    url: '{{ route("user.case.withdraw") }}',
-                    data: $('#withdrawForm').serialize(),
-                    success: function (data) {
-
-
-                        console.log(data);
-                        // alert('form was submitted');
-                        //userTable.ajax.reload();
-
-
-                        swal("withdraw successfully!", {
-                            icon: "success",
-                        });
-                        $('#withdrawModal').modal("hide");
-                    },
-                    error:function(err){
-
-                        console.log(err);
-                    }
-                });
-            } else {
-                swal("Cancle Withdraw Request!");
-            }
-        });
-        return false;
-    });
-
-            $('#withdrawModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var recipient = button.data('id');
-        var modal = $(this)
-        modal.find('.modal-body input[name="case_id"]').val(recipient);
-    });
+           
 
 
 

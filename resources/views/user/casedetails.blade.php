@@ -1,4 +1,4 @@
-@section('title', 'Casedetails M'.sprintf('%06d',$case->id));
+@section('title', 'Casedetails M'.sprintf('%06d',$case->id))
 @extends('user.layouts.app')
 
 
@@ -62,15 +62,25 @@
                 			<td> Issue</td>
                 			<td>{{$case->issue}}</td>
                 		</tr>
-                		<!-- <tr>
-                			<td> Supporting Document</td>
-                			<td>uiou</td>
-                		</tr>
-                		<tr>
-                			<td> Mediator</td>
-                			<td>nklkj</td>
-                			
-                		</tr> -->
+                        <tr>
+                            <td>Supporting Document</td>
+                            <td>
+                                
+                                <?php if($case->documentPath){ ?>
+
+                                    <a href="{{$case->documentPath}}">View</a>
+                                <?php } else {?>
+
+
+                                   Na
+
+                                <?php } ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Mediator</td>
+                            <td>{{$case->mediator}}</td>
+                        </tr>
                 	</table>
                 </div>
             </div>

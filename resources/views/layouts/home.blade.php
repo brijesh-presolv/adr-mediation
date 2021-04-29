@@ -154,12 +154,33 @@ margin-left: -5px;
 		        <a class="nav-link abtbtn" href="about_us">O mediacji<span class="sr-only">(current)</span></a>
 		      </li>
 
-          <?php if(Auth::user()){ ?>
+          <li>
+
+          <?php if(Auth::user() and Auth::user()->role==0){ ?>
               <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="user/dashboard">Dashboard</a>
-          <?php } else{ ?>
+
+          <?php } else if (Auth::user() and Auth::user()->role==1){ ?>
+
+              <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="mediator/dashboard">Dashboard</a>
+
+
+            <?php } else if (Auth::user() and Auth::user()->role==2){ ?>
+
+              <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="admin/dashboard">Dashboard</a>
+
+
+          <?php } else { ?>
 		      			        <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="login">Zaloguj się</a>
                       <?php } ?>
-		       		    </ul>
+		       		    
+            </li>
+            <?php if(Auth::user()){ ?>
+            <li>
+              <a href="logout" class="nav-link btn  loginbtn btn-danger" style="border-radius: 18px;">Logout</a>
+            </li>
+          <?php } ?>
+
+          </ul>
 		  </div>
 	</div>
 </nav>
