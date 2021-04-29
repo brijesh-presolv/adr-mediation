@@ -1,52 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8" />
-    <title>{{ config('app.name', 'Mediation') }}| @yield('title')</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Responsive bootstrap 4 admin template" name="description" />
-    <meta content="Coderthemes" name="author" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="{{url('')}}/assets/images/favicon.ico">
-     <!-- @yield('head') -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- App css -->
-    <link href="{{url('assets/')}}/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
-    <link href="{{url('assets/')}}/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{url('assets/')}}/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+    <head>
+        <meta charset="utf-8" />
+        <title>{{ config('app.name', 'Mediation') }}| @yield('title')</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="Responsive bootstrap 4 admin template" name="description" />
+        <meta content="Coderthemes" name="author" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="{{url('')}}/assets/images/favicon.ico">
+        <!-- @yield('head') -->
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <!-- App css -->
+        <link href="{{url('assets/')}}/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+        <link href="{{url('assets/')}}/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="{{url('assets/')}}/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
 
-    <!-- Dynamic pages css comes -->
-    @yield('head')
-</head>
+        <!-- Dynamic pages css comes -->
+        @yield('head')
+    </head>
 
-<body>
+    <body>
 
-    <!-- Begin page -->
-    <div id="wrapper">
-
-
-        <!-- Topbar Start -->
-        <div class="navbar-custom">
-            <ul class="list-unstyled topnav-menu float-right mb-0">
+        <!-- Begin page -->
+        <div id="wrapper">
 
 
-                <li class="dropdown notification-list">
-                    <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                        <!-- <img src="{{ url('/') }}/assets/images/users/avatar-1.jpg" alt="user-image" class="rounded-circle"> -->
-                        <span class="d-none d-sm-inline-block ml-1"><?= Auth::user()->first_name?></span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
-                        <!-- item-->
-                        <div class="dropdown-header noti-title">
-                            <h6 class="text-overflow m-0">Welcome !</h6>
-                        </div>
+            <!-- Topbar Start -->
+            <div class="navbar-custom">
+                <ul class="list-unstyled topnav-menu float-right mb-0">
 
-                        <!-- item-->
-                        <a href="{{url('mediator/profile')}}" class="dropdown-item notify-item">
-                            <i class="mdi mdi-account-outline"></i>
-                            <span>Profile</span>
+
+                    <li class="dropdown notification-list">
+                        <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                            <!-- <img src="{{ url('/') }}/assets/images/users/avatar-1.jpg" alt="user-image" class="rounded-circle"> -->
+                            <span class="d-none d-sm-inline-block ml-1"><?= Auth::user()->first_name ?></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
                             <!-- item-->
@@ -60,14 +49,9 @@
                                 <span>Profile</span>
                             </a>
 
+
                             <div class="dropdown-divider"></div>
 
-                            <!-- item-->
-                            <!--  <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                 <i class="mdi mdi-logout-variant"></i>
-                                 <span>Logout</span>
-                             </a>
-                            -->
                             <a class="dropdown-item notify-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
                                        document.getElementById('logout-form').submit();">
@@ -78,12 +62,6 @@
                             </form>
 
                         </div>
-                    </li>
-
-                    <li class="dropdown notification-list">
-                        <a href="javascript:void(0);" class="nav-link right-bar-toggle waves-effect">
-                            <i class="mdi mdi-settings-outline mdi-spin"></i>
-                        </a>
                     </li>
 
                 </ul>

@@ -294,9 +294,9 @@ $(function () {
                     var d = "";
                     for (i in data) {
                         if (data[i].isOnboarded == 1) {
-                            d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
+                            d = d + `<span class="text-success party_name" data-id="`+data[i].id+`">` + data[i].name + `</span><br>`;
                         } else {
-                            d = d + `<span class="text-danger">` + data[i].name + `</span>`;
+                            d = d + `<span class="text-danger party_name" data-id="`+data[i].id+`">` + data[i].name + `</span>`;
                         }
                     }
                     return d;
@@ -534,6 +534,8 @@ $(function () {
     });
     $('#addSession-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
+        var data=button.parent().parent().find(".party_name");
+        
         var recipient = button.data('id');
         var mediator = button.data('mediator');
         $('#caseIdF').val(recipient);
