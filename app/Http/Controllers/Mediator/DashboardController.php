@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mediator;
 use Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Mediation_Details;
 use App\Models\MedCase;
 use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
@@ -31,6 +32,47 @@ class DashboardController extends Controller {
      */
     public function index() {
         return view('mediator.dashboard');
+    }
+
+    public function profileUpdate() {
+        return view('mediator.user.profile');
+    }
+
+    public function profileSave(Request $request) {
+        $user = User::find($request->id);
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->mobile_number = $request->mobile_number;
+        $user->email = $request->email;
+        $user->address = $request->address;
+        $user->address1 = $request->address1;
+        $user->pincode = $request->pincode;
+        $user->city = $request->city;
+        $user->state = $request->state;
+        $user->country = $request->country;
+        $user->isDone = 1;
+        $user->save();
+        $isMedi = Mediation_Details::where("user_id", "=", $request->id)->first();
+        if (empty($isMedi)) {
+            $mediation_details = new Mediation_Details();
+        } else {
+            $mediation_details = $isMedi;
+        }
+        $mediation_details->user_id = $request->id;
+        $mediation_details->area_of_specialization = $request->area_of_specialization;
+        $mediation_details->no_of_arbitrations = $request->no_of_arbitrations;
+        $mediation_details->linked_in_profile_link = $request->linked_in_profile_link;
+        $mediation_details->experience = $request->experience;
+        $mediation_details->is_accept1 = $request->is_accept1;
+        $mediation_details->is_accept2 = $request->is_accept2;
+        $mediation_details->is_accept3 = $request->is_accept3;
+        $mediation_details->filed1 = $request->field1;
+        $mediation_details->filed2 = $request->field2;
+        $mediation_details->filed3 = $request->field3;
+        $mediation_details->save();
+        
+        Auth::logout();
+        return redirect('/login')->with('message', 'success|please waiting for approval.');
     }
 
     /**

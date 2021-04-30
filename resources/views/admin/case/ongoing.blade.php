@@ -241,7 +241,7 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm">case details</a> `;
+                    var button = `<a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
                     return button;
                 }
             },
@@ -266,6 +266,8 @@ $(function () {
                         button = button + `<br><span class="badge badge-warning">pending</span>`;
                     } else if (row.case.mediator_status == 1) {
                         button = button + `<br><span class="badge badge-success">Accepted</span>`;
+                    }else {
+                        button = button + `<br><span class="badge badge-danger">Rejected</span>`;
                     }
                     return button;
                 }

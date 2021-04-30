@@ -288,7 +288,7 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<a href="{{ url('mediator/casedetails/') }}/`+data+`" class="btn btn-primary waves-effect  waves-light btn-sm">case details</a> `;
+                    var button = `<a href="{{ url('mediator/casedetails/') }}/`+data+`" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
                     return button;
                 }
             },
@@ -431,7 +431,7 @@ $(function () {
         $("#commentView").html("");
         $.ajax({
             type: 'post',
-            url: '{{ route("admin.case.comment_view") }}',
+            url: '{{ route("mediator.case.comment_view") }}',
             data: {type: type, case_id: id},
             success: function (data) {
                 for (i in data) {
@@ -461,7 +461,7 @@ $(function () {
             if (willDelete) {
                 $.ajax({
                     type: 'post',
-                    url: '{{ route("admin.case.comment") }}',
+                    url: '{{ route("mediator.case.comment") }}',
                     data: $('#commentForm').serialize(),
                     success: function () {
                         $('#commentForm')[0].reset();
@@ -489,7 +489,7 @@ $(function () {
             if (willDelete) {
                 $.ajax({
                     type: 'post',
-                    url: '{{ route("admin.case.withdraw") }}',
+                    url: '{{ route("mediator.case.withdraw") }}',
                     data: $('#withdrawForm').serialize(),
                     success: function () {
                         // alert('form was submitted');
