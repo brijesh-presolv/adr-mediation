@@ -70,7 +70,7 @@ class DashboardController extends Controller {
         $mediation_details->filed2 = $request->field2;
         $mediation_details->filed3 = $request->field3;
         $mediation_details->save();
-        
+
         Auth::logout();
         return redirect('/login')->with('message', 'success|please waiting for approval.');
     }
@@ -191,13 +191,22 @@ class DashboardController extends Controller {
         $sessionData = DB::table('manage_session')->where('scheduled_by', $request->mediator_id)->get();
         $sn = 1;
         foreach ($sessionData as $value) {
-
+            $dataArray = array();
+            if (!is_null($value->session_party_ids)) {
+                $dataArray = json_decode($value->session_party_ids);
+            }
+            $user = array();
+            foreach ($dataArray as $d) {
+                $dd = User::find($request->id);
+                $user[]=$dd->first_name." ".$dd->last_name;
+            }
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
             echo "<td>" . $value->created_at . "</td>";
             echo "<td>" . $value->session_date . "</td>";
             echo "<td>" . $value->zoom_id . "</td>";
             echo "<td>" . $value->note . "</td>";
+            echo "<td>" . implode("<br>", $user) . "</td>";
             echo "</tr>";
 
             $sn++;
@@ -260,7 +269,7 @@ class DashboardController extends Controller {
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded', 'id')->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('name', 'isOnboarded', 'userId')->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }
@@ -292,7 +301,7 @@ class DashboardController extends Controller {
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded', 'id')->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('name', 'isOnboarded', 'userId')->where(['userPlanid' => $d->id])->get(),
             ];
         }
         return response()->json(["data" => $arraydata]);

@@ -135,6 +135,7 @@
                     <th scope="col">Session Time :</th>
                     <th scope="col">Zoom Id :</th>
                     <th scope="col">Note :</th>
+                    <th scope="col">Meeting user</th>
                     </thead>
                     <tbody>
                     </tbody>
@@ -249,10 +250,10 @@ $(function () {
                 render: function (data, type, row) {
                     var d = "";
                     for (i in data) {
-                        if (data[i].isOnboarded == 1) {
-                            d = d + `<span class="text-success party_name" data-id="` + data[i].id + `">` + data[i].name + `</span><br>`;
+                        if (data[i].userId != 0) {
+                            d = d + `<span class="text-success party_name" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
                         } else {
-                            d = d + `<span class="text-danger party_name" data-id="` + data[i].id + `">` + data[i].name + `</span>`;
+                            d = d + `<span class="text-danger" data-id="` + data[i].userId + `">` + data[i].name + `</span>`;
                         }
                     }
                     return d;
