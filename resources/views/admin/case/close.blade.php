@@ -288,8 +288,8 @@ $(function () {
                     var button = "";
                     //console.log(data);
                     if (data == null) {
-                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">view Supporting</button>`;
-                        button = button + ` <a href="{{url('/')}}/` + row.case.document_settelment + `"   class="btn btn-success waves-effect btn-sm">view Settelment</a>`;
+                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
+                        button = button + ` <a href="{{url('storage/app/')}}/` + row.case.document_settelment + `"   class="btn btn-success waves-effect btn-sm" target="_blank">View Settelment</a>`;
                     } else {
                         button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdraw</button>`;
                     }
