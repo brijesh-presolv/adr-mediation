@@ -135,6 +135,7 @@
                     <th scope="col">Session Time :</th>
                     <th scope="col">Zoom Id :</th>
                     <th scope="col">Note :</th>
+                    <th scope="col">Meeting user</th>
                     </thead>
                     <tbody>
                     </tbody>
@@ -179,7 +180,9 @@
 
                     <span>Note :</span>
                     <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
-
+                    <span>Party :</span>
+                    <div id="sessionParty">
+                    </div>
                     <div class="text-center">    
                         <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
                     </div>
@@ -239,7 +242,7 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<button type="button" class="btn btn-primary waves-effect  waves-light btn-sm">case details</button> `;
+                    var button = `<a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
                     return button;
                 }
             },
@@ -247,10 +250,10 @@ $(function () {
                 render: function (data, type, row) {
                     var d = "";
                     for (i in data) {
-                        if (data[i].isOnboarded == 1) {
-                            d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
+                        if (data[i].userId != 0) {
+                            d = d + `<span class="text-success party_name" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
                         } else {
-                            d = d + `<span class="text-danger">` + data[i].name + `</span>`;
+                            d = d + `<span class="text-danger" data-id="` + data[i].userId + `">` + data[i].name + `</span>`;
                         }
                     }
                     return d;
@@ -264,6 +267,8 @@ $(function () {
                         button = button + `<br><span class="badge badge-warning">pending</span>`;
                     } else if (row.case.mediator_status == 1) {
                         button = button + `<br><span class="badge badge-success">Accepted</span>`;
+                    }else {
+                        button = button + `<br><span class="badge badge-danger">Rejected</span>`;
                     }
                     return button;
                 }
@@ -441,6 +446,17 @@ $(function () {
     });
     $('#addSession-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
+        var data = button.parent().parent().find(".party_name");
+        $("#sessionParty").html("");
+        data.each(function () {
+            var party_id = $(this).data("id")
+            var party_name = $(this).text()
+            var text = `<div class="form-group form-check">
+                <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `">
+                <label class="form-check-label" for="party` + party_id + `">` + party_name + `</label>
+              </div>`;
+            $("#sessionParty").append(text);
+        });
         var recipient = button.data('id');
         var mediator = button.data('mediator');
         $('#caseIdF').val(recipient);

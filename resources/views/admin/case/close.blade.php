@@ -101,6 +101,7 @@
                     <th scope="col">Session Time :</th>
                     <th scope="col">Zoom Id :</th>
                     <th scope="col">Note :</th>
+                    <th scope="col">Meeting user</th>
                     </thead>
                     <tbody>
                     </tbody>
@@ -205,7 +206,7 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<button type="button" class="btn btn-primary waves-effect  waves-light btn-sm">case details</button> `;
+                    var button = `<a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
                     return button;
                 }
             },

@@ -100,7 +100,7 @@ var userTable = $('#users').DataTable({
         {"data": "date"},
         {"data": "case.id",
             render: function (data) {
-                var button = `<button type="button" class="btn btn-primary waves-effect  waves-light">case details</button> `;
+                var button = `<a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
                 return button;
             }
         },

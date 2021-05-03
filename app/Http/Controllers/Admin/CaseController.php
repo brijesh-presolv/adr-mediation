@@ -52,6 +52,19 @@ class CaseController extends Controller {
         return view('admin.case.rjected', compact("confirm_status", "users"));
     }
 
+    public function casedetails($id) {
+        $case = MedCase::select("mediation_case.*", "users.username as mediator", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where('mediation_case.id', '=', $id)
+                ->first();
+
+        $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
+
+
+        return view('admin.case.casedetails', compact("case"));
+    }
+
     public function confirmStatus(Request $request) {
         $user = MedCase::find($request->id);
         $user->confirm_status = 1;
@@ -171,6 +184,7 @@ class CaseController extends Controller {
             'session_date' => $request->sessionDate . "/" . $request->sessionTime,
             'note' => $request->note,
             'zoom_id' => $request->zoomId,
+            'session_party_ids' => json_encode($request->session_party_ids),
             'scheduled_by' => Auth::user()->id,
         ];
 
@@ -184,6 +198,15 @@ class CaseController extends Controller {
 
         $sessionData = DB::table('manage_session')->where('case_id', $request->caseid)->get();
         $sn = 1;
+        $dataArray = array();
+        if (!is_null($value->session_party_ids)) {
+            $dataArray = json_decode($value->session_party_ids);
+        }
+        $user = array();
+        foreach ($dataArray as $d) {
+            $dd = User::find($request->id);
+            $user[] = $dd->first_name . " " . $dd->last_name;
+        }
         foreach ($sessionData as $value) {
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
@@ -191,6 +214,7 @@ class CaseController extends Controller {
             echo "<td>" . $value->session_date . "</td>";
             echo "<td>" . $value->zoom_id . "</td>";
             echo "<td>" . $value->note . "</td>";
+            echo "<td>" . implode("<br>", $user) . "</td>";
             echo "</tr>";
 
             $sn++;
@@ -209,7 +233,7 @@ class CaseController extends Controller {
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }

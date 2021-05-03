@@ -175,6 +175,7 @@
                     <th scope="col">Session Time :</th>
                     <th scope="col">Zoom Id :</th>
                     <th scope="col">Note :</th>
+                    <th scope="col">Meeting user</th>
                     </thead>
                     <tbody>
                     </tbody>
@@ -219,7 +220,10 @@
 
                     <span>Note :</span>
                     <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
+                     <span>Party :</span>
+                    <div id="sessionParty">
 
+                    </div>
                     <div class="text-center">    
                         <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
                     </div>
@@ -285,7 +289,7 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<button type="button" class="btn btn-primary waves-effect  waves-light btn-sm">case details</button> `;
+                    var button = `<a href="{{ url('mediator/casedetails/') }}/`+data+`" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
                     return button;
                 }
             },
@@ -293,10 +297,10 @@ $(function () {
                 render: function (data, type, row) {
                     var d = "";
                     for (i in data) {
-                        if (data[i].isOnboarded == 1) {
-                            d = d + `<span class="text-success party_name" data-id="`+data[i].id+`">` + data[i].name + `</span><br>`;
+                        if (data[i].userId != 0) {
+                            d = d + `<span class="text-success party_name" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
                         } else {
-                            d = d + `<span class="text-danger party_name" data-id="`+data[i].id+`">` + data[i].name + `</span>`;
+                            d = d + `<span class="text-danger" data-id="` + data[i].userId + `">` + data[i].name + `</span>`;
                         }
                     }
                     return d;
@@ -376,7 +380,7 @@ $(function () {
             dataType: 'json',
             success: (data) => {
                 //this.reset();
-                 swal("Files has been uploaded!", {
+                swal("Files has been uploaded!", {
                     icon: "success",
                 });
                 $("#uploadSupportingDocsModal").modal("hide");
@@ -428,7 +432,7 @@ $(function () {
         $("#commentView").html("");
         $.ajax({
             type: 'post',
-            url: '{{ route("admin.case.comment_view") }}',
+            url: '{{ route("mediator.case.comment_view") }}',
             data: {type: type, case_id: id},
             success: function (data) {
                 for (i in data) {
@@ -458,7 +462,7 @@ $(function () {
             if (willDelete) {
                 $.ajax({
                     type: 'post',
-                    url: '{{ route("admin.case.comment") }}',
+                    url: '{{ route("mediator.case.comment") }}',
                     data: $('#commentForm').serialize(),
                     success: function () {
                         $('#commentForm')[0].reset();
@@ -486,7 +490,7 @@ $(function () {
             if (willDelete) {
                 $.ajax({
                     type: 'post',
-                    url: '{{ route("admin.case.withdraw") }}',
+                    url: '{{ route("mediator.case.withdraw") }}',
                     data: $('#withdrawForm').serialize(),
                     success: function () {
                         // alert('form was submitted');
@@ -534,8 +538,17 @@ $(function () {
     });
     $('#addSession-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
-        var data=button.parent().parent().find(".party_name");
-        
+        var data = button.parent().parent().find(".party_name");
+        $("#sessionParty").html("");
+        data.each(function () {
+            var party_id = $(this).data("id")
+            var party_name = $(this).text()
+            var text = `<div class="form-group form-check">
+                <input type="checkbox" value="`+party_id+`" class="form-check-input" name="session_party_ids[]" id="party`+party_id+`">
+                <label class="form-check-label" for="party`+party_id+`">`+party_name+`</label>
+              </div>`;
+            $("#sessionParty").append(text);
+        });
         var recipient = button.data('id');
         var mediator = button.data('mediator');
         $('#caseIdF').val(recipient);
@@ -545,7 +558,7 @@ $(function () {
         e.preventDefault();
         $.ajax({
             type: 'post',
-            url: '{{ route("admin.case.addSession") }}',
+            url: '{{ route("mediator.case.addSession") }}',
             data: $('#addSessionForm').serialize(),
             success: function () {
                 // alert('form was submitted');
@@ -563,7 +576,7 @@ $(function () {
         var csrf = document.querySelector('meta[name="csrf-token"]').content;
         $.ajax({
             type: 'post',
-            url: '{{ route("admin.case.getAddedSesion") }}',
+            url: '{{ route("mediator.case.getAddedSesion") }}',
             data: {mediator_id: sheduledBy_Id, caseid: caseid, '_token': csrf},
             success: function (data) {
                 $('#sessRecId tbody').html(data);
