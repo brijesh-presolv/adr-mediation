@@ -22,8 +22,10 @@ use App\Models\InvoledUser;
                         <th>Sr. No</th>
                         <th>Case Id</th>
                         <th>Date</th>
+                        <th>Case Details</th>
                         <th>Party Details</th>
                         <th>Action</th>
+                        <td>Status</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,6 +52,8 @@ use App\Models\InvoledUser;
                         <td>{{$i++}}</td>
                         <td><?= 'M'.sprintf('%06d',$value->id) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->created_at))?></td>
+
+                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->id)}}">View</a></td>
 
                         <td>
   
@@ -79,6 +83,7 @@ use App\Models\InvoledUser;
                         <td>
                         <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->id ?>" >Withdraw</button>
                         <br></td>
+                        <td>Pending</td>
                         </tr>
                     <?php } ?>
                 </tbody>
