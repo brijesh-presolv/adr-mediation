@@ -197,7 +197,7 @@ class DashboardController extends Controller {
             }
             $user = array();
             foreach ($dataArray as $d) {
-                $dd = User::find($request->id);
+                $dd = User::find($d);
                 $user[] = $dd->first_name . " " . $dd->last_name;
             }
             echo "<tr>";
