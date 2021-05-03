@@ -198,7 +198,7 @@ class DashboardController extends Controller {
             $user = array();
             foreach ($dataArray as $d) {
                 $dd = User::find($request->id);
-                $user[]=$dd->first_name." ".$dd->last_name;
+                $user[] = $dd->first_name . " " . $dd->last_name;
             }
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
@@ -359,13 +359,12 @@ class DashboardController extends Controller {
         if ($request->TotalFiles > 0) {
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
-
                 if ($request->hasFile('Settelmentfiles' . $x)) {
                     $file = $request->file('Settelmentfiles' . $x);
                     $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                     $insert[$x]['file_name'] = $path;
                     MedCase::where('id', $request->caseId)
-                            ->update(['documentPath' => $path, "confirm_status" => 2]);
+                            ->update(['document_settelment' => $path, "confirm_status" => 2]);
                 }
             }
             $mediation_status_log = new Mediation_status_log;
