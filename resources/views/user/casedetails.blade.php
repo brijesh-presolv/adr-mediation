@@ -63,7 +63,7 @@
                 			<td>{{$case->issue}}</td>
                 		</tr>
                         <tr>
-                            <td>Supporting Document</td>
+                            <td>Supporting Document (User)</td>
                             <td>
                                 
                                 <?php if($case->documentPath){ 
@@ -80,11 +80,30 @@
                                 <?php } ?>
                             </td>
                         </tr>
+
                         <tr>
                             <td>Mediator</td>
                             <td>{{$case->mfirstname}}  {{$case->mlastname}}</td>
                         </tr>
                 	</table>
+                    <?php if(count($case->supporting_document)>0) {?>
+                    <table class="table table-bordered">
+                        <tr >
+                            <th colspan="2">Supporting documents</th>
+                        </tr>
+                        
+                            <tr>
+                            <?php foreach ($case->supporting_document as $k => $v) { ?>
+
+                            <td><?= $v->file_name?></td>
+                            <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">view</a></td>
+                        </tr>
+                        <?php } ?>
+
+                    
+                    </table>
+                    <?php } ?>
+                    
                 </div>
             </div>
         </section>

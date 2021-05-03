@@ -8,6 +8,7 @@ use App\Models\MedCase;
 use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
 use App\Models\InvoledUser;
+use App\Models\SupportingDocument;
 use App\Models\User;
 use App\Models\Mediators_mediation_cases_status;
 use Session;
@@ -342,6 +343,7 @@ class MediationController extends Controller {
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
 
+        $case->supporting_document=SupportingDocument::where(['case_id' => $case->id])->get();
 
         return view('user.casedetails', compact("case"));
     }
