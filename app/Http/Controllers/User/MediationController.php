@@ -182,6 +182,8 @@ class MediationController extends Controller {
 
             if ($med->save()) {
 
+                $request->session()->forget('newcase');
+
                 return redirect()->route('user.invoke', 'id=' . $med->id);
             }
         }

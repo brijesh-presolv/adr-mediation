@@ -26,6 +26,8 @@ use App\Models\InvoledUser;
                         <th>Mediator</th>
 
                         <th>Session</th>
+                        <th>Settelment Agreement</th>
+
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -79,6 +81,7 @@ use App\Models\InvoledUser;
                         ?></td>
                         <td><?=  $value->mediator  ?></td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
+                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->caseid)}}">View</a></td>
                         <td>Closed</td>
                         </tr>
                     <?php } ?>
