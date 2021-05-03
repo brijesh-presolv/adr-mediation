@@ -73,16 +73,18 @@ use App\Models\InvoledUser;
                         <td>{{$i++}}</td>
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
-                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->caseid)}}">Case details</a></td>
+                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->caseid)}}">View</a></td>
 
                         <td><?php
 
+                        if(!isset($value->party)){ ?>
 
-                        if(count($value->party)==0){ ?>
-
-                            <a href="invoke?id=<?= $value->caseid ?>" class="btn btn-sm btn-danger">Pending</a>
+                            <a href="invoke?id=<?= $value->id ?>" class="btn btn-sm btn-danger">Pending</a>
 
                         <?php } 
+
+
+                        if(isset($value->party)){
 
                         foreach ($value->party as $key => $v) {
 
@@ -93,6 +95,7 @@ use App\Models\InvoledUser;
                             }
                             
                         }
+                    }
 
 
 

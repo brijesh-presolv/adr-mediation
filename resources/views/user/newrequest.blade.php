@@ -50,11 +50,14 @@ use App\Models\InvoledUser;
 
                         <td><?php
 
-                        if(count($value->party)==0){ ?>
+                        if(!isset($value->party)){ ?>
 
                             <a href="invoke?id=<?= $value->id ?>" class="btn btn-sm btn-danger">Pending</a>
 
                         <?php } 
+
+
+                        if(isset($value->party)){
 
                         foreach ($value->party as $key => $v) {
 
@@ -65,6 +68,7 @@ use App\Models\InvoledUser;
                             }
                             
                         }
+                    }
 
 
 

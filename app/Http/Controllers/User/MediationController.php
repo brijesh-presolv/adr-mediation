@@ -362,11 +362,12 @@ class MediationController extends Controller
 
 
 
-        $case= MedCase::select("mediation_case.*", "users.username as mediator", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+        $case= MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname","mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where('mediation_case.id','=',$id)
                 ->first();
+                
 
         $case->party=InvoledUser::where(['userPlanid' => $case->id])->get();
 
