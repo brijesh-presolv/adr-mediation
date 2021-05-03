@@ -292,7 +292,7 @@ class MediationController extends Controller {
 
     public function closed() {
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'))
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'),'mediation_case.document_settelment')
                 ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -305,6 +305,8 @@ class MediationController extends Controller {
             $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
             $value->party = $in;
 
+            $value->casestatus=Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
+
             $closed[] = $value;
         }
 
@@ -316,13 +318,24 @@ class MediationController extends Controller {
 
         $sessionData = DB::table('manage_session')->where('case_id', $request->caseid)->get();
         $sn = 1;
+        $dataArray = array();
+
         foreach ($sessionData as $value) {
+            if (!is_null($value->session_party_ids)) {
+                $dataArray = json_decode($value->session_party_ids);
+            }
+            $user = array();
+            foreach ($dataArray as $d) {
+                $dd = User::find($d);
+                $user[] = $dd->first_name . " " . $dd->last_name;
+            }
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
             echo "<td>" . $value->created_at . "</td>";
             echo "<td>" . $value->session_date . "</td>";
             echo "<td>" . $value->zoom_id . "</td>";
             echo "<td>" . $value->note . "</td>";
+            echo "<td>" . implode("<br>", $user) . "</td>";
             echo "</tr>";
 
             $sn++;

@@ -60,12 +60,7 @@ use App\Models\InvoledUser;
                         <td><?php
 
 
-                        if(count($value->party)==0){ ?>
-
-                            <a href="invoke?id=<?= $value->caseid ?>" class="btn btn-sm btn-danger">Pending</a>
-
-                        <?php } 
-
+    
                         foreach ($value->party as $key => $v) {
 
                             if($v->isOnboarded==1){
@@ -81,8 +76,24 @@ use App\Models\InvoledUser;
                         ?></td>
                         <td><?=  $value->mediator  ?></td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
-                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->caseid)}}">View</a></td>
-                        <td>Closed</td>
+                        <td>
+
+                            <?php 
+
+
+                            if ($value->document_settelment!=''){?>
+                            <a class="btn   btn-sm btn-primary label label-success" href="{{url('storage/app/'.$value->document_settelment)}}" target="_blank">View</a>
+                        <?php }  else { echo "NA";} ?>
+
+                        </td>
+                        <td>
+                           <?php if ($value->document_settelment!=''){
+                            ?>
+                            <span class="badge badge-success ">Closed at {{$value->casestatus->created}}</span>
+                        <?php } else { ?>
+                            <span class="badge badge-danger ">Withdrawn at {{$value->casestatus->created}}</span>
+                        <?php } ?>
+                        </td>
                         </tr>
                     <?php } ?>
                 </tbody>
@@ -111,7 +122,7 @@ use App\Models\InvoledUser;
                     <th scope="col">Session Time :</th>
                     <th scope="col">Zoom Id :</th>
                     <th scope="col">Note :</th>
-                    <th scope="col">Meeting user</th>
+                    <th scope="col">Party</th>
                     </thead>
                     <tbody>
                     </tbody>
