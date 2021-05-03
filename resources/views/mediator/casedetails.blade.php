@@ -1,5 +1,5 @@
 @section('title', 'Casedetails M'.sprintf('%06d',$case->id))
-@extends('user.layouts.app')
+@extends('mediator.layouts.app')
 
 
 @section('breadcrumb')
@@ -64,7 +64,7 @@
                 		</tr>
                         <tr>
                             <td>Supporting Document</td>
-                            <td>
+                             <td>
                                 
                                 <?php if($case->documentPath){ 
 
@@ -82,7 +82,7 @@
                         </tr>
                         <tr>
                             <td>Mediator</td>
-                            <td>{{$case->mfirstname}}  {{$case->mlastname}}</td>
+                            <td>{{$case->mediator}}</td>
                         </tr>
                 	</table>
                 </div>

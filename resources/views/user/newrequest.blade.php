@@ -32,7 +32,10 @@ use App\Models\InvoledUser;
                     $i=1;
                     $id='';
 
-                    foreach ($pending as $key => $value) { ?>
+                    foreach ($pending as $key => $value) {
+
+
+                     ?>
                      <tr>
 
                         <?php 
@@ -48,16 +51,11 @@ use App\Models\InvoledUser;
                         <td><?= 'M'.sprintf('%06d',$value->id) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->created_at))?></td>
 
-                        <td><?php
+                        <td>
+  
+                            <?php
 
-                        if(!isset($value->party)){ ?>
-
-                            <a href="invoke?id=<?= $value->id ?>" class="btn btn-sm btn-danger">Pending</a>
-
-                        <?php } 
-
-
-                        if(isset($value->party)){
+                        if(isset($value->party) and count($value->party)>0){
 
                         foreach ($value->party as $key => $v) {
 
@@ -68,11 +66,16 @@ use App\Models\InvoledUser;
                             }
                             
                         }
-                    }
+                    } else { ?>
+
+
+                        <a href="invoke?id=<?= $value->id ?>" class="btn btn-sm btn-danger">Pending</a>
+
+                    <?php } ?>
 
 
 
-                        ?></td>
+                        </td>
                         <td>
                         <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->id ?>" >Withdraw</button>
                         <br></td>
