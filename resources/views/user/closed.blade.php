@@ -108,6 +108,7 @@ use App\Models\InvoledUser;
                     <th scope="col">Session Time :</th>
                     <th scope="col">Zoom Id :</th>
                     <th scope="col">Note :</th>
+                    <th scope="col">Meeting user</th>
                     </thead>
                     <tbody>
                     </tbody>
