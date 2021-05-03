@@ -79,7 +79,7 @@
                         </tr>
                         <tr>
                             <td>Mediator</td>
-                            <td>{{$case->mediator}}</td>
+                            <td>{{$case->mfirstname}}  {{$case->mlastname}}</td>
                         </tr>
                 	</table>
                 </div>

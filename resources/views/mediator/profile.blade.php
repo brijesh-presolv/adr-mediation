@@ -17,7 +17,12 @@
                  @if(Session::has('key'))
                     <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('key') }}</p>
                 @endif
-                  
+                    <div class="avatar-xl member-thumb mb-3 mx-auto d-block">
+                        <img src="assets/upload/profileImg/" class="rounded-circle img-thumbnail" alt="profile-image" onerror="this.onerror=null; this.src='assets/upload/profileImg/DefaultProfile.jpg'" >
+                        <i class="mdi mdi-star-circle member-star text-success" title="verified user"></i>
+                    </div>
+                        <h5 class="font-18">{{ ucfirst($profileData->username) }}</h5>
+                        <p class="text-muted mb-2">Org name : {{ ucfirst($profileData->organization) }}</p>
                         <div class="table-responsive">
                             <table class="table table-bordered m-0">
 
