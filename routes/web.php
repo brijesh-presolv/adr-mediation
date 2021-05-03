@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 Route::get('/clear-cache', function() {
     Artisan::call('cache:clear');
+    Artisan::call('config:clear');
     return "Cache is cleared";
 });
 Route::get('/admin/login', function() {
@@ -123,4 +124,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('case/get-add-session', [App\Http\Controllers\Admin\CaseController::class, 'getAddedSesion'])->name('admin.case.getAddedSesion');
     Route::post('case/comment-action', [App\Http\Controllers\Admin\CaseController::class, 'commentAction'])->name('admin.case.comment');
     Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('admin.case.comment_view');
+    Route::post('view-supporting', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
+    
 });

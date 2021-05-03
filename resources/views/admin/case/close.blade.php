@@ -1,10 +1,10 @@
 @extends('admin.layouts.app')
-@section('title',"Ongoing Request")
+@section('title',"Close Request")
 
 @section('breadcrumb')
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">Ongoing Request</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">Close Request</a></li>
 <!-- end page title -->
 @endsection
 
@@ -155,6 +155,39 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="uploadSupportingDocsModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-white">Upload Supporting Documnet's</h4>
+                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered" id="supportingDocumnet"> 
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>file</th>
+                            <th>Upload By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                    <span>Close</span>
+                </button> 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 @endsection
 
 <!-- Table datatable css -->
@@ -253,10 +286,12 @@ $(function () {
             {"data": "case.withdraw",
                 render: function (data, type, row) {
                     var button = "";
-                    if (data != null) {
-                        button = button + `<button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">N/A</button>`;
+                    //console.log(data);
+                    if (data == null) {
+                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">view Supporting</button>`;
+                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#settelmentModal" class="btn btn-success waves-effect btn-sm">view Settelment</button>`;
                     } else {
-                        button = button + `<button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdraw</button>`;
+                        button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdraw</button>`;
                     }
                     return button;
                 }
@@ -280,6 +315,21 @@ $(function () {
                 }
             },
         ],
+    });
+    $('#uploadSupportingDocsModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var recipient = button.data('id');
+        $.ajax({
+            type: 'post',
+            url: '{{ route("admin.case.viewSupporting") }}',
+            data: {id: recipient},
+            success: function (data) {
+                $("#supportingDocumnet tbody").html('');
+                $("#supportingDocumnet tbody").append(data);
+                //$("#supportingDocumnet").datatable();
+            }
+        });
+        $('#caseIdF1').val(recipient);
     });
     $('#commentModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);

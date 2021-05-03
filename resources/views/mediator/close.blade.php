@@ -1,10 +1,10 @@
 @extends('mediator.layouts.app')
-@section('title',"Ongoing Request")
+@section('title',"Close Request")
 
 @section('breadcrumb')
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">Ongoing Request</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">Close Request</a></li>
 <!-- end page title -->
 @endsection
 
@@ -274,7 +274,7 @@ $(function () {
             {"data": "case.withdraw",
                 render: function (data, type, row) {
                     var button = "";
-                    console.log(data);
+                    //console.log(data);
                     if (data == null) {
                         button = button + ` <button value="` + row.case.id + `"  data-id="` +row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">view Supporting</button>`;
                         button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#settelmentModal" class="btn btn-success waves-effect btn-sm">view Settelment</button>`;
