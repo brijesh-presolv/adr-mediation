@@ -100,6 +100,10 @@ class MediationController extends Controller {
             $inv->userPhone = $usr->mobile_number;
             $inv->name = $usr->first_name . ' ' . $usr->last_name;
             $inv->address1 = $usr->address;
+
+            if($usr->address1==''){
+                $usr->address1='null';
+            }
             $inv->address2 = $usr->address1;
             $inv->city = $usr->city;
             $inv->pincode = $usr->pincode;
@@ -134,6 +138,10 @@ class MediationController extends Controller {
                 $inv->name = $r['name'][$i];
                 $inv->joinCode = $this->joinCode();
                 $inv->address1 = $r['add1'][$i];
+
+                if($r['add2'][$i]==''){
+                    $r['add2'][$i]='null';
+                }
                 $inv->address2 = $r['add2'][$i];
                 $inv->city = $r['city'][$i];
                 $inv->pincode = $r['pincode'][$i];
@@ -234,7 +242,8 @@ class MediationController extends Controller {
                 return response()->json(['response' => 'Invalid']);
             }
 
-            $InvoledUser->joincode = '';
+            $InvoledUser->joincode = null;
+            $InvoledUser->isOnboarded='1';
             $InvoledUser->userid = Auth::user()->id;
 
             if ($InvoledUser->save()) {
@@ -246,6 +255,7 @@ class MediationController extends Controller {
             return response()->json(['response' => 'error', 'code' => 404]);
         }
     }
+
 
     public function newrequest(Request $request) {
 
