@@ -395,7 +395,7 @@ class MediationController extends Controller {
         $mediation_status_log->user_id = Auth::user()->id;
         $mediation_status_log->mediation_case_id = $request->case_id;
         $mediation_status_log->status = 2;
-        $mediation_status_log->description = "Request Colse";
+        $mediation_status_log->description = "Request Closed";
         $mediation_status_log->save();
 
         return response()->json(["msg" => "withdraw Case"]);
