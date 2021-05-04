@@ -13,7 +13,7 @@ class CreateMediationCaseTable extends Migration
 		$table->id();
 		$table->integer('userid')->length(11)->unsigned();
 		$table->string('name',1000);
-		$table->string('companyName',500)->nullable()->default('NULL');
+		$table->string('companyName',500)->nullable()->default(NULL);
 		$table->string('email',110);
 		$table->bigInteger('phone')->length(20);
 		$table->bigInteger('altphone')->length(20)->nullable()->nullable();
@@ -21,7 +21,7 @@ class CreateMediationCaseTable extends Migration
 		$table->integer('noOfParties')->length(2);
 		$table->string('amount',100);
 		$table->string('issue',1000);
-		$table->string('documentPath',500)->nullable()->default('NULL');
+		$table->string('documentPath',500)->nullable()->default(NULL);
 		$table->integer('confirm_status')->length(11)->unsigned();
 		$table->timestamp('created_at');
 		$table->timestamp('updated_at')->nullable();;

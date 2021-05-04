@@ -14,8 +14,8 @@ class UpdateUserTable extends Migration
     public function up()
     {
        Schema::table('users', function(Blueprint $table) {
-            $table->string('emailotp',11)->nullable()->default('NULL');
-            $table->string('smsotp',11)->nullable()->default('NULL');
+            $table->string('emailotp',11)->nullable()->default(NULL);
+            $table->string('smsotp',11)->nullable()->default(NULL);
         });
     }
 
@@ -28,8 +28,8 @@ class UpdateUserTable extends Migration
     {
 
         Schema::table('users', function(Blueprint $table) {
-             $table->string('emailotp',11)->nullable()->default('NULL');
-            $table->string('smsotp',11)->nullable()->default('NULL');
+             $table->string('emailotp',11)->nullable()->default(NULL);
+            $table->string('smsotp',11)->nullable()->default(NULL);
         });
     }
 }

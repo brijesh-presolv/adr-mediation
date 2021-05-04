@@ -14,13 +14,13 @@ class UserTableUpdate extends Migration
     public function up()
     {
         Schema::table('users', function(Blueprint $table) {
-			$table->string('country_code',10)->nullable()->default('NULL');
-			$table->string('address',255)->nullable()->default('NULL');
-			$table->string('address1',255)->nullable()->default('NULL');
-			$table->string('pincode',15)->nullable()->default('NULL');
-			$table->string('city',255)->nullable()->default('NULL');
-			$table->string('state',255)->nullable()->default('NULL');
-			$table->string('country',255)->nullable()->default('NULL');
+			$table->string('country_code',10)->nullable()->default(NULL);
+			$table->string('address',255)->nullable()->default(NULL);
+			$table->string('address1',255)->nullable()->default(NULL);
+			$table->string('pincode',15)->nullable()->default(NULL);
+			$table->string('city',255)->nullable()->default(NULL);
+			$table->string('state',255)->nullable()->default(NULL);
+			$table->string('country',255)->nullable()->default(NULL);
 		});
     }
 

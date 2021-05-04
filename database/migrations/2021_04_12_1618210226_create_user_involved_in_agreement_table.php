@@ -15,8 +15,8 @@ class CreateUserInvolvedInAgreementTable extends Migration
 		$table->string('userEmail',500);
 		$table->bigInteger('userPhone')->lenght(10)->unsigned();
 		$table->integer('userPlanId')->lenght(10)->unsigned()->default(0);
-		$table->string('joinCode',100)->nullable()->default('NULL');
-		$table->string('username',110)->nullable()->default('NULL');
+		$table->string('joinCode',100)->nullable()->default(NULL);
+		$table->string('username',110)->nullable()->default(NULL);
 		$table->text('address1');
 		$table->text('address2');
 		$table->string('city',100);

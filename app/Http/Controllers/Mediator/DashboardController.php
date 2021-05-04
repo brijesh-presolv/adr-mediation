@@ -93,7 +93,7 @@ class DashboardController extends Controller {
 
         $loginUser = Auth::user()->id;
         $newrequestData = DB::table('mediation_case')
-                // ->select('mediation_case.*')
+                //->select('mediation_case.*')
                 ->join('mediators_mediation_cases_status', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
                 ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 0])
                 ->get();
@@ -103,10 +103,10 @@ class DashboardController extends Controller {
 
         foreach ($newrequestData as $d) {
             $arraydata[] = [
-                "id" => $d->id,
-                "party" => InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $d->id])->get(),
+                "id" => $d->mediation_case_id,
+                "party" => InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $d->mediation_case_id])->get(),
                 "comments" => "tesr",
-                "caseId" => $d->id,
+                "caseId" => $d->mediation_case_id,
                 "mediator_id" => $d->mediator_id,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
             ];
