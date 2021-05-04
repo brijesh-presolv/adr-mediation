@@ -48,6 +48,7 @@ use App\Models\InvoledUser;
 
                         <th>Session</th>
                         <th>Action</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -102,9 +103,17 @@ use App\Models\InvoledUser;
                         ?></td>
                         <td><?=  $value->mediator  ?></td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
+
+
                         <td>
+                             <?php if($value->userid==Auth::user()->id){ ?>
                         <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->caseid?>">Withdraw</button>
-                        <br></td>
+                        <br>
+                    <?php } ?>
+                    </td>
+
+
+                        <td><span class="badge badge-success ">Ongoing</span></td>
                         </tr>
                     <?php } ?>
                 </tbody>

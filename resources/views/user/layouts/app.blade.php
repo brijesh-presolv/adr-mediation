@@ -38,11 +38,6 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
 
-                        <!-- item-->
-                        <a href="#" class="dropdown-item notify-item">
-                            <i class="mdi mdi-account-outline"></i>
-                            <span>Profile</span>
-                        </a>
 
                         <div class="dropdown-divider"></div>
 
@@ -150,9 +145,9 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-    <a href="javascript:void(0);" class="right-bar-toggle demos-show-btn">
+    <!-- <a href="javascript:void(0);" class="right-bar-toggle demos-show-btn">
         <i class="mdi mdi-settings-outline mdi-spin"></i> &nbsp;Choose Demos
-    </a>
+    </a> -->
 
     <!-- Vendor js -->
     <script src="{{url('assets/')}}/js/vendor.min.js"></script>

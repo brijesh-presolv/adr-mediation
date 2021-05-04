@@ -95,7 +95,8 @@
                             <tr>
                             <?php foreach ($case->supporting_document as $k => $v) { ?>
 
-                            <td><?= $v->file_name?></td>
+                            <td><?= basename($v->file_name)?></td>
+                            
                             <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">view</a></td>
                         </tr>
                         <?php } ?>

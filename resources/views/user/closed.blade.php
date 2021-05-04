@@ -83,7 +83,11 @@ use App\Models\InvoledUser;
 
                             if ($value->document_settelment!=''){?>
                             <a class="btn   btn-sm btn-primary label label-success" href="{{url('storage/app/'.$value->document_settelment)}}" target="_blank">View</a>
-                        <?php }  else { echo "NA";} ?>
+                        <?php }  else { ?>
+
+
+                            <button value="Comment" data-withdraw="{{$value->withdraw}}" data-toggle="modal" data-target="#withdrawModal" class="btn btn-success waves-effect btn-sm">Withdrawn</button>
+                       <?php } ?>
 
                         </td>
                         <td>
@@ -145,29 +149,22 @@ use App\Models\InvoledUser;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">Withdraw</h5>
+                <h5 class="modal-title" id="withdrawModalLabel">Withdrawn Reason</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="withdrawForm" method="post">
                 <div class="modal-body">
-                    <input type="hidden" name="case_id" class="form-control" >
-                    @csrf
-
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Withdraw Comment:</label>
-                        <textarea class="form-control" name="withdraw_comment"  required></textarea>
-                    </div>
+                   <p id="withdrawreason"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Close Request</button>
                 </div>
-            </form>
         </div>
     </div>
 </div>
+
+
 @endsection
 
  <!-- Table datatable css -->
@@ -221,6 +218,15 @@ use App\Models\InvoledUser;
 
     });
 
+    });
+
+
+
+            $('#withdrawModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var withdraw = button.data('withdraw');
+        var modal = $(this)
+        modal.find('#withdrawreason').text(withdraw);
     });
 
 

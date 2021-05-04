@@ -279,7 +279,7 @@ $(function () {
                         button = button + ` <button value="` + row.case.id + `"  data-id="` +row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
                         button = button + ` <a href="{{url('storage/app/')}}/` + row.case.document_settelment + `"  class="btn btn-success waves-effect btn-sm" target="_blank">View Settelment</button>`;
                     } else {
-                        button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdraw</button>`;
+                        button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdrawn</button>`;
                     }
                     return button;
                 }

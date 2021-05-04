@@ -199,7 +199,11 @@ class MediationController extends Controller {
             $string .= $characters[mt_rand(0, $max)];
         }
 
+        return '123456';
+
         return $string;
+
+
     }
 
     public function join(Request $request) {
@@ -271,7 +275,7 @@ class MediationController extends Controller {
         // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'))
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'), 'mediation_case.userid')
                 ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 1])
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -292,7 +296,7 @@ class MediationController extends Controller {
 
     public function closed() {
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'),'mediation_case.document_settelment')
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'),'mediation_case.document_settelment','mediation_case.withdraw')
                 ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
