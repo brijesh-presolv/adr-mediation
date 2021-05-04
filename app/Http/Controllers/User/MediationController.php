@@ -80,7 +80,7 @@ class MediationController extends Controller {
 
             $usr = User::find(Auth::user()->id);
 
-            if (Auth::user()->address == 'NULL') {
+            if (Auth::user()->address == '') {
                 $usr->address = $r['useraddress'];
                 $usr->address1 = $r['useraddress1'];
                 $usr->city = $r['usercity'];
@@ -92,6 +92,12 @@ class MediationController extends Controller {
 
 
             // add initiating party
+
+
+
+            $inv=InvoledUser::where(['userPlanid'=>$med->id,'userId'=>$usr->id])->first();
+
+            if(!$inv){
 
             $inv = new InvoledUser();
             $inv->userId = $usr->id;
@@ -120,6 +126,8 @@ class MediationController extends Controller {
 
 
             $inv->save();
+
+        }
 
 
             //add responding party
@@ -264,7 +272,7 @@ class MediationController extends Controller {
         // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new = MedCase::Where(['userid' => Auth::user()->id, 'confirm_status' => 0])->orderby('id')->get();
+        $new = MedCase::Where(['userid' => Auth::user()->id, 'confirm_status' => 0])->orderby('id','DESC')->get();
 
         $pending = [];
 
@@ -290,6 +298,7 @@ class MediationController extends Controller {
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+                ->orderby('mediation_case.id','DESC')
                 ->get();
 
         $ongoing = [];
