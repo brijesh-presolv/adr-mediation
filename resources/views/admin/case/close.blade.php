@@ -159,7 +159,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Upload Supporting Documnet's</h4>
+                <h4 class="modal-title text-white">Upload Supporting Documents</h4>
                 <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -289,7 +289,7 @@ $(function () {
                     //console.log(data);
                     if (data == null) {
                         button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
-                        button = button + ` <a href="{{url('storage/app/')}}/` + row.case.document_settelment + `"   class="btn btn-success waves-effect btn-sm" target="_blank">View Settelment</a>`;
+                        button = button + ` <a href="{{url('storage/app/')}}/` + row.case.document_Settlement + `"   class="btn btn-success waves-effect btn-sm" target="_blank">View Settlement</a>`;
                     } else {
                         button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdrawn</button>`;
                     }

@@ -34,9 +34,7 @@ class DashboardController extends Controller {
         return view('mediator.dashboard');
     }
 
-    public function profileUpdate() {
-        return view('mediator.user.profile');
-    }
+   
 
     public function profileSave(Request $request) {
         $user = User::find($request->id);

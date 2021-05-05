@@ -65,7 +65,7 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('mediator.profile');
-    Route::get('profile/update', [App\Http\Controllers\Mediator\DashboardController::class, 'profileUpdate'])->name('mediator.profile');
+    Route::get('profile/update', [App\Http\Controllers\Mediator\ProfileController::class, 'profileUpdate'])->name('mediator.profile');
     Route::post('profile/profile-save', [App\Http\Controllers\Mediator\DashboardController::class, 'profileSave'])->name('mediator.profile_save');
     Route::get('casedetails/{id}', [App\Http\Controllers\Mediator\DashboardController::class, 'casedetails'])->name('mediator.casedetails');
 

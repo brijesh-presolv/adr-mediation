@@ -62,11 +62,13 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="area_of_specialization">Area of Specialization </label>
-                            <input type="text" class="form-control" id="area_of_specialization" name="area_of_specialization" required>
+                            <select  class="form-control" id="area_of_specialization" name="area_of_specialization" required>
+                                <option>0 – 5</option>
+                            </select>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="no_of_arbitrations">No. of Arbitrations</label>
-                            <select type="text" class="form-control" id="no_of_arbitrations" name="no_of_arbitrations">
+                            <select  class="form-control" id="no_of_arbitrations" name="no_of_arbitrations">
                                 <option>0 – 5</option>
                                 <option>6 – 10</option>
                                 <option>11 – 25</option>
@@ -74,25 +76,25 @@
                                 <option>Above 50</option>
                             </select>
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-12">
                             <label for="linked_in_profile_link">LinkedIn Profile Link</label>
                             <input type="url" class="form-control" id="linked_in_profile_link" name="linked_in_profile_link">
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-12">
                             <label for="experience">Experience</label>
-                            <input type="text" class="form-control" id="experience" name="experience" required>
+                            <textarea class="form-control" id="experience" name="experience" required></textarea>
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4  d-none">
                             <label for="field1">Field 1</label>
-                            <input type="text" class="form-control" id="field1" name="field1" required>
+                            <input type="text" class="form-control" id="field1" name="field1">
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4  d-none">
                             <label for="field1">Field 2</label>
-                            <input type="text" class="form-control" id="field2" name="field2" required>
+                            <input type="text" class="form-control" id="field2" name="field2">
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 d-none">
                             <label for="field1">Field 3</label>
-                            <input type="text" class="form-control" id="field3" name="field3" required>
+                            <input type="text" class="form-control" id="field3" name="field3">
                         </div>
                         <div class="form-group form-check">
                             <input type="checkbox" name="is_accept1" value="1"  class="form-check-input" id="is_accept1" required>

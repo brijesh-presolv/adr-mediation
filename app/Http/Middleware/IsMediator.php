@@ -17,7 +17,7 @@ class IsMediator {
      */
     public function handle(Request $request, Closure $next) {
         if (Auth::check() && (Auth::user()->role == 1)) {
-            if (Auth::user()->isDone == 0) {
+            if (Auth::user()->status == 0) {
                 if ($request->path() == "mediator/profile/update" || $request->path() == "mediator/profile/profile-save") {
                     return $next($request);
                 } else {

@@ -8,7 +8,7 @@
                         <ul class="metismenu" id="side-menu">
     
                             <li class="menu-title">Navigation</li>
-                            @if(Auth::user()->isDone==1 && Auth::user()->isActive==1)
+                            @if(Auth::user()->isDone==1 && Auth::user()->status==1)
                             <li>
                                 <a  href="{{route('mediator.dashboard')}}" class="waves-effect waves-light">
                                     <i class="mdi mdi-view-dashboard"></i>

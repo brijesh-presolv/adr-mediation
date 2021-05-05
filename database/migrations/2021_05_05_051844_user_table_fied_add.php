@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MediationCaseAddFiled extends Migration {
+class UserTableFiedAdd extends Migration {
 
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class MediationCaseAddFiled extends Migration {
      * @return void
      */
     public function up() {
-        Schema::table('mediation_case', function(Blueprint $table) {
-            $table->text('document_settelment')->default(null)->nullable();
+        Schema::table('users', function(Blueprint $table) {
+            $table->tinyInteger('status')->comment('approval=1,plugin=0')->default(0);
         });
     }
 
@@ -23,8 +23,8 @@ class MediationCaseAddFiled extends Migration {
      * @return void
      */
     public function down() {
-        Schema::table('mediation_case', function($table) {
-            $table->dropColumn('document_settelment');
+        Schema::table('users', function($table) {
+            $table->dropColumn('status');
         });
     }
 
