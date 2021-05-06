@@ -19,16 +19,19 @@
                 @csrf
                 <input type="hidden" name="id" value="{{ Auth::user()->id }}">
                 <div class="card-body">
-                    @if(Auth::user()->isDone==1 && Auth::user()->status==0)
-                    <div class="alert alert-warning" role="alert">
-                        <strong>Warning!</strong> waiting for approval by administrator
-                    </div
-                    @elseif(Auth::user()->isDone==0)
-                    <div class="alert alert-danger" role="alert">
-                        <strong>Profile is not Done!</strong> waiting for approval by administrator
-                    </div>
-                    @endif
                     <div class="row">
+                        <div class="form-group col-md-12">
+                            @if(Auth::user()->isDone==1 && Auth::user()->status==0)
+                            <div class="alert alert-warning" role="alert">
+                                <strong>Warning!</strong> waiting for approval by administrator
+                            </div>
+                            @elseif(Auth::user()->isDone==0)
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Profile is not Done!</strong> waiting for approval by administrator
+                            </div>
+                            @endif
+                        </div>
+
                         <div class="form-group col-md-6">
                             <label for="firstname">First Name</label>
                             <input type="text" class="form-control" id="firstname" name="first_name" value="{{ Auth::user()->first_name }}" required readonly>

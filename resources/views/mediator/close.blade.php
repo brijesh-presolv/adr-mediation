@@ -72,7 +72,7 @@
                         <label for="message-text" class="col-form-label">Comment:</label>
                         <textarea class="form-control" name="comment"  required></textarea>
                     </div>
-                    <div class="row" id="commentView">
+                    <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -225,6 +225,7 @@ $(function () {
     var userTable = $('#users').DataTable({
         "ajax": '{{ route("mediator.case.json",$confirm_status) }}',
         "responsive": true,
+        "order": [[ 1, "desc" ]],
         "columns": [
             {"data": "case.id",
                 render: function (data, type, row, meta) {
@@ -239,8 +240,8 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = ` <a href="{{ url('mediator/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                    button = button + ` <a href="{{ url('mediator/consent-and-disclosures/') }}/` + data + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-sm">Disclosure</a> `;
+                    var button = ` <a href="{{ url('mediator/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> <br>`;
+                    button = button + ` <a href="{{ url('mediator/consent-and-disclosures/') }}/` + data + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a> `;
                     return button;
                 }
             },
@@ -251,7 +252,7 @@ $(function () {
                         if (data[i].isOnboarded == 1) {
                             d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
                         } else {
-                            d = d + `<span class="text-danger">` + data[i].name + `</span>`;
+                            d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
                         }
                     }
                     return d;
@@ -334,9 +335,23 @@ $(function () {
                 for (i in data) {
                     //console.log(data[0]);
                     if (data[i].username == '{{Auth::user()->username}}') {
-                        $("#commentView").append(`<div class="col-md-12 text-right border-bottom"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
+                        var msg = `<div class="col-md-12 text-right border-top">
+                            <div class="row">
+                                            <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
+                                            <div class="col-md-8">` + data[i].username + `</div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
+                        $("#commentView").append(msg);
                     } else {
-                        $("#commentView").append(`<div class="col-md-12 text-left border-bottom"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
+                        var msg = `<div class="col-md-12 border-top">
+                            <div class="row">
+                                            <div class="col-md-8">` + data[i].username + `</div>
+                                            <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
+                        $("#commentView").append(msg);
                     }
                 }
             }
