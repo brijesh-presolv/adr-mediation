@@ -239,7 +239,8 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<a href="{{ url('mediator/casedetails/') }}/`+data+`" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                    var button = ` <a href="{{ url('mediator/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                    button = button + ` <a href="{{ url('mediator/consent-and-disclosures/') }}/` + data + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-sm">Disclosure</a> `;
                     return button;
                 }
             },
@@ -276,7 +277,7 @@ $(function () {
                     var button = "";
                     //console.log(data);
                     if (data == null) {
-                        button = button + ` <button value="` + row.case.id + `"  data-id="` +row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
+                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
                         button = button + ` <a href="{{url('storage/app/')}}/` + row.case.document_settelment + `"  class="btn btn-success waves-effect btn-sm" target="_blank">View Settelment</button>`;
                     } else {
                         button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdrawn</button>`;

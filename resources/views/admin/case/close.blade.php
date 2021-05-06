@@ -264,6 +264,7 @@ $(function () {
                         button = button + `<br><span class="badge badge-warning">pending</span>`;
                     } else if (row.case.mediator_status == 1) {
                         button = button + `<br><span class="badge badge-success">Accepted</span>`;
+                        button = button + ` <a href="{{ url('admin/consent-and-disclosures/') }}/` + data + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-sm">Disclosure</a> `;
                     }
                     return button;
                 }

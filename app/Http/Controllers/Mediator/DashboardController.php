@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Mediator;
 use Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Mediation_Details;
 use App\Models\MedCase;
+use App\Models\Mediation_Details;
 use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
+use App\Models\ConsentDisclosures;
 use Illuminate\Http\Request;
 use App\Models\InvoledUser;
 use DB;
+use PDF;
 use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller {
@@ -34,52 +36,14 @@ class DashboardController extends Controller {
         return view('mediator.dashboard');
     }
 
-   
-
-    public function profileSave(Request $request) {
-        $user = User::find($request->id);
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->mobile_number = $request->mobile_number;
-        $user->email = $request->email;
-        $user->address = $request->address;
-        $user->address1 = $request->address1;
-        $user->pincode = $request->pincode;
-        $user->city = $request->city;
-        $user->state = $request->state;
-        $user->country = $request->country;
-        $user->isDone = 1;
-        $user->save();
-        $isMedi = Mediation_Details::where("user_id", "=", $request->id)->first();
-        if (empty($isMedi)) {
-            $mediation_details = new Mediation_Details();
-        } else {
-            $mediation_details = $isMedi;
-        }
-        $mediation_details->user_id = $request->id;
-        $mediation_details->area_of_specialization = $request->area_of_specialization;
-        $mediation_details->no_of_arbitrations = $request->no_of_arbitrations;
-        $mediation_details->linked_in_profile_link = $request->linked_in_profile_link;
-        $mediation_details->experience = $request->experience;
-        $mediation_details->is_accept1 = $request->is_accept1;
-        $mediation_details->is_accept2 = $request->is_accept2;
-        $mediation_details->is_accept3 = $request->is_accept3;
-        $mediation_details->filed1 = $request->field1;
-        $mediation_details->filed2 = $request->field2;
-        $mediation_details->filed3 = $request->field3;
-        $mediation_details->save();
-
-        Auth::logout();
-        return redirect('/login')->with('message', 'success|please waiting for approval.');
-    }
-
     /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function newrequest() {
-        return view('mediator.newrequest');
+        $mediationDetails = Mediation_Details::where("user_id", "=", Auth::user()->id)->first();
+        return view('mediator.newrequest', compact('mediationDetails'));
     }
 
     /**
@@ -151,10 +115,42 @@ class DashboardController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function statusChange(Request $request) {
-
+        if ($request->status == 1) {
+            $caseid = $request->mediation_case_id;
+            $consentDisclosures = ConsentDisclosures::where("mediation_case_id", "=", $caseid)->first();
+            if (empty($consentDisclosures)) {
+                $consentDisclosures = new ConsentDisclosures();
+                $consentDisclosures->mediation_case_id = $caseid;
+                $consentDisclosures->mediator_id = Auth::user()->id;
+                $consentDisclosures->consent1 = $request->consent1;
+                $consentDisclosures->consent2 = $request->consent2;
+                $consentDisclosures->consent3 = $request->consent3;
+                $consentDisclosures->consent4 = $request->consent4;
+                $consentDisclosures->consent5 = $request->consent5;
+                $consentDisclosures->particulars1 = $request->particulars1;
+                $consentDisclosures->particulars2 = $request->particulars2;
+                $consentDisclosures->particulars3 = $request->particulars3;
+                $consentDisclosures->particulars4 = $request->particulars4;
+            } else {
+                $consentDisclosures->mediation_case_id = $caseid;
+                $consentDisclosures->mediator_id = Auth::user()->id;
+                $consentDisclosures->consent1 = $request->consent1;
+                $consentDisclosures->consent2 = $request->consent2;
+                $consentDisclosures->consent3 = $request->consent3;
+                $consentDisclosures->consent4 = $request->consent4;
+                $consentDisclosures->consent5 = $request->consent5;
+                $consentDisclosures->particulars1 = $request->particulars1;
+                $consentDisclosures->particulars2 = $request->particulars2;
+                $consentDisclosures->particulars3 = $request->particulars3;
+                $consentDisclosures->particulars4 = $request->particulars4;
+            }
+            $consentDisclosures->save();
+        } else {
+            $caseid = $request->caseid;
+        }
         DB::table('mediators_mediation_cases_status')
-                ->where('mediator_id', $request->mediator_id)
-                ->where('mediation_case_id', $request->caseid)
+                ->where('mediator_id', Auth::user()->id)
+                ->where('mediation_case_id', $caseid)
                 ->update(['status' => $request->status, 'updated_at' => now()]);
         return response()->json(["msg" => "staus Update"]);
     }
@@ -293,7 +289,7 @@ class DashboardController extends Controller {
                         ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
                         ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
                         ->where('confirm_status', "=", 1)
-                        ->where(['mediator_id' => Auth::user()->id, 'status' => 1])->get();
+                        ->where(['mediator_id' => Auth::user()->id, 'mediators_mediation_cases_status.status' => 1])->get();
         $arraydata = array();
         foreach ($cases as $d) {
             $arraydata[] = [
@@ -340,6 +336,16 @@ class DashboardController extends Controller {
         } else {
             return response()->json(["message" => "Please try again."]);
         }
+    }
+
+    public function getConsentAndDisclosures($id) {
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
+                ->where("mediation_case_id", "=", $id)
+                ->first();
+        $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
+        return $pdf->stream('document.pdf');
     }
 
     /**

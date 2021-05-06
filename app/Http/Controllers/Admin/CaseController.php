@@ -52,6 +52,16 @@ class CaseController extends Controller {
         return view('admin.case.rjected', compact("confirm_status", "users"));
     }
 
+    public function getConsentAndDisclosures($id) {
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
+                ->where("mediation_case_id", "=", $id)
+                ->first();
+        $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
+        return $pdf->stream('document.pdf');
+    }
+
     public function casedetails($id) {
         $case = MedCase::select("mediation_case.*", "users.username as mediator", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")

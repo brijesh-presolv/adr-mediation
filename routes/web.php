@@ -65,8 +65,8 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('mediator.profile');
-    Route::get('profile/update', [App\Http\Controllers\Mediator\ProfileController::class, 'profileUpdate'])->name('mediator.profile');
-    Route::post('profile/profile-save', [App\Http\Controllers\Mediator\DashboardController::class, 'profileSave'])->name('mediator.profile_save');
+    Route::get('profile/update', [App\Http\Controllers\Mediator\ProfileController::class, 'profileUpdate'])->name('mediator.profile.firstupdate');
+    Route::post('profile/profile-save', [App\Http\Controllers\Mediator\ProfileController::class, 'profileSave'])->name('mediator.profile_save');
     Route::get('casedetails/{id}', [App\Http\Controllers\Mediator\DashboardController::class, 'casedetails'])->name('mediator.casedetails');
 
 
@@ -93,6 +93,7 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::post('case/add-session', [App\Http\Controllers\Admin\CaseController::class, 'addSession'])->name('mediator.case.addSession');
     Route::post('case/withdraw-status', [App\Http\Controllers\Admin\CaseController::class, 'withdrawStatus'])->name('mediator.case.withdraw');
     Route::post('case/get-add-session', [App\Http\Controllers\Admin\CaseController::class, 'getAddedSesion'])->name('mediator.case.getAddedSesion');
+    Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Mediator\DashboardController::class, 'getConsentAndDisclosures'])->name('mediator.getConsentAndDisclosures');
 });
 
 
@@ -125,5 +126,5 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('case/comment-action', [App\Http\Controllers\Admin\CaseController::class, 'commentAction'])->name('admin.case.comment');
     Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('admin.case.comment_view');
     Route::post('view-supporting', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
-    
+    Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
 });

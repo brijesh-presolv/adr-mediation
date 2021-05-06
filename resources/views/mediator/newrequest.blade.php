@@ -34,6 +34,216 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="acceptModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h5 class="modal-title" id="acceptModalLabel">Accept Request To </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="acceptForm">
+                <input type="hidden" name="mediation_case_id">
+                <input type="hidden" name="status" value="1">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 text-center">
+                            <h5>Mediator’s Consent and Disclosures</h5>
+                            <p>See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)</p>
+                        </div>
+                        <div class="col-lg-12">
+                            <p><u>Details of the Dispute</u></p>
+
+                            <p>Initiating Party Details:  details to appear here</p>
+
+                            <p> Responding Party Details: details to appear here</p>
+
+                            <p>Details of Dispute as per Initiating Party: details to appear here</p>
+
+                        </div>
+                        <div class="col-lg-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Consent</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>I accept and consent to act as a mediator in the captioned dispute </td>
+                                        <td>
+                                            <div class="form-inline">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent1" id="consent1yes" value="1">
+                                                    <label class="form-check-label" for="consent1yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                &nbsp;&nbsp;
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent1" id="consent1no" value="0">
+                                                    <label class="form-check-label" for="consent1no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>I am qualified, possess the required competence, knowledge and expertise, and have sufficient time to be able to conduct the mediation proceedings within the time limits prescribed in the Rules</td>
+                                        <td>
+                                            <div class="form-inline">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2yes" value="1">
+                                                    <label class="form-check-label" for="consent2yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                &nbsp;&nbsp;
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2no" value="0">
+                                                    <label class="form-check-label" for="consent2no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>I shall be, and remain, independent and neutral throughout the proceedings i.e. from beginning to end and ensure that my words, manner, attitude, body language and process management reflects an impartial and even-handed approach</td>
+                                        <td>
+                                            <div class="form-inline">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent3" id="consent3yes" value="1">
+                                                    <label class="form-check-label" for="consent3yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                &nbsp;&nbsp;
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent3" id="consent3no" value="0">
+                                                    <label class="form-check-label" for="consent3no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>I shall conduct the mediation proceedings in a fair and impartial manner, and endeavour to provide a procedurally fair process in which each party is given an adequate opportunity to participate </td>
+                                        <td>
+                                            <div class="form-inline">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent4" id="consent4yes" value="1">
+                                                    <label class="form-check-label" for="consent4yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                &nbsp;&nbsp;
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent4" id="consent4no" value="0">
+                                                    <label class="form-check-label" for="consent4no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>I shall maintain utmost confidentiality of all matters relating to mediation proceedings, including all documents, records, and communications, during as well as after its completion</td>
+                                        <td>
+                                            <div class="form-inline">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent5" id="consent5yes" value="1">
+                                                    <label class="form-check-label" for="consent5yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                &nbsp;&nbsp;
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="consent5" id="consent5no" value="0">
+                                                    <label class="form-check-label" for="consent5no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Particulars</th> 
+                                        <th>Disclosures</th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Experience</td>
+                                        <td>
+                                            <div class="form-group">
+                                                <textarea class="form-control" cols="150" name="particulars1" id="particulars1" rows="3">{{isset($mediationDetails->experience)?$mediationDetails->experience:""}}</textarea>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Circumstances disclosing any past or present relationship with, or interest in, any of the parties or in relation to the subject-matter in dispute, whether financial, business, professional or other kind, which is likely to impair your independence or impartiality (list out)</td>
+                                        <td>
+                                            <div class="form-group">
+                                                <textarea class="form-control" name="particulars2" id="particulars2" rows="3"></textarea>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Circumstances which are likely to affect your ability to devote sufficient time to the mediation and in particular your </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <textarea class="form-control" name="particulars3" id="particulars3" rows="3"></textarea>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>ability to complete the entire mediation within the time limits prescribed under the Rules</td>
+                                        <td>
+                                            <div class="form-group">
+                                                <textarea class="form-control" name="particulars4" id="particulars4" rows="3"></textarea>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" required id="confirm">
+                                <label class="form-check-label" for="confirm">
+                                    I confirm that the details provided above are true, accurate, current and complete and acknowledge that a copy of the consent and disclosures will be provided to the parties.
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="accept">
+                                <label class="form-check-label" for="accept">
+                                    By checking this box, I accept and agree to conduct the mediation in accordance with the Rules and confirm that I shall abide by the Code, Terms & Conditions and Privacy Policy.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Accept</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 <!-- Table datatable css -->
@@ -99,64 +309,69 @@ var userTable = $('#request').DataTable({
         {"data": "caseId",
             render: function (data, type, row) {
 
-                // if(data==1){
-                //   var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
-                //     return button;  
-                // }else{
-                // }
+// if(data==1){
+//   var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
+//     return button;  
+// }else{
+// }
 
-                var button = `<button class="btn-sm btn-success" id="statuschang" data-caseid="`+row.caseId+`" data-mediatorId="`+row.mediator_id+`">Accept</button>
-                                    <button class="btn-sm btn-danger" id="statuschang" data-caseid="`+row.caseId+`" data-mediatorId="`+row.mediator_id+`">Reject</button>`;
+                var button = `<button class="btn-sm btn-success acceptBtn" data-toggle="modal" data-target="#acceptModal" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Accept</button>
+                                    <button class="btn-sm btn-danger" id="statuschang" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Reject</button>`;
                 return button;
 
 
 
-                //   var button = `<div class="form-group">
-                //   <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                //     <input type="checkbox" name=="user_status" id="customSwitch` + row.id + `" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
-                //     <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
-                //   </div>
-                // </div>`;
-                //   return button;
+//   var button = `<div class="form-group">
+//   <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+//     <input type="checkbox" name=="user_status" id="customSwitch` + row.id + `" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
+//     <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
+//   </div>
+// </div>`;
+//   return button;
             }
         }
     ],
 });
-// $(document).on('click', "#statuschang", function () {
-
-
-// var do_action = $(this).html();
-// var id = $(this).val();
-
-// console.log(id);
-
-// if(do_action == 'Accept'){
-//     status = 1;
-// }
-
-// if(do_action == 'Reject'){
-//     status = 2
-// }
-
-// var csrf = document.querySelector('meta[name="csrf-token"]').content;
-// // if ($(this).is(':checked')){
-// // var status = 1;
-// // } else{
-// // var status = 0;
-// // }
-// $.ajax({
-// url: '{{ route('mediator.activeDeactive') }}',
-//         method: "post",
-//         data: {id:id, status:status, '_token': csrf},
-//         }).done(function (data) {
-
-
-//         userTable.ajax.reload()
-//     });
-// });
-
-
-
+$('#acceptModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var caseid = button.data('caseid');
+    var modal = $(this);
+    modal.find('.modal-title').text('Accept Request To : ' + "M" + pad(caseid, 6));
+    modal.find('input[name="mediation_case_id"]').val(caseid);
+})
+$(document).on('submit', "#acceptForm", function () {
+    swal({
+        title: "Are you sure?",
+        text: "to accept this request!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            $.ajax({
+                url: '{{ route("mediator.activeDeactive") }}',
+                method: "post",
+                data: $('#acceptForm').serialize(),
+            }).done(function (data) {
+                userTable.ajax.reload()
+                swal("Request Accepted!", {
+                    icon: "success",
+                });
+                
+            });
+            $("#acceptModal").modal("hide");
+        } else {
+            $('#acceptForm').find("textarea[name='particulars2']").val("");
+            $('#acceptForm').find("textarea[name='particulars2']").text("");
+            $('#acceptForm').find("textarea[name='particulars3']").val("");
+            $('#acceptForm').find("textarea[name='particulars3']").text("");
+            $('#acceptForm').find("textarea[name='particulars4']").val("");
+            $('#acceptForm').find("textarea[name='particulars4']").text("");
+            swal("Your imaginary file is safe!");
+        }
+    });
+    return false;
+});
 $(document).on('click', "#statuschang", function () {
     var caseid = $(this).data('caseid');
     var mediatorid = $(this).data('mediatorid');
@@ -164,40 +379,11 @@ $(document).on('click', "#statuschang", function () {
 
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
-    /*on accept case*/
-    if (do_action == 'Accept') {
-
-       var status = 1;
-
-        swal({
-            title: "Are you sure?",
-            text: "to accept this request!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then((willDelete) => {
-            if (willDelete) {
-                $.ajax({
-                    url: '{{ route("mediator.activeDeactive") }}',
-                    method: "post",
-                    data: {caseid: caseid,mediator_id:mediatorid,status: status, '_token': csrf},
-                }).done(function (data) {
-                    userTable.ajax.reload()
-                    swal("Request Accepted!", {
-                        icon: "success",
-                    });
-                });
-
-            } else {
-                swal("Your imaginary file is safe!");
-            }
-        });
-
-    }
+   
 
     /*on reject case*/
     if (do_action == 'Reject') {
-       var status = 2;
+        var status = 2;
 
         swal({
             title: "Are you sure?",
@@ -210,7 +396,7 @@ $(document).on('click', "#statuschang", function () {
                 $.ajax({
                     url: '{{ route("mediator.activeDeactive") }}',
                     method: "post",
-                    data: {caseid: caseid,mediator_id:mediatorid,status: status, '_token': csrf},
+                    data: {caseid: caseid, mediator_id: mediatorid, status: status, '_token': csrf},
                 }).done(function (data) {
                     userTable.ajax.reload()
                     swal("Request Rejected!", {
@@ -229,7 +415,7 @@ $(document).on('click', "#statuschang", function () {
     }
 
 
-    // var csrf = document.querySelector('meta[name="csrf-token"]').content;
+// var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
 });
 

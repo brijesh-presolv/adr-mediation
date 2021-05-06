@@ -21,7 +21,7 @@ class IsMediator {
                 if ($request->path() == "mediator/profile/update" || $request->path() == "mediator/profile/profile-save") {
                     return $next($request);
                 } else {
-                    return redirect()->route("mediator.profile");
+                    return redirect()->route("mediator.profile.firstupdate");
                 }
             } else {
                 return $next($request);

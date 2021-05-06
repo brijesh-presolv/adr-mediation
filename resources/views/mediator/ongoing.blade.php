@@ -289,7 +289,9 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<a href="{{ url('mediator/casedetails/') }}/`+data+`" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                    var button = "";
+                    button = button + `<a href="{{ url('mediator/casedetails/') }}/`+data+`" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                    button = button + `<a href="{{ url('mediator/consent-and-disclosures/') }}/`+data+`" target="_blank" class="btn btn-teal waves-light waves-effect btn-sm">Disclosure</a> `;
                     return button;
                 }
             },
