@@ -1,3 +1,11 @@
+<style type="text/css">
+    
+   #sidebar-menu>ul>li>a.active {
+
+    background-color: #ffa600 !important;
+   }
+</style>
+
 <div class="left-side-menu" style="background-color: #fdfdfd; " >
 
     <div class="slimscroll-menu">
@@ -5,7 +13,8 @@
         <!--- Sidemenu -->
         <div id="sidebar-menu">
 
-            <ul class="metismenu" id="side-menu">
+            <ul class="metismenu usersidebar" id="side-menu">
+
 
                 <li class="menu-title">Navigation</li>
 
