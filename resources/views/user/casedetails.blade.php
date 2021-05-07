@@ -85,6 +85,25 @@
                             <td>Mediator</td>
                             <td>{{$case->mfirstname}}  {{$case->mlastname}}</td>
                         </tr>
+                        <tr>
+                            <td>Invitation to mediate</td>
+                            <td>
+                                
+                                <?php 
+                                if($case->invitation){ 
+
+                                    $doc='storage/app/public/mediation/'.$case->id.'/'.$case->invitation->file_name;
+                                    ?>
+
+                                    <a href="{{url($doc)}}" target="_blank">View</a>
+                                <?php } else {?>
+
+
+                                   Na
+
+                                <?php } ?>
+                            </td>
+                        </tr>
                 	</table>
                     <?php if(count($case->supporting_document)>0) {?>
                     <table class="table table-bordered">

@@ -10,6 +10,8 @@ use App\Models\Mediation_case_comment;
 use App\Models\InvoledUser;
 use App\Models\SupportingDocument;
 use App\Models\User;
+use App\Models\InvitationFiles;
+
 use App\Models\Mediators_mediation_cases_status;
 use Session;
 use Auth;
@@ -378,6 +380,9 @@ class MediationController extends Controller {
                 
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
+
+        $case->invitation= InvitationFiles::where(['case_id'=>$case->id])->orderByDesc('id')->limit(1)->first();
+
 
         $case->supporting_document=SupportingDocument::where(['case_id' => $case->id])->get();
 
