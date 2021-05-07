@@ -150,6 +150,8 @@ use App\Models\InvoledUser;
              swal("Success", "Form has been submitted", "success").then(function() {
     window.location ="{{route('user.newrequest')}}"
 
+});
+
 <?php } ?>
 
         

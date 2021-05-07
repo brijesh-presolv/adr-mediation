@@ -285,4 +285,180 @@ class CaseController extends Controller {
         return $name;
     }
 
+
+
+    public function updatecase(Request $request,$id){
+
+
+
+            $med = MedCase::find($id);
+
+
+            if (!$med) {
+
+                return abort(404);
+            }
+
+            $usr=User::find($med->userid);
+
+            $response='';
+
+
+
+
+        //fetch all involved users
+
+        $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
+
+
+
+
+        if ($request->method() == 'POST') {
+
+
+
+
+
+
+
+
+
+
+            $r = $request->post();
+
+
+
+            //udpate mediation case
+
+            $med->issue = $r['issue'];
+            $med->updated_at = date("Y-m-d H:i:s");
+            $med->save();
+
+            //if user profile update
+
+
+
+                $usr->address = $r['useraddress'];
+                $usr->address1 = $r['useraddress1'];
+                $usr->city = $r['usercity'];
+                $usr->pincode = $r['userpincode'];
+                $usr->state = $r['userstate'];
+                $usr->country = $r['usercountry'];
+                $usr->save();
+           
+
+
+            // update initiating party
+
+
+
+            $inv=InvoledUser::where(['userPlanid'=>$med->id,'userId'=>$usr->id])->first();
+
+            if($inv){
+
+            $inv->address1 = $usr->address;
+
+            if($usr->address1==''){
+                $usr->address1='null';
+            }
+            $inv->address2 = $usr->address1;
+            $inv->city = $usr->city;
+            $inv->pincode = $usr->pincode;
+            $inv->state = $usr->state;
+            $inv->country = $usr->country;
+            $inv->updated_at = date('Y-m-d H:s:i');
+            $inv->save();
+
+        }
+
+           
+            //update responding party
+
+
+
+
+            for ($i = 0; $i < count($r['email']); $i++) {
+
+                $invid=$r['invid'][$i];
+
+                if($invid!=''){
+
+                    $inv = InvoledUser::find($invid);
+                } else{
+                    $inv= new InvoledUser();
+                }
+
+
+                
+                //$inv->userId=;
+                if($inv->userEmail!=$r['email'][$i]){
+
+                   $inv->joinCode = $this->joinCode();
+                }
+
+                $inv->userPlanId = $med->id;
+                $inv->userEmail = $r['email'][$i];
+                $inv->userPhone = $r['phone'][$i];
+                $inv->name = $r['name'][$i];
+                $inv->address1 = $r['add1'][$i];
+
+                if($r['add2'][$i]==''){
+                    $r['add2'][$i]='null';
+                }
+                $inv->address2 = $r['add2'][$i];
+                $inv->city = $r['city'][$i];
+                $inv->pincode = $r['pincode'][$i];
+                $inv->state = $r['state'][$i];
+                $inv->country = $r['country'][$i];
+                $inv->isClaimant = $i + 1;
+
+
+
+                $inv->created_at = date('Y-m-d H:s:i');
+                $inv->updated_at = date('Y-m-d H:s:i');
+
+
+                $inv->save();
+
+
+
+                
+            }
+
+            
+
+            //remove involed
+
+            if($r['rminv']!=''){
+
+                foreach (explode(',', $r['rminv']) as $key => $value) {
+                    
+                    InvoledUser::find($value)->delete();
+                }
+            }
+
+            $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
+
+            $response='success';
+
+            
+        }
+
+        return view('admin.case.updatecase', ['user' => $usr, 'InvoledUser' => $InvoledUser, 'medcase' => $med,'response'=>$response]);
+    }
+
+     public function joinCode() {
+
+        $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        $string = '';
+        $max = strlen($characters) - 1;
+        for ($i = 0; $i < 8; $i++) {
+            $string .= $characters[mt_rand(0, $max)];
+        }
+
+        return $string;
+
+
+    }
+
 }
