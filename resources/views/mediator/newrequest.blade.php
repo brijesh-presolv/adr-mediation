@@ -273,6 +273,7 @@ function pad(str, max) {
 var userTable = $('#request').DataTable({
     "ajax": '{{ route('mediator.newjson') }}',
     "responsive": true,
+    "order": [[ 1, "desc" ]],
     "columns": [
         {"data": "id"},
         {"data": "caseId",

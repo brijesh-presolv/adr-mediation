@@ -87,6 +87,7 @@ function pad(str, max) {
 var userTable = $('#users').DataTable({
     "ajax": '{{ route("admin.case.json",$confirm_status) }}',
     "responsive": true,
+    "order": [[ 1, "desc" ]],
     "columns": [
         {"data": "case.id",
             render: function (data, type, row, meta) {
@@ -112,7 +113,7 @@ var userTable = $('#users').DataTable({
                     if (data[i].isOnboarded == 1) {
                         d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
                     } else {
-                        d = d + `<span class="text-danger">` + data[i].name + `</span>`;
+                        d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
                     }
                 }
                 return d;

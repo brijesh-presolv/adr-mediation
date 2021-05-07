@@ -47,7 +47,7 @@
                         <label for="message-text" class="col-form-label">Comment:</label>
                         <textarea class="form-control" name="comment"  required></textarea>
                     </div>
-                    <div class="row" id="commentView">
+                    <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -220,7 +220,7 @@
 
                     <span>Note :</span>
                     <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
-                     <span>Party :</span>
+                    <span>Party :</span>
                     <div id="sessionParty">
 
                     </div>
@@ -275,6 +275,7 @@ $(function () {
     var userTable = $('#users').DataTable({
         "ajax": '{{ route("mediator.case.jsonOngoing",$confirm_status) }}',
         "responsive": true,
+        "order": [[ 1, "desc" ]],
         "columns": [
             {"data": "case.id",
                 render: function (data, type, row, meta) {
@@ -290,8 +291,8 @@ $(function () {
             {"data": "case.id",
                 render: function (data) {
                     var button = "";
-                    button = button + `<a href="{{ url('mediator/casedetails/') }}/`+data+`" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                    button = button + `<a href="{{ url('mediator/consent-and-disclosures/') }}/`+data+`" target="_blank" class="btn btn-teal waves-light waves-effect btn-sm">Disclosure</a> `;
+                    button = button + `<a href="{{ url('mediator/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                    button = button + `<a href="{{ url('mediator/consent-and-disclosures/') }}/` + data + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-sm">Disclosure</a> `;
                     return button;
                 }
             },
@@ -302,7 +303,7 @@ $(function () {
                         if (data[i].userId != 0) {
                             d = d + `<span class="text-success party_name" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
                         } else {
-                            d = d + `<span class="text-danger" data-id="` + data[i].userId + `">` + data[i].name + `</span>`;
+                            d = d + `<span class="text-danger" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
                         }
                     }
                     return d;
@@ -440,9 +441,23 @@ $(function () {
                 for (i in data) {
                     //console.log(data[0]);
                     if (data[i].username == '{{Auth::user()->username}}') {
-                        $("#commentView").append(`<div class="col-md-12 text-right border-bottom"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
+                        var msg = `<div class="col-md-12 text-righ border-topt">
+                            <div class="row">
+                                            <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
+                                            <div class="col-md-8">` + data[i].username + `</div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
+                        $("#commentView").append(msg);
                     } else {
-                        $("#commentView").append(`<div class="col-md-12 text-left border-bottom"><h6>` + data[i].username + `</h6><p>` + data[i].comment + `</p></div>`);
+                        var msg = `<div class="col-md-12 border-top">
+                            <div class="row">
+                                            <div class="col-md-8">` + data[i].username + `</div>
+                                            <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
+                        $("#commentView").append(msg);
                     }
                 }
             }
@@ -546,8 +561,8 @@ $(function () {
             var party_id = $(this).data("id")
             var party_name = $(this).text()
             var text = `<div class="form-group form-check">
-                <input type="checkbox" value="`+party_id+`" class="form-check-input" name="session_party_ids[]" id="party`+party_id+`">
-                <label class="form-check-label" for="party`+party_id+`">`+party_name+`</label>
+                <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `">
+                <label class="form-check-label" for="party` + party_id + `">` + party_name + `</label>
               </div>`;
             $("#sessionParty").append(text);
         });

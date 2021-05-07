@@ -9,10 +9,12 @@ use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
 use App\Models\InvoledUser;
 use App\Models\SupportingDocument;
+use App\Models\ConsentDisclosures;
 use App\Models\User;
 use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
 use DB;
+use PDF;
 use Auth;
 use PDF;
 use Storage;
@@ -62,6 +64,9 @@ class CaseController extends Controller {
         $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
                 ->where("mediation_case_id", "=", $id)
                 ->first();
+        if(empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])){
+            return abort(404);
+        }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
         return $pdf->stream('document.pdf');
     }
@@ -158,9 +163,9 @@ class CaseController extends Controller {
 
     public function commentView(Request $request) {
         if ($request->type == 1) {
-            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment")->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("user_id", Auth::user()->id)->where("mediation_case_id", $request->case_id)->get();
+            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment",DB::raw("DATE_FORMAT(mediation_case_comment.created_at,'%d-%c-%y %h:%i %p') as created"))->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("user_id", Auth::user()->id)->where("mediation_case_id", $request->case_id)->get();
         } else {
-            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment")->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("type", $request->type)->where("mediation_case_id", $request->case_id)->get();
+            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment",DB::raw("DATE_FORMAT(mediation_case_comment.created_at,'%d-%c-%y %h:%i %p') as created"))->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("type", $request->type)->where("mediation_case_id", $request->case_id)->get();
         }
         return response()->json($mediation_case_comment);
     }

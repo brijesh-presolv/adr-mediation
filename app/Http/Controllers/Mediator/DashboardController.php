@@ -354,6 +354,9 @@ class DashboardController extends Controller {
         $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
                 ->where("mediation_case_id", "=", $id)
                 ->first();
+        if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
+            return abort(404);
+        }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
         return $pdf->stream('document.pdf');
     }
