@@ -78,6 +78,7 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
 
     Route::post('add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'addSession'])->name('mediator.addSession');
     Route::post('view-supporting', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSupporting'])->name('mediator.viewSupporting');
+    Route::post('view-settelment', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSettelment'])->name('mediator.viewSettelment');
     Route::post('settelmen-save-close', [App\Http\Controllers\Mediator\DashboardController::class, 'settelmenSaveClose'])->name('mediator.settelmenSaveClose');
 
     Route::post('get-add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'getAddedSesion'])->name('mediator.getAddedSesion');

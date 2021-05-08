@@ -126,37 +126,7 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<div class="modal fade" id="settelmentModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Upload Settelment Documnet's</h4>
-                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="settelmentForm" method="POST"  action="javascript:void(0)" accept-charset="utf-8" enctype="multipart/form-data" >
-                    @csrf
-                    <input type="hidden" name="caseId" id="caseIdF2" value="">
-                    <input type="file" name="Settelmentfiles[]" id="Settelmentfiles" class="dropify" data-height="150" multiple  />
-                    <br>
-                    <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
-                    <br>
-                    <br>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                    <span>Close</span>
-                </button> 
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
+
 <div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -394,32 +364,7 @@ $(function () {
             }
         });
     });
-    $('#settelmentForm').on('submit', function (e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        let TotalFiles = $('#Settelmentfiles')[0].files.length;
-        let files = $('#Settelmentfiles')[0];
-        for (let i = 0; i < TotalFiles; i++) {
-            formData.append('Settelmentfiles' + i, files.files[i]);
-        }
-        formData.append('TotalFiles', TotalFiles);
-        $.ajax({
-            type: 'post',
-            url: '{{ route("mediator.settelmenSaveClose") }}',
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function () {
-                // alert('form was submitted');
-                swal("Settelment has been uploaded!", {
-                    icon: "success",
-                });
-                $("#settelmentModal").modal("hide");
-                userTable.ajax.reload();
-            }
-        });
-    });
+    
     $('#withdrawModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var recipient = button.data('id');
@@ -548,11 +493,7 @@ $(function () {
         });
         $('#caseIdF1').val(recipient);
     });
-    $('#settelmentModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var recipient = button.data('id');
-        $('#caseIdF2').val(recipient);
-    });
+    
     $('#addSession-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var data = button.parent().parent().find(".party_name");

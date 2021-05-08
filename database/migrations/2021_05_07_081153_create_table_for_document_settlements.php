@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MediationCaseComment extends Migration {
+class CreateTableForDocumentSettlements extends Migration {
 
     /**
      * Run the migrations.
@@ -12,14 +12,13 @@ class MediationCaseComment extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('mediation_case_comment', function (Blueprint $table) {
+        Schema::create('document_settlements', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('mediation_case_id');
             $table->foreign('mediation_case_id')->references('id')->on('mediation_case')->onDelete('cascade');
-            $table->tinyInteger('type')->default(0)->comment("Share=0, Private=1");
-            $table->longText('comment');
+            $table->longText('file_path');
+            $table->unsignedBigInteger('uploaded_by');
+            $table->foreign('uploaded_by')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,7 +29,7 @@ class MediationCaseComment extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('mediation_case_comment');
+        Schema::dropIfExists('document_settlements');
     }
 
 }

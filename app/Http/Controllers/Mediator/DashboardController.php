@@ -234,6 +234,31 @@ class DashboardController extends Controller {
     }
 
     /**
+     * get added session data to view on ongoing.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function viewSettelment(Request $request) {
+
+        $sessionData = DB::table('document_settlements')
+                ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+                ->where('document_settlements.mediation_case_id', $request->id)
+                ->get();
+        $sn = 1;
+        foreach ($sessionData as $value) {
+
+            echo "<tr>";
+            echo "<td>" . $sn . "</td>";
+            echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
+            echo "<td>" . $value->username . "</td>";
+            echo "</tr>";
+
+            $sn++;
+        }
+        return;
+    }
+
+    /**
      * show the rejected case.
      *
      * @return \Illuminate\Contracts\Support\Renderable
@@ -369,19 +394,15 @@ class DashboardController extends Controller {
                 if ($request->hasFile('Settelmentfiles' . $x)) {
                     $file = $request->file('Settelmentfiles' . $x);
                     $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
-                    $insert[$x]['file_name'] = $path;
-                    MedCase::where('id', $request->caseId)
-                            ->update(['document_settelment' => $path, "confirm_status" => 2]);
+                    $insert[$x]['file_path'] = $path;
+                    $insert[$x]['uploaded_by'] = Auth::user()->id;
+                    $insert[$x]['mediation_case_id'] = $request->caseId;
+                    //MedCase::where('id', $request->caseId)
+                    //        ->update(['document_settelment' => $path, "confirm_status" => 2]);
                 }
             }
-            $mediation_status_log = new Mediation_status_log;
-            $mediation_status_log->user_id = Auth::user()->id;
-            $mediation_status_log->mediation_case_id = $request->caseId;
-            $mediation_status_log->status = 2;
-            $mediation_status_log->description = "Request Closed";
-            $mediation_status_log->save();
+            DB::table('document_settlements')->insert($insert);
             return response()->json(["message" => 'Ajax Multiple fIle has been uploaded']);
-            //DB::table('manage_files')->insert($insert);
         } else {
             return response()->json(["message" => "Please try again."]);
         }
