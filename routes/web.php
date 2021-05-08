@@ -39,6 +39,8 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
 
 
 
+
+
     Route::get('casedetails/{id}', [App\Http\Controllers\User\MediationController::class, 'casedetails'])->name('user.casedetails');
 
     Route::post('withdraw', [App\Http\Controllers\User\MediationController::class, 'withdraw'])->name('user.case.withdraw');

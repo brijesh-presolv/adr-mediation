@@ -8,12 +8,15 @@ use App\Models\MedCase;
 use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
 use App\Models\InvoledUser;
+use App\Models\SupportingDocument;
 use App\Models\ConsentDisclosures;
 use App\Models\User;
+use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
 use DB;
 use PDF;
 use Auth;
+use Storage;
 
 class CaseController extends Controller {
 
@@ -68,13 +71,21 @@ class CaseController extends Controller {
     }
 
     public function casedetails($id) {
-        $case = MedCase::select("mediation_case.*", "users.username as mediator", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+        
+
+         $case= MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname","mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where('mediation_case.id', '=', $id)
                 ->first();
+                
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
+
+        $case->invitation= InvitationFiles::where(['case_id'=>$case->id])->orderByDesc('id')->limit(1)->first();
+
+
+        $case->supporting_document=SupportingDocument::where(['case_id' => $case->id])->get();
 
 
         return view('admin.case.casedetails', compact("case"));
@@ -90,6 +101,15 @@ class CaseController extends Controller {
         $mediation_status_log->status = 1;
         $mediation_status_log->description = "Request Confirm";
         $mediation_status_log->save();
+
+        // generate pdf
+        $invitation=$this->invitation_mediate($request->id);
+
+        $invmodel=new InvitationFiles();
+        $invmodel->case_id=$request->id;
+        $invmodel->file_name=$invitation;
+        $invmodel->save();
+
         return response()->json(["msg" => "Onging Case"]);
     }
 
@@ -254,6 +274,15 @@ class CaseController extends Controller {
             ];
         }
         return response()->json(["data" => $arraydata]);
+    }
+
+    public function invitation_mediate($id) {
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $pdf = PDF::loadView('pdf.invitation_mediation', $data);
+        $name='Invitation_mediate_M'.sprintf('%06d',$data["case"]->id).time().'.pdf';
+        Storage::put('public/mediation/'.$data["case"]->id.'/'.$name, $pdf->output());
+        return $name;
     }
 
 }
