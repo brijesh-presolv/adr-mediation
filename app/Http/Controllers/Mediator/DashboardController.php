@@ -68,9 +68,10 @@ class DashboardController extends Controller {
         foreach ($newrequestData as $d) {
             $arraydata[] = [
                 "id" => $d->mediation_case_id,
-                "party" => InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $d->mediation_case_id])->get(),
+                "party" => InvoledUser::select('name','userPhone','address1','address2','userEmail', 'isOnboarded')->where(['userPlanid' => $d->mediation_case_id])->get(),
                 "comments" => "tesr",
                 "caseId" => $d->mediation_case_id,
+                "case_issue" => $d->issue,
                 "mediator_id" => $d->mediator_id,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
             ];

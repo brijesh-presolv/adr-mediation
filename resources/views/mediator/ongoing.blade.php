@@ -58,32 +58,6 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">Withdraw</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="withdrawForm" method="post">
-                <div class="modal-body">
-                    <input type="hidden" name="case_id" class="form-control" >
-
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Withdraw Comment:</label>
-                        <textarea class="form-control" name="withdraw_comment"  required></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Close Request</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 <div class="modal fade" id="uploadSupportingDocsModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -202,6 +176,39 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="withdrawModalLabel">Request Close</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="withdrawForm" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="case_id" class="form-control" >
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Status:</label>
+                        <select class="form-control" name="status"  required>
+                            <option value="">---select status---</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}">Resolved</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}">Unresolved</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Comment:</label>
+                        <textarea class="form-control" name="withdraw_comment"  required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Close Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 <!-- Table datatable css -->
@@ -245,7 +252,7 @@ $(function () {
     var userTable = $('#users').DataTable({
         "ajax": '{{ route("mediator.case.jsonOngoing",$confirm_status) }}',
         "responsive": true,
-        "order": [[ 1, "desc" ]],
+        "order": [[1, "desc"]],
         "columns": [
             {"data": "case.id",
                 render: function (data, type, row, meta) {
@@ -299,7 +306,7 @@ $(function () {
                 render: function (data, type, row) {
                     var button = "";
                     button = button + ` <button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">Upload Supporting</button>`;
-                    button = button + ` <button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#settelmentModal" class="btn btn-success waves-effect btn-sm">Upload Settelment</button>`;
+                    button = button + ` <button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-teal waves-light waves-effect btn-sm">Close</button>`;
                     return button;
                 }
             },
@@ -364,7 +371,7 @@ $(function () {
             }
         });
     });
-    
+
     $('#withdrawModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var recipient = button.data('id');
@@ -493,7 +500,7 @@ $(function () {
         });
         $('#caseIdF1').val(recipient);
     });
-    
+
     $('#addSession-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var data = button.parent().parent().find(".party_name");

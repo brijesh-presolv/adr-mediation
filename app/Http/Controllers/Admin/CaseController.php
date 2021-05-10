@@ -63,7 +63,7 @@ class CaseController extends Controller {
         $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
                 ->where("mediation_case_id", "=", $id)
                 ->first();
-        if(empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])){
+        if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
             return abort(404);
         }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
@@ -71,21 +71,21 @@ class CaseController extends Controller {
     }
 
     public function casedetails($id) {
-        
 
-         $case= MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname","mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+
+        $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where('mediation_case.id', '=', $id)
                 ->first();
-                
+
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
 
-        $case->invitation= InvitationFiles::where(['case_id'=>$case->id])->orderByDesc('id')->limit(1)->first();
+        $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
 
 
-        $case->supporting_document=SupportingDocument::where(['case_id' => $case->id])->get();
+        $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->get();
 
 
         return view('admin.case.casedetails', compact("case"));
@@ -103,11 +103,11 @@ class CaseController extends Controller {
         $mediation_status_log->save();
 
         // generate pdf
-        $invitation=$this->invitation_mediate($request->id);
+        $invitation = $this->invitation_mediate($request->id);
 
-        $invmodel=new InvitationFiles();
-        $invmodel->case_id=$request->id;
-        $invmodel->file_name=$invitation;
+        $invmodel = new InvitationFiles();
+        $invmodel->case_id = $request->id;
+        $invmodel->file_name = $invitation;
         $invmodel->save();
 
         return response()->json(["msg" => "Onging Case"]);
@@ -122,15 +122,14 @@ class CaseController extends Controller {
         $mediation_status_log = new Mediation_status_log;
         $mediation_status_log->user_id = Auth::user()->id;
         $mediation_status_log->mediation_case_id = $request->case_id;
-        $mediation_status_log->status = 2;
-        $mediation_status_log->description = "Request Withdraw";
-        $mediation_status_log->save();
-
-        $mediation_status_log = new Mediation_status_log;
-        $mediation_status_log->user_id = Auth::user()->id;
-        $mediation_status_log->mediation_case_id = $request->case_id;
-        $mediation_status_log->status = 2;
-        $mediation_status_log->description = "Request Closed";
+        $mediation_status_log->status = $request->status;
+        if (Mediation_status_log::STATUS_WITHDRAWN == $request->status) {
+            $mediation_status_log->description = "Request Withdraw";
+        } else if (Mediation_status_log::STATUS_RESOLVED == $request->status) {
+            $mediation_status_log->description = "Request Resolved";
+        } else if (Mediation_status_log::STATUS_UNRESOLVED == $request->status) {
+            $mediation_status_log->description = "Request Unresolved";
+        }
         $mediation_status_log->save();
 
         return response()->json(["msg" => "withdraw Case"]);
@@ -162,9 +161,9 @@ class CaseController extends Controller {
 
     public function commentView(Request $request) {
         if ($request->type == 1) {
-            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment",DB::raw("DATE_FORMAT(mediation_case_comment.created_at,'%d-%c-%y %h:%i %p') as created"))->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("user_id", Auth::user()->id)->where("mediation_case_id", $request->case_id)->get();
+            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment", DB::raw("DATE_FORMAT(mediation_case_comment.created_at,'%d-%c-%y %h:%i %p') as created"))->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("user_id", Auth::user()->id)->where("mediation_case_id", $request->case_id)->get();
         } else {
-            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment",DB::raw("DATE_FORMAT(mediation_case_comment.created_at,'%d-%c-%y %h:%i %p') as created"))->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("type", $request->type)->where("mediation_case_id", $request->case_id)->get();
+            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment", DB::raw("DATE_FORMAT(mediation_case_comment.created_at,'%d-%c-%y %h:%i %p') as created"))->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("type", $request->type)->where("mediation_case_id", $request->case_id)->get();
         }
         return response()->json($mediation_case_comment);
     }
@@ -280,8 +279,8 @@ class CaseController extends Controller {
         $data["case"] = MedCase::where("id", "=", $id)->first();
         $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
-        $name='Invitation_mediate_M'.sprintf('%06d',$data["case"]->id).time().'.pdf';
-        Storage::put('public/mediation/'.$data["case"]->id.'/'.$name, $pdf->output());
+        $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
+        Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
         return $name;
     }
 

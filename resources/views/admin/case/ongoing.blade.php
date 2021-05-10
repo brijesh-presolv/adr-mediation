@@ -64,7 +64,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">Withdraw</h5>
+                <h5 class="modal-title" id="withdrawModalLabel">Request Close</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -72,9 +72,17 @@
             <form id="withdrawForm" method="post">
                 <div class="modal-body">
                     <input type="hidden" name="case_id" class="form-control" >
-
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Withdraw Comment:</label>
+                        <label for="message-text" class="col-form-label">Status:</label>
+                        <select class="form-control" name="status"  required>
+                            <option value="">---select status---</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}">Withdraw</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}">Resolved</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}">Unresolved</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Comment:</label>
                         <textarea class="form-control" name="withdraw_comment"  required></textarea>
                     </div>
                 </div>
@@ -294,7 +302,7 @@ $(function () {
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdraw</button>`;
+                    button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-teal waves-light waves-effect btn-sm">Close</button>`;
                     return button;
                 }
             },
@@ -302,15 +310,17 @@ $(function () {
                 render: function (data, type, row) {
                     var button = "";
                     for (i in data) {
-                        console.log(data[i].status);
-                        if (data[i].status == 1) {
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}') {
                             button = button + `<span class="badge badge-success">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
-                        if (data[i].status == 2) {
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}') {
                             button = button + `<span class="badge badge-info ">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
-                        if (data[i].status == 3) {
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}') {
                             button = button + `<span class="badge badge-danger">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
+                        }
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status =='{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
+                            button = button + `<span class="badge badge-warning">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
                     }
                     return button;

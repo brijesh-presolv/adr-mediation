@@ -289,7 +289,7 @@ $(function () {
                 render: function (data, type, row) {
                     var button = "";
                     //console.log(data);
-                    if (data == null) {
+                     if (row.status_log.length==0 || row.status_log[0].status != '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}') {
                         button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
                         button = button + ` <a href="{{url('storage/app/')}}/` + row.case.document_Settlement + `"   class="btn btn-success waves-effect btn-sm" target="_blank">View Settlement</a>`;
                     } else {
@@ -302,15 +302,17 @@ $(function () {
                 render: function (data, type, row) {
                     var button = "";
                     for (i in data) {
-                        console.log(data[i].status);
-                        if (data[i].status == 1) {
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}') {
                             button = button + `<span class="badge badge-success">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
-                        if (data[i].status == 2) {
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}') {
                             button = button + `<span class="badge badge-info ">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
-                        if (data[i].status == 3) {
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}') {
                             button = button + `<span class="badge badge-danger">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
+                        }
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status =='{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
+                            button = button + `<span class="badge badge-warning">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
                     }
                     return button;

@@ -50,7 +50,8 @@ use App\Models\InvoledUser;
                         <td>M0000<span id="caseId">{{ $data->mediation_case_id  }}</span></td>
                         <td>{{ date('d-m-Y', strtotime($data->created_at))}}</td>
                         
-                        <td><?php 
+                        <td>
+                            <?php 
                             $invuser=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$data->userid])->get();
 
                             foreach ($invuser as $key => $value) {
