@@ -130,4 +130,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('admin.case.comment_view');
     Route::post('view-supporting', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
+
+    Route::match(['post','get'],'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
+
 });

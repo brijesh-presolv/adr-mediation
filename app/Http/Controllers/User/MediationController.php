@@ -57,7 +57,7 @@ class MediationController extends Controller {
             if ($request->file('document') !== null) {
 
                 $request->validate([
-                    'document' => 'mimes:pdf|max:20048',
+                    'document' => 'mimes:pdf,zip|max:20048',
                 ]);
 
                 $filename = 'supporting_document' . $med->id . time() . '.' . $request->document->extension();
