@@ -46,6 +46,24 @@
                                     <th scope="row"> <strong>Organization : </strong></th>
                                         <td><span class="ml-4">{{ $profileData->organization }}</span></td>
                                     </tr>
+                                    {{-- <th scope="row"> <strong>Address : </strong></th>
+                                        <td><span class="ml-4">{{ $profileData->address }}</span></td>
+                                    </tr>
+                                    <th scope="row"> <strong>Address Line 2 : </strong></th>
+                                        <td><span class="ml-4">{{ $profileData->address1 }}</span></td>
+                                    </tr>
+                                    <th scope="row"> <strong>City : </strong></th>
+                                        <td><span class="ml-4">{{ $profileData->city }}</span></td>
+                                    </tr>
+                                    <th scope="row"> <strong>State : </strong></th>
+                                        <td><span class="ml-4">{{ $profileData->state }}</span></td>
+                                    </tr>
+                                    <th scope="row"> <strong>Country : </strong></th>
+                                        <td><span class="ml-4">{{ $profileData->country }}</span></td>
+                                    </tr>
+                                    <th scope="row"> <strong>Pincode : </strong></th>
+                                        <td><span class="ml-4">{{ $profileData->pincode }}</span></td>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
@@ -142,6 +160,55 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="field-5" class="control-label">Address : </label>
+                              <input type="text" name="address"  value="{{ $profileData->address }}"  class="form-control" id="field-5">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="field-5" class="control-label">Address Line 2 : </label>
+                              <input type="text" name="address1"  value="{{ $profileData->address1 }}"  class="form-control" id="field-5">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="field-5" class="control-label">City : </label>
+                              <input type="text" name="city"  value="{{ $profileData->city }}"  class="form-control" id="field-5">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="field-5" class="control-label">State : </label>
+                              <input type="text" name="state"  value="{{ $profileData->state }}"  class="form-control" id="field-5">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="field-5" class="control-label">Country : </label>
+                              <input type="text" name="country"  value="{{ $profileData->country }}"  class="form-control" id="field-5">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                              <label for="field-5" class="control-label">pincode : </label>
+                              <input type="text" name="pincode"  value="{{ $profileData->pincode }}"  class="form-control" id="field-5">
+                          </div>
+                      </div>
+                  </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Close</button>
