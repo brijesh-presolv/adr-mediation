@@ -79,6 +79,12 @@ class ProfileController extends Controller {
             'email' => $request->email,
             'mobile_number' => $request->mobile,
             'organization' => $request->orgName,
+            'address' => $request->address,
+            'address1' => $request->address1,
+            'city' => $request->city,
+            'state' => $request->state,
+            'country' => $request->country,
+            'pincode' => $request->pincode,
             'username' => $request->username,
         ];
 

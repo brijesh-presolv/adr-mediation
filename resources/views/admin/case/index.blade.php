@@ -45,7 +45,9 @@
                         <select class="form-control" name="midater"  required>
                             <option value="">select Mediator</option>
                             @foreach($users as $user)
-                            <option value="{{$user->id}}">{{$user->first_name}} {{$user->last_name}}</option>
+                            @if ($user->isActive)
+                                <option value="{{$user->id}}">{{$user->first_name}} {{$user->last_name}}</option>
+                            @endif
                             @endforeach
                         </select>
                     </div>
