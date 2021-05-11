@@ -109,12 +109,15 @@
 
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Mediator:</label>
-                        <select class="form-control" name="midater"  required>
+                        <div id="mediatorList"></div>
+                        {{-- <select class="form-control" name="midater"  required>
                             <option value="">select Mediator</option>
                             @foreach($users as $user)
-                            <option value="{{$user->id}}">{{$user->first_name}} {{$user->last_name}}</option>
+                            @if ($user->isActive)
+                                <option value="{{$user->id}}">{{$user->first_name}} {{$user->last_name}}</option>
+                            @endif
                             @endforeach
-                        </select>
+                        </select> --}}
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -466,7 +469,21 @@ $(function () {
         var mediator = button.data('mediator');
         var modal = $(this)
         modal.find('.modal-body input[name="id"]').val(recipient);
-        modal.find('.modal-body select[name="midater"]').val(mediator);
+        // modal.find('.modal-body select[name="midater"]').val(mediator);
+        var users=<?php echo json_encode($users); ?>;
+        var htmlData="<select class='form-control' name='midater'  required><option value=''>select Mediator</option>";
+            users.forEach(function(item, index) {
+                    if (item.isActive) {
+                        if (mediator===item.id) {
+                            htmlData+="<option value='"+item.id+"' disabled style='background-color:#d6d2d2'>"+item.first_name+" "+item.last_name+"</option>";
+                        }else{
+                            htmlData+="<option value='"+item.id+"'>"+item.first_name+" "+item.last_name+"</option>";
+                        }
+                    }
+            });
+        htmlData+="</select>";
+        document.getElementById("mediatorList").innerHTML = htmlData;
+
     });
     $('#addSession-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
