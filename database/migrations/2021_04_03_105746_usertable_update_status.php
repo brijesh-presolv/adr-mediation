@@ -14,7 +14,7 @@ class UsertableUpdateStatus extends Migration
     public function up()
     {
         Schema::table('users', function(Blueprint $table) {
-			$table->tinyInteger('status')->default(0)->comment('0=inactive ,1=active')	;
+			$table->tinyInteger('isActive')->default(0)->comment('0=inactive ,1=active')	;
 		});
     }
 
@@ -26,7 +26,7 @@ class UsertableUpdateStatus extends Migration
     public function down()
     {
         Schema::table('users', function($table) {
-			$table->dropColumn('status');
+			$table->dropColumn('isActive');
 		});
     }
 }

@@ -15,7 +15,7 @@ class CreateMediationCaseTable extends Migration
 		$table->string('disputeCategory',100);
 		$table->integer('noOfParties')->length(2);
 		$table->string('amount',100);
-		$table->string('issue',1000)->nullable()->default(NULL);
+		$table->text('issue')->nullable()->default(NULL);
 		$table->string('documentPath',500)->nullable()->default(NULL);
 		$table->integer('confirm_status')->length(11)->unsigned();
 		$table->timestamp('created_at');

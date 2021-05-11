@@ -18,7 +18,7 @@ class CreateUserInvolvedInAgreementTable extends Migration
 		$table->string('joinCode',100)->nullable()->default(NULL);
 		$table->string('username',110)->nullable()->default(NULL);
 		$table->text('address1');
-		$table->text('address2');
+		$table->text('address2')->nullable()->default(NULL);
 		$table->string('city',100);
 		$table->integer('pincode')->lenght(10)->unsigned();
 		$table->string('state',100);
