@@ -103,9 +103,16 @@ var userTable = $('#users').DataTable({
         },
         {"data": "date"},
         {"data": "case.id",
-            render: function (data) {
-                var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
+            render: function (data,type,row) {
+
+                var d='';
+
+                if(row.party.length==0){
+                    var d="disabled";
+                } 
+
+                var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm `+d+`"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm `+d+`"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
                 return button;
             }
         },
@@ -118,6 +125,11 @@ var userTable = $('#users').DataTable({
                     } else {
                         d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
                     }
+                }
+
+                if(d==''){
+
+                    return `<span class="text-danger">Pending</span><br>`;
                 }
                 return d;
             }
