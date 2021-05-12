@@ -346,7 +346,7 @@ class MediationController extends Controller {
                 $value->casestatus->css='success';
             }else if($value->casestatus->status==7){
 
-                $value->casestatus->css='warning';
+                $value->casestatus->css='danger';
             }
 
             $closed[] = $value;
