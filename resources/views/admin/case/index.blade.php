@@ -108,7 +108,7 @@ var userTable = $('#users').DataTable({
                 var d='';
 
                 if(row.party.length==0){
-                    var d="disabled";
+                     d="disabled";
                 } 
 
                 var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm `+d+`"><i class="mdi mdi-file-eye-outline"></i></a> `;
@@ -136,9 +136,16 @@ var userTable = $('#users').DataTable({
         },
         {"data": "case.id",
             render: function (data, type, row) {
+
+                 var d='';
+
+                if(row.party.length==0){
+                     return button='NA';
+                } 
+
                 var button = "";
-                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info">Confirm</button>`;
-                button = button + ` <button value="` + data + `" class="btn btn-danger reject">Reject</button>`;
+                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info `+d+`">Confirm</button>`;
+                button = button + ` <button value="` + data + `" class="btn btn-danger reject `+d+`">Reject</button>`;
                 return button;
             }
         },
