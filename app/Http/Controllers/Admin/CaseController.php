@@ -259,10 +259,12 @@ class CaseController extends Controller {
 
     public function json($role = 0) {
         $cases = MedCase::select("mediation_case.*", "users.username as mediator_username", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
-                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("mediators_mediation_cases_status", function($join) {
+                    $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
+                    $join->where("mediators_mediation_cases_status.status", "!=", 2);
+                })
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediation_case.confirm_status", "=", $role)
-                ->where("mediators_mediation_cases_status.status", "!=", 2)
                 ->get();
         $arraydata = array();
         foreach ($cases as $d) {
@@ -301,7 +303,7 @@ class CaseController extends Controller {
             $med->issue = $r['issue'];
             $med->updated_at = date("Y-m-d H:i:s");
             $med->save();
-           //if user profile update
+            //if user profile update
             $usr->address = $r['useraddress'];
             $usr->address1 = $r['useraddress1'];
             $usr->city = $r['usercity'];
