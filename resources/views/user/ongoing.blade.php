@@ -113,7 +113,10 @@ use App\Models\InvoledUser;
                     </td>
 
 
-                        <td><span class="badge badge-success ">Ongoing</span></td>
+                        <td>
+                            
+                            <span class="badge badge-success ">{{$value->casestatus->description}} | At: {{$value->casestatus->created}}
+                        </td>
                         </tr>
                     <?php } ?>
                 </tbody>
@@ -327,8 +330,10 @@ use App\Models\InvoledUser;
 
                         swal("withdraw successfully!", {
                             icon: "success",
-                        });
-                        $('#withdrawModal').modal("hide");
+                        }).then(function(){
+
+                            location.reload();
+                        })
                     },
                     error:function(err){
 
@@ -336,7 +341,7 @@ use App\Models\InvoledUser;
                     }
                 });
             } else {
-                swal("Cancle Withdraw Request!");
+                swal("Cancel Withdraw Request!");
             }
         });
         return false;

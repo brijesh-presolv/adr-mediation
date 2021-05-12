@@ -124,7 +124,7 @@ class CaseController extends Controller {
         $mediation_status_log->mediation_case_id = $request->case_id;
         $mediation_status_log->status = $request->status;
         if (Mediation_status_log::STATUS_WITHDRAWN == $request->status) {
-            $mediation_status_log->description = "Request Withdraw";
+            $mediation_status_log->description = "Request Withdrawn";
         } else if (Mediation_status_log::STATUS_RESOLVED == $request->status) {
             $mediation_status_log->description = "Request Resolved";
         } else if (Mediation_status_log::STATUS_UNRESOLVED == $request->status) {

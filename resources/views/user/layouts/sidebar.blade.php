@@ -19,7 +19,7 @@
                 <li class="menu-title">Navigation</li>
 
                 <li>
-                    <a  href="{{url('/')}}" class="waves-effect waves-light" style="color: #575a65;" >
+                    <a  href="{{route('user.dashboard')}}" class="waves-effect waves-light" style="color: #575a65;" >
                         <i class="mdi mdi-view-dashboard"></i>
                         <span  style="color: #000000;"> <b>  Dashboard  </b></span>
                     </a>
@@ -46,7 +46,7 @@
                 </li>
                 <li>
                     <a  href="{{route('user.rejected')}}"  class="waves-effect waves-light" style="color: #575a65;" >
-                        <i class=" far fa-lightbulb"></i>
+                        <i class="fas fa-bullseye"></i>
                         <span  style="color: #000000;"> <b>  Rejected  </b></span>
                     </a>
                 </li>
