@@ -19,7 +19,7 @@
                 <li class="menu-title">Navigation</li>
 
                 <li>
-                    <a  href="{{url('/')}}" class="waves-effect waves-light" style="color: #575a65;" >
+                    <a  href="{{route('user.dashboard')}}" class="waves-effect waves-light" style="color: #575a65;" >
                         <i class="mdi mdi-view-dashboard"></i>
                         <span  style="color: #000000;"> <b>  Dashboard  </b></span>
                     </a>
