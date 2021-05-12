@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Session;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Auth;
-use Illuminate\Http\Request;
-use Session;
 
 class LoginController extends Controller {
     /*
@@ -64,12 +65,38 @@ use AuthenticatesUsers;
 
     protected function credentials(\Illuminate\Http\Request $request) {
         //return $request->only($this->username(), 'password');
-        return ['email' => $request->{$this->username()}, 'password' => $request->password, 'isActive' => 1];
+        return ['email' => $request->{$this->username()}, 'password' => $request->password];
     }
 
     public function logout(Request $request) {
           Auth::logout();
           return redirect('/login');
+    }
+
+    /**
+     * Send the response after the user was authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    protected function sendLoginResponse(Request $request)
+    {
+        $request->session()->regenerate();
+
+        $this->clearLoginAttempts($request);
+
+        if ($response = $this->authenticated($request, $this->guard()->user())) {
+            return $response;
+        }
+
+        if (!Auth::user()->isActive) {
+            Auth::logout();
+            return redirect('login')->with('warning','Account Under Review.');
+        }
+
+        return $request->wantsJson()
+                    ? new JsonResponse([], 204)
+                    : redirect()->intended($this->redirectPath());
     }
 
 }

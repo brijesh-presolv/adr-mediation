@@ -10,7 +10,7 @@ function isreadonly($rows) {
 function isreadonlys($rows) {
 
 
-    if ($rows!='NULL') {
+    if ($rows!='') {
         echo "readonly";
     }
 }

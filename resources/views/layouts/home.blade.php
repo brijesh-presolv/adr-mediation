@@ -526,6 +526,7 @@ media.</div>
 
         <script src="https://presolv360.com/presolv360/js/sweetalert2.js"></script>
         <script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js"></script>
+        @yield('extra-js')
         
 
         <script type="text/javascript">

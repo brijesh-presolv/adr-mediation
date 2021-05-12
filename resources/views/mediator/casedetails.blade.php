@@ -81,10 +81,13 @@
                             </td>
                         </tr>
 
+                        <?php if($case->mfirstname){ ?>
+
                         <tr>
                             <td>Mediator</td>
                             <td>{{$case->mfirstname}}  {{$case->mlastname}}</td>
                         </tr>
+                    <?php } ?>
                         <tr>
                             <td>Invitation to mediate</td>
                             <td>

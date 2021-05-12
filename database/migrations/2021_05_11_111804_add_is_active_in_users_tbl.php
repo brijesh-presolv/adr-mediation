@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UsertableUpdateStatus extends Migration
+class AddIsActiveInUsersTbl extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class UsertableUpdateStatus extends Migration
      */
     public function up()
     {
-        Schema::table('users', function(Blueprint $table) {
-			$table->tinyInteger('isActive')->default(0)->comment('0=inactive ,1=active')	;
-		});
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('isActive')->comment('active=1,inactive=0')->default(0);
+        });
     }
 
     /**
@@ -25,8 +25,8 @@ class UsertableUpdateStatus extends Migration
      */
     public function down()
     {
-        Schema::table('users', function($table) {
-			$table->dropColumn('isActive');
-		});
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('isActive');
+        });
     }
 }

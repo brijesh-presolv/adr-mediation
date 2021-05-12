@@ -538,3 +538,11 @@ function setResponse(response) {
         </script> -->
         
 @endsection('content')
+
+@section('extra-js')
+    @if(session()->has('warning'))
+        <script>
+            swal("Warning!", "{{ session()->get('warning') }}", "warning");
+        </script>
+    @endif
+@endsection
