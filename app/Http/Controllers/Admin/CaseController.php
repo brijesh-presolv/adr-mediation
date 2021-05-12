@@ -262,6 +262,7 @@ class CaseController extends Controller {
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediation_case.confirm_status", "=", $role)
+                ->where("mediators_mediation_cases_status.status", "!=", 2)
                 ->get();
         $arraydata = array();
         foreach ($cases as $d) {
@@ -284,93 +285,47 @@ class CaseController extends Controller {
         return $name;
     }
 
-
-
-    public function updatecase(Request $request,$id){
-
-
-
-            $med = MedCase::find($id);
-
-
-            if (!$med) {
-
-                return abort(404);
-            }
-
-            $usr=User::find($med->userid);
-
-            $response='';
-
-
-
+    public function updatecase(Request $request, $id) {
+        $med = MedCase::find($id);
+        if (!$med) {
+            return abort(404);
+        }
+        $usr = User::find($med->userid);
+        $response = '';
 
         //fetch all involved users
-
         $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
-
-
-
-
         if ($request->method() == 'POST') {
-
-
-
-
-
-
-
-
-
-
             $r = $request->post();
-
-
-
             //udpate mediation case
-
             $med->issue = $r['issue'];
             $med->updated_at = date("Y-m-d H:i:s");
             $med->save();
-
-            //if user profile update
-
-
-
-                $usr->address = $r['useraddress'];
-                $usr->address1 = $r['useraddress1'];
-                $usr->city = $r['usercity'];
-                $usr->pincode = $r['userpincode'];
-                $usr->state = $r['userstate'];
-                $usr->country = $r['usercountry'];
-                $usr->save();
-           
-
-
+           //if user profile update
+            $usr->address = $r['useraddress'];
+            $usr->address1 = $r['useraddress1'];
+            $usr->city = $r['usercity'];
+            $usr->pincode = $r['userpincode'];
+            $usr->state = $r['userstate'];
+            $usr->country = $r['usercountry'];
+            $usr->save();
             // update initiating party
-
-
-
-            $inv=InvoledUser::where(['userPlanid'=>$med->id,'userId'=>$usr->id])->first();
-
-            if($inv){
-
-            $inv->address1 = $usr->address;
-
-            if($usr->address1==''){
-                $usr->address1='null';
+            $inv = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $usr->id])->first();
+            if ($inv) {
+                $inv->address1 = $usr->address;
+                if ($usr->address1 == '') {
+                    $usr->address1 = 'null';
+                }
+                $inv->address2 = $usr->address1;
+                $inv->city = $usr->city;
+                $inv->pincode = $usr->pincode;
+                $inv->state = $usr->state;
+                $inv->country = $usr->country;
+                $inv->updated_at = date('Y-m-d H:s:i');
+                $inv->save();
             }
-            $inv->address2 = $usr->address1;
-            $inv->city = $usr->city;
-            $inv->pincode = $usr->pincode;
-            $inv->state = $usr->state;
-            $inv->country = $usr->country;
-            $inv->updated_at = date('Y-m-d H:s:i');
-            $inv->save();
 
-        }
 
-           
             //update responding party
 
 
@@ -378,21 +333,21 @@ class CaseController extends Controller {
 
             for ($i = 0; $i < count($r['email']); $i++) {
 
-                $invid=$r['invid'][$i];
+                $invid = $r['invid'][$i];
 
-                if($invid!=''){
+                if ($invid != '') {
 
                     $inv = InvoledUser::find($invid);
-                } else{
-                    $inv= new InvoledUser();
+                } else {
+                    $inv = new InvoledUser();
                 }
 
 
-                
-                //$inv->userId=;
-                if($inv->userEmail!=$r['email'][$i]){
 
-                   $inv->joinCode = $this->joinCode();
+                //$inv->userId=;
+                if ($inv->userEmail != $r['email'][$i]) {
+
+                    $inv->joinCode = $this->joinCode();
                 }
 
                 $inv->userPlanId = $med->id;
@@ -401,8 +356,8 @@ class CaseController extends Controller {
                 $inv->name = $r['name'][$i];
                 $inv->address1 = $r['add1'][$i];
 
-                if($r['add2'][$i]==''){
-                    $r['add2'][$i]='null';
+                if ($r['add2'][$i] == '') {
+                    $r['add2'][$i] = 'null';
                 }
                 $inv->address2 = $r['add2'][$i];
                 $inv->city = $r['city'][$i];
@@ -418,35 +373,29 @@ class CaseController extends Controller {
 
 
                 $inv->save();
-
-
-
-                
             }
 
-            
+
 
             //remove involed
 
-            if($r['rminv']!=''){
+            if ($r['rminv'] != '') {
 
                 foreach (explode(',', $r['rminv']) as $key => $value) {
-                    
+
                     InvoledUser::find($value)->delete();
                 }
             }
 
             $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
 
-            $response='success';
-
-            
+            $response = 'success';
         }
 
-        return view('admin.case.updatecase', ['user' => $usr, 'InvoledUser' => $InvoledUser, 'medcase' => $med,'response'=>$response]);
+        return view('admin.case.updatecase', ['user' => $usr, 'InvoledUser' => $InvoledUser, 'medcase' => $med, 'response' => $response]);
     }
 
-     public function joinCode() {
+    public function joinCode() {
 
         $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $string = '';
@@ -456,8 +405,6 @@ class CaseController extends Controller {
         }
 
         return $string;
-
-
     }
 
 }
