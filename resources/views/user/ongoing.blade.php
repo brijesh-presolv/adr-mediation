@@ -330,8 +330,10 @@ use App\Models\InvoledUser;
 
                         swal("withdraw successfully!", {
                             icon: "success",
-                        });
-                        $('#withdrawModal').modal("hide");
+                        }).then(function(){
+
+                            location.reload();
+                        })
                     },
                     error:function(err){
 
@@ -339,7 +341,7 @@ use App\Models\InvoledUser;
                     }
                 });
             } else {
-                swal("Cancle Withdraw Request!");
+                swal("Cancel Withdraw Request!");
             }
         });
         return false;
