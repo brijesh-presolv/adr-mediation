@@ -317,7 +317,7 @@ class MediationController extends Controller {
 
     public function closed() {
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'),'mediation_case.document_settelment','mediation_case.withdraw')
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'),'mediation_case.withdraw')
                 ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -332,10 +332,50 @@ class MediationController extends Controller {
 
             $value->casestatus=Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
 
+            $value->casestatus->css='';
+
+            if($value->casestatus->status==2){
+
+                $value->casestatus->css='danger';
+            } else if($value->casestatus->status==5){
+
+                $value->casestatus->css='danger';
+            }else if($value->casestatus->status==6){
+
+                $value->casestatus->css='success';
+            }else if($value->casestatus->status==7){
+
+                $value->casestatus->css='warning';
+            }
+
             $closed[] = $value;
         }
 
         return view('user.closed', ['closed' => $closed]);
+    }
+
+    public function rejected() {
+
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date','mediation_case.withdraw')
+                ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 3])
+                ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+                ->get();
+
+        $closed = [];
+
+        foreach ($new as $key => $value) {
+            $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+            $value->party = $in;
+
+            $value->casestatus=Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
+
+            $value->casestatus->css='danger';
+
+
+            $closed[] = $value;
+        }
+
+        return view('user.rejected', ['closed' => $closed]);
     }
 
     public function sessions(Request $request) {
