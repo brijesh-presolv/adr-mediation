@@ -24,7 +24,6 @@ use App\Models\InvoledUser;
                         <th>Date</th>
                         <th>Case Details</th>
                         <th>Party Details</th>
-                        <th>Action</th>
                         <td>Status</td>
                     </tr>
                 </thead>
@@ -53,7 +52,7 @@ use App\Models\InvoledUser;
                         <td><?= 'M'.sprintf('%06d',$value->id) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->created_at))?></td>
 
-                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->id)}}">View</a></td>
+                        <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" href="{{route('user.casedetails',$value->id)}}" >View</a></td>
 
                         <td>
   
@@ -73,52 +72,21 @@ use App\Models\InvoledUser;
                     } else { ?>
 
 
-                        <a href="invoke?id=<?= $value->id ?>" class="btn btn-sm btn-danger">Pending</a>
+                        <a href="invoke?id=<?= $value->id ?>" class="btn btn-danger btn-sm">Pending</a>
 
                     <?php } ?>
 
 
 
                         </td>
-                        <td>
-                        <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->id ?>" >Withdraw</button>
-                        <br></td>
-                        <td>Pending</td>
+                        <td><span class="badge badge-danger">Pending</span></td>
                         </tr>
                     <?php } ?>
                 </tbody>
             </table>
         </div>
     </div>
-</div>
-
-<div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">Withdraw</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="withdrawForm" method="post">
-                <div class="modal-body">
-                    <input type="hidden" name="case_id" class="form-control" >
-                    @csrf
-
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Withdraw Comment:</label>
-                        <textarea class="form-control" name="withdraw_comment"  required></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Close Request</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+</div
 @endsection
 
  <!-- Table datatable css -->
