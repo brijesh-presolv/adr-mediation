@@ -46,7 +46,7 @@
                             <option value="">select Mediator</option>
                             @foreach($users as $user)
                             @if ($user->isActive)
-                                <option value="{{$user->id}}">{{$user->first_name}} {{$user->last_name}}</option>
+                                <option value="{{$user->id}}">{{$user->first_name}} {{$user->last_name}} - {{$user->organization}}</option>
                             @endif
                             @endforeach
                         </select>

@@ -258,7 +258,7 @@ class CaseController extends Controller {
     }
 
     public function json($role = 0) {
-        $cases = MedCase::select("mediation_case.*", "users.username as mediator_username", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+        $cases = MedCase::select("mediation_case.*", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
                 ->leftJoin("mediators_mediation_cases_status", function($join) {
                     $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
                     $join->where("mediators_mediation_cases_status.id","=",DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
