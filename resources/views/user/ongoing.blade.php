@@ -113,7 +113,10 @@ use App\Models\InvoledUser;
                     </td>
 
 
-                        <td><span class="badge badge-success ">Ongoing</span></td>
+                        <td>
+                            
+                            <span class="badge badge-success ">{{$value->casestatus->description}} | At: {{$value->casestatus->created}}
+                        </td>
                         </tr>
                     <?php } ?>
                 </tbody>

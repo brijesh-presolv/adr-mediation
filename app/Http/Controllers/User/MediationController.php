@@ -309,6 +309,8 @@ class MediationController extends Controller {
             $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
             $value->party = $in;
 
+            $value->casestatus=Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
+
             $ongoing[] = $value;
         }
 
