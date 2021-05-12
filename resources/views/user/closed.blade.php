@@ -81,8 +81,9 @@ use App\Models\InvoledUser;
                             <?php 
 
 
-                            if ($value->document_settelment!=''){?>
-                            <a class="btn   btn-sm btn-primary label label-success" href="{{url('storage/app/'.$value->document_settelment)}}" target="_blank">View</a>
+                            if ($value->casestatus->status!=5){?>
+
+                            <button value="<?= $value->caseid ?>"  data-id="<?= $value->caseid ?>" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View</button>
                         <?php }  else { ?>
 
 
@@ -92,7 +93,7 @@ use App\Models\InvoledUser;
                         </td>
                         <td>
                             
-                            <span class="badge badge-{{$value->casestatus->css}} ">{{$value->casestatus->description}} at {{$value->casestatus->created}}</
+                            <span class="badge badge-{{$value->casestatus->css}} ">{{$value->casestatus->description}} | At: {{$value->casestatus->created}}</
                         </td>
                         </tr>
                     <?php } ?>
@@ -160,6 +161,41 @@ use App\Models\InvoledUser;
     </div>
 </div>
 
+<div class="modal fade" id="settelmentModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-white">Settelment Agreemnet</h4>
+                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered"> 
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>file</th>
+                            <th>Upload By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                    <span>Close</span>
+                </button> 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 
 @endsection
 
@@ -223,6 +259,30 @@ use App\Models\InvoledUser;
         var withdraw = button.data('withdraw');
         var modal = $(this)
         modal.find('#withdrawreason').text(withdraw);
+    });
+
+            $('#settelmentModal').on('show.bs.modal', function (event) {
+
+        var button = $(event.relatedTarget);
+        var recipient = button.data('id');
+
+        var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+        
+
+        $.ajax({
+            type: 'post',
+            url: '{{ route("user.viewSettelment") }}',
+            data: {id: recipient,'_token': csrf},
+            success: function (data) {
+
+
+                $("#settelmentModal tbody").html('');
+                $("#settelmentModal tbody").append(data);
+                //$("#supportingDocumnet").datatable();
+            }
+        });
+        $('#caseIdF2').val(recipient);
     });
 
 

@@ -226,7 +226,7 @@ function isreadonlys($rows) {
                         <div class="form-group">
                             <label>Supporting document</label><br>
                             <?php if ($rows == 0) { ?>
-                                <input class="form-control dropify" type="file" name="document" data-allowed-file-extensions="pdf zip" required="" data-max-file-size="20M"></input>
+                                <input class="form-control dropify" type="file" name="document" data-allowed-file-extensions="pdf zip"  data-max-file-size="20M"></input>
                             <?php } else {
                                 if ($medcase->documentPath != '') { ?>
 

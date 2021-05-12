@@ -295,7 +295,7 @@ class MediationController extends Controller {
         // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'), 'mediation_case.userid')
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date','mediation_case.userid',DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"))
                 ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 1])
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -317,11 +317,12 @@ class MediationController extends Controller {
 
     public function closed() {
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw('concat(users.first_name) as mediator'),'mediation_case.withdraw')
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"),'mediation_case.withdraw')
                 ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+                ->orderby('mediation_case.id','DESC')
                 ->get();
 
         $closed = [];
@@ -441,18 +442,36 @@ class MediationController extends Controller {
         $mediation_status_log = new Mediation_status_log;
         $mediation_status_log->user_id = Auth::user()->id;
         $mediation_status_log->mediation_case_id = $request->case_id;
-        $mediation_status_log->status = 2;
-        $mediation_status_log->description = "Request Withdraw";
+        $mediation_status_log->status = 5;
+        $mediation_status_log->description = "Request Withdrawn";
         $mediation_status_log->save();
 
-        $mediation_status_log = new Mediation_status_log;
-        $mediation_status_log->user_id = Auth::user()->id;
-        $mediation_status_log->mediation_case_id = $request->case_id;
-        $mediation_status_log->status = 2;
-        $mediation_status_log->description = "Request Closed";
-        $mediation_status_log->save();
+        return response()->json(["msg" => "Case withdrawn"]);
+    }
 
-        return response()->json(["msg" => "withdraw Case"]);
+     /**
+     * get added session data to view on ongoing.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function viewSettelment(Request $request) {
+
+        $sessionData = DB::table('document_settlements')
+                ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+                ->where('document_settlements.mediation_case_id', $request->id)
+                ->get();
+        $sn = 1;
+        foreach ($sessionData as $value) {
+
+            echo "<tr>";
+            echo "<td>" . $sn . "</td>";
+            echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
+            echo "<td>" . $value->first_name . ' '.$value->last_name. "</td>";
+            echo "</tr>";
+
+            $sn++;
+        }
+        //return;
     }
 
 }

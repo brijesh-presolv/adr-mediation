@@ -47,6 +47,8 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
 
     Route::post('withdraw', [App\Http\Controllers\User\MediationController::class, 'withdraw'])->name('user.case.withdraw');
 
+    Route::post('view-settelment', [App\Http\Controllers\User\MediationController::class, 'viewSettelment'])->name('user.viewSettelment');
+
 
 
     //profile
