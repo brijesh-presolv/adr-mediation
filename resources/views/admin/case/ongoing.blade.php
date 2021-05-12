@@ -176,20 +176,24 @@
                 <input type="hidden" name="caseId" id="caseIdF" value="">
 
                 <div class="custom-modal-text ">
-
-                    <span>Session Date :</span>
-                    <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date">
-
-                    <span>Session Time :</span>
-                    <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time">
-
-                    <span>Zoom Id :</span>
-                    <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id">
-
-                    <span>Note :</span>
-                    <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
+                    <div class="form-group">
+                        <label>Session Date :</label>
+                        <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date" data-validation="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Session Time :</label>
+                        <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time" data-validation="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Zoom Id :</label>
+                        <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id" data-validation="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Note :</label>
+                        <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
+                    </div>
                     <span>Party :</span>
-                    <div id="sessionParty">
+                    <div class="form-group" id="sessionParty">
                     </div>
                     <div class="text-center">    
                         <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
@@ -225,7 +229,9 @@
 $(function () {
     $("#sessionDate").datepicker({minDate: 0});
 });</script>
-
+<script>
+    $.validate();
+</script>
 <script>
 
     function pad(str, max) {
@@ -236,7 +242,7 @@ $(function () {
     var userTable = $('#users').DataTable({
         "ajax": '{{ route("admin.case.json",$confirm_status) }}',
         "responsive": true,
-        "order": [[ 1, "desc" ]],
+        "order": [[1, "desc"]],
         "columns": [
             {"data": "case.id",
                 render: function (data, type, row, meta) {
@@ -319,7 +325,7 @@ $(function () {
                         if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}') {
                             button = button + `<span class="badge badge-danger">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
-                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status =='{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status == '{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
                             button = button + `<span class="badge badge-warning">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
                     }
@@ -475,8 +481,8 @@ $(function () {
         data.each(function () {
             var party_id = $(this).data("id")
             var party_name = $(this).text()
-            var text = `<div class="form-group form-check">
-                <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `">
+            var text = `<div class="form-check">
+                <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `" data-validation="checkbox_group" data-validation-qty="min1">
                 <label class="form-check-label" for="party` + party_id + `">` + party_name + `</label>
               </div>`;
             $("#sessionParty").append(text);
@@ -497,6 +503,7 @@ $(function () {
                 swal("session created!", {
                     icon: "success",
                 });
+                $('#addSessionForm')[0].reset();
                 $('#addSession-modal').modal("hide");
             }
         });
