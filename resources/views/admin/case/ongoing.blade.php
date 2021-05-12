@@ -261,6 +261,7 @@ $(function () {
             {"data": "case.id",
                 render: function (data) {
                     var button = `<a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                    button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
                     return button;
                 }
             },
@@ -325,12 +326,10 @@ $(function () {
                         if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}') {
                             button = button + `<span class="badge badge-info ">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
-                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}') {
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status == '{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
                             button = button + `<span class="badge badge-danger">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
-                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status == '{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
-                            button = button + `<span class="badge badge-warning">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
-                        }
+                        
                     }
                     return button;
                 }

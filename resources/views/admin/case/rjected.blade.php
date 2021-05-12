@@ -129,11 +129,8 @@ var userTable = $('#users').DataTable({
                     if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}') {
                         button = button + `<span class="badge badge-info ">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                     }
-                    if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}') {
+                    if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}'  || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status == '{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
                         button = button + `<span class="badge badge-danger">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
-                    }
-                    if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status =='{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
-                        button = button + `<span class="badge badge-warning">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                     }
                 }
                 return button;

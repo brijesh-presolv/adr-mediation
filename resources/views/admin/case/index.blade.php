@@ -104,7 +104,8 @@ var userTable = $('#users').DataTable({
         {"data": "date"},
         {"data": "case.id",
             render: function (data) {
-                var button = `<a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
                 return button;
             }
         },
