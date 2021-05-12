@@ -50,27 +50,27 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="address_line_1">Address Line 1</label>
-                            <input type="text" class="form-control" id="address_line_1" name="address" value="{{ Auth::user()->address }}" required readonly>
+                            <input type="text" class="form-control" id="address_line_1" name="address" value="{{ Auth::user()->address }}" required >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="address_line_2">Address Line 2</label>
-                            <input type="text" class="form-control" id="address_line_2" name="address1" value="{{ Auth::user()->address1 }}" readonly>
+                            <input type="text" class="form-control" id="address_line_2" name="address1" value="{{ Auth::user()->address1 }}" >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="city">City</label>
-                            <input type="text" class="form-control" id="city" name="city" value="{{ Auth::user()->city }}" required readonly>
+                            <input type="text" class="form-control" id="city" name="city" value="{{ Auth::user()->city }}" required >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="pinCode">Pin code</label>
-                            <input type="text" class="form-control" id="pinCode" name="pincode" value="{{ Auth::user()->pincode }}" required readonly>
+                            <input type="text" class="form-control" id="pinCode" name="pincode" value="{{ Auth::user()->pincode }}" required >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="state">State</label>
-                            <input type="text" class="form-control" id="state" name="state" value="{{ Auth::user()->state }}" required readonly>
+                            <input type="text" class="form-control" id="state" name="state" value="{{ Auth::user()->state }}" required >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="country">Country</label>
-                            <input type="text" class="form-control" id="country" name="country" value="{{ Auth::user()->country }}" required readonly>
+                            <input type="text" class="form-control" id="country" name="country" value="{{ Auth::user()->country }}" required >
                         </div>
                         <div class="form-group col-md-6">
                             <label for="area_of_specialization">Area of Specialization</label>
