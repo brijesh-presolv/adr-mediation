@@ -81,13 +81,16 @@ use App\Models\InvoledUser;
                             <?php 
 
 
-                            if ($value->casestatus->status!=5){?>
+                            if ($value->casestatus->status==6){?>
 
                             <button value="<?= $value->caseid ?>"  data-id="<?= $value->caseid ?>" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View</button>
-                        <?php }  else { ?>
+                        <?php }  else if ($value->casestatus->status==5){ ?>
 
 
                             <button value="Comment" data-withdraw="{{$value->withdraw}}" data-toggle="modal" data-target="#withdrawModal" class="btn btn-success waves-effect btn-sm">Withdrawn</button>
+                       <?php } else if ($value->casestatus->status==7){?>
+                            <button value="Comment" data-withdraw="{{$value->withdraw}}" data-toggle="modal" data-target="#withdrawModal" class="btn btn-danger waves-effect btn-sm">Unresolved</button>
+
                        <?php } ?>
 
                         </td>
@@ -146,7 +149,7 @@ use App\Models\InvoledUser;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">Withdrawn Reason</h5>
+                <h5 class="modal-title" id="withdrawModalLabel">Reason</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
