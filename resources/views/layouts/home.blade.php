@@ -140,7 +140,7 @@ margin-left: -5px;
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top bxshadow ">
 
 	<div class="container">
-		  <a class="navbar-brand" href="https://presolv360.com/">
+		  <a class="navbar-brand" href="{{url('/')}}">
 		  	
 		  	<img src="{{url('/assert/')}}/img/logo_mediacje.png" class="img-fluid home-logo">
 		  </a>
