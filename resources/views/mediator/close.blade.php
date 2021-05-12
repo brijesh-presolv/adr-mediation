@@ -487,7 +487,7 @@ $(function () {
         e.preventDefault();
         swal({
             title: "Are you sure?",
-            text: "withdraw this request!",
+            text: "status change this request!",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -500,14 +500,14 @@ $(function () {
                     success: function () {
                         // alert('form was submitted');
                         userTable.ajax.reload();
-                        swal("withdraw successfully!", {
+                        swal("status change successfully!", {
                             icon: "success",
                         });
                         $('#withdrawModal').modal("hide");
                     }
                 });
             } else {
-                swal("Cansel withdraw Request!");
+                swal("Request Canseled!");
             }
         });
         return false;

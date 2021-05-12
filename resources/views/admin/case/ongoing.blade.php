@@ -444,7 +444,7 @@ $(function () {
         e.preventDefault();
         swal({
             title: "Are you sure?",
-            text: "withdraw this request!",
+            text: "Change status!",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -457,14 +457,14 @@ $(function () {
                     success: function () {
                         // alert('form was submitted');
                         userTable.ajax.reload();
-                        swal("withdraw successfully!", {
+                        swal("Status Change successfully!", {
                             icon: "success",
                         });
                         $('#withdrawModal').modal("hide");
                     }
                 });
             } else {
-                swal("Cansel withdraw Request!");
+                swal("Request Canseled!");
             }
         });
         return false;
@@ -481,9 +481,9 @@ $(function () {
             users.forEach(function(item, index) {
                     if (item.isActive) {
                         if (mediator===item.id) {
-                            htmlData+="<option value='"+item.id+"' disabled style='background-color:#d6d2d2'>"+item.first_name+" "+item.last_name+"</option>";
+                            htmlData+="<option value='"+item.id+"' disabled style='background-color:#d6d2d2'>"+item.first_name+" "+item.last_name+" - "+item.organization+"</option>";
                         }else{
-                            htmlData+="<option value='"+item.id+"'>"+item.first_name+" "+item.last_name+"</option>";
+                            htmlData+="<option value='"+item.id+"'>"+item.first_name+" "+item.last_name+" - "+item.organization+"</option>";
                         }
                     }
             });

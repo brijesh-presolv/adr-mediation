@@ -29,21 +29,66 @@
         See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)
     </p>
     <u>Details of the Dispute</u>
-    <p>Initiating Party Details:   {{$party[0]->name}}</p>
-    <p>Responding Party Details: 
-        @php
-        $partys = array();
-        @endphp
-        @foreach($party as $key=>$p)
-        @if($key!=0)
-            @php
-                $partys[] = $p->name;
-            @endphp
-        @endif
-        @endforeach
-        {{implode(",",$partys)}}
-    </p>
-    <p>Details of Dispute as per Initiating Party:  {{$case->issue}}</p>
+    <table border="1" cellspacing="0" cellpadding="10">
+        <thead>
+            <tr>
+                <th>Initiating Party</th>
+                <th>Responding Party</th>
+            <tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <p>{{$party[0]->name}}</p>
+                    <p>{{$party[0]->address1}} {{$party[0]->address2}}</p>
+                    @php
+                    $address = array();
+                    $address[]=$party[0]->city." - ".$party[0]->pincode;
+                    $address[]=$party[0]->state;
+                    $address[]=$party[0]->country;
+                    @endphp
+                    <p>{{ implode(", ",$address) }}</p>
+                    <p>{{$party[0]->userEmail }}</p>
+                    <p>{{$party[0]->userPhone }}</p>
+                </td>
+                <td>
+                    @if(isset($party[1]))
+                    <p>{{$party[1]->name}}</p>
+                    <p>{{$party[1]->address1}} {{$party[1]->address2}}</p>
+                    @php
+                    $address = array();
+                    $address[]=$party[1]->city." - ".$party[1]->pincode;
+                    $address[]=$party[1]->state;
+                    $address[]=$party[1]->country;
+                    @endphp
+                    <p>{{ implode(", ",$address) }}</p>
+                    <p>{{$party[1]->userEmail }}</p>
+                    <p>{{$party[1]->userPhone }}</p>
+                    @endif
+                </td>
+            </tr>
+            @foreach($party as $key=>$p)
+            @if($key>1)
+            <tr>
+                <td></td>
+                <td>
+                    <p>{{$p->name}}</p>
+                    <p>{{$p->address1}} {{$p->address2}}</p>
+                    @php
+                    $address = array();
+                    $address[]=$p->city." - ".$p->pincode;
+                    $address[]=$p->state;
+                    $address[]=$p->country;
+                    @endphp
+                    <p>{{ implode(", ",$address) }}</p>
+                    <p>{{$p->userEmail }}</p>
+                    <p>{{$p->userPhone }}</p>
+                </td>
+            </tr>
+            @endif
+            @endforeach            
+        </tbody>
+    </table>
     <table border="1" cellspacing="0" cellpadding="10">
         <thead>
             <tr>

@@ -408,5 +408,50 @@ class CaseController extends Controller {
 
         return $string;
     }
+    public function viewSettelment(Request $request) {
+
+        $sessionData = DB::table('document_settlements')
+                ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+                ->where('document_settlements.mediation_case_id', $request->id)
+                ->get();
+        $sn = 1;
+        foreach ($sessionData as $value) {
+
+            echo "<tr>";
+            echo "<td>" . $sn . "</td>";
+            echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
+            echo "<td>" . $value->username . "</td>";
+            echo "</tr>";
+
+            $sn++;
+        }
+        return;
+    }
+    public function settelmenUpload(Request $request) {
+
+        $validatedData = $request->validate([
+            'Settelmentfiles' => 'required',
+            'Settelmentfiles.*' => 'mimes:csv,txt,xlx,xls,pdf',
+        ]);
+
+        if ($request->TotalFiles > 0) {
+
+            for ($x = 0; $x < $request->TotalFiles; $x++) {
+                if ($request->hasFile('Settelmentfiles' . $x)) {
+                    $file = $request->file('Settelmentfiles' . $x);
+                    $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                    $insert[$x]['file_path'] = $path;
+                    $insert[$x]['uploaded_by'] = Auth::user()->id;
+                    $insert[$x]['mediation_case_id'] = $request->caseId;
+                    //MedCase::where('id', $request->caseId)
+                    //        ->update(['document_settelment' => $path, "confirm_status" => 2]);
+                }
+            }
+            DB::table('document_settlements')->insert($insert);
+            return response()->json(["message" => 'Ajax Multiple fIle has been uploaded']);
+        } else {
+            return response()->json(["message" => "Please try again."]);
+        }
+    }
 
 }

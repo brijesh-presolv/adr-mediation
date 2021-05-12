@@ -154,13 +154,13 @@
                 <div class="custom-modal-text ">
 
                     <span>Session Date :</span>
-                    <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date">
+                    <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date" data-validation="required">
 
                     <span>Session Time :</span>
-                    <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time">
+                    <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time" data-validation="required">
 
                     <span>Zoom Id :</span>
-                    <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id">
+                    <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id" data-validation="required">
 
                     <span>Note :</span>
                     <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
@@ -241,7 +241,9 @@ $(function () {
     $("#sessionDate").datepicker({minDate: 0});
 });
 </script>
-
+<script>
+    $.validate();
+</script>
 <script>
 
     function pad(str, max) {
@@ -451,7 +453,7 @@ $(function () {
         e.preventDefault();
         swal({
             title: "Are you sure?",
-            text: "withdraw this request!",
+            text: "Change status!",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -464,14 +466,14 @@ $(function () {
                     success: function () {
                         // alert('form was submitted');
                         userTable.ajax.reload();
-                        swal("withdraw successfully!", {
+                        swal("status change successfully!", {
                             icon: "success",
                         });
                         $('#withdrawModal').modal("hide");
                     }
                 });
             } else {
-                swal("Cansel withdraw Request!");
+                swal("Request Canseled!");
             }
         });
         return false;
@@ -509,7 +511,7 @@ $(function () {
             var party_id = $(this).data("id")
             var party_name = $(this).text()
             var text = `<div class="form-group form-check">
-                <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `">
+                <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `" data-validation="checkbox_group" data-validation-qty="min1">
                 <label class="form-check-label" for="party` + party_id + `">` + party_name + `</label>
               </div>`;
             $("#sessionParty").append(text);

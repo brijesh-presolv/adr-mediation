@@ -50,7 +50,7 @@ class ProfileController extends Controller {
             $mediation_details = $isMedi;
         }
         $mediation_details->user_id = $request->id;
-        $mediation_details->area_of_specialization = $request->area_of_specialization;
+        $mediation_details->area_of_specialization = json_encode($request->area_of_specialization);
         $mediation_details->no_of_arbitrations = $request->no_of_arbitrations;
         $mediation_details->linked_in_profile_link = $request->linked_in_profile_link;
         $mediation_details->experience = $request->experience;

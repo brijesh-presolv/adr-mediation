@@ -281,7 +281,7 @@ function pad(str, max) {
 var userTable = $('#request').DataTable({
     "ajax": '{{ route('mediator.newjson') }}',
     "responsive": true,
-    "order": [[ 1, "desc" ]],
+    "order": [[1, "desc"]],
     "columns": [
         {"data": "id"},
         {"data": "caseId",
@@ -299,7 +299,7 @@ var userTable = $('#request').DataTable({
                 var d = "";
                 for (i in data) {
                     if (data[i].isOnboarded == 1) {
-                        d = d + `<p class="text-success party_name" data-phone="`+data[i].userPhone+`" data-email="`+data[i].userEmail+`" data-address="`+data[i].address1+" "+data[i].address2+`">` + data[i].name + `</p>`;
+                        d = d + `<p class="text-success party_name" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
                     } else {
                         d = d + `<p class="text-danger">` + data[i].name + `</p>`;
                     }
@@ -324,7 +324,7 @@ var userTable = $('#request').DataTable({
 // }else{
 // }
 
-                var button = `<button class="btn-sm btn-success acceptBtn" data-issue="`+row.case_issue+`" data-toggle="modal" data-target="#acceptModal" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Accept</button>
+                var button = `<button class="btn-sm btn-success acceptBtn" data-issue="` + row.case_issue + `" data-toggle="modal" data-target="#acceptModal" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Accept</button>
                                     <button class="btn-sm btn-danger" id="statuschang" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Reject</button>`;
                 return button;
 
@@ -346,27 +346,31 @@ $('#acceptModal').on('show.bs.modal', function (event) {
     var data = button.parent().parent().find(".party_name");
     var caseid = button.data('caseid');
     var issue = button.data('issue');
-    var modal = $(this);$(this).data("address")+`</td><td></td></tr>`
-        
+    var modal = $(this);
+    $(this).data("address") + `</td><td></td></tr>`
+
     data.each(function (index) {
-        var dd="";
-        dd=dd+`<tr>
+        var dd = "";
+        dd = dd + `<tr>
                 <td>`;
-                if(index==0){
-                    dd=dd+`<p>`+$(this).data("address")+`</p>
-                    </p>`+$(this).data("phone")+`</p>
-                    </p>`+$(this).data("email")+`</p>`;
-                }
-              dd=dd+`</td>`;
-               dd=dd+`<td>`;
-                if(index>0){
-                    dd=dd+`<p>`+$(this).data("address")+`</p>
-                    </p>`+$(this).data("phone")+`</p>
-                    </p>`+$(this).data("email")+`</p>`;
-                }
-                dd=dd+`</td>
+        if (index == 0) {
+            dd = dd +
+                    `<p>` + $(this).text() + `</p>`
+                    `<p>` + $(this).data("address") + `</p>
+                    </p>` + $(this).data("phone") + `</p>
+                    </p>` + $(this).data("email") + `</p>`;
+        }
+        dd = dd + `</td>`;
+        dd = dd + `<td>`;
+        if (index > 0) {
+            dd = dd +
+                    `<p>` + $(this).text() + `</p>`
+                    `<p>` + $(this).data("address") + `</p>
+                    </p>` + $(this).data("phone") + `</p>
+                    </p>` + $(this).data("email") + `</p>`;
+        }
+        dd = dd + `</td>
               </tr>`;
-              console.log(dd);
         modal.find("#partyDetails").find("tbody").append(dd);
     });
     modal.find('.modal-title').text('Accept Request To : ' + "M" + pad(caseid, 6));
@@ -391,7 +395,7 @@ $(document).on('submit', "#acceptForm", function () {
                 swal("Request Accepted!", {
                     icon: "success",
                 });
-                
+
             });
             $("#acceptModal").modal("hide");
         } else {
@@ -413,7 +417,7 @@ $(document).on('click', "#statuschang", function () {
 
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
-   
+
 
     /*on reject case*/
     if (do_action == 'Reject') {

@@ -23,11 +23,7 @@
                         <div class="form-group col-md-12">
                             @if(Auth::user()->isDone==1 && Auth::user()->status==0)
                             <div class="alert alert-warning" role="alert">
-                                <strong>Warning!</strong> waiting for approval by administrator
-                            </div>
-                            @elseif(Auth::user()->isDone==0)
-                            <div class="alert alert-danger" role="alert">
-                                <strong>Profile is not Done!</strong> waiting for approval by administrator
+                                <strong>Warning!</strong> Account under review
                             </div>
                             @endif
                         </div>
@@ -74,10 +70,10 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="area_of_specialization">Area of Specialization</label>
-                            <select  class="form-control" id="area_of_specialization" name="area_of_specialization" required>
+                            <select  class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="" id="area_of_specialization" name="area_of_specialization[]" required>
                                 <option value="">--- Select Area of Specialization ---</option>
                                 @foreach($areaOfSpecialization as $specialization)
-                                <option value="{{$specialization->id}}" {{(isset($medi->area_of_specialization) && $medi->area_of_specialization==$specialization->id)?"selected":"" }}>{{$specialization->name}}</option>
+                                <option value="{{$specialization->name}}" {{(isset($medi->area_of_specialization) && array_search($specialization->name, json_decode($medi->area_of_specialization)) !==false )?"selected":"" }}>{{$specialization->name}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -133,4 +129,17 @@
         </div>
     </div>
 </div>
+@endsection
+@section('head')
+    <link href="{{url('assets/')}}/libs/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
+@endsection
+@section('footer')
+ <script src="{{url('assets/')}}/libs/select2/select2.min.js"></script>
+ <script src="{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.js"></script>
+ <script>
+ $(document).ready(function() {
+        $('.select2-multiple').select2();
+    });
+ </script>
 @endsection

@@ -130,6 +130,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('case/get-add-session', [App\Http\Controllers\Admin\CaseController::class, 'getAddedSesion'])->name('admin.case.getAddedSesion');
     Route::post('case/comment-action', [App\Http\Controllers\Admin\CaseController::class, 'commentAction'])->name('admin.case.comment');
     Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('admin.case.comment_view');
+    Route::post('case/settelmen-upload', [App\Http\Controllers\Admin\CaseController::class, 'settelmenUpload'])->name('admin.case.settelmen_upload');
+    Route::post('view-settelment', [App\Http\Controllers\Admin\CaseController::class, 'viewSettelment'])->name('admin.case.viewSettelment');
     Route::post('view-supporting', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
 

@@ -188,6 +188,49 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+<div class="modal fade" id="settelmentModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-white">Upload Settelment Documents</h4>
+                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="settelmentForm" method="POST"  action="javascript:void(0)" accept-charset="utf-8" enctype="multipart/form-data" >
+                    @csrf
+                    <input type="hidden" name="caseId" id="caseIdF2" value="">
+                    <input type="file" name="Settelmentfiles[]" id="Settelmentfiles" class="dropify" data-height="150" multiple  />
+                    <br>
+                    <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
+                    <br>
+                    <br>
+                </form>
+                <table class="table table-bordered"> 
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>file</th>
+                            <th>Upload By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                    <span>Close</span>
+                </button> 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 @endsection
 
 <!-- Table datatable css -->
@@ -291,7 +334,7 @@ $(function () {
                     //console.log(data);
                      if (row.status_log.length==0 || row.status_log[0].status != '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}') {
                         button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
-                        button = button + ` <a href="{{url('storage/app/')}}/` + row.case.document_Settlement + `"   class="btn btn-success waves-effect btn-sm" target="_blank">View Settlement</a>`;
+                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View Settelment</button>`;
                     } else {
                         button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdrawn</button>`;
                     }
@@ -320,6 +363,21 @@ $(function () {
             },
         ],
     });
+    $('#settelmentModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var recipient = button.data('id');
+        $.ajax({
+            type: 'post',
+            url: '{{ route("admin.case.viewSettelment") }}',
+            data: {id: recipient},
+            success: function (data) {
+                $("#settelmentModal tbody").html('');
+                $("#settelmentModal tbody").append(data);
+                //$("#supportingDocumnet").datatable();
+            }
+        });
+        $('#caseIdF2').val(recipient);
+    });
     $('#uploadSupportingDocsModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var recipient = button.data('id');
@@ -334,6 +392,32 @@ $(function () {
             }
         });
         $('#caseIdF1').val(recipient);
+    });
+    $('#settelmentForm').on('submit', function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        let TotalFiles = $('#Settelmentfiles')[0].files.length;
+        let files = $('#Settelmentfiles')[0];
+        for (let i = 0; i < TotalFiles; i++) {
+            formData.append('Settelmentfiles' + i, files.files[i]);
+        }
+        formData.append('TotalFiles', TotalFiles);
+        $.ajax({
+            type: 'post',
+            url: '{{ route("admin.case.settelmen_upload") }}',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function () {
+                // alert('form was submitted');
+                swal("Settelment has been uploaded!", {
+                    icon: "success",
+                });
+                $("#settelmentModal").modal("hide");
+                userTable.ajax.reload();
+            }
+        });
     });
     $('#commentModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
@@ -427,14 +511,14 @@ $(function () {
                     success: function () {
                         // alert('form was submitted');
                         userTable.ajax.reload();
-                        swal("withdraw successfully!", {
+                        swal("status change successfully!", {
                             icon: "success",
                         });
                         $('#withdrawModal').modal("hide");
                     }
                 });
             } else {
-                swal("Cansel withdraw Request!");
+                swal("Request Canseled!");
             }
         });
         return false;

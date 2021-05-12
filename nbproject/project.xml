@@ -6,6 +6,7 @@
             <name>presolv360</name>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>php</word>
             <word>tbo</word>
         </spellchecker-wordlist>
     </configuration>
