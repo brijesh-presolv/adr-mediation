@@ -91,12 +91,8 @@ use App\Models\InvoledUser;
 
                         </td>
                         <td>
-                           <?php if ($value->document_settelment!=''){
-                            ?>
-                            <span class="badge badge-success ">Closed at {{$value->casestatus->created}}</span>
-                        <?php } else { ?>
-                            <span class="badge badge-danger ">Withdrawn at {{$value->casestatus->created}}</span>
-                        <?php } ?>
+                            
+                            <span class="badge badge-{{$value->casestatus->css}} ">{{$value->casestatus->description}} at {{$value->casestatus->created}}</
                         </td>
                         </tr>
                     <?php } ?>
