@@ -15,16 +15,16 @@
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
-                        <th>Sr. No</th>
-                        <th>Case Id</th>
-                        <th>Date</th>
-                        <th>Case Details</th>
-                        <th>Party Details</th>
-                        <th>Mediator</th>
-                        <th>Comment</th>
-                        <th>Session</th>
-                        <th>Action</th>
-                        <th>Status</th>
+                        <th>@lang('case.serial_number')</th>
+                        <th>@lang('case.case_id')</th>
+                        <th>@lang('case.date')</th>
+                        <th>@lang('case.case_details')</th>
+                        <th>@lang('case.party_details')</th>
+                        <th>@lang('case.mediator')</th>
+                        <th>@lang('case.comment')</th>
+                        <th>@lang('case.session')</th>
+                        <th>@lang('case.action')</th>
+                        <th>@lang('case.status_logs')</th>
                     </tr>
                 </thead>
             </table>
@@ -141,7 +141,7 @@
             <div class="modal-body">
                 <table class="table" id="sessRecId">
                     <thead>
-                    <th scope="col">S.No. </th>
+                    <th scope="col">@lang('case.serial_number')</th>
                     <th scope="col">Session Date :</th>
                     <th scope="col">Session Time :</th>
                     <th scope="col">Zoom Id :</th>
@@ -260,8 +260,8 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                    button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
+                    var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                    button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm" title="@lang('case.btn_case_details_edit')"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
                     return button;
                 }
             },
@@ -283,12 +283,12 @@ $(function () {
                     var button = "";
                     button = button + `<button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-mediator="` + row.case.mediator_id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info btn-sm">` + data + ` </button>`;
                     if (row.case.mediator_status == 0) {
-                        button = button + `<br><span class="badge badge-warning">pending</span><br> `;
+                        button = button + `<br><span class="badge badge-warning">@lang('case.status_pending')</span><br> `;
                     } else if (row.case.mediator_status == 1) {
-                        button = button + `<br><span class="badge badge-success">Accepted</span><br> `;
-                        button = button + ` <a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a> `;
+                        button = button + `<br><span class="badge badge-success">@lang('case.status_accepted')</span><br> `;
+                        button = button + ` <a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
                     } else {
-                        button = button + `<br><span class="badge badge-danger">Rejected</span>`;
+                        button = button + `<br><span class="badge badge-danger">@lang('case.status_rejected')</span>`;
                     }
                     return button;
                 }
@@ -296,23 +296,23 @@ $(function () {
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
-                    button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
+                    button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">@lang('case.btn_share')</button>`;
                     return button;
                 }
             },
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button>`;
-                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target="#addSession-modal" ><span class="mdi mdi-pencil-plus"></span></button>`;
+                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal" title="@lang('case.btn_session_view')" ><span class="mdi mdi-file-eye-outline"></span></button>`;
+                    button = button + ` <button value="` + data + `"  data-id="` + data + `"   class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target="#addSession-modal" title="@lang('case.btn_session_add')"><span class="mdi mdi-pencil-plus"></span></button>`;
                     return button;
                 }
             },
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-teal waves-light waves-effect btn-sm">Close</button>`;
+                    button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-teal waves-light waves-effect btn-sm">@lang('case.btn_close')</button>`;
                     return button;
                 }
             },

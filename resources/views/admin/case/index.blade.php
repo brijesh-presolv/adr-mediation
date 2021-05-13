@@ -15,12 +15,12 @@
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
-                        <th>Sr. No</th>
-                        <th>Case Id</th>
-                        <th>Date</th>
-                        <th>Case Details</th>
-                        <th>Party Details</th>
-                        <th>Action</th>
+                        <th>@lang('case.serial_number')</th>
+                        <th>@lang('case.case_id')</th>
+                        <th>@lang('case.date')</th>
+                        <th>@lang('case.case_details')</th>
+                        <th>@lang('case.party_details')</th>
+                        <th>@lang('case.action')</th>
                     </tr>
                 </thead>
             </table>
@@ -31,7 +31,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Assign Mediator</h5>
+                <h5 class="modal-title" id="exampleModalLabel">@lang('case.assign_mediator')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -41,9 +41,9 @@
                     <input type="hidden" name="id" class="form-control" id="recipient-name">
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Mediator:</label>
+                        <label for="message-text" class="col-form-label">@lang('case.form_mediator')</label>
                         <select class="form-control" name="midater"  required>
-                            <option value="">select Mediator</option>
+                            <option value="">@lang('case.form_select_mediator')</option>
                             @foreach($users as $user)
                             @if ($user->isActive)
                                 <option value="{{$user->id}}">{{$user->first_name}} {{$user->last_name}} - {{$user->organization}}</option>
@@ -104,8 +104,8 @@ var userTable = $('#users').DataTable({
         {"data": "date"},
         {"data": "case.id",
             render: function (data) {
-                var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
+                var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm" title="@lang('case.btn_case_details_edit')"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
                 return button;
             }
         },

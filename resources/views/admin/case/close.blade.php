@@ -15,16 +15,16 @@
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
-                        <th>Sr. No</th>
-                        <th>Case Id</th>
-                        <th>Date</th>
-                        <th>Case Details</th>
-                        <th>Party Details</th>
-                        <th>Mediator</th>
-                        <th>Comment</th>
-                        <th>Session</th>
-                        <th>Settlement Agreement</th>
-                        <th>Status</th>
+                        <th>@lang('case.serial_number')</th>
+                        <th>@lang('case.case_id')</th>
+                        <th>@lang('case.date')</th>
+                        <th>@lang('case.case_details')</th>
+                        <th>@lang('case.party_details')</th>
+                        <th>@lang('case.mediator')</th>
+                        <th>@lang('case.comment')</th>
+                        <th>@lang('case.session')</th>
+                        <th>@lang('case.settlement_agreement')</th>
+                        <th>@lang('case.status_logs')</th>
                     </tr>
                 </thead>
             </table>
@@ -283,7 +283,7 @@ $(function () {
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = `<a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                    var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
                     return button;
                 }
             },
@@ -332,7 +332,7 @@ $(function () {
                 render: function (data, type, row) {
                     var button = "";
                     //console.log(data);
-                     if (row.status_log.length==0 || row.status_log[0].status != '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}') {
+                    if (row.status_log.length == 0 || row.status_log[0].status != '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}') {
                         button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
                         button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View Settelment</button>`;
                     } else {
@@ -351,7 +351,7 @@ $(function () {
                         if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}') {
                             button = button + `<span class="badge badge-info ">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
-                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}'  || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status == '{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
+                        if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i].status == '{{App\Models\Mediation_status_log::STATUS_UNRESOLVED}}') {
                             button = button + `<span class="badge badge-danger">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }
                     }

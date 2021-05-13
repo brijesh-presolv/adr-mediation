@@ -16,12 +16,12 @@
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
-                        <th>Sr. No</th>
-                        <th>Case Id</th>
-                        <th>Date</th>
-                        <th>Case Details</th>
-                        <th>Party Details</th>
-                        <th>Status</th>
+                        <th>@lang('case.serial_number')</th>
+                        <th>@lang('case.case_id')</th>
+                        <th>@lang('case.date')</th>
+                        <th>@lang('case.case_details')</th>
+                        <th>@lang('case.party_details')</th>
+                        <th>@lang('case.status_logs')</th>
                     </tr>
                 </thead>
             </table>
