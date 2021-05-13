@@ -355,8 +355,8 @@ $('#acceptModal').on('show.bs.modal', function (event) {
                 <td>`;
         if (index == 0) {
             dd = dd +
-                    `<p>` + $(this).text() + `</p>`
-                    `<p>` + $(this).data("address") + `</p>
+                    `<p>` + $(this).text() + `</p>
+                    <p>` + $(this).data("address") + `</p>
                     </p>` + $(this).data("phone") + `</p>
                     </p>` + $(this).data("email") + `</p>`;
         }
@@ -364,8 +364,8 @@ $('#acceptModal').on('show.bs.modal', function (event) {
         dd = dd + `<td>`;
         if (index > 0) {
             dd = dd +
-                    `<p>` + $(this).text() + `</p>`
-                    `<p>` + $(this).data("address") + `</p>
+                    `<p>` + $(this).text() + `</p>
+                    <p>` + $(this).data("address") + `</p>
                     </p>` + $(this).data("phone") + `</p>
                     </p>` + $(this).data("email") + `</p>`;
         }

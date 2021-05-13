@@ -104,8 +104,13 @@ var userTable = $('#users').DataTable({
         {"data": "date"},
         {"data": "case.id",
             render: function (data) {
-                var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm" title="@lang('case.btn_case_details_edit')"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
+                var d='';
+
+                if(row.party.length==0){
+                     d="disabled";
+                }
+                var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm `+d+`" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm `+d+`" title="@lang('case.btn_case_details_edit')"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
                 return button;
             }
         },
@@ -119,14 +124,26 @@ var userTable = $('#users').DataTable({
                         d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
                     }
                 }
+
+                if(d==''){
+
+                    return `<span class="text-danger">Pending</span><br>`;
+                }
                 return d;
             }
         },
         {"data": "case.id",
             render: function (data, type, row) {
+
+                 var d='';
+
+                if(row.party.length==0){
+                     return button='NA';
+                }
+
                 var button = "";
-                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info">Confirm</button>`;
-                button = button + ` <button value="` + data + `" class="btn btn-danger reject">Reject</button>`;
+                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info `+d+`">Confirm</button>`;
+                button = button + ` <button value="` + data + `" class="btn btn-danger reject `+d+`">Reject</button>`;
                 return button;
             }
         },
@@ -209,26 +226,3 @@ $('#midaterAdd').on('show.bs.modal', function (event) {
 })
 </script>
 @endsection
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
