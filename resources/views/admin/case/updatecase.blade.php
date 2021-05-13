@@ -365,7 +365,16 @@ function isreadonlys($rows) {
             $('.removeresp').show();
         }
 
+       
+
         });
+
+         if($('.removeresp').length==1){
+             
+             $('.removeresp').hide();
+        } else{
+            $('.removeresp').show();
+        }
     });
 </script>
 @endsection('footer')
