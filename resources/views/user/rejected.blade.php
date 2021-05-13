@@ -114,7 +114,7 @@ use App\Models\InvoledUser;
 
         $(document).ready(function(){
 
-          // $('#users').DataTable();
+          $('#users').DataTable();
 
 
 

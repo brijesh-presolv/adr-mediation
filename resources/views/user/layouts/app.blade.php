@@ -11,7 +11,6 @@
      <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{url('')}}/assets/images/favicon.ico">
-     <!-- @yield('head') -->
     <!-- App css -->
     <link href="{{url('assets/')}}/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
     <link href="{{url('assets/')}}/css/icons.min.css" rel="stylesheet" type="text/css" />

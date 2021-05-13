@@ -18,6 +18,12 @@
         <link href="{{url('assets/')}}/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
 
         <!-- Dynamic pages css comes -->
+
+        <style type="text/css">
+            .table .btn{
+    padding: 0px 10px;
+}
+        </style>
         @yield('head')
     </head>
 

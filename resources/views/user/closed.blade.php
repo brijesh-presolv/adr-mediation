@@ -15,6 +15,7 @@ use App\Models\InvoledUser;
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
+
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -33,24 +34,11 @@ use App\Models\InvoledUser;
                 </thead>
                 <tbody>
 
-                    <?php 
+                     <?php 
                     $i=1;
-                    $id='';
 
-                    foreach ($closed as $key => $value) {
-
-                     ?>
-                     <tr>
-
-                        <?php 
-
-                        if($value->caseid==$id){
-                            continue;
-                        }
-
-                        $id=$value->caseid;
-
-                        ?>
+                    foreach ($closed as $key => $value) { ?>
+                    <tr>
                         <td>{{$i++}}</td>
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
@@ -96,12 +84,16 @@ use App\Models\InvoledUser;
                         </td>
                         <td>
                             
-                            <span class="badge badge-{{$value->casestatus->css}} ">{{$value->casestatus->description}} | At: {{$value->casestatus->created}}</
+                            <span class="badge badge-{{$value->casestatus->css}} ">{{$value->casestatus->description}} | At: {{$value->casestatus->created}}
+                            </span>
                         </td>
-                        </tr>
-                    <?php } ?>
+
+                    </tr>
+                <?php } ?>
                 </tbody>
+
             </table>
+            
         </div>
     </div>
 </div>
@@ -226,7 +218,7 @@ use App\Models\InvoledUser;
 
         $(document).ready(function(){
 
-          // $('#users').DataTable();
+          $('#users').DataTable();
 
 
 

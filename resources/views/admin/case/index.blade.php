@@ -103,7 +103,7 @@ var userTable = $('#users').DataTable({
         },
         {"data": "date"},
         {"data": "case.id",
-            render: function (data) {
+            render: function (data,type,row) {
                 var d='';
 
                 if(row.party.length==0){
