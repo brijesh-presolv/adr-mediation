@@ -29,7 +29,7 @@
         See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)
     </p>
     <u>Details of the Dispute</u>
-    <table border="1" cellspacing="0" cellpadding="10">
+    <table width="100%" border="1" cellspacing="0" cellpadding="10">
         <thead>
             <tr>
                 <th>Initiating Party</th>

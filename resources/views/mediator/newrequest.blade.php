@@ -299,9 +299,9 @@ var userTable = $('#request').DataTable({
                 var d = "";
                 for (i in data) {
                     if (data[i].isOnboarded == 1) {
-                        d = d + `<p class="text-success party_name" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
+                        d = d + `<p class="text-success party_name get_party" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
                     } else {
-                        d = d + `<p class="text-danger">` + data[i].name + `</p>`;
+                        d = d + `<p class="text-danger get_party" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
                     }
                 }
                 return d;
@@ -343,36 +343,49 @@ var userTable = $('#request').DataTable({
 });
 $('#acceptModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
-    var data = button.parent().parent().find(".party_name");
+    var data = button.parent().parent().find(".get_party");
     var caseid = button.data('caseid');
     var issue = button.data('issue');
     var modal = $(this);
     $(this).data("address") + `</td><td></td></tr>`
 
-    data.each(function (index) {
         var dd = "";
-        dd = dd + `<tr>
-                <td>`;
-        if (index == 0) {
-            dd = dd +
-                    `<p>` + $(this).text() + `</p>
-                    <p>` + $(this).data("address") + `</p>
-                    </p>` + $(this).data("phone") + `</p>
-                    </p>` + $(this).data("email") + `</p>`;
+    data.each(function (index) {
+        if(index <= 1) {
+            if (index == 0) {
+                dd = dd + `<tr>`;
+                dd = dd +
+                        `<td>
+                        <p>` + $(this).text() + `</p>
+                        <p>` + $(this).data("address") + `</p>
+                        </p>` + $(this).data("phone") + `</p>
+                        </p>` + $(this).data("email") + `</p>
+                        </td>`;
+            }
+            if (index > 0) {
+                dd = dd +
+                        `<td>
+                            <p>` + $(this).text() + `</p>
+                            <p>` + $(this).data("address") + `</p>
+                            </p>` + $(this).data("phone") + `</p>
+                            </p>` + $(this).data("email") + `</p>
+                        </td>`;
+                dd = dd + `</tr>`;
+            }
+           
+        }else{
+            dd = dd + `<tr>
+                    <td></td>
+                    <td>
+                        <p>` + $(this).text() + `</p>
+                        <p>` + $(this).data("address") + `</p>
+                        </p>` + $(this).data("phone") + `</p>
+                        </p>` + $(this).data("email") + `</p>
+                    </td>
+                    `;
         }
-        dd = dd + `</td>`;
-        dd = dd + `<td>`;
-        if (index > 0) {
-            dd = dd +
-                    `<p>` + $(this).text() + `</p>
-                    <p>` + $(this).data("address") + `</p>
-                    </p>` + $(this).data("phone") + `</p>
-                    </p>` + $(this).data("email") + `</p>`;
-        }
-        dd = dd + `</td>
-              </tr>`;
-        modal.find("#partyDetails").find("tbody").append(dd);
     });
+    modal.find("#partyDetails").find("tbody").html(dd);
     modal.find('.modal-title').text('Accept Request To : ' + "M" + pad(caseid, 6));
     modal.find('input[name="mediation_case_id"]').val(caseid);
     modal.find('#issueModal').text(issue);
