@@ -73,6 +73,13 @@ class UsersController extends Controller {
         $user->city = $request->city;
         $user->state = $request->state;
         $user->country = $request->country;
+        if(isset($request->status)){
+            $user->status = $request->status;
+        }
+        
+        
+
+
         $user->save();
         return redirect()->route("admin.users.list");
     }

@@ -70,6 +70,16 @@
                             <label for="state">state</label>
                             <input type="text" class="form-control" id="state" name="state" value="{{$user->state}}">
                         </div>
+                        <?php if($user->role==1){ ?>
+                        <div class="form-group col-md-4">
+                            <label for="state">Approve</label>
+                            <select name="status" class="form-control">
+                                <option value="1">Approve</option>
+                                <option value="0">Unapprove</option>
+
+                            </select>
+                        </div>
+                    <?php } ?>
                     </div>
                 </div>
                 <div class="card-footer">
