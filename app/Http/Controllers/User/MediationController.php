@@ -110,7 +110,7 @@ class MediationController extends Controller {
             $inv->address1 = $usr->address;
 
             if($usr->address1==''){
-                $usr->address1='null';
+                $usr->address1='';
             }
             $inv->address2 = $usr->address1;
             $inv->city = $usr->city;
@@ -150,7 +150,7 @@ class MediationController extends Controller {
                 $inv->address1 = $r['add1'][$i];
 
                 if($r['add2'][$i]==''){
-                    $r['add2'][$i]='null';
+                    $r['add2'][$i]='';
                 }
                 $inv->address2 = $r['add2'][$i];
                 $inv->city = $r['city'][$i];
