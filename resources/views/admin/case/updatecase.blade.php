@@ -113,7 +113,7 @@ function isreadonlys($rows) {
             <section>
                 <div class="row">
                     <div class="col-md-12 ">
-                        <h6>Reponding Party</h6>
+                        <h6>Responding Party</h6>
                     </div>
                 </div>
             </section>
@@ -223,7 +223,7 @@ function isreadonlys($rows) {
                     <div class="col-md-12">
                         <hr>
                         <div class="form-group">
-                            <label>Disupute details <span style="color:red; ">*</span></label>
+                            <label>Dispute details <span style="color:red; ">*</span></label>
                             <textarea class="form-control" rows="4" name="issue" required=""><?= $medcase->issue ?></textarea>
                         </div>
                     </div>
