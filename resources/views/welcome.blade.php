@@ -21,8 +21,7 @@
       <div class="row">
         <div class="col-12">
 
-          <h1>Nasz Mediator pomoże Ci zakończyć spory ugodą,
-która może zastąpić orzeczenie sądu</h1>
+          <h1>Pomagamy zakończyć <br>spory ugodą z mocą <br> orzeczenia sądu.</h1>
                   <h2>Szybko. Efektywnie. Skutecznie.</h2>
 
                </div>
