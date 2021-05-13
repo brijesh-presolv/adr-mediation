@@ -307,8 +307,8 @@ $(function () {
                     if (row.case.mediator_status == 0) {
                         button = button + `<br><span class="badge badge-warning">pending</span> <br> `;
                     } else if (row.case.mediator_status == 1) {
-                        button = button + `<br><span class="badge badge-success">Accepted</span> <br> `;
-                        button = button + ` <a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a> `;
+                        //button = button + `<br><span class="badge badge-success">Accepted</span> <br> `;
+                        button = button + ` <br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a> `;
                     }
                     return button;
                 }
