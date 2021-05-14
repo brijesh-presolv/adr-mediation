@@ -70,6 +70,57 @@
                             <label for="state">state</label>
                             <input type="text" class="form-control" id="state" name="state" value="{{$user->state}}">
                         </div>
+                        @if($user->role==1)
+                        <div class="form-group col-md-6">
+                            <label for="area_of_specialization">Area of Specialization</label>
+                            <select  class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="" id="area_of_specialization" name="area_of_specialization[]" required>
+                                <option value="">--- Select Area of Specialization ---</option>
+                                @foreach($areaOfSpecialization as $specialization)
+                                <option value="{{$specialization->name}}" {{(isset($medi->area_of_specialization) && array_search($specialization->name, json_decode($medi->area_of_specialization)) !==false )?"selected":"" }}>{{$specialization->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="no_of_arbitrations">No. of Arbitrations</label>
+                            <select  class="form-control" id="no_of_arbitrations" name="no_of_arbitrations">
+                                <option value="">--- Select No. of Arbitrations ---</option>
+                                <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='0 – 5')?"selected":"" }}>0 – 5</option>
+                                <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='6 – 10')?"selected":"" }}>6 – 10</option>
+                                <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='11 – 25')?"selected":"" }}>11 – 25</option>
+                                <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='25 – 50')?"selected":"" }}>25 – 50</option>
+                                <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='Above 50')?"selected":"" }}>Above 50</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="linked_in_profile_link">LinkedIn Profile Link</label>
+                            <input type="url" class="form-control" id="linked_in_profile_link" value="{{isset($medi->linked_in_profile_link)?$medi->no_of_arbitrations:"" }}" name="linked_in_profile_link">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="experience">Experience</label>
+                            <textarea class="form-control" id="experience" name="experience" required>{{ isset($medi->experience)?$medi->experience:"" }}</textarea>
+                        </div>
+                        <div class="form-group col-md-4  d-none">
+                            <label for="field1">Field 1</label>
+                            <input type="text" class="form-control" id="field1" name="field1">
+                        </div>
+                        <div class="form-group col-md-4  d-none">
+                            <label for="field1">Field 2</label>
+                            <input type="text" class="form-control" id="field2" name="field2">
+                        </div>
+                        <div class="form-group col-md-4 d-none">
+                            <label for="field1">Field 3</label>
+                            <input type="text" class="form-control" id="field3" name="field3">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="state">Approve</label>
+                            <select name="status" class="form-control">
+                                <option value="1">Approve</option>
+                                <option value="0">Unapprove</option>
+
+                            </select>
+                        </div>
+                        @endif
+
                     </div>
                 </div>
                 <div class="card-footer">
@@ -86,6 +137,8 @@
 
 <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="{{url('assets/')}}/libs/select2/select2.min.css" rel="stylesheet" type="text/css" />
+<link href="{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
 
 @endsection
 
@@ -98,70 +151,14 @@
 <!-- Datatables init -->
 <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
 
+<script src="{{url('assets/')}}/libs/select2/select2.min.js"></script>
+<script src = "{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.js" ></script>
 <script>
-
-var userTable = $('#users').DataTable({
-    "ajax": '{{ route("admin.users.json") }}',
-    "responsive": true,
-    "columns": [
-        {"data": "id"},
-        {"data": "first_name",
-            render: function (data, type, row) {
-                return data + " " + row.last_name;
-            }
-        },
-        {"data": "username"},
-        {"data": "email"},
-        {"data": "mobile_number"},
-        {"data": "role",
-            render: function (data, type, row) {
-                if (data == 2) {
-                    var role = `<sapm class="badge badge-danger">Admin</span>`;
-                } else if (data == 1) {
-                    var role = `<sapm class="badge badge-success">Mediator</span>`;
-                } else {
-                    var role = `<sapm class="badge badge-info">User</span>`;
-                }
-                return role;
-            }
-        },
-        {"data": "status",
-            render: function (data, type, row) {
-                var button = `<div class="form-group">
-                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                  <input type="checkbox" id="customSwitch` + row.id + `" name=="user_status" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
-                  <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
-                </div>
-              </div>`;
-                return button;
-            }
-        },
-        {"data": "id", sortable: false,
-            render: function (data, type, row) {
-                var button = `<form method="post" action="{{route('admin.users.edit')}}">@csrf<button type="submit" value="` + data + `" class="btn btn-primary"><i class="fas fa-user-edit"></i></button></form> `;
-                button += ` <form method="post" action="{{route('admin.users.edit')}}">@csrf<button type="submit"  value="` + data + `" class="btn btn-danger"><i class="far fa-trash-alt"></i></button></form>`;
-                return button;
-            }
-        },
-    ],
-});
-$(document).on('change', ".statuschang", function () {
-    var id = $(this).val();
-    var csrf = document.querySelector('meta[name="csrf-token"]').content;
-    if ($(this).is(':checked')) {
-        var status = 1;
-    } else {
-        var status = 0;
-    }
-    $.ajax({
-        url: '{{ route("admin.users.status_change") }}',
-        method: "post",
-        data: {id: id, status: status, '_token': csrf},
-    }).done(function (data) {
-        userTable.ajax.reload()
-    });
+$(document).ready(function () {
+    $('.select2-multiple').select2();
 });
 </script>
+
 @endsection
 
 

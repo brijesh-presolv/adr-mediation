@@ -35,7 +35,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">Reason</h5>
+                <h5 class="modal-title" id="withdrawModalLabel">@lang('case.title_status_change')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -43,12 +43,12 @@
             <form id="withdrawForm" method="post">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Reason Comment:</label>
+                        <label for="message-text" class="col-form-label">@lang('case.textarea_title_status_change')</label>
                         <textarea class="form-control" name="withdraw_comment"  readonly></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.status_change_btn_close')</button>
                 </div>
             </form>
         </div>
@@ -58,7 +58,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">Share</h5>
+                <h5 class="modal-title" id="commentModalLabel">@lang('case.share_comment_title')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -69,15 +69,15 @@
                     <input type="hidden" name="type" class="form-control" >
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Comment:</label>
+                        <label for="message-text" class="col-form-label">@lang('case.share_privet_comment_textarea')</label>
                         <textarea class="form-control" name="comment"  required></textarea>
                     </div>
                     <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">save comment</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.share_privet_btn_close')</button>
+                    <button type="submit" class="btn btn-primary">@lang('case.share_privet_btn_save')</button>
                 </div>
             </form>
         </div>
@@ -87,7 +87,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Session Records</h4>
+                <h4 class="modal-title text-white">@lang('case.session_title')</h4>
                 <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -96,12 +96,12 @@
             <div class="modal-body">
                 <table class="table" id="sessRecId">
                     <thead>
-                    <th scope="col">S.No. </th>
-                    <th scope="col">Session Date :</th>
-                    <th scope="col">Session Time :</th>
-                    <th scope="col">Zoom Id :</th>
-                    <th scope="col">Note :</th>
-                    <th scope="col">Meeting user</th>
+                    <th scope="col">@lang('case.session_serial_number')</th>
+                    <th scope="col">@lang('case.session_date')</th>
+                    <th scope="col">@lang('case.session_time')</th>
+                    <th scope="col">@lang('case.session_zoom_id')</th>
+                    <th scope="col">@lang('case.session_note')</th>
+                    <th scope="col">@lang('case.session_meeting_user')</th>
                     </thead>
                     <tbody>
                     </tbody>
@@ -109,7 +109,7 @@
                 <hr>    
                 <div class="text-center">
                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                        <span>Close</span>
+                        <span>@lang('case.session_close')</span>
                     </button>  
                 </div>
             </div>
@@ -122,7 +122,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Session</h5>
+                <h5 class="modal-title" id="exampleModalLabel">@lang('case.session_add_title')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span><span class="sr-only">Close</span>
                 </button>
@@ -135,17 +135,17 @@
 
                 <div class="custom-modal-text ">
 
-                    <span>Session Date :</span>
-                    <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date">
+                    <span>@lang('case.session_date')</span>
+                    <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="@lang('case.session_date_placeholder')">
 
-                    <span>Session Time :</span>
-                    <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time">
+                    <span>@lang('case.session_time')</span>
+                    <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="@lang('case.session_time_placeholder')">
 
-                    <span>Zoom Id :</span>
-                    <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id">
+                    <span>@lang('case.session_zoom_id')</span>
+                    <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="@lang('case.session_zoom_id_placeholder')">
 
-                    <span>Note :</span>
-                    <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
+                    <span>@lang('case.session_note')</span>
+                    <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
 
                     <div class="text-center">    
                         <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
@@ -159,7 +159,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Upload Supporting Documents</h4>
+                <h4 class="modal-title text-white">@lang('case.supporting_title')</h4>
                 <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -169,9 +169,9 @@
                 <table class="table table-bordered" id="supportingDocumnet"> 
                     <thead>
                         <tr>
-                            <th>Sr. No</th>
-                            <th>file</th>
-                            <th>Upload By</th>
+                            <th>@lang('case.supporting_title')</th>
+                            <th>@lang('case.supporting_file')</th>
+                            <th>@lang('case.supporting_upload_by')</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -180,7 +180,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                    <span>Close</span>
+                    <span>@lang('case.supporting_close')</span>
                 </button> 
             </div>
         </div>
@@ -192,7 +192,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Upload Settelment Documents</h4>
+                        <h4 class="modal-title text-white">@lang('case.settlement_title')</h4>
                 <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -211,9 +211,9 @@
                 <table class="table table-bordered"> 
                     <thead>
                         <tr>
-                            <th>Sr. No</th>
-                            <th>file</th>
-                            <th>Upload By</th>
+                            <th>@lang('case.settlement_serial_number')</th>
+                            <th>@lang('case.settlement_file')</th>
+                            <th>@lang('case.settlement_upload_by')</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -223,7 +223,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                    <span>Close</span>
+                    <span>@lang('case.settlement_close')</span>
                 </button> 
             </div>
         </div>

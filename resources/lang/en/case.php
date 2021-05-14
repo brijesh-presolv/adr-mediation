@@ -31,10 +31,46 @@ return [
     "btn_close" => "Close",
     "btn_session_view" => "Session View",
     "btn_session_add" => "Session Add",
-    //Modal
+    //Modal Assign Mediator
     "assign_mediator" => "Assign Mediator",
     "form_mediator" => "Mediator :",
     "form_select_mediator" => "--- Select Mediator ---",
+    //Modal Status Change
+     "title_status_change" => "Reason",
+     "textarea_title_status_change" => "Reason Comment",
+     "status_change_btn_close" => "Close",
+    //Modal Share/Privet Comment
+     "share_comment_title" => "Share",
+     "privet_comment_title" => "Privet",
+     "share_privet_comment_textarea" => "Comment",
+     "share_privet_btn_close" => "close",
+     "share_privet_btn_save" => "save comment",
+    //Modal Session
+     "session_title" => "Session Records",
+     "session_add_title" => "Add Session",
+     "session_serial_number" => "Sr. No",
+     "session_date" => "Date",
+     "session_date_placeholder" => "Select Session Date",
+     "session_time" => "Time",
+     "session_time_placeholder" => "Select session Time",
+     "session_zoom_id" => "Zoom Id",
+     "session_zoom_id_placeholder" => "Paste meeting Id Or Zoom Id",
+     "session_note" => "Note",
+     "session_note_placeholder" => "Add aditional notes",
+     "session_meeting_user" => "Meeting User",
+     "session_close" => "Close",
+    //Modal supporting
+     "supporting_title" => "Upload Supporting Documents",
+     "supporting_serial_number" => "Sr. No",
+     "supporting_upload_by" => "Upload By",
+     "supporting_file" => "File",
+     "supporting_close" => "Close",
+    //Modal Upload settlement Documents
+     "settlement_title" => "Upload Settlement Documents",
+     "settlement_file" => "File",
+     "settlement_upload_by" => "Upload By",
+     "settlement_serial_number" => "Sr. No",
+     "settlement_close" => "Close",
     
 ];
 
