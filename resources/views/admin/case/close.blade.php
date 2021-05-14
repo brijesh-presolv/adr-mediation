@@ -106,11 +106,11 @@
                     <tbody>
                     </tbody>
                 </table>
-                <hr>    
+                <hr>
                 <div class="text-center">
                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
                         <span>@lang('case.session_close')</span>
-                    </button>  
+                    </button>
                 </div>
             </div>
         </div>
@@ -147,7 +147,7 @@
                     <span>@lang('case.session_note')</span>
                     <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
 
-                    <div class="text-center">    
+                    <div class="text-center">
                         <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
                     </div>
                 </div>
@@ -166,7 +166,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-bordered" id="supportingDocumnet"> 
+                <table class="table table-bordered" id="supportingDocumnet">
                     <thead>
                         <tr>
                             <th>@lang('case.supporting_title')</th>
@@ -181,7 +181,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
                     <span>@lang('case.supporting_close')</span>
-                </button> 
+                </button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -208,7 +208,7 @@
                     <br>
                     <br>
                 </form>
-                <table class="table table-bordered"> 
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>@lang('case.settlement_serial_number')</th>
@@ -224,7 +224,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
                     <span>@lang('case.settlement_close')</span>
-                </button> 
+                </button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -307,8 +307,8 @@ $(function () {
                     if (row.case.mediator_status == 0) {
                         button = button + `<br><span class="badge badge-warning">pending</span> <br> `;
                     } else if (row.case.mediator_status == 1) {
-                        button = button + `<br><span class="badge badge-success">Accepted</span> <br> `;
-                        button = button + ` <a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a> `;
+                        //button = button + `<br><span class="badge badge-success">Accepted</span> <br> `;
+                        button = button + ` <br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a> `;
                     }
                     return button;
                 }
@@ -437,7 +437,7 @@ $(function () {
                             <div class="row">
                                             <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
                                             <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                </div>           
+                                </div>
                                  <p>` + data[i].comment + `</p>
                         </div>`;
                         $("#commentView").append(msg);
@@ -446,7 +446,7 @@ $(function () {
                             <div class="row">
                                             <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
                                             <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
-                                </div>           
+                                </div>
                                  <p>` + data[i].comment + `</p>
                         </div>`;
                         $("#commentView").append(msg);

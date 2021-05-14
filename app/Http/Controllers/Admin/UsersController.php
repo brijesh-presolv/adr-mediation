@@ -77,6 +77,13 @@ class UsersController extends Controller {
         $user->city = $request->city;
         $user->state = $request->state;
         $user->country = $request->country;
+        if(isset($request->status)){
+            $user->status = $request->status;
+        }
+        
+        
+
+
         $user->save();
         if ($user->role == 1) {
             $isMedi = Mediation_Details::where("user_id", "=", $request->id)->first();

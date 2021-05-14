@@ -142,8 +142,8 @@
                 <table class="table" id="sessRecId">
                     <thead>
                     <th scope="col">@lang('case.serial_number')</th>
-                    <th scope="col">Session Date :</th>
-                    <th scope="col">Session Time :</th>
+                    <th scope="col">Scheduling done on:</th>
+                    <th scope="col">Session scheduled for:</th>
                     <th scope="col">Zoom Id :</th>
                     <th scope="col">Note :</th>
                     <th scope="col">Meeting user</th>
