@@ -4,7 +4,8 @@
 @section('breadcrumb')
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard </a></li>
+<li class="breadcrumb-item"><a href="{{url()->previous()}}">User </a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('user.edit_title')</a></li>
 <!-- end page title -->
 @endsection
 
@@ -14,76 +15,78 @@
         <div class="card-box">
             <form action="{{route('admin.users.update')}}" method="post">
                 <input type="hidden" name="id" value="{{$user->id}}">
-                <h4 class="header-title"><b>Edit</b></h4>
+                <h4 class="header-title"><b>@lang('user.edit_title')</b></h4>
                 @csrf
                 <div class="card-body">
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label for="first_name">First Name</label>
+                            <label for="first_name">@lang('user.first_name')</label>
                             <input type="text" class="form-control" id="first_name" name="first_name"  value="{{$user->first_name}}">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="last_name">Last Name</label>
+                            <label for="last_name">@lang('user.last_name')</label>
                             <input type="text" class="form-control" id="last_name" name="last_name"  value="{{$user->last_name}}">
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="email">Email</label>
+                            <label for="email">@lang('user.email')</label>
                             <input type="email" class="form-control" id="email" name="email"  value="{{$user->email}}">
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="username">username</label>
+                            <label for="username">@lang('user.username')</label>
                             <input type="text" class="form-control" id="username" name="username"  value="{{$user->username}}">
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="mobile_number">mobile number</label>
+                            <label for="mobile_number">@lang('user.phone')</label>
                             <input type="number" class="form-control" id="mobile_number" name="mobile_number"  value="{{$user->mobile_number}}">
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="organization">organization</label>
+                            <label for="organization">@lang('user.organization')</label>
                             <input type="text" class="form-control" id="organization" name="organization"  value="{{$user->organization}}">
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="country_code">country code</label>
+                            <label for="country_code">@lang('user.country_code')</label>
                             <input type="text" class="form-control" id="country_code" name="country_code"  value="{{$user->country_code}}">
+                        </div>                        
+                        <div class="form-group col-md-6">
+                            <label for="address">@lang('user.address1')</label>
+                            <input type="text" class="form-control" id="address" name="address" value="{{$user->address}}">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="address">@lang('user.address2')</label>
+                            <input type="text" class="form-control" id="address1" name="address1" value="{{$user->address1}}">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="country">country</label>
                             <input type="text" class="form-control" id="country" name="country"  value="{{$user->country}}">
                         </div>
-                        <div class="form-group col-md-6">
-                            <label for="address">address Line1</label>
-                            <input type="text" class="form-control" id="address" name="address" value="{{$user->address}}">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="address">address Line2</label>
-                            <input type="text" class="form-control" id="address1" name="address1" value="{{$user->address1}}">
+                        <div class="form-group col-md-4">
+                            <label for="state">@lang('user.state')</label>
+                            <input type="text" class="form-control" id="state" name="state" value="{{$user->state}}">
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="pincode">pincode</label>
-                            <input type="number" class="form-control" id="pincode" name="pincode" value="{{$user->pincode}}">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="city">city</label>
+                            <label for="city">@lang('user.city')</label>
                             <input type="text" class="form-control" id="city" name="city" value="{{$user->city}}">
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="state">state</label>
-                            <input type="text" class="form-control" id="state" name="state" value="{{$user->state}}">
+                            <label for="pincode">@lang('user.pincode')</label>
+                            <input type="number" class="form-control" id="pincode" name="pincode" value="{{$user->pincode}}">
                         </div>
+                        
+                        
                         @if($user->role==1)
                         <div class="form-group col-md-6">
-                            <label for="area_of_specialization">Area of Specialization</label>
+                            <label for="area_of_specialization">@lang('user.area_of_specialization')</label>
                             <select  class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="" id="area_of_specialization" name="area_of_specialization[]" required>
-                                <option value="">--- Select Area of Specialization ---</option>
+                                <option value="">@lang('user.area_of_specialization_option')</option>
                                 @foreach($areaOfSpecialization as $specialization)
                                 <option value="{{$specialization->name}}" {{(isset($medi->area_of_specialization) && array_search($specialization->name, json_decode($medi->area_of_specialization)) !==false )?"selected":"" }}>{{$specialization->name}}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="no_of_arbitrations">No. of Arbitrations</label>
+                            <label for="no_of_arbitrations">@lang('user.no_of_arbitrations')</label>
                             <select  class="form-control" id="no_of_arbitrations" name="no_of_arbitrations">
-                                <option value="">--- Select No. of Arbitrations ---</option>
+                                <option value="">@lang('user.no_of_arbitrations_option')</option>
                                 <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='0 – 5')?"selected":"" }}>0 – 5</option>
                                 <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='6 – 10')?"selected":"" }}>6 – 10</option>
                                 <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='11 – 25')?"selected":"" }}>11 – 25</option>
@@ -92,30 +95,30 @@
                             </select>
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="linked_in_profile_link">LinkedIn Profile Link</label>
+                            <label for="linked_in_profile_link">@lang('user.linkedin_profile_link')</label>
                             <input type="url" class="form-control" id="linked_in_profile_link" value="{{isset($medi->linked_in_profile_link)?$medi->no_of_arbitrations:"" }}" name="linked_in_profile_link">
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="experience">Experience</label>
+                            <label for="experience">@lang('user.experience')</label>
                             <textarea class="form-control" id="experience" name="experience" required>{{ isset($medi->experience)?$medi->experience:"" }}</textarea>
                         </div>
                         <div class="form-group col-md-4  d-none">
-                            <label for="field1">Field 1</label>
+                            <label for="field1">@lang('user.field_1')</label>
                             <input type="text" class="form-control" id="field1" name="field1">
                         </div>
                         <div class="form-group col-md-4  d-none">
-                            <label for="field1">Field 2</label>
+                            <label for="field1">@lang('user.field_2')</label>
                             <input type="text" class="form-control" id="field2" name="field2">
                         </div>
                         <div class="form-group col-md-4 d-none">
-                            <label for="field1">Field 3</label>
+                            <label for="field1">@lang('user.field_3')</label>
                             <input type="text" class="form-control" id="field3" name="field3">
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="state">Approve</label>
+                            <label for="state">@lang('user.state')</label>
                             <select name="status" class="form-control">
-                                <option value="1">Approve</option>
-                                <option value="0">Unapprove</option>
+                                <option value="1">@lang('user.approve')</option>
+                                <option value="0">@lang('user.unapprove')</option>
 
                             </select>
                         </div>

@@ -23,64 +23,64 @@
                         <div class="form-group col-md-12">
                             @if(Auth::user()->isDone==1 && Auth::user()->status==0)
                             <div class="alert alert-warning" role="alert">
-                                <strong>Warning!</strong> Account under review
+                                @lang('user.account_under_review')
                             </div>
                             @endif
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="firstname">First Name</label>
+                            <label for="firstname">@lang('user.first_name')</label>
                             <input type="text" class="form-control" id="firstname" name="first_name" value="{{ Auth::user()->first_name }}" required readonly>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="lastname">Last Name</label>
+                            <label for="lastname">@lang('user.last_name')</label>
                             <input type="text" class="form-control" id="lastname" name="last_name" value="{{ Auth::user()->last_name }}" required readonly>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="email">Email</label>
+                            <label for="email">@lang('user.email')</label>
                             <input type="email" class="form-control" id="email" name="email"  value="{{ Auth::user()->email }}" required readonly>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="phone">Phone</label>
+                            <label for="phone">@lang('user.phone')</label>
                             <input type="number" class="form-control" id="phone" name="mobile_number" value="{{ Auth::user()->mobile_number }}" required readonly>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="address_line_1">Address Line 1</label>
+                            <label for="address_line_1">@lang('user.address1')</label>
                             <input type="text" class="form-control" id="address_line_1" name="address" value="{{ Auth::user()->address }}" required >
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="address_line_2">Address Line 2</label>
+                            <label for="address_line_2">@lang('user.address2')</label>
                             <input type="text" class="form-control" id="address_line_2" name="address1" value="{{ Auth::user()->address1 }}" >
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="city">City</label>
+                            <label for="city">@lang('user.city')</label>
                             <input type="text" class="form-control" id="city" name="city" value="{{ Auth::user()->city }}" required >
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="pinCode">Pin code</label>
+                            <label for="pinCode">@lang('user.pincode')</label>
                             <input type="text" class="form-control" id="pinCode" name="pincode" value="{{ Auth::user()->pincode }}" required >
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="state">State</label>
+                            <label for="state">@lang('user.state')</label>
                             <input type="text" class="form-control" id="state" name="state" value="{{ Auth::user()->state }}" required >
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="country">Country</label>
+                            <label for="country">@lang('user.country')</label>
                             <input type="text" class="form-control" id="country" name="country" value="{{ Auth::user()->country }}" required >
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="area_of_specialization">Area of Specialization</label>
+                            <label for="area_of_specialization">@lang('user.area_of_specialization')</label>
                             <select  class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="" id="area_of_specialization" name="area_of_specialization[]" required>
-                                <option value="">--- Select Area of Specialization ---</option>
+                                <option value="">@lang('user.area_of_specialization_option')</option>
                                 @foreach($areaOfSpecialization as $specialization)
                                 <option value="{{$specialization->name}}" {{(isset($medi->area_of_specialization) && array_search($specialization->name, json_decode($medi->area_of_specialization)) !==false )?"selected":"" }}>{{$specialization->name}}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="no_of_arbitrations">No. of Arbitrations</label>
+                            <label for="no_of_arbitrations">@lang('user.no_of_arbitrations')</label>
                             <select  class="form-control" id="no_of_arbitrations" name="no_of_arbitrations">
-                                <option value="">--- Select No. of Arbitrations ---</option>
+                                <option value="">@lang('user.no_of_arbitrations_option')</option>
                                 <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='0 – 5')?"selected":"" }}>0 – 5</option>
                                 <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='6 – 10')?"selected":"" }}>6 – 10</option>
                                 <option {{(isset($medi->no_of_arbitrations) && $medi->no_of_arbitrations=='11 – 25')?"selected":"" }}>11 – 25</option>
@@ -89,36 +89,36 @@
                             </select>
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="linked_in_profile_link">LinkedIn Profile Link</label>
+                            <label for="linked_in_profile_link">@lang('user.linkedin_profile_link')</label>
                             <input type="url" class="form-control" id="linked_in_profile_link" value="{{isset($medi->linked_in_profile_link)?$medi->no_of_arbitrations:"" }}" name="linked_in_profile_link">
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="experience">Experience</label>
+                            <label for="experience">@lang('user.experience')</label>
                             <textarea class="form-control" id="experience" name="experience" required>{{ isset($medi->experience)?$medi->experience:"" }}</textarea>
                         </div>
                         <div class="form-group col-md-4  d-none">
-                            <label for="field1">Field 1</label>
+                            <label for="field1">@lang('user.field_1')</label>
                             <input type="text" class="form-control" id="field1" name="field1">
                         </div>
                         <div class="form-group col-md-4  d-none">
-                            <label for="field1">Field 2</label>
+                            <label for="field1">@lang('user.field_2')</label>
                             <input type="text" class="form-control" id="field2" name="field2">
                         </div>
                         <div class="form-group col-md-4 d-none">
-                            <label for="field1">Field 3</label>
+                            <label for="field1">@lang('user.field_3')</label>
                             <input type="text" class="form-control" id="field3" name="field3">
                         </div>
                         <div class="form-group form-check">
                             <input type="checkbox" name="is_accept1" value="1"  class="form-check-input" id="is_accept1"  {{ (isset($medi->is_accept1) && $medi->is_accept1==1)?"checked":"" }}  required>
-                            <label class="form-check-label" for="is_accept1">I confirm that the details provided above are true, accurate, current and complete and consent to verification by Presolv360.</label>
+                            <label class="form-check-label" for="is_accept1">@lang('user.confirm1')</label>
                         </div>
                         <div class="form-group form-check">
                             <input type="checkbox" name="is_accept2" value="1"  class="form-check-input" id="is_accept2" required {{ (isset($medi->is_accept2) && $medi->is_accept2==1)?"checked":"" }}>
-                            <label class="form-check-label" for="is_accept2">I confirm that I am qualified, I possess the required competence, knowledge and expertise and I will devote sufficient time to conduct the mediation proceedings within the time limits prescribed in Presolv360's <a href="{{url('arbitrator/important_documents')}}" target="_blank">Dispute Resolution Rules</a></label>
+                            <label class="form-check-label" for="is_accept2">@lang('user.confirm2')</label>
                         </div>
                         <div class="form-group form-check">
                             <input type="checkbox" name="is_accept3" value="1"  class="form-check-input" id="is_accept3" required {{ (isset($medi->is_accept3) && $medi->is_accept3==1)?"checked":"" }}>
-                            <label class="form-check-label" for="is_accept3">I acknowledge that I have read and understood Presolv360’s <a href="{{ url('arbitrator/important_documents')}}">Dispute Resolution Rules</a>, the Arbitrators’ and Mediators’ <a href="{{ url('arbitrator/important_documents')}}">Code of Conduct and Disclosure Rules</a>, <a href="{{ url('terms_conditions')}}">Terms & Conditions</a> and <a href="{{ url('privacy_policy')}}">Privacy Policy</a>.</label>
+                            <label class="form-check-label" for="is_accept3">@lang('user.confirm3')</label>
                         </div>
                     </div>
                 </div>
