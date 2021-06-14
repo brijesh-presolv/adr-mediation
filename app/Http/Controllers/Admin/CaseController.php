@@ -92,9 +92,10 @@ class CaseController extends Controller {
     }
 
     public function confirmStatus(Request $request) {
-        $user = MedCase::find($request->id);
-        $user->confirm_status = 1;
-        $user->save();
+        $medCas = MedCase::find($request->id);
+        $medCas->confirm_status = 1;
+        $medCas->save();
+
         $mediation_status_log = new Mediation_status_log;
         $mediation_status_log->user_id = Auth::user()->id;
         $mediation_status_log->mediation_case_id = $request->id;
@@ -109,6 +110,8 @@ class CaseController extends Controller {
         $invmodel->case_id = $request->id;
         $invmodel->file_name = $invitation;
         $invmodel->save();
+        //send invitation 
+        $this->sned_invitation($request->id,$invitation);
 
         return response()->json(["msg" => "Onging Case"]);
     }
@@ -261,7 +264,7 @@ class CaseController extends Controller {
         $cases = MedCase::select("mediation_case.*", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
                 ->leftJoin("mediators_mediation_cases_status", function($join) {
                     $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
-                    $join->where("mediators_mediation_cases_status.id","=",DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
+                    $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
                 })
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediation_case.confirm_status", "=", $role)
@@ -408,6 +411,7 @@ class CaseController extends Controller {
 
         return $string;
     }
+
     public function viewSettelment(Request $request) {
 
         $sessionData = DB::table('document_settlements')
@@ -427,6 +431,7 @@ class CaseController extends Controller {
         }
         return;
     }
+
     public function settelmenUpload(Request $request) {
 
         $validatedData = $request->validate([
@@ -452,6 +457,37 @@ class CaseController extends Controller {
         } else {
             return response()->json(["message" => "Please try again."]);
         }
+    }
+
+    public function sned_invitation($id,$invitation) {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $initiating_party = "";
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                $initiating_party = $inv->name;
+            } else if ($inv->isOnboarded == 0) {
+                $code = $inv->joinCode;
+                $email = new \SendGrid\Mail\Mail();
+                $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
+                $email->setSubject('Invitation by ' . $initiating_party . ' to participate in resolution of your case via ' . config('app.name', 'Laravel'));
+                $email->addTo($inv->userEmail, $inv->name);
+                $html = view('email.l4_invitation_to_counter_parties_for_onboarding', compact("code", "initiating_party"));
+                //dd;
+                $email->addAttachment(url("/storage/app/public/mediation/".$invitation));
+                $email->addContent("text/html", $html->render());
+                //echo env('SENDGRID_API_KEY', 'test');
+                $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+                try {
+                    $response = $sendgrid->send($email);
+                    //$response->statusCode() . "\n";
+                    //print_r($response->headers());
+                    //return $response->body() . "\n";
+                } catch (Exception $e) {
+                    //echo 'Caught exception: ' . $e->getMessage() . "\n";
+                }
+            }
+        }
+        return true;
     }
 
 }
