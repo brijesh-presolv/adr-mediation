@@ -111,7 +111,7 @@ class CaseController extends Controller {
         $invmodel->file_name = $invitation;
         $invmodel->save();
         //send invitation 
-        $this->sned_invitation($request->id,$invitation);
+        $this->sned_invitation($request->id, $invitation);
 
         return response()->json(["msg" => "Onging Case"]);
     }
@@ -182,6 +182,7 @@ class CaseController extends Controller {
         $mediation_status_log->status = 3;
         $mediation_status_log->description = "Request Reject";
         $mediation_status_log->save();
+        $this->sned_reject($request->id);
         return response()->json(["msg" => "Rejected Case"]);
     }
 
@@ -459,7 +460,7 @@ class CaseController extends Controller {
         }
     }
 
-    public function sned_invitation($id,$invitation) {
+    public function sned_invitation($id, $invitation) {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $initiating_party = "";
         foreach ($involedUser as $inv) {
@@ -473,7 +474,39 @@ class CaseController extends Controller {
                 $email->addTo($inv->userEmail, $inv->name);
                 $html = view('email.l4_invitation_to_counter_parties_for_onboarding', compact("code", "initiating_party"));
                 //dd;
-                $email->addAttachment(url("/storage/app/public/mediation/".$invitation));
+                $email->addAttachment(url("/storage/app/public/mediation/" . $invitation));
+                $email->addContent("text/html", $html->render());
+                //echo env('SENDGRID_API_KEY', 'test');
+                $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+                try {
+                    $response = $sendgrid->send($email);
+                    //$response->statusCode() . "\n";
+                    //print_r($response->headers());
+                    //return $response->body() . "\n";
+                } catch (Exception $e) {
+                    //echo 'Caught exception: ' . $e->getMessage() . "\n";
+                }
+            }
+        }
+        return true;
+    }
+
+    public function sned_reject($id) {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $initiating_party = "";
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                $party_name = $inv->name;
+                $id = "M".sprintf("%06d",$id);
+
+                
+                $email = new \SendGrid\Mail\Mail();
+                $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
+                $email->setSubject('Update about your case');
+                $email->addTo($inv->userEmail, $inv->name);
+                $html = view('email.l7_upon_successful_onboarding_of_any_counter_party', compact("party_name","id"));
+                //dd;
+                //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
                 $email->addContent("text/html", $html->render());
                 //echo env('SENDGRID_API_KEY', 'test');
                 $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
