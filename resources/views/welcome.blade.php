@@ -393,7 +393,7 @@ zakończyć spór ugodą.</p>
       <div class="modal-body">
          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <video controls id="video2" style="width: 100%; height: auto; margin:0 auto; frameborder:0;">
-          <source src="https://presolv360.com/asset/video/Resolve_explainer_video.mp4" type="video/mp4">
+          <source src="{{url('storage/app/public/video/How_it_works_video_final.mp4')}}" type="video/mp4">
           Your browser doesn't support HTML5 video tag.
         </video>
         <!-- <iframe width="auto" height="315" src="https://www.youtube.com/embed/_110tyMBaLo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
