@@ -173,19 +173,21 @@ class MediationController extends Controller {
                 $email = new \SendGrid\Mail\Mail();
                 $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
                 $email->setSubject('Thank you for choosing Mediation');
-                $email->addTo($usr->userEmail, $usr->name);
-                $html = view('l1');
+                $email->addTo($usr->email, $usr->first_name.' '.$usr->last_name);
+                $html = view('email.l1');
                 //dd;
                 $email->addContent("text/html", $html->render());
                 //echo env('SENDGRID_API_KEY', 'test');
                 $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
                 try {
                     $response = $sendgrid->send($email);
+
                     //$response->statusCode() . "\n";
                     //print_r($response->headers());
                     //return $response->body() . "\n";
                 } catch (Exception $e) {
-                    //echo 'Caught exception: ' . $e->getMessage() . "\n";
+                    echo 'Caught exception: ' . $e->getMessage() . "\n";
+
                 }
                 
 
@@ -238,8 +240,6 @@ class MediationController extends Controller {
             $string .= $characters[mt_rand(0, $max)];
         }
 
-        return '123456';
-
         return $string;
 
 
@@ -281,21 +281,23 @@ class MediationController extends Controller {
 
 
                 //fetch init parry
-                $id = "M" . sprintf("%06d", $case->id);
+                $id = "M" . sprintf("%06d", $InvoledUser->userPlanId);
                 
-                $InvoledUserP1 = InvoledUser::where(['isClaimant' => 0, 'userPlanId' => $id])->first();
+                $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $InvoledUser->userPlanId])->first();
 
                 
 
-                $party_name=$InvoledUserP1->name;
+                $party_name=$InvoledUser->name;
+
+
 
 
                 $email = new \SendGrid\Mail\Mail();
                 $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
                 $email->setSubject('Update about your case');
-                $email->addTo($usr->userEmail, $usr->name);
-                $html = view('l7_upon_successful_onboarding_of_any_counter_party',compact("id","party_name"));
-                
+                $email->addTo($InvoledUserP1->userEmail, $InvoledUserP1->name);
+                $html = view('email.l7_upon_successful_onboarding_of_any_counter_party',compact("id","party_name"));
+    
                 //dd;
                 $email->addContent("text/html", $html->render());
                 //echo env('SENDGRID_API_KEY', 'test');
