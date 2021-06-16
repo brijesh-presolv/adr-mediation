@@ -134,7 +134,7 @@ class CaseController extends Controller {
             $mediation_status_log->description = "Request Unresolved";
         }
         $mediation_status_log->save();
-
+        $this->sned_withdrawal($request->case_id);
         return response()->json(["msg" => "withdraw Case"]);
     }
 
