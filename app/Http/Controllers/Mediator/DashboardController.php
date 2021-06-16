@@ -174,7 +174,10 @@ class DashboardController extends Controller {
         ];
 
         DB::table('manage_session')->insert($dataToInsert);
-
+        foreach ($request->session_party_ids as $pary_id) {
+            $data=InvoledUser::where("userId", $pary_id)->where("userPlanId",$request->caseId)->first();
+            $this->sned_session($request->caseId, $data->userEmail, $data->name);
+        }
         return true;
     }
 
@@ -417,6 +420,30 @@ class DashboardController extends Controller {
         } else {
             return response()->json(["message" => "Please try again."]);
         }
+    }
+    
+    public function sned_session($id, $email_id, $email_name) {
+        $id = "M" . sprintf("%06d", $id);
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
+        $email->setSubject('Your resolution session has been scheduled');
+        $email->addTo($email_id, $email_name);
+        $html = view('email.l10_scheduling_of_session', compact("id"));
+        //dd;
+        //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
+        $email->addContent("text/html", $html->render());
+        //echo env('SENDGRID_API_KEY', 'test');
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        try {
+            $response = $sendgrid->send($email);
+            $response->statusCode() . "\n";
+            print_r($response->headers());
+            //return $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+        }
+
+        return true;
     }
 
 }

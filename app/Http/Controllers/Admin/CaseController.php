@@ -225,7 +225,10 @@ class CaseController extends Controller {
             'session_party_ids' => json_encode($request->session_party_ids),
             'scheduled_by' => Auth::user()->id,
         ];
-
+        foreach ($request->session_party_ids as $pary_id) {
+            $data = InvoledUser::where("userId", $pary_id)->where("userPlanId", $request->caseId)->first();
+            $this->sned_session($request->caseId, $data->userEmail, $data->name);
+        }
         DB::table('manage_session')->insert($dataToInsert);
 
         return true;
@@ -469,22 +472,23 @@ class CaseController extends Controller {
             } else if ($inv->isOnboarded == 0) {
                 $code = $inv->joinCode;
                 $email = new \SendGrid\Mail\Mail();
-                $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
+                $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
                 $email->setSubject('Invitation by ' . $initiating_party . ' to participate in resolution of your case via ' . config('app.name', 'Laravel'));
+                //echo $inv->userEmail;
                 $email->addTo($inv->userEmail, $inv->name);
                 $html = view('email.l4_invitation_to_counter_parties_for_onboarding', compact("code", "initiating_party"));
-                //dd;
-                $email->addAttachment(url("/storage/app/public/mediation/" . $invitation));
+                $email->addAttachment(file_get_contents(url("/storage/app/public/mediation/" . $id . "/" . $invitation)), "application/pdf", $invitation);
                 $email->addContent("text/html", $html->render());
                 //echo env('SENDGRID_API_KEY', 'test');
+                //echo env('SENDGRID_API_KEY', 'Laravel');
                 $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
                 try {
                     $response = $sendgrid->send($email);
-                    //$response->statusCode() . "\n";
+                    // echo $response->statusCode() . "\n";
                     //print_r($response->headers());
-                    //return $response->body() . "\n";
+                    //print_r($response->body());
                 } catch (Exception $e) {
-                    //echo 'Caught exception: ' . $e->getMessage() . "\n";
+                    echo 'Caught exception: ' . $e->getMessage() . "\n";
                 }
             }
         }
@@ -497,14 +501,14 @@ class CaseController extends Controller {
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
                 $party_name = $inv->name;
-                $id = "M".sprintf("%06d",$id);
+                $id = "M" . sprintf("%06d", $id);
 
-                
+
                 $email = new \SendGrid\Mail\Mail();
-                $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
-                $email->setSubject('Update about your case');
+                $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
+                $email->setSubject('Unable to process your case ');
                 $email->addTo($inv->userEmail, $inv->name);
-                $html = view('email.l7_upon_successful_onboarding_of_any_counter_party', compact("party_name","id"));
+                $html = view('email.l8_case_rejected', compact("party_name", "id"));
                 //dd;
                 //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
                 $email->addContent("text/html", $html->render());
@@ -512,12 +516,67 @@ class CaseController extends Controller {
                 $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
                 try {
                     $response = $sendgrid->send($email);
-                    //$response->statusCode() . "\n";
-                    //print_r($response->headers());
+                    $response->statusCode() . "\n";
+                    print_r($response->headers());
                     //return $response->body() . "\n";
                 } catch (Exception $e) {
-                    //echo 'Caught exception: ' . $e->getMessage() . "\n";
+                    echo 'Caught exception: ' . $e->getMessage() . "\n";
                 }
+            }
+        }
+    }
+
+    public function sned_session($id, $email_id, $email_name) {
+        $id = "M" . sprintf("%06d", $id);
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
+        $email->setSubject('Your resolution session has been scheduled');
+        $email->addTo($email_id, $email_name);
+        $html = view('email.l10_scheduling_of_session', compact("id"));
+        //dd;
+        //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
+        $email->addContent("text/html", $html->render());
+        //echo env('SENDGRID_API_KEY', 'test');
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        try {
+            $response = $sendgrid->send($email);
+            $response->statusCode() . "\n";
+            print_r($response->headers());
+            //return $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+        }
+
+        return true;
+    }
+
+    public function sned_withdrawal($id) {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $id = "M" . sprintf("%06d", $id);
+        $initiating_party = "";
+        foreach ($involedUser as $inv) {
+            $email = new \SendGrid\Mail\Mail();
+            $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
+
+            if ($inv->isClaimant == 0) {
+                $email->setSubject('Withdrawal of your case :' . $id);
+                $email->addTo($inv->userEmail, $inv->name);
+                $html = view('l13_withdrawal_of_case', compact("id"));
+                $initiating_party = $inv->name;
+            } else if ($inv->isOnboarded == 0) {
+                $email->setSubject('Update about your case');
+                $email->addTo($inv->userEmail, $inv->name);
+                $html = view('l14_communication_of_withdrawal_to_other_parties', compact("id", "initiating_party "));
+            }
+            $email->addContent("text/html", $html->render());
+            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+            try {
+                $response = $sendgrid->send($email);
+                // echo $response->statusCode() . "\n";
+                //print_r($response->headers());
+                //print_r($response->body());
+            } catch (Exception $e) {
+                echo 'Caught exception: ' . $e->getMessage() . "\n";
             }
         }
         return true;
