@@ -85,14 +85,14 @@
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent1" id="consent1yes" value="1">
+                                                    <input class="form-check-input" type="radio" name="consent1" id="consent1yes" value="1" checked>
                                                     <label class="form-check-label" for="consent1yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent1" id="consent1no" value="0">
+                                                    <input class="form-check-input" type="radio" name="consent1" id="consent1no" value="0" >
                                                     <label class="form-check-label" for="consent1no">
                                                         No
                                                     </label>
@@ -105,14 +105,14 @@
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2yes" value="1">
+                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2yes" value="1" checked>
                                                     <label class="form-check-label" for="consent2yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2no" value="0">
+                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2no" value="0" checked>
                                                     <label class="form-check-label" for="consent2no">
                                                         No
                                                     </label>
@@ -125,14 +125,14 @@
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent3" id="consent3yes" value="1">
+                                                    <input class="form-check-input" type="radio" name="consent3" id="consent3yes" value="1" checked>
                                                     <label class="form-check-label" for="consent3yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent3" id="consent3no" value="0">
+                                                    <input class="form-check-input" type="radio" name="consent3" id="consent3no" value="0" >
                                                     <label class="form-check-label" for="consent3no">
                                                         No
                                                     </label>
@@ -145,14 +145,14 @@
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent4" id="consent4yes" value="1">
+                                                    <input class="form-check-input" type="radio" name="consent4" id="consent4yes" value="1" checked>
                                                     <label class="form-check-label" for="consent4yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent4" id="consent4no" value="0">
+                                                    <input class="form-check-input" type="radio" name="consent4" id="consent4no" value="0" >
                                                     <label class="form-check-label" for="consent4no">
                                                         No
                                                     </label>
@@ -165,14 +165,14 @@
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent5" id="consent5yes" value="1">
+                                                    <input class="form-check-input" type="radio" name="consent5" id="consent5yes" value="1" checked>
                                                     <label class="form-check-label" for="consent5yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent5" id="consent5no" value="0">
+                                                    <input class="form-check-input" type="radio" name="consent5" id="consent5no" value="0" >
                                                     <label class="form-check-label" for="consent5no">
                                                         No
                                                     </label>
@@ -205,7 +205,7 @@
                                         <td>Circumstances disclosing any past or present relationship with, or interest in, any of the parties or in relation to the subject-matter in dispute, whether financial, business, professional or other kind, which is likely to impair your independence or impartiality (list out)</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars2" id="particulars2" rows="3"></textarea>
+                                                <textarea class="form-control" name="particulars2" id="particulars2" rows="3">Na</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -213,7 +213,7 @@
                                         <td>Circumstances which are likely to affect your ability to devote sufficient time to the mediation and in particular your </td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars3" id="particulars3" rows="3"></textarea>
+                                                <textarea class="form-control" name="particulars3" id="particulars3" rows="3">Na</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -221,7 +221,7 @@
                                         <td>ability to complete the entire mediation within the time limits prescribed under the Rules</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars4" id="particulars4" rows="3"></textarea>
+                                                <textarea class="form-control" name="particulars4" id="particulars4" rows="3">Na</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -230,14 +230,14 @@
                         </div>
                         <div class="col-lg-12">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" required id="confirm">
+                                <input class="form-check-input" type="checkbox" required id="confirm" checked>
                                 <label class="form-check-label" for="confirm">
                                     I confirm that the details provided above are true, accurate, current and complete and acknowledge that a copy of the consent and disclosures will be provided to the parties.
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="accept">
-                                <label class="form-check-label" for="accept">
+                                <input class="form-check-input" type="checkbox" value="" id="accept" checked>
+                                <label class="form-check-label" for="accept" >
                                     By checking this box, I accept and agree to conduct the mediation in accordance with the Rules and confirm that I shall abide by the Code, Terms & Conditions and Privacy Policy.
                                 </label>
                             </div>
