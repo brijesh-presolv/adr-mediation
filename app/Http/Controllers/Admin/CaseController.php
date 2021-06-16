@@ -564,12 +564,12 @@ class CaseController extends Controller {
             if ($inv->isClaimant == 0) {
                 $email->setSubject('Withdrawal of your case :' . $id);
                 $email->addTo($inv->userEmail, $inv->name);
-                $html = view('l13_withdrawal_of_case', compact("id"));
+                $html = view('email.l13_withdrawal_of_case', compact("id"));
                 $initiating_party = $inv->name;
             } else if ($inv->isOnboarded == 0) {
                 $email->setSubject('Update about your case');
                 $email->addTo($inv->userEmail, $inv->name);
-                $html = view('l14_communication_of_withdrawal_to_other_parties', compact("id", "initiating_party "));
+                $html = view('email.l14_communication_of_withdrawal_to_other_parties', compact("id", "initiating_party"));
             }
             $email->addContent("text/html", $html->render());
             $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
@@ -595,7 +595,7 @@ class CaseController extends Controller {
 //            if ($inv->isClaimant == 0) {
                 $email->setSubject('Successful resolution of your case :' . $id);
                 $email->addTo($inv->userEmail, $inv->name);
-                $html = view('l15_case_resolved', compact("id"));
+                $html = view('email.l15_case_resolved', compact("id"));
                 $initiating_party = $inv->name;
 //            } else if ($inv->isOnboarded == 0) {
 //                $email->setSubject('Update about your case');
@@ -626,7 +626,7 @@ class CaseController extends Controller {
             //if ($inv->isClaimant == 0) {
                 $email->setSubject('Closure of your case :' . $id);
                 $email->addTo($inv->userEmail, $inv->name);
-                $html = view('l15_case_unresolved', compact("id"));
+                $html = view('email.l15_case_unresolved', compact("id"));
                 $initiating_party = $inv->name;
 //            } else if ($inv->isOnboarded == 0) {
 //                $email->setSubject('Update about your case');
