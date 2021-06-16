@@ -128,13 +128,16 @@ class CaseController extends Controller {
         $mediation_status_log->status = $request->status;
         if (Mediation_status_log::STATUS_WITHDRAWN == $request->status) {
             $mediation_status_log->description = "Request Withdrawn";
+            $this->sned_withdrawal($request->case_id);
         } else if (Mediation_status_log::STATUS_RESOLVED == $request->status) {
             $mediation_status_log->description = "Request Resolved";
+            $this->sned_resolved($request->case_id);
         } else if (Mediation_status_log::STATUS_UNRESOLVED == $request->status) {
             $mediation_status_log->description = "Request Unresolved";
+            $this->sned_unresolved($request->case_id);
         }
         $mediation_status_log->save();
-        $this->sned_withdrawal($request->case_id);
+        
         return response()->json(["msg" => "withdraw Case"]);
     }
 
@@ -568,6 +571,68 @@ class CaseController extends Controller {
                 $email->addTo($inv->userEmail, $inv->name);
                 $html = view('l14_communication_of_withdrawal_to_other_parties', compact("id", "initiating_party "));
             }
+            $email->addContent("text/html", $html->render());
+            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+            try {
+                $response = $sendgrid->send($email);
+                // echo $response->statusCode() . "\n";
+                //print_r($response->headers());
+                //print_r($response->body());
+            } catch (Exception $e) {
+                echo 'Caught exception: ' . $e->getMessage() . "\n";
+            }
+        }
+        return true;
+    }
+    public function sned_resolved($id) {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $id = "M" . sprintf("%06d", $id);
+        $initiating_party = "";
+        foreach ($involedUser as $inv) {
+            $email = new \SendGrid\Mail\Mail();
+            $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
+
+//            if ($inv->isClaimant == 0) {
+                $email->setSubject('Successful resolution of your case :' . $id);
+                $email->addTo($inv->userEmail, $inv->name);
+                $html = view('l15_case_resolved', compact("id"));
+                $initiating_party = $inv->name;
+//            } else if ($inv->isOnboarded == 0) {
+//                $email->setSubject('Update about your case');
+//                $email->addTo($inv->userEmail, $inv->name);
+//                $html = view('l14_communication_of_withdrawal_to_other_parties', compact("id", "initiating_party "));
+//            }
+            $email->addContent("text/html", $html->render());
+            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+            try {
+                $response = $sendgrid->send($email);
+                // echo $response->statusCode() . "\n";
+                //print_r($response->headers());
+                //print_r($response->body());
+            } catch (Exception $e) {
+                echo 'Caught exception: ' . $e->getMessage() . "\n";
+            }
+        }
+        return true;
+    }
+    public function sned_unresolved($id) {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $id = "M" . sprintf("%06d", $id);
+        $initiating_party = "";
+        foreach ($involedUser as $inv) {
+            $email = new \SendGrid\Mail\Mail();
+            $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
+
+            //if ($inv->isClaimant == 0) {
+                $email->setSubject('Closure of your case :' . $id);
+                $email->addTo($inv->userEmail, $inv->name);
+                $html = view('l15_case_unresolved', compact("id"));
+                $initiating_party = $inv->name;
+//            } else if ($inv->isOnboarded == 0) {
+//                $email->setSubject('Update about your case');
+//                $email->addTo($inv->userEmail, $inv->name);
+//                $html = view('l14_communication_of_withdrawal_to_other_parties', compact("id", "initiating_party "));
+//            }
             $email->addContent("text/html", $html->render());
             $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
             try {
