@@ -691,7 +691,7 @@ class CaseController extends Controller {
         foreach ($files as $f) {
             $email->addAttachment(file_get_contents(url("storage/app/".$f["file_name"])));
         }
-        $html = view('email.l19_additional doc_all_parties', compact("id"));
+        $html = view('email.l19_additional_doc_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
         $email->addContent("text/html", $html->render());
@@ -725,7 +725,7 @@ class CaseController extends Controller {
         foreach ($files as $f) {
             $email->addAttachment(file_get_contents(url("storage/app/".$f["file_path"])));
         }
-        $html = view('email.l19_additional doc_all_parties', compact("id"));
+        $html = view('email.l21_settlement_agreement_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
         $email->addContent("text/html", $html->render());

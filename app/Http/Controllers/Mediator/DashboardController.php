@@ -470,7 +470,7 @@ class DashboardController extends Controller {
         $email->setSubject('Urgent: Mediator\'s Consent and Disclosures');
         $email->addTos($sendEamils);
         $email->addAttachment($pdf->stream('document.pdf'), "application/pdf", $id . ".pdf");
-        $html = view('email.l18_mediator acceptance_all_parties', compact("id"));
+        $html = view('email.l18_mediator_acceptance_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
         $email->addContent("text/html", $html->render());
@@ -504,7 +504,7 @@ class DashboardController extends Controller {
         foreach ($files as $f) {
             $email->addAttachment(file_get_contents(url("storage/app/".$f["file_name"])));
         }
-        $html = view('email.l19_additional doc_all_parties', compact("id"));
+        $html = view('email.l19_additional_doc_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
         $email->addContent("text/html", $html->render());
@@ -538,7 +538,7 @@ class DashboardController extends Controller {
         foreach ($files as $f) {
             $email->addAttachment(file_get_contents(url("storage/app/".$f["file_path"])));
         }
-        $html = view('email.l19_additional doc_all_parties', compact("id"));
+        $html = view('email.l21_settlement_agreement_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
         $email->addContent("text/html", $html->render());
