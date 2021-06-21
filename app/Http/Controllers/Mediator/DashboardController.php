@@ -68,7 +68,7 @@ class DashboardController extends Controller {
         foreach ($newrequestData as $d) {
             $arraydata[] = [
                 "id" => $d->mediation_case_id,
-                "party" => InvoledUser::select('name','userPhone','address1','address2','userEmail', 'isOnboarded')->where(['userPlanid' => $d->mediation_case_id])->get(),
+                "party" => InvoledUser::select('name', 'userPhone', 'address1', 'address2', 'userEmail', 'isOnboarded')->where(['userPlanid' => $d->mediation_case_id])->get(),
                 "comments" => "tesr",
                 "caseId" => $d->mediation_case_id,
                 "case_issue" => $d->issue,
@@ -151,6 +151,7 @@ class DashboardController extends Controller {
         } else {
             $caseid = $request->caseid;
         }
+        $this->send_attechment_party($caseid);
         DB::table('mediators_mediation_cases_status')
                 ->where('mediator_id', Auth::user()->id)
                 ->where('mediation_case_id', $caseid)
@@ -175,7 +176,7 @@ class DashboardController extends Controller {
 
         DB::table('manage_session')->insert($dataToInsert);
         foreach ($request->session_party_ids as $pary_id) {
-            $data=InvoledUser::where("userId", $pary_id)->where("userPlanId",$request->caseId)->first();
+            $data = InvoledUser::where("userId", $pary_id)->where("userPlanId", $request->caseId)->first();
             $this->sned_session($request->caseId, $data->userEmail, $data->name);
         }
         return true;
@@ -302,21 +303,21 @@ class DashboardController extends Controller {
     }
 
     public function casedetails($id) {
-        
 
-        $case= MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname","mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+
+        $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where('mediation_case.id', '=', $id)
                 ->first();
-                
+
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
 
-        $case->invitation= InvitationFiles::where(['case_id'=>$case->id])->orderByDesc('id')->limit(1)->first();
+        $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
 
 
-        $case->supporting_document=SupportingDocument::where(['case_id' => $case->id])->get();
+        $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->get();
 
 
         return view('admin.case.casedetails', compact("case"));
@@ -369,8 +370,8 @@ class DashboardController extends Controller {
             // dd($insert);
             // die();
             // File::insert($insert);
-            DB::table('manage_files')->insert($insert);
-
+            DB::table('manage_files')->insert($insert, $insert);
+            $this->send_upload_file_party($request->caseId, $insert);
             return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
         } else {
             return response()->json(["message" => "Please try again."]);
@@ -416,12 +417,13 @@ class DashboardController extends Controller {
                 }
             }
             DB::table('document_settlements')->insert($insert);
+            $this->send_settlement_agreement_party($request->caseId, $insert);
             return response()->json(["message" => 'Ajax Multiple fIle has been uploaded']);
         } else {
             return response()->json(["message" => "Please try again."]);
         }
     }
-    
+
     public function sned_session($id, $email_id, $email_name) {
         $id = "M" . sprintf("%06d", $id);
         $email = new \SendGrid\Mail\Mail();
@@ -429,6 +431,114 @@ class DashboardController extends Controller {
         $email->setSubject('Your resolution session has been scheduled');
         $email->addTo($email_id, $email_name);
         $html = view('email.l10_scheduling_of_session', compact("id"));
+        //dd;
+        //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
+        $email->addContent("text/html", $html->render());
+        //echo env('SENDGRID_API_KEY', 'test');
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        try {
+            $response = $sendgrid->send($email);
+            $response->statusCode() . "\n";
+            print_r($response->headers());
+            //return $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+        }
+
+        return true;
+    }
+
+    public function send_attechment_party($id) {
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
+                ->where("mediation_case_id", "=", $id)
+                ->first();
+        if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
+            return abort(404);
+        }
+        $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
+
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $id = "M" . sprintf("%06d", $id);
+        $sendEamils = array();
+        foreach ($involedUser as $inv) {
+            $sendEamils[] = $inv->userEmail;
+        }
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
+        $email->setSubject('Urgent: Mediator\'s Consent and Disclosures');
+        $email->addTos($sendEamils);
+        $email->addAttachment($pdf->stream('document.pdf'), "application/pdf", $id . ".pdf");
+        $html = view('email.l18_mediator acceptance_all_parties', compact("id"));
+        //dd;
+        //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
+        $email->addContent("text/html", $html->render());
+        //echo env('SENDGRID_API_KEY', 'test');
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        try {
+            $response = $sendgrid->send($email);
+            $response->statusCode() . "\n";
+            print_r($response->headers());
+            //return $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+        }
+
+        return true;
+    }
+
+    public function send_upload_file_party($id, $files) {
+
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $id = "M" . sprintf("%06d", $id);
+        $sendEamils = array();
+        foreach ($involedUser as $inv) {
+            $sendEamils[] = $inv->userEmail;
+        }
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
+        $email->setSubject('URGENT: ‘Additional Document’');
+        $email->addTos($sendEamils);
+
+        foreach ($files as $f) {
+            $email->addAttachment(file_get_contents(url("storage/app/".$f["file_name"])));
+        }
+        $html = view('email.l19_additional doc_all_parties', compact("id"));
+        //dd;
+        //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
+        $email->addContent("text/html", $html->render());
+        //echo env('SENDGRID_API_KEY', 'test');
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        try {
+            $response = $sendgrid->send($email);
+            $response->statusCode() . "\n";
+            print_r($response->headers());
+            //return $response->body() . "\n";
+        } catch (Exception $e) {
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+        }
+
+        return true;
+    }
+
+    public function send_settlement_agreement_party($id, $files) {
+
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $id = "M" . sprintf("%06d", $id);
+        $sendEamils = array();
+        foreach ($involedUser as $inv) {
+            $sendEamils[] = $inv->userEmail;
+        }
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
+        $email->setSubject('URGENT: ‘Settlement Agreement’');
+        $email->addTos($sendEamils);
+
+        foreach ($files as $f) {
+            $email->addAttachment(file_get_contents(url("storage/app/".$f["file_path"])));
+        }
+        $html = view('email.l19_additional doc_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
         $email->addContent("text/html", $html->render());

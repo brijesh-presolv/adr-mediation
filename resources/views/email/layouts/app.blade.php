@@ -29,7 +29,7 @@
                                 </tr>
                             </thead>
                             <tbody style="background-color: #fff;">
-                                <tr><td style="padding:5px;"> @yield('content')</td></tr>
+                                <tr><td style="padding:15px;"> @yield('content')</td></tr>
                             </tbody>
                             <tfoot style="background-color: #3d3b3b;color:#d3d3d3">
                                 <tr>
