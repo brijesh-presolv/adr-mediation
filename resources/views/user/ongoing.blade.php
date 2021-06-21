@@ -267,6 +267,9 @@ use App\Models\InvoledUser;
                     data: $('#joincode').serialize(),
                     success: function (res) {
 
+
+                        console.log(res);
+
                       
                         
 
