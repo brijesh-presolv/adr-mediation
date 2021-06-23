@@ -64,7 +64,7 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Phone <span style="color:red; ">*</span></label>
-                            <input type="text"class="form-control" value="<?= $user->mobile_number ?>"readonly>
+                            <input type="text"class="form-control" value="<?= $user->mobile_number ?>"readonly >
                         </div>
                     </div>
                 </div>
@@ -152,7 +152,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Phone <span style="color:red; ">*</span></label>
-                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>  required>
+                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>  required data-smk-type="number" minlength="10" maxlength="10" data-smk-msg="Enter vaild phone number">
                             </div>
                         </div>
                     </div>
