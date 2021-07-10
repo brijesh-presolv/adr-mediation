@@ -83,7 +83,7 @@
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Comment:</label>
-                        <textarea class="form-control" name="withdraw_comment"  required></textarea>
+                        <textarea class="form-control" name="withdraw_comment"  ></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -24,15 +24,15 @@ class ProfileController extends Controller {
     }
 
     public function profileUpdate() {
-        $areaOfSpecialization=AreaOfSpecialization::all();
+        $areaOfSpecialization = AreaOfSpecialization::all();
         $medi = Mediation_Details::where("user_id", "=", Auth::user()->id)->first();
-        return view('mediator.user.profile', compact('areaOfSpecialization','medi'));
+        return view('mediator.user.profile', compact('areaOfSpecialization', 'medi'));
     }
 
     public function profileSave(Request $request) {
         $user = User::find($request->id);
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
+        $user->first_name = ucfirst($request->first_name);
+        $user->last_name = ucfirst($request->last_name);
         $user->mobile_number = $request->mobile_number;
         $user->email = $request->email;
         $user->address = $request->address;
@@ -109,8 +109,8 @@ class ProfileController extends Controller {
 
 
         $dataToUpdate = [
-            'first_name' => $request->firstName,
-            'last_name' => $request->lastName,
+            'first_name' => ucfirst($request->firstName),
+            'last_name' => ucfirst($request->lastName),
             'email' => $request->email,
             'mobile_number' => $request->mobile,
             'organization' => $request->orgName,

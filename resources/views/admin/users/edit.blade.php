@@ -21,31 +21,33 @@
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label for="first_name">@lang('user.first_name')</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name"  value="{{$user->first_name}}">
+                            <input type="text" class="form-control" id="first_name" name="first_name"  value="{{$user->first_name}}"  data-validation="required">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="last_name">@lang('user.last_name')</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name"  value="{{$user->last_name}}">
+                            <input type="text" class="form-control" id="last_name" name="last_name"  value="{{$user->last_name}}"  data-validation="required">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="email">@lang('user.email')</label>
-                            <input type="email" class="form-control" id="email" name="email"  value="{{$user->email}}">
+                            <input type="text" class="form-control" id="email" name="email"  value="{{$user->email}}"  data-validation="required email">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="username">@lang('user.username')</label>
-                            <input type="text" class="form-control" id="username" name="username"  value="{{$user->username}}">
+                            <input type="text" class="form-control" id="username" name="username"  value="{{$user->username}}"  data-validation="required">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="mobile_number">@lang('user.phone')</label>
-                            <input type="number" class="form-control" id="mobile_number" name="mobile_number"  value="{{$user->mobile_number}}">
+                            <input type="number" class="form-control" id="mobile_number" name="mobile_number"  value="{{$user->mobile_number}}"  data-validation="required">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="organization">@lang('user.organization')</label>
-                            <input type="text" class="form-control" id="organization" name="organization"  value="{{$user->organization}}">
+                            <input type="text" class="form-control" id="organization" name="organization"  value="{{$user->organization}}"  data-validation="required">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="country_code">@lang('user.country_code')</label>
-                            <input type="text" class="form-control" id="country_code" name="country_code"  value="{{$user->country_code}}">
+                            <select class="form-control" id="country_code" name="country_code" >
+                                <option>48</option>
+                            </select>
                         </div>                        
                         <div class="form-group col-md-6">
                             <label for="address">@lang('user.address1')</label>
@@ -57,22 +59,73 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="country">country</label>
-                            <input type="text" class="form-control" id="country" name="country"  value="{{$user->country}}">
+                            <select class="form-control" id="country" name="country">
+                                <option>Polska</option>
+                            </select>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
-                            <input type="text" class="form-control" id="state" name="state" value="{{$user->state}}">
+                            <select  class="form-control" id="state" name="state">
+                                <option {{($user->state=="dolnośląskie")?"selected":"" }} >
+                                    dolnośląskie
+                                </option>
+                                <option {{($user->state=="kujawsko-pomorskie")?"selected":"" }}>
+                                    kujawsko-pomorskie
+                                </option>
+                                <option {{($user->state=="lubelskie")?"selected":"" }}>
+                                    lubelskie
+                                </option>
+                                <option {{($user->state=="lubuskie")?"selected":"" }}>
+                                    lubuskie
+                                </option>
+                                <option {{($user->state=="łódzkie")?"selected":"" }}>
+                                    łódzkie
+                                </option>
+                                <option {{($user->state=="małopolskie")?"selected":"" }}>
+                                    małopolskie
+                                </option>
+                                <option {{($user->state=="mazowieckie")?"selected":"" }}>
+                                    mazowieckie
+                                </option>
+                                <option {{($user->state=="opolskie")?"selected":"" }}>
+                                    opolskie
+                                </option>
+                                <option {{($user->state=="podkarpackie")?"selected":"" }}>
+                                    podkarpackie
+                                </option>
+                                <option {{($user->state=="podlaskie")?"selected":"" }}>
+                                    podlaskie
+                                </option>
+                                <option {{($user->state=="pomorskie")?"selected":"" }}>
+                                    pomorskie
+                                </option>
+                                <option {{($user->state=="śląskie")?"selected":"" }}>
+                                    śląskie
+                                </option>
+                                <option {{($user->state=="świętokrzyskie")?"selected":"" }}>
+                                    świętokrzyskie
+                                </option>
+                                <option {{($user->state=="warmińsko-mazurskie")?"selected":"" }}>
+                                    warmińsko-mazurskie
+                                </option>
+                                <option {{($user->state=="wielkopolskie")?"selected":"" }}>
+                                    wielkopolskie
+                                </option>
+                                <option {{($user->state=="zachodniopomorskie")?"selected":"" }}>
+                                    zachodniopomorskie
+                                </option>
+                            </select>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="city">@lang('user.city')</label>
-                            <input type="text" class="form-control" id="city" name="city" value="{{$user->city}}">
+                            <input type="text" class="form-control" id="city" name="city" value="{{$user->city}}"  data-validation="required">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="pincode">@lang('user.pincode')</label>
-                            <input type="number" class="form-control" id="pincode" name="pincode" value="{{$user->pincode}}">
+                            <input type="number" class="form-control" id="pincode" name="pincode" value="{{$user->pincode}}"  data-validation="required">
                         </div>
-                        
-                        
+
+
                         @if($user->role==1)
                         <div class="form-group col-md-6">
                             <label for="area_of_specialization">@lang('user.area_of_specialization')</label>
@@ -114,6 +167,7 @@
                             <label for="field1">@lang('user.field_3')</label>
                             <input type="text" class="form-control" id="field3" name="field3">
                         </div>
+                        @endif
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
                             <select name="status" class="form-control">
@@ -122,7 +176,7 @@
 
                             </select>
                         </div>
-                        @endif
+                        
 
                     </div>
                 </div>
@@ -137,12 +191,10 @@
 
 <!-- Table datatable css -->
 @section('head')
-
 <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <link href="{{url('assets/')}}/libs/select2/select2.min.css" rel="stylesheet" type="text/css" />
 <link href="{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
-
 @endsection
 
 
@@ -150,10 +202,8 @@
 <!-- Datatable plugin js -->
 <script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
 <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
-
 <!-- Datatables init -->
 <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
-
 <script src="{{url('assets/')}}/libs/select2/select2.min.js"></script>
 <script src = "{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.js" ></script>
 <script>
@@ -161,5 +211,7 @@ $(document).ready(function () {
     $('.select2-multiple').select2();
 });
 </script>
-
+<script>
+    $.validate();
+</script>
 @endsection

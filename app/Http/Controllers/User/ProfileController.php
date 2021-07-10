@@ -74,8 +74,8 @@ class ProfileController extends Controller {
 
         
         $dataToUpdate = [
-            'first_name' => $request->firstName,
-            'last_name' => $request->lastName,
+            'first_name' => ucfirst($request->firstName),
+            'last_name' => ucfirst($request->lastName),
             'email' => $request->email,
             'mobile_number' => $request->mobile,
             'organization' => $request->orgName,

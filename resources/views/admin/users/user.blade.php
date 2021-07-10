@@ -23,6 +23,7 @@
                         <th>mobile number</th>
                         <th>User Type</th>
                         <th>Active/Inactive</th>
+                        <th>Approve/Unapprove</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -80,8 +81,19 @@ var userTable = $('#users').DataTable({
             render: function (data, type, row) {
                 var button = `<div class="form-group">
                 <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                  <input type="checkbox" id="customSwitch`+row.id+`" name=="user_status" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
-                  <label class="custom-control-label" for="customSwitch`+row.id+`"> </label>
+                  <input type="checkbox" id="customSwitch` + row.id + `" name=="user_status" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
+                  <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
+                </div>
+              </div>`;
+                return button;
+            }
+        },
+        {"data": "status",
+            render: function (data, type, row) {
+                var button = `<div class="form-group">
+                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                  <input type="checkbox" id="status_change_approvel` + row.id + `" name=="user_status" value="` + row.id + `" class="custom-control-input status_change_approvel" ` + ((data == 1) ? "checked" : "") + `>
+                  <label class="custom-control-label" for="status_change_approvel` + row.id + `"> </label>
                 </div>
               </div>`;
                 return button;
@@ -89,8 +101,8 @@ var userTable = $('#users').DataTable({
         },
         {"data": "id", sortable: false,
             render: function (data, type, row) {
-                var button = `<form method="post" action="{{route('admin.users.edit')}}"> @csrf <button type="submit" value="`+data+`" name="id" class="btn btn-primary"><i class="fas fa-user-edit"></i></button></form> `;
-                button += ` <form method="post" action="{{route('admin.users.edit')}}"> @csrf <button type="submit"  value="`+data+`" name="id"  class="btn btn-danger"><i class="far fa-trash-alt"></i></button></form>`;
+                var button = `<form method="post" action="{{route('admin.users.edit')}}"> @csrf <button type="submit" value="` + data + `" name="id" class="btn btn-primary"><i class="fas fa-user-edit"></i></button></form> `;
+                button += ` <form method="post" action="{{route('admin.users.edit')}}"> @csrf <button type="submit"  value="` + data + `" name="id"  class="btn btn-danger"><i class="far fa-trash-alt"></i></button></form>`;
                 return button;
             }
         },
@@ -112,28 +124,21 @@ $(document).on('change', ".statuschang", function () {
         userTable.ajax.reload()
     });
 });
+$(document).on('change', ".status_change_approvel", function () {
+    var id = $(this).val();
+    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+    if ($(this).is(':checked')) {
+        var status = 1;
+    } else {
+        var status = 0;
+    }
+    $.ajax({
+        url: '{{ route("admin.users.status_change_approvel") }}',
+        method: "post",
+        data: {id: id, status: status, '_token': csrf},
+    }).done(function (data) {
+        userTable.ajax.reload()
+    });
+});
 </script>
 @endsection
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

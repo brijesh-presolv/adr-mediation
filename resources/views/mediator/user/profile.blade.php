@@ -62,11 +62,62 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
-                            <input type="text" class="form-control" id="state" name="state" value="{{ Auth::user()->state }}" required >
+                            <select  class="form-control" id="state" name="state">
+                                <option {{($user->state=="dolnośląskie")?"selected":"" }} >
+                                    dolnośląskie
+                                </option>
+                                <option {{($user->state=="kujawsko-pomorskie")?"selected":"" }}>
+                                    kujawsko-pomorskie
+                                </option>
+                                <option {{($user->state=="lubelskie")?"selected":"" }}>
+                                    lubelskie
+                                </option>
+                                <option {{($user->state=="lubuskie")?"selected":"" }}>
+                                    lubuskie
+                                </option>
+                                <option {{($user->state=="łódzkie")?"selected":"" }}>
+                                    łódzkie
+                                </option>
+                                <option {{($user->state=="małopolskie")?"selected":"" }}>
+                                    małopolskie
+                                </option>
+                                <option {{($user->state=="mazowieckie")?"selected":"" }}>
+                                    mazowieckie
+                                </option>
+                                <option {{($user->state=="opolskie")?"selected":"" }}>
+                                    opolskie
+                                </option>
+                                <option {{($user->state=="podkarpackie")?"selected":"" }}>
+                                    podkarpackie
+                                </option>
+                                <option {{($user->state=="podlaskie")?"selected":"" }}>
+                                    podlaskie
+                                </option>
+                                <option {{($user->state=="pomorskie")?"selected":"" }}>
+                                    pomorskie
+                                </option>
+                                <option {{($user->state=="śląskie")?"selected":"" }}>
+                                    śląskie
+                                </option>
+                                <option {{($user->state=="świętokrzyskie")?"selected":"" }}>
+                                    świętokrzyskie
+                                </option>
+                                <option {{($user->state=="warmińsko-mazurskie")?"selected":"" }}>
+                                    warmińsko-mazurskie
+                                </option>
+                                <option {{($user->state=="wielkopolskie")?"selected":"" }}>
+                                    wielkopolskie
+                                </option>
+                                <option {{($user->state=="zachodniopomorskie")?"selected":"" }}>
+                                    zachodniopomorskie
+                                </option>
+                            </select>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="country">@lang('user.country')</label>
-                            <input type="text" class="form-control" id="country" name="country" value="{{ Auth::user()->country }}" required >
+                            <label for="country">country</label>
+                            <select class="form-control" id="country" name="country">
+                                <option>Polska</option>
+                            </select>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="area_of_specialization">@lang('user.area_of_specialization')</label>
@@ -131,15 +182,15 @@
 </div>
 @endsection
 @section('head')
-    <link href="{{url('assets/')}}/libs/select2/select2.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
+<link href="{{url('assets/')}}/libs/select2/select2.min.css" rel="stylesheet" type="text/css" />
+<link href="{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
 @endsection
 @section('footer')
- <script src="{{url('assets/')}}/libs/select2/select2.min.js"></script>
- <script src="{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.js"></script>
- <script>
- $(document).ready(function() {
-        $('.select2-multiple').select2();
-    });
- </script>
+<script src="{{url('assets/')}}/libs/select2/select2.min.js"></script>
+<script src="{{url('assets/')}}/libs/bootstrap-select/bootstrap-select.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('.select2-multiple').select2();
+});
+</script>
 @endsection

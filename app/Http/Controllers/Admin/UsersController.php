@@ -38,6 +38,18 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    public function statusChangeApprove(Request $request) {
+        $user = User::find($request->id);
+        $user->status = $request->status;
+        $user->save();
+        return response()->json(["msg" => "Category Name Update"]);
+    }
+
+    /**
+     * Show the application users.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
     public function statusChange(Request $request) {
         $user = User::find($request->id);
         $user->isActive = $request->status;
@@ -64,8 +76,8 @@ class UsersController extends Controller {
      */
     public function update(Request $request) {
         $user = User::find($request->id);
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
+        $user->first_name = ucfirst($request->first_name);
+        $user->last_name = ucfirst($request->last_name);
         $user->email = $request->email;
         $user->username = $request->username;
         $user->mobile_number = $request->mobile_number;
@@ -77,11 +89,11 @@ class UsersController extends Controller {
         $user->city = $request->city;
         $user->state = $request->state;
         $user->country = $request->country;
-        if(isset($request->status)){
+        if (isset($request->status)) {
             $user->status = $request->status;
         }
-        
-        
+
+
 
 
         $user->save();
