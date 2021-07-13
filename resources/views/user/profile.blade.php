@@ -148,7 +148,7 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="field-4" class="control-label">Mobile Number : </label>
-                                                <input type="text" name="mobile"  value="{{ $profileData->mobile_number }}"  class="form-control" id="field-4" >
+                                                <input type="number" name="mobile"  value="{{ $profileData->mobile_number }}"  class="form-control" id="field-4" >
                                             </div>
                                         </div>
                                     </div>

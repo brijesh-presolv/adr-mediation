@@ -2,7 +2,7 @@
 
 function isreadonly($rows) {
 
-    if ($rows > 0 ) {
+    if ($rows > 0) {
         echo "readonly";
     }
 }
@@ -10,7 +10,7 @@ function isreadonly($rows) {
 function isreadonlys($rows) {
 
 
-    if ($rows!='') {
+    if ($rows != '') {
         echo "readonly";
     }
 }
@@ -64,7 +64,7 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Phone <span style="color:red; ">*</span></label>
-                            <input type="text"class="form-control" value="<?= $user->mobile_number ?>"readonly >
+                            <input type="number"class="form-control" value="<?= $user->mobile_number ?>"readonly >
                         </div>
                     </div>
                 </div>
@@ -72,19 +72,19 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Address line 1 <span style="color:red; ">*</span></label>
-                            <input type="text" name="useraddress" class="form-control" value="<?= ($user->address1 !='NULL') ? $user->address : ''; ?>" <?= isreadonlys($user->address) ?> required>
+                            <input type="text" name="useraddress" class="form-control" value="<?= ($user->address1 != 'NULL') ? $user->address : ''; ?>" <?= isreadonlys($user->address) ?> required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Address line 2</label>
-                            <input type="text" name="useraddress1" class="form-control" value="<?= ($user->address1 !='NULL') ? $user->address1 : ''; ?>" <?= isreadonlys($user->address1) ?> >
+                            <input type="text" name="useraddress1" class="form-control" value="<?= ($user->address1 != 'NULL') ? $user->address1 : ''; ?>" <?= isreadonlys($user->address1) ?> >
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>City <span style="color:red; ">*</span></label>
-                            <input type="text" name="usercity" class="form-control" value="<?= ($user->city !='NULL') ? $user->city : ''; ?>" <?= isreadonlys($user->city) ?> required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid city">
+                            <input type="text" name="usercity" class="form-control" value="<?= ($user->city != 'NULL') ? $user->city : ''; ?>" <?= isreadonlys($user->city) ?> required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid city">
                         </div>
                     </div>
                 </div>
@@ -92,19 +92,70 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Pincode <span style="color:red; ">*</span></label>
-                            <input type="text" name="userpincode" class="form-control" value="<?= ($user->pincode !='NULL') ? $user->pincode : ''; ?>" <?= isreadonlys($user->pincode) ?> required data-smk-type="number" minlength="6" maxlength="6" data-smk-msg="Enter vaild pincode">
+                            <input type="text" name="userpincode" class="form-control" value="<?= ($user->pincode != 'NULL') ? $user->pincode : ''; ?>" <?= isreadonlys($user->pincode) ?> required data-smk-type="number" minlength="6" maxlength="6" data-smk-msg="Enter vaild pincode">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
-                            <input type="text" name="userstate" class="form-control" value="<?= ($user->state !='NULL') ? $user->state : ''; ?>" <?= isreadonlys($user->state) ?> required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
+                            <select  class="form-control" id="userstate" name="userstate">
+                                <option {{($user->state=="dolnośląskie")?"selected":"" }} >
+                                    dolnośląskie
+                                </option>
+                                <option {{($user->state=="kujawsko-pomorskie")?"selected":"" }}>
+                                    kujawsko-pomorskie
+                                </option>
+                                <option {{($user->state=="lubelskie")?"selected":"" }}>
+                                    lubelskie
+                                </option>
+                                <option {{($user->state=="lubuskie")?"selected":"" }}>
+                                    lubuskie
+                                </option>
+                                <option {{($user->state=="łódzkie")?"selected":"" }}>
+                                    łódzkie
+                                </option>
+                                <option {{($user->state=="małopolskie")?"selected":"" }}>
+                                    małopolskie
+                                </option>
+                                <option {{($user->state=="mazowieckie")?"selected":"" }}>
+                                    mazowieckie
+                                </option>
+                                <option {{($user->state=="opolskie")?"selected":"" }}>
+                                    opolskie
+                                </option>
+                                <option {{($user->state=="podkarpackie")?"selected":"" }}>
+                                    podkarpackie
+                                </option>
+                                <option {{($user->state=="podlaskie")?"selected":"" }}>
+                                    podlaskie
+                                </option>
+                                <option {{($user->state=="pomorskie")?"selected":"" }}>
+                                    pomorskie
+                                </option>
+                                <option {{($user->state=="śląskie")?"selected":"" }}>
+                                    śląskie
+                                </option>
+                                <option {{($user->state=="świętokrzyskie")?"selected":"" }}>
+                                    świętokrzyskie
+                                </option>
+                                <option {{($user->state=="warmińsko-mazurskie")?"selected":"" }}>
+                                    warmińsko-mazurskie
+                                </option>
+                                <option {{($user->state=="wielkopolskie")?"selected":"" }}>
+                                    wielkopolskie
+                                </option>
+                                <option {{($user->state=="zachodniopomorskie")?"selected":"" }}>
+                                    zachodniopomorskie
+                                </option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Country <span style="color:red; ">*</span></label>
-                            <input type="text" name="usercountry" class="form-control" value="<?= ($user->country !='NULL') ? $user->country : ''; ?>" <?= isreadonlys($user->country) ?> required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid country">
+                            <select class="form-control" id="usercountry" name="usercountry">
+                                <option>Polska</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -152,7 +203,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Phone <span style="color:red; ">*</span></label>
-                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>  required data-smk-type="number" minlength="10" maxlength="10" data-smk-msg="Enter vaild phone number">
+                                <input type="number" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>  required data-smk-type="number" minlength="10" maxlength="10" data-smk-msg="Enter vaild phone number">
                             </div>
                         </div>
                     </div>
@@ -186,13 +237,64 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>State <span style="color:red; ">*</span></label>
-                                <input name="state[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>" <?= isreadonly($rows) ?>  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
+                                <select  class="form-control" id="state" name="state[]">
+                                    <option {{($user->state=="dolnośląskie")?"selected":"" }} >
+                                        dolnośląskie
+                                    </option>
+                                    <option {{($user->state=="kujawsko-pomorskie")?"selected":"" }}>
+                                        kujawsko-pomorskie
+                                    </option>
+                                    <option {{($user->state=="lubelskie")?"selected":"" }}>
+                                        lubelskie
+                                    </option>
+                                    <option {{($user->state=="lubuskie")?"selected":"" }}>
+                                        lubuskie
+                                    </option>
+                                    <option {{($user->state=="łódzkie")?"selected":"" }}>
+                                        łódzkie
+                                    </option>
+                                    <option {{($user->state=="małopolskie")?"selected":"" }}>
+                                        małopolskie
+                                    </option>
+                                    <option {{($user->state=="mazowieckie")?"selected":"" }}>
+                                        mazowieckie
+                                    </option>
+                                    <option {{($user->state=="opolskie")?"selected":"" }}>
+                                        opolskie
+                                    </option>
+                                    <option {{($user->state=="podkarpackie")?"selected":"" }}>
+                                        podkarpackie
+                                    </option>
+                                    <option {{($user->state=="podlaskie")?"selected":"" }}>
+                                        podlaskie
+                                    </option>
+                                    <option {{($user->state=="pomorskie")?"selected":"" }}>
+                                        pomorskie
+                                    </option>
+                                    <option {{($user->state=="śląskie")?"selected":"" }}>
+                                        śląskie
+                                    </option>
+                                    <option {{($user->state=="świętokrzyskie")?"selected":"" }}>
+                                        świętokrzyskie
+                                    </option>
+                                    <option {{($user->state=="warmińsko-mazurskie")?"selected":"" }}>
+                                        warmińsko-mazurskie
+                                    </option>
+                                    <option {{($user->state=="wielkopolskie")?"selected":"" }}>
+                                        wielkopolskie
+                                    </option>
+                                    <option {{($user->state=="zachodniopomorskie")?"selected":"" }}>
+                                        zachodniopomorskie
+                                    </option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Country <span style="color:red; ">*</span></label>
-                                <input name="country[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : ''; ?>" <?= isreadonly($rows) ?>  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid country">
+                                <select class="form-control" id="country" name="country[]">
+                                    <option>Polska</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -227,15 +329,19 @@ function isreadonlys($rows) {
                             <label>Supporting document</label><br>
                             <?php if ($rows == 0) { ?>
                                 <input class="form-control dropify" type="file" name="document" data-allowed-file-extensions="pdf zip png jpg jpeg"  data-max-file-size="20M"></input>
-                            <?php } else {
-                                if ($medcase->documentPath != '') { ?>
+                                <?php
+                            } else {
+                                if ($medcase->documentPath != '') {
+                                    ?>
 
-                                    <a href="<?= public_path('mediation').'/'.$medcase->id.'/'.$medcase->documentPath ?>" class="btn btn-success btn-sm" >Supporting Document</a> 
+                                    <a href="<?= public_path('mediation') . '/' . $medcase->id . '/' . $medcase->documentPath ?>" class="btn btn-success btn-sm" >Supporting Document</a> 
 
-                                <?php } else {
+                                    <?php
+                                } else {
                                     echo "Not avalable";
                                 }
-                            } ?>
+                            }
+                            ?>
                             <!-- {{$errors->document}} -->
                         </div>
                     </div>
@@ -245,8 +351,8 @@ function isreadonlys($rows) {
         <section>
             <div class="row">
                 <div class="col-md-12">
-                            <button class="btn btn-success smksubmit">Invoke</button>
-                        </div>
+                    <button class="btn btn-success smksubmit">Invoke</button>
+                </div>
             </div>
         </section>
     </div>
@@ -270,22 +376,22 @@ function isreadonlys($rows) {
 
 
 
-    <script type="text/javascript">
-        
-     $(document).ready(function(){
+<script type="text/javascript">
+
+$(document).ready(function () {
 
 
-        //form validation
+//form validation
 
-        $('.smksubmit').click(function(){
+    $('.smksubmit').click(function () {
 
-    if( $('.smkform').smkValidate() ){
-        
-        $('.smkform').submit();
+        if ($('.smkform').smkValidate()) {
 
-   } 
+            $('.smkform').submit();
 
-});
+        }
+
+    });
 });
 </script>
 
