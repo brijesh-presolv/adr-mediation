@@ -8,7 +8,7 @@
 
     <div class="videosection">
       <video width="100%"   loop="loop" id="bannervdo" autoplay="autoplay" muted="muted" playsinline>
-          <source src="https://presolv360.com/asset/video/2.mp4"  />
+          <source src="{{url('/assert/')}}/video/2.mp4"  />
       </video>
     </div>
 
@@ -340,20 +340,7 @@ zakończyć spór ugodą.</p>
 </div>
 
 <!-- Modal -->
-<div class="modal fade videomodal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <video id="video1" controls="true" style="width: 100%; height: auto; margin:0 auto; frameborder:0;">
-          <source src="https://presolv360.com/asset/video/Secure_explainer_video.mp4" type="video/mp4">
-          Your browser doesn't support HTML5 video tag.
-        </video>
-        <!-- <iframe width="auto" height="315" src="https://www.youtube.com/embed/BgEy12SijzY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
-      </div>
-    </div>
-  </div>
-</div>
+
 
 <!-- Modal -->
 <div class="modal fade" id="resolvefees" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -558,80 +545,7 @@ zakończyć spór ugodą.</p>
 
                    
 
-                            <div id="plan1" style="display: none;">
-
-</div>
-
-
-
-          <div class="form-group row mt-2" id="plan" style="display: none;">
-
-                   <div class="col-sm-12">
-
-                                      <!---    <form action="checkout.php" method="post">     --->        
-
-                      <center>
-             <h5 class="modal-title mt-3" style="background-color: #0A5185; color: #fff;padding: 4px; border-radius: 14px;">
-
-                     Secure Contract:</h5>
-
-                     </center>
-
-                    <table class="table">
-
-           <tbody>
-
-                       <tr>
-
-                          <td style="text-align:left;font-size: 14px;font-weight: 600;">Plan Name:</td>
-
-                           <td style="text-align:right; font-size: 14px;font-weight: 600;"><div id="planname" name="planname" readonly required></div></td>
-
-                        </tr>
-
-                         <tr>
-
-                        <td style="text-align:left;font-size: 14px;font-weight: 600;">Plan Cost (Rs.):<br>(Inclusive of all taxes)</td>
-
-                        <td style="text-align:right; font-size: 14px;font-weight: 600;">&#8377; <span id="price" name="price" readonly required></span></td>
-
-                        </tr>
-
-                       <!-- <td style="text-align:left;font-size: 14px;font-weight: 600;">Sessions 
-                       
-                      
-&nbsp;<a href="#" data-toggle="tooltip" title="Advance situations of a dispute may require assignment of a certified dispute resolution expert for arriving at a resolution. Video-conferencing will be conducted to facilitate the dispute resolution process with the expert. The number of sessions (1 session = 3 hours) included in you plan has been mentioned here. These sessions will be conducted at no additional cost. 'Online' sessions indicates that the dispute will be resolved using online negotiation only."><i class="fa fa-info-circle" aria-hidden="true"></i></a> 
-
-
-
-</td>
-
-                       <td style="text-align:right; font-size: 14px;font-weight: 600;"><span id="session" name="session" readonly required></span></td> -->
-
-                       </tr>
-
-                     </tbody>
-
-            </table>
-
-          <div class="form-group row">
-
-                    <div class="col-sm-12">
-
-                    	<span style="font-size: 12px;"><b><a href="https://presolv360.com/secure_terms_conditions" style="line-height: 68px;" target="_blank">*Terms & Conditions apply</a></b>  </span>
-
- <button type="button" class="btn btn-warning"  id="btn_sub1" style="background-color: #FFA600;height:40px;float: right;">Purchase</button>
-                    </div>
-
-                  </div>
-
-<!--                   </form>
-
- -->                    </div>
-
-
-                  </div>
-
+                         
 
 
                 </form>

@@ -7,6 +7,7 @@ use Auth;
 
 use App\Models\User;
 use Session;
+use App\Http\Helpers\SendGrid; 
 
 class HomeController extends Controller {
 
@@ -26,8 +27,16 @@ class HomeController extends Controller {
 
 
 
+        $email=SendGrid::send('prashant@bombayblokes.com', '0980bfd2-1743-4106-a861-eb64204cae94', ['otp'=>'123455']);
 
-        if(Auth::user()->emailotp!=null or Auth::user()->sms!=null){
+        var_dump($email);
+
+        exit();
+
+
+
+
+        if(Auth::user()->emailotp!=null){
 
 
         if($request->method()=='POST'){
@@ -36,7 +45,7 @@ class HomeController extends Controller {
 
             $usr=User::find(Auth::user()->id);
 
-            if($r['smsotp']=='123456' and $r['emailotp']=='123456'){
+            if($r['emailotp']==$usr->emailotp){
 
                 $usr->emailotp=null;
                 $usr->smsotp=null;
@@ -51,8 +60,10 @@ class HomeController extends Controller {
 
                     } else{
 
-                        return redirect()->route('user.dashboard');
-
+                         if (!Auth::user()->isActive) {
+                                Auth::logout();
+                                return redirect('login')->with('warning','Account Under Review.');
+                            }
                     }
                 }
 

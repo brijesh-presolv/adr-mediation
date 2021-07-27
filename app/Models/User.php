@@ -27,6 +27,8 @@ class User extends Authenticatable
         'password',
         'isDone',
         'status',
+        'emailotp',
+        'smsotp',
     ];
 
     /**

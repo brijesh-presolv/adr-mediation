@@ -89,10 +89,10 @@ use AuthenticatesUsers;
             return $response;
         }
 
-        if (!Auth::user()->isActive) {
-            Auth::logout();
-            return redirect('login')->with('warning','Account Under Review.');
-        }
+        // if (!Auth::user()->isActive) {
+        //     Auth::logout();
+        //     return redirect('login')->with('warning','Account Under Review.');
+        // }
 
         return $request->wantsJson()
                     ? new JsonResponse([], 204)

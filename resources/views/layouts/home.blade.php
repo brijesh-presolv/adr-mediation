@@ -2,7 +2,7 @@
 <head>
 <title> {{ config('app.name', 'Medtiator') }} | Dispute resolution made easy | ODR | ODR India</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="msapplication-TileImage" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
+<meta name="msapplication-TileImage" content="{{url('/assert/')}}/img/DisputeManagement.jpg" />
 
 <meta name="description" content="Online Dispute Resolution platform to conduct arbitration, mediation, conciliation digitally." />
 
@@ -10,20 +10,20 @@
 
 <meta property="og:keywords" content="ODR, ADR, Online Dispute Resolution, Alternative Dispute Resolution, Out of Court Settlement, Arbitration, Mediation, Conciliation, Online Arbitration, Online Negotiation, Money Recovery, Legaltech, ODR India" />
 <meta property="og:description" content="Online Dispute Resolution platform to conduct arbitration, mediation, conciliation digitally." />
-<meta property="og:image" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
-<meta property="og:image:secure_url" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
+<meta property="og:image" content="{{url('/assert/')}}/img/DisputeManagement.jpg" />
+<meta property="og:image:secure_url" content="{{url('/assert/')}}/img/DisputeManagement.jpg" />
 <meta property="og:url" content="https://www.presolv360.com">
 <meta property="og:title" content=" {{ config('app.name', 'Medtiator') }} | Dispute resolution made easy" />
 <meta property="og:type" content="article" />
 	
 <!-- Standard Favicon -->
-<link rel="icon" type="image/x-icon" href="https://www.presolv360.com/presolv360/images/icon.png" />
+<link rel="icon" type="image/x-icon" href="{{url('/assert/')}}/img/icon.png" />
 
-<link rel="stylesheet" type="text/css" href="https://presolv360.com/asset/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/home.css">
-  <link rel="stylesheet" type="text/css" href="https://presolv360.com/asset/fontawesome/css/all.min.css">
-  <link rel="stylesheet" href="https://www.presolv360.com/presolv360/js/sweetalert2.css">
-  <link rel="stylesheet" href="https://www.presolv360.com/presolv360/css/style_slide.css">
+<!--   <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/fontawesome/css/all.min.css"> -->
+  <link rel="stylesheet" href="{{url('/assert/')}}/css/sweetalert2.css">
+  <!-- <link rel="stylesheet" href="{{url('/assert/')}}/css/style_slide.css"> -->
 
   
 
@@ -70,7 +70,6 @@
 
   <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://www.presolv360.com/presolv360/js/sweetalert2.css">
 
 <!--[if lt IE 9]>
         <script src="https://www.presolv360.com/presolv360/js/html5/respond.min.js"></script>
@@ -79,24 +78,11 @@
 
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
-<script src="https://presolv360.com/presolv360/js/jquery.min.js"></script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118321131-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<script src="{{url('/assert/')}}/js/jquery.min.js"></script>
 
-  gtag('config', 'UA-118321131-1');
-</script>
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-757076966"></script>
 
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
- gtag('js', new Date());
 
-  gtag('config', 'AW-757076966');
  
  
  
@@ -289,7 +275,7 @@ function resolvsubmit(){
 
 
     </script>
-  <link rel="stylesheet" href="https://presolv360.com/asset/css/plyr.css" />
+  <link rel="stylesheet" href="{{url('/assert/')}}/css/plyr.css" />
 
   <div class="contact-section">
     <div class="container">
@@ -372,10 +358,10 @@ Gibek-Wiśniewską.</p>
       </div>
       <div class="col-md-2">
          <h5 class="mb-3">Ważne linki</h5>
-         <a href="https://presolv360.com/faqs" target="_blank"><p>Pytania i odpowiedzi</p></a>
-         <a href="https://presolv360.com/terms_conditions" target="_blank"><p>Regulamin i warunki</p></a>
-         <a href="https://presolv360.com/privacy_policy" target="_blank"><p>Polityka prywatności</p></a>
-         <a href="https://presolv360.com/odr_standard" target="_blank"><p>Nasze standardy</p></a>
+         <a href="{{url('home')}}/faqs" target="_blank"><p>Pytania i odpowiedzi</p></a>
+         <a href="{{url('home')}}/terms_conditions" target="_blank"><p>Regulamin i warunki</p></a>
+         <a href="{{url('home')}}/privacy_policy" target="_blank"><p>Polityka prywatności</p></a>
+         <a href="{{url('home')}}/odr_standard" target="_blank"><p>Nasze standardy</p></a>
 
       </div>
       <div class="col-md-3">
@@ -509,22 +495,21 @@ media.</div>
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
   crossorigin="anonymous"></script> -->
  <script> 
- var DOMAIN = "https://presolv360.com/";
+ var DOMAIN = "{{url('home')}}";
   </script>
-  <script src="https://presolv360.com/presolv360/js/jquery.min.js"></script>
-<script type="text/javascript" src="https://presolv360.com/asset/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{url('/assert/')}}/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.js"></script>
 
-<script src="https://presolv360.com/asset/js/brand-slider.js"></script>
+<script src="{{url('/assert/')}}/js/brand-slider.js"></script>
 
-<script src="https://presolv360.com/presolv360/js/main.js"></script>
+<script src="{{url('/assert/')}}/js/main.js"></script>
 
 
-<script src="https://presolv360.com/public/js/site.js"></script>
+<script src="{{url('/assert/')}}/js/site.js"></script>
 
-   <script src="https://presolv360.com/public/js/lib/slick-carousel/slick.js"></script> 
+   <!-- <script src="{{url('/assert/')}}js/slick.js"></script>  -->
 
-        <script src="https://presolv360.com/presolv360/js/sweetalert2.js"></script>
+        <script src="{{url('/assert/')}}/js/sweetalert2.js"></script>
          <script src="//code.tidio.co/whiaumb73nws3xz5su24odtrgpni9etf.js" async></script>
         @yield('extra-js')
         
@@ -878,29 +863,7 @@ $('#hs-eu-cookie-confirmation-inner').css('margin','0 auto');
   
      
            
-     $('#sub').click(function (event) {
           
-            var plan=$('#planname').text();
-            var price=$('#price').text();
-
-            $.ajax({
-                method:'POST',
-                
-                 url: DOMAIN+'functions/presolv360/middleware.php', 
-                dataType:'JSON',
-                data:{plan:plan,price:price},
-                success: function (data) {
-                    if(data.resp==true) {
-                        window.location.replace('presolvcheckout');
-                    }
-                    else{
-                        window.location.replace('presolvreview.php');
-
-                    }
-
-                }
-            });
-        });        
     </script>
 
 <!-- <script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js"></script>  -->
@@ -954,16 +917,13 @@ if(document.getElementById('sms_otp').value.length==5)
                else if(ajaxRequest.responseText=='both')
                 { //alert(ajaxRequest.responseText);
             
-                      //alert('You have been successfully registered and logged in');
-                    //swal("Success!", "You have been successfully registered and logged in.", "success");                    
-                    //window.location.href = 'https://presolv360.com/'; 
-                    gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
+                  
                      swal(
                             'Success!',
                             'You have been successfully registered and logged in.',
                             'success'
                         ).then(function() {
-                            window.location.href = "https://presolv360.com/user/presolv-secure ";
+                            //window.location.href = "https://presolv360.com/user/presolv-secure ";
                          }).catch(swal.noop);
          
 
@@ -985,7 +945,7 @@ gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
                       text: "You have been successfully registered and logged in!",
                       type: "success"
                   }, function() {
-                      window.location = "../checkout.php";
+                      //window.location = "../checkout.php";
                   });
               }, 200);
 
@@ -1128,7 +1088,7 @@ $('.panel-group').on('shown.bs.collapse', toggleIcon);
 
 </script>
 
-<script src="https://presolv360.com/asset/js/plyr.js"></script>
+<script src="{{url('/assert/')}}/js/plyr.js"></script>
 <script>
     const player = new Plyr('#video2');
     const player2 = new Plyr('#video1');

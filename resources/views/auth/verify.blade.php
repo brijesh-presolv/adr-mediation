@@ -193,15 +193,15 @@
                                                 <input type="text" class="form-control txtmobile" id="email1" placeholder="Email OTP" name="emailotp" value="123456" required/>
                                             </div>
                                         </div>
-                                        <div class="form-group formmobile row">
+                                       <!--  <div class="form-group formmobile row"> -->
                                             <!-- <label for="exampleInputPassword1" class="col-md-1 control-label" style="margin-right: 20px;">
                                                 Password</label> -->
-                                            <div class="col-sm-12">
+                                            <!-- <div class="col-sm-12">
                                                 <label for="exampleInputPassword1" class="control-label" style="margin-right: 20px;">
                                                 SMS OTP</label>
                                                 <input type="text" class="form-control txtmobile mb-2" id="exampleInputPassword1" placeholder="SMS OTP" name="smsotp" value="123456" required/>
-                                            </div>
-                                        </div>
+                                            </div> -->
+                                        <!-- </div> -->
                                     
                                         <div class="row mobtns">
                                             <div class="col-md-12" style="display:inline-block; text-align: center;">
