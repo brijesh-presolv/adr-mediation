@@ -430,12 +430,17 @@ class DashboardController extends Controller {
         $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
         $email->setSubject('Your resolution session has been scheduled');
         $email->addTo($email_id, $email_name);
-        $html = view('email.l10_scheduling_of_session', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
-        $email->addContent("text/html", $html->render());
+//        $email->addContent("text/html", $html->render());
         //echo env('SENDGRID_API_KEY', 'test');
-        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+        if (env('L10_SCHEDULING_OF_SESSION', '') != "") {
+            $sendgrid->client->templates()->_(env('L10_SCHEDULING_OF_SESSION', ''))->patch(["id" => $id]);
+        } else {
+            $html = view('email.l10_scheduling_of_session', compact("id"));
+            $email->addContent("text/html", $html->render());
+        }
         try {
             $response = $sendgrid->send($email);
             $response->statusCode() . "\n";
@@ -470,12 +475,17 @@ class DashboardController extends Controller {
         $email->setSubject('Urgent: Mediator\'s Consent and Disclosures');
         $email->addTos($sendEamils);
         $email->addAttachment($pdf->stream('document.pdf'), "application/pdf", $id . ".pdf");
-        $html = view('email.l18_mediator_acceptance_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
-        $email->addContent("text/html", $html->render());
+//        $email->addContent("text/html", $html->render());
         //echo env('SENDGRID_API_KEY', 'test');
-        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+        if (env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', '') != "") {
+            $sendgrid->client->templates()->_(env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''))->patch(["id" => $id]);
+        } else {
+            $html = view('email.l18_mediator_acceptance_all_parties', compact("id"));
+            $email->addContent("text/html", $html->render());
+        }
         try {
             $response = $sendgrid->send($email);
             $response->statusCode() . "\n";
@@ -502,14 +512,19 @@ class DashboardController extends Controller {
         $email->addTos($sendEamils);
 
         foreach ($files as $f) {
-            $email->addAttachment(file_get_contents(url("storage/app/".$f["file_name"])));
+            $email->addAttachment(file_get_contents(url("storage/app/" . $f["file_name"])));
         }
-        $html = view('email.l19_additional_doc_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
-        $email->addContent("text/html", $html->render());
+        //$email->addContent("text/html", $html->render());
         //echo env('SENDGRID_API_KEY', 'test');
-        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+        if (env('L19_ADDITIONAL_DOC_ALL_PARTIES', '') != "") {
+            $sendgrid->client->templates()->_(env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''))->patch(["id" => $id]);
+        } else {
+            $html = view('email.l19_additional_doc_all_parties', compact("id"));
+            $email->addContent("text/html", $html->render());
+        }
         try {
             $response = $sendgrid->send($email);
             $response->statusCode() . "\n";
@@ -536,14 +551,19 @@ class DashboardController extends Controller {
         $email->addTos($sendEamils);
 
         foreach ($files as $f) {
-            $email->addAttachment(file_get_contents(url("storage/app/".$f["file_path"])));
+            $email->addAttachment(file_get_contents(url("storage/app/" . $f["file_path"])));
         }
-        $html = view('email.l21_settlement_agreement_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
-        $email->addContent("text/html", $html->render());
+        //$email->addContent("text/html", $html->render());
         //echo env('SENDGRID_API_KEY', 'test');
-        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+        if (env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', '') != "") {
+            $sendgrid->client->templates()->_(env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''))->patch(["id" => $id]);
+        } else {
+            $html = view('email.l21_settlement_agreement_all_parties', compact("id"));
+            $email->addContent("text/html", $html->render());
+        }
         try {
             $response = $sendgrid->send($email);
             $response->statusCode() . "\n";

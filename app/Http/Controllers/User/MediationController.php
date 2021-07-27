@@ -172,11 +172,16 @@ class MediationController extends Controller {
             $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
             $email->setSubject('Thank you for choosing Mediation');
             $email->addTo($usr->email, $usr->first_name . ' ' . $usr->last_name);
-            $html = view('email.l1');
             //dd;
-            $email->addContent("text/html", $html->render());
+//            $email->addContent("text/html", $html->render());
             //echo env('SENDGRID_API_KEY', 'test');
-            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+            if (env('EMAIL_L1', '') != "") {
+                $sendgrid->client->templates()->_(env('EMAIL_L1', ''));
+            } else {
+                $html = view('email.l1');
+                $email->addContent("text/html", $html->render());
+            }
             try {
                 $response = $sendgrid->send($email);
 
@@ -291,12 +296,17 @@ class MediationController extends Controller {
                 $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
                 $email->setSubject('Update about your case');
                 $email->addTo($InvoledUserP1->userEmail, $InvoledUserP1->name);
-                $html = view('email.l7_upon_successful_onboarding_of_any_counter_party', compact("id", "party_name"));
 
                 //dd;
-                $email->addContent("text/html", $html->render());
+//                $email->addContent("text/html", $html->render());
                 //echo env('SENDGRID_API_KEY', 'test');
-                $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+                $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+                if (env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', '') != "") {
+                    $sendgrid->client->templates()->_(env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''))->patch(["id" => $id, "party_name" => $party_name]);
+                } else {
+                    $html = view('email.l7_upon_successful_onboarding_of_any_counter_party', compact("id", "party_name"));
+                    $email->addContent("text/html", $html->render());
+                }
                 try {
                     $response = $sendgrid->send($email);
                     //$response->statusCode() . "\n";

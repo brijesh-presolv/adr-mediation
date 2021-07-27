@@ -461,7 +461,7 @@ class CaseController extends Controller {
                 }
             }
             DB::table('document_settlements')->insert($insert);
-            $this->send_settlement_agreement_party( $request->caseId, $insert);
+            $this->send_settlement_agreement_party($request->caseId, $insert);
             return response()->json(["message" => 'Ajax Multiple fIle has been uploaded']);
         } else {
             return response()->json(["message" => "Please try again."]);
@@ -481,12 +481,17 @@ class CaseController extends Controller {
                 $email->setSubject('Invitation by ' . $initiating_party . ' to participate in resolution of your case via ' . config('app.name', 'Laravel'));
                 //echo $inv->userEmail;
                 $email->addTo($inv->userEmail, $inv->name);
-                $html = view('email.l4_invitation_to_counter_parties_for_onboarding', compact("code", "initiating_party"));
                 $email->addAttachment(file_get_contents(url("/storage/app/public/mediation/" . $id . "/" . $invitation)), "application/pdf", $invitation);
-                $email->addContent("text/html", $html->render());
+//                $email->addContent("text/html", $html->render());
                 //echo env('SENDGRID_API_KEY', 'test');
                 //echo env('SENDGRID_API_KEY', 'Laravel');
-                $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+                $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+                if (env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', '') != "") {
+                    $sendgrid->client->templates()->_(env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''))->patch(["code" => $code, "initiating_party" => $initiating_party]);
+                } else {
+                    $html = view('email.l4_invitation_to_counter_parties_for_onboarding', compact("code", "initiating_party"));
+                    $email->addContent("text/html", $html->render());
+                }
                 try {
                     $response = $sendgrid->send($email);
                     // echo $response->statusCode() . "\n";
@@ -513,12 +518,18 @@ class CaseController extends Controller {
                 $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
                 $email->setSubject('Unable to process your case ');
                 $email->addTo($inv->userEmail, $inv->name);
-                $html = view('email.l8_case_rejected', compact("party_name", "id"));
+//                $html = view('email.l8_case_rejected', compact("party_name", "id"));
                 //dd;
                 //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
-                $email->addContent("text/html", $html->render());
+//                $email->addContent("text/html", $html->render());
                 //echo env('SENDGRID_API_KEY', 'test');
-                $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+                $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+                if (env('L8_CASE_REJECTED', '') != "") {
+                    $sendgrid->client->templates()->_(env('L8_CASE_REJECTED', ''))->patch(["id" => $id, "party_name" => $party_name]);
+                } else {
+                    $html = view('email.l8_case_rejected', compact("party_name", "id"));
+                    $email->addContent("text/html", $html->render());
+                }
                 try {
                     $response = $sendgrid->send($email);
                     $response->statusCode() . "\n";
@@ -537,12 +548,18 @@ class CaseController extends Controller {
         $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
         $email->setSubject('Your resolution session has been scheduled');
         $email->addTo($email_id, $email_name);
-        $html = view('email.l10_scheduling_of_session', compact("id"));
+//        $html = view('email.l10_scheduling_of_session', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
-        $email->addContent("text/html", $html->render());
+        //$email->addContent("text/html", $html->render());
         //echo env('SENDGRID_API_KEY', 'test');
-        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+        if (env('L10_SCHEDULING_OF_SESSION', '') != "") {
+            $sendgrid->client->templates()->_(env('L10_SCHEDULING_OF_SESSION', ''))->patch(["id" => $id]);
+        } else {
+            $html = view('email.l10_scheduling_of_session', compact("id"));
+            $email->addContent("text/html", $html->render());
+        }
         try {
             $response = $sendgrid->send($email);
             $response->statusCode() . "\n";
@@ -573,8 +590,16 @@ class CaseController extends Controller {
                 $email->addTo($inv->userEmail, $inv->name);
                 $html = view('email.l14_communication_of_withdrawal_to_other_parties', compact("id", "initiating_party"));
             }
-            $email->addContent("text/html", $html->render());
-            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+            //$email->addContent("text/html", $html->render());
+            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+            if ($inv->isClaimant == 0 && env('L13_WITHDRAWAL_OF_CASE', '') != "") {
+                $sendgrid->client->templates()->_(env('L13_WITHDRAWAL_OF_CASE', ''))->patch(["id" => $id]);
+            } else if ($inv->isOnboarded == 0 && env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', '') != "") {
+                $sendgrid->client->templates()->_(env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''))->patch(["id" => $id, "initiating_party" => $initiating_party]);
+            } else {
+                //$html = view('email.l15_case_resolved', compact("id"));
+                $email->addContent("text/html", $html->render());
+            }
             try {
                 $response = $sendgrid->send($email);
                 // echo $response->statusCode() . "\n";
@@ -598,15 +623,21 @@ class CaseController extends Controller {
 //            if ($inv->isClaimant == 0) {
             $email->setSubject('Successful resolution of your case :' . $id);
             $email->addTo($inv->userEmail, $inv->name);
-            $html = view('email.l15_case_resolved', compact("id"));
+            //$html = view('email.l15_case_resolved', compact("id"));
             $initiating_party = $inv->name;
 //            } else if ($inv->isOnboarded == 0) {
 //                $email->setSubject('Update about your case');
 //                $email->addTo($inv->userEmail, $inv->name);
 //                $html = view('l14_communication_of_withdrawal_to_other_parties', compact("id", "initiating_party "));
 //            }
-            $email->addContent("text/html", $html->render());
-            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+            //$email->addContent("text/html", $html->render());
+            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+            if (env('L15_CASE_RESOLVED', '') != "") {
+                $sendgrid->client->templates()->_(env('L15_CASE_RESOLVED', ''))->patch(["id" => $id]);
+            } else {
+                $html = view('email.l15_case_resolved', compact("id"));
+                $email->addContent("text/html", $html->render());
+            }
             try {
                 $response = $sendgrid->send($email);
                 // echo $response->statusCode() . "\n";
@@ -630,15 +661,21 @@ class CaseController extends Controller {
             //if ($inv->isClaimant == 0) {
             $email->setSubject('Closure of your case :' . $id);
             $email->addTo($inv->userEmail, $inv->name);
-            $html = view('email.l15_case_unresolved', compact("id"));
+            //$html = view('email.l15_case_unresolved', compact("id"));
             $initiating_party = $inv->name;
 //            } else if ($inv->isOnboarded == 0) {
 //                $email->setSubject('Update about your case');
 //                $email->addTo($inv->userEmail, $inv->name);
 //                $html = view('l14_communication_of_withdrawal_to_other_parties', compact("id", "initiating_party "));
 //            }
-            $email->addContent("text/html", $html->render());
-            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+            //$email->addContent("text/html", $html->render());
+            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+            if (env('L15_CASE_UNRESOLVED', '') != "") {
+                $sendgrid->client->templates()->_(env('L15_CASE_UNRESOLVED', ''))->patch(["id" => $id]);
+            } else {
+                $html = view('email.l15_case_unresolved', compact("id"));
+                $email->addContent("text/html", $html->render());
+            }
             try {
                 $response = $sendgrid->send($email);
                 // echo $response->statusCode() . "\n";
@@ -660,9 +697,15 @@ class CaseController extends Controller {
         $email->setFrom("no-repley@mediatation.livetest.top", config('app.name', 'Laravel'));
         $email->setSubject('Urgent: Appointment as Mediator');
         $email->addTo($user->email, $user->name);
-        $html = view('email.l17_when_admin_selects_mediator', compact("id", 'user'));
-        $email->addContent("text/html", $html->render());
-        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        //$html = view('email.l17_when_admin_selects_mediator', compact("id", 'user'));
+        //$email->addContent("text/html", $html->render());
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+        if (env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', '') != "") {
+            $sendgrid->client->templates()->_(env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''))->patch(["id" => $id, "user" => $user]);
+        } else {
+            $html = view('email.l17_when_admin_selects_mediator', compact("id", 'user'));
+            $email->addContent("text/html", $html->render());
+        }
         try {
             $response = $sendgrid->send($email);
             // echo $response->statusCode() . "\n";
@@ -689,14 +732,20 @@ class CaseController extends Controller {
         $email->addTos($sendEamils);
 
         foreach ($files as $f) {
-            $email->addAttachment(file_get_contents(url("storage/app/".$f["file_name"])));
+            $email->addAttachment(file_get_contents(url("storage/app/" . $f["file_name"])));
         }
-        $html = view('email.l19_additional_doc_all_parties', compact("id"));
+
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
-        $email->addContent("text/html", $html->render());
+        //$email->addContent("text/html", $html->render());
         //echo env('SENDGRID_API_KEY', 'test');
-        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+        if (env('L19_ADDITIONAL_DOC_ALL_PARTIES', '') != "") {
+            $sendgrid->client->templates()->_(env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''))->patch(["id" => $id]);
+        } else {
+            $html = view('email.l19_additional_doc_all_parties', compact("id"));
+            $email->addContent("text/html", $html->render());
+        }
         try {
             $response = $sendgrid->send($email);
             $response->statusCode() . "\n";
@@ -723,14 +772,19 @@ class CaseController extends Controller {
         $email->addTos($sendEamils);
 
         foreach ($files as $f) {
-            $email->addAttachment(file_get_contents(url("storage/app/".$f["file_path"])));
+            $email->addAttachment(file_get_contents(url("storage/app/" . $f["file_path"])));
         }
         $html = view('email.l21_settlement_agreement_all_parties', compact("id"));
         //dd;
         //$email->addAttachment(url("/storage/app/public/mediation/".$invitation));
-        $email->addContent("text/html", $html->render());
         //echo env('SENDGRID_API_KEY', 'test');
-        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'Laravel'));
+        $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
+        if (env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', '') != "") {
+            $sendgrid->client->templates()->_(env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''))->patch(["id" => $id]);
+        } else {
+            $html = view('email.l21_settlement_agreement_all_parties', compact("id"));
+            $email->addContent("text/html", $html->render());
+        }
         try {
             $response = $sendgrid->send($email);
             $response->statusCode() . "\n";
