@@ -7,7 +7,7 @@ use Auth;
 
 use App\Models\User;
 use Session;
-use App\Http\Helpers\SendGrid; 
+use App\Http\Helpers\SendGrid as Email;
 
 class HomeController extends Controller {
 
@@ -24,15 +24,6 @@ class HomeController extends Controller {
 
 
      public function verify(Request $request){
-
-
-
-        $email=SendGrid::send('prashant@bombayblokes.com', '0980bfd2-1743-4106-a861-eb64204cae94', ['otp'=>'123455']);
-
-        var_dump($email);
-
-        exit();
-
 
 
 
@@ -54,9 +45,20 @@ class HomeController extends Controller {
                 if($usr->save()){
 
 
+                    if($usr->role=='1'){
+
+                        return redirect()->route('mediator.dashboard');
+                    }
+
+
                     if($request->session()->has('newcase')){
 
-                        return redirect()->route('user.newcase');
+                        //return redirect()->route('user.newcase');
+
+                        if (!Auth::user()->isActive) {
+                                Auth::logout();
+                                return redirect('login')->with('warning','Account Under Review.');
+                            }
 
                     } else{
 

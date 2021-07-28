@@ -11,7 +11,7 @@ Class SendGrid
 
 public static $apiKey='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';
 
-public static function send($to, $templateId, $subs=NULL, $senderName = NULL, 
+public static function send($to, $templateId, $subs=NULL,  
 $toName = NULL, $file = NULL)
 {
 

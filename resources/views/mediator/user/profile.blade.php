@@ -1,3 +1,8 @@
+<?php
+
+$user=Auth::user();
+
+?>
 @extends('mediator.layouts.app')
 @section('title', 'Profile')
 
