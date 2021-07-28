@@ -215,7 +215,7 @@ class CaseController extends Controller {
             $MedCaseStatus->status = 0;
             $MedCaseStatus->save();
         }
-        $this->send_mediatorAdd($id, $request->midater);
+        $this->send_mediatorAdd($request->id, $request->midater);
         return response()->json(["msg" => "midater Added"]);
     }
 
@@ -537,7 +537,7 @@ class CaseController extends Controller {
     }
 
     public function send_mediatorAdd($id, $mediator_id) {
-        $user = User::where("id", $mediator_id)->get();
+        $user = User::where("id", $mediator_id)->first();
         $id = "M" . sprintf("%06d", $id);
         SendGrid::send($user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $id], $user->name);
         return true;

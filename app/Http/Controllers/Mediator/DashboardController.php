@@ -441,14 +441,14 @@ class DashboardController extends Controller {
             return abort(404);
         }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
-
+        Storage::put('public/mediation/' . $data["case"]->id . '/' . "M" . sprintf("%06d", $id)."_party.pdf", $pdf->output());
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $id = "M" . sprintf("%06d", $id);
         $sendEamils = array();
         foreach ($involedUser as $inv) {
             $sendEamils[] = $inv->userEmail;
         }
-        SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $id], null, null, $pdf->stream('document.pdf'));
+        SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $id], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $id."_party.pdf"));
 
 
         return true;
