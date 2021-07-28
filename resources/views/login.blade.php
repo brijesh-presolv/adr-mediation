@@ -217,10 +217,10 @@
                                             </div>
                                         </div>
                                     
-                                        <div class="row mobtns">
+                                        <div class="row ">
                                             <div class="col-md-12" style="display:inline-block; text-align: center;">
                                                 <button type="submit" class="btn btn-warning btn-lg btnmobile mt-2 dwidth" style="background-color: #FFA600;border: 1px;">
-                                                    Submit</button>
+                                                    Submits</button>
                                                 <button type="button" class="btn btn-warning btn-lg btnmobile mt-2 dwidth2" style="background-color:#0B5386;border: 1px;" data-toggle="modal" data-target="#myModal">Forgot Password?</button>
                                                  <button type="button" class="btn btn-warning btn-lg btnmobile mt-2 dwidth" style="background-color: #0B5386;border: 1px;width:188px;"data-toggle="modal" data-target="#myModal2">Forgot Username?</button>
                                             </div>

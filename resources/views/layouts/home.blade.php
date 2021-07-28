@@ -15,6 +15,7 @@
 <meta property="og:url" content="https://www.presolv360.com">
 <meta property="og:title" content=" {{ config('app.name', 'Medtiator') }} | Dispute resolution made easy" />
 <meta property="og:type" content="article" />
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 	
 <!-- Standard Favicon -->
 <link rel="icon" type="image/x-icon" href="{{url('/assert/')}}/img/icon.png" />
@@ -495,7 +496,7 @@ media.</div>
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
   crossorigin="anonymous"></script> -->
  <script> 
- var DOMAIN = "{{url('home')}}";
+ var DOMAIN = "{{url('/')}}";
   </script>
 <script type="text/javascript" src="{{url('/assert/')}}/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.js"></script>
@@ -507,6 +508,9 @@ media.</div>
 
 <script src="{{url('/assert/')}}/js/site.js"></script>
 
+<script src="{{url('/assert/')}}/js/slick.js"></script>
+
+
    <!-- <script src="{{url('/assert/')}}js/slick.js"></script>  -->
 
         <script src="{{url('/assert/')}}/js/sweetalert2.js"></script>
@@ -517,6 +521,13 @@ media.</div>
         <script type="text/javascript">
             
             $(window).load(function() {
+
+
+              $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
 
 
 
@@ -986,35 +997,36 @@ else
         if(str!=='') {
             var $this = $(this);
             $this.button('loading');
+
+            $.ajax({
+
+              url:DOMAIN+'/forgotpassword',
+              type: "POST",
+              data:{'username':str},
+              success:function(d){
+
+                console.log(d);
+
+                d=JSON.parse(d);
+
           
+                console.log(d);
 
-              $.get(DOMAIN+"functions/password_recover.php?username=" + str +'&flag=1', function(data, status){
+                 if(d.response=='success'){
+                swal("Success!", "Your Password Has Been Updated. Please Check Your Registered Email Id!", "success");
+              }else{
 
-                var d=$.trim(data.resp);
+                swal("Failed!", "Wrong username entered!", "warning");
+              }
+              },
+              error:function(e){
 
-                   if(d=="success"){
-
-                    //alert('this');
-
-                    $('#myModal').modal('hide');
-
-                        swal("Success!", "Your Password Has Been Updated. Please Check Your Registered Email Id!", "success");
-
-                   } else if(d=="fail"){
-
-
-                    $this.button('reset');
-                        $('#myModal').modal('hide');
-
-                        swal("Failed!", "Wrong username entered!", "warning");
+                  console.log(e);
+                  swal("Failed!", "Wrong username entered!", "warning");
+              }
 
 
-                   }
-              });
-
-
-            var xmlhttp = new XMLHttpRequest();
-          
+            });
 
         }
         else
@@ -1040,27 +1052,27 @@ else
             var $this = $(this);
             $this.button('loading');
             
-            $.get(DOMAIN+"functions/password_recover.php?password=" + str +'&flag=2', function(data, status){
+            $.ajax({
 
-                var d=$.trim(data.resp);
+              url:DOMAIN+'/forgotusername',
+              type: "POST",
+              data:{'email':str},
+              success:function(d){
+                if(d.response=='success'){
+                  swal("Success!", "Your Username Has Been Sent To Your Registered Email Id. Please Check Your Registered Email Id!", "success");
+                } else{
+                  swal("Failed!", "Wrong email entered!", "warning");
+                }
+                
+              },
+              error:function(e){
+
+                  console.log(e);
+                  swal("Failed!", "Wrong email entered!", "warning");
+              }
 
 
-                   if(d=="success"){
-
-                    $this.button('reset');
-                        $('#myModal2').modal('hide');
-                        swal("Success!", "Your Username Has Been Sent To Your Registered Email Id. Please Check Your Registered Email Id!", "success");
-
-                   } if(d=="fail"){
-
-
-                    $this.button('reset');
-                        $('#myModal2').modal('hide');
-                        swal("Failed!", "Wrong email entered!", "warning");
-
-
-                   }
-              });
+            });
 
         }
         else

@@ -221,12 +221,21 @@
                                                 <button type="submit" class="btn btn-warning btn-lg btnmobile mt-2 dwidth" style="background-color: #FFA600;border: 1px;">
                                                     Submit</button>
                                             </div>
-                                            <div class="col-xs-12 d-sm-none d-md-none d-lg-none btnmobile btnmobiles">
-                                             <button type="submit" class="btn btn-warning btn-block btnmobile" style="background-color: #FFA600;border: 1px;width:100%;">
-                                                    Submit</button>
-                                                    <button type="button" class="btn btn-warning btn-block btnmobile" style="background-color:#0B5386;width:100%; " data-toggle="modal" data-target="#myModal">Forgot Password?</button>
-                                                    <button type="button" class="btn btn-warning btn-block btnmobile mt-2" style="background-color: #0B5386;border: 1px;width:100%;"    data-toggle="modal" data-target="#myModal2">Forgot Username?</button>
+
+                                            <div class="col-md-12">
+
+                                                <div class="row mt-3">
+                                                    <div class="col-md-6">
+                                                        <button type="button" class="btn btn-warning btn-block " style="background-color:#0B5386;width:80%; " data-toggle="modal" data-target="#myModal">Forgot Password?</button>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <button type="button" class="btn btn-warning btn-block" style="background-color: #0B5386;border: 1px;width:80%;"    data-toggle="modal" data-target="#myModal2">Forgot Username?</button>
+                                                    </div>
+                                                </div>
+                                                 
+
                                             </div>
+                       
                                         </div>
                                     </form>
                                 </div>
@@ -401,7 +410,7 @@
     </div>
     <!-- model for resetpassword -->
                                 <div class="modal fade" id="myModal" role="dialog">
-                                    <div class="modal-dialog modal-xs" style="width: 360px; margin-top: 80px;" >
+                                    <div class="modal-dialog modal-xs"  >
                                         <div class="modal-content frgpmobile">
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -429,7 +438,7 @@
                                 
                                 
                                 <div class="modal fade" id="myModal2" role="dialog">
-                                    <div class="modal-dialog modal-xs" style="width: 360px;margin-top: 80px;" style="height:60%;">
+                                    <div class="modal-dialog modal-xs">
                                         <div class="modal-content frgpmobile">
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -540,8 +549,12 @@ function setResponse(response) {
 @endsection('content')
 
 @section('extra-js')
+
     @if(session()->has('warning'))
         <script>
+
+
+            
             swal("Warning!", "{{ session()->get('warning') }}", "warning");
         </script>
     @endif

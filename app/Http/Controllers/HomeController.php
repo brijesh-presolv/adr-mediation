@@ -103,6 +103,74 @@ class HomeController extends Controller {
     }
 
 
+
+    public function forgotpassword(Request $request){
+
+        if($request->post()){
+
+            $u=$request->post();
+
+
+
+            $usr=User::where(['username'=>$u['username']])->first();
+
+            if($usr){
+                
+                echo json_encode(['response'=>'success']);
+
+                exit;
+
+            }
+
+
+        }
+
+        echo json_encode(['response'=>'error']);
+
+
+ 
+
+    }
+
+    public function forgotusername(Request $request){
+
+
+        if($request->post()){
+
+            $u=$request->post();
+
+            
+            $usr=User::where(['email'=>$u['email']])->first();
+
+            if($usr){
+
+                if($usr->role==0){
+
+                    $type='User';
+                } else{
+
+                    $type='Mediator';
+                }
+
+                Email::send($usr->email,'aad4779e-f892-46ed-b6d8-7b75195f45b9',['-type-'=>$type,'-name-'=>$usr->username],$usr->name);
+                
+                echo json_encode(['response'=>'success']);
+
+                exit;
+
+            }
+
+
+
+            
+        }
+
+        echo json_encode(['response'=>'error']);
+
+        
+    }
+
+
     // public function login(){
 
     //     return view('login');
