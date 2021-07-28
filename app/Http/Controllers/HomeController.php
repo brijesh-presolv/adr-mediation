@@ -115,6 +115,22 @@ class HomeController extends Controller {
             $usr=User::where(['username'=>$u['username']])->first();
 
             if($usr){
+
+                
+                if($usr->role==0){
+
+                    $type='User';
+                } else{
+
+                    $type='Mediator';
+                }
+
+
+                 $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                 $pwd=substr(str_shuffle($chars),0,8);
+
+
+                Email::send($usr->email,'760f8edf-ada7-4b23-8c44-7d0770195cdb',['-type-'=>$type,'-pwd-'=>$pwd],$usr->name);
                 
                 echo json_encode(['response'=>'success']);
 
