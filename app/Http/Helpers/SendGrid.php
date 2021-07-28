@@ -11,7 +11,7 @@ Class SendGrid {
     }
 
     public static function send($to, $templateId, $subs = NULL,
-            $toName = NULL, $file = NULL) {
+            $toName = NULL, $file = NULL, $pdf = null) {
 
 
         $response = '';
@@ -26,11 +26,14 @@ Class SendGrid {
 
 
 
+        if (!empty($pdf)) {
+            $email->addAttachment($pdf, "application/pdf", "document.pdf");
+        }
         if (!empty($file)) {
 
             //attachment
             if (is_array($file)) {
-                foreach($file as $ff) {
+                foreach ($file as $ff) {
                     $attachment = new \SendGrid\Mail\Attachment();
 
                     $file_encoded = base64_encode(file_get_contents($ff));
@@ -39,9 +42,6 @@ Class SendGrid {
                     $attachment->setContent($file_encoded);
                     $attachment->setDisposition("attachment");
                     $attachment->setFilename($filename);
-
-
-
                     $email->addAttachment(
                             $attachment
                     );
