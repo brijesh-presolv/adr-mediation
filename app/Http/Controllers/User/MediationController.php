@@ -12,6 +12,7 @@ use App\Models\SupportingDocument;
 use App\Models\User;
 use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
+use App\Http\Helpers\SendGrid as Email;
 use Session;
 use Auth;
 use Validator;
@@ -166,31 +167,12 @@ class MediationController extends Controller {
                 $inv->save();
             }
 
-            // l1 to submit user
 
-            $email = new \SendGrid\Mail\Mail();
-            $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
-            $email->setSubject('Thank you for choosing Mediation');
-            $email->addTo($usr->email, $usr->first_name . ' ' . $usr->last_name);
-            //dd;
-//            $email->addContent("text/html", $html->render());
-            //echo env('SENDGRID_API_KEY', 'test');
-            $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
-            if (env('EMAIL_L1', '') != "") {
-                $sendgrid->client->templates()->_(env('EMAIL_L1', ''));
-            } else {
-                $html = view('email.l1');
-                $email->addContent("text/html", $html->render());
-            }
-            try {
-                $response = $sendgrid->send($email);
+            
 
-                //$response->statusCode() . "\n";
-                //print_r($response->headers());
-                //return $response->body() . "\n";
-            } catch (Exception $e) {
-                echo 'Caught exception: ' . $e->getMessage() . "\n";
-            }
+             Email::send($usr->email,'c1887740-50f9-4f77-ba1f-507ca42e7f62',['-caseid-'=>$med->id,],$usr->first_name . ' ' . $usr->last_name);
+
+            
 
 
             return redirect()->route('user.newrequest')->with(['response' => 'success']);

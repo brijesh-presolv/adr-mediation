@@ -225,6 +225,10 @@
                                             <div class="col-md-12">
 
                                                 <div class="row mt-3">
+                                                <div class="col-md-12">
+                                                    <!--  <center><p>OR</p></center> -->
+                                                </div>
+                                                   
                                                     <div class="col-md-6">
                                                         <button type="button" class="btn btn-warning btn-block " style="background-color:#0B5386;width:80%; " data-toggle="modal" data-target="#myModal">Forgot Password?</button>
                                                     </div>

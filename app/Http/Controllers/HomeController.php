@@ -45,10 +45,23 @@ class HomeController extends Controller {
                 if($usr->save()){
 
 
+                 
+
+
                     if($usr->role=='1'){
+
+                        $type='Mediator';
+
+                        Email::send($usr->email,'92f1d3c4-077b-4e6a-b9db-3f9a3fda2111',['-type-'=>$type],$usr->name);
+
+
 
                         return redirect()->route('mediator.dashboard');
                     }
+
+                     $type='User';
+
+                        Email::send($usr->email,'92f1d3c4-077b-4e6a-b9db-3f9a3fda2111',['-type-'=>$type],$usr->name);
 
 
                     if($request->session()->has('newcase')){

@@ -190,7 +190,7 @@
                                             <div class="col-sm-12">
                                                 <label for="email" class="control-label" style="margin-right: 20px;">Email OTP
                                                 </label>
-                                                <input type="text" class="form-control txtmobile" id="email1" placeholder="Email OTP" name="emailotp" value="123456" required/>
+                                                <input type="text" class="form-control txtmobile" id="email1" placeholder="Email OTP" name="emailotp" value="" required/>
                                             </div>
                                         </div>
                                        <!--  <div class="form-group formmobile row"> -->
