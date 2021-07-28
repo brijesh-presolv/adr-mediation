@@ -36,7 +36,7 @@ use AuthenticatesUsers;
 
     protected function redirectTo(){
 
-      if(Auth::user()->emailotp!=null or Auth::user()->smsotp!=null ){
+      if(Auth::user()->emailotp!=null){
           
           return route('verify');
         } else
@@ -47,6 +47,11 @@ use AuthenticatesUsers;
           }
            return route('user.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 1)) {
+
+            if(Auth::user()->emailotp!=null){
+          
+          return route('verify');
+      }
            return route('mediator.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 2)) {
             return route('admin.dashboard');

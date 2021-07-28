@@ -13,6 +13,8 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
+use App\Http\Helpers\SendGrid;
+
 class RegisterController extends Controller
 {
     /*
@@ -48,7 +50,13 @@ class RegisterController extends Controller
 
       
         } else if (Auth::check() && (Auth::user()->role == 1)) {
+
+            if(Auth::user()->emailotp!=null){
+          
+          return route('verify');
+      }
            return route('mediator.dashboard');
+           
         } else if (Auth::check() && (Auth::user()->role == 2)) {
             return route('admin.dashboard');
         }
@@ -133,6 +141,15 @@ class RegisterController extends Controller
 
         if ($response = $this->registered($request, $user)) {
             return $response;
+        }
+
+        if($user->role=='0'){
+        $email=SendGrid::send($user->email, '5e3c0043-6349-4dc6-9886-23795ccb5f27', ['-otp-'=>strval($user->emailotp)]);
+
+        } else if($user->role=='1'){
+
+            $email=SendGrid::send($user->email, '0980bfd2-1743-4106-a861-eb64204cae94', ['-otp-'=>strval($user->emailotp)],$user->name);
+
         }
 
         // if (!Auth::user()->isActive) {
