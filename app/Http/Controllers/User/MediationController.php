@@ -168,10 +168,11 @@ class MediationController extends Controller {
             }
 
 
+
+            $cid = "M" . sprintf("%06d", $med->id);
             
 
-             Email::send($usr->email,'c1887740-50f9-4f77-ba1f-507ca42e7f62',['-caseid-'=>$med->id,],$usr->first_name . ' ' . $usr->last_name);
-
+             $e=Email::send($usr->email,'c1887740-50f9-4f77-ba1f-507ca42e7f62',['-caseid-'=>$cid,],$usr->first_name . ' ' . $usr->last_name);
             
 
 
@@ -271,32 +272,7 @@ class MediationController extends Controller {
 
                 $party_name = $InvoledUser->name;
 
-
-
-
-                $email = new \SendGrid\Mail\Mail();
-                $email->setFrom("no-repley@mediatation.livetest.top", "No Repley");
-                $email->setSubject('Update about your case');
-                $email->addTo($InvoledUserP1->userEmail, $InvoledUserP1->name);
-
-                //dd;
-//                $email->addContent("text/html", $html->render());
-                //echo env('SENDGRID_API_KEY', 'test');
-                $sendgrid = new \SendGrid(env('SENDGRID_API_KEY', 'xyz'));
-                if (env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', '') != "") {
-                    $sendgrid->client->templates()->_(env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''))->patch(["id" => $id, "party_name" => $party_name]);
-                } else {
-                    $html = view('email.l7_upon_successful_onboarding_of_any_counter_party', compact("id", "party_name"));
-                    $email->addContent("text/html", $html->render());
-                }
-                try {
-                    $response = $sendgrid->send($email);
-                    //$response->statusCode() . "\n";
-                    //print_r($response->headers());
-                    //return $response->body() . "\n";
-                } catch (Exception $e) {
-                    //echo 'Caught exception: ' . $e->getMessage() . "\n";
-                }
+                $e=Email::send($InvoledUserP1->userEmail,'8c86c224-75e5-4cfd-8bc2-f3305df4d3f3',['-caseid-'=>$id,'-partyname-'=>$party_name],$InvoledUserP1->name);
 
 
 
@@ -483,6 +459,36 @@ class MediationController extends Controller {
         $user->confirm_status = 2;
         $user->withdraw = $request->withdraw_comment;
         $user->save();
+
+           //p1
+
+            $cid = "M" . sprintf("%06d", $request->case_id);
+
+
+        
+
+        $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $request->case_id])->first();
+
+        $e=Email::send($InvoledUserP1->userEmail,'a469fac2-a496-43dd-a64a-bc5fbd782880',['-caseid-'=>$cid],$InvoledUserP1->name);
+
+
+        //other
+
+         $InvoledUser = InvoledUser::where(['userPlanId' => $request->case_id])->where('isClaimant', '<>', '0')->get();
+
+
+
+
+         foreach ($InvoledUser as $key => $value) {
+             
+             $e=Email::send($value->userEmail,'048a86d0-f750-4c99-9718-64529ca45725',['-caseid-'=>$cid,'-partyname-'=>$InvoledUserP1->name],$value->name);
+
+         }
+
+
+         
+
+     
 
         $mediation_status_log = new Mediation_status_log;
         $mediation_status_log->user_id = Auth::user()->id;
