@@ -41,6 +41,11 @@ class UsersController extends Controller {
     public function statusChangeApprove(Request $request) {
         $user = User::find($request->id);
         $user->status = $request->status;
+        if ($user->role==0 && $request->status == 1) {
+            SendGrid::send($sendEamils, env('L23_USER_ACCOUNT_ACTIVATION', ''), ["-caseid-" => $id], null, $filesE);
+        } else if ($request->status == 1) {
+            SendGrid::send($sendEamils, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''), ["-caseid-" => $id], null, $filesE);
+        }
         $user->save();
         return response()->json(["msg" => "Category Name Update"]);
     }

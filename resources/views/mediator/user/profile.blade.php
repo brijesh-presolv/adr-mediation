@@ -1,8 +1,3 @@
-<?php
-
-$user=Auth::user();
-
-?>
 @extends('mediator.layouts.app')
 @section('title', 'Profile')
 
@@ -68,52 +63,52 @@ $user=Auth::user();
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
                             <select  class="form-control" id="state" name="state">
-                                <option {{($user->state=="dolnośląskie")?"selected":"" }} >
+                                <option {{(Auth::user()->state=="dolnośląskie")?"selected":"" }} >
                                     dolnośląskie
                                 </option>
-                                <option {{($user->state=="kujawsko-pomorskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="kujawsko-pomorskie")?"selected":"" }}>
                                     kujawsko-pomorskie
                                 </option>
-                                <option {{($user->state=="lubelskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="lubelskie")?"selected":"" }}>
                                     lubelskie
                                 </option>
-                                <option {{($user->state=="lubuskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="lubuskie")?"selected":"" }}>
                                     lubuskie
                                 </option>
-                                <option {{($user->state=="łódzkie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="łódzkie")?"selected":"" }}>
                                     łódzkie
                                 </option>
-                                <option {{($user->state=="małopolskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="małopolskie")?"selected":"" }}>
                                     małopolskie
                                 </option>
-                                <option {{($user->state=="mazowieckie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="mazowieckie")?"selected":"" }}>
                                     mazowieckie
                                 </option>
-                                <option {{($user->state=="opolskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="opolskie")?"selected":"" }}>
                                     opolskie
                                 </option>
-                                <option {{($user->state=="podkarpackie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="podkarpackie")?"selected":"" }}>
                                     podkarpackie
                                 </option>
-                                <option {{($user->state=="podlaskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="podlaskie")?"selected":"" }}>
                                     podlaskie
                                 </option>
-                                <option {{($user->state=="pomorskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="pomorskie")?"selected":"" }}>
                                     pomorskie
                                 </option>
-                                <option {{($user->state=="śląskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="śląskie")?"selected":"" }}>
                                     śląskie
                                 </option>
-                                <option {{($user->state=="świętokrzyskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="świętokrzyskie")?"selected":"" }}>
                                     świętokrzyskie
                                 </option>
-                                <option {{($user->state=="warmińsko-mazurskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="warmińsko-mazurskie")?"selected":"" }}>
                                     warmińsko-mazurskie
                                 </option>
-                                <option {{($user->state=="wielkopolskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="wielkopolskie")?"selected":"" }}>
                                     wielkopolskie
                                 </option>
-                                <option {{($user->state=="zachodniopomorskie")?"selected":"" }}>
+                                <option {{(Auth::user()->state=="zachodniopomorskie")?"selected":"" }}>
                                     zachodniopomorskie
                                 </option>
                             </select>

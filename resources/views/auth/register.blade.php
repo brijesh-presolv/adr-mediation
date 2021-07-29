@@ -320,7 +320,7 @@
                                              <!-- <label for="password" class="col-sm-3 control-label pdr20">
                                                 Password*</label> -->
                                             <div class="col-sm-12 ml25">
-                                                <input id="password" value="12345678" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="password">
+                                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="password">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -333,7 +333,7 @@
                                              <!-- <label for="password" class="col-sm-3 control-label pdr20">
                                                 Password*</label> -->
                                             <div class="col-sm-12 ml25">
-                                                <input id="password" value="12345678" type="password" class="form-control @error('password') is-invalid @enderror" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm password">
+                                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm password">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
