@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Mediation_Details;
 use App\Models\AreaOfSpecialization;
-
+use App\Http\Helpers\SendGrid;
 class UsersController extends Controller {
 
     /**
@@ -42,9 +42,9 @@ class UsersController extends Controller {
         $user = User::find($request->id);
         $user->status = $request->status;
         if ($user->role==0 && $request->status == 1) {
-            SendGrid::send($sendEamils, env('L23_USER_ACCOUNT_ACTIVATION', ''), ["-caseid-" => $id], null, $filesE);
+            SendGrid::send($user->email, env('L23_USER_ACCOUNT_ACTIVATION', ''));
         } else if ($request->status == 1) {
-            SendGrid::send($sendEamils, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''), ["-caseid-" => $id], null, $filesE);
+            SendGrid::send($user->email, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''));
         }
         $user->save();
         return response()->json(["msg" => "Category Name Update"]);
