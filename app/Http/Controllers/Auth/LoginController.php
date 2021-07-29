@@ -42,9 +42,11 @@ use AuthenticatesUsers;
         } else
        if (Auth::check() && (Auth::user()->role == 0)) {
 
+
           if(Session::has('newcase')){
              return route('user.newcase');
           }
+
            return route('user.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 1)) {
 

@@ -21,6 +21,12 @@ class IsUser {
           
           return redirect('verify');
       }  else{
+
+        if (Auth::user()->isActive=='0' or Auth::user()->status=='0') {
+            Auth::logout();
+            return redirect('login')->with('warning','Account Under Review.');
+        }
+        
             return $next($request);
       }
         } else {

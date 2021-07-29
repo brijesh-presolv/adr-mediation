@@ -45,10 +45,23 @@ class HomeController extends Controller {
                 if($usr->save()){
 
 
+                 
+
+
                     if($usr->role=='1'){
+
+                        $type='Mediator';
+
+                        Email::send($usr->email,'92f1d3c4-077b-4e6a-b9db-3f9a3fda2111',['-type-'=>$type],$usr->name);
+
+
 
                         return redirect()->route('mediator.dashboard');
                     }
+
+                     $type='User';
+
+                        Email::send($usr->email,'92f1d3c4-077b-4e6a-b9db-3f9a3fda2111',['-type-'=>$type],$usr->name);
 
 
                     if($request->session()->has('newcase')){
@@ -100,6 +113,90 @@ class HomeController extends Controller {
         }
 
 
+    }
+
+
+
+    public function forgotpassword(Request $request){
+
+        if($request->post()){
+
+            $u=$request->post();
+
+
+
+            $usr=User::where(['username'=>$u['username']])->first();
+
+            if($usr){
+
+                
+                if($usr->role==0){
+
+                    $type='User';
+                } else{
+
+                    $type='Mediator';
+                }
+
+
+                 $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                 $pwd=substr(str_shuffle($chars),0,8);
+
+
+                Email::send($usr->email,'760f8edf-ada7-4b23-8c44-7d0770195cdb',['-type-'=>$type,'-pwd-'=>$pwd],$usr->name);
+                
+                echo json_encode(['response'=>'success']);
+
+                exit;
+
+            }
+
+
+        }
+
+        echo json_encode(['response'=>'error']);
+
+
+ 
+
+    }
+
+    public function forgotusername(Request $request){
+
+
+        if($request->post()){
+
+            $u=$request->post();
+
+            
+            $usr=User::where(['email'=>$u['email']])->first();
+
+            if($usr){
+
+                if($usr->role==0){
+
+                    $type='User';
+                } else{
+
+                    $type='Mediator';
+                }
+
+                Email::send($usr->email,'aad4779e-f892-46ed-b6d8-7b75195f45b9',['-type-'=>$type,'-name-'=>$usr->username],$usr->name);
+                
+                echo json_encode(['response'=>'success']);
+
+                exit;
+
+            }
+
+
+
+            
+        }
+
+        echo json_encode(['response'=>'error']);
+
+        
     }
 
 

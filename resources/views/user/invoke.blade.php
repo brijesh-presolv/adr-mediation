@@ -329,6 +329,7 @@ function isreadonlys($rows) {
                             <label>Supporting document</label><br>
                             <?php if ($rows == 0) { ?>
                                 <input class="form-control dropify" type="file" name="document" data-allowed-file-extensions="pdf zip png jpg jpeg"  data-max-file-size="20M"></input>
+                                <p>*Only Pdf zip png and jpg file allowed</p>
                                 <?php
                             } else {
                                 if ($medcase->documentPath != '') {

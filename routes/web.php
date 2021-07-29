@@ -20,6 +20,10 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::match(['POST'], '/mediation', [App\Http\Controllers\HomeController::class, 'mediation'])->name('mediation');
 
+Route::match(['POST','GET'], '/forgotpassword', [App\Http\Controllers\HomeController::class, 'forgotpassword'])->name('forgotpassword');
+Route::match(['POST','GET'], '/forgotusername', [App\Http\Controllers\HomeController::class, 'forgotusername'])->name('forgotusername');
+
+
 
 Route::match(['GET', 'POST'], '/verify', [App\Http\Controllers\HomeController::class, 'verify'])->name('verify');
 

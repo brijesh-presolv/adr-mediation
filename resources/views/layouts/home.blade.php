@@ -15,7 +15,8 @@
 <meta property="og:url" content="https://www.presolv360.com">
 <meta property="og:title" content=" {{ config('app.name', 'Medtiator') }} | Dispute resolution made easy" />
 <meta property="og:type" content="article" />
-	
+<meta name="csrf-token" content="{{ csrf_token() }}" />
+
 <!-- Standard Favicon -->
 <link rel="icon" type="image/x-icon" href="https://www.presolv360.com/presolv360/images/icon.png" />
 
@@ -25,11 +26,11 @@
   <link rel="stylesheet" href="https://www.presolv360.com/presolv360/js/sweetalert2.css">
   <link rel="stylesheet" href="https://www.presolv360.com/presolv360/css/style_slide.css">
 
-  
+
 
 
   <style type="text/css">
-    
+
     .modal-content {
     position: relative;
     background-color: #fff;
@@ -97,20 +98,20 @@
  gtag('js', new Date());
 
   gtag('config', 'AW-757076966');
- 
- 
- 
+
+
+
   $( document ).ready(function() {
-    $('#set_cookies').hide(); 
+    $('#set_cookies').hide();
     if(getCookie("presolv_cookie")){
     var user=getCookie("presolv_cookie");
   }
 
     if (user != "") {
         //alert("Welcome again " + user);
-        $('#set_cookies').hide();  
+        $('#set_cookies').hide();
     } else {
- $('#set_cookies').show();  
+ $('#set_cookies').show();
     }
 });
 </script>
@@ -124,7 +125,7 @@ ul li :hover {
 margin-left: -5px;
 }
 }
-</style>    
+</style>
 <style>
 @media (min-width: 768px) and (max-width: 1024px){
 	.widget.widget-about{
@@ -135,13 +136,13 @@ margin-left: -5px;
   <!--links for carousel end-->
 <body data-offset="" data-spy="" data-target=".ow-navigation" style="width: 100%;">
 <!-- Main Container -->
-    
+
 <!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top bxshadow ">
 
 	<div class="container">
 		  <a class="navbar-brand" href="{{url('/')}}">
-		  	
+
 		  	<img src="{{url('/assert/')}}/img/logo_mediacje.png" class="img-fluid home-logo">
 		  </a>
 		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -172,7 +173,7 @@ margin-left: -5px;
           <?php } else { ?>
 		      			        <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="login">Zaloguj się</a>
                       <?php } ?>
-		       		    
+
             </li>
             <?php if(Auth::user()){ ?>
             <li>
@@ -194,7 +195,7 @@ margin-left: -5px;
 @yield('content')
 
  <script>
-  
+
 var cat = document.forms['vform']['cat'];
 var cat_error = document.getElementById('cat_error');
 cat.addEventListener('blur', catVerify, true);
@@ -220,14 +221,14 @@ function validateFormx() {
     cat.focus();
     return false;
   }
-  
+
    if (npd.value == "") {
     npd.style.border = "1px solid red";
     document.getElementById('npd_div').style.color = "red";
     npd_error.textContent = "Number of parties involved in the dispute is required";
     npd.focus();
     return false;
-  } 
+  }
    if (damount.value == "") {
     damount.style.border = "1px solid red";
     document.getElementById('damount_div').style.color = "red";
@@ -235,7 +236,7 @@ function validateFormx() {
     damount.focus();
     return false;
   }
-  
+
 }
 
 function catVerify() {
@@ -293,7 +294,7 @@ function resolvsubmit(){
 
   <div class="contact-section">
     <div class="container">
-  
+
   <div class="row justify-content-center">
     <div class="col-md-12">
       <div class="section-title text-center pb-25">
@@ -312,7 +313,7 @@ function resolvsubmit(){
       <p>Mumbai, India</p>
       </div>
     </div>
-</div> 
+</div>
 </div>
 <div class="col-lg-4 col-md-6 col-sm-7">
 <div class="card text-center mt-30">
@@ -326,7 +327,7 @@ function resolvsubmit(){
 <p><a href="tel:022-20821102" target="_top">Tel 721 782 222</a></p>
 </div>
 </div>
-</div> 
+</div>
 </div>
 <div class="col-lg-4 col-md-6 col-sm-7">
 <div class="card text-center mt-30">
@@ -340,11 +341,11 @@ function resolvsubmit(){
     <p><a href="mailto:info@presolv360.com" target="_top">info@pdmo24.pl</a></p>
     </div>
   </div>
-</div> 
 </div>
 </div>
 </div>
-        
+</div>
+
   </div>
 
 
@@ -381,16 +382,16 @@ Gibek-Wiśniewską.</p>
       <div class="col-md-3">
          <h5 class="mb-3">Bądźmy w kontakcie</h5>
          <div class="social">
-          <a href="https://www.linkedin.com/company/presolv360/" target="_blank"><i class="fab fa-linkedin"></i></a> 
+          <a href="https://www.linkedin.com/company/presolv360/" target="_blank"><i class="fab fa-linkedin"></i></a>
                     <a href="https://twitter.com/presolv360" target="_blank"><i class="fab fa-twitter" ></i></a>
          </div>
-            
+
       </div>
     </div>
-    
+
   </div>
 
-  
+
 </div>
 
 <div class="container-fluid footer">
@@ -407,7 +408,7 @@ Gibek-Wiśniewską.</p>
       </div>
     </div>
   </div>
-  
+
 </div>
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -444,10 +445,10 @@ div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner{background:#ff
 
 div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a{background:none !important;border:none !important;box-shadow:none !important;color:#0091ae;font-family:inherit;font-size:inherit;font-weight:normal !important;line-height:inherit;text-align:left;text-shadow:none !important;text-decoration:none !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a:hover{background:none !important;border:none !important;box-shadow:none !important;color:#0091ae;font-family:inherit;font-size:inherit;font-weight:normal !important;line-height:inherit;text-align:left;text-shadow:none !important;text-decoration:underline !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner div#hs-en-cookie-confirmation-buttons-area{margin:10px 0 0 !important;text-align:right !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a#hs-eu-confirmation-button,div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a#hs-eu-decline-button{border-radius:3px;display:inline-block;padding:10px 16px !important;text-decoration:none !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a#hs-eu-confirmation-button{background-color:#425b76 !important;border:1px solid #425b76 !important;margin-right:12px !important;color:#fff;font-family:inherit;font-size:inherit;font-weight:normal !important;line-height:inherit;text-align:left;text-shadow:none !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a#hs-eu-decline-button{border:1px solid #425b76 !important;color:#425b76;font-family:inherit;font-size:inherit;font-weight:normal !important;line-height:inherit;text-align:left;text-shadow:none !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner p{margin:0 0 12px;color:#33475b;font-family:inherit;font-size:inherit;font-weight:normal !important;line-height:inherit;text-align:left;text-shadow:none !important}@media print{div#hs-eu-cookie-confirmation{display:none !important}}@media screen and (max-width: 480px){div#hs-eu-cookie-confirmation{font-size:12px !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner{padding:8px 14px 14px !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a{font-size:12px !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a#hs-eu-confirmation-button{font-size:12px !important}div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner p{font-size:12px !important;margin-bottom:12px !important;line-height:15px !important}}@media only screen and (min-width: 960px){div#hs-eu-cookie-confirmation{position:fixed}div#hs-eu-cookie-confirmation.hs-cookie-notification-position-bottom{bottom:0;top:auto;box-shadow:0 -1px 3px #eaf0f6}div#hs-eu-cookie-confirmation.hs-cookie-notification-position-bottom-left{width:500px;bottom:0;top:auto;left:0;right:auto;box-shadow:0 -1px 3px #eaf0f6}}
 @media (min-width: 320px) and (max-width: 560px) {
-  
+
   div#hs-eu-cookie-confirmation {
     background: #fff;
-    
+
     left: 0;
     position: fixed;
     /*bottom:0%;*/
@@ -466,7 +467,7 @@ div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a{background:n
     font-size: 12px;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     line-height: 18px;
-    
+
     /* margin-bottom: 99px; */
 }
   .cls{
@@ -488,10 +489,10 @@ div#hs-eu-cookie-confirmation div#hs-eu-cookie-confirmation-inner a{background:n
     <div class="row">
   <div class="col-md-10" style="margin-bottom: 10px;">
 This
- website stores cookies on your computer. By using our website you 
- consent to our use of cookies as described in our <a href="privacy_policy" id="cool">Privacy Policy</a>.These 
-cookies  are used to improve our website and provide more personalised 
-and relevant services to you, both on this website and through other 
+ website stores cookies on your computer. By using our website you
+ consent to our use of cookies as described in our <a href="privacy_policy" id="cool">Privacy Policy</a>.These
+cookies  are used to improve our website and provide more personalised
+and relevant services to you, both on this website and through other
 media.</div>
 <div class="col-md-2">
   <div class="cookbtn"  style='margin-top: 0px;'>
@@ -508,8 +509,8 @@ media.</div>
   src="https://code.jquery.com/jquery-3.4.1.min.js"
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
   crossorigin="anonymous"></script> -->
- <script> 
- var DOMAIN = "https://presolv360.com/";
+ <script>
+ var DOMAIN = "{{url('/')}}";
   </script>
   <script src="https://presolv360.com/presolv360/js/jquery.min.js"></script>
 <script type="text/javascript" src="https://presolv360.com/asset/js/bootstrap.min.js"></script>
@@ -522,16 +523,26 @@ media.</div>
 
 <script src="https://presolv360.com/public/js/site.js"></script>
 
-   <script src="https://presolv360.com/public/js/lib/slick-carousel/slick.js"></script> 
+<script src="{{url('/assert/')}}/js/slick.js"></script>
+
+
+   <!-- <script src="{{url('/assert/')}}js/slick.js"></script>  -->
 
         <script src="https://presolv360.com/presolv360/js/sweetalert2.js"></script>
          <script src="//code.tidio.co/whiaumb73nws3xz5su24odtrgpni9etf.js" async></script>
         @yield('extra-js')
-        
+
 
         <script type="text/javascript">
-            
+
             $(window).load(function() {
+
+
+              $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
 
 
 
@@ -553,7 +564,7 @@ media.</div>
 
      } else if(hash=='#resolve'){
 
-      
+
 
           $('.nav-2 .nav-link').addClass('active');
           $('.nav-1 .nav-link').removeClass('active');
@@ -564,7 +575,7 @@ media.</div>
 })
         </script>
 
-        
+
 
 
 
@@ -576,7 +587,7 @@ if(banrvid){
 
   document.getElementById('bannervdo').play();
 }
-  
+
 
     $('.securevideomodal').click(function(){
 
@@ -599,7 +610,7 @@ if(banrvid){
 
 
 
-   
+
 
 
  $('#myModal').on('hidden.bs.modal', function () {
@@ -637,7 +648,7 @@ $('#npd').change(function(){
 
  $('#npd,#Damount').change(function(){
         if($('#npd').val() == 'more_than_3' || $('#Damount').val() == "Above Rs. 5 crore"){
-            
+
                $('.cntctus').show();
                $('.sbmtt').hide();
 
@@ -681,7 +692,7 @@ $('#npd').change(function(){
 
 
 
-  
+
   $('#apromocode').click(function(){
 
       var pcode=$('#promocode').val();
@@ -735,14 +746,14 @@ $('#npd').change(function(){
 
       if(qty=='0'){
        $(this).val('1');
-       
+
        }
 
        if(qty==''){
         qty=1;
        }
 
-       
+
 
       $.ajax({
 
@@ -806,7 +817,7 @@ $('#npd').change(function(){
     });
 
 
-</script> 
+</script>
       <script>
 
 function setCookie(cname,cvalue,exdays) {
@@ -844,25 +855,25 @@ $('#hs-eu-cookie-confirmation-inner').css('margin','0 auto');
 }
 
 
-    
+
     var user=getCookie("presolv_cookie");
     if (user != "") {
        // alert("Welcome again " + user);
-        $('#set_cookies').hide();  
+        $('#set_cookies').hide();
     } else {
     //alert(2);
-     $('#set_cookies').show();  
-           
-       
+     $('#set_cookies').show();
+
+
     }
 });
- //$('#set_cookies').show(); 
+ //$('#set_cookies').show();
 
           $('.cls').click(function(){
-            
+
 
              setCookie("presolv_cookie", 'dataip', 1000);
-             $('#set_cookies').hide(); 
+             $('#set_cookies').hide();
           });
 
            $('#btn_sub1').click(function (event) {
@@ -873,20 +884,20 @@ $('#hs-eu-cookie-confirmation-inner').css('margin','0 auto');
                         ).then(function(result) {
                             window.location.replace('login');
                         }).catch(swal.noop);
-   
+
    });
-  
-     
-           
+
+
+
      $('#sub').click(function (event) {
-          
+
             var plan=$('#planname').text();
             var price=$('#price').text();
 
             $.ajax({
                 method:'POST',
-                
-                 url: DOMAIN+'functions/presolv360/middleware.php', 
+
+                 url: DOMAIN+'functions/presolv360/middleware.php',
                 dataType:'JSON',
                 data:{plan:plan,price:price},
                 success: function (data) {
@@ -900,7 +911,7 @@ $('#hs-eu-cookie-confirmation-inner').css('margin','0 auto');
 
                 }
             });
-        });        
+        });
     </script>
 
 <!-- <script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js"></script>  -->
@@ -909,17 +920,17 @@ $('#hs-eu-cookie-confirmation-inner').css('margin','0 auto');
   <script>
 $(document).ready(function(){
 
-  $('[data-toggle="tooltip"]').tooltip();   
+  $('[data-toggle="tooltip"]').tooltip();
 
 
 
 
 });
-</script>                          
+</script>
 <script>
-    
+
         function ajax_confirm_sms(){
-     
+
 if(document.getElementById('sms_otp').value.length==5)
 {
         var ajaxRequest;
@@ -953,10 +964,10 @@ if(document.getElementById('sms_otp').value.length==5)
                 }
                else if(ajaxRequest.responseText=='both')
                 { //alert(ajaxRequest.responseText);
-            
+
                       //alert('You have been successfully registered and logged in');
-                    //swal("Success!", "You have been successfully registered and logged in.", "success");                    
-                    //window.location.href = 'https://presolv360.com/'; 
+                    //swal("Success!", "You have been successfully registered and logged in.", "success");
+                    //window.location.href = 'https://presolv360.com/';
                     gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
                      swal(
                             'Success!',
@@ -965,14 +976,14 @@ if(document.getElementById('sms_otp').value.length==5)
                         ).then(function() {
                             window.location.href = "https://presolv360.com/user/presolv-secure ";
                          }).catch(swal.noop);
-         
+
 
 
                   document.getElementById('sms_submit').style.display='none';
                     document.getElementById('update_phone').style.display='none';
                     document.getElementById('resend_phone').style.display='none';
                     document.getElementById('correct1').style.display='block';
-                    document.getElementById('cancel1').style.display='none';                    
+                    document.getElementById('cancel1').style.display='none';
                     document.getElementById('sms_otp').style.display='none';
                       document.getElementById('buttons').style.display='block';
                 }
@@ -994,7 +1005,7 @@ gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
                     document.getElementById('resend_phone').style.display='none';
                     document.getElementById('correct1').style.display='block';
                     document.getElementById('cancel1').style.display='none';
-                    
+
                     document.getElementById('sms_otp').style.display='none';
                       document.getElementById('buttons2').style.display='block';
 
@@ -1017,44 +1028,45 @@ else
 
 }
     }
-    
+
 </script>
 <script>
     $('#load2').on('click', function() {
-       
+
     var str=document.getElementById('username_reset').value;
         if(str!=='') {
             var $this = $(this);
             $this.button('loading');
-          
 
-              $.get(DOMAIN+"functions/password_recover.php?username=" + str +'&flag=1', function(data, status){
+            $.ajax({
 
-                var d=$.trim(data.resp);
+              url:DOMAIN+'/forgotpassword',
+              type: "POST",
+              data:{'username':str},
+              success:function(d){
 
-                   if(d=="success"){
+                console.log(d);
 
-                    //alert('this');
-
-                    $('#myModal').modal('hide');
-
-                        swal("Success!", "Your Password Has Been Updated. Please Check Your Registered Email Id!", "success");
-
-                   } else if(d=="fail"){
+                d=JSON.parse(d);
 
 
-                    $this.button('reset');
-                        $('#myModal').modal('hide');
+                console.log(d);
 
-                        swal("Failed!", "Wrong username entered!", "warning");
+                 if(d.response=='success'){
+                swal("Success!", "Your Password Has Been Updated. Please Check Your Registered Email Id!", "success");
+              }else{
+
+                swal("Failed!", "Wrong username entered!", "warning");
+              }
+              },
+              error:function(e){
+
+                  console.log(e);
+                  swal("Failed!", "Wrong username entered!", "warning");
+              }
 
 
-                   }
-              });
-
-
-            var xmlhttp = new XMLHttpRequest();
-          
+            });
 
         }
         else
@@ -1079,28 +1091,28 @@ else
     if(str!=='') {
             var $this = $(this);
             $this.button('loading');
-            
-            $.get(DOMAIN+"functions/password_recover.php?password=" + str +'&flag=2', function(data, status){
 
-                var d=$.trim(data.resp);
+            $.ajax({
+
+              url:DOMAIN+'/forgotusername',
+              type: "POST",
+              data:{'email':str},
+              success:function(d){
+                if(d.response=='success'){
+                  swal("Success!", "Your Username Has Been Sent To Your Registered Email Id. Please Check Your Registered Email Id!", "success");
+                } else{
+                  swal("Failed!", "Wrong email entered!", "warning");
+                }
+
+              },
+              error:function(e){
+
+                  console.log(e);
+                  swal("Failed!", "Wrong email entered!", "warning");
+              }
 
 
-                   if(d=="success"){
-
-                    $this.button('reset');
-                        $('#myModal2').modal('hide');
-                        swal("Success!", "Your Username Has Been Sent To Your Registered Email Id. Please Check Your Registered Email Id!", "success");
-
-                   } if(d=="fail"){
-
-
-                    $this.button('reset');
-                        $('#myModal2').modal('hide');
-                        swal("Failed!", "Wrong email entered!", "warning");
-
-
-                   }
-              });
+            });
 
         }
         else
@@ -1135,11 +1147,11 @@ $('.panel-group').on('shown.bs.collapse', toggleIcon);
 
 </script>
  </body>
-</html>                          
+</html>
 <script>
-    
+
         function ajax_confirm_sms(){
-     
+
 if(document.getElementById('sms_otp').value.length==5)
 {
         var ajaxRequest;
@@ -1173,10 +1185,10 @@ if(document.getElementById('sms_otp').value.length==5)
                 }
                else if(ajaxRequest.responseText=='both')
                 { //alert(ajaxRequest.responseText);
-            
+
                       //alert('You have been successfully registered and logged in');
-                    //swal("Success!", "You have been successfully registered and logged in.", "success");                    
-                    //window.location.href = 'https://presolv360.com/'; 
+                    //swal("Success!", "You have been successfully registered and logged in.", "success");
+                    //window.location.href = 'https://presolv360.com/';
                     gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
                      swal(
                             'Success!',
@@ -1185,14 +1197,14 @@ if(document.getElementById('sms_otp').value.length==5)
                         ).then(function() {
                             window.location.href = "https://presolv360.com/user/presolv-secure ";
                          }).catch(swal.noop);
-         
+
 
 
                   document.getElementById('sms_submit').style.display='none';
                     document.getElementById('update_phone').style.display='none';
                     document.getElementById('resend_phone').style.display='none';
                     document.getElementById('correct1').style.display='block';
-                    document.getElementById('cancel1').style.display='none';                    
+                    document.getElementById('cancel1').style.display='none';
                     document.getElementById('sms_otp').style.display='none';
                       document.getElementById('buttons').style.display='block';
                 }
@@ -1214,7 +1226,7 @@ gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
                     document.getElementById('resend_phone').style.display='none';
                     document.getElementById('correct1').style.display='block';
                     document.getElementById('cancel1').style.display='none';
-                    
+
                     document.getElementById('sms_otp').style.display='none';
                       document.getElementById('buttons2').style.display='block';
 
@@ -1237,7 +1249,7 @@ else
 
 }
     }
-    
+
 </script>
 
 
