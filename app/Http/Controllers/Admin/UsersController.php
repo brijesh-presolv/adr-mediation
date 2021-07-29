@@ -42,7 +42,9 @@ class UsersController extends Controller {
         $user = User::find($request->id);
         $user->status = $request->status;
         if ($user->role==0 && $request->status == 1) {
-            SendGrid::send($user->email, env('L23_USER_ACCOUNT_ACTIVATION', ''));
+            
+            $err=SendGrid::send($user->email, env('L23_USER_ACCOUNT_ACTIVATION', ''));
+//           dd($user->email,$err,env('L23_USER_ACCOUNT_ACTIVATION', ''));
         } else if ($request->status == 1) {
             SendGrid::send($user->email, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''));
         }
