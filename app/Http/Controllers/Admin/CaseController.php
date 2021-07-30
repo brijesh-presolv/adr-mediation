@@ -477,7 +477,7 @@ class CaseController extends Controller {
                 $initiating_party = $inv->name;
             } else if ($inv->isOnboarded == 0) {
                 $code = $inv->joinCode;
-                SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => $code, "-responding-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+                SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-"=>"M" . sprintf("%06d", $id),"-joincode-" => $code, "-claimant-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
             }
         }
         return true;
