@@ -217,13 +217,15 @@ class HomeController extends Controller {
             if($usr){
 
               if($usr->role=='0'){
-        $email=SendGrid::send($usr->email, '5e3c0043-6349-4dc6-9886-23795ccb5f27', ['-otp-'=>strval($usr->emailotp)],$usr->first_name.' '.$usr->last_name);
+        $email=Email::send($usr->email, '5e3c0043-6349-4dc6-9886-23795ccb5f27', ['-otp-'=>strval($usr->emailotp)],$usr->first_name.' '.$usr->last_name);
 
         } else if($usr->role=='1'){
 
-            $email=SendGrid::send($usr->email, '0980bfd2-1743-4106-a861-eb64204cae94', ['-otp-'=>strval($usr->emailotp)],$usr->first_name.' '.$usr->last_name);
+            $email=Email::send($usr->email, '0980bfd2-1743-4106-a861-eb64204cae94', ['-otp-'=>strval($usr->emailotp)],$usr->first_name.' '.$usr->last_name);
 
         }
+
+        echo json_encode(['response'=>'success']);
 
                 exit;
 

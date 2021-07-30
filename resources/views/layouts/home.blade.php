@@ -757,12 +757,11 @@ $(document).ready(function(){
               data:{'username':str},
               success:function(d){
 
-                console.log(d);
-
+      
                 d=JSON.parse(d);
 
 
-                console.log(d);
+      
 
                  if(d.response=='success'){
                 swal("Success!", "Your Password Has Been Updated. Please Check Your Registered Email Id!", "success");
@@ -808,6 +807,7 @@ $(document).ready(function(){
               type: "POST",
               data:{'email':str},
               success:function(d){
+                d=JSON.parse(d);
                 if(d.response=='success'){
                   swal("Success!", "Your Username Has Been Sent To Your Registered Email Id. Please Check Your Registered Email Id!", "success");
                 } else{
@@ -837,7 +837,7 @@ $(document).ready(function(){
 
     });
 
-    $('.resendotp').on('click', function() {
+    $('#resendotp').on('click', function() {
         var str=$(this).data('id');
 
     if(str!=='') {
@@ -850,6 +850,9 @@ $(document).ready(function(){
               type: "POST",
               data:{'id':str},
               success:function(d){
+
+               d=JSON.parse(d);
+
                 if(d.response=='success'){
                   swal("Success!", "Otp has been sent. Please Check Your Registered Email Id!", "success");
                 } else{
@@ -858,6 +861,8 @@ $(document).ready(function(){
 
               },
               error:function(e){
+
+                console.log(e);
 
                   //console.log(e);
                   swal("Failed!", "Please try again", "warning");
