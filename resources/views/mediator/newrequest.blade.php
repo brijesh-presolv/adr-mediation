@@ -252,6 +252,35 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Share</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="commentForm" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="case_id" class="form-control" >
+                    <input type="hidden" name="type" class="form-control" >
+
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Comment:</label>
+                        <textarea class="form-control" name="comment"  required></textarea>
+                    </div>
+                    <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">save comment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 <!-- Table datatable css -->
@@ -307,11 +336,11 @@ var userTable = $('#request').DataTable({
                 return d;
             }
         },
-        {"data": "comments",
+        {"data": "caseId",
             render: function (data, type, row) {
-
-                var button = `<button class="btn   btn-sm btn-primary label label-success "  data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',1,'425')">Private</button>
-                            <button class="btn  btn-sm  btn-success label label-success " data-toggle="modal" data-target="#myModalcomment" onclick="arbcommentmodal('1243',2,'a')">Shared</button>`;
+                var button = "";
+                button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
                 return button;
             }
         },
@@ -341,6 +370,75 @@ var userTable = $('#request').DataTable({
         }
     ],
 });
+$('#commentModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var id = button.data('id');
+    var typename = button.data('typename');
+    var type = button.data('type');
+    var modal = $(this)
+    $("#commentView").html("");
+    $.ajax({
+        type: 'post',
+        url: '{{ route("mediator.case.comment_view") }}',
+        data: {type: type, case_id: id},
+        success: function (data) {
+            for (i in data) {
+                //console.log(data[0]);
+                if (data[i].username == '{{Auth::user()->username}}') {
+                    var msg = `<div class="col-md-12 text-right border-top">
+                            <div class="row">
+                                            <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
+                                            <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
+                    $("#commentView").append(msg);
+                } else {
+                    var msg = `<div class="col-md-12 border-top">
+                            <div class="row">
+                                            <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                            <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
+                    $("#commentView").append(msg);
+                }
+            }
+        }
+    });
+
+    modal.find('#commentModalLabel').text(typename);
+    modal.find('.modal-body input[name="type"]').val(type);
+    modal.find('.modal-body input[name="case_id"]').val(id);
+});
+$('#commentForm').on('submit', function (e) {
+    e.preventDefault();
+    swal({
+        title: "Are you sure?",
+        text: "add this comment!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            $.ajax({
+                type: 'post',
+                url: '{{ route("mediator.case.comment") }}',
+                data: $('#commentForm').serialize(),
+                success: function () {
+                    swal("comment save successfully!", {
+                        icon: "success",
+                    });
+                    $('#commentForm')[0].reset();
+                    $('#commentModal').modal("hide");
+                }
+            });
+        } else {
+            swal("comment not added!");
+        }
+    });
+    return false;
+});
 $('#acceptModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     var data = button.parent().parent().find(".get_party");
@@ -349,9 +447,9 @@ $('#acceptModal').on('show.bs.modal', function (event) {
     var modal = $(this);
     $(this).data("address") + `</td><td></td></tr>`
 
-        var dd = "";
+    var dd = "";
     data.each(function (index) {
-        if(index <= 1) {
+        if (index <= 1) {
             if (index == 0) {
                 dd = dd + `<tr>`;
                 dd = dd +
@@ -372,8 +470,8 @@ $('#acceptModal').on('show.bs.modal', function (event) {
                         </td>`;
                 dd = dd + `</tr>`;
             }
-           
-        }else{
+
+        } else {
             dd = dd + `<tr>
                     <td></td>
                     <td>
