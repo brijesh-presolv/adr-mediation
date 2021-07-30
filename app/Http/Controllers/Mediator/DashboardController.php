@@ -61,6 +61,7 @@ class DashboardController extends Controller {
                 //->select('mediation_case.*')
                 ->join('mediators_mediation_cases_status', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
                 ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 0])
+                ->where("mediation_case.confirm_status", "!=",2 )
                 ->get();
         // dd($newrequestData);
         $arraydata = array();
