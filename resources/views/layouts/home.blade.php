@@ -545,33 +545,10 @@ media.</div>
 });
 
 
-
-
-
-
     $(".loader").fadeOut("slow");
 
     var hash = window.location.hash;
 
-    console.log(hash);
-
-     if(hash=='#profile'){
-
-      $('.nav-1 .nav-link').addClass('active');
-      $('.nav-2 .nav-link').removeClass('active');
-      $('#resolve').removeClass('in active show');
-      $('#secure').addClass('in active show');
-
-     } else if(hash=='#resolve'){
-
-
-
-          $('.nav-2 .nav-link').addClass('active');
-          $('.nav-1 .nav-link').removeClass('active');
-           $('#resolve').addClass('in active show');
-           $('#secure').removeClass('in active show');
-
-     }
 })
         </script>
 
@@ -690,133 +667,6 @@ $('#npd').change(function(){
         }
     });
 
-
-
-
-  $('#apromocode').click(function(){
-
-      var pcode=$('#promocode').val();
-
-      if(pcode==''){
-        $('#promomsg').text('Enter promocode').addClass('red').removeClass('green');
-      }
-
-      $.ajax({
-
-        'url':DOMAIN+'applypromocode',
-        'data':{pcode:pcode},
-        'type':'POST',
-        'success':function(res){
-
-          var res=JSON.parse(res);
-
-          console.log(res);
-
-           if(res.response=='true'){
-
-            $('.pcost').html(res.cost);
-            $('#apromocode').hide();
-            $('#rpromocode').show();
-            $('#promomsg').text('Promocode applied').addClass('green').removeClass('red');
-            $('#promocode').hide();
-            $('#pcodehead').html(res.code).show();
-           }
-
-           if(res.response=="invalid"){
-              $('#promomsg').text('Invalid promocode').addClass('red').removeClass('green');
-           }
-
-           if(res.response=="Used"){
-              $('#promomsg').text('Promocode expired').addClass('red').removeClass('green');
-           }
-        },
-        'error':function(res){
-          console.log(res);
-        }
-
-      })
-
-
-    });
-
-
-  $('#qty').keyup(function(){
-
-    var qty=$(this).val();
-
-      if(qty=='0'){
-       $(this).val('1');
-
-       }
-
-       if(qty==''){
-        qty=1;
-       }
-
-
-
-      $.ajax({
-
-        'url':DOMAIN+'/secure/plan/qty',
-        'data':{qty:qty},
-        'type':'POST',
-        'success':function(res){
-
-          var res=JSON.parse(res);
-
-          console.log(res);
-
-           if(res.response=='true'){
-
-            $('.pcost').html(res.cost);
-           }
-
-        },
-        'error':function(res){
-          console.log(res);
-        }
-
-      })
-
-
-
-  });
-
-  $('#rpromocode').click(function(){
-
-      var rcode='1';
-
-      $.ajax({
-
-        'url':DOMAIN+'removepromocode',
-        'data':{rcode:rcode},
-        'type':'POST',
-        'success':function(res){
-
-          console.log(res);
-
-          var res=JSON.parse(res);
-
-           if(res.response=='true'){
-
-            $('.pcost').html(res.cost);
-            $('#rpromocode').hide();
-            $('#promomsg').text('');
-            $('#pcodehead').hide();
-            $('#promocode').show();
-            $('#apromocode').show();
-           }
-        },
-        'error':function(res){
-          console.log(res);
-        }
-
-      })
-
-
-    });
-
-
 </script>
       <script>
 
@@ -876,42 +726,6 @@ $('#hs-eu-cookie-confirmation-inner').css('margin','0 auto');
              $('#set_cookies').hide();
           });
 
-           $('#btn_sub1').click(function (event) {
-             swal(
-                            'Please Login/signup!',
-                            'Login if you have a account or else create a new account.',
-                            'info'
-                        ).then(function(result) {
-                            window.location.replace('login');
-                        }).catch(swal.noop);
-
-   });
-
-
-
-     $('#sub').click(function (event) {
-
-            var plan=$('#planname').text();
-            var price=$('#price').text();
-
-            $.ajax({
-                method:'POST',
-
-                 url: DOMAIN+'functions/presolv360/middleware.php',
-                dataType:'JSON',
-                data:{plan:plan,price:price},
-                success: function (data) {
-                    if(data.resp==true) {
-                        window.location.replace('presolvcheckout');
-                    }
-                    else{
-                        window.location.replace('presolvreview.php');
-
-                    }
-
-                }
-            });
-        });
     </script>
 
 <!-- <script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js"></script>  -->
@@ -927,109 +741,7 @@ $(document).ready(function(){
 
 });
 </script>
-<script>
 
-        function ajax_confirm_sms(){
-
-if(document.getElementById('sms_otp').value.length==5)
-{
-        var ajaxRequest;
-
-        try {
-            ajaxRequest = new XMLHttpRequest();
-        }catch (e) {
-            try {
-                ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
-            }catch (e) {
-                try{
-                    ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
-                }catch (e){
-                    alert("Your browser broke!");
-                    return false;
-                }
-            }
-        }
-        ajaxRequest.onreadystatechange = function(){
-            if(ajaxRequest.readyState == 4){
-
-                if(ajaxRequest.responseText=='true')
-                { //alert(ajaxRequest.responseText);
-                   // document.getElementById('sms_submit').style.display='none'; /*commented by kewal*/
-                    document.getElementById('update_phone').style.display='none';
-                    document.getElementById('resend_phone').style.display='none';
-                    document.getElementById('correct1').style.display='block';
-                    document.getElementById('cancel1').style.display='none';
-                    document.getElementById('sms_otp').style.display='none';
-
-                }
-               else if(ajaxRequest.responseText=='both')
-                { //alert(ajaxRequest.responseText);
-
-                      //alert('You have been successfully registered and logged in');
-                    //swal("Success!", "You have been successfully registered and logged in.", "success");
-                    //window.location.href = 'https://presolv360.com/';
-                    gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
-                     swal(
-                            'Success!',
-                            'You have been successfully registered and logged in.',
-                            'success'
-                        ).then(function() {
-                            window.location.href = "https://presolv360.com/user/presolv-secure ";
-                         }).catch(swal.noop);
-
-
-
-                  document.getElementById('sms_submit').style.display='none';
-                    document.getElementById('update_phone').style.display='none';
-                    document.getElementById('resend_phone').style.display='none';
-                    document.getElementById('correct1').style.display='block';
-                    document.getElementById('cancel1').style.display='none';
-                    document.getElementById('sms_otp').style.display='none';
-                      document.getElementById('buttons').style.display='block';
-                }
-                else if(ajaxRequest.responseText=='checkout')
-                { //alert(ajaxRequest.responseText);
-gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
-          setTimeout(function() {
-                  swal({
-                      title: "Success!",
-                      text: "You have been successfully registered and logged in!",
-                      type: "success"
-                  }, function() {
-                      window.location = "../checkout.php";
-                  });
-              }, 200);
-
-                      document.getElementById('sms_submit').style.display='none';
-                    document.getElementById('update_phone').style.display='none';
-                    document.getElementById('resend_phone').style.display='none';
-                    document.getElementById('correct1').style.display='block';
-                    document.getElementById('cancel1').style.display='none';
-
-                    document.getElementById('sms_otp').style.display='none';
-                      document.getElementById('buttons2').style.display='block';
-
-                }
-                else
-                {
-                    document.getElementById('cancel1').style.display='block';
-                }
-            }
-        }
-
-        var sms_otp= document.getElementById('sms_otp').value;
-        var queryString="?sms="+sms_otp;
-        ajaxRequest.open("GET", "ajax_confirm_sms" + queryString, true);
-        ajaxRequest.send(null);
-}
-else
-{
-                      document.getElementById('cancel1').style.display='block';
-
-}
-    }
-
-</script>
 <script>
     $('#load2').on('click', function() {
 
@@ -1083,8 +795,6 @@ else
 
     });
 
-</script>
-<script>
     $('#load3').on('click', function() {
         var str=document.getElementById('forgot_username_reset').value;
 
@@ -1127,6 +837,51 @@ else
 
     });
 
+    $('.resendotp').on('click', function() {
+        var str=$(this).data('id');
+
+    if(str!=='') {
+            var $this = $(this);
+            $this.button('loading');
+
+            $.ajax({
+
+              url:DOMAIN+'/resendotp',
+              type: "POST",
+              data:{'id':str},
+              success:function(d){
+                if(d.response=='success'){
+                  swal("Success!", "Otp has been sent. Please Check Your Registered Email Id!", "success");
+                } else{
+                  swal("Failed!", "Please try again", "warning");
+                }
+
+              },
+              error:function(e){
+
+                  //console.log(e);
+                  swal("Failed!", "Please try again", "warning");
+              }
+
+
+            });
+
+        }
+        else
+        {
+            $this.button('reset');
+            $('#myModal2').modal('hide');
+
+            swal("Failed!", "Please enter an Email Id!", "warning");
+
+
+        }
+
+    });
+
+
+    
+
     function toggleIcon(e) {
     $(e.target)
         .prev('.panel-heading')
@@ -1148,113 +903,5 @@ $('.panel-group').on('shown.bs.collapse', toggleIcon);
 </script>
  </body>
 </html>
-<script>
-
-        function ajax_confirm_sms(){
-
-if(document.getElementById('sms_otp').value.length==5)
-{
-        var ajaxRequest;
-
-        try {
-            ajaxRequest = new XMLHttpRequest();
-        }catch (e) {
-            try {
-                ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
-            }catch (e) {
-                try{
-                    ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
-                }catch (e){
-                    alert("Your browser broke!");
-                    return false;
-                }
-            }
-        }
-        ajaxRequest.onreadystatechange = function(){
-            if(ajaxRequest.readyState == 4){
-
-                if(ajaxRequest.responseText=='true')
-                { //alert(ajaxRequest.responseText);
-                   // document.getElementById('sms_submit').style.display='none'; /*commented by kewal*/
-                    document.getElementById('update_phone').style.display='none';
-                    document.getElementById('resend_phone').style.display='none';
-                    document.getElementById('correct1').style.display='block';
-                    document.getElementById('cancel1').style.display='none';
-                    document.getElementById('sms_otp').style.display='none';
-
-                }
-               else if(ajaxRequest.responseText=='both')
-                { //alert(ajaxRequest.responseText);
-
-                      //alert('You have been successfully registered and logged in');
-                    //swal("Success!", "You have been successfully registered and logged in.", "success");
-                    //window.location.href = 'https://presolv360.com/';
-                    gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
-                     swal(
-                            'Success!',
-                            'You have been successfully registered and logged in.',
-                            'success'
-                        ).then(function() {
-                            window.location.href = "https://presolv360.com/user/presolv-secure ";
-                         }).catch(swal.noop);
-
-
-
-                  document.getElementById('sms_submit').style.display='none';
-                    document.getElementById('update_phone').style.display='none';
-                    document.getElementById('resend_phone').style.display='none';
-                    document.getElementById('correct1').style.display='block';
-                    document.getElementById('cancel1').style.display='none';
-                    document.getElementById('sms_otp').style.display='none';
-                      document.getElementById('buttons').style.display='block';
-                }
-                else if(ajaxRequest.responseText=='checkout')
-                { //alert(ajaxRequest.responseText);
-gtag('event', 'conversion', {'send_to': 'AW-757076966/fXdMCMmE8pYBEOangOkC'});
-          setTimeout(function() {
-                  swal({
-                      title: "Success!",
-                      text: "You have been successfully registered and logged in!",
-                      type: "success"
-                  }, function() {
-                      window.location = "../checkout.php";
-                  });
-              }, 200);
-
-                      document.getElementById('sms_submit').style.display='none';
-                    document.getElementById('update_phone').style.display='none';
-                    document.getElementById('resend_phone').style.display='none';
-                    document.getElementById('correct1').style.display='block';
-                    document.getElementById('cancel1').style.display='none';
-
-                    document.getElementById('sms_otp').style.display='none';
-                      document.getElementById('buttons2').style.display='block';
-
-                }
-                else
-                {
-                    document.getElementById('cancel1').style.display='block';
-                }
-            }
-        }
-
-        var sms_otp= document.getElementById('sms_otp').value;
-        var queryString="?sms="+sms_otp;
-        ajaxRequest.open("GET", "ajax_confirm_sms" + queryString, true);
-        ajaxRequest.send(null);
-}
-else
-{
-                      document.getElementById('cancel1').style.display='block';
-
-}
-    }
-
-</script>
-
-
-
-
-
 </body>
 </html>

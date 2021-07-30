@@ -22,6 +22,8 @@ Route::match(['POST'], '/mediation', [App\Http\Controllers\HomeController::class
 
 Route::match(['POST','GET'], '/forgotpassword', [App\Http\Controllers\HomeController::class, 'forgotpassword'])->name('forgotpassword');
 Route::match(['POST','GET'], '/forgotusername', [App\Http\Controllers\HomeController::class, 'forgotusername'])->name('forgotusername');
+Route::match(['POST','GET'], '/resendotp', [App\Http\Controllers\HomeController::class, 'resendotp'])->name('resendotp');
+
 
 
 

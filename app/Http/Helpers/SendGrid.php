@@ -16,7 +16,7 @@ Class SendGrid {
 
         $response = '';
         $email = new \SendGrid\Mail\Mail();
-        $email->setFrom('prashant@bombayblokes.com', 'pdmo24.pl');
+        $email->setFrom('info@pdm24.pl', 'pdm24.pl');
         if (is_array($to)) {
         foreach($to as $t){
                 $email->addTo($t);

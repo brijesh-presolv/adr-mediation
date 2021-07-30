@@ -172,7 +172,7 @@ class MediationController extends Controller {
             $cid = "M" . sprintf("%06d", $med->id);
             
 
-             $e=Email::send($usr->email,'c1887740-50f9-4f77-ba1f-507ca42e7f62',['-caseid-'=>$cid,],$usr->first_name . ' ' . $usr->last_name);
+             $e=Email::send($usr->email,'00838919-cdac-4515-ba1d-fa98918036b5',['-caseid-'=>$cid,],$usr->first_name . ' ' . $usr->last_name);
             
 
 
