@@ -190,52 +190,52 @@
                                             <div class="form-group">
                                                 <label for="state">@lang('user.state')</label>
                                                 <select  class="form-control" id="state" name="state">
-                                                    <option {{($user->state=="dolnośląskie")?"selected":"" }} >
+                                                    <option {{( $profileData->state=="dolnośląskie")?"selected":"" }} >
                                                         dolnośląskie
                                                     </option>
-                                                    <option {{($user->state=="kujawsko-pomorskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="kujawsko-pomorskie")?"selected":"" }}>
                                                         kujawsko-pomorskie
                                                     </option>
-                                                    <option {{($user->state=="lubelskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="lubelskie")?"selected":"" }}>
                                                         lubelskie
                                                     </option>
-                                                    <option {{($user->state=="lubuskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="lubuskie")?"selected":"" }}>
                                                         lubuskie
                                                     </option>
-                                                    <option {{($user->state=="łódzkie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="łódzkie")?"selected":"" }}>
                                                         łódzkie
                                                     </option>
-                                                    <option {{($user->state=="małopolskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="małopolskie")?"selected":"" }}>
                                                         małopolskie
                                                     </option>
-                                                    <option {{($user->state=="mazowieckie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="mazowieckie")?"selected":"" }}>
                                                         mazowieckie
                                                     </option>
-                                                    <option {{($user->state=="opolskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="opolskie")?"selected":"" }}>
                                                         opolskie
                                                     </option>
-                                                    <option {{($user->state=="podkarpackie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="podkarpackie")?"selected":"" }}>
                                                         podkarpackie
                                                     </option>
-                                                    <option {{($user->state=="podlaskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="podlaskie")?"selected":"" }}>
                                                         podlaskie
                                                     </option>
-                                                    <option {{($user->state=="pomorskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="pomorskie")?"selected":"" }}>
                                                         pomorskie
                                                     </option>
-                                                    <option {{($user->state=="śląskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="śląskie")?"selected":"" }}>
                                                         śląskie
                                                     </option>
-                                                    <option {{($user->state=="świętokrzyskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="świętokrzyskie")?"selected":"" }}>
                                                         świętokrzyskie
                                                     </option>
-                                                    <option {{($user->state=="warmińsko-mazurskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="warmińsko-mazurskie")?"selected":"" }}>
                                                         warmińsko-mazurskie
                                                     </option>
-                                                    <option {{($user->state=="wielkopolskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="wielkopolskie")?"selected":"" }}>
                                                         wielkopolskie
                                                     </option>
-                                                    <option {{($user->state=="zachodniopomorskie")?"selected":"" }}>
+                                                    <option {{( $profileData->state=="zachodniopomorskie")?"selected":"" }}>
                                                         zachodniopomorskie
                                                     </option>
                                                 </select>
