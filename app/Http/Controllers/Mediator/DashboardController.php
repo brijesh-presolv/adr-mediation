@@ -179,7 +179,15 @@ class DashboardController extends Controller {
         DB::table('manage_session')->insert($dataToInsert);
         foreach ($request->session_party_ids as $pary_id) {
             $data = InvoledUser::where("userId", $pary_id)->where("userPlanId", $request->caseId)->first();
-            $this->sned_session($request->caseId, $data->userEmail, $data->name);
+            $this->sned_session($request->caseId, $data->userEmail, $data->name,$request->sessionDate . "/" . $request->sessionTime);
+        }
+        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+        if ($mediator) {
+            $id = "M" . sprintf("%06d", $request->caseId);
+            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime], $mediator->username);
         }
         return true;
     }
@@ -426,9 +434,9 @@ class DashboardController extends Controller {
         }
     }
 
-    public function sned_session($id, $email_id, $email_name) {
+    public function sned_session($id, $email_id, $email_name,$date) {
         $id = "M" . sprintf("%06d", $id);
-        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id], $email_name);
+        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id,"-insert_date-"=>$date], $email_name);
         return true;
     }
 

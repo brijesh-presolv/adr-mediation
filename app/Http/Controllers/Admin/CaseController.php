@@ -232,7 +232,15 @@ class CaseController extends Controller {
         ];
         foreach ($request->session_party_ids as $pary_id) {
             $data = InvoledUser::where("userId", $pary_id)->where("userPlanId", $request->caseId)->first();
-            $this->sned_session($request->caseId, $data->userEmail, $data->name);
+            $this->sned_session($request->caseId, $data->userEmail, $data->name, $request->sessionDate . "/" . $request->sessionTime);
+        }
+        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+        if ($mediator) {
+            $id = "M" . sprintf("%06d", $request->caseId);
+            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime], $mediator->username);
         }
         DB::table('manage_session')->insert($dataToInsert);
 
@@ -477,7 +485,7 @@ class CaseController extends Controller {
                 $initiating_party = $inv->name;
             } else if ($inv->isOnboarded == 0) {
                 $code = $inv->joinCode;
-                SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-"=>"M" . sprintf("%06d", $id),"-joincode-" => $code, "-claimant-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+                SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-joincode-" => $code, "-claimant-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
             }
         }
         return true;
@@ -495,14 +503,18 @@ class CaseController extends Controller {
         }
     }
 
-    public function sned_session($id, $email_id, $email_name) {
+    public function sned_session($id, $email_id, $email_name, $date) {
         $id = "M" . sprintf("%06d", $id);
-        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id], $email_name);
+        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $date], $email_name);
         return true;
     }
 
     public function sned_withdrawal($id) {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
         $id = "M" . sprintf("%06d", $id);
         $initiating_party = "";
         foreach ($involedUser as $inv) {
@@ -510,28 +522,52 @@ class CaseController extends Controller {
                 SendGrid::send($inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $id], $inv->name);
                 $initiating_party = $inv->name;
             } else if ($inv->isOnboarded == 0) {
-                SendGrid::send($inv->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $id, "-partyname-" => $initiating_party], $inv->name);
+                SendGrid::send($inv->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $id, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
+        }
+        if ($mediator) {
+            SendGrid::send($mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
         }
         return true;
     }
 
     public function sned_resolved($id) {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
         $id = "M" . sprintf("%06d", $id);
         $initiating_party = "";
         foreach ($involedUser as $inv) {
-            SendGrid::send($inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party], $inv->name);
+            if ($inv->isClaimant == 0) {
+                $initiating_party = $inv->name;
+            }
+            SendGrid::send($inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+        }
+        if ($mediator) {
+            SendGrid::send($mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
         }
         return true;
     }
 
     public function sned_unresolved($id) {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+
         $id = "M" . sprintf("%06d", $id);
         $initiating_party = "";
         foreach ($involedUser as $inv) {
-            SendGrid::send($inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party], $inv->name);
+            if ($inv->isClaimant == 0) {
+                $initiating_party = $inv->name;
+            }
+            SendGrid::send($inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+        }
+        if ($mediator) {
+            SendGrid::send($mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
         }
         return true;
     }
