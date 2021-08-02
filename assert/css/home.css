@@ -1392,9 +1392,13 @@ width: 195px;
    }
 
    .bannersectiontext {
-    position: absolute;
-    top: 17%;
-    left: -0.2%;
+    
+    osition: absolute;
+    top: 13px;
+    left: -3.2%;
+    bottom: 7px;
+    right: -3%;
+
 }
 
 .bannersection h2 {
@@ -1683,9 +1687,10 @@ width: 195px;
    }
 
    .bannersectiontext {
-    position: absolute;
-    top: 19%;
-    left: -0.2%;
+        position: absolute;
+    top: -1%;
+    left: -3.2%;
+    right: -8px;
 }
 
 .bannersection h2 {
