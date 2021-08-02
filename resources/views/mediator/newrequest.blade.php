@@ -112,7 +112,7 @@
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2no" value="0" checked>
+                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2no" value="0" >
                                                     <label class="form-check-label" for="consent2no">
                                                         No
                                                     </label>
