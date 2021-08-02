@@ -473,7 +473,7 @@ class MediationController extends Controller {
 
         $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $request->case_id])->first();
 
-        $e=Email::send($InvoledUserP1->userEmail,'a469fac2-a496-43dd-a64a-bc5fbd782880',['-caseid-'=>$cid],$InvoledUserP1->name);
+        $e=Email::send($InvoledUserP1->userEmail,'a469fac2-a496-43dd-a64a-bc5fbd782880',['-caseid-'=>$cid,'-type-'=>'Party'],$InvoledUserP1->name);
 
 
         //other
