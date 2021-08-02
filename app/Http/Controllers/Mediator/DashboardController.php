@@ -187,7 +187,7 @@ class DashboardController extends Controller {
                 ->first();
         if ($mediator) {
             $id = "M" . sprintf("%06d", $request->caseId);
-            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime], $mediator->username);
+            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime,"-type-"=>"Mediator"], $mediator->username);
         }
         return true;
     }
@@ -436,7 +436,7 @@ class DashboardController extends Controller {
 
     public function sned_session($id, $email_id, $email_name,$date) {
         $id = "M" . sprintf("%06d", $id);
-        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id,"-insert_date-"=>$date], $email_name);
+        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id,"-insert_date-"=>$date,"-type-"=>"Party"], $email_name);
         return true;
     }
 
