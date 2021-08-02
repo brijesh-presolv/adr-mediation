@@ -18,12 +18,12 @@
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 
 <!-- Standard Favicon -->
-<link rel="icon" type="image/x-icon" href="https://www.presolv360.com/presolv360/images/icon.png" />
+<link rel="icon" type="image/x-icon" href="{{url('/assert/')}}/img/icon.png" />
 
-<link rel="stylesheet" type="text/css" href="https://presolv360.com/asset/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/home.css">
-  <link rel="stylesheet" type="text/css" href="https://presolv360.com/asset/fontawesome/css/all.min.css">
-  <link rel="stylesheet" href="https://www.presolv360.com/presolv360/js/sweetalert2.css">
+  <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/all.min.css">
+  <link rel="stylesheet" href="{{url('/assert/')}}/css/sweetalert2.css">
   <link rel="stylesheet" href="https://www.presolv360.com/presolv360/css/style_slide.css">
 
 
@@ -71,35 +71,13 @@
 
   <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://www.presolv360.com/presolv360/js/sweetalert2.css">
 
-<!--[if lt IE 9]>
-        <script src="https://www.presolv360.com/presolv360/js/html5/respond.min.js"></script>
-<![endif]-->
-<!-- <link href="https://www.presolv360.com/presolv360/presolvuser/plugins/bower_components/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"> -->
 
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
-<script src="https://presolv360.com/presolv360/js/jquery.min.js"></script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118321131-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-118321131-1');
-</script>
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-757076966"></script>
+<script src="{{url('/assert/')}}/js/jquery.min.js"></script>
 
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
- gtag('js', new Date());
-
-  gtag('config', 'AW-757076966');
-
-
 
   $( document ).ready(function() {
     $('#set_cookies').hide();
@@ -290,7 +268,7 @@ function resolvsubmit(){
 
 
     </script>
-  <link rel="stylesheet" href="https://presolv360.com/asset/css/plyr.css" />
+  <link rel="stylesheet" href="{{url('/assert/')}}css/plyr.css" />
 
   <div class="contact-section">
     <div class="container">
@@ -512,23 +490,22 @@ media.</div>
  <script>
  var DOMAIN = "{{url('/')}}";
   </script>
-  <script src="https://presolv360.com/presolv360/js/jquery.min.js"></script>
-<script type="text/javascript" src="https://presolv360.com/asset/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{url('/assert/')}}/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.js"></script>
 
-<script src="https://presolv360.com/asset/js/brand-slider.js"></script>
+<script src="{{url('/assert/')}}/js/brand-slider.js"></script>
 
-<script src="https://presolv360.com/presolv360/js/main.js"></script>
+<script src="{{url('/assert/')}}/js/main.js"></script>
 
 
-<script src="https://presolv360.com/public/js/site.js"></script>
+<script src="{{url('/assert/')}}/js/site.js"></script>
 
 <script src="{{url('/assert/')}}/js/slick.js"></script>
 
 
    <!-- <script src="{{url('/assert/')}}js/slick.js"></script>  -->
 
-        <script src="https://presolv360.com/presolv360/js/sweetalert2.js"></script>
+        <script src="{{url('/assert/')}}/js/sweetalert2.js"></script>
          <script src="//code.tidio.co/whiaumb73nws3xz5su24odtrgpni9etf.js" async></script>
         @yield('extra-js')
 
