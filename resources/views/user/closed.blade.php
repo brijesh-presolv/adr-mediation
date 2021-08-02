@@ -62,7 +62,28 @@ use App\Models\InvoledUser;
 
 
                         ?></td>
-                        <td><?=  $value->mediator  ?></td>
+                        <td>
+
+                            <button class="btn btn-info btn-sm"><?=  $value->mediator  ?></button>
+                            
+                             <?php if($value->mstatus==0){ ?>
+                                <br>
+                                <span class="badge badge-warning">@lang('case.status_pending')</span>
+                            <?php } else if($value->mstatus==1){ ?>
+                                <br>
+                                <span class="badge badge-success">@lang('case.status_accepted')</span>
+
+                            <?php } else { ?>
+
+                                 <br>
+                                <span class="badge badge-success">@lang('case.status_rejected')</span>
+
+                            <?php } if($value->consent==1){?>
+
+                            <br>
+                            <a href="{{route('user.disclosures',$value->caseid)}}" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a>
+                        <?php } ?>
+                        </td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
                         <td>
 
