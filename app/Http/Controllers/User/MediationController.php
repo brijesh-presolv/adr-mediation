@@ -13,10 +13,12 @@ use App\Models\User;
 use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid as Email;
+use App\Models\ConsentDisclosures;
 use Session;
 use Auth;
 use Validator;
 use DB;
+use PDF;
 
 class MediationController extends Controller {
 
@@ -314,9 +316,10 @@ class MediationController extends Controller {
         // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"))
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"),'consent_disclosures.id as consent','mediators_mediation_cases_status.status as mstatus')
                 ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 1])
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
                 ->orderby('mediation_case.id', 'DESC')
@@ -338,9 +341,10 @@ class MediationController extends Controller {
 
     public function closed() {
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'mediation_case.withdraw')
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'mediation_case.withdraw','consent_disclosures.id as consent','mediators_mediation_cases_status.status as mstatus')
                 ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+                ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
                 ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
                 ->orderby('mediation_case.id', 'DESC')
@@ -523,6 +527,19 @@ class MediationController extends Controller {
             $sn++;
         }
         //return;
+    }
+
+    public function getConsentAndDisclosures($id) {
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
+                ->where("mediation_case_id", "=", $id)
+                ->first();
+        if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
+            return abort(404);
+        }
+        $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
+        return $pdf->stream('document.pdf');
     }
 
 }

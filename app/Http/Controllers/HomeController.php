@@ -70,12 +70,17 @@ class HomeController extends Controller {
                                 Auth::logout();
                                 return redirect('login')->with('warning', 'Account Under Review.');
                             }
+
+                            return redirect()->route('user.dashboard');
+
                         } else {
 
                             if (!Auth::user()->isActive) {
                                 Auth::logout();
                                 return redirect('login')->with('warning', 'Account Under Review.');
                             }
+
+                            return redirect()->route('user.dashboard');
                         }
                     }
                 }

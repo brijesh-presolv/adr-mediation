@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
 use App\Http\Helpers\SendGrid;
+use App\Models\InvoledUser;
 
 class RegisterController extends Controller
 {
@@ -110,7 +111,16 @@ class RegisterController extends Controller
         } else if($data['actype']==2){
             $role=1;
         }
-        return User::create([
+
+
+
+        $InvoledUser = InvoledUser::where(['userEmail' => $data['email']])->first();
+
+
+        if($InvoledUser){
+
+
+             return User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'username' => $data['username'],
@@ -121,8 +131,32 @@ class RegisterController extends Controller
             'role'=>$role,
             'emailotp'=>rand('100000','999999'),
             'smsotp'=>rand('100000','999999'),
+            'isActive'=>1,
+            'status'=>1,
 
         ]);
+
+
+
+        } else{
+
+             return User::create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'username' => $data['username'],
+            'mobile_number' => $data['mobile_number'],
+            'organization' => $data['organization'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role'=>$role,
+            'emailotp'=>rand('100000','999999'),
+            'smsotp'=>rand('100000','999999'),
+        ]);
+
+
+
+        }
+
     }
 
     /**
