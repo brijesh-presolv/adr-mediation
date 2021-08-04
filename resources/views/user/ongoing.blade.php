@@ -57,10 +57,7 @@ use App\Models\InvoledUser;
                     $i=1;
                     $id='';
 
-                    foreach ($ongoing as $key => $value) {
-
-
-                     ?>
+                    foreach ($ongoing as $key => $value) {?>
                      <tr>
 
                         <?php 
