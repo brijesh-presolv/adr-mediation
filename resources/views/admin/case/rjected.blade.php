@@ -3,8 +3,8 @@
 
 @section('breadcrumb')
 <!-- start page title -->
-<li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">Rejected Request</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.home')</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.rejected_request')</a></li>
 <!-- end page title -->
 @endsection
 
@@ -32,7 +32,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Midater Add</h5>
+                <h5 class="modal-title" id="exampleModalLabel">@lang('case.mediator_add')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -42,9 +42,9 @@
                     <input type="hidden" name="id" class="form-control" id="recipient-name">
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Midater:</label>
+                        <label for="message-text" class="col-form-label">@lang('case.mediator'):</label>
                         <select class="form-control" name="midater"  required>
-                            <option value="">select Midater</option>
+                            <option value="">@lang('case.form_select_mediator')</option>
                             @foreach($users as $user)
                             <option value="{{$user->id}}">{{$user->username}}</option>
                             @endforeach
@@ -52,8 +52,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Accept</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
+                    <button type="submit" class="btn btn-primary">@lang('case.btn_accept')</button>
                 </div>
             </form>
         </div>
@@ -142,8 +142,8 @@ $(document).on('click', ".reject", function () {
     var id = $(this).val();
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
     swal({
-        title: "Are you sure?",
-        text: "Reject this request!",
+        title: "@lang('case.are_you_sure')",
+        text: "@lang('case.reject_this_request')",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -155,12 +155,12 @@ $(document).on('click', ".reject", function () {
                 data: {id: id, '_token': csrf},
             }).done(function (data) {
                 userTable.ajax.reload();
-                swal("Reject successfully!", {
+                swal("@lang('case.reject_successfully')", {
                     icon: "success",
                 });
             });
         } else {
-            swal("Cansel Reject Request!");
+            swal("@lang('case.cansel_reject_request')");
         }
     });
 });
@@ -169,8 +169,8 @@ $(document).on('submit', "#MidaterForm", function () {
     var midater = $(this).find("select[name='midater']").val();
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
     swal({
-        title: "Are you sure?",
-        text: "Canform this request!",
+        title: "@lang('case.are_you_sure')",
+        text: "@lang('case.canform_this_request')",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -181,7 +181,7 @@ $(document).on('submit', "#MidaterForm", function () {
                 method: "post",
                 data: {id: id, midater: midater, '_token': csrf},
             }).done(function (data) {
-                swal("mediator assigned successfully!", {
+                swal("@lang('case.mediator_assigned_successfully')", {
                     icon: "success",
                 });
                 $.ajax({
@@ -190,7 +190,7 @@ $(document).on('submit', "#MidaterForm", function () {
                     data: {id: id, '_token': csrf},
                 }).done(function (data) {
                     userTable.ajax.reload()
-                    swal("conform successfully!", {
+                    swal("@lang('case.conform_successfully')", {
                         icon: "success",
                     });
                 });
@@ -200,7 +200,7 @@ $(document).on('submit', "#MidaterForm", function () {
 
 
         } else {
-            swal("Cansel Confirm Request!");
+            swal("@lang('case.cansel_confirm_request')");
         }
     });
     return false;

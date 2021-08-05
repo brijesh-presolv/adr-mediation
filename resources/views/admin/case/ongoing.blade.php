@@ -3,8 +3,8 @@
 
 @section('breadcrumb')
 <!-- start page title -->
-<li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">Ongoing Request</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.home')</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.ongoing_request')</a></li>
 <!-- end page title -->
 @endsection
 
@@ -35,7 +35,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">Share</h5>
+                <h5 class="modal-title" id="commentModalLabel">@lang('case.share_comment_title')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -46,15 +46,15 @@
                     <input type="hidden" name="type" class="form-control" >
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Comment:</label>
+                        <label for="message-text" class="col-form-label">@lang('case.share_privet_comment_textarea'):</label>
                         <textarea class="form-control" name="comment"  required></textarea>
                     </div>
                     <div class="row"  id="commentView" style="height: 200px;overflow-x: auto">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">save comment</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
+                    <button type="submit" class="btn btn-primary">@lang('case.btn_save_comment')</button>
                 </div>
             </form>
         </div>
@@ -64,7 +64,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">Request Close</h5>
+                <h5 class="modal-title" id="withdrawModalLabel">@lang('case.request_close')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -76,19 +76,19 @@
                         <label for="message-text" class="col-form-label">Status:</label>
                         <select class="form-control" name="status"  required>
                             <option value="">---select status---</option>
-                            <option value="{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}">Withdraw</option>
-                            <option value="{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}">Resolved</option>
-                            <option value="{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}">Unresolved</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}">@lang('case.btn_withdrawn')</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}">@lang('case.btn_resolved')</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}">@lang('case.btn_unresolved')</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Comment:</label>
+                        <label for="message-text" class="col-form-label">@lang('case.share_privet_comment_textarea'):</label>
                         <textarea class="form-control" name="withdraw_comment"  ></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Close Request</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
+                    <button type="submit" class="btn btn-primary">@lang('case.btn_close_request')</button>
                 </div>
             </form>
         </div>
@@ -98,7 +98,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Mediator Add</h5>
+                <h5 class="modal-title" id="exampleModalLabel">@lang('case.mediator_add')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -108,7 +108,7 @@
                     <input type="hidden" name="id" class="form-control" id="recipient-name">
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Mediator:</label>
+                        <label for="message-text" class="col-form-label">@lang('case.mediator'):</label>
                         <div id="mediatorList"></div>
                         {{-- <select class="form-control" name="midater"  required>
                             <option value="">select Mediator</option>
@@ -121,8 +121,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Accept</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
+                    <button type="submit" class="btn btn-primary">@lang('case.btn_accept')</button>
                 </div>
             </form>
         </div>
@@ -132,8 +132,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Session Records</h4>
-                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                <h4 class="modal-title text-white">@lang('case.session_title')</h4>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -142,11 +141,11 @@
                 <table class="table" id="sessRecId">
                     <thead>
                     <th scope="col">@lang('case.serial_number')</th>
-                    <th scope="col">Scheduling done on:</th>
-                    <th scope="col">Session scheduled for:</th>
-                    <th scope="col">Zoom Id :</th>
-                    <th scope="col">Note :</th>
-                    <th scope="col">Meeting user</th>
+                    <th scope="col">@lang('case.scheduling_done_on')</th>
+                    <th scope="col">@lang('case.session_scheduled_for')</th>
+                    <th scope="col">@lang('case.session_zoom_id')</th>
+                    <th scope="col">@lang('case.session_note')</th>
+                    <th scope="col">@lang('case.session_meeting_user')</th>
                     </thead>
                     <tbody>
                     </tbody>
@@ -154,7 +153,7 @@
                 <hr>    
                 <div class="text-center">
                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                        <span>Close</span>
+                        <span>@lang('case.btn_close')</span>
                     </button>  
                 </div>
             </div>
@@ -167,7 +166,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Session</h5>
+                <h5 class="modal-title" id="exampleModalLabel">@lang('case.session_add_title')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span><span class="sr-only">Close</span>
                 </button>
@@ -180,26 +179,26 @@
 
                 <div class="custom-modal-text ">
                     <div class="form-group">
-                        <label>Session Date :</label>
-                        <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date" data-validation="required">
+                        <label>@lang('case.session_date') :</label>
+                        <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="@lang('case.session_date_placeholder')" data-validation="required">
                     </div>
                     <div class="form-group">
-                        <label>Session Time :</label>
-                        <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time" data-validation="required">
+                        <label>@lang('case.session_time'):</label>
+                        <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
                     </div>
                     <div class="form-group">
-                        <label>Zoom Id :</label>
-                        <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id" data-validation="required">
+                        <label>@lang('case.session_zoom_id') :</label>
+                        <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="@lang('case.session_zoom_id_placeholder')" data-validation="required">
                     </div>
                     <div class="form-group">
-                        <label>Note :</label>
-                        <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
+                        <label>@lang('case.session_note'):</label>
+                        <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
                     </div>
-                    <span>Party :</span>
+                    <span>@lang('case.session_party'):</span>
                     <div class="form-group" id="sessionParty">
                     </div>
                     <div class="text-center">    
-                        <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
+                        <input type="submit" name="@lang('case.session_add_title')" class="btn-sm btn-primary mt-3">
                     </div>
                 </div>
             </form>
@@ -341,8 +340,8 @@ $(function () {
         var midater = $(this).find("select[name='midater']").val();
         var csrf = document.querySelector('meta[name="csrf-token"]').content;
         swal({
-            title: "Are you sure?",
-            text: "Canform this request!",
+            title: "@lang('case.are_you_sure')",
+            text: "@lang('case.canform_this_request')",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -353,14 +352,14 @@ $(function () {
                     method: "post",
                     data: {id: id, midater: midater, '_token': csrf},
                 }).done(function (data) {
-                    swal("mediator assigned successfully!", {
+                    swal("@lang('case.mediator_assigned_successfully')", {
                         icon: "success",
                     });
                     userTable.ajax.reload();
                     $('#midaterAdd').modal("hide");
                 });
             } else {
-                swal("Cansel Confirm Request!");
+                swal("@lang('case.cansel_confirm_request')");
             }
         });
         return false;
@@ -414,8 +413,8 @@ $(function () {
     $('#commentForm').on('submit', function (e) {
         e.preventDefault();
         swal({
-            title: "Are you sure?",
-            text: "add this comment!",
+            title: "@lang('case.are_you_sure')",
+            text: "@lang('case.add_this_comment')",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -427,14 +426,14 @@ $(function () {
                     data: $('#commentForm').serialize(),
                     success: function () {
                         $('#commentForm')[0].reset();
-                        swal("comment save successfully!", {
+                        swal("@lang('case.comment_save_successfully')", {
                             icon: "success",
                         });
                         $('#commentModal').modal("hide");
                     }
                 });
             } else {
-                swal("comment not added!");
+                swal("@lang('case.comment_not_added')");
             }
         });
         return false;
@@ -442,8 +441,8 @@ $(function () {
     $('#withdrawForm').on('submit', function (e) {
         e.preventDefault();
         swal({
-            title: "Are you sure?",
-            text: "Change status!",
+            title: "@lang('case.are_you_sure')",
+            text: "@lang('case.change_status')",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -456,14 +455,14 @@ $(function () {
                     success: function () {
                         // alert('form was submitted');
                         userTable.ajax.reload();
-                        swal("Status Change successfully!", {
+                        swal("@lang('case.status_change_successfully')", {
                             icon: "success",
                         });
                         $('#withdrawModal').modal("hide");
                     }
                 });
             } else {
-                swal("Request Canseled!");
+                swal("@lang('case.request_canseled')");
             }
         });
         return false;
@@ -476,7 +475,7 @@ $(function () {
         modal.find('.modal-body input[name="id"]').val(recipient);
         // modal.find('.modal-body select[name="midater"]').val(mediator);
         var users=<?php echo json_encode($users); ?>;
-        var htmlData="<select class='form-control' name='midater'  required><option value=''>select Mediator</option>";
+        var htmlData="<select class='form-control' name='midater'  required><option value=''>@lang('case.form_select_mediator')</option>";
             users.forEach(function(item, index) {
                     if (item.isActive) {
                         if (mediator===item.id) {
@@ -516,7 +515,7 @@ $(function () {
             data: $('#addSessionForm').serialize(),
             success: function () {
                 // alert('form was submitted');
-                swal("session created!", {
+                swal("@lang('case.session_created')", {
                     icon: "success",
                 });
                 $('#addSessionForm')[0].reset();
