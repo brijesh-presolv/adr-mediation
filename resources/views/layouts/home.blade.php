@@ -2,7 +2,7 @@
 <head>
 <title> {{ config('app.name', 'Medtiator') }} | Dispute resolution made easy | ODR | ODR India</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="msapplication-TileImage" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
+<meta name="msapplication-TileImage" content="{{url('/assert/')}}/img/DisputeManagement.jpg" />
 
 <meta name="description" content="Online Dispute Resolution platform to conduct arbitration, mediation, conciliation digitally." />
 
@@ -10,7 +10,7 @@
 
 <meta property="og:keywords" content="ODR, ADR, Online Dispute Resolution, Alternative Dispute Resolution, Out of Court Settlement, Arbitration, Mediation, Conciliation, Online Arbitration, Online Negotiation, Money Recovery, Legaltech, ODR India" />
 <meta property="og:description" content="Online Dispute Resolution platform to conduct arbitration, mediation, conciliation digitally." />
-<meta property="og:image" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
+<meta property="og:image" content="{{url('/assert/')}}/img/DisputeManagement.jpg" />
 <meta property="og:image:secure_url" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
 <meta property="og:url" content="https://www.presolv360.com">
 <meta property="og:title" content=" {{ config('app.name', 'Medtiator') }} | Dispute resolution made easy" />
@@ -268,7 +268,7 @@ function resolvsubmit(){
 
 
     </script>
-  <link rel="stylesheet" href="{{url('/assert/')}}css/plyr.css" />
+  <link rel="stylesheet" href="{{url('/assert/')}}/css/plyr.css" />
 
   <div class="contact-section">
     <div class="container">

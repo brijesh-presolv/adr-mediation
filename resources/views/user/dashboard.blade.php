@@ -10,71 +10,13 @@
 @section('content')
     
 <div class="row">
-    <div class="col-lg-6 col-xl-3">
-        <div class="card widget-box-three">
-            <div class="card-body">
-                <div class="float-right mt-2">
-                    <i class="mdi mdi-chart-areaspline display-3 m-0"></i>
-                </div>
-                <div class="overflow-hidden">
-                    <p class="text-uppercase font-weight-medium text-truncate mb-2">Statistics</p>
-                    <h2 class="mb-0"><span data-plugin="counterup">34578</span> <i class="mdi mdi-arrow-up text-success font-24"></i></h2>
-                    <p class="text-muted mt-2 m-0"><span class="font-weight-medium">Last:</span> 30.4k</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- end col -->
-
-    <div class="col-lg-6 col-xl-3">
-        <div class="card widget-box-three">
-            <div class="card-body">
-                <div class="float-right mt-2">
-                    <i class="mdi mdi-account-convert display-3 m-0"></i>
-                </div>
-                <div class="overflow-hidden">
-                    <p class="text-uppercase font-weight-medium text-truncate mb-2">User Today</p>
-                    <h2 class="mb-0"><span data-plugin="counterup">895</span> <i class="mdi mdi-arrow-down text-danger font-24"></i></h2>
-                    <p class="text-muted mt-2 m-0"><span class="font-weight-medium">Last:</span> 1250</p>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!-- end col -->
-
-    <div class="col-lg-6 col-xl-3">
-        <div class="card widget-box-three">
-            <div class="card-body">
-                <div class="float-right mt-2">
-                    <i class="mdi mdi-layers display-3 m-0"></i>
-                </div>
-                <div class="overflow-hidden">
-                    <p class="text-uppercase font-weight-medium text-truncate mb-2">User This Month</p>
-                    <h2 class="mb-0"><span data-plugin="counterup">52410</span><i class="mdi mdi-arrow-up text-success font-24"></i></h2>
-                    <p class="text-muted mt-2 m-0"><span class="font-weight-medium">Last:</span> 40.33k</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- end col -->
-
-    <div class="col-lg-6 col-xl-3">
-        <div class="card widget-box-three">
-            <div class="card-body">
-                <div class="float-right mt-2">
-                    <i class="mdi mdi-av-timer display-3 m-0"></i>
-                </div>
-                <div class="overflow-hidden">
-                    <p class="text-uppercase font-weight-medium text-truncate mb-2">Request Per Minute</p>
-                    <h2 class="mb-0"><span data-plugin="counterup">652</span> <i class="mdi mdi-arrow-down text-danger font-24"></i></h2>
-                    <p class="text-muted mt-2 m-0"><span class="font-weight-medium">Last:</span> 956</p>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!-- end col -->
+    <div class="col-12">
+    <center><h1 class="box-title m-b-0" style="margin-bottom: 20px;margin-top: 5%;">Welcome to</h1>
+        <h1 class="box-title m-b-0" style="margin-bottom: -12px;font-weight:800;font-size:85px;font-family: 'Poppins', sans-serif;"><span style="color: #075284;"></span><span style="margin-bottom: 20px;font-weight:800;font-size:70px;color: #075284;">Mediacje</span><span style="color: #f6ac4c;">Online</span></h1>
+        <!-- <h3 class="box-title m-b-0" style="margin-bottom: 150px;font-weight:800;font-size:25px;"><span style="color: #727374;">RESOLVE &amp; EVOLVE</span></h3> -->
+ <!--<img src="https://presolv360.com/public/images/logo12.png" alt=""> </center>-->
+</center>
+</div>
 </div>
 <!-- end end -->
 @endsection

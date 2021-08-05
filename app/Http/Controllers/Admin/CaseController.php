@@ -373,6 +373,26 @@ class CaseController extends Controller {
                 }
 
                 $inv->userPlanId = $med->id;
+
+                if($inv->userEmail!=$r['email'][$i]){
+
+
+                    $invitation = $this->invitation_mediate($id);
+
+                    $invmodel = new InvitationFiles();
+                    $invmodel->case_id = $request->id;
+                    $invmodel->file_name = $invitation;
+                    $invmodel->save();
+
+                    $r=$this->sned_invitation($id, $invitation);
+
+
+                    var_dump($r);
+
+                    exit;
+
+                }
+
                 $inv->userEmail = $r['email'][$i];
                 $inv->userPhone = $r['phone'][$i];
                 $inv->name = $r['name'][$i];
@@ -479,6 +499,7 @@ class CaseController extends Controller {
 
     public function sned_invitation($id, $invitation) {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
+
         $initiating_party = "";
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {

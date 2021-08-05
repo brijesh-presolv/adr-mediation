@@ -57,10 +57,7 @@ use App\Models\InvoledUser;
                     $i=1;
                     $id='';
 
-                    foreach ($ongoing as $key => $value) {
-
-
-                     ?>
+                    foreach ($ongoing as $key => $value) {?>
                      <tr>
 
                         <?php 
@@ -116,7 +113,7 @@ use App\Models\InvoledUser;
                                  <br>
                                 <span class="badge badge-success">@lang('case.status_rejected')</span>
 
-                            <?php } if($value->consent==1){?>
+                            <?php } if($value->consent>0){?>
                             <br>
                             <a href="{{route('user.disclosures',$value->caseid)}}" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a>
                         <?php } ?>
