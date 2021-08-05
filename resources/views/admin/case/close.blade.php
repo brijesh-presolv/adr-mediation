@@ -3,8 +3,8 @@
 
 @section('breadcrumb')
 <!-- start page title -->
-<li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">Closed Request</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.home')</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.closed_request')</a></li>
 <!-- end page title -->
 @endsection
 
@@ -308,7 +308,7 @@ $(function () {
                         button = button + `<br><span class="badge badge-warning">pending</span> <br> `;
                     } else if (row.case.mediator_status == 1) {
                         //button = button + `<br><span class="badge badge-success">Accepted</span> <br> `;
-                        button = button + ` <br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a> `;
+                        button = button + ` <br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
                     }
                     return button;
                 }
@@ -316,8 +316,8 @@ $(function () {
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
-                    button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
+                    button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">@lang('case.btn_share')</button>`;
                     return button;
                 }
             },
@@ -333,12 +333,12 @@ $(function () {
                     var button = "";
                     //console.log(data);
                     if (row.status_log.length!=0 && row.status_log[0].status == '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}') {
-                        button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">Withdrawn</button>`;
+                        button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">@lang('case.btn_withdrawn')</button>`;
                     } else if (row.status_log.length!=0 && row.status_log[0].status == '{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}') {
-                        button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-danger waves-effect btn-sm">Unresolved</button>`;
+                        button = button + ` <button value="` + data + `"  data-withdraw="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-danger waves-effect btn-sm">@lang('case.btn_unresolved')</button>`;
                     }else {
-                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
-                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View Settelment</button>`;
+                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
+                        button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case.id + `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">@lang('case.btn_view_settelment')</button>`;
                     }
                     return button;
                 }
@@ -410,7 +410,7 @@ $(function () {
             processData: false,
             success: function () {
                 // alert('form was submitted');
-                swal("Settelment has been uploaded!", {
+                swal("@lang('case.settelment_has_been_uploaded')", {
                     icon: "success",
                 });
                 $("#settelmentModal").modal("hide");
@@ -462,8 +462,8 @@ $(function () {
     $('#commentForm').on('submit', function (e) {
         e.preventDefault();
         swal({
-            title: "Are you sure?",
-            text: "add this comment!",
+            title: "@lang('case.are_you_sure')",
+            text: "@lang('case.add_this_comment')",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -474,7 +474,7 @@ $(function () {
                     url: '{{ route("admin.case.comment") }}',
                     data: $('#commentForm').serialize(),
                     success: function () {
-                        swal("comment save successfully!", {
+                        swal("@lang('case.comment_save_successfully')", {
                             icon: "success",
                         });
                         $('#commentForm')[0].reset();
@@ -482,7 +482,7 @@ $(function () {
                     }
                 });
             } else {
-                swal("comment not added!");
+                swal("@lang('case.comment_not_added')");
             }
         });
         return false;
@@ -496,8 +496,8 @@ $(function () {
     $('#withdrawForm').on('submit', function (e) {
         e.preventDefault();
         swal({
-            title: "Are you sure?",
-            text: "withdraw this request!",
+            title: "@lang('case.are_you_sure')",
+            text: "@lang('case.withdraw_this_request')",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -510,14 +510,14 @@ $(function () {
                     success: function () {
                         // alert('form was submitted');
                         userTable.ajax.reload();
-                        swal("status change successfully!", {
+                        swal("@lang('case.status_change_successfully')", {
                             icon: "success",
                         });
                         $('#withdrawModal').modal("hide");
                     }
                 });
             } else {
-                swal("Request Canseled!");
+                swal("@lang('case.request_canseled')");
             }
         });
         return false;

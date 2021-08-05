@@ -3,8 +3,8 @@
 
 @section('breadcrumb')
 <!-- start page title -->
-<li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">New Request</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.home')</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.new_request')</a></li>
 <!-- end page title -->
 @endsection
 
@@ -53,8 +53,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Accept</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
+                    <button type="submit" class="btn btn-primary">@lang('case.btn_accept')</button>
                 </div>
             </form>
         </div>
@@ -127,7 +127,7 @@ var userTable = $('#users').DataTable({
 
                 if(d==''){
 
-                    return `<span class="text-danger">Pending</span><br>`;
+                    return `<span class="text-danger">@lang('case.status_pending')</span><br>`;
                 }
                 return d;
             }
@@ -138,12 +138,12 @@ var userTable = $('#users').DataTable({
                  var d='';
 
                 if(row.party.length==0){
-                     return button='NA';
+                     return button="@lang('case.na')";
                 }
 
                 var button = "";
-                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info `+d+`">Confirm</button>`;
-                button = button + ` <button value="` + data + `" class="btn btn-danger reject `+d+`">Reject</button>`;
+                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info `+d+`">@lang('case.btn_confirm')</button>`;
+                button = button + ` <button value="` + data + `" class="btn btn-danger reject `+d+`">@lang('case.btn_reject')</button>`;
                 return button;
             }
         },
@@ -166,12 +166,12 @@ $(document).on('click', ".reject", function () {
                 data: {id: id, '_token': csrf},
             }).done(function (data) {
                 userTable.ajax.reload();
-                swal("Reject successfully!", {
+                swal("@lang('case.reject_successfully')", {
                     icon: "success",
                 });
             });
         } else {
-            swal("Cansel Reject Request!");
+            swal("@lang('case.cansel_reject_request')");
         }
     });
 });
@@ -180,8 +180,8 @@ $(document).on('submit', "#MidaterForm", function () {
     var midater = $(this).find("select[name='midater']").val();
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
     swal({
-        title: "Are you sure?",
-        text: "Confirm this request!",
+        title: "@lang('case.are_you_sure')",
+        text: "@lang('case.confirm_this_request')",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -192,7 +192,7 @@ $(document).on('submit', "#MidaterForm", function () {
                 method: "post",
                 data: {id: id, midater: midater, '_token': csrf},
             }).done(function (data) {
-                swal("mediator assigned successfully!", {
+                swal("@lang('case.mediator_assigned_successfully')", {
                     icon: "success",
                 });
                 $.ajax({
@@ -201,7 +201,7 @@ $(document).on('submit', "#MidaterForm", function () {
                     data: {id: id, '_token': csrf},
                 }).done(function (data) {
                     userTable.ajax.reload()
-                    swal("Confirm successfully!", {
+                    swal("@lang('case.confirm_successfully')", {
                         icon: "success",
                     });
                 });
@@ -211,7 +211,7 @@ $(document).on('submit', "#MidaterForm", function () {
 
 
         } else {
-            swal("Cansel Confirm Request!");
+            swal("@lang('case.cansel_confirm_request')");
         }
     });
     return false;
