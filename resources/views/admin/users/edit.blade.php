@@ -37,7 +37,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="mobile_number">@lang('user.phone')</label>
-                            <input type="number" class="form-control" id="mobile_number" name="mobile_number"  value="{{$user->mobile_number}}"  data-validation="required">
+                            <input type="text" class="form-control" id="mobile_number" name="mobile_number"  value="{{$user->mobile_number}}"  data-validation="required number" data-validation-allowing="+- ">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="organization">@lang('user.organization')</label>
@@ -59,62 +59,64 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="country">country</label>
-                            <select class="form-control" id="country" name="country">
+                            <input list="countryData" class="form-control" id="country" name="country">
+                            <datalist id="countryData">
                                 <option>Polska</option>
-                            </select>
+                            </datalist>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
-                            <select  class="form-control" id="state" name="state">
-                                <option {{($user->state=="dolnośląskie")?"selected":"" }} >
+                            <input list="stateData"  class="form-control" id="state" value="{{$user->state}}" name="state">
+                            <datalist id="stateData">
+                                <option>
                                     dolnośląskie
                                 </option>
-                                <option {{($user->state=="kujawsko-pomorskie")?"selected":"" }}>
+                                <option>
                                     kujawsko-pomorskie
                                 </option>
-                                <option {{($user->state=="lubelskie")?"selected":"" }}>
+                                <option>
                                     lubelskie
                                 </option>
-                                <option {{($user->state=="lubuskie")?"selected":"" }}>
+                                <option>
                                     lubuskie
                                 </option>
-                                <option {{($user->state=="łódzkie")?"selected":"" }}>
+                                <option>
                                     łódzkie
                                 </option>
-                                <option {{($user->state=="małopolskie")?"selected":"" }}>
+                                <option>
                                     małopolskie
                                 </option>
-                                <option {{($user->state=="mazowieckie")?"selected":"" }}>
+                                <option>
                                     mazowieckie
                                 </option>
-                                <option {{($user->state=="opolskie")?"selected":"" }}>
+                                <option>
                                     opolskie
                                 </option>
-                                <option {{($user->state=="podkarpackie")?"selected":"" }}>
+                                <option>
                                     podkarpackie
                                 </option>
-                                <option {{($user->state=="podlaskie")?"selected":"" }}>
+                                <option>
                                     podlaskie
                                 </option>
-                                <option {{($user->state=="pomorskie")?"selected":"" }}>
+                                <option>
                                     pomorskie
                                 </option>
-                                <option {{($user->state=="śląskie")?"selected":"" }}>
+                                <option>
                                     śląskie
                                 </option>
-                                <option {{($user->state=="świętokrzyskie")?"selected":"" }}>
+                                <option>
                                     świętokrzyskie
                                 </option>
-                                <option {{($user->state=="warmińsko-mazurskie")?"selected":"" }}>
+                                <option>
                                     warmińsko-mazurskie
                                 </option>
-                                <option {{($user->state=="wielkopolskie")?"selected":"" }}>
+                                <option>
                                     wielkopolskie
                                 </option>
-                                <option {{($user->state=="zachodniopomorskie")?"selected":"" }}>
+                                <option>
                                     zachodniopomorskie
                                 </option>
-                            </select>
+                            </datalist>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="city">@lang('user.city')</label>
@@ -176,7 +178,7 @@
 
                             </select>
                         </div>
-                        
+
 
                     </div>
                 </div>

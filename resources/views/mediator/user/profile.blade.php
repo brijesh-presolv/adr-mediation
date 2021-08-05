@@ -30,23 +30,23 @@
 
                         <div class="form-group col-md-6">
                             <label for="firstname">@lang('user.first_name')</label>
-                            <input type="text" class="form-control" id="firstname" name="first_name" value="{{ Auth::user()->first_name }}" required readonly>
+                            <input type="text" class="form-control" id="firstname" name="first_name" value="{{ Auth::user()->first_name }}" data-validation="required" readonly>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="lastname">@lang('user.last_name')</label>
-                            <input type="text" class="form-control" id="lastname" name="last_name" value="{{ Auth::user()->last_name }}" required readonly>
+                            <input type="text" class="form-control" id="lastname" name="last_name" value="{{ Auth::user()->last_name }}" data-validation="required" readonly>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="email">@lang('user.email')</label>
-                            <input type="email" class="form-control" id="email" name="email"  value="{{ Auth::user()->email }}" required readonly>
+                            <input type="email" class="form-control" id="email" name="email"  value="{{ Auth::user()->email }}" data-validation="required" readonly>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="phone">@lang('user.phone')</label>
-                            <input type="number" class="form-control" id="phone" name="mobile_number" value="{{ Auth::user()->mobile_number }}" required readonly>
+                            <input type="text" class="form-control" id="phone" name="mobile_number" value="{{ Auth::user()->mobile_number }}" data-validation="required number" data-validation-allowing="+- "  readonly>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="address_line_1">@lang('user.address1')</label>
-                            <input type="text" class="form-control" id="address_line_1" name="address" value="{{ Auth::user()->address }}" required >
+                            <input type="text" class="form-control" id="address_line_1" name="address" value="{{ Auth::user()->address }}" data-validation="required" >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="address_line_2">@lang('user.address2')</label>
@@ -54,74 +54,76 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="city">@lang('user.city')</label>
-                            <input type="text" class="form-control" id="city" name="city" value="{{ Auth::user()->city }}" required >
+                            <input type="text" class="form-control" id="city" name="city" value="{{ Auth::user()->city }}" data-validation="required" >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="pinCode">@lang('user.pincode')</label>
-                            <input type="text" class="form-control" id="pinCode" name="pincode" value="{{ Auth::user()->pincode }}" required >
+                            <input type="text" class="form-control" id="pinCode" name="pincode" value="{{ Auth::user()->pincode }}" data-validation="required" >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
-                            <select  class="form-control" id="state" name="state">
-                                <option {{(Auth::user()->state=="dolnośląskie")?"selected":"" }} >
+                            <input type="text" list="stateData" value="{{Auth::user()->state}}"  class="form-control" id="state" name="state">
+                            <datalist id="stateData">
+                                <option>
                                     dolnośląskie
                                 </option>
-                                <option {{(Auth::user()->state=="kujawsko-pomorskie")?"selected":"" }}>
+                                <option>
                                     kujawsko-pomorskie
                                 </option>
-                                <option {{(Auth::user()->state=="lubelskie")?"selected":"" }}>
+                                <option>
                                     lubelskie
                                 </option>
-                                <option {{(Auth::user()->state=="lubuskie")?"selected":"" }}>
+                                <option>
                                     lubuskie
                                 </option>
-                                <option {{(Auth::user()->state=="łódzkie")?"selected":"" }}>
+                                <option>
                                     łódzkie
                                 </option>
-                                <option {{(Auth::user()->state=="małopolskie")?"selected":"" }}>
+                                <option>
                                     małopolskie
                                 </option>
-                                <option {{(Auth::user()->state=="mazowieckie")?"selected":"" }}>
+                                <option>
                                     mazowieckie
                                 </option>
-                                <option {{(Auth::user()->state=="opolskie")?"selected":"" }}>
+                                <option>
                                     opolskie
                                 </option>
-                                <option {{(Auth::user()->state=="podkarpackie")?"selected":"" }}>
+                                <option>
                                     podkarpackie
                                 </option>
-                                <option {{(Auth::user()->state=="podlaskie")?"selected":"" }}>
+                                <option>
                                     podlaskie
                                 </option>
-                                <option {{(Auth::user()->state=="pomorskie")?"selected":"" }}>
+                                <option>
                                     pomorskie
                                 </option>
-                                <option {{(Auth::user()->state=="śląskie")?"selected":"" }}>
+                                <option>
                                     śląskie
                                 </option>
-                                <option {{(Auth::user()->state=="świętokrzyskie")?"selected":"" }}>
+                                <option>
                                     świętokrzyskie
                                 </option>
-                                <option {{(Auth::user()->state=="warmińsko-mazurskie")?"selected":"" }}>
+                                <option>
                                     warmińsko-mazurskie
                                 </option>
-                                <option {{(Auth::user()->state=="wielkopolskie")?"selected":"" }}>
+                                <option>
                                     wielkopolskie
                                 </option>
-                                <option {{(Auth::user()->state=="zachodniopomorskie")?"selected":"" }}>
+                                <option>
                                     zachodniopomorskie
                                 </option>
-                            </select>
+                            </datalist>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="country">country</label>
-                            <select class="form-control" id="country" name="country">
-                                <option>Polska</option>
-                            </select>
+                            <input list="countryData" class="form-control" id="country" name="country">
+                            <datalist id="countryData">
+                               <option>Polska</option>
+                            </datalist>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="area_of_specialization">@lang('user.area_of_specialization')</label>
-                            <select  class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="" id="area_of_specialization" name="area_of_specialization[]" required>
+                            <select  class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="" id="area_of_specialization" name="area_of_specialization[]" data-validation="required">
                                 <option value="">@lang('user.area_of_specialization_option')</option>
                                 @foreach($areaOfSpecialization as $specialization)
                                 <option value="{{$specialization->name}}" {{(isset($medi->area_of_specialization) && array_search($specialization->name, json_decode($medi->area_of_specialization)) !==false )?"selected":"" }}>{{$specialization->name}}</option>
@@ -160,15 +162,15 @@
                             <input type="text" class="form-control" id="field3" name="field3">
                         </div>
                         <div class="form-group form-check">
-                            <input type="checkbox" name="is_accept1" value="1"  class="form-check-input" id="is_accept1"  {{ (isset($medi->is_accept1) && $medi->is_accept1==1)?"checked":"" }}  required>
+                            <input type="checkbox" name="is_accept1" value="1"  class="form-check-input" id="is_accept1"  {{ (isset($medi->is_accept1) && $medi->is_accept1==1)?"checked":"" }}  data-validation="required">
                             <label class="form-check-label" for="is_accept1">@lang('user.confirm1')</label>
                         </div>
                         <div class="form-group form-check">
-                            <input type="checkbox" name="is_accept2" value="1"  class="form-check-input" id="is_accept2" required {{ (isset($medi->is_accept2) && $medi->is_accept2==1)?"checked":"" }}>
+                            <input type="checkbox" name="is_accept2" value="1"  class="form-check-input" id="is_accept2" data-validation="required" {{ (isset($medi->is_accept2) && $medi->is_accept2==1)?"checked":"" }}>
                             <label class="form-check-label" for="is_accept2">@lang('user.confirm2')</label>
                         </div>
                         <div class="form-group form-check">
-                            <input type="checkbox" name="is_accept3" value="1"  class="form-check-input" id="is_accept3" required {{ (isset($medi->is_accept3) && $medi->is_accept3==1)?"checked":"" }}>
+                            <input type="checkbox" name="is_accept3" value="1"  class="form-check-input" id="is_accept3" data-validation="required" {{ (isset($medi->is_accept3) && $medi->is_accept3==1)?"checked":"" }}>
                             <label class="form-check-label" for="is_accept3">@lang('user.confirm3')</label>
                         </div>
                     </div>
@@ -192,5 +194,8 @@
 $(document).ready(function () {
     $('.select2-multiple').select2();
 });
+</script>
+<script>
+    $.validate();
 </script>
 @endsection

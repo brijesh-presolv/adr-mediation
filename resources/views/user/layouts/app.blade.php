@@ -155,7 +155,7 @@
     <script src="{{url('assets/')}}/libs/raphael/raphael.min.js"></script>
 
     <script src="{{url('assets/')}}/js/pages/dashboard.init.js"></script>
-
+    <script src="{{url('assets/')}}/form-validator/jquery.form-validator.js"></script>
     <!-- App js -->
     <script src="{{url('assets/')}}/js/app.min.js"></script>
 

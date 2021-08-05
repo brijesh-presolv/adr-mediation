@@ -47,9 +47,9 @@
                                     <td><span class="ml-4">{{ $profileData->organization }}</span></td>
                                 </tr>
                                 {{-- <th scope="row"> <strong>Address : </strong></th>
-                                <td><span class="ml-4">{{ $profileData->address }}</span></td>
-                                    </tr>
-                                <th scope="row"> <strong>Address Line 2 : </strong></th>
+                            <td><span class="ml-4">{{ $profileData->address }}</span></td>
+                            </tr>
+                            <th scope="row"> <strong>Address Line 2 : </strong></th>
                             <td><span class="ml-4">{{ $profileData->address1 }}</span></td>
                             </tr>
                             <th scope="row"> <strong>City : </strong></th>
@@ -148,7 +148,7 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="field-4" class="control-label">Mobile Number : </label>
-                                                <input type="number" name="mobile"  value="{{ $profileData->mobile_number }}"  class="form-control" id="field-4" >
+                                                <input type="text" name="mobile"  value="{{ $profileData->mobile_number }}"  class="form-control" data-validation="required number" data-validation-allowing="+- " id="field-4" >
                                             </div>
                                         </div>
                                     </div>
@@ -189,56 +189,57 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="state">@lang('user.state')</label>
-                                                <select  class="form-control" id="state" name="state">
-                                                    <option {{( $profileData->state=="dolnośląskie")?"selected":"" }} >
+                                                <input type="text" list="stateData"  class="form-control" id="state" name="state">
+                                                <datalist id="stateData">
+                                                    <option>
                                                         dolnośląskie
                                                     </option>
-                                                    <option {{( $profileData->state=="kujawsko-pomorskie")?"selected":"" }}>
+                                                    <option>
                                                         kujawsko-pomorskie
                                                     </option>
-                                                    <option {{( $profileData->state=="lubelskie")?"selected":"" }}>
+                                                    <option>
                                                         lubelskie
                                                     </option>
-                                                    <option {{( $profileData->state=="lubuskie")?"selected":"" }}>
+                                                    <option>
                                                         lubuskie
                                                     </option>
-                                                    <option {{( $profileData->state=="łódzkie")?"selected":"" }}>
+                                                    <option>
                                                         łódzkie
                                                     </option>
-                                                    <option {{( $profileData->state=="małopolskie")?"selected":"" }}>
+                                                    <option>
                                                         małopolskie
                                                     </option>
-                                                    <option {{( $profileData->state=="mazowieckie")?"selected":"" }}>
+                                                    <option>
                                                         mazowieckie
                                                     </option>
-                                                    <option {{( $profileData->state=="opolskie")?"selected":"" }}>
+                                                    <option>
                                                         opolskie
                                                     </option>
-                                                    <option {{( $profileData->state=="podkarpackie")?"selected":"" }}>
+                                                    <option>
                                                         podkarpackie
                                                     </option>
-                                                    <option {{( $profileData->state=="podlaskie")?"selected":"" }}>
+                                                    <option>
                                                         podlaskie
                                                     </option>
-                                                    <option {{( $profileData->state=="pomorskie")?"selected":"" }}>
+                                                    <option>
                                                         pomorskie
                                                     </option>
-                                                    <option {{( $profileData->state=="śląskie")?"selected":"" }}>
+                                                    <option>
                                                         śląskie
                                                     </option>
-                                                    <option {{( $profileData->state=="świętokrzyskie")?"selected":"" }}>
+                                                    <option>
                                                         świętokrzyskie
                                                     </option>
-                                                    <option {{( $profileData->state=="warmińsko-mazurskie")?"selected":"" }}>
+                                                    <option>
                                                         warmińsko-mazurskie
                                                     </option>
-                                                    <option {{( $profileData->state=="wielkopolskie")?"selected":"" }}>
+                                                    <option>
                                                         wielkopolskie
                                                     </option>
-                                                    <option {{( $profileData->state=="zachodniopomorskie")?"selected":"" }}>
+                                                    <option>
                                                         zachodniopomorskie
                                                     </option>
-                                                </select>
+                                                </datalist>
                                             </div>
                                         </div>
                                     </div>
@@ -279,12 +280,11 @@
 
 @endsection
 
-<!-- Table datatable css -->
-
-<!-- 
 @section('footer')
-
-@endsection -->
+<script>
+    $.validate();
+</script>
+@endsection
 
 
 
