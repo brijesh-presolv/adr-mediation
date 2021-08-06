@@ -2,7 +2,7 @@
 
 function isreadonly($rows) {
 
-    if ($rows > 0 ) {
+    if ($rows > 0) {
         echo "readonly";
     }
 }
@@ -10,7 +10,7 @@ function isreadonly($rows) {
 function isreadonlys($rows) {
 
 
-    if ($rows!='NULL') {
+    if ($rows != 'NULL') {
         echo "readonly";
     }
 }
@@ -72,19 +72,19 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Address line 1 <span style="color:red; ">*</span></label>
-                            <input type="text" name="useraddress" class="form-control" value="<?= ($user->address1 !='NULL') ? $user->address : ''; ?>"  required>
+                            <input type="text" name="useraddress" class="form-control" value="<?= ($user->address1 != 'NULL') ? $user->address : ''; ?>"  required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Address line 2</label>
-                            <input type="text" name="useraddress1" class="form-control" value="<?= ($user->address1 !='NULL') ? $user->address1 : ''; ?>"  >
+                            <input type="text" name="useraddress1" class="form-control" value="<?= ($user->address1 != 'NULL') ? $user->address1 : ''; ?>"  >
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>City <span style="color:red; ">*</span></label>
-                            <input type="text" name="usercity" class="form-control" value="<?= ($user->city !='NULL') ? $user->city : ''; ?>"  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid city">
+                            <input type="text" name="usercity" class="form-control" value="<?= ($user->city != 'NULL') ? $user->city : ''; ?>"  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid city">
                         </div>
                     </div>
                 </div>
@@ -92,19 +92,19 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Pincode <span style="color:red; ">*</span></label>
-                            <input type="text" name="userpincode" class="form-control" value="<?= ($user->pincode !='NULL') ? $user->pincode : ''; ?>"  required data-smk-type="number" minlength="6" maxlength="6" data-smk-msg="Enter vaild pincode">
+                            <input type="text" name="userpincode" class="form-control" value="<?= ($user->pincode != 'NULL') ? $user->pincode : ''; ?>"  required data-smk-type="number" minlength="6" maxlength="6" data-smk-msg="Enter vaild pincode">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
-                            <input type="text" name="userstate" class="form-control" value="<?= ($user->state !='NULL') ? $user->state : ''; ?>"  required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
+                            <input type="text" name="userstate"  list="stateData"  class="form-control" value="<?= ($user->state != 'NULL') ? $user->state : ''; ?>"  required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Country <span style="color:red; ">*</span></label>
-                            <input type="text" name="usercountry" class="form-control" value="<?= ($user->country !='NULL') ? $user->country : ''; ?>"  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid country">
+                            <input type="text" list="countryData" name="usercountry" class="form-control" value="<?= ($user->country != 'NULL') ? $user->country : ''; ?>"  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid country">
                         </div>
                     </div>
                 </div>
@@ -117,22 +117,22 @@ function isreadonlys($rows) {
                     </div>
                 </div>
             </section>
-            
 
 
-                <?php
-                $rows = count($InvoledUser);
 
-                if ($rows == 0) {
-                    $rowcount = ($medcase->noOfParties - 1);
-                } else {
-                    $rowcount = $rows;
-                }
+            <?php
+            $rows = count($InvoledUser);
 
-                for ($i = 0; $i < $rowcount; $i++) {
-                    ?>
+            if ($rows == 0) {
+                $rowcount = ($medcase->noOfParties - 1);
+            } else {
+                $rowcount = $rows;
+            }
 
-                    <section class="respondent" id="{{ 'rowid'.($i+1)}}">
+            for ($i = 0; $i < $rowcount; $i++) {
+                ?>
+
+                <section class="respondent" id="{{ 'rowid'.($i+1)}}">
                     <div class="row">
                         <div class="col-md-12">
                             <h6 class="respcount">#Respondent <?= $i + 1 ?></h6>
@@ -186,13 +186,13 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>State <span style="color:red; ">*</span></label>
-                                <input name="state[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>"   required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
+                                <input name="state[]"  list="stateData"  type="text" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>"   required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Country <span style="color:red; ">*</span></label>
-                                <input name="country[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : ''; ?>"   required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid country">
+                                <input list="countryData" name="country[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : ''; ?>"   required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid country">
                                 <input type="hidden" name="invid[]" class="form-control" value="{{$InvoledUser[$i]['id']}}" >
                             </div>
                         </div>
@@ -200,9 +200,9 @@ function isreadonlys($rows) {
                             <button class="btn badge badge-danger removeresp"  data-id="{{ 'rowid'.($i+1)}}" data-ivid="{{$InvoledUser[$i]['id']}}">Remove</button>
                         </div>
                     </div>
-                    </section>
-                <?php } ?>
-            
+                </section>
+            <?php } ?>
+
 
             <?php if (1 == 1) { ?>
                 <section class="respondents">
@@ -213,7 +213,7 @@ function isreadonlys($rows) {
                         <div class="col-md-12">
                             <br>
                             <button class="btn btn-sm btn-warning" id="addmore">Add</button>
-                            
+
                         </div>
                     </div>
                 </section>
@@ -232,19 +232,23 @@ function isreadonlys($rows) {
                             <label>Supporting document</label><br>
                             <?php if ($rows == 0) { ?>
                                 <input class="form-control" type="file" name="document"></input>
-                            <?php } else {
-                                if ($medcase->documentPath != '') { ?>
+                                <?php
+                            } else {
+                                if ($medcase->documentPath != '') {
+                                    ?>
 
-                                    <a href="<?= public_path('mediation').'/'.$medcase->id.'/'.$medcase->documentPath ?>" class="btn badge badge-success" >Supporting Document</a> 
+                                    <a href="<?= public_path('mediation') . '/' . $medcase->id . '/' . $medcase->documentPath ?>" class="btn badge badge-success" >Supporting Document</a> 
 
-                                <?php } else {
+                                    <?php
+                                } else {
                                     echo "Not avalable";
                                 }
-                            } ?>
+                            }
+                            ?>
                             <!-- {{$errors->document}} -->
                         </div>
                     </div>
-                        
+
                 </div>
             </section>
             <input type="hidden" name="rminv" value="" id="rminv">
@@ -253,12 +257,65 @@ function isreadonlys($rows) {
         <section>
             <div class="row">
                 <div class="col-md-12">
-                            <button class="btn btn-success smksubmit">Update</button>
-                        </div>
+                    <button class="btn btn-success smksubmit">Update</button>
+                </div>
             </div>
         </section>
     </div>
 </div>
+<datalist id="stateData">
+    <option>
+        dolnośląskie
+    </option>
+    <option>
+        kujawsko-pomorskie
+    </option>
+    <option>
+        lubelskie
+    </option>
+    <option>
+        lubuskie
+    </option>
+    <option>
+        łódzkie
+    </option>
+    <option>
+        małopolskie
+    </option>
+    <option>
+        mazowieckie
+    </option>
+    <option>
+        opolskie
+    </option>
+    <option>
+        podkarpackie
+    </option>
+    <option>
+        podlaskie
+    </option>
+    <option>
+        pomorskie
+    </option>
+    <option>
+        śląskie
+    </option>
+    <option>
+        świętokrzyskie
+    </option>
+    <option>
+        warmińsko-mazurskie
+    </option>
+    <option>
+        wielkopolskie
+    </option>
+    <option>
+        zachodniopomorskie
+    </option>
+</datalist>
+<datalist id="countryData">
+    <option>Polska</option>
+</datalist>
 @endsection
 
 @section('head')
@@ -272,110 +329,84 @@ function isreadonlys($rows) {
 <script src="{{url('assets/')}}/js/smoke.js"></script>
 
 
-    <script type="text/javascript">
-        
-     $(document).ready(function(){
+<script type="text/javascript">
+
+$(document).ready(function(){
 
 
-        //form validation
+//form validation
 
-        $('.smksubmit').click(function(){
+$('.smksubmit').click(function(){
 
-    if( $('.smkform').smkValidate() ){
-        
-        $('.smkform').submit();
+if ($('.smkform').smkValidate()){
 
-   } 
+$('.smkform').submit();
+}
 
 });
+<?php if ($response == 'success') { ?>
 
-
-        <?php if($response=='success'){ ?>
-
-             swal("Success", "Case has been updated", "success").then(function() {
+    swal("Success", "Case has been updated", "success").then(function() {
     //window.location ="{{route('user.newrequest')}}"
 
     });
-
-
 <?php } ?>
 
 
-        var rowid={{count($InvoledUser)}};
+var rowid = {{count($InvoledUser)}};
+$(document).on('click', '#addmore', function(e){
 
-        $(document).on('click','#addmore',function(e){
+rowid++;
+e.preventDefault();
+$('.removeresp').show();
+var resp = $('.respondent').first().clone();
+resp.attr('id', 'rowid' + rowid);
+resp.find('.respcount').text('#Respondent ' + rowid);
+resp.find('.removeresp').attr('data-id', 'rowid' + rowid);
+resp.find('.form-control').val('');
+$('.respondents').append(resp);
+});
+$(document).on('click', '.removeresp', function(e){
 
-            rowid++;
+e.preventDefault();
+rid = '#' + $(this).data('id');
+$(rid).remove();
+if ($(this).data('ivid') != ''){
 
-            e.preventDefault();
+if ($('#rminv').val() == ''){
+var invvalue = $(this).data('ivid');
+} else{
+var invvalue = $('#rminv').val() + ',' + $(this).data('ivid');
+}
 
-            $('.removeresp').show();
+$('#rminv').val(invvalue);
+}
 
-            var resp=$('.respondent').first().clone();
-            
-            resp.attr('id','rowid'+rowid);
-            resp.find('.respcount').text('#Respondent '+rowid);
+if (rowid > 1){
+rowid--;
+}
+
+$('.respcount').each(function(k, v){
+
+$(this).text('#Respondent ' + (k + 1));
+});
+if ($('.removeresp').length == 1){
+
+$('.removeresp').hide();
+} else{
+$('.removeresp').show();
+}
 
 
-           resp.find('.removeresp').attr('data-id','rowid'+rowid);
 
-            resp.find('.form-control').val('');
+});
+if ($('.removeresp').length == 1){
 
-
-
-            $('.respondents').append(resp);
-
-        });
-
-        $(document).on('click','.removeresp',function(e){
-
-            e.preventDefault();
-
-            rid='#'+$(this).data('id');
-
-            
-
-            $(rid).remove();
-
-            if($(this).data('ivid')!=''){
-
-                if($('#rminv').val()==''){
-                var invvalue=$(this).data('ivid');
-            } else{
-                var invvalue=$('#rminv').val()+','+$(this).data('ivid');
-            }
-
-                $('#rminv').val(invvalue);
-            }
-
-            if(rowid>1){
-            rowid--;
-        }
-
-        $('.respcount').each(function(k,v){
-
-            $(this).text('#Respondent '+(k+1));
-            
-        });
-
-        if($('.removeresp').length==1){
-             
-             $('.removeresp').hide();
-        } else{
-            $('.removeresp').show();
-        }
-
-       
-
-        });
-
-         if($('.removeresp').length==1){
-             
-             $('.removeresp').hide();
-        } else{
-            $('.removeresp').show();
-        }
-    });
+$('.removeresp').hide();
+} else{
+$('.removeresp').show();
+}
+});
 </script>
 @endsection('footer')
 
