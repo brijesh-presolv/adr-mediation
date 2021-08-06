@@ -153,12 +153,6 @@
 }
 </style>
 
-<?php if (isset($errors)) {
-   
-
-   var_dump($errors);
-
-} ?>
 
 
  <!-- <ol class="breadcrumb  bcrm" style="">

@@ -98,7 +98,7 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
-                            <input type="text" name="userstate" class="form-control" value="<?= ($user->state !='NULL') ? $user->state : ''; ?>"  required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
+                            <input type="text" name="userstate" class="form-control" value="<?= ($user->state !='NULL') ? $user->state : ''; ?>"  required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state" list="state">
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -122,6 +122,9 @@ function isreadonlys($rows) {
 
                 <?php
                 $rows = count($InvoledUser);
+
+
+            
 
                 if ($rows == 0) {
                     $rowcount = ($medcase->noOfParties - 1);
@@ -186,7 +189,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>State <span style="color:red; ">*</span></label>
-                                <input name="state[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>"   required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
+                                <input name="state[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>"   required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state" list="state">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -259,6 +262,24 @@ function isreadonlys($rows) {
         </section>
     </div>
 </div>
+<datalist id="state">
+                                <option>dolnośląskie</option>
+                                <option>kujawsko-pomorskie</option>
+                                <option>lubelskie</option>
+                                <option>lubuskie</option>
+                                <option>łódzkie</option>
+                                <option>małopolskie</option>
+                                <option>mazowieckie</option>
+                                <option>opolskie</option>
+                                <option>podkarpackie</option>
+                                <option>podlaskie</option>
+                                <option>pomorskie</option>
+                                <option>śląskie</option>
+                                <option>świętokrzyskie</option>
+                                <option>warmińsko-mazurskie</option>
+                                <option>wielkopolskie</option>
+                                <option>zachodniopomorskie</option>
+                            </datalist>
 @endsection
 
 @section('head')
