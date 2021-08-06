@@ -22,7 +22,7 @@ function isreadonlys($rows) {
 @section('breadcrumb')
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.home')</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">Invoke </a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.invoke')</a></li>
 <!-- end page title -->
 @endsection
 @section('content')

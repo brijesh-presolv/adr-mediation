@@ -13,6 +13,7 @@ return [
     "new_request"=>"New Request",
     "ongoing_request"=>"Ongoing Request",
     "rejected_request"=>"Rejected Request",
+    "invoke"=>"Invoke",
     //table title
     "serial_number" => "Sr.No",
     "case_id" => "Case Id",
