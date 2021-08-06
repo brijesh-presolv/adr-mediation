@@ -98,7 +98,7 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
-                            <input type="text" name="userstate"  list="stateData"  class="form-control" value="<?= ($user->state != 'NULL') ? $user->state : ''; ?>"  required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
+                            <input type="text" name="userstate" class="form-control" value="<?= ($user->state !='NULL') ? $user->state : ''; ?>"  required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state" list="state">
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -237,7 +237,7 @@ function isreadonlys($rows) {
                                 if ($medcase->documentPath != '') {
                                     ?>
 
-                                    <a href="<?= public_path('mediation') . '/' . $medcase->id . '/' . $medcase->documentPath ?>" class="btn badge badge-success" >Supporting Document</a> 
+                                    <a href="<?= public_path('mediation') . '/' . $medcase->id . '/' . $medcase->documentPath ?>" class="btn badge badge-success" >Supporting Document</a>
 
                                     <?php
                                 } else {
@@ -409,7 +409,3 @@ $('.removeresp').show();
 });
 </script>
 @endsection('footer')
-
-
-
-

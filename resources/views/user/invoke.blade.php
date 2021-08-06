@@ -98,56 +98,27 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
-                            <select  class="form-control" id="userstate" name="userstate">
-                                <option {{($user->state=="dolnośląskie")?"selected":"" }} >
-                                    dolnośląskie
-                                </option>
-                                <option {{($user->state=="kujawsko-pomorskie")?"selected":"" }}>
-                                    kujawsko-pomorskie
-                                </option>
-                                <option {{($user->state=="lubelskie")?"selected":"" }}>
-                                    lubelskie
-                                </option>
-                                <option {{($user->state=="lubuskie")?"selected":"" }}>
-                                    lubuskie
-                                </option>
-                                <option {{($user->state=="łódzkie")?"selected":"" }}>
-                                    łódzkie
-                                </option>
-                                <option {{($user->state=="małopolskie")?"selected":"" }}>
-                                    małopolskie
-                                </option>
-                                <option {{($user->state=="mazowieckie")?"selected":"" }}>
-                                    mazowieckie
-                                </option>
-                                <option {{($user->state=="opolskie")?"selected":"" }}>
-                                    opolskie
-                                </option>
-                                <option {{($user->state=="podkarpackie")?"selected":"" }}>
-                                    podkarpackie
-                                </option>
-                                <option {{($user->state=="podlaskie")?"selected":"" }}>
-                                    podlaskie
-                                </option>
-                                <option {{($user->state=="pomorskie")?"selected":"" }}>
-                                    pomorskie
-                                </option>
-                                <option {{($user->state=="śląskie")?"selected":"" }}>
-                                    śląskie
-                                </option>
-                                <option {{($user->state=="świętokrzyskie")?"selected":"" }}>
-                                    świętokrzyskie
-                                </option>
-                                <option {{($user->state=="warmińsko-mazurskie")?"selected":"" }}>
-                                    warmińsko-mazurskie
-                                </option>
-                                <option {{($user->state=="wielkopolskie")?"selected":"" }}>
-                                    wielkopolskie
-                                </option>
-                                <option {{($user->state=="zachodniopomorskie")?"selected":"" }}>
-                                    zachodniopomorskie
-                                </option>
-                            </select>
+
+                            <datalist id="state">
+                                <option>dolnośląskie</option>
+                                <option>kujawsko-pomorskie</option>
+                                <option>lubelskie</option>
+                                <option>lubuskie</option>
+                                <option>łódzkie</option>
+                                <option>małopolskie</option>
+                                <option>mazowieckie</option>
+                                <option>opolskie</option>
+                                <option>podkarpackie</option>
+                                <option>podlaskie</option>
+                                <option>pomorskie</option>
+                                <option>śląskie</option>
+                                <option>świętokrzyskie</option>
+                                <option>warmińsko-mazurskie</option>
+                                <option>wielkopolskie</option>
+                                <option>zachodniopomorskie</option>
+                            </datalist>
+                            <input type="text" name="userstate" id="userstate" list="state" class="form-control" value="<?= $user->state?>">
+                           
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -237,56 +208,9 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>State <span style="color:red; ">*</span></label>
-                                <select  class="form-control" id="state" name="state[]">
-                                    <option {{($user->state=="dolnośląskie")?"selected":"" }} >
-                                        dolnośląskie
-                                    </option>
-                                    <option {{($user->state=="kujawsko-pomorskie")?"selected":"" }}>
-                                        kujawsko-pomorskie
-                                    </option>
-                                    <option {{($user->state=="lubelskie")?"selected":"" }}>
-                                        lubelskie
-                                    </option>
-                                    <option {{($user->state=="lubuskie")?"selected":"" }}>
-                                        lubuskie
-                                    </option>
-                                    <option {{($user->state=="łódzkie")?"selected":"" }}>
-                                        łódzkie
-                                    </option>
-                                    <option {{($user->state=="małopolskie")?"selected":"" }}>
-                                        małopolskie
-                                    </option>
-                                    <option {{($user->state=="mazowieckie")?"selected":"" }}>
-                                        mazowieckie
-                                    </option>
-                                    <option {{($user->state=="opolskie")?"selected":"" }}>
-                                        opolskie
-                                    </option>
-                                    <option {{($user->state=="podkarpackie")?"selected":"" }}>
-                                        podkarpackie
-                                    </option>
-                                    <option {{($user->state=="podlaskie")?"selected":"" }}>
-                                        podlaskie
-                                    </option>
-                                    <option {{($user->state=="pomorskie")?"selected":"" }}>
-                                        pomorskie
-                                    </option>
-                                    <option {{($user->state=="śląskie")?"selected":"" }}>
-                                        śląskie
-                                    </option>
-                                    <option {{($user->state=="świętokrzyskie")?"selected":"" }}>
-                                        świętokrzyskie
-                                    </option>
-                                    <option {{($user->state=="warmińsko-mazurskie")?"selected":"" }}>
-                                        warmińsko-mazurskie
-                                    </option>
-                                    <option {{($user->state=="wielkopolskie")?"selected":"" }}>
-                                        wielkopolskie
-                                    </option>
-                                    <option {{($user->state=="zachodniopomorskie")?"selected":"" }}>
-                                        zachodniopomorskie
-                                    </option>
-                                </select>
+                                 <input type="text" name="userstate" id="userstate" list="state" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>">
+                                
+                                   
                             </div>
                         </div>
                         <div class="col-md-4">
