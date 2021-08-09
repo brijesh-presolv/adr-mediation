@@ -347,6 +347,8 @@ class CaseController extends Controller {
                 $inv->save();
             }
 
+            $pone=$inv;
+
 
             //update responding party
 
@@ -376,6 +378,8 @@ class CaseController extends Controller {
 
                 if($inv->userEmail!=$r['email'][$i]){
 
+                    $inv->userEmail = $r['email'][$i];
+
 
                     $invitation = $this->invitation_mediate($id);
 
@@ -384,16 +388,14 @@ class CaseController extends Controller {
                     $invmodel->file_name = $invitation;
                     $invmodel->save();
 
-                    $r=$this->sned_invitation($id, $invitation);
+                    
+                    $code = $inv->joinCode;
+                     $s=SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-joincode-" => $inv->joinCode, "-claimant-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
 
-
-                    var_dump($r);
-
-                    exit;
 
                 }
 
-                $inv->userEmail = $r['email'][$i];
+                
                 $inv->userPhone = $r['phone'][$i];
                 $inv->name = $r['name'][$i];
                 $inv->address1 = $r['add1'][$i];

@@ -174,7 +174,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Phone <span style="color:red; ">*</span></label>
-                                <input type="number" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>  required data-smk-type="number" minlength="10" maxlength="10" data-smk-msg="Enter vaild phone number">
+                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>  required  minlength="8" maxlength="15" data-smk-msg="Enter vaild phone number" >
                             </div>
                         </div>
                     </div>
@@ -202,13 +202,13 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Pincode <span style="color:red; ">*</span></label>
-                                <input name="pincode[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['pincode']) ? $InvoledUser[$i]['pincode'] : ''; ?>" <?= isreadonly($rows) ?>  required data-smk-type="number" minlength="6" maxlength="6" data-smk-msg="Enter vaild pincode">
+                                <input name="pincode[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['pincode']) ? $InvoledUser[$i]['pincode'] : ''; ?>" <?= isreadonly($rows) ?>   minlength="5" maxlength="10" data-smk-msg="Enter vaild pincode"  data-smk-pattern="[0-9\s-]{5,10}">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>State <span style="color:red; ">*</span></label>
-                                 <input type="text" name="userstate" id="userstate" list="state" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>">
+                                 <input type="text" name="state[]" id="state" list="state" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>">
                                 
                                    
                             </div>
@@ -216,9 +216,8 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Country <span style="color:red; ">*</span></label>
-                                <select class="form-control" id="country" name="country[]">
-                                    <option>Polska</option>
-                                </select>
+
+                                <input type="text" name="country[]" id="country" list="" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : 'Polska'; ?>">
                             </div>
                         </div>
                     </div>
