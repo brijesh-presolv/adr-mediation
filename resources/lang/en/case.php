@@ -7,6 +7,7 @@
  */
 return [
     //Admin home page
+    "Cases"=>"Case",
     "users"=>"Users",
     "usersDiscription"=>"Total number of users",
     "casesRegistered"=>"All cases",
@@ -19,8 +20,8 @@ return [
     "ongoingDiscription"=>"Number of ongoing case",
     "resolvedCases"=>"Resolved cases",
     "resolvedDiscription"=>"Number of resolved case",
-    "respondingPartiesCases"=>"Resolved cases",
-    "respondingPartiesDiscription"=>"Number of Responding Parties",
+    "respondingPartiesCases"=>"Responding Parties",
+    "respondingPartiesDiscription"=>"total no. of cases accepted by responding parties",
     
     //bradcrom
     "home"=>"Home",
