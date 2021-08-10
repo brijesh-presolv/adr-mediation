@@ -288,7 +288,11 @@ class DashboardController extends Controller {
         $rejected_case = DB::table('mediators_mediation_cases_status')
                         ->select('mediators_mediation_cases_status.*', 'user_involved_in_agreement.userid')
                         ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
-                        ->join('user_involved_in_agreement', 'user_involved_in_agreement.id', '=', 'mediation_case.userid')
+                        ->join('user_involved_in_agreement',
+ 			function ($join) {
+            		$join->on( 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')
+                	 ->where('user_involved_in_agreement.isClaimant', '=', '0');
+       			 })
                         ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->get();
 
         //dd($rejected_case);
@@ -298,7 +302,7 @@ class DashboardController extends Controller {
     public function json($role = 0) {
         $cases = MedCase::select("mediation_case.*", "users.username as mediator_username", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
                 ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->leftJoin("users","users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediation_case.confirm_status", "=", $role)
                 ->where('mediator_id', "=", Auth::user()->id)
                 ->get();
