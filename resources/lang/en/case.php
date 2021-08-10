@@ -6,6 +6,22 @@
  * and open the template in the editor.
  */
 return [
+    //Admin home page
+    "users"=>"Users",
+    "usersDiscription"=>"Total number of users",
+    "casesRegistered"=>"All cases",
+    "casesRegisteredDiscription"=>" total no. of cases registered",
+    "newCases"=>"New cases",
+    "newDiscription"=>"Number of new requests",
+    "ongoingCases"=>"Ongoing cases",
+    "ongoingDiscription"=>"Number of ongoing case",
+    "ongoingCases"=>"Ongoing cases",
+    "ongoingDiscription"=>"Number of ongoing case",
+    "resolvedCases"=>"Resolved cases",
+    "resolvedDiscription"=>"Number of resolved case",
+    "respondingPartiesCases"=>"Resolved cases",
+    "respondingPartiesDiscription"=>"Number of Responding Parties",
+    
     //bradcrom
     "home"=>"Home",
     "casedetails"=>"Casedetails",
