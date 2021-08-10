@@ -208,7 +208,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>State <span style="color:red; ">*</span></label>
-                                 <input type="text" name="userstate" id="userstate" list="state" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>">
+                                 <input type="text" name="state[]" id="userstate" list="state" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>">
                                 
                                    
                             </div>

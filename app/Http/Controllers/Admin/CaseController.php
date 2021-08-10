@@ -540,9 +540,9 @@ class CaseController extends Controller {
         $initiating_party = "";
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
-                SendGrid::send($inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $id], $inv->name);
+                SendGrid::send($inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $id, "-type-" => "Party"], $inv->name);
                 $initiating_party = $inv->name;
-            } else if ($inv->isOnboarded == 0) {
+            } else {
                 SendGrid::send($inv->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $id, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
         }

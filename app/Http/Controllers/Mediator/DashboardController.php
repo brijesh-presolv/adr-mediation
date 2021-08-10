@@ -150,10 +150,13 @@ class DashboardController extends Controller {
                 $consentDisclosures->particulars4 = $request->particulars4;
             }
             $consentDisclosures->save();
+            $this->send_attechment_party($caseid);
         } else {
             $caseid = $request->caseid;
+            
         }
-        $this->send_attechment_party($caseid);
+        
+        
         DB::table('mediators_mediation_cases_status')
                 ->where('mediator_id', Auth::user()->id)
                 ->where('mediation_case_id', $caseid)
@@ -284,12 +287,11 @@ class DashboardController extends Controller {
         $loginUser = Auth::user()->id;
         $rejected_case = DB::table('mediators_mediation_cases_status')
                         ->select('mediators_mediation_cases_status.*', 'user_involved_in_agreement.userid')
-                        ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
                         ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
                         ->join('user_involved_in_agreement', 'user_involved_in_agreement.id', '=', 'mediation_case.userid')
-                        ->where(['mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->get();
+                        ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->get();
 
-        // dd($rejected_case);
+        //dd($rejected_case);
         return view('mediator.reject', compact("rejected_case"));
     }
 
