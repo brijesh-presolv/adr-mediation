@@ -9,47 +9,15 @@
 @endsection
 @section('content')
 
-<div class="row">
-    <!-- end col -->
-    <div class="col-lg-12">
-        <h4 class="page-title">@lang('case.cases')</h4>
-    </div>
-    <div class="col-lg-6 col-xl-3">
-        <div class="card widget-box-three">
-            <div class="card-body">
-                <div class="float-right mt-2">
-                    <i class="mdi mdi-account-convert display-3 m-0"></i>
-                </div>
-                <div class="overflow-hidden">
-                    <p class="text-uppercase font-weight-medium text-truncate mb-2">@lang('case.users')</p>
-                    <h2 class="mb-0"><span data-plugin="counterup">{{$usersCount}}</span></h2>
-                    <p class="text-muted mt-2 m-0">@lang('case.usersDiscription')</p>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6 col-xl-3">
-        <div class="card widget-box-three">
-            <div class="card-body">
-                <div class="float-right mt-2">
-                    <i class="mdi mdi-av-timer display-3 m-0"></i>
-                </div>
-                <div class="overflow-hidden">
-                    <p class="text-uppercase font-weight-medium text-truncate mb-2">@lang('case.respondingPartiesCases')</p>
-                    <h2 class="mb-0"><span data-plugin="counterup">{{$respondingPartiesCount}}</span></h2>
-                    <p class="text-muted mt-2 m-0">@lang('case.respondingPartiesDiscription')</p>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!-- end col -->
-</div>
+<style type="text/css">
+    .widget-box-three{
+      height: 186.50px;
+    }
+</style>
 
 <div class="row">
     <div class="col-lg-12">
-        <h4 class="page-title">@lang('case.cases')</h4>
+        <h4 class="page-title"></h4>
     </div>
     <div class="col-lg-6 col-xl-3">
         <div class="card widget-box-three">
@@ -118,6 +86,47 @@
     <!-- end col -->
 
 </div>
+
+<div class="row admindash">
+    <!-- end col -->
+    <div class="col-lg-12">
+        <h4 class="page-title"></h4>
+    </div>
+    <div class="col-lg-6 col-xl-3">
+        <div class="card widget-box-three">
+            <div class="card-body">
+                <div class="float-right mt-2">
+                    <i class="mdi mdi-av-timer display-3 m-0"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">@lang('case.respondingPartiesCases')</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$respondingPartiesCount}}</span></h2>
+                    <p class="text-muted mt-2 m-0">@lang('case.respondingPartiesDiscription')</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xl-3">
+        <div class="card widget-box-three">
+            <div class="card-body">
+                <div class="float-right mt-2">
+                    <i class="mdi mdi-account-convert display-3 m-0"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">@lang('case.users')</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$usersCount}}</span></h2>
+                    <p class="text-muted mt-2 m-0">@lang('case.usersDiscription')</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <!-- end col -->
+</div>
+
+
 <!-- end end -->
 @endsection
 
