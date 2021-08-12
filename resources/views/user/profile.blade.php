@@ -148,7 +148,7 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="field-4" class="control-label">Mobile Number : </label>
-                                                <input type="text" name="mobile"  value="{{ $profileData->mobile_number }}"  class="form-control" data-validation="required number" data-validation-allowing="+- " id="field-4" >
+                                                <input type="text" name="mobile"  value="{{ $profileData->mobile_number }}"  class="form-control" data-validation="required custom length" data-validation-length="8-15" data-validation-regexp="^([0-9\s+-]+)$" id="field-4" >
                                             </div>
                                         </div>
                                     </div>
@@ -257,7 +257,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="field-5" class="control-label">pincode : </label>
-                                                <input type="text" name="pincode"  value="{{ $profileData->pincode }}"  class="form-control" id="field-5">
+                                                <input type="text" name="pincode"  value="{{ $profileData->pincode }}" data-validation="required length" data-validation-length="4-10"  class="form-control" id="field-5">
                                             </div>
                                         </div>
                                     </div>

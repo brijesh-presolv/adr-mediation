@@ -61,7 +61,7 @@ class DashboardController extends Controller {
                 //->select('mediation_case.*')
                 ->join('mediators_mediation_cases_status', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
                 ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 0])
-                ->where("mediation_case.confirm_status", "!=",2 )
+                ->where("mediation_case.confirm_status", "!=", 2)
                 ->get();
         // dd($newrequestData);
         $arraydata = array();
@@ -150,10 +150,12 @@ class DashboardController extends Controller {
                 $consentDisclosures->particulars4 = $request->particulars4;
             }
             $consentDisclosures->save();
+            $this->send_attechment_party($caseid);
         } else {
             $caseid = $request->caseid;
         }
-        $this->send_attechment_party($caseid);
+
+
         DB::table('mediators_mediation_cases_status')
                 ->where('mediator_id', Auth::user()->id)
                 ->where('mediation_case_id', $caseid)
@@ -179,7 +181,7 @@ class DashboardController extends Controller {
         DB::table('manage_session')->insert($dataToInsert);
         foreach ($request->session_party_ids as $pary_id) {
             $data = InvoledUser::where("userId", $pary_id)->where("userPlanId", $request->caseId)->first();
-            $this->sned_session($request->caseId, $data->userEmail, $data->name,$request->sessionDate . "/" . $request->sessionTime);
+            $this->sned_session($request->caseId, $data->userEmail, $data->name, $request->sessionDate . "/" . $request->sessionTime);
         }
         $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
@@ -187,7 +189,7 @@ class DashboardController extends Controller {
                 ->first();
         if ($mediator) {
             $id = "M" . sprintf("%06d", $request->caseId);
-            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime,"-type-"=>"Mediator"], $mediator->username);
+            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
         }
         return true;
     }
@@ -284,12 +286,15 @@ class DashboardController extends Controller {
         $loginUser = Auth::user()->id;
         $rejected_case = DB::table('mediators_mediation_cases_status')
                         ->select('mediators_mediation_cases_status.*', 'user_involved_in_agreement.userid')
-                        ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
                         ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
-                        ->join('user_involved_in_agreement', 'user_involved_in_agreement.id', '=', 'mediation_case.userid')
-                        ->where(['mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->get();
+                        ->join('user_involved_in_agreement',
+                                function ($join) {
+                            $join->on('user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')
+                            ->where('user_involved_in_agreement.isClaimant', '=', '0');
+                        })
+                        ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->get();
 
-        // dd($rejected_case);
+        //dd($rejected_case);
         return view('mediator.reject', compact("rejected_case"));
     }
 
@@ -434,9 +439,9 @@ class DashboardController extends Controller {
         }
     }
 
-    public function sned_session($id, $email_id, $email_name,$date) {
+    public function sned_session($id, $email_id, $email_name, $date) {
         $id = "M" . sprintf("%06d", $id);
-        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id,"-insert_date-"=>$date,"-type-"=>"Party"], $email_name);
+        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
         return true;
     }
 
@@ -450,14 +455,14 @@ class DashboardController extends Controller {
             return abort(404);
         }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
-        Storage::put('public/mediation/' . $data["case"]->id . '/' . "M" . sprintf("%06d", $id)."_party.pdf", $pdf->output());
+        Storage::put('public/mediation/' . $data["case"]->id . '/' . "M" . sprintf("%06d", $id) . "_party.pdf", $pdf->output());
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $id = "M" . sprintf("%06d", $id);
         $sendEamils = array();
         foreach ($involedUser as $inv) {
             $sendEamils[] = $inv->userEmail;
         }
-        SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $id], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $id."_party.pdf"));
+        SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $id], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $id . "_party.pdf"));
 
 
         return true;
