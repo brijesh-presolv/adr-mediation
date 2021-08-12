@@ -18,10 +18,10 @@
                     <tr>
                         <th>@lang('case.serial_number')</th>
                         <th>@lang('case.case_id')</th>
-                        <th>@lang('case.date')</th>
-                        <th>@lang('case.case_details')</th>
+                        <th>@lang('case.date') <a href="#" data-toggle="tooltip" title="" data-original-title="Date and time of raising the 'Request for Mediation'."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                        <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title="" data-original-title="Click here to view the 'Request for Mediation'."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                         <th>@lang('case.party_details')</th>
-                        <th>@lang('case.status_logs')</th>
+                        <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title="" data-original-title="Current status of the Mediation appears here."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                     </tr>
                 </thead>
             </table>

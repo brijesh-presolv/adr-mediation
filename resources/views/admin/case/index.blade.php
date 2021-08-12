@@ -17,10 +17,10 @@
                     <tr>
                         <th>@lang('case.serial_number')</th>
                         <th>@lang('case.case_id')</th>
-                        <th>@lang('case.date')</th>
-                        <th>@lang('case.case_details')</th>
+                        <th>@lang('case.date') <a href="#" data-toggle="tooltip" title="" data-original-title="Date and time of raising the 'Request for Mediation'."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                        <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title="" data-original-title="Click here to view the 'Request for Mediation'."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                         <th>@lang('case.party_details')</th>
-                        <th>@lang('case.action')</th>
+                        <th>@lang('case.action') <a href="#" data-toggle="tooltip" title="" data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                     </tr>
                 </thead>
             </table>
