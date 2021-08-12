@@ -92,7 +92,7 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Pincode <span style="color:red; ">*</span></label>
-                            <input type="text" name="userpincode" class="form-control" value="<?= ($user->pincode != 'NULL') ? $user->pincode : ''; ?>"  required data-smk-type="number" minlength="6" maxlength="6" data-smk-msg="Enter vaild pincode">
+                            <input type="text" name="userpincode" class="form-control" value="<?= ($user->pincode != 'NULL') ? $user->pincode : ''; ?>"  required  minlength="6" maxlength="10" data-smk-msg="Enter vaild pincode" data-smk-pattern="[a-zA-Z0-9\s-]{5,10}">
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -180,7 +180,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Pincode <span style="color:red; ">*</span></label>
-                                <input name="pincode[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['pincode']) ? $InvoledUser[$i]['pincode'] : ''; ?>" required  minlength="5" maxlength="10" data-smk-msg="Enter vaild pincode" data-smk-pattern="[0-9\s-]{5,10}">
+                                <input name="pincode[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['pincode']) ? $InvoledUser[$i]['pincode'] : ''; ?>" required  minlength="5" maxlength="10" data-smk-msg="Enter vaild pincode" data-smk-pattern="[a-zA-Z0-9\s-]{5,10}">
                             </div>
                         </div>
                         <div class="col-md-4">
