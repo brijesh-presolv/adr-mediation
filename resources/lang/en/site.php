@@ -1,0 +1,30 @@
+<?php
+
+return[
+'login'=>"Login",
+'createaccount'=>'Create Account',
+'email'=>'Email',
+'password'=>'Password',
+'submit'=>'Submit',
+'forgotpassword'=>'Forgot Password?',
+'forgotusername'=>'Forgot Username?',
+'registeras'=>'Register As',
+'User'=>'User',
+'Mediator'=>'Mediator',
+'Reset'=>'Reset',
+'First Name'=>'First Name',
+'Last name'=>'Last name',
+'Mobile'=>'Mobile',
+'Organization'=>'Organization',
+'Username'=>'Username',
+'Confirm password'=>'Confirm password',
+'Enter Email'=>'Enter Email',
+'Enter Username'=>'Enter Username',
+'Reset Password'=>'Reset Password',
+'Reset Username'=>'Reset Username',
+
+
+
+
+
+];

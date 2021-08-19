@@ -179,8 +179,8 @@
                             <!-- Nav tabs -->
 
                                                         <ul class="nav nav-tabs loginmobile">
-                                <li class=""><a href="{{route('login')}}" class="active">Login</a></li>
-                                <li class=""><a href="{{route('register')}}"  class="">Create Account</a></li>
+                                <li class=""><a href="{{route('login')}}" class="active">@lang('site.login')</a></li>
+                                <li class=""><a href="{{route('register')}}"  class="">@lang('site.createaccount')</a></li>
                             </ul>
                             <!-- Tab panes -->
                             <div class="tab-content ">
@@ -192,7 +192,7 @@
                                             <!-- <label for="email" class="col-md-1 control-label" style="margin-right: 20px;">
                                                 Username</label> -->
                                             <div class="col-sm-12">
-                                                <label for="email" class="control-label" style="margin-right: 20px;">Email
+                                                <label for="email" class="control-label" style="margin-right: 20px;">@lang('site.email')
                                                 </label>
                                                 <input type="email" class="form-control txtmobile @error('email') is-invalid @enderror" id="email1" placeholder="Email" name="email" value=""required/>
                                                 @error('email')
@@ -207,7 +207,7 @@
                                                 Password</label> -->
                                             <div class="col-sm-12">
                                                 <label for="exampleInputPassword1" class="control-label" style="margin-right: 20px;">
-                                                Password</label>
+                                                @lang('site.password')</label>
                                                 <input type="password" class="form-control txtmobile mb-2 @error('password') is-invalid @enderror" id="exampleInputPassword1" placeholder="Password" name="password" value="" required/>
                                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -231,10 +231,10 @@
                                                 </div>
                                                    
                                                     <div class="col-md-6">
-                                                        <button type="button" class="btn btn-warning btn-block " style="background-color:#0B5386;width:80%; " data-toggle="modal" data-target="#myModal">Forgot Password?</button>
+                                                        <button type="button" class="btn btn-warning btn-block " style="background-color:#0B5386;width:80%; " data-toggle="modal" data-target="#myModal">@lang('site.forgotpassword')</button>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <button type="button" class="btn btn-warning btn-block" style="background-color: #0B5386;border: 1px;width:80%;"    data-toggle="modal" data-target="#myModal2">Forgot Username?</button>
+                                                        <button type="button" class="btn btn-warning btn-block" style="background-color: #0B5386;border: 1px;width:80%;"    data-toggle="modal" data-target="#myModal2">@lang('site.forgotusername')</button>
                                                     </div>
                                                 </div>
                                                  
@@ -260,15 +260,15 @@
                                         <div class="modal-content frgpmobile">
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">Forgot Password ?</h4>
+                                                <h4 class="modal-title">@lang('site.forgotpassword')</h4>
                                             </div>
                                             <div class="modal-body">
 
                                                 <div class="form-group ">
-                                                    <label for="email" class="d-sm-none ">Enter Username</label>
+                                                    <label for="email" class="d-sm-none ">@lang('site.Enter Username')</label>
                                                     <input type="text" class="form-control fgmobile" id="username_reset" name="username_reset" placeholder="Username" >
                                                 </div>
-                                                <button type="button" class="btn btn-primary btn-lg" id="load2" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">Reset Password</button>
+                                                <button type="button" class="btn btn-primary btn-lg" id="load2" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">@lang('site.Reset Password')</button>
                                                 <br/>
 
                                                 <div>For any query contact <a href="mailto:info@presolve360.com">info@presolv360.com</a></div>
@@ -288,15 +288,15 @@
                                         <div class="modal-content frgpmobile">
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">Forgot Username ?</h4>
+                                                <h4 class="modal-title">@lang('site.forgotpassword')</h4>
                                             </div>
                                             <div class="modal-body">
 
                                                 <div class="form-group">
-                                                    <label for="email" class="d-sm-none ">Enter Email</label>
+                                                    <label for="email" class="d-sm-none ">@lang('site.Enter Email')</label>
                                                     <input type="text" class="form-control fgmobile" id="forgot_username_reset" name="forgot_username_reset" placeholder="Email" >
                                                 </div>
-                                                <button type="button" class="btn btn-primary btn-lg" id="load3" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">Reset Username</button>
+                                                <button type="button" class="btn btn-primary btn-lg" id="load3" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">@lang('site.Reset Username')</button>
                                                 <br/>
 
                                                 <div>For any query contact <a href="mailto:info@presolve360.com">info@presolv360.com</a></div>

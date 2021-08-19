@@ -178,50 +178,11 @@
                             <!-- Nav tabs -->
 
                                                         <ul class="nav nav-tabs loginmobile">
-                                <li class=""><a href="{{route('login')}}"  class="">Login</a></li>
-                                <li class=""><a href="{{route('register')}}"  class="active">Create Account</a></li>
+                                <li class=""><a href="{{route('login')}}"  class="">@lang('site.login')</a></li>
+                                <li class=""><a href="{{route('register')}}"  class="active">@lang('site.createaccount')</a></li>
                             </ul>
                             <!-- Tab panes -->
                             <div class="tab-content ">
-                                <div class="tab-pane" id="Login">
-                                <br>
-                                <form role="form" class="form-horizontal loginformsection" method="POST" action="login">
-                                        @csrf
-                                        <div class="form-group formmobile row">
-                                            <!-- <label for="email" class="col-md-1 control-label" style="margin-right: 20px;">
-                                                Username</label> -->
-                                            <div class="col-sm-12">
-                                                <label for="email" class="control-label" style="margin-right: 20px;">Email
-                                                </label>
-                                                <input type="email" class="form-control txtmobile" id="email1" placeholder="Email" name="email" value="prashant.blokess@gmail.com"required/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group formmobile row">
-                                            <!-- <label for="exampleInputPassword1" class="col-md-1 control-label" style="margin-right: 20px;">
-                                                Password</label> -->
-                                            <div class="col-sm-12">
-                                                <label for="exampleInputPassword1" class="control-label" style="margin-right: 20px;">
-                                                Password</label>
-                                                <input type="password" class="form-control txtmobile mb-2" id="exampleInputPassword1" placeholder="Password" name="password" value="Admin@123" required/>
-                                            </div>
-                                        </div>
-                                    
-                                        <div class="row mobtns">
-                                            <div class="col-md-12" style="display:inline-block; text-align: center;">
-                                                <button type="submit" class="btn btn-warning btn-lg btnmobile mt-2 dwidth" style="background-color: #FFA600;border: 1px;">
-                                                    Submit</button>
-                                                <button type="button" class="btn btn-warning btn-lg btnmobile mt-2 dwidth2" style="background-color:#0B5386;border: 1px;" data-toggle="modal" data-target="#myModal">Forgot Password?</button>
-                                                 <button type="button" class="btn btn-warning btn-lg btnmobile mt-2 dwidth" style="background-color: #0B5386;border: 1px;width:188px;"data-toggle="modal" data-target="#myModal2">Forgot Username?</button>
-                                            </div>
-                                            <div class="col-xs-12 d-sm-none d-md-none d-lg-none btnmobile btnmobiles">
-                                             <button type="submit" class="btn btn-warning btn-block btnmobile" style="background-color: #FFA600;border: 1px;width:100%;">
-                                                    Submit</button>
-                                                    <button type="button" class="btn btn-warning btn-block btnmobile" style="background-color:#0B5386;width:100%; " data-toggle="modal" data-target="#myModal">Forgot Password?</button>
-                                                    <button type="button" class="btn btn-warning btn-block btnmobile mt-2" style="background-color: #0B5386;border: 1px;width:100%;"    data-toggle="modal" data-target="#myModal2">Forgot Username?</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
                                 
                                 <div class="tab-pane active" id="Registration">
                                 <br>
@@ -230,7 +191,7 @@
                                             <!-- <label for="email" class="col-sm-2 control-label pdr20 ">
                                                First Name*</label> -->
                                             <div class="col-sm-6 ml25 pr5">
-                                                        <input id="first_name" type="text" class="form-control @error('first_name') is-invalid @enderror" name="first_name" value="{{ old('first_name') }}" required autocomplete="first_name" autofocus placeholder="First Name">
+                                                        <input id="first_name" type="text" class="form-control @error('first_name') is-invalid @enderror" name="first_name" value="{{ old('first_name') }}" required autocomplete="first_name" autofocus placeholder="@lang('site.First Name')">
 
                                 @error('first_name')
                                     <span class="invalid-feedback" role="alert">
@@ -241,7 +202,7 @@
                                             </div>
                                             <div class="col-sm-6 ml25 pl5">
                                                 
-                                                        <input id="last_name" type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" value="{{ old('last_name') }}" required autocomplete="last_name" autofocus placeholder="Last name">
+                                                        <input id="last_name" type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" value="{{ old('last_name') }}" required autocomplete="last_name" autofocus placeholder="@lang('site.Last name')">
 
                                 @error('last_name')
                                     <span class="invalid-feedback" role="alert">
@@ -262,7 +223,7 @@
                                                 Organization</label> -->
 
                                              <div class="col-sm-6 ml25 pr5">
-                                                 <input id="mobile_number" type="text" class="form-control @error('mobile_number') is-invalid @enderror" name="mobile_number" value="{{ old('mobile_number') }}" required autocomplete="mobile_number" placeholder="mobile" maxlength="15" minlength="8"  autofocus>
+                                                 <input id="mobile_number" type="text" class="form-control @error('mobile_number') is-invalid @enderror" name="mobile_number" value="{{ old('mobile_number') }}" required autocomplete="mobile_number" placeholder="@lang('site.Mobile')" maxlength="15" minlength="8"  autofocus>
 
                                 @error('mobile_number')
                                     <span class="invalid-feedback" role="alert">
@@ -272,7 +233,7 @@
                                             </div>
                                             
                                              <div class="col-sm-6 ml25 pl5">
-                                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="email">
+                                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="@lang('site.email')">
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -290,7 +251,7 @@
                                             <!-- <label for="mobile" class="col-sm-3  control-label pdr20">
                                                 Organization*</label> -->
                                             <div class="col-sm-12 ml25">
-                                                <input id="organization" type="text" class="form-control @error('organization') is-invalid @enderror" name="organization" value="{{ old('organization') }}" required autocomplete="organization" autofocus placeholder="Organization">
+                                                <input id="organization" type="text" class="form-control @error('organization') is-invalid @enderror" name="organization" value="{{ old('organization') }}" required autocomplete="organization" autofocus placeholder="@lang('site.Organization')">
 
                                 @error('organization')
                                     <span class="invalid-feedback" role="alert">
@@ -305,7 +266,7 @@
                                             <!-- <label for="username" class="col-sm-3  control-label pdr20">
                                                 Username*</label> -->
                                             <div class="col-sm-12 ml25">
-                                                <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus placeholder="Username">
+                                                <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus placeholder="@lang('site.Username')">
 
                                 @error('username')
                                     <span class="invalid-feedback" role="alert">
@@ -320,7 +281,7 @@
                                              <!-- <label for="password" class="col-sm-3 control-label pdr20">
                                                 Password*</label> -->
                                             <div class="col-sm-12 ml25">
-                                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="password">
+                                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="@lang('site.password')">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -333,7 +294,7 @@
                                              <!-- <label for="password" class="col-sm-3 control-label pdr20">
                                                 Password*</label> -->
                                             <div class="col-sm-12 ml25">
-                                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm password">
+                                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password_confirmation" required autocomplete="new-password" placeholder="@lang('site.Confirm password')">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -344,15 +305,15 @@
                                         </div>
                                         <div class="form-group row rdivmain">
                                             <label for="password" class="col-sm-3 control-label pdr20 rdiv">
-                                                Register As*</label>
+                                                @lang('site.registeras')*</label>
                                             <div class="col-sm-9 ml25">
                                                 <label class="radio-inline" style="margin-right: 10px;">
                                                      <input type="radio" name="actype" value="1" required="" style="
     margin-right: 5px;
-">User
+">@lang('site.User')
                                                 </label>
                                                 <label class="radio-inline">
-                                                      <input type="radio" name="actype" value="2" required="">Mediator
+                                                      <input type="radio" name="actype" value="2" required="">@lang('site.Mediator')
                                                 </label>
                                             </div>
                                         </div>
@@ -367,10 +328,10 @@
     
                                          <input type="hidden" id="captcha-response" name="captcha-response" />
                                          
-                                                <button type="submit" class="btn btn-warning btn-lg" style="background-color:#FFA600;" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait.."> Create Account </button>
+                                                <button type="submit" class="btn btn-warning btn-lg" style="background-color:#FFA600;" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait.."> @lang('site.createaccount') </button>
 
                                                 <button type="reset" style="background-color:#0B5386;"  class="btn btn-warning btn-lg">
-                                                    Reset</button>
+                                                    @lang('site.Reset')</button>
 
                                             </div>
 
@@ -392,57 +353,7 @@
         </div>
     </div>
     <!-- model for resetpassword -->
-                                <div class="modal fade" id="myModal" role="dialog">
-                                    <div class="modal-dialog modal-xs" style="width: 360px; margin-top: 80px;" >
-                                        <div class="modal-content frgpmobile">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">Forgot Password ?</h4>
-                                            </div>
-                                            <div class="modal-body">
-
-                                                <div class="form-group ">
-                                                    <label for="email" class="d-sm-none ">Enter Username</label>
-                                                    <input type="text" class="form-control fgmobile" id="username_reset" name="username_reset" placeholder="Username" >
-                                                </div>
-                                                <button type="button" class="btn btn-primary btn-lg" id="load2" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">Reset Password</button>
-                                                <br/>
-
-                                                <div>For any query contact <a href="mailto:info@presolve360.com">info@presolv360.com</a></div>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
                                 
-                                <!--End model for resetpassword -->
-                                
-                                
-                                
-                                <div class="modal fade" id="myModal2" role="dialog">
-                                    <div class="modal-dialog modal-xs" style="width: 360px;margin-top: 80px;" style="height:60%;">
-                                        <div class="modal-content frgpmobile">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">Forgot Username ?</h4>
-                                            </div>
-                                            <div class="modal-body">
-
-                                                <div class="form-group">
-                                                    <label for="email" class="d-sm-none ">Enter Email</label>
-                                                    <input type="text" class="form-control fgmobile" id="forgot_username_reset" name="forgot_username_reset" placeholder="Email" >
-                                                </div>
-                                                <button type="button" class="btn btn-primary btn-lg" id="load3" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">Reset Username</button>
-                                                <br/>
-
-                                                <div>For any query contact <a href="mailto:info@presolve360.com">info@presolv360.com</a></div>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
 
 
    <style type="text/css">
