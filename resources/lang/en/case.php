@@ -49,12 +49,16 @@ return [
     "status_rejected" => "Rejected",
     //table button
     "btn_case_details_view" => "Case Details View",
+    "btn_case_details" => "Case Details",
     "btn_case_details_edit" => "Case Details Edit",
     "btn_disclosure" => "Disclosure",
     "btn_private" => "Private",
     "btn_share" => "Share",
     "btn_close" => "Close",
     "btn_withdrawn" => "Withdrawn",
+    'btn_withdraw'=>'Withdraw',
+    'withdraw_modal_title'=>'Withdraw',
+    'withdraw_comment'=>'Withdraw Comment',
     "btn_accept" => "Accept",
     "btn_unresolved" => "Unresolved",
     "btn_resolved" => "Resolved",
@@ -147,5 +151,7 @@ return [
     "mediator_assigned_successfully" => "mediator assigned successfully!",
     "change_status" => "Change status",
     "conform_successfully" => "conform successfully",
+    "Sr. No"=>'Sr. No',
+    "At"=>"At",
 ];
 
