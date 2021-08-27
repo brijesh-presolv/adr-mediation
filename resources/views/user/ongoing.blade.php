@@ -6,8 +6,8 @@ use App\Models\InvoledUser;
 
 @section('breadcrumb')
       <!-- start page title -->
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Ongoing </a></li>
+       <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('site.Home')</a></li>
+       <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('site.Ongoing') </a></li>
     <!-- end page title -->
 @endsection
 
@@ -22,9 +22,9 @@ use App\Models\InvoledUser;
 
                                                 <div class="input-group mt-3">
                                                     @csrf
-                                                    <input type="text" id="joincode" name="joincode" class="form-control" placeholder="Enter the joincode" required>
+                                                    <input type="text" id="joincode" name="joincode" class="form-control" placeholder="@lang('site.Enter the joincode')" required>
                                                     <span class="input-group-append">
-                                                            <button type="submit" class="btn waves-effect waves-light btn-primary">GO</button>
+                                                            <button type="submit" class="btn waves-effect waves-light btn-primary">@lang('site.GO')</button>
                                                         </span>
                                                 </div>
 
@@ -35,20 +35,19 @@ use App\Models\InvoledUser;
     </div>
     <div class="col-sm-12">
         <div class="card-box table-responsive">
-            <h4 class="header-title"><b>Ongoing </b></h4>
+            <h4 class="header-title"><b>@lang('site.Ongoing') </b></h4>
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
-                        <th>Sr. No</th>
-                        <th>Case Id</th>
-                        <th>Date</th>
-                        <th>Case Details</th>
-                        <th>Party Details</th>
-                        <th>Mediator</th>
-
-                        <th>Session</th>
-                        <th>Action</th>
-                        <th>Status</th>
+                        <th>@lang('case.Sr. No')</th>
+                        <th>@lang('case.case_id')</th>
+                        <th>@lang('case.date')</th>
+                        <th>@lang('case.case_details')</th>
+                        <th>@lang('case.party_details')</th>
+                        <th>@lang('case.mediator')</th>
+                        <th>@lang('case.session')</th>
+                        <th>@lang('case.action')</th>
+                        <th>@lang('case.status_logs')</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,13 +71,13 @@ use App\Models\InvoledUser;
                         <td>{{$i++}}</td>
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
-                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->caseid)}}">View</a></td>
+                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->caseid)}}">@lang('case.btn_case_details')</a></td>
 
                         <td><?php
 
                         if(!isset($value->party)){ ?>
 
-                            <a href="invoke?id=<?= $value->id ?>" class="btn btn-sm btn-danger">Pending</a>
+                            <a href="invoke?id=<?= $value->id ?>" class="btn btn-sm btn-danger">@lang('site.Pending')</a>
 
                         <?php } 
 
@@ -115,7 +114,7 @@ use App\Models\InvoledUser;
 
                             <?php } if($value->consent>0){?>
                             <br>
-                            <a href="{{route('user.disclosures',$value->caseid)}}" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a>
+                            <a href="{{route('user.disclosures',$value->caseid)}}" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a>
                         <?php } ?>
                         </td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
@@ -123,7 +122,7 @@ use App\Models\InvoledUser;
 
                         <td>
                              <?php if($value->userid==Auth::user()->id){ ?>
-                        <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->caseid?>">Withdraw</button>
+                        <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->caseid?>">@lang('case.btn_withdraw')</button>
                         <br>
                     <?php } ?>
                     </td>
@@ -131,7 +130,7 @@ use App\Models\InvoledUser;
 
                         <td>
                             
-                            <span class="badge badge-success ">{{$value->casestatus->description}} | At: {{$value->casestatus->created}}
+                            <span class="badge badge-success ">{{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}
                         </td>
                         </tr>
                     <?php } ?>
@@ -147,7 +146,7 @@ use App\Models\InvoledUser;
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Session Records</h4>
+                <h4 class="modal-title text-white">@lang('case.session_title')</h4>
                 <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -156,12 +155,12 @@ use App\Models\InvoledUser;
             <div class="modal-body">
                 <table class="table" id="sessRecId">
                     <thead>
-                    <th scope="col">S.No. </th>
-                    <th scope="col">Scheduling done on:</th>
-                    <th scope="col">Session scheduled for:</th>
-                    <th scope="col">Zoom Id :</th>
-                    <th scope="col">Note :</th>
-                    <th scope="col">Party</th>
+                    <th scope="col">@lang('case.serial_number')</th>
+                    <th scope="col">@lang('case.scheduling_done_on')</th>
+                    <th scope="col">@lang('case.session_scheduled_for')</th>
+                    <th scope="col">@lang('case.session_zoom_id')</th>
+                    <th scope="col">@lang('case.session_note')</th>
+                    <th scope="col">@lang('case.session_meeting_user')</th>
                     </thead>
                     
                     <tbody>
@@ -170,7 +169,7 @@ use App\Models\InvoledUser;
                 <hr>    
                 <div class="text-center">
                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                        <span>Close</span>
+                         <span>@lang('case.btn_close')</span>
                     </button>  
                 </div>
             </div>
@@ -185,7 +184,7 @@ use App\Models\InvoledUser;
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">Withdraw</h5>
+                <h5 class="modal-title" id="withdrawModalLabel">@lang('case.withdraw_modal_title')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -196,13 +195,13 @@ use App\Models\InvoledUser;
                     @csrf
 
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Withdraw Comment:</label>
+                        <label for="message-text" class="col-form-label">@lang('case.withdraw_comment'):</label>
                         <textarea class="form-control" name="withdraw_comment"  required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Close Request</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
+                    <button type="submit" class="btn btn-primary">@lang('case.btn_close_request')</button>
                 </div>
             </form>
         </div>

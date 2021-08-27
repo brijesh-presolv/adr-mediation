@@ -316,7 +316,7 @@ function resolvsubmit(){
     </div>
     <div class="contact-content">
     <h4> Napisz do nas</h4>
-    <p><a href="mailto:info@presolv360.com" target="_top">info@pdmo24.pl</a></p>
+    <p><a href="mailto:info@pdm24.pl" target="_top">info@pdm24.pl</a></p>
     </div>
   </div>
 </div>

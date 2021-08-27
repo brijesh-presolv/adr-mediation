@@ -6,8 +6,8 @@ use App\Models\InvoledUser;
 
 @section('breadcrumb')
       <!-- start page title -->
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Pending </a></li>
+       <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('site.Home')</a></li>
+       <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('site.Pending') </a></li>
     <!-- end page title -->
 @endsection
 
@@ -19,12 +19,12 @@ use App\Models\InvoledUser;
             <table  id="datatable" id="" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
-                        <th>Sr. No</th>
-                        <th>Case Id</th>
-                        <th>Date</th>
-                        <th>Case Details</th>
-                        <th>Party Details</th>
-                        <td>Status</td>
+                        <th>@lang('case.Sr. No')</th>
+                        <th>@lang('case.case_id')</th>
+                        <th>@lang('case.date')</th>
+                        <th>@lang('case.case_details')</th>
+                        <th>@lang('case.party_details')</th>
+                        <th>@lang('case.status_logs')</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,14 +72,14 @@ use App\Models\InvoledUser;
                     } else { ?>
 
 
-                        <a href="invoke?id=<?= $value->id ?>" class="btn btn-danger btn-sm">Pending</a>
+                        <a href="invoke?id=<?= $value->id ?>" class="btn btn-danger btn-sm">@lang('site.Pending')</a>
 
                     <?php } ?>
 
 
 
                         </td>
-                        <td><span class="badge badge-danger">Pending</span></td>
+                        <td><span class="badge badge-danger">@lang('site.Pending')</span></td>
                         </tr>
                     <?php } ?>
                 </tbody>

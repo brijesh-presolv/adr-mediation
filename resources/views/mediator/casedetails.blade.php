@@ -26,7 +26,7 @@
                                 Name: {{ $case->party[0]->name}}<br>
                                 Emai: {{ $case->party[0]->userEmail}}<br>   
                                 Phone: {{ $case->party[0]->userPhone}}<br>
-                                Address: <?= $case->party[0]->address1.' '.$case->party[0]->address2.' '.$case->party[0]->city.'-'.$case->party[0]->pincode.', '.$case->party[0]->state.' '.$case->party[0]->country    ?><br>  
+                                Address: <?= $case->party[0]->address1.' '.$case->party[0]->address2.' '.$case->party[0]->city.','.$case->party[0]->pincode.', '.$case->party[0]->state.' '.$case->party[0]->country    ?><br>  
 
                                     
 
@@ -48,7 +48,7 @@
                                 Name: {{ $value->name}}<br>
                                 Emai: {{ $value->userEmail}}<br>    
                                 Phone: {{ $value->userPhone}}<br>
-                                Address: <?= $value->address1.' '.$value->address2.' '.$value->city.'-'.$value->pincode.', '.$value->state.' '.$value->country    ?><br><br>
+                                Address: <?= $value->address1.' '.$value->address2.' '.$value->city.','.$value->pincode.', '.$value->state.' '.$value->country    ?><br><br>
 
                             <?php 
                         }

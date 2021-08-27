@@ -169,7 +169,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">@lang('case.session_add_title')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span>&times;</span><span class="sr-only">Close</span>
+                    <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
                 </button>
             </div>
 

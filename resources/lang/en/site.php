@@ -22,9 +22,14 @@ return[
 'Enter Username'=>'Enter Username',
 'Reset Password'=>'Reset Password',
 'Reset Username'=>'Reset Username',
-
-
-
-
+'Dashboard'=>'Dashboard',
+'Pending'=>'Pending',
+'Ongoing'=>'Ongoing',
+'Closed'=>'Closed',
+'Rejected'=>'Rejected',
+'Profile'=>'Profile',
+'Home'=>'Home',
+'GO'=>'GO',
+'Enter the joincode'=>'Enter the joincode',
 
 ];

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>{{ config('app.name', 'Mediation') }}| @yield('title')</title>
+    <title>{{ config('app.name', 'Mediacje') }}| @yield('title')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Responsive bootstrap 4 admin template" name="description" />
     <meta content="Coderthemes" name="author" />
@@ -65,7 +65,7 @@
                 <a href="{{ url('/') }}" class="logo text-center" style="background-color:#fdfdfd ">
                     <span class="logo-lg">
                         <!-- <img src="{{ url('/') }}/assets/images/logo-light.png" alt="" height="18"> -->
-                        <span class="logo-lg-text-light" style="color: #575a65 ">Mediation</span>
+                        <span class="logo-lg-text-light" style="color: #575a65 ">Mediacje</span>
                     </span>
                     <span class="logo-sm">
                         <!-- <span class="logo-sm-text-dark">Z</span> -->
@@ -125,7 +125,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
-                            2020 - 2021 &copy; by <a href="">Mediation</a>
+                            2020 - 2021 &copy; by <a href="">Mediacje</a>
                         </div>
                     </div>
                 </div>
