@@ -22,7 +22,7 @@
                                 @lang('case.name'): {{ $case->party[0]->name}}<br>
                                 @lang('case.emai'): {{ $case->party[0]->userEmail}}<br>   
                                 @lang('case.phone'): {{ $case->party[0]->userPhone}}<br>
-                                @lang('case.address'): <?= $case->party[0]->address1 . ' ' . $case->party[0]->address2 . ' ' . $case->party[0]->city . '-' . $case->party[0]->pincode . ', ' . $case->party[0]->state . ' ' . $case->party[0]->country ?><br>  
+                                @lang('case.address'): <?= $case->party[0]->address1 . ' ' . $case->party[0]->address2 . ' ' . $case->party[0]->city . ',' . $case->party[0]->pincode . ', ' . $case->party[0]->state . ' ' . $case->party[0]->country ?><br>  
                             </td>
                         </tr>
                         <tr>
@@ -38,7 +38,7 @@
                                         @lang('case.name'): {{ $value->name}}<br>
                                         @lang('case.emai'): {{ $value->userEmail}}<br>    
                                         @lang('case.phone'): {{ $value->userPhone}}<br>
-                                        @lang('case.address'): <?= $value->address1 . ' ' . $value->address2 . ' ' . $value->city . '-' . $value->pincode . ', ' . $value->state . ' ' . $value->country ?><br><br>
+                                        @lang('case.address'): <?= $value->address1 . ' ' . $value->address2 . ' ' . $value->city . ',' . $value->pincode . ', ' . $value->state . ' ' . $value->country ?><br><br>
                                         <?php
                                     }
                                     $pcount++;
