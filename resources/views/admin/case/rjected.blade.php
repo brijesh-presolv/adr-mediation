@@ -154,7 +154,7 @@ $(document).on('click', ".reject", function () {
                 method: "post",
                 data: {id: id, '_token': csrf},
             }).done(function (data) {
-                userTable.ajax.reload();
+                userTable.ajax.reload(null, false);
                 swal("@lang('case.reject_successfully')", {
                     icon: "success",
                 });
@@ -189,7 +189,7 @@ $(document).on('submit', "#MidaterForm", function () {
                     method: "post",
                     data: {id: id, '_token': csrf},
                 }).done(function (data) {
-                    userTable.ajax.reload()
+                    userTable.ajax.reload(null, false)
                     swal("@lang('case.conform_successfully')", {
                         icon: "success",
                     });
