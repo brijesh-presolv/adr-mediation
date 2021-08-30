@@ -42,7 +42,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="phone">@lang('user.phone')</label>
-                            <input type="text" class="form-control" id="phone" name="mobile_number" value="{{ Auth::user()->mobile_number }}" data-validation="required number" data-validation-allowing="+- "  readonly>
+                            <input type="text" class="form-control" id="phone" name="mobile_number" value="{{ Auth::user()->mobile_number }}" data-validation="required custom length" data-validation-length="8-15" data-validation-regexp="^([0-9\s+-]+)$"  readonly>
                         </div>
                         <div class="form-group col-md-4">
                             <label for="address_line_1">@lang('user.address1')</label>
@@ -58,7 +58,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="pinCode">@lang('user.pincode')</label>
-                            <input type="text" class="form-control" id="pinCode" name="pincode" value="{{ Auth::user()->pincode }}" data-validation="required" >
+                            <input type="text" class="form-control" id="pinCode" name="pincode" value="{{ Auth::user()->pincode }}" data-validation="required length" data-validation-length="4-10" >
                         </div>
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>

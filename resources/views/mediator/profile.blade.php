@@ -139,7 +139,7 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="field-4" class="control-label">Mobile Number : </label>
-                                                <input type="text" name="mobile"  value="{{ $profileData->mobile_number }}" data-validation="required number" data-validation-allowing="+- "  class="form-control" id="field-4" >
+                                                <input type="text" name="mobile"  value="{{ $profileData->mobile_number }}" data-validation="required custom length" data-validation-length="8-15" data-validation-regexp="^([0-9\s+-]+)$"  class="form-control" id="field-4" >
                                             </div>
                                         </div>
                                     </div>

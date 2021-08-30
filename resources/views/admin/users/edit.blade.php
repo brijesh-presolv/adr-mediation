@@ -37,7 +37,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="mobile_number">@lang('user.phone')</label>
-                            <input type="text" class="form-control" id="mobile_number" name="mobile_number"  value="{{$user->mobile_number}}"  data-validation="required number" data-validation-allowing="+- ">
+                            <input type="text" class="form-control" id="mobile_number" name="mobile_number"  value="{{$user->mobile_number}}"  data-validation="required custom length" data-validation-length="8-15" data-validation-regexp="^([0-9\s+-]+)$">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="organization">@lang('user.organization')</label>
@@ -59,7 +59,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="country">country</label>
-                            <input list="countryData" class="form-control" id="country" name="country">
+                            <input list="countryData" class="form-control" id="country" name="country" data-validation="required length" data-validation-length="4-10">
                             <datalist id="countryData">
                                 <option>Polska</option>
                             </datalist>
