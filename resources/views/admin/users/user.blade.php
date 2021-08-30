@@ -137,7 +137,8 @@ $(document).on('change', ".status_change_approvel", function () {
         method: "post",
         data: {id: id, status: status, '_token': csrf},
     }).done(function (data) {
-        userTable.ajax.reload()
+        userTable.ajax.reload( null, false)
+        
     });
 });
 </script>
