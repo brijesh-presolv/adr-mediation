@@ -55,6 +55,7 @@
 var userTable = $('#users').DataTable({
     "ajax": '{{ route("admin.users.json",$role) }}',
     "responsive": true,
+    "pageLength":50,
     "columns": [
         {"data": "id"},
         {"data": "first_name",
