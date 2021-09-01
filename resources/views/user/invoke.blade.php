@@ -64,7 +64,7 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Phone <span style="color:red; ">*</span></label>
-                            <input type="number"class="form-control" value="<?= $user->mobile_number ?>"readonly >
+                            <input type="text"class="form-control" value="<?= $user->mobile_number ?>"readonly >
                         </div>
                     </div>
                 </div>
