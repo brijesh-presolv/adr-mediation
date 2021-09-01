@@ -125,7 +125,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
-                            2020 - 2021 &copy; by <a href="">Mediacje</a>
+                            2020 - 2021 &copy; by <a href="">{{ config('app.name', 'Mediation') }}</a>
                         </div>
                     </div>
                 </div>
