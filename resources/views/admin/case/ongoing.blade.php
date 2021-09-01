@@ -356,7 +356,7 @@ $(function () {
                     swal("@lang('case.mediator_assigned_successfully')", {
                         icon: "success",
                     });
-                    userTable.ajax.reload();
+                    userTable.ajax.reload(null, false);
                     $('#midaterAdd').modal("hide");
                 });
             } else {
@@ -455,7 +455,7 @@ $(function () {
                     data: $('#withdrawForm').serialize(),
                     success: function () {
                         // alert('form was submitted');
-                        userTable.ajax.reload();
+                        userTable.ajax.reload(null, false);
                         swal("@lang('case.status_change_successfully')", {
                             icon: "success",
                         });
