@@ -84,7 +84,7 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>City <span style="color:red; ">*</span></label>
-                            <input type="text" name="usercity" class="form-control" value="<?= ($user->city != 'NULL') ? $user->city : ''; ?>" <?= isreadonlys($user->city) ?> required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid city">
+                            <input type="text" name="usercity" class="form-control" value="<?= ($user->city != 'NULL') ? $user->city : ''; ?>" <?= isreadonlys($user->city) ?> required  data-smk-msg="Enter valid city">
                         </div>
                     </div>
                 </div>
@@ -194,7 +194,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>City <span style="color:red; ">*</span></label>
-                                <input name="city[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['city']) ? $InvoledUser[$i]['city'] : ''; ?>" <?= isreadonly($rows) ?>  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid city">
+                                <input name="city[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['city']) ? $InvoledUser[$i]['city'] : ''; ?>" <?= isreadonly($rows) ?>  required  data-smk-msg="Enter valid city">
                             </div>
                         </div>
                     </div>

@@ -84,7 +84,7 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>City <span style="color:red; ">*</span></label>
-                            <input type="text" name="usercity" class="form-control" value="<?= ($user->city != 'NULL') ? $user->city : ''; ?>"  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid city">
+                            <input type="text" name="usercity" class="form-control" value="<?= ($user->city != 'NULL') ? $user->city : ''; ?>"  required  data-smk-msg="Enter valid city">
                         </div>
                     </div>
                 </div>
@@ -98,13 +98,13 @@ function isreadonlys($rows) {
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
-                            <input type="text" name="userstate" class="form-control" value="<?= ($user->state !='NULL') ? $user->state : ''; ?>"  required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state" list="stateData">
+                            <input type="text" name="userstate" class="form-control" value="<?= ($user->state !='NULL') ? $user->state : ''; ?>"  required=""  data-smk-msg="Enter valid state" list="stateData">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Country <span style="color:red; ">*</span></label>
-                            <input type="text" list="countryData" name="usercountry" class="form-control" value="<?= ($user->country != 'NULL') ? $user->country : ''; ?>"  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid country">
+                            <input type="text" list="countryData" name="usercountry" class="form-control" value="<?= ($user->country != 'NULL') ? $user->country : ''; ?>"  required  data-smk-msg="Enter valid country">
                         </div>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>City <span style="color:red; ">*</span></label>
-                                <input name="city[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['city']) ? $InvoledUser[$i]['city'] : ''; ?>"  required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid city">
+                                <input name="city[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['city']) ? $InvoledUser[$i]['city'] : ''; ?>"  required  data-smk-msg="Enter valid city">
                             </div>
                         </div>
                     </div>
@@ -186,13 +186,13 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>State <span style="color:red; ">*</span></label>
-                                <input name="state[]"  list="stateData"  type="text" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>"   required="" data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid state">
+                                <input name="state[]"  list="stateData"  type="text" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>"   required=""  data-smk-msg="Enter valid state">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Country <span style="color:red; ">*</span></label>
-                                <input list="countryData" name="country[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : ''; ?>"   required data-smk-pattern="[a-zA-Z\s]{2,100}" data-smk-msg="Enter valid country">
+                                <input list="countryData" name="country[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : ''; ?>"   required  data-smk-msg="Enter valid country">
                                 <input type="hidden" name="invid[]" class="form-control" value="{{$InvoledUser[$i]['id']}}" >
                             </div>
                         </div>

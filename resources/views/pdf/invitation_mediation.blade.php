@@ -97,7 +97,7 @@ $ldate = $lastdate->format('d-m-Y');
         <tr>
             <td >
                 <p>{{$party[0]->name}}</p>
-                <p>{{$party[0]->address1}} {{$party[0]->address2}}, {{$party[0]->city}} - {{$party[0]->pincode}}</p>
+                <p>{{$party[0]->address1}} {{$party[0]->address2}}, {{$party[0]->city}}, {{$party[0]->pincode}}</p>
                 <p>{{$party[0]->state}} {{$party[0]->country}}</p>
                 <p>{{$party[0]->userEmail}}</p>
                 <p>{{$party[0]->userPhone}}</p>
@@ -107,7 +107,7 @@ $ldate = $lastdate->format('d-m-Y');
                 @foreach($party as $key=>$p)
                 @if($key!=0)
                 <p>{{$p->name}}</p>
-                <p>{{$p->address1}} {{$p->address2}}, {{$p->city}} - {{$p->pincode}}</p>
+                <p>{{$p->address1}} {{$p->address2}}, {{$p->city}}, {{$p->pincode}}</p>
                 <p>{{$p->state}} {{$p->country}}</p>
                 <p>{{$p->userEmail}}</p>
                 <p>{{$p->userPhone}}</p>

@@ -22,7 +22,7 @@
                                 @lang('case.name'): {{ $case->party[0]->name}}<br>
                                 @lang('case.emai'): {{ $case->party[0]->userEmail}}<br>   
                                 @lang('case.phone'): {{ $case->party[0]->userPhone}}<br>
-                                @lang('case.address'): <?= $case->party[0]->address1 . ' ' . $case->party[0]->address2 . ' ' . $case->party[0]->city . ',' . $case->party[0]->pincode . ', ' . $case->party[0]->state . ' ' . $case->party[0]->country ?><br>  
+                                @lang('case.address'): <?= $case->party[0]->address1 . ' ' . $case->party[0]->address2 . ' ' . $case->party[0]->city . ', ' . $case->party[0]->pincode . ', ' . $case->party[0]->state . ' ' . $case->party[0]->country ?><br>  
                             </td>
                         </tr>
                         <tr>
@@ -38,7 +38,7 @@
                                         @lang('case.name'): {{ $value->name}}<br>
                                         @lang('case.emai'): {{ $value->userEmail}}<br>    
                                         @lang('case.phone'): {{ $value->userPhone}}<br>
-                                        @lang('case.address'): <?= $value->address1 . ' ' . $value->address2 . ' ' . $value->city . ',' . $value->pincode . ', ' . $value->state . ' ' . $value->country ?><br><br>
+                                        @lang('case.address'): <?= $value->address1 . ' ' . $value->address2 . ' ' . $value->city . ', ' . $value->pincode . ', ' . $value->state . ' ' . $value->country ?><br><br>
                                         <?php
                                     }
                                     $pcount++;
@@ -50,23 +50,7 @@
                             <td>@lang('case.issue')</td>
                             <td>{{$case->issue}}</td>
                         </tr>
-                        <tr>
-                            <td>@lang('case.supporting_document_user')</td>
-                            <td>
-
-                                <?php
-                                if ($case->documentPath) {
-
-                                    $doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->documentPath;
-                                    ?>
-
-                                    <a href="{{url($doc)}}" target="_blank">@lang('case.view')</a>
-                                <?php } else { ?>
-
-                                    @lang('case.na')
-                                <?php } ?>
-                            </td>
-                        </tr>
+                        
                         <?php if ($case->mfirstname) { ?>
                             <tr>
                                 <td>@lang('case.mediator')</td>
@@ -89,6 +73,28 @@
                             </td>
                         </tr>
                     </table>
+                    <?php if($case->documentPath){ $doc='storage/app/public/mediation/'.$case->id.'/'.$case->documentPath;
+                                    ?>
+
+                                     <table class="table table-bordered">
+
+                         <tr >
+                            <th colspan="2">Supporting document (User)</th>
+                        </tr>
+
+
+
+                    <tr>
+                        <td><?= basename($case->documentPath)?></td>
+                            
+                            <td>
+
+                               <a href="{{url($doc)}}" target="_blank">Download</a>
+                                
+                            </td>
+                        </tr>
+                        </table>
+                    <?php } ?>
                     <?php if (count($case->supporting_document) > 0) { ?>
                         <table class="table table-bordered">
                             <tr >

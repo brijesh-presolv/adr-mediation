@@ -189,7 +189,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="state">@lang('user.state')</label>
-                                                <input type="text" list="stateData"  class="form-control" id="state" name="state">
+                                                <input type="text" list="stateData"  class="form-control" id="state" name="state" value="{{ $profileData->state }}">
                                                 <datalist id="stateData">
                                                     <option>
                                                         dolnośląskie
@@ -247,9 +247,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="country">country</label>
-                                                <select class="form-control" id="country" name="country">
-                                                    <option>Polska</option>
-                                                </select>
+                                                <input type="text" class="form-control" id="country" name="country" required="" value="{{ $profileData->country }}">
                                             </div>
                                         </div>
                                     </div>
