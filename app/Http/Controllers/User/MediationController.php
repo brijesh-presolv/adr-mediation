@@ -18,11 +18,14 @@ use Session;
 use Auth;
 use Validator;
 use DB;
+use Exception;
 use PDF;
 
-class MediationController extends Controller {
+class MediationController extends Controller
+{
 
-    public function invoke(Request $request) {
+    public function invoke(Request $request)
+    {
 
 
 
@@ -54,7 +57,7 @@ class MediationController extends Controller {
 
 
 
-            //upload file 
+            //upload file
             $filename = '';
             if ($request->file('document') !== null) {
 
@@ -172,10 +175,10 @@ class MediationController extends Controller {
 
 
             $cid = "M" . sprintf("%06d", $med->id);
-            
 
-             $e=Email::send($usr->email,'00838919-cdac-4515-ba1d-fa98918036b5',['-caseid-'=>$cid,],$usr->first_name . ' ' . $usr->last_name);
-            
+
+            $e = Email::send($usr->email, '00838919-cdac-4515-ba1d-fa98918036b5', ['-caseid-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
+
 
 
             return redirect()->route('user.newrequest')->with(['response' => 'success']);
@@ -186,7 +189,8 @@ class MediationController extends Controller {
         return view('user.invoke', ['user' => Auth::user(), 'InvoledUser' => $InvoledUser, 'medcase' => $med]);
     }
 
-    public function newcase(Request $request) {
+    public function newcase(Request $request)
+    {
 
 
         if ($request->session()->has('newcase')) {
@@ -218,7 +222,8 @@ class MediationController extends Controller {
         }
     }
 
-    public function joinCode() {
+    public function joinCode()
+    {
 
         $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $string = '';
@@ -230,7 +235,8 @@ class MediationController extends Controller {
         return $string;
     }
 
-    public function join(Request $request) {
+    public function join(Request $request)
+    {
 
 
 
@@ -274,7 +280,7 @@ class MediationController extends Controller {
 
                 $party_name = $InvoledUser->name;
 
-                $e=Email::send($InvoledUserP1->userEmail,'8c86c224-75e5-4cfd-8bc2-f3305df4d3f3',['-caseid-'=>$id,'-partyname-'=>$party_name],$InvoledUserP1->name);
+                $e = Email::send($InvoledUserP1->userEmail, '8c86c224-75e5-4cfd-8bc2-f3305df4d3f3', ['-caseid-' => $id, '-partyname-' => $party_name], $InvoledUserP1->name);
 
 
 
@@ -288,7 +294,8 @@ class MediationController extends Controller {
         }
     }
 
-    public function newrequest(Request $request) {
+    public function newrequest(Request $request)
+    {
 
 
 
@@ -310,20 +317,21 @@ class MediationController extends Controller {
         return view('user.newrequest', ['pending' => $pending, 'response' => Session::get('response')]);
     }
 
-    public function ongoing() {
+    public function ongoing()
+    {
 
 
         // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"),'consent_disclosures.id as consent','mediators_mediation_cases_status.status as mstatus')
-                ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 1])
-                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-                ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
-                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-                ->orderby('mediation_case.id', 'DESC')
-                ->get();
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus')
+            ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 1])
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->orderby('mediation_case.id', 'DESC')
+            ->get();
 
         $ongoing = [];
 
@@ -339,16 +347,17 @@ class MediationController extends Controller {
         return view('user.ongoing', ['ongoing' => $ongoing]);
     }
 
-    public function closed() {
+    public function closed()
+    {
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'mediation_case.withdraw','consent_disclosures.id as consent','mediators_mediation_cases_status.status as mstatus')
-                ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
-                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-                ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
-                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-                ->orderby('mediation_case.id', 'DESC')
-                ->get();
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'mediation_case.withdraw', 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus')
+            ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->orderby('mediation_case.id', 'DESC')
+            ->get();
 
         $closed = [];
 
@@ -380,12 +389,13 @@ class MediationController extends Controller {
         return view('user.closed', ['closed' => $closed]);
     }
 
-    public function rejected() {
+    public function rejected()
+    {
 
         $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', 'mediation_case.withdraw')
-                ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 3])
-                ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-                ->get();
+            ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 3])
+            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->get();
 
         $closed = [];
 
@@ -404,7 +414,8 @@ class MediationController extends Controller {
         return view('user.rejected', ['closed' => $closed]);
     }
 
-    public function sessions(Request $request) {
+    public function sessions(Request $request)
+    {
 
 
         $sessionData = DB::table('manage_session')->where('case_id', $request->caseid)->get();
@@ -434,15 +445,16 @@ class MediationController extends Controller {
         // return $sessionData;
     }
 
-    public function casedetails($id) {
+    public function casedetails($id)
+    {
 
 
 
         $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
-                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where('mediation_case.id', '=', $id)
-                ->first();
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where('mediation_case.id', '=', $id)
+            ->first();
 
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
@@ -455,7 +467,8 @@ class MediationController extends Controller {
         return view('user.casedetails', compact("case"));
     }
 
-    public function withdraw(Request $request) {
+    public function withdraw(Request $request)
+    {
 
 
 
@@ -464,35 +477,34 @@ class MediationController extends Controller {
         $user->withdraw = $request->withdraw_comment;
         $user->save();
 
-           //p1
+        //p1
 
-            $cid = "M" . sprintf("%06d", $request->case_id);
+        $cid = "M" . sprintf("%06d", $request->case_id);
 
 
-        
+
 
         $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $request->case_id])->first();
 
-        $e=Email::send($InvoledUserP1->userEmail,'a469fac2-a496-43dd-a64a-bc5fbd782880',['-caseid-'=>$cid,'-type-'=>'Party'],$InvoledUserP1->name);
+        $e = Email::send($InvoledUserP1->userEmail, 'a469fac2-a496-43dd-a64a-bc5fbd782880', ['-caseid-' => $cid, '-type-' => 'Party'], $InvoledUserP1->name);
 
 
         //other
 
-         $InvoledUser = InvoledUser::where(['userPlanId' => $request->case_id])->where('isClaimant', '<>', '0')->get();
+        $InvoledUser = InvoledUser::where(['userPlanId' => $request->case_id])->where('isClaimant', '<>', '0')->get();
 
 
 
 
-         foreach ($InvoledUser as $key => $value) {
-             
-             $e=Email::send($value->userEmail,'048a86d0-f750-4c99-9718-64529ca45725',['-caseid-'=>$cid,'-partyname-'=>$InvoledUserP1->name],$value->name);
+        foreach ($InvoledUser as $key => $value) {
 
-         }
+            $e = Email::send($value->userEmail, '048a86d0-f750-4c99-9718-64529ca45725', ['-caseid-' => $cid, '-partyname-' => $InvoledUserP1->name], $value->name);
+        }
 
 
-         
 
-     
+
+
 
         $mediation_status_log = new Mediation_status_log;
         $mediation_status_log->user_id = Auth::user()->id;
@@ -509,12 +521,13 @@ class MediationController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function viewSettelment(Request $request) {
+    public function viewSettelment(Request $request)
+    {
 
         $sessionData = DB::table('document_settlements')
-                ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
-                ->where('document_settlements.mediation_case_id', $request->id)
-                ->get();
+            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+            ->where('document_settlements.mediation_case_id', $request->id)
+            ->get();
         $sn = 1;
         foreach ($sessionData as $value) {
 
@@ -529,12 +542,13 @@ class MediationController extends Controller {
         //return;
     }
 
-    public function getConsentAndDisclosures($id) {
+    public function getConsentAndDisclosures($id)
+    {
         $data["case"] = MedCase::where("id", "=", $id)->first();
         $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
-                ->where("mediation_case_id", "=", $id)
-                ->first();
+            ->where("mediation_case_id", "=", $id)
+            ->first();
         if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
             return abort(404);
         }
@@ -542,4 +556,209 @@ class MediationController extends Controller {
         return $pdf->stream('document.pdf');
     }
 
+    public function csvToArray($file)
+    {
+        $rows = array();
+        $headers = array();
+        if (file_exists($file) && is_readable($file)) {
+            $handle = fopen($file, 'r');
+            while (!feof($handle)) {
+                $row = fgetcsv($handle, 10240, ',', '"');
+                if (empty($headers))
+                    $headers = $row;
+                else if (is_array($row)) {
+                    array_splice($row, count($headers));
+                    //$rows[] = array_combine($headers, $row);
+                    $rows[] = $row;
+                }
+            }
+            fclose($handle);
+        } else {
+            throw new Exception($file . ' doesn`t exist or is not readable.');
+        }
+        return $rows;
+    }
+
+    public function bulkUpload(Request $request)
+    {
+        $_SESSION['last_uploaded_id'] = '';
+        $uploaded_by = $request->uploaded_by;
+        /*upload*/
+        $uploaded_excel = '';
+        $claimantid = $request->claimant;
+        $cldetails = User::find($claimantid);
+
+        $selectCsv = $request->file('csv');
+        $tmpName = $selectCsv->getPathname();
+
+        $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
+        $errormsg = '';
+
+        if ($ext != 'csv') {
+            $errormsg .= 'Please upload csv file';
+        }
+        // dd($errormsg);
+        if ($errormsg == '') {
+            $csv = $this->csvToArray($tmpName);
+            // dd($csv);
+            if (count($csv[0]) != 21) {
+                $errormsg .= "Invalid csv file";
+            }
+            $errormsg .= '';
+            foreach ($csv as $key => $v) {
+                $i = $key + 1;
+
+                for ($n = 1; $n < 16; $n++) {
+                    if ($v[$n] == '' and $n != 3) {
+                        $errormsg .= "Please fill all the required details to proceed at line no $i ";
+                    }
+                }
+                if ($v[3] == '') {
+                    $errormsg .= "Please Enter EmailId at line no $i ";
+                }
+                if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
+                    $errormsg .= "Invalid mobile number at line no $i ";
+                }
+
+                if (strlen($v[4]) != 10) {
+                    $errormsg .= "Invalid mobile number at line no $i ";
+                }
+
+                // validate pincode
+                if (!filter_var($v[8], FILTER_SANITIZE_NUMBER_INT)) {
+                    $errormsg .= "Invalid pincode at line no $i ";
+                }
+
+                if (strlen($v[8]) != 6) {
+                    $errormsg .= "Invalid pincode at line no $i ";
+                }
+
+                //validate date
+                if (strpos($v[12], '-')) {
+                    $dt = str_replace('-', '/', $v[12]);
+                    $v[12] = $dt;
+                }
+
+                $dt = explode('/', $v[12]);
+
+                if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
+
+                    $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
+                }
+
+                if ($v[19] != 'Yes') {
+                    $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
+                }
+
+                if ($v[20] != 'Yes') {
+
+                    $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
+                }
+            }
+        }
+        if ($errormsg != '') {
+
+            return redirect('/user/newrequest')->with(['error' => $errormsg]);
+
+            exit();
+        }
+        if (1 == 1) {
+
+            //save file
+            $file = $request->file('csv');
+            $destinationPath = 'storage/uploaded';
+
+            $extension = $file->getClientOriginalExtension();
+            $fileName = time() . '.' . $extension;
+
+            if ($file->move($destinationPath, $fileName)) {
+                $uploaded_excel .= $fileName;
+            }
+        }
+        // dd($cldetails);
+        //store in database
+        foreach ($csv as $k => $value) {
+            $data['userid'] = $uploaded_by;
+            $data['disputeCategory'] = $value['0'];
+            $data['noOfParties'] = count($csv);
+            $data['amount'] = $value['1'];
+            $data['issue'] = $value['14'];
+            $data['confirm_status'] = 0;
+            $med = MedCase::create($data);
+
+            $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $uploaded_by])->first();
+
+            if (!$iniParty) {
+                // add initiating party
+                $iniParty = new InvoledUser();
+
+                $iniParty->userId = $cldetails->id;
+                $iniParty->userPlanId = $med->id;
+                $iniParty->userEmail = $cldetails->email;
+                $iniParty->userPhone = $cldetails->mobile_number;
+                $iniParty->name = $cldetails->first_name . ' ' . $cldetails->last_name;
+                $iniParty->address1 = $cldetails->address;
+                $iniParty->address2 = $cldetails->address1;
+                $iniParty->city = $cldetails->city;
+                $iniParty->pincode = $cldetails->pincode;
+                $iniParty->state = $cldetails->state;
+                $iniParty->country = $cldetails->country;
+                $iniParty->created_at = date('Y-m-d H:s:i');
+                $iniParty->updated_at = date('Y-m-d H:s:i');
+                $iniParty->save();
+            }
+            //add responding party
+            $resParty = new InvoledUser();
+            $resParty->userPlanId = $med->id;
+            $resParty->userEmail = $value['3'];
+            $resParty->userPhone = $value['4'];
+            $resParty->name = $value['2'];
+            $resParty->joinCode = $this->joinCode();
+            $resParty->address1 = $value['5'];
+            $resParty->address2 = $value['6'];
+            $resParty->city = $value['7'];
+            $resParty->pincode = $value['8'];
+            $resParty->state = $value['9'];
+            $resParty->country = $value['10'];
+            $resParty->created_at = date('Y-m-d H:s:i');
+            $resParty->updated_at = date('Y-m-d H:s:i');
+            $resParty->save();
+        }
+
+        return redirect('/user/newrequest')->with(['success' => 'Success']);
+    }
+
+    public function documentUpload(Request $request, $id)
+    {
+
+        $selectDocument = $request->file('document');
+
+        $errormsg = '';
+
+        $med = MedCase::find($id);
+
+        if ($selectDocument !== null) {
+
+            // $errormsg .= $request->validate([
+            //     'document' => 'mimes:pdf,zip,rar|max:20048',
+            // ]);
+
+            $filename = 'supporting_document' . $med->id . time() . '.' . $selectDocument->getClientOriginalExtension();
+            // dd($filename);
+
+            $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
+            $med->documentPath = $filename;
+            $med->save();
+            return redirect('/user/newrequest')->with(['success' => 'Success']);
+        } else {
+            $errormsg .= "Please Select Document";
+        }
+
+        if ($errormsg != '') {
+
+            return redirect('/user/newrequest')->with(['error' => $errormsg]);
+
+            exit();
+        }
+    }
 }

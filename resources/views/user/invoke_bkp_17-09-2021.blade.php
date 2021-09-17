@@ -247,7 +247,28 @@ function isreadonlys($rows) {
                             <textarea class="form-control" rows="4" name="issue" required=""><?= $medcase->issue ?></textarea>
                         </div>
                     </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Supporting document</label><br>
+                            <?php if ($rows == 0) { ?>
+                                <input class="form-control dropify" type="file" name="document" data-allowed-file-extensions="pdf zip png jpg jpeg"  data-max-file-size="20M"></input>
+                                <p>*Only Pdf zip png and jpg file allowed</p>
+                                <?php
+                            } else {
+                                if ($medcase->documentPath != '') {
+                                    ?>
 
+                                    <a href="<?= public_path('mediation') . '/' . $medcase->id . '/' . $medcase->documentPath ?>" class="btn btn-success btn-sm" >Supporting Document</a>
+
+                                    <?php
+                                } else {
+                                    echo "Not avalable";
+                                }
+                            }
+                            ?>
+                            <!-- {{$errors->document}} -->
+                        </div>
+                    </div>
                 </div>
             </section>
         </form>

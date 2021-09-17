@@ -3,13 +3,13 @@
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
-Route::get('/clear-cache', function() {
+Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
-	Artisan::call('view:clear');
+    Artisan::call('view:clear');
     return "Cache is cleared";
 });
-Route::get('/admin/login', function() {
+Route::get('/admin/login', function () {
     Auth::logout();
     return view('admin.login');
 });
@@ -20,9 +20,9 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::match(['POST'], '/mediation', [App\Http\Controllers\HomeController::class, 'mediation'])->name('mediation');
 
-Route::match(['POST','GET'], '/forgotpassword', [App\Http\Controllers\HomeController::class, 'forgotpassword'])->name('forgotpassword');
-Route::match(['POST','GET'], '/forgotusername', [App\Http\Controllers\HomeController::class, 'forgotusername'])->name('forgotusername');
-Route::match(['POST','GET'], '/resendotp', [App\Http\Controllers\HomeController::class, 'resendotp'])->name('resendotp');
+Route::match(['POST', 'GET'], '/forgotpassword', [App\Http\Controllers\HomeController::class, 'forgotpassword'])->name('forgotpassword');
+Route::match(['POST', 'GET'], '/forgotusername', [App\Http\Controllers\HomeController::class, 'forgotusername'])->name('forgotusername');
+Route::match(['POST', 'GET'], '/resendotp', [App\Http\Controllers\HomeController::class, 'resendotp'])->name('resendotp');
 
 
 
@@ -67,6 +67,10 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::post('edit-profile/{id}', [App\Http\Controllers\User\ProfileController::class, 'updateProfile'])->name('user.profile.update');
 
     Route::get('change-password/{id}', [App\Http\Controllers\User\ProfileController::class, 'changePassword'])->name('user.change.password');
+
+    //bulk upload
+    Route::post('bulkupload', [App\Http\Controllers\User\MediationController::class, 'bulkUpload'])->name('user.bulkUpload');
+    Route::put('uploaddocument/{id}', [App\Http\Controllers\User\MediationController::class, 'documentUpload'])->name('user.documentUpload');
 });
 
 
@@ -123,10 +127,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('users/update', [App\Http\Controllers\Admin\UsersController::class, 'update'])->name('admin.users.update');
     Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
     Route::post('users/status-change-approve', [App\Http\Controllers\Admin\UsersController::class, 'statusChangeApprove'])->name('admin.users.status_change_approvel');
-//    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
-//    Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
-//    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
-//    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
+    //    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
+    //    Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
+    //    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
+    //    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
     //case
     Route::get('casedetails/{id}', [App\Http\Controllers\Admin\CaseController::class, 'casedetails'])->name('admin.case.casedetails');
     Route::get('case/new-request', [App\Http\Controllers\Admin\CaseController::class, 'index'])->name('admin.case.newrequest');
@@ -147,6 +151,5 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('view-supporting', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
 
-    Route::match(['post','get'],'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
-
+    Route::match(['post', 'get'], 'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
 });

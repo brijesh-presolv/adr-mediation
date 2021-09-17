@@ -12,10 +12,64 @@ use App\Models\InvoledUser;
 @endsection
 
 @section('content')
+
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
             <!-- <h4 class="header-title"><b>New Request</b></h4> -->
+            <div class="row">
+                <div class="col-md-12">
+                        <button class="btn btn-primary btn-sm" data-target="#myModalbupld" data-toggle="modal"> Bulk Upload</button>
+                  <br>
+                  <br>
+                </div>
+           </div>
+           <div id="myModalbupld" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+
+                        <div class="blkfrmdiv">
+                            <h3>Upload .csv file</h3>
+                           <form enctype="multipart/form-data" method="post" action="{{route('user.bulkUpload')}}">
+                            {{ csrf_field() }}
+                                    <input type="hidden" name="token" id="token_input">
+
+                                    <input type="hidden" name="claimant" value="{{auth()->user()->id}}">
+
+                                     <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" />
+
+                                <div class="form-group">
+                                    <input type="file" name="csv" id="fileInput" onchange="" class="col-md-12 dropify" data-allowed-file-extensions="csv" required="" data-max-file-size="20M" />
+                                </div>
+
+    <input type="Submit"  value="Submit" class="btn btn-primary blkupdbtnsb">
+    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
+        <span>@lang('case.btn_close')</span>
+   </button>
+                            </form>
+
+                        </div>
+                          {{-- <div class="loading_form" style="display: none;">
+                        <center>
+
+                            </center>
+                        <center><p>Please Wait. Do Not Close Until Close Button Appear.</p></center>
+
+                        <div style="height: 200px;
+        overflow-y: scroll;" id="mess">
+
+                        </div>
+                        <!-- <a>Close</a> -->
+                    </div> --}}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
             <table  id="datatable" id="" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -25,11 +79,12 @@ use App\Models\InvoledUser;
                         <th>@lang('case.case_details')</th>
                         <th>@lang('case.party_details')</th>
                         <th>@lang('case.status_logs')</th>
+                        <th>@lang('Supporting Document')</th>
                     </tr>
                 </thead>
                 <tbody>
 
-                    <?php 
+                    <?php
                     $i=1;
                     $id='';
 
@@ -39,7 +94,7 @@ use App\Models\InvoledUser;
                      ?>
                      <tr>
 
-                        <?php 
+                        <?php
 
                         if($value->id==$id){
                             continue;
@@ -55,7 +110,7 @@ use App\Models\InvoledUser;
                         <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" href="{{route('user.casedetails',$value->id)}}" >View</a></td>
 
                         <td>
-  
+
                             <?php
 
                         if(isset($value->party) and count($value->party)>0){
@@ -67,7 +122,7 @@ use App\Models\InvoledUser;
                             } else{
                                 echo '<span class="text-danger">'.$v->name.'</span></br>';
                             }
-                            
+
                         }
                     } else { ?>
 
@@ -80,7 +135,27 @@ use App\Models\InvoledUser;
 
                         </td>
                         <td><span class="badge badge-danger">@lang('site.Pending')</span></td>
-                        </tr>
+                        <td><div class="form-group">
+
+                                <?php
+
+                                if ($value->documentPath !== 'NULL') {
+                                    ?>
+                                    <p  class="btn btn-success btn-sm">{{$value->documentPath}}</p>
+                                    <?php
+                                } else {?>
+                                    <form action="{{route('user.documentUpload', $value->id)}}"  method="post" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
+                                    <input class="form-control dropify" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
+                                    <p>*Only Pdf zip and rar file allowed</p>
+                                    <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
+                                    </form>
+                                <?php }
+
+                            ?>
+                        </div></td>
+                    </tr>
                     <?php } ?>
                 </tbody>
             </table>
@@ -91,10 +166,10 @@ use App\Models\InvoledUser;
 
  <!-- Table datatable css -->
 @section('head')
-  
+
     <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    
+
 @endsection
 
 
@@ -109,9 +184,30 @@ use App\Models\InvoledUser;
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script type="text/javascript">
-        
+
+
+
      $(document).ready(function(){
 
+        <?php if(session()->has('success')) {?>
+        swal({
+            title: '{{session()->get("success")}}',
+            // text: "Withdraw case!",
+            icon: "success",
+            buttons: true,
+        }).then(function() {
+    window.location ="{{route('user.newrequest')}}"});
+
+    <?php } if(session()->has('error')) {?>
+        swal({
+            title: "Error",
+            text: '{{session()->get("error")}}',
+            icon: "error",
+            buttons: true,
+            dangerMode: true,
+        }).then(function() {
+    window.location ="{{route('user.newrequest')}}"});
+    <?php } ?>
 
         <?php if($response=='success'){ ?>
 
@@ -122,7 +218,7 @@ use App\Models\InvoledUser;
 
 <?php } ?>
 
-        
+
 
     //withdraw the case
 
