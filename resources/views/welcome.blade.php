@@ -21,8 +21,8 @@
       <div class="row">
         <div class="col-12">
 
-          <h1>Pomagamy zakończyć <br>spory ugodą z mocą <br> orzeczenia sądu.</h1>
-                  <h2>Szybko. Efektywnie. Skutecznie.</h2>
+          <h1>Online dispute resolution<br>platform to resolve legal<br>disputes and achieve<br>settlements in record time</h1>
+                  <h2>Easy. Efficient. Enforceable.</h2>
 
                </div>
         
@@ -31,12 +31,12 @@
       
             <div class="row ">
         <div class="col-12 bannerbtn">
-                <a href="#howitwork" class="btn btn-circle-y">Rozpocznij </a>
+                <a href="#howitwork" class="btn btn-circle-y">Get Started </a>
                 <!-- <a href="" class="btn btn-circle-y ml-3" data-toggle="modal" data-target="#myModal">Watch Video </a> -->
               </div>
              </div><div class="row">
         <div class="col-12 toc mt-5">
-                <a href="https://presolv360.com/secure_terms_conditions"><p>*<span style="color: #ffa600"><b><u>Zaakceptuj nasz regulamin i warunki</u></b></span></p></a>
+                <a href="https://presolv360.com/secure_terms_conditions"><p>*<span style="color: #ffa600"><b><u>Accept our terms and conditions</u></b></span></p></a>
               </div>
       </div>
 
@@ -58,7 +58,7 @@
 
       <div class="col-12 tsection">
         <!-- <img src="https://presolv360.com/asset/img/logo-21.png"> -->
-        <p>Nasz portal jest uznany przez Sądy Powszechne</p>
+        <p>Our website is recognized by the Common Courts</p>
       </div>
     </div>
   </div>
@@ -75,9 +75,8 @@
       
 
       <div class="col-12 tabcentertext" id="howitworks">
-         <center><h2>OFERUJEMY MEDIACJE ONLINE</h2></center>
-         <center><p>Korzystając z nowatorskich rozwiązań technologicznych umożliwiamy stronom bezpieczną, poufną
-i efektywną komunikację wraz z uzgodnieniem i podpisaniem warunków ugody online.</p></center>
+         <center><h2>WE OFFER ONLINE MEDIATION</h2></center>
+         <center><p>KUsing innovative technological solutions, we enable the parties to communicate securely, confidentially and effectively, along with agreeing and signing the terms of the settlement online.</p></center>
       </div>
 
     </div>
@@ -106,10 +105,7 @@ i efektywną komunikację wraz z uzgodnieniem i podpisaniem warunków ugody onli
           <div class="card">
             <div class="card-body">
           <img src="https://presolv360.com/asset/img/test2111.png" style="max-width: 150px;">
-        <p>1. Zgłoś do nas sprawę do
-rozwiązania, a my udzielimy Ci
-wsparcia na każdym etapie aż
-do zakończenia ugodą.</p>
+        <p>1. Register an existing dispute and opt for e-arbitration or e-mediation</p>
 
         </div>
         </div>
@@ -119,10 +115,7 @@ do zakończenia ugodą.</p>
           <div class="card">
             <div class="card-body">
           <img src="https://presolv360.com/asset/img/test12.png">
-                <p>2. Wspólnie opracujemy
-i wyślemy zaproszenie do
-mediacji drugiej stronie
-konfliktu.
+                <p>2. The other party is invited to register on the platform
 </p>
 <br>
 
@@ -134,9 +127,7 @@ konfliktu.
           <div class="card">
             <div class="card-body">
           <img src="https://presolv360.com/asset/img/test111.png">
-                <p>3. Wspólnie z naszym
-mediatorem pomożemy
-zakończyć spór ugodą.</p>
+                <p>3. Achieve a timely resolution with the help of Presolv360's experts</p>
 <br>
         </div>
        </div>
@@ -144,9 +135,9 @@ zakończyć spór ugodą.</p>
    </div>
        <div class="row ">
         <div class="col-12 btnsection">
-                <a href="" class="btn btn-circle-y" data-toggle="modal" id="" data-target="#myModalResolve">Rozpocznij </span></a>
-                <a href="" class="btn btn-circle-y ml-2 resolvideomodal" data-toggle="modal" id="" data-target="#myModal2">Zobacz wideo </span></a>
-                <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Opłaty</button>
+                <a href="" class="btn btn-circle-y" data-toggle="modal" id="" data-target="#myModalResolve">Get started </span></a>
+                <a href="" class="btn btn-circle-y ml-2 resolvideomodal" data-toggle="modal" id="" data-target="#myModal2">Watch the video </span></a>
+                <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Charges</button>
               </div>
          </div>
 
@@ -168,7 +159,7 @@ zakończyć spór ugodą.</p>
   <div class="container">
     <div class="row">
       <div class="col-12">
-         <center><h2 class="mb-5" style="color: #0e5587;">Wypowiedzi ekspertów </h2></center>
+         <center><h2 class="mb-5" style="color: #0e5587;">Experts' statements</h2></center>
       </div>
     </div>
     
@@ -240,7 +231,7 @@ zakończyć spór ugodą.</p>
   <div class="container">
     
 
-    <h2>Partnerzy i Sponsorzy</h2>
+    <h2>Partners and Sponsors</h2>
 
 <div class="brands">
     <div class="container">

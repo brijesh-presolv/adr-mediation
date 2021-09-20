@@ -130,7 +130,7 @@ margin-left: -5px;
 		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
 		    <ul class="navbar-nav ml-auto">
 		      <li class="nav-item active">
-		        <a class="nav-link abtbtn" href="about_us">O mediacji<span class="sr-only">(current)</span></a>
+		        <a class="nav-link abtbtn" href="about_us">About<span class="sr-only">(current)</span></a>
 		      </li>
 
           <li>
@@ -149,7 +149,7 @@ margin-left: -5px;
 
 
           <?php } else { ?>
-		      			        <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="login">Zaloguj się</a>
+		      			        <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="login">Login</a>
                       <?php } ?>
 
             </li>
@@ -277,7 +277,7 @@ function resolvsubmit(){
     <div class="col-md-12">
       <div class="section-title text-center pb-25">
 <h2 class="title">Get In Touch</h2><p></p>
-<p>Nunc id dui at sapien faucibus fermentum ut vel diam. Nullam tempus, nunc id efficitur sagittis, urna est ultricies eros, ac porta sem turpis quis leo.</p>
+<p>Now that's worth it at the throat of the fermented or the wise man. There is no time, now that the arrows are made, it is just a urn of eros, and a gateway to the disgraceful man who is the lion.</p>
 </div>
     </div>
 <div class="col-lg-4 col-md-6 col-sm-7">
@@ -301,7 +301,7 @@ function resolvsubmit(){
 <i class="fa fa-hand-pointer"></i>
 </div>
 <div class="contact-content">
-<h4>Zadzwoń do nas</h4>
+<h4>Call us</h4>
 <p><a href="tel:022-20821102" target="_top">Tel 721 782 222</a></p>
 </div>
 </div>
@@ -315,7 +315,7 @@ function resolvsubmit(){
     <i class="fa fa-hand-pointer"></i>
     </div>
     <div class="contact-content">
-    <h4> Napisz do nas</h4>
+    <h4> Write to us</h4>
     <p><a href="mailto:info@pdm24.pl" target="_top">info@pdm24.pl</a></p>
     </div>
   </div>
@@ -332,36 +332,22 @@ function resolvsubmit(){
   <div class="container">
       <div class="row pb-5">
       <div class="col-md-7">
-         <h5 class="mb-3">PORTAL DLA MEDIACJI ONLINE</h5>
-         <p>jest nowatorskim rozwiązaniem
-technologicznym, które jest dedykowane dla
-stron konfliktu i profesjonalnych mediatorów,
-żeby ułatwić ugodowe rozwiązywanie sporów
-online w łatwy, poufny i bezpieczny sposób z
-dostępem przez całą dobę.
-Portal Dla Mediacji Online powstał dzięki
-współpracy z firmą Edgecraft Solutions Private
-Limited z Indii prowadzonej przez Urszulę
-Ciołeszyńską - Prezes fundacji Polska Sieć
-Ambasadorów Przedsiębiorczości Kobiet oraz
-Henryka Stężałę - Prezesa Zarządu TENSOFT w
-konsultacji z ekspertem mediacji –
-doświadczoną Adwokat i Mediator Anetą
-Gibek-Wiśniewską.</p>
+         <h5 class="mb-3">ONLINE MEDIATION PORTAL</h5>
+         <p>Is an innovative technological solution dedicated to conflict parties and professional mediators to facilitate the conciliatory resolution of online disputes in an easy, confidential and secure way with 24/7 access. Portal dla Mediacji Online was created thanks to cooperation with Edgecraft Solutions Private Limited from India led by Urszula Ciołeszyńska - President of the Polish Network of Women's Entrepreneurship Ambassadors foundation and Henryk Stężała - President of the Management Board of TENSOFT in consultation with mediation expert - experienced advocate and mediator Aneta Gibek-Wiśniewska.</p>
       </div>
       <div class="col-md-2">
-         <h5 class="mb-3">Ważne linki</h5>
-         <a href="https://presolv360.com/faqs" target="_blank"><p>Pytania i odpowiedzi</p></a>
-         <a href="https://presolv360.com/terms_conditions" target="_blank"><p>Regulamin i warunki</p></a>
-         <a href="https://presolv360.com/privacy_policy" target="_blank"><p>Polityka prywatności</p></a>
-         <a href="https://presolv360.com/odr_standard" target="_blank"><p>Nasze standardy</p></a>
+         <h5 class="mb-3">Important links</h5>
+         <a href="https://presolv360.com/faqs" target="_blank"><p>FAQs</p></a>
+         <a href="https://presolv360.com/terms_conditions" target="_blank"><p>Terms & Conditions</p></a>
+         <a href="https://presolv360.com/privacy_policy" target="_blank"><p>Privacy Policy</p></a>
+         <a href="https://presolv360.com/odr_standard" target="_blank"><p>Standards</p></a>
 
       </div>
       <div class="col-md-3">
-         <h5 class="mb-3">Bądźmy w kontakcie</h5>
+         <h5 class="mb-3">Let's be in touch</h5>
          <div class="social">
-          <a href="https://www.linkedin.com/company/presolv360/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://twitter.com/presolv360" target="_blank"><i class="fab fa-twitter" ></i></a>
+          <a href="https://www.linkedin.com/company/presolv360/" target="_blank"><i class="fa fa-linkedin"></i></a>
+                    <a href="https://twitter.com/presolv360" target="_blank"><i class="fa fa-twitter" ></i></a>
          </div>
 
       </div>
