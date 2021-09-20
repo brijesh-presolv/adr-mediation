@@ -12,6 +12,67 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
+            <div class="row">
+                <div class="col-md-12">
+                        <button class="btn btn-primary btn-sm" data-target="#myModalbupldAdmin" data-toggle="modal"> Bulk Upload</button>
+                  <br>
+                  <br>
+                </div>
+           </div>
+           <div id="myModalbupldAdmin" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {{-- {{dd($allUsers)}} --}}
+                        <div class="blkfrmdiv">
+                            <h3>Upload .csv file</h3>
+                           <form enctype="multipart/form-data" method="post" action="{{route('admin.bulkUpload')}}">
+                            {{ csrf_field() }}
+                                    <input type="hidden" name="token" id="token_input">
+                                    <div class="form-group">
+                                    <select class="form-control" name="claimant"  required>
+                                        <option value="">@lang('Select Claimant')</option>
+                                        @foreach($allUsers as $value)
+                                        @if ($value->isActive)
+                                            <option value="{{$value->id}}">{{$value->first_name}} {{$value->last_name}} - {{$value->organization}}</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
+                                    {{-- <input type="hidden" name="claimant" value="{{auth()->user()->id}}"> --}}
+                                    </div>
+                                     {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
+
+                                <div class="form-group">
+                                    <input type="file" name="csv" id="fileInput" onchange="" class="col-md-12 dropify" data-allowed-file-extensions="csv" required="" data-max-file-size="20M" />
+                                </div>
+
+    <input type="Submit"  value="Submit" class="btn btn-primary blkupdbtnsb">
+    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
+        <span>@lang('case.btn_close')</span>
+   </button>
+                            </form>
+
+                        </div>
+                          {{-- <div class="loading_form" style="display: none;">
+                        <center>
+
+                            </center>
+                        <center><p>Please Wait. Do Not Close Until Close Button Appear.</p></center>
+
+                        <div style="height: 200px;
+        overflow-y: scroll;" id="mess">
+
+                        </div>
+                        <!-- <a>Close</a> -->
+                    </div> --}}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
             <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -20,6 +81,7 @@
                         <th>@lang('case.date') <a href="#" data-toggle="tooltip" title="" data-original-title="Date and time of raising the 'Request for Mediation'."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                         <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title="" data-original-title="Click here to view the 'Request for Mediation'."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                         <th>@lang('case.party_details')</th>
+                        <th>@lang('Supporting Document')</th>
                         <th>@lang('case.action') <a href="#" data-toggle="tooltip" title="" data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                     </tr>
                 </thead>
@@ -91,6 +153,7 @@ var userTable = $('#users').DataTable({
     "responsive": true,
     "order": [[1, "desc"]],
     "columns": [
+        
         {"data": "case.id",
             render: function (data, type, row, meta) {
                 return meta.row + meta.settings._iDisplayStart + 1;
@@ -118,6 +181,8 @@ var userTable = $('#users').DataTable({
             render: function (data, type, row) {
                 var d = "";
                 for (i in data) {
+                    // console.log(data[i].documentPath);
+
                     if (data[i].isOnboarded == 1) {
                         d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
                     } else {
@@ -132,6 +197,29 @@ var userTable = $('#users').DataTable({
                 return d;
             }
         },
+        {"data": "case",
+            render: function (data, type, row) {
+                var d = "";
+                // for (i in data) {
+
+                    if (data.documentPath != 'NULL' && data.documentPath != '') {
+                        d = d + `<p  class="btn btn-success btn-sm">` + data.documentPath + `</p>`;
+                    } else {
+                        d = d + `<form action="{{ url('admin/uploaddocument/') }}/` + data.id + `"  method="post" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
+                                    <input  class="form-control dropify" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
+                                    <p>*Only Pdf zip and rar file allowed</p>
+                                    <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
+                                    </form>`;
+                    }
+                // }
+
+                
+                return d;
+            }
+        },
+        
         {"data": "case.id",
             render: function (data, type, row) {
 
@@ -224,5 +312,25 @@ $('#midaterAdd').on('show.bs.modal', function (event) {
     var modal = $(this)
     modal.find('.modal-body input[name="id"]').val(recipient)
 })
+
+<?php if(session()->has('success')) {?>
+        swal({
+            title: '{{session()->get("success")}}',
+            // text: "Withdraw case!",
+            icon: "success",
+            buttons: true,
+        }).then(function() {
+    window.location ="{{route('admin.case.newrequest')}}"});
+
+    <?php } if(session()->has('error')) {?>
+        swal({
+            title: "Error",
+            text: '{{session()->get("error")}}',
+            icon: "error",
+            buttons: true,
+            dangerMode: true,
+        }).then(function() {
+    window.location ="{{route('admin.case.newrequest')}}"});
+    <?php } ?>
 </script>
 @endsection

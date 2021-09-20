@@ -149,4 +149,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     Route::match(['post','get'],'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
 
+    //cases bulk upload 
+    Route::post('cases/bulkupload', [App\Http\Controllers\Admin\CaseController::class, 'bulkUpload'])->name('admin.bulkUpload');
+    Route::put('uploaddocument/{id}', [App\Http\Controllers\Admin\CaseController::class, 'documentUpload'])->name('admin.documentUpload');
+
 });
