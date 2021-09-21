@@ -23,6 +23,8 @@
 <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/home.css">
   <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/fontawesome/css/all.min.css">
+
   <link rel="stylesheet" href="{{url('/assert/')}}/css/sweetalert2.css">
   <link rel="stylesheet" href="https://www.presolv360.com/presolv360/css/style_slide.css">
 
@@ -276,15 +278,15 @@ function resolvsubmit(){
   <div class="row justify-content-center">
     <div class="col-md-12">
       <div class="section-title text-center pb-25">
-<h2 class="title">Get In Touch</h2><p></p>
-<p>Now that's worth it at the throat of the fermented or the wise man. There is no time, now that the arrows are made, it is just a urn of eros, and a gateway to the disgraceful man who is the lion.</p>
+{{-- <h2 class="title">Get In Touch</h2><p></p> --}}
+{{-- <p>Now that's worth it at the throat of the fermented or the wise man. There is no time, now that the arrows are made, it is just a urn of eros, and a gateway to the disgraceful man who is the lion.</p> --}}
 </div>
     </div>
 <div class="col-lg-4 col-md-6 col-sm-7">
 <div class="card text-center mt-30">
   <div class="card-body">
       <div class="contact-icon">
-      <i class="fa fa-hand-pointer"></i>
+      <h2><i class="fas fa-map-marker-alt"></i></h2>
       </div>
       <div class="contact-content">
       <h4>Locate us</h4>
@@ -298,7 +300,7 @@ function resolvsubmit(){
   <div class="card-body">
 
 <div class="contact-icon">
-<i class="fa fa-hand-pointer"></i>
+<h2><i class="fas fa-phone-alt"></i></h2>
 </div>
 <div class="contact-content">
 <h4>Call us</h4>
@@ -312,7 +314,7 @@ function resolvsubmit(){
   <div class="card-body">
 
     <div class="contact-icon">
-    <i class="fa fa-hand-pointer"></i>
+    <h2><i class="fas fa-edit"></i></h2>
     </div>
     <div class="contact-content">
     <h4> Write to us</h4>
@@ -332,11 +334,11 @@ function resolvsubmit(){
   <div class="container">
       <div class="row pb-5">
       <div class="col-md-7">
-         <h5 class="mb-3">ONLINE MEDIATION PORTAL</h5>
-         <p>Is an innovative technological solution dedicated to conflict parties and professional mediators to facilitate the conciliatory resolution of online disputes in an easy, confidential and secure way with 24/7 access. Portal dla Mediacji Online was created thanks to cooperation with Edgecraft Solutions Private Limited from India led by Urszula Ciołeszyńska - President of the Polish Network of Women's Entrepreneurship Ambassadors foundation and Henryk Stężała - President of the Management Board of TENSOFT in consultation with mediation expert - experienced advocate and mediator Aneta Gibek-Wiśniewska.</p>
+         <h5 class="mb-3">Disclaimer</h5>
+         <p>Presolv360 is owned by Edgecraft Solutions Private Limited, an Indian Company incorporated under the provisions of the Companies Act, 2013. It is not a law firm and does not provide legal advice. The use of any materials or services is not a substitute for legal advice. Only a legal practitioner can provide legal advice. A legal practitioner should be consulted for any legal advice or matter. No Attorney-Client relationship is created by use of these materials or services.</p>
       </div>
       <div class="col-md-2">
-         <h5 class="mb-3">Important links</h5>
+         <h5 class="mb-3">Important Links</h5>
          <a href="https://presolv360.com/faqs" target="_blank"><p>FAQs</p></a>
          <a href="https://presolv360.com/terms_conditions" target="_blank"><p>Terms & Conditions</p></a>
          <a href="https://presolv360.com/privacy_policy" target="_blank"><p>Privacy Policy</p></a>
@@ -344,10 +346,10 @@ function resolvsubmit(){
 
       </div>
       <div class="col-md-3">
-         <h5 class="mb-3">Let's be in touch</h5>
+         <h5 class="mb-3">Stay Connected</h5>
          <div class="social">
-          <a href="https://www.linkedin.com/company/presolv360/" target="_blank"><i class="fa fa-linkedin"></i></a>
-                    <a href="https://twitter.com/presolv360" target="_blank"><i class="fa fa-twitter" ></i></a>
+          <a href="https://www.linkedin.com/company/presolv360/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com/presolv360" target="_blank"><i class="fab fa-twitter" ></i></a>
          </div>
 
       </div>
@@ -492,7 +494,8 @@ media.</div>
    <!-- <script src="{{url('/assert/')}}js/slick.js"></script>  -->
 
         <script src="{{url('/assert/')}}/js/sweetalert2.js"></script>
-         <script src="//code.tidio.co/whiaumb73nws3xz5su24odtrgpni9etf.js" async></script>
+        <script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js" async></script>
+         {{-- <script src="//code.tidio.co/whiaumb73nws3xz5su24odtrgpni9etf.js" async></script> --}}
         @yield('extra-js')
 
 

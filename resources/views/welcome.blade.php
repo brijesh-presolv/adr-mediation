@@ -34,11 +34,7 @@
                 <a href="#howitwork" class="btn btn-circle-y">Get Started </a>
                 <!-- <a href="" class="btn btn-circle-y ml-3" data-toggle="modal" data-target="#myModal">Watch Video </a> -->
               </div>
-             </div><div class="row">
-        <div class="col-12 toc mt-5">
-                <a href="https://presolv360.com/secure_terms_conditions"><p>*<span style="color: #ffa600"><b><u>Accept our terms and conditions</u></b></span></p></a>
-              </div>
-      </div>
+             </div>
 
     </div>
 
@@ -54,13 +50,13 @@
   <div class="container">
 
 
-    <div class="row">
+      <div class="row">
 
-      <div class="col-12 tsection">
-        <!-- <img src="https://presolv360.com/asset/img/logo-21.png"> -->
-        <p>Our website is recognized by the Common Courts</p>
+          <div class="col-12 tsection">
+              <img src="/assets/images/logo-21.png">
+              <p>Recognised by the Ministry of Law and Justice, Government of India</p>
+          </div>
       </div>
-    </div>
   </div>
 </div>
 
@@ -75,8 +71,7 @@
       
 
       <div class="col-12 tabcentertext" id="howitworks">
-         <center><h2>WE OFFER ONLINE MEDIATION</h2></center>
-         <center><p>KUsing innovative technological solutions, we enable the parties to communicate securely, confidentially and effectively, along with agreeing and signing the terms of the settlement online.</p></center>
+         <center><h2>Our Services</h2></center>
       </div>
 
     </div>
@@ -90,11 +85,11 @@
 <!-- jQuery first, then Bootstrap JS. -->
 <!-- Nav tabs -->
 
-<!--       <ul class="nav nav-tabs justify-content-center" role="tablist">
+      <ul class="nav nav-tabs justify-content-center" role="tablist">
         <li class="nav-item nav-2">
           <a class="nav-link active" href="#resolve" role="tab" data-toggle="tab">Resolve Disputes</a>
         </li>
-      </ul> -->
+      </ul> 
 
 <!-- Tab panes -->
 <div class="tab-content">
@@ -105,7 +100,7 @@
           <div class="card">
             <div class="card-body">
           <img src="https://presolv360.com/asset/img/test2111.png" style="max-width: 150px;">
-        <p>1. Register an existing dispute and opt for e-arbitration or e-mediation</p>
+        <p>Register an existing dispute and opt for e-arbitration or e-mediation</p>
 
         </div>
         </div>
@@ -115,7 +110,7 @@
           <div class="card">
             <div class="card-body">
           <img src="https://presolv360.com/asset/img/test12.png">
-                <p>2. The other party is invited to register on the platform
+                <p>The other party is invited to register on the platform
 </p>
 <br>
 
@@ -127,7 +122,7 @@
           <div class="card">
             <div class="card-body">
           <img src="https://presolv360.com/asset/img/test111.png">
-                <p>3. Achieve a timely resolution with the help of Presolv360's experts</p>
+                <p>Achieve a timely resolution with the help of Presolv360's experts</p>
 <br>
         </div>
        </div>
@@ -135,11 +130,12 @@
    </div>
        <div class="row ">
         <div class="col-12 btnsection">
-                <a href="" class="btn btn-circle-y" data-toggle="modal" id="" data-target="#myModalResolve">Get started </span></a>
-                <a href="" class="btn btn-circle-y ml-2 resolvideomodal" data-toggle="modal" id="" data-target="#myModal2">Watch the video </span></a>
-                <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Charges</button>
-              </div>
-         </div>
+          <a href="" class="btn btn-circle-y" data-toggle="modal" id="" data-target="#myModalResolve">Get Started </span></a>
+          <a href="" class="btn btn-circle-y ml-2 resolvideomodal" data-toggle="modal" id="" data-target="#myModal2">Watch Video </span></a>
+          <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Fees</button>
+          <a href="" class="btn btn-circle-y ml-2 clse" target="_blank">Clause </span></a>
+          <!--<a href="https://presolv360.com/arbitrator" class="btn btn-circle-y ml-2 clse" target="_blank">Panel of Experts </span></a>-->
+      </div>
 
   </div>
 </div>
@@ -159,7 +155,7 @@
   <div class="container">
     <div class="row">
       <div class="col-12">
-         <center><h2 class="mb-5" style="color: #0e5587;">Experts' statements</h2></center>
+         <center><h2 class="mb-5" style="color: #0e5587;">Experts’ Views </h2></center>
       </div>
     </div>
     
@@ -227,6 +223,221 @@
 </div>
 
 <div class="container-fluid awardsection">
+
+  <div class="container">
+
+
+      <h2>Alliances and Incubation</h2>
+
+      <div class="brands">
+          <div class="container">
+              <div class="row">
+                  <div class="col">
+                      <div class="brands_slider_container">
+                          <div class="owl-carousel owl-theme brands_slider">
+                              <div class="owl-item">
+                                  <a href="https://shaktipreneurs.org/portfolio/" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/shaktiai.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item nextflaw">
+                                  <a href="https://legaltech.asia/announcement-nextlaw-referral-network-joins-hands-with-presolv360-to-promote-online-dispute-resolution/" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/refnetai.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a href="https://alita.legal/join-us" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/asiaai.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/weeai.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/shineai.png" alt=""></div>
+                                  </a>
+                              </div>
+                              
+                              <!-- <div class="owl-item">
+                      <div class="brands_item d-flex flex-column justify-content-center"><img src="img/weefoundation.jpg" alt=""></div>
+                  </div> -->
+                              <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/nsrai.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/blairai.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a  href=" https://www.cyrilshroff.com/prarambh/" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/camii.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/ICAI.png" alt=""></div>
+                                  </a>
+                              </div>
+
+                              
+                              
+                          </div>
+                          <!-- Brands Slider Navigation -->
+                          <!-- <div class="brands_nav brands_prev"><i class="fas fa-chevron-left"></i></div>
+              <div class="brands_nav brands_next"><i class="fas fa-chevron-right"></i></div> -->
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="container-fluid awardsection">
+
+  <div class="container">
+
+
+      <h2>Awards and Recognition</h2>
+
+      <div class="brands">
+          <div class="container">
+              <div class="row">
+                  <div class="col">
+                      <div class="brands_slider_container">
+                          <div class="owl-carousel owl-theme brands_slider">
+                              <div class="owl-item">
+
+                                  <a href="http://doj.gov.in/page/online-dispute-resolution-through-mediation-arbitration-conciliation-etc" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/awrdz3.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a href="https://www.thelegalforecast.com/blog/interview-bhaven-shah-presolv360" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/legaal.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a href="https://superlawyer.in/bhaven-shah-co-founder-presolv360-entrepreneurship-technology-future-of-dispute-resolution/" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/superlaw.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a href="https://www.thehindu.com/news/cities/mumbai/a-startup-that-helps-you-avoid-courts/article24618326.ece" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/The-Hindu-Logo-1.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <!-- <div class="owl-item">
+                      <div class="brands_item d-flex flex-column justify-content-center"><img src="img/weefoundation.jpg" alt=""></div>
+                  </div> -->
+                              <div class="owl-item">
+                                  <a href="https://indianconventions.com/in/presolv360-receives-start-up-award-2018/" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/awardz6.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a href="https://www.mediate.com/articles/rodriguesj1.cfm" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/media.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <!-- <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Sine-IIT.png" alt=""></div>
+                                  </a>
+                              </div> -->
+                              <div class="owl-item">
+                                  <a href="https://www.businesstoday.in/magazine/the-buzz/presolv360-dispute-management-on-the-cloud/story/280068.html" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Business-Today.png" alt=""></div>
+                                  </a>
+                              </div>
+                              
+                              <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/MSINS.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Startup-India.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <!-- <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/WEE.png" alt=""></div>
+                                  </a>
+                              </div> -->
+                              <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/DST.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a href="https://soundcloud.com/hrishikay/hrishi-k-with-namita-shah-aman-sanghvi-presolv360-mediation-out-of-court-settlements" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Radio-one.png" alt=""></div>
+                                  </a>
+                              </div>
+                               <div class="owl-item">
+                                  <a href="https://asialawportal.com/2020/09/12/indias-online-dispute-resolution-platform-an-interview-with-namita-shah-co-founder-presolv360/" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/AsiaLawPortal.png" style="margin-top: 12px;height: 180px;
+width: 200px;" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a href="https://www.livemint.com/opinion/online-views/opinion-collections-and-dispute-resolution-hope-faith-and-more-for-lenders-11599974221412.html" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Livemint.png" style="
+height: 165px;
+width: 200px;
+margin-top: 12px;" alt=""></div>
+                                  </a>
+                              </div>
+                               <div class="owl-item">
+                                  <a href="https://timesofindia.indiatimes.com/india/as-lockdown-slows-down-courts-e-mediation-across-cities-picks-up/articleshow/78204960.cms" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/TimesofIndia.png" style="height:150px;width:200px;" alt=""></div>
+                                  </a>
+                              </div>
+                              
+                              <div class="owl-item">
+                                  <a href="https://www.youtube.com/watch?v=jfezqCotG9U" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Businessworld_(logo).png" style="margin-top: 76px;
+height: 56px;
+width: 250px;" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a href="https://yourstory.com/2020/03/womens-day-women-entrepreneurs-legal-tech-startups" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Yourstory.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a  target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Legal-Business-World.png" alt=""></div>
+                                  </a>
+                              </div>
+                              <div class="owl-item">
+                                  <a href="https://www.artificiallawyer.com/2020/03/16/in-india-civil-cases-take-13-years-but-presolv360-has-a-better-solution/" target="_blank">
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Artificial-Lawyer.png" alt=""></div>
+                                  </a>
+                              </div>
+                          </div>
+                          <!-- Brands Slider Navigation -->
+                          <!-- <div class="brands_nav brands_prev"><i class="fas fa-chevron-left"></i></div>
+              <div class="brands_nav brands_next"><i class="fas fa-chevron-right"></i></div> -->
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+{{-- <div class="container-fluid awardsection">
 
   <div class="container">
     
@@ -328,7 +539,7 @@
     </div>
 </div>
   </div>
-</div>
+</div> --}}
 
 <!-- Modal -->
 <div class="modal fade videomodal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -371,7 +582,8 @@
             </div>
 
       <div class="modal-body">
-        
+        The fees will be determined on the basis of the nature and quantum of the dispute. To know the fee applicable to you, contact us at <a href="mailto:info@pdm24.pl" target="_top">info@pdm24.pl</a> or call us on .<a href="tel:+91-721782222"
+                        target="_top">+91-721782222</a>
       </div>
     </div>
   </div>
