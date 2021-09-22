@@ -21,12 +21,15 @@
 <link rel="icon" type="image/x-icon" href="{{url('/assert/')}}/img/icon.png" />
 
 <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/home.css">
-  <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/all.min.css">
-  <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/fontawesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/fontawesome/css/all.min.css">
+<link rel="stylesheet" href="{{url('/assert/')}}/css/sweetalert2.css">
+<link rel="stylesheet" href="{{url('/assert/')}}/css/style_slide.css">
 
-  <link rel="stylesheet" href="{{url('/assert/')}}/css/sweetalert2.css">
-  <link rel="stylesheet" href="https://www.presolv360.com/presolv360/css/style_slide.css">
+  <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/home.css">
+  {{-- <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/all.min.css"> --}}
+
+
+  {{-- <link rel="stylesheet" href="https://www.presolv360.com/presolv360/css/style_slide.css"> --}}
 
 
 
@@ -67,12 +70,15 @@
   }
   </style>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css">
+<link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/OwlCarousel/dist/assets/owl.carousel.min.css">
+<link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/OwlCarousel/dist/assets/owl.theme.default.css">
+
+  {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"> --}}
+{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css"> --}}
 
 
-  <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+  {{-- <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet"> --}}
 
 
 
@@ -123,7 +129,7 @@ margin-left: -5px;
 	<div class="container">
 		  <a class="navbar-brand" href="{{url('/')}}">
 
-		  	<img src="{{url('/assert/')}}/img/logo_mediacje.png" class="img-fluid home-logo">
+		  	<img src="{{url('/assert/')}}/img/logo_mediacje.png" loading="lazy" class="img-fluid home-logo">
 		  </a>
 		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		    <span class="navbar-toggler-icon"></span>
@@ -478,8 +484,12 @@ media.</div>
  <script>
  var DOMAIN = "{{url('/')}}";
   </script>
+<script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js" async></script>
+
 <script type="text/javascript" src="{{url('/assert/')}}/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.js"></script>
+{{-- <script src="{{url('/assert/')}}/OwlCarousel/owl.carousel.js"> </script> --}}
+
 
 <script src="{{url('/assert/')}}/js/brand-slider.js"></script>
 
@@ -491,10 +501,9 @@ media.</div>
 <script src="{{url('/assert/')}}/js/slick.js"></script>
 
 
-   <!-- <script src="{{url('/assert/')}}js/slick.js"></script>  -->
+   {{-- <!-- <script src="{{url('/assert/')}}js/slick.js"></script>  --> --}}
 
         <script src="{{url('/assert/')}}/js/sweetalert2.js"></script>
-        <script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js" async></script>
          {{-- <script src="//code.tidio.co/whiaumb73nws3xz5su24odtrgpni9etf.js" async></script> --}}
         @yield('extra-js')
 
@@ -866,12 +875,12 @@ $('.panel-group').on('shown.bs.collapse', toggleIcon);
 
 </script>
 
-<script src="https://presolv360.com/asset/js/plyr.js"></script>
-<script>
+{{-- <script src="https://presolv360.com/asset/js/plyr.js"></script> --}}
+{{-- <script>
     const player = new Plyr('#video2');
     const player2 = new Plyr('#video1');
 
-</script>
+</script> --}}
  </body>
 </html>
 </body>

@@ -8,7 +8,7 @@
 
     <div class="videosection">
       <video width="100%"   loop="loop" id="bannervdo" autoplay="autoplay" muted="muted" playsinline>
-          <source src="https://presolv360.com/asset/video/2.mp4"  />
+          <source src="{{url('/assert/')}}/video/2.mp4"  />
       </video>
     </div>
 
@@ -53,7 +53,7 @@
       <div class="row">
 
           <div class="col-12 tsection">
-              <img src="/assets/images/logo-21.png">
+              <img loading="lazy" src="/assets/images/logo-21.png">
               <p>Recognised by the Ministry of Law and Justice, Government of India</p>
           </div>
       </div>
@@ -99,7 +99,7 @@
         <div class="col-md-4 imgtxtbox">
           <div class="card">
             <div class="card-body">
-          <img src="https://presolv360.com/asset/img/test2111.png" style="max-width: 150px;">
+          <img src="/assert/img/test2111.png" loading="lazy" style="max-width: 150px;">
         <p>Register an existing dispute and opt for e-arbitration or e-mediation</p>
 
         </div>
@@ -109,7 +109,7 @@
         <div class="col-md-4 imgtxtbox">
           <div class="card">
             <div class="card-body">
-          <img src="https://presolv360.com/asset/img/test12.png">
+          <img src="/assert/img/test12.png" loading="lazy">
                 <p>The other party is invited to register on the platform
 </p>
 <br>
@@ -121,7 +121,7 @@
         <div class="col-md-4 imgtxtbox">
           <div class="card">
             <div class="card-body">
-          <img src="https://presolv360.com/asset/img/test111.png">
+          <img src="/assert/img/test111.png" loading="lazy">
                 <p>Achieve a timely resolution with the help of Presolv360's experts</p>
 <br>
         </div>
@@ -180,34 +180,48 @@
         <div class="col-sm-12">
 
            <div class="owl-carousel vowl owl-theme">
+                        <div class="owl-item ">
+                          <a href="https://www.youtube.com/embed/wtGSvrd_rhk"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/wtGSvrd_rhk/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                          </a></div>
                         <div class="owl-item">
-
-                          
-
-                          <iframe class="ifr" width="350" height="220" src="https://www.youtube.com/embed/wtGSvrd_rhk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                          <a target="_blank" href="https://www.youtube.com/embed/7ucnjGw1AvY"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/7ucnjGw1AvY/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                          </a></div>
+                        <div class="owl-item">
+                          <a target="_blank" href="https://www.youtube.com/embed/UozMurcWIcU"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/UozMurcWIcU/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                          </a></div>
+                        <div class="owl-item">
+                          <a target="_blank" href="https://www.youtube.com/embed/YnwnYv6KsVw"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/YnwnYv6KsVw/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                          </a></div>
+                        <div class="owl-item">
+                          <a target="_blank" href="https://www.youtube.com/embed/TjOyFnNfz4U"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/TjOyFnNfz4U/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                          </a></div>
+                        <div class="owl-item">
+                          <a target="_blank" href="https://www.youtube.com/embed/kfCa8JoW-ns"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/kfCa8JoW-ns/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                          </a></div>
+                        <div class="owl-item">
+                          <a target="_blank" href="https://www.youtube.com/embed/l6TRFntt77s"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/l6TRFntt77s/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                          </a></div>
+                        <div class="owl-item">
+                          <a target="_blank" href="https://www.youtube.com/embed/ni-k3Oj2G_M"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/ni-k3Oj2G_M/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                          </a></div>
+                        {{-- <div class="owl-item">
+                          <img class="ifr" width="350" height="220" src="https://www.youtube.com/embed/UozMurcWIcU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
                         </div>
                         <div class="owl-item">
-                          <iframe class="ifr" width="350" height="220" src="https://www.youtube.com/embed/7ucnjGw1AvY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-
-                        <div class="owl-item">
-                          <iframe class="ifr" width="350" height="220" src="https://www.youtube.com/embed/UozMurcWIcU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                          <img class="ifr" width="350" height="220" src="https://www.youtube.com/embed/YnwnYv6KsVw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
                         </div>
                         <div class="owl-item">
-                        <iframe class="ifr" width="350" height="220" src="https://www.youtube.com/embed/YnwnYv6KsVw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                          <img class="ifr" width="350" height="220" src="https://www.youtube.com/embed/TjOyFnNfz4U" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
                         </div>
                         <div class="owl-item">
-                        <iframe class="ifr" width="350" height="220" src="https://www.youtube.com/embed/TjOyFnNfz4U" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="owl-item">
-                        <iframe class="ifr" width="350" height="220" src="https://www.youtube.com/embed/kfCa8JoW-ns" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="owl-item">
-                    <iframe class="ifr" width="350" height="220" src="https://www.youtube.com/embed/l6TRFntt77s" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-                <div class="owl-item">
-                    <iframe class="ifr" width="350" height="220" src="https://www.youtube.com/embed/ni-k3Oj2G_M" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
+                          <img class="ifr" width="350" height="220" src="https://www.youtube.com/embed/kfCa8JoW-ns" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                        </div>
+                        <div class="owl-item">
+                          <img class="ifr" width="350" height="220" src="https://www.youtube.com/embed/l6TRFntt77s" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                        </div>
+                        <div class="owl-item">
+                            <img class="ifr" width="350" height="220" src="https://www.youtube.com/embed/ni-k3Oj2G_M" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                        </div> --}}
           </div>
           
         </div>
@@ -237,52 +251,52 @@
                           <div class="owl-carousel owl-theme brands_slider">
                               <div class="owl-item">
                                   <a href="https://shaktipreneurs.org/portfolio/" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/shaktiai.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/shaktiai.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item nextflaw">
                                   <a href="https://legaltech.asia/announcement-nextlaw-referral-network-joins-hands-with-presolv360-to-promote-online-dispute-resolution/" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/refnetai.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/refnetai.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a href="https://alita.legal/join-us" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/asiaai.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/asiaai.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
 
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/weeai.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/weeai.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/shineai.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/shineai.png" alt=""></div>
                                   </a>
                               </div>
                               
                               <!-- <div class="owl-item">
-                      <div class="brands_item d-flex flex-column justify-content-center"><img src="img/weefoundation.jpg" alt=""></div>
+                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="img/weefoundation.jpg" alt=""></div>
                   </div> -->
                               <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/nsrai.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/nsrai.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/blairai.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/blairai.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a  href=" https://www.cyrilshroff.com/prarambh/" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/camii.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/camii.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/ICAI.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/ICAI.png" alt=""></div>
                                   </a>
                               </div>
 
@@ -316,82 +330,82 @@
                               <div class="owl-item">
 
                                   <a href="http://doj.gov.in/page/online-dispute-resolution-through-mediation-arbitration-conciliation-etc" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/awrdz3.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/awrdz3.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a href="https://www.thelegalforecast.com/blog/interview-bhaven-shah-presolv360" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/legaal.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/legaal.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a href="https://superlawyer.in/bhaven-shah-co-founder-presolv360-entrepreneurship-technology-future-of-dispute-resolution/" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/superlaw.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/superlaw.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a href="https://www.thehindu.com/news/cities/mumbai/a-startup-that-helps-you-avoid-courts/article24618326.ece" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/The-Hindu-Logo-1.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/The-Hindu-Logo-1.png" alt=""></div>
                                   </a>
                               </div>
                               <!-- <div class="owl-item">
-                      <div class="brands_item d-flex flex-column justify-content-center"><img src="img/weefoundation.jpg" alt=""></div>
+                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="img/weefoundation.jpg" alt=""></div>
                   </div> -->
                               <div class="owl-item">
                                   <a href="https://indianconventions.com/in/presolv360-receives-start-up-award-2018/" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/awardz6.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/awardz6.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a href="https://www.mediate.com/articles/rodriguesj1.cfm" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/media.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/media.png" alt=""></div>
                                   </a>
                               </div>
                               <!-- <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Sine-IIT.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Sine-IIT.png" alt=""></div>
                                   </a>
                               </div> -->
                               <div class="owl-item">
                                   <a href="https://www.businesstoday.in/magazine/the-buzz/presolv360-dispute-management-on-the-cloud/story/280068.html" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Business-Today.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/Business-Today.png" alt=""></div>
                                   </a>
                               </div>
                               
                               <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/MSINS.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/MSINS.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Startup-India.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/Startup-India.png" alt=""></div>
                                   </a>
                               </div>
                               <!-- <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/WEE.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/WEE.png" alt=""></div>
                                   </a>
                               </div> -->
                               <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/DST.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/DST.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a href="https://soundcloud.com/hrishikay/hrishi-k-with-namita-shah-aman-sanghvi-presolv360-mediation-out-of-court-settlements" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Radio-one.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/Radio-one.png" alt=""></div>
                                   </a>
                               </div>
                                <div class="owl-item">
                                   <a href="https://asialawportal.com/2020/09/12/indias-online-dispute-resolution-platform-an-interview-with-namita-shah-co-founder-presolv360/" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/AsiaLawPortal.png" style="margin-top: 12px;height: 180px;
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/AsiaLawPortal.png" style="margin-top: 12px;height: 180px;
 width: 200px;" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a href="https://www.livemint.com/opinion/online-views/opinion-collections-and-dispute-resolution-hope-faith-and-more-for-lenders-11599974221412.html" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Livemint.png" style="
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Livemint.png" style="
 height: 165px;
 width: 200px;
 margin-top: 12px;" alt=""></div>
@@ -399,30 +413,30 @@ margin-top: 12px;" alt=""></div>
                               </div>
                                <div class="owl-item">
                                   <a href="https://timesofindia.indiatimes.com/india/as-lockdown-slows-down-courts-e-mediation-across-cities-picks-up/articleshow/78204960.cms" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/TimesofIndia.png" style="height:150px;width:200px;" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/TimesofIndia.png" style="height:150px;width:200px;" alt=""></div>
                                   </a>
                               </div>
                               
                               <div class="owl-item">
                                   <a href="https://www.youtube.com/watch?v=jfezqCotG9U" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Businessworld_(logo).png" style="margin-top: 76px;
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Businessworld_(logo).png" style="margin-top: 76px;
 height: 56px;
 width: 250px;" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a href="https://yourstory.com/2020/03/womens-day-women-entrepreneurs-legal-tech-startups" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Yourstory.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/Yourstory.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a  target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Legal-Business-World.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/Legal-Business-World.png" alt=""></div>
                                   </a>
                               </div>
                               <div class="owl-item">
                                   <a href="https://www.artificiallawyer.com/2020/03/16/in-india-civil-cases-take-13-years-but-presolv360-has-a-better-solution/" target="_blank">
-                                      <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Artificial-Lawyer.png" alt=""></div>
+                                      <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/Artificial-Lawyer.png" alt=""></div>
                                   </a>
                               </div>
                           </div>
@@ -453,81 +467,81 @@ width: 250px;" alt=""></div>
                         <div class="owl-item">
 
                           <a href="http://doj.gov.in/page/online-dispute-resolution-through-mediation-arbitration-conciliation-etc" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/awrdz3.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/awrdz3.png" alt=""></div>
                           </a>
                         </div>
                         <div class="owl-item">
                           <a href="https://www.thelegalforecast.com/blog/interview-bhaven-shah-presolv360" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/legaal.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/legaal.png" alt=""></div>
                           </a>
                         </div>
                         <div class="owl-item">
                           <a href="https://superlawyer.in/bhaven-shah-co-founder-presolv360-entrepreneurship-technology-future-of-dispute-resolution/" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/superlaw.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/superlaw.png" alt=""></div>
                           </a>
                         </div>
                         <div class="owl-item">
                           <a href="https://www.thehindu.com/news/cities/mumbai/a-startup-that-helps-you-avoid-courts/article24618326.ece" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/The-Hindu-Logo-1.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/The-Hindu-Logo-1.png" alt=""></div>
                           </a>
                         </div>
                         <!-- <div class="owl-item">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="img/weefoundation.jpg" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="img/weefoundation.jpg" alt=""></div>
                         </div> -->
                         <div class="owl-item">
                           <a href="https://indianconventions.com/in/presolv360-receives-start-up-award-2018/" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/awardz6.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/awardz6.png" alt=""></div>
                           </a>
                         </div>
                         <div class="owl-item">
                           <a href="https://www.mediate.com/articles/rodriguesj1.cfm" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/media.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/media.png" alt=""></div>
                           </a>
                         </div>
                         <div class="owl-item">
                           <a href="" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Sine-IIT.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Sine-IIT.png" alt=""></div>
                           </a>
                         </div><div class="owl-item">
                           <a href="https://www.businesstoday.in/magazine/the-buzz/presolv360-dispute-management-on-the-cloud/story/280068.html" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Business-Today.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Business-Today.png" alt=""></div>
                           </a>
                         </div><div class="owl-item">
                           <a href="" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/ICAI.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/ICAI.png" alt=""></div>
                           </a>
                         </div><div class="owl-item">
                           <a href="" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/MSINS.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/MSINS.png" alt=""></div>
                           </a>
                         </div><div class="owl-item">
                           <a href="" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Startup-India.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Startup-India.png" alt=""></div>
                           </a>
                         </div><div class="owl-item">
                           <a href="" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/WEE.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/WEE.png" alt=""></div>
                           </a>
                         </div>
                         <div class="owl-item">
                           <a href="" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/DST.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/DST.png" alt=""></div>
                           </a>
                         </div><div class="owl-item">
                           <a href="https://soundcloud.com/hrishikay/hrishi-k-with-namita-shah-aman-sanghvi-presolv360-mediation-out-of-court-settlements" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Radio-one.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Radio-one.png" alt=""></div>
                           </a>
                         </div><div class="owl-item">
                           <a href="https://yourstory.com/2020/03/womens-day-women-entrepreneurs-legal-tech-startups" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Yourstory.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Yourstory.png" alt=""></div>
                           </a>
                         </div><div class="owl-item">
                           <a href="" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Legal-Business-World.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Legal-Business-World.png" alt=""></div>
                           </a>
                         </div><div class="owl-item">
                           <a href="https://www.artificiallawyer.com/2020/03/16/in-india-civil-cases-take-13-years-but-presolv360-has-a-better-solution/" target="_blank">
-                            <div class="brands_item d-flex flex-column justify-content-center"><img src="https://presolv360.com/asset/img/Artificial-Lawyer.png" alt=""></div>
+                            <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Artificial-Lawyer.png" alt=""></div>
                           </a>
                         </div>
                     </div> <!-- Brands Slider Navigation -->
@@ -548,7 +562,7 @@ width: 250px;" alt=""></div>
       <div class="modal-body">
          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <video id="video1" controls="true" style="width: 100%; height: auto; margin:0 auto; frameborder:0;">
-          <source src="https://presolv360.com/asset/video/Secure_explainer_video.mp4" type="video/mp4">
+          <source src="/assert/video/Secure_explainer_video.mp4" type="video/mp4">
           Your browser doesn't support HTML5 video tag.
         </video>
         <!-- <iframe width="auto" height="315" src="https://www.youtube.com/embed/BgEy12SijzY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
@@ -1042,3 +1056,12 @@ width: 250px;" alt=""></div>
 </div>
 
 @endsection
+
+<script>
+  <script>
+                $('img').click(function(){
+            var video = '<div class="video-container"><iframe src="'+ $(this).attr('data-video') +'"></iframe></div>';
+            $(this).replaceWith(video);
+        });
+        </script>
+</script>

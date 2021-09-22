@@ -1531,6 +1531,10 @@ width: 195px;
     min-width: 100%;
 }
 
+.ifr {
+  cursor: pointer !important;
+}
+
 .owl-stage-outer * {
      height:100%;
 }
