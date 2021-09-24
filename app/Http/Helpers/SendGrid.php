@@ -4,10 +4,10 @@ namespace App\Http\Helpers;
 
 Class SendGrid {
 
-    public static $apiKey = "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";
+    public static $apiKey = "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";
 
     public function __construct() {
-        self::$apiKey = env('SENDGRID_API_KEY', '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');
+        self::$apiKey = env('SENDGRID_API_KEY', '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');
     }
 
     public static function send($to, $templateId, $subs = NULL,
