@@ -181,7 +181,7 @@
 
            <div class="owl-carousel vowl owl-theme">
                         <div class="owl-item ">
-                          <a href="https://www.youtube.com/embed/wtGSvrd_rhk"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/wtGSvrd_rhk/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                          <a target="_blank" href="https://www.youtube.com/embed/wtGSvrd_rhk"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/wtGSvrd_rhk/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
                           </a></div>
                         <div class="owl-item">
                           <a target="_blank" href="https://www.youtube.com/embed/7ucnjGw1AvY"><img class="ifr" width="350" height="220" src="http://img.youtube.com/vi/7ucnjGw1AvY/hqdefault.jpg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
