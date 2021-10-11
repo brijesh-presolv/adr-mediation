@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\Common_function;
 use Illuminate\Http\Request;
 use App\Models\MedCase;
 use App\Models\Mediation_status_log;
@@ -13,7 +14,9 @@ use App\Models\User;
 use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid as Email;
+use App\Http\Helpers\Whatsapp;
 use App\Models\ConsentDisclosures;
+use App\Models\WaTemplate;
 use Session;
 use Auth;
 use Validator;
@@ -724,6 +727,25 @@ class MediationController extends Controller
             $resParty->updated_at = date('Y-m-d H:s:i');
             $resParty->save();
         }
+
+        // $var = ['--caseid--'];
+        // $var1 = [Common_function::getsixdigitid('sc', $med->id)];
+        // $content1 = WaTemplate::getcontent('P23');
+        // $content = str_replace($var, $var1, $content1);
+        // $dwa1 = [
+        //     'caseid' => $med->id,
+        //     'contact' => $cldetails->mobile_number,
+        //     'content' => ['text' => $content],
+        //     'casetype' => 1,
+        //     'event' => 'DRCN_ARBTR'
+        // ];
+
+        // $access = Whatsapp::sendWamessage($dwa1);
+
+
+        // print_r($dwa1);
+        // exit;
+
 
         return redirect('/user/newrequest')->with(['success' => 'Success']);
     }
