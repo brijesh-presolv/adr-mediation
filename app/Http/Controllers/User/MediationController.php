@@ -60,19 +60,19 @@ class MediationController extends Controller
 
 
 
-            //upload file
-            $filename = '';
-            if ($request->file('document') !== null) {
+            // //upload file
+            // $filename = '';
+            // if ($request->file('document') !== null) {
 
-                $request->validate([
-                    'document' => 'mimes:pdf,zip,jpg,jpeg,png|max:20048',
-                ]);
+            //     $request->validate([
+            //         'document' => 'mimes:pdf,zip,jpg,jpeg,png|max:20048',
+            //     ]);
 
-                $filename = 'supporting_document' . $med->id . time() . '.' . $request->document->extension();
+            //     $filename = 'supporting_document' . $med->id . time() . '.' . $request->document->extension();
 
 
-                $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
-            }
+            //     $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
+            // }
 
 
             $r = $request->post();
@@ -82,7 +82,7 @@ class MediationController extends Controller
             //udpate mediation case
 
             $med->issue = $r['issue'];
-            $med->documentPath = $filename;
+            // $med->documentPath = $filename;
             $med->updated_at = date("Y-m-d H:i:s");
             $med->save();
 
@@ -681,6 +681,7 @@ class MediationController extends Controller
         // dd($cldetails);
         //store in database
         foreach ($csv as $k => $value) {
+            // dd($value);
             $data['userid'] = $uploaded_by;
             $data['disputeCategory'] = $value['0'];
             $data['noOfParties'] = count($csv);
@@ -688,6 +689,8 @@ class MediationController extends Controller
             $data['issue'] = $value['14'];
             $data['confirm_status'] = 0;
             $med = MedCase::create($data);
+
+            
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $uploaded_by])->first();
 

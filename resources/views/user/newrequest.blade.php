@@ -139,7 +139,7 @@ use App\Models\InvoledUser;
 
                                 <?php
 
-                                if ($value->documentPath !== 'NULL') {
+                                if ($value->documentPath !== 'NULL' && $value->documentPath !== "") {
                                     ?>
                                     <p  class="btn btn-success btn-sm">{{$value->documentPath}}</p>
                                     <?php
