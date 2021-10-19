@@ -681,9 +681,7 @@ class CaseController extends Controller {
         // dd($errormsg);
         if ($errormsg == '') {
             $csv = $this->csvToArray($tmpName);
-            // dd(count($csv[0]));
-            // exit;
-            if (count($csv[0]) != 21) {
+            if (count($csv[0]) != 24) {
                 $errormsg .= "Invalid csv file";
             }
             $errormsg .= '';
@@ -766,6 +764,7 @@ class CaseController extends Controller {
             $data['amount'] = $value['1'];
             $data['issue'] = $value['14'];
             $data['confirm_status'] = 0;
+            $data['otherRespondentDetails'] = $value[23];
             $med = MedCase::create($data);
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();
@@ -834,6 +833,34 @@ class CaseController extends Controller {
             $resParty->created_at = date('Y-m-d H:s:i');
             $resParty->updated_at = date('Y-m-d H:s:i');
             $resParty->save();
+
+
+            $otherResEmail = explode(',', $value[21]);
+            $otherResMobile = explode(',', $value[22]);
+
+
+            for($i = 0; $i < count($otherResEmail); $i++) {
+                if($i == count($otherResEmail)-1) {
+                    $otherDetails[$i] = new InvoledUser();
+                    $otherDetails[$i]->userPlanId = $med->id;
+                    $otherDetails[$i]->userEmail = $otherResEmail[$i];
+                    $otherDetails[$i]->userPhone = $otherResMobile[$i];
+                    $otherDetails[$i]->joinCode = $this->joinCode();
+                    $otherDetails[$i]->created_at = date('Y-m-d H:s:i');
+                    $otherDetails[$i]->updated_at = date('Y-m-d H:s:i');
+                    $otherDetails[$i]->save();
+                } else {
+                    $otherDetails[$i] = new InvoledUser();
+                    $otherDetails[$i]->userPlanId = $med->id;
+                    $otherDetails[$i]->userEmail = $otherResEmail[$i];
+                    $otherDetails[$i]->userPhone = $otherResMobile[$i];
+                    $otherDetails[$i]->joinCode = $this->joinCode();
+                    $otherDetails[$i]->created_at = date('Y-m-d H:s:i');
+                    $otherDetails[$i]->updated_at = date('Y-m-d H:s:i');
+                    $otherDetails[$i]->save();
+                }
+
+            }
         }
 
         return redirect('/admin/case/new-request')->with(['success' => 'Success']);

@@ -11,5 +11,5 @@ class MedCase extends Model
 
     protected $table = 'mediation_case';
 
-    protected $fillable = ['userid', 'disputeCategory', 'noOfParties', 'amount', 'issue', 'confirm_status', 'documentPath', 'withdraw'];
+    protected $fillable = ['userid', 'disputeCategory', 'noOfParties', 'amount', 'issue', 'confirm_status', 'documentPath', 'withdraw', 'otherRespondentDetails'];
 }
