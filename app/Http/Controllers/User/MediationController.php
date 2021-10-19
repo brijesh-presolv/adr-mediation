@@ -603,8 +603,8 @@ class MediationController extends Controller
         // dd($errormsg);
         if ($errormsg == '') {
             $csv = $this->csvToArray($tmpName);
-            // dd($csv);
-            if (count($csv[0]) != 21) {
+            // dd(count($csv[0]));
+            if (count($csv[0]) != 24) {
                 $errormsg .= "Invalid csv file";
             }
             $errormsg .= '';
@@ -678,19 +678,18 @@ class MediationController extends Controller
                 $uploaded_excel .= $fileName;
             }
         }
-        // dd($cldetails);
+        // dd($csv);
         //store in database
         foreach ($csv as $k => $value) {
-            // dd($value);
+            // dd();
             $data['userid'] = $uploaded_by;
             $data['disputeCategory'] = $value['0'];
             $data['noOfParties'] = count($csv);
             $data['amount'] = $value['1'];
             $data['issue'] = $value['14'];
             $data['confirm_status'] = 0;
+            $data['otherRespondentDetails'] = $value[23];
             $med = MedCase::create($data);
-
-            
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $uploaded_by])->first();
 
@@ -729,6 +728,47 @@ class MediationController extends Controller
             $resParty->created_at = date('Y-m-d H:s:i');
             $resParty->updated_at = date('Y-m-d H:s:i');
             $resParty->save();
+
+            
+            // $otherDetails = array_merge(["email" => explode(',', $value[21]), 'mobile' => explode(',', $value[22])]);
+
+            $otherResEmail = explode(',', $value[21]);
+            $otherResMobile = explode(',', $value[22]);
+
+            // dd(count($otherResEmail));
+
+            for($i = 0; $i < count($otherResEmail); $i++) {
+                if($i == count($otherResEmail)-1) {
+                    $otherDetails[$i] = new InvoledUser();
+                    $otherDetails[$i]->userPlanId = $med->id;
+                    $otherDetails[$i]->userEmail = $otherResEmail[$i];
+                    $otherDetails[$i]->userPhone = $otherResMobile[$i];
+                    $otherDetails[$i]->joinCode = $this->joinCode();
+                    $otherDetails[$i]->created_at = date('Y-m-d H:s:i');
+                    $otherDetails[$i]->updated_at = date('Y-m-d H:s:i');
+                    $otherDetails[$i]->save();
+                } else {
+                    $otherDetails[$i] = new InvoledUser();
+                    $otherDetails[$i]->userPlanId = $med->id;
+                    $otherDetails[$i]->userEmail = $otherResEmail[$i];
+                    $otherDetails[$i]->userPhone = $otherResMobile[$i];
+                    $otherDetails[$i]->joinCode = $this->joinCode();
+                    $otherDetails[$i]->created_at = date('Y-m-d H:s:i');
+                    $otherDetails[$i]->updated_at = date('Y-m-d H:s:i');
+                    $otherDetails[$i]->save();
+                }
+
+            }
+
+
+            // foreach($otherDetails as $values) {
+            //     foreach($values)
+            // }
+            // $otherResEmail = explode(',', $value[21]);
+            // $otherResMobile = explode(',', $value[22]);
+            
+
+
         }
 
         // $var = ['--caseid--'];
