@@ -636,14 +636,14 @@ class CaseController extends Controller {
 
     public function csvToArray($file)
     {
-        
         $rows = array();
         $headers = array();
         if (file_exists($file) && is_readable($file)) {
             $handle = fopen($file, 'r');
-           
+            // dd($handle);
             while (!feof($handle)) {
                 $row = fgetcsv($handle, 10240, ',', '"');
+                
                 
                 if (empty($headers))
                     $headers = $row;
@@ -674,16 +674,17 @@ class CaseController extends Controller {
 
         $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
         $errormsg = '';
+        // dd($ext);
 
-        if ($ext != 'csv') {
+        if ($ext != 'csv' && $ext != 'xlsx') {
             $errormsg .= 'Please upload csv file';
         }
-        // dd($errormsg);
         if ($errormsg == '') {
             $csv = $this->csvToArray($tmpName);
-            if (count($csv[0]) != 24) {
+            if (count($csv[0]) != 20) {
                 $errormsg .= "Invalid csv file";
             }
+
             $errormsg .= '';
             foreach ($csv as $key => $v) {
                 $i = $key + 1;
@@ -726,11 +727,11 @@ class CaseController extends Controller {
                     $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
                 }
 
-                if ($v[19] != 'Yes') {
+                if ($v[18] != 'Yes') {
                     $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
                 }
 
-                if ($v[20] != 'Yes') {
+                if ($v[19] != 'Yes') {
 
                     $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
                 }
@@ -755,16 +756,18 @@ class CaseController extends Controller {
                 $uploaded_excel .= $fileName;
             }
         }
-        // dd($cldetails);
         //store in database
         foreach ($csv as $k => $value) {
+            // dd( count(explode(',', $value[15])) + 1);
+            // exit;
+
             $data['userid'] = $claimantid;
             $data['disputeCategory'] = $value['0'];
-            $data['noOfParties'] = 2;
+            $data['noOfParties'] = count(explode(',', $value[15])) + 1;
             $data['amount'] = $value['1'];
-            $data['issue'] = $value['14'];
+            $data['issue'] = $value['13'];
             $data['confirm_status'] = 0;
-            $data['otherRespondentDetails'] = $value[23];
+            $data['otherRespondentDetails'] = $value[17];
             $med = MedCase::create($data);
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();
@@ -835,8 +838,8 @@ class CaseController extends Controller {
             $resParty->save();
 
 
-            $otherResEmail = explode(',', $value[21]);
-            $otherResMobile = explode(',', $value[22]);
+            $otherResEmail = explode(',', $value[15]);
+            $otherResMobile = explode(',', $value[16]);
 
 
             for($i = 0; $i < count($otherResEmail); $i++) {
