@@ -122,6 +122,9 @@ $ldate = $lastdate->format('d-m-Y');
                 <br>
                 @endif
                 @endforeach
+                @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
+                <p>{{$case->otherRespondentDetails}}</p>
+                @endif
             </td>
         </tr>
 
