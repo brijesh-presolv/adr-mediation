@@ -677,7 +677,7 @@ class CaseController extends Controller {
         $errormsg = '';
         // dd($ext);
 
-        if ($ext != 'csv' && $ext != 'xlsx') {
+        if ($ext != 'csv') {
             $errormsg .= 'Please upload csv file';
         }
         if ($errormsg == '') {
