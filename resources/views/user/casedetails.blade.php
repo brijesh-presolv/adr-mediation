@@ -35,16 +35,29 @@
                                 foreach ($case->party as $key => $value) {
                                     if ($pcount > 0) {
                                         ?>
-                                        @lang('case.name'): {{ $value->name}}<br>
-                                        @lang('case.emai'): {{ $value->userEmail}}<br>    
-                                        @lang('case.phone'): {{ $value->userPhone}}<br>
-                                        @lang('case.address'): <?= $value->address1 . ' ' . $value->address2 . ' ' . $value->city . ', ' . $value->pincode . ', ' . $value->state . ' ' . $value->country ?><br><br>
-                                        <?php
+                                       @if($value->name != "")
+                                       @lang('case.name'): {{ $value->name}}<br>
+                                       @endif
+                                       @if($value->userEmail != "")
+                                       @lang('case.emai'): {{ $value->userEmail}}<br>   
+                                       @endif 
+                                       @if($value->userPhone != "")
+                                       @lang('case.phone'): {{ $value->userPhone}}<br>
+                                       @endif
+                                       @if($value->address1 != "")
+                                       @lang('case.address'): <?= $value->address1 . ' ' . $value->address2 . ' ' . $value->city . ', ' . $value->pincode . ', ' . $value->state . ' ' . $value->country ?><br>
+                                       @endif
+                                       <br>
+                                       <?php
                                     }
                                     $pcount++;
                                 }
                                 ?>
                             </td>
+                        </tr>
+                        <tr>
+                            <td>@lang('case.otherRespondentDetails')</td>
+                            <td>{{$case->otherRespondentDetails}}</td>
                         </tr>
                         <tr>
                             <td>@lang('case.issue')</td>

@@ -106,14 +106,25 @@ $ldate = $lastdate->format('d-m-Y');
 
                 @foreach($party as $key=>$p)
                 @if($key!=0)
+                @if($p->name != "")
                 <p>{{$p->name}}</p>
+                @endif
+                @if($p->address1 != "")
                 <p>{{$p->address1}} {{$p->address2}}, {{$p->city}}, {{$p->pincode}}</p>
                 <p>{{$p->state}} {{$p->country}}</p>
+                @endif
+                @if($p->userEmail != "")
                 <p>{{$p->userEmail}}</p>
+                @endif
+                @if($p->userPhone != "")
                 <p>{{$p->userPhone}}</p>
+                @endif
                 <br>
                 @endif
                 @endforeach
+                @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
+                <p>{{$case->otherRespondentDetails}}</p>
+                @endif
             </td>
         </tr>
 
