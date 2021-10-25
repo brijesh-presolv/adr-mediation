@@ -842,29 +842,24 @@ class CaseController extends Controller {
 
             $otherResEmail = explode(',', $value[15]);
             $otherResMobile = explode(',', $value[16]);
+            
+            $forloopcnt = max(count($otherResEmail), count($otherResMobile)) ;
+            
+           
+            for($i = 0; $i < $forloopcnt; $i++) {
+            // for($j = 0; $j < count($otherResMobile); $j++) {
 
-
-            for($i = 0; $i < count($otherResEmail); $i++) {
-                if($i == count($otherResEmail)-1) {
-                    $otherDetails[$i] = new InvoledUser();
-                    $otherDetails[$i]->userPlanId = $med->id;
-                    $otherDetails[$i]->userEmail = $otherResEmail[$i];
-                    $otherDetails[$i]->userPhone = $otherResMobile[$i];
-                    $otherDetails[$i]->joinCode = $this->joinCode();
-                    $otherDetails[$i]->created_at = date('Y-m-d H:s:i');
-                    $otherDetails[$i]->updated_at = date('Y-m-d H:s:i');
-                    $otherDetails[$i]->save();
-                } else {
-                    $otherDetails[$i] = new InvoledUser();
-                    $otherDetails[$i]->userPlanId = $med->id;
-                    $otherDetails[$i]->userEmail = $otherResEmail[$i];
-                    $otherDetails[$i]->userPhone = $otherResMobile[$i];
-                    $otherDetails[$i]->joinCode = $this->joinCode();
-                    $otherDetails[$i]->created_at = date('Y-m-d H:s:i');
-                    $otherDetails[$i]->updated_at = date('Y-m-d H:s:i');
-                    $otherDetails[$i]->save();
-                }
-
+                
+                    $otherDetails = new InvoledUser();
+                    $otherDetails->userPlanId = $med->id;
+                    $otherDetails->userEmail = isset($otherResEmail[$i]) ? $otherResEmail[$i] : "";
+                    $otherDetails->userPhone = isset($otherResMobile[$i]) ? $otherResMobile[$i] : "";
+                    $otherDetails->joinCode = $this->joinCode();
+                    $otherDetails->created_at = date('Y-m-d H:s:i');
+                    $otherDetails->updated_at = date('Y-m-d H:s:i');
+                    $otherDetails->save();
+               
+            // }
             }
         }
 
