@@ -153,5 +153,6 @@ return [
     "conform_successfully" => "conform successfully",
     "Sr. No"=>'Sr. No',
     "At"=>"At",
+    "otherRespondentDetails" => "Other Respondent Details",
 ];
 

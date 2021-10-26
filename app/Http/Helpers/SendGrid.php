@@ -4,10 +4,10 @@ namespace App\Http\Helpers;
 
 Class SendGrid {
 
-    public static $apiKey = "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";
+    public static $apiKey = "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";
 
     public function __construct() {
-        self::$apiKey = env('SENDGRID_API_KEY', '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');
+        self::$apiKey = env('SENDGRID_API_KEY', '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');
     }
 
     public static function send($to, $templateId, $subs = NULL,
@@ -16,7 +16,7 @@ Class SendGrid {
 
         $response = '';
         $email = new \SendGrid\Mail\Mail();
-        $email->setFrom('info@pdm24.pl', 'pdm24.pl');
+        $email->setFrom('admin@presolv360.com', 'Presolv360');
         if (is_array($to)) {
         foreach($to as $t){
                 $email->addTo($t);

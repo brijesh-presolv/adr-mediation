@@ -62,13 +62,16 @@ class ProfileController extends Controller {
          $request->validate([
                 'firstName' => ['required'],
                 'lastName' => ['required'],
-                'email' => ['email','required'],
+                'email' => ['email','required','unique:users'],
+                'mobile_number' => ['unique:users'],
             ],
             [
                 'firstName.required'=>'first name cant empty*',    
                 'lastName.required'=>'Last name cant empty*',    
                 'email.email'=>'invalid email address*',     
-                'email.required'=>'Please Enter Email*',     
+                'email.required'=>'Please Enter Email*', 
+                'email.unique'=>'This Email already used*',
+                'mobile_number.unique'=>'This Mobile No. already used*',
             ]
             );
 
