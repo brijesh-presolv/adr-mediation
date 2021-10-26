@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\Common_function;
 use Illuminate\Http\Request;
 use App\Models\MedCase;
 use App\Models\Mediation_status_log;
@@ -14,20 +15,23 @@ use App\Models\User;
 use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid;
+use App\Http\Helpers\Whatsapp;
+use App\Models\WaTemplate;
 use DB;
 use PDF;
 use Auth;
 use Storage;
 
-class CaseController extends Controller {
+class CaseController extends Controller
+{
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct() {
-        
+    public function __construct()
+    {
     }
 
     /**
@@ -35,36 +39,41 @@ class CaseController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index() {
+    public function index()
+    {
         $allUsers = User::where("role", "=", 0)->get();
         $users = User::where("role", "=", 1)->get();
         $confirm_status = 0;
         return view('admin.case.index', compact("confirm_status", "users", "allUsers"));
     }
 
-    public function ongoingRequest() {
+    public function ongoingRequest()
+    {
         $users = User::where("role", "=", 1)->get();
         $confirm_status = 1;
         return view('admin.case.ongoing', compact("confirm_status", "users"));
     }
 
-    public function closedRequest() {
+    public function closedRequest()
+    {
         $confirm_status = 2;
         return view('admin.case.close', compact("confirm_status"));
     }
 
-    public function rjectedRequest() {
+    public function rjectedRequest()
+    {
         $users = User::where("role", "=", 1)->get();
         $confirm_status = 3;
         return view('admin.case.rjected', compact("confirm_status", "users"));
     }
 
-    public function getConsentAndDisclosures($id) {
+    public function getConsentAndDisclosures($id)
+    {
         $data["case"] = MedCase::where("id", "=", $id)->first();
         $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
-                ->where("mediation_case_id", "=", $id)
-                ->first();
+            ->where("mediation_case_id", "=", $id)
+            ->first();
         if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
             return abort(404);
         }
@@ -72,14 +81,15 @@ class CaseController extends Controller {
         return $pdf->stream('document.pdf');
     }
 
-    public function casedetails($id) {
+    public function casedetails($id)
+    {
 
 
         $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
-                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where('mediation_case.id', '=', $id)
-                ->first();
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where('mediation_case.id', '=', $id)
+            ->first();
 
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
@@ -93,7 +103,8 @@ class CaseController extends Controller {
         return view('admin.case.casedetails', compact("case"));
     }
 
-    public function confirmStatus(Request $request) {
+    public function confirmStatus(Request $request)
+    {
         $medCas = MedCase::find($request->id);
         $medCas->confirm_status = 1;
         $medCas->save();
@@ -118,7 +129,8 @@ class CaseController extends Controller {
         return response()->json(["msg" => "Onging Case"]);
     }
 
-    public function withdrawStatus(Request $request) {
+    public function withdrawStatus(Request $request)
+    {
         $user = MedCase::find($request->case_id);
         $user->confirm_status = 2;
         $user->withdraw = $request->withdraw_comment;
@@ -143,7 +155,8 @@ class CaseController extends Controller {
         return response()->json(["msg" => "withdraw Case"]);
     }
 
-    public function closeStatus(Request $request) {
+    public function closeStatus(Request $request)
+    {
         $user = MedCase::find($request->id);
         $user->confirm_status = 2;
         $user->save();
@@ -157,7 +170,8 @@ class CaseController extends Controller {
         return response()->json(["msg" => "Closed Case"]);
     }
 
-    public function commentAction(Request $request) {
+    public function commentAction(Request $request)
+    {
         $mediation_case_comment = new Mediation_case_comment;
         $mediation_case_comment->user_id = Auth::user()->id;
         $mediation_case_comment->mediation_case_id = $request->case_id;
@@ -167,7 +181,8 @@ class CaseController extends Controller {
         return response()->json(["msg" => "Closed Case"]);
     }
 
-    public function commentView(Request $request) {
+    public function commentView(Request $request)
+    {
         if ($request->type == 1) {
             $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment", DB::raw("DATE_FORMAT(mediation_case_comment.created_at,'%d-%c-%y %h:%i %p') as created"))->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("user_id", Auth::user()->id)->where("mediation_case_id", $request->case_id)->get();
         } else {
@@ -176,7 +191,8 @@ class CaseController extends Controller {
         return response()->json($mediation_case_comment);
     }
 
-    public function rejectStatus(Request $request) {
+    public function rejectStatus(Request $request)
+    {
         $user = MedCase::find($request->id);
         $user->confirm_status = 3;
         $user->save();
@@ -191,13 +207,14 @@ class CaseController extends Controller {
         return response()->json(["msg" => "Rejected Case"]);
     }
 
-    public function midaterAdd(Request $request) {
+    public function midaterAdd(Request $request)
+    {
         $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $request->id)
-                ->where(function($q) {
-                    $q->where("status", "=", 0)
+            ->where(function ($q) {
+                $q->where("status", "=", 0)
                     ->orWhere("status", "=", 1);
-                })
-                ->count();
+            })
+            ->count();
         if ($data == 0) {
             Mediators_mediation_cases_status::create([
                 'mediator_id' => $request->midater,
@@ -206,12 +223,12 @@ class CaseController extends Controller {
                 'user_type' => 1,
             ]);
         } else {
-            $MedCaseStatus = Mediators_mediation_cases_status::where(function($q) {
-                        $q->where("status", "=", 0)
-                        ->orWhere("status", "=", 1);
-                    })
-                    ->where("mediation_case_id", "=", $request->id)
-                    ->first();
+            $MedCaseStatus = Mediators_mediation_cases_status::where(function ($q) {
+                $q->where("status", "=", 0)
+                    ->orWhere("status", "=", 1);
+            })
+                ->where("mediation_case_id", "=", $request->id)
+                ->first();
             $MedCaseStatus->mediator_id = $request->midater;
             $MedCaseStatus->status = 0;
             $MedCaseStatus->save();
@@ -220,7 +237,8 @@ class CaseController extends Controller {
         return response()->json(["msg" => "midater Added"]);
     }
 
-    public function addSession(Request $request) {
+    public function addSession(Request $request)
+    {
         // echo $request->zoomId;
 
         $dataToInsert = [
@@ -236,19 +254,20 @@ class CaseController extends Controller {
             $this->sned_session($request->caseId, $data->userEmail, $data->name, $request->sessionDate . "/" . $request->sessionTime);
         }
         $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
-                ->where("mediators_mediation_cases_status.status", "=", 1)
-                ->first();
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
         if ($mediator) {
             $id = "M" . sprintf("%06d", $request->caseId);
-            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime,"-type-"=>"Mediator"], $mediator->username);
+            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
         }
         DB::table('manage_session')->insert($dataToInsert);
 
         return true;
     }
 
-    public function getAddedSesion(Request $request) {
+    public function getAddedSesion(Request $request)
+    {
 
 
         $sessionData = DB::table('manage_session')->where('case_id', $request->caseid)->get();
@@ -278,16 +297,17 @@ class CaseController extends Controller {
         // return $sessionData;
     }
 
-    public function json($role = 0) {
+    public function json($role = 0)
+    {
         $cases = MedCase::select("mediation_case.*", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
-                ->leftJoin("mediators_mediation_cases_status", function($join) {
-                    $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
-                    $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
-                })
-                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediation_case.confirm_status", "=", $role)
-                ->get();
-            // dd($cases);
+            ->leftJoin("mediators_mediation_cases_status", function ($join) {
+                $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
+                $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
+            })
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediation_case.confirm_status", "=", $role)
+            ->get();
+        // dd($cases);
         $arraydata = array();
         foreach ($cases as $d) {
             $arraydata[] = [
@@ -300,7 +320,8 @@ class CaseController extends Controller {
         return response()->json(["data" => $arraydata]);
     }
 
-    public function invitation_mediate($id) {
+    public function invitation_mediate($id)
+    {
         $data["case"] = MedCase::where("id", "=", $id)->first();
         $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
@@ -309,7 +330,8 @@ class CaseController extends Controller {
         return $name;
     }
 
-    public function updatecase(Request $request, $id) {
+    public function updatecase(Request $request, $id)
+    {
         $med = MedCase::find($id);
         if (!$med) {
             return abort(404);
@@ -349,7 +371,7 @@ class CaseController extends Controller {
                 $inv->save();
             }
 
-            $pone=$inv;
+            $pone = $inv;
 
 
             //update responding party
@@ -378,7 +400,7 @@ class CaseController extends Controller {
 
                 $inv->userPlanId = $med->id;
 
-                if($inv->userEmail!=$r['email'][$i]){
+                if ($inv->userEmail != $r['email'][$i]) {
 
                     $inv->userEmail = $r['email'][$i];
 
@@ -390,14 +412,12 @@ class CaseController extends Controller {
                     $invmodel->file_name = $invitation;
                     $invmodel->save();
 
-                    
+
                     $code = $inv->joinCode;
-                     $s=SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-joincode-" => $inv->joinCode, "-claimant-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
-
-
+                    $s = SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-joincode-" => $inv->joinCode, "-claimant-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
                 }
 
-                
+
                 $inv->userPhone = $r['phone'][$i];
                 $inv->name = $r['name'][$i];
                 $inv->address1 = $r['add1'][$i];
@@ -441,7 +461,8 @@ class CaseController extends Controller {
         return view('admin.case.updatecase', ['user' => $usr, 'InvoledUser' => $InvoledUser, 'medcase' => $med, 'response' => $response]);
     }
 
-    public function joinCode() {
+    public function joinCode()
+    {
 
         $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         $string = '';
@@ -453,12 +474,13 @@ class CaseController extends Controller {
         return $string;
     }
 
-    public function viewSettelment(Request $request) {
+    public function viewSettelment(Request $request)
+    {
 
         $sessionData = DB::table('document_settlements')
-                ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
-                ->where('document_settlements.mediation_case_id', $request->id)
-                ->get();
+            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+            ->where('document_settlements.mediation_case_id', $request->id)
+            ->get();
         $sn = 1;
         foreach ($sessionData as $value) {
 
@@ -473,7 +495,8 @@ class CaseController extends Controller {
         return;
     }
 
-    public function settelmenUpload(Request $request) {
+    public function settelmenUpload(Request $request)
+    {
 
         $validatedData = $request->validate([
             'Settelmentfiles' => 'required',
@@ -501,24 +524,38 @@ class CaseController extends Controller {
         }
     }
 
-    public function sned_invitation($id, $invitation) {
+    public function sned_invitation($id, $invitation)
+    {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
 
         $initiating_party = "";
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
                 $initiating_party = $inv->name;
+                $var = ['-cid-', '-rp-'];
+                $var1 = [Common_function::getsixdigitid('sc', $inv->id), $initiating_party];
+                $content1 = WaTemplate::getcontent('l4_mediation_initiating');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $inv->id,
+                    'contact' => "+91" . $inv->userPhone,
+                    'content' => ['text' => $content],
+                    'casetype' => 2,
+                    'event' => 'ACPTARB_ADM'
+                ];
+
+                $access = Whatsapp::sendWamessage($dwa1);
             } else if ($inv->isOnboarded == 0 && $inv->address1 != null) {
-                
+
                 $code = $inv->joinCode;
                 $send = SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
-               
             }
         }
-        return true;
+        // return true;
     }
 
-    public function sned_reject($id) {
+    public function sned_reject($id)
+    {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $initiating_party = "";
         foreach ($involedUser as $inv) {
@@ -530,18 +567,20 @@ class CaseController extends Controller {
         }
     }
 
-    public function sned_session($id, $email_id, $email_name, $date) {
+    public function sned_session($id, $email_id, $email_name, $date)
+    {
         $id = "M" . sprintf("%06d", $id);
-        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $date,"-type-"=>"Party"], $email_name);
+        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
         return true;
     }
 
-    public function sned_withdrawal($id) {
+    public function sned_withdrawal($id)
+    {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
-                ->where("mediators_mediation_cases_status.status", "=", 1)
-                ->first();
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
         $id = "M" . sprintf("%06d", $id);
         $initiating_party = "";
         foreach ($involedUser as $inv) {
@@ -558,12 +597,13 @@ class CaseController extends Controller {
         return true;
     }
 
-    public function sned_resolved($id) {
+    public function sned_resolved($id)
+    {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
-                ->where("mediators_mediation_cases_status.status", "=", 1)
-                ->first();
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
         $id = "M" . sprintf("%06d", $id);
         $initiating_party = "";
         foreach ($involedUser as $inv) {
@@ -578,12 +618,13 @@ class CaseController extends Controller {
         return true;
     }
 
-    public function sned_unresolved($id) {
+    public function sned_unresolved($id)
+    {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
-                ->where("mediators_mediation_cases_status.status", "=", 1)
-                ->first();
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
 
         $id = "M" . sprintf("%06d", $id);
         $initiating_party = "";
@@ -599,14 +640,16 @@ class CaseController extends Controller {
         return true;
     }
 
-    public function send_mediatorAdd($id, $mediator_id) {
+    public function send_mediatorAdd($id, $mediator_id)
+    {
         $user = User::where("id", $mediator_id)->first();
         $id = "M" . sprintf("%06d", $id);
         SendGrid::send($user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $id], $user->name);
         return true;
     }
 
-    public function send_upload_file_party($id, $files) {
+    public function send_upload_file_party($id, $files)
+    {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $id = "M" . sprintf("%06d", $id);
         $sendEamils = array();
@@ -621,7 +664,8 @@ class CaseController extends Controller {
         return true;
     }
 
-    public function send_settlement_agreement_party($id, $files) {
+    public function send_settlement_agreement_party($id, $files)
+    {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $id = "M" . sprintf("%06d", $id);
         $sendEamils = array();
@@ -645,8 +689,8 @@ class CaseController extends Controller {
             // dd($handle);
             while (!feof($handle)) {
                 $row = fgetcsv($handle, 10240, ',', '"');
-                
-                
+
+
                 if (empty($headers))
                     $headers = $row;
                 else if (is_array($row)) {
@@ -665,12 +709,12 @@ class CaseController extends Controller {
     public function bulkUpload(Request $request)
     {
         $_SESSION['last_uploaded_id'] = '';
-       
+
         $uploaded_excel = '';
         $claimantid = $request->claimant;
         // dd($claimantid);
         $cldetails = User::find($claimantid);
-    
+
         $selectCsv = $request->file('csv');
         $tmpName = $selectCsv->getPathname();
 
@@ -783,36 +827,37 @@ class CaseController extends Controller {
                 $iniParty->userEmail = $cldetails->email;
                 $iniParty->userPhone = $cldetails->mobile_number;
                 $iniParty->name = $cldetails->first_name . ' ' . $cldetails->last_name;
-                if(isset($cldetails->address)) {
+                if (isset($cldetails->address)) {
                     $iniParty->address1 = $cldetails->address;
                 } else {
                     $iniParty->address1 = '';
                 }
-                if(isset($cldetails->address1)) {
+                if (isset($cldetails->address1)) {
                     $iniParty->address2 = $cldetails->address1;
                 } else {
                     $iniParty->address2 = '';
                 }
-                if(isset($cldetails->city)) {
+                if (isset($cldetails->city)) {
                     $iniParty->city = $cldetails->city;
                 } else {
                     $iniParty->city = '';
                 }
-                if(isset($cldetails->pincode)) {
+                if (isset($cldetails->pincode)) {
                     $iniParty->pincode = $cldetails->pincode;
                 } else {
                     $iniParty->pincode = '';
                 }
-                if(isset($cldetails->state)) {
+                if (isset($cldetails->state)) {
                     $iniParty->state = $cldetails->state;
                 } else {
                     $iniParty->state = '';
                 }
-                if(isset($cldetails->country)) {
+                if (isset($cldetails->country)) {
                     $iniParty->country = $cldetails->country;
                 } else {
                     $iniParty->country = '';
                 }
+                $iniParty->isOnboarded = 1;
                 // $iniParty->address2 = $cldetails->address1;
                 // $iniParty->city = $cldetails->city;
                 // $iniParty->pincode = $cldetails->pincode;
@@ -835,6 +880,7 @@ class CaseController extends Controller {
             $resParty->pincode = $value['8'];
             $resParty->state = $value['9'];
             $resParty->country = $value['10'];
+            $resParty->isClaimant = 1;
             $resParty->created_at = date('Y-m-d H:s:i');
             $resParty->updated_at = date('Y-m-d H:s:i');
             $resParty->save();
@@ -842,24 +888,25 @@ class CaseController extends Controller {
 
             $otherResEmail = explode(',', $value[15]);
             $otherResMobile = explode(',', $value[16]);
-            
-            $forloopcnt = max(count($otherResEmail), count($otherResMobile)) ;
-            
-           
-            for($i = 0; $i < $forloopcnt; $i++) {
-            // for($j = 0; $j < count($otherResMobile); $j++) {
 
-                
-                    $otherDetails = new InvoledUser();
-                    $otherDetails->userPlanId = $med->id;
-                    $otherDetails->userEmail = isset($otherResEmail[$i]) ? $otherResEmail[$i] : "";
-                    $otherDetails->userPhone = isset($otherResMobile[$i]) ? $otherResMobile[$i] : "";
-                    $otherDetails->joinCode = $this->joinCode();
-                    $otherDetails->created_at = date('Y-m-d H:s:i');
-                    $otherDetails->updated_at = date('Y-m-d H:s:i');
-                    $otherDetails->save();
-               
-            // }
+            $forloopcnt = max(count($otherResEmail), count($otherResMobile));
+
+
+            for ($i = 0; $i < $forloopcnt; $i++) {
+                // for($j = 0; $j < count($otherResMobile); $j++) {
+
+
+                $otherDetails = new InvoledUser();
+                $otherDetails->userPlanId = $med->id;
+                $otherDetails->userEmail = isset($otherResEmail[$i]) ? $otherResEmail[$i] : "";
+                $otherDetails->userPhone = isset($otherResMobile[$i]) ? $otherResMobile[$i] : "";
+                $otherDetails->joinCode = $this->joinCode();
+                $otherDetails->isClaimant = 1;
+                $otherDetails->created_at = date('Y-m-d H:s:i');
+                $otherDetails->updated_at = date('Y-m-d H:s:i');
+                $otherDetails->save();
+
+                // }
             }
         }
 
@@ -878,7 +925,7 @@ class CaseController extends Controller {
         if ($selectDocument !== null) {
 
             $ext = pathinfo($selectDocument->getClientOriginalName(), PATHINFO_EXTENSION);
-            
+
             // dd($ext);
 
             if ($ext != 'pdf' && $ext != 'zip' && $ext != 'rar') {
@@ -886,7 +933,7 @@ class CaseController extends Controller {
             } else {
                 $filename = 'supporting_document' . $med->id . time() . '.' . $selectDocument->getClientOriginalExtension();
                 // dd($filename);
-    
+
                 $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
                 $med->documentPath = $filename;
                 $med->save();
@@ -896,7 +943,7 @@ class CaseController extends Controller {
             //     'document' => 'mimes:pdf,zip,rar|max:20048',
             // ]);
 
-            
+
         } else {
             $errormsg .= "Please Select Document";
         }
@@ -908,5 +955,4 @@ class CaseController extends Controller {
             exit();
         }
     }
-
 }

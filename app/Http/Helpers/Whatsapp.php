@@ -25,7 +25,7 @@ class Whatsapp
             "source" => "+13253077759",
             "destination" => [$d['contact']],
             "content" => $d['content'],
-            "events_url" => "https://presolv360.com/functions/whatsapp_status.php",
+            // "events_url" => "https://presolv360.com/functions/whatsapp_status.php",
         ];
 
         //+918591275735 - live no.
@@ -70,7 +70,7 @@ class Whatsapp
 
                     'caseid' => $d['caseid'],
                     'contact' => $d['contact'],
-                    'content'=> "",
+                    'content' => "",
                     'media' => $d['content']['media']['url'],
                     'casetype' => $d['casetype'],
                     'event' => $d['event'],
@@ -85,10 +85,11 @@ class Whatsapp
                 WhatsappTrack::create($data2);
             }
 
-        //     return true;
-        // } else {
+            //     return true;
+            // } else {
 
-        //     return false;
-        // }
+            //     return false;
+            // }
+        }
     }
 }
