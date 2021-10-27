@@ -25,8 +25,19 @@ class Whatsapp
             "source" => "+13253077759",
             "destination" => [$d['contact']],
             "content" => $d['content'],
-            // "events_url" => "https://presolv360.com/functions/whatsapp_status.php",
+            "events_url" => "https://presolv360.com/functions/whatsapp_status.php",
         ];
+
+        // $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
+
+        // $data = [
+        //     "channel" => "whatsapp",
+        //     "source" => "+918591275735",
+        //     "destination" => [$d['contact']],
+        //     // "destination" => $d['contact'],
+        //     "content" => $d['content'],
+        //     "events_url" => "https://presolv360.com/functions/whatsapp_status.php",
+        // ];
 
         //+918591275735 - live no.
         //+13253077759 - sandbox no.
@@ -53,7 +64,6 @@ class Whatsapp
                     'caseid' => $d['caseid'],
                     'contact' => $d['contact'],
                     'content' => implode(" ", str_replace(['‘', '’'], ['::', ';;'], $d['content'])),
-                    'casetype' => $d['casetype'],
                     'event' => $d['event'],
                     'request_uuid' => $res1['meta']['request_uuid'],
                     'credits_charged' => '0',
@@ -64,6 +74,7 @@ class Whatsapp
                 ];
 
                 WhatsappTrack::create($data1);
+
             } else {
 
                 $data2 = [
@@ -72,7 +83,6 @@ class Whatsapp
                     'contact' => $d['contact'],
                     'content' => "",
                     'media' => $d['content']['media']['url'],
-                    'casetype' => $d['casetype'],
                     'event' => $d['event'],
                     'request_uuid' => $res1['meta']['request_uuid'],
                     'credits_charged' => '0',
@@ -83,13 +93,17 @@ class Whatsapp
                 ];
 
                 WhatsappTrack::create($data2);
+
             }
 
             //     return true;
             // } else {
 
             //     return false;
+            return true;
             // }
+        } else {
+            return false;
         }
     }
 }

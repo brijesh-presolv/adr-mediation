@@ -449,6 +449,7 @@ $('#acceptModal').on('show.bs.modal', function (event) {
 
     var dd = "";
     data.each(function (index) {
+        
         if (index <= 1) {
             if (index == 0) {
                 dd = dd + `<tr>`;
@@ -471,7 +472,8 @@ $('#acceptModal').on('show.bs.modal', function (event) {
                 dd = dd + `</tr>`;
             }
 
-        } else {
+        } 
+        else {
             dd = dd + `<tr>
                     <td></td>
                     <td>
