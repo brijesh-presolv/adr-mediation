@@ -275,7 +275,7 @@ class MediationController extends Controller
 
 
                 //fetch init parry
-                $id = "M" . sprintf("%06d", $InvoledUser->userPlanId);
+                $mid = "M" . sprintf("%06d", $InvoledUser->userPlanId);
 
                 $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $InvoledUser->userPlanId])->first();
 
@@ -283,9 +283,22 @@ class MediationController extends Controller
 
                 $party_name = $InvoledUser->name;
 
-                $e = Email::send($InvoledUserP1->userEmail, '8c86c224-75e5-4cfd-8bc2-f3305df4d3f3', ['-caseid-' => $id, '-partyname-' => $party_name], $InvoledUserP1->name);
+                $e = Email::send($InvoledUserP1->userEmail, '8c86c224-75e5-4cfd-8bc2-f3305df4d3f3', ['-caseid-' => $mid, '-partyname-' => $party_name], $InvoledUserP1->name);
 
+                $var = ['-rp-, -cid-'];
+                $var1 = [$party_name, $mid];
+                $content1 = WaTemplate::getcontent('l7_mediation_onboarded');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $InvoledUser->userPlanId,
+                    'contact' => "+91" . $InvoledUserP1->userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'ONBOAR_USER'
+                ];
 
+                // print_r($dwa1);
+                // exit;
+                $access = Whatsapp::sendWamessage($dwa1);
 
 
 
