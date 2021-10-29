@@ -489,12 +489,36 @@ class DashboardController extends Controller {
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
         Storage::put('public/mediation/' . $data["case"]->id . '/' . "M" . sprintf("%06d", $id) . "_party.pdf", $pdf->output());
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
-        $id = "M" . sprintf("%06d", $id);
+        $mid = "M" . sprintf("%06d", $id);
         $sendEamils = array();
         foreach ($involedUser as $inv) {
-            $sendEamils[] = $inv->userEmail;
+            if ($inv->address1 != null && $inv->name != null) {
+
+                $sendEamils[] = $inv->userEmail;
+
+                // additional_doc
+
+                $var = ['-cid-'];
+                $var1 = [$mid];
+                $content1 = WaTemplate::getcontent('mediator_appointment');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $id,
+                    'contact' => "+91" .  $inv->userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'SEND_APPO_MED'
+                ];
+                $access = Whatsapp::sendWamessage($dwa1);
+                // $dwa2 = [
+                //     'caseid' => $id,
+                //     'contact' => "+91" .  $inv->userPhone,
+                //     'content' => ['media' => ['url' => $filesE, 'caption' => 'Additional Document ' . $mid]],
+                //     'event' => 'SEND_ADDI_DOC_ADM'
+                // ];
+                // $access = Whatsapp::sendWamessage($dwa2);
+            }
         }
-        SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $id], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $id . "_party.pdf"));
+        SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $id . "_party.pdf"));
 
 
         return true;

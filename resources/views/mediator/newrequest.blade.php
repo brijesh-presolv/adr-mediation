@@ -328,9 +328,14 @@ var userTable = $('#request').DataTable({
                 var d = "";
                 for (i in data) {
                     if (data[i].isOnboarded == 1) {
+                        if(data[i].name != null) {
                         d = d + `<p class="text-success party_name get_party" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
+                    }
                     } else {
+                        if(data[i].name != null) {
+
                         d = d + `<p class="text-danger get_party" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
+                        }
                     }
                 }
                 return d;

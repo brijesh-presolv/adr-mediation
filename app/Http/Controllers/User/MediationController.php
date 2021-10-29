@@ -285,7 +285,7 @@ class MediationController extends Controller
 
                 $e = Email::send($InvoledUserP1->userEmail, '8c86c224-75e5-4cfd-8bc2-f3305df4d3f3', ['-caseid-' => $mid, '-partyname-' => $party_name], $InvoledUserP1->name);
 
-                $var = ['-rp-, -cid-'];
+                $var = ['-rp-', '-cid-'];
                 $var1 = [$party_name, $mid];
                 $content1 = WaTemplate::getcontent('l7_mediation_onboarded');
                 $content = str_replace($var, $var1, $content1);
