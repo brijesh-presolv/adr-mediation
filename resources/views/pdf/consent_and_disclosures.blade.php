@@ -72,17 +72,33 @@
             <tr>
                 <td></td>
                 <td>
+                    @if($p->name != "")
                     <p>{{$p->name}}</p>
+                    @endif
+                    @if($p->address1 != "")
                     <p>{{$p->address1}} {{$p->address2}}</p>
+                    @endif
                     @php
                     $address = array();
+                    if($p->city != "" && $p->pincode != "") {
                     $address[]=$p->city." - ".$p->pincode;
+                    }
+                    if($p->state != "") {
                     $address[]=$p->state;
+                    }
+                    if($p->country != "") {
                     $address[]=$p->country;
+                    }
                     @endphp
+                    @if($p->address != "") 
                     <p>{{ implode(", ",$address) }}</p>
+                    @endif
+                    @if($p->userEmail != "")
                     <p>{{$p->userEmail }}</p>
+                    @endif
+                    @if($p->userPhone != "")
                     <p>{{$p->userPhone }}</p>
+                    @endif
                 </td>
             </tr>
             @endif

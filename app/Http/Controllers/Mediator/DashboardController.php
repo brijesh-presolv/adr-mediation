@@ -518,7 +518,7 @@ class DashboardController extends Controller {
                 // $access = Whatsapp::sendWamessage($dwa2);
             }
         }
-        SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $id . "_party.pdf"));
+        SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
 
 
         return true;
