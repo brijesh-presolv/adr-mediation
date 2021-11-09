@@ -29,6 +29,7 @@ Route::match(['POST', 'GET'], '/resendotp', [App\Http\Controllers\HomeController
 
 Route::match(['GET', 'POST'], '/verify', [App\Http\Controllers\HomeController::class, 'verify'])->name('verify');
 
+Route::match(['post'], '/whatsapp_status', [App\Http\Controllers\WhatsappStatus::class, 'status']);
 
 //Route::get('/login', [App\Http\Controllers\HomeController::class, 'login'])->name('login');
 
@@ -151,10 +152,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('view-supporting', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
 
-    Route::match(['post','get'],'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
+    Route::match(['post', 'get'], 'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
 
-    //cases bulk upload 
+    //cases bulk upload
     Route::post('cases/bulkupload', [App\Http\Controllers\Admin\CaseController::class, 'bulkUpload'])->name('admin.bulkUpload');
     Route::put('uploaddocument/{id}', [App\Http\Controllers\Admin\CaseController::class, 'documentUpload'])->name('admin.documentUpload');
-
 });

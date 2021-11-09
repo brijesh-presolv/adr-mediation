@@ -4,6 +4,7 @@ namespace App\Http\Helpers;
 
 use App\Http\Helpers\Curl;
 use App\Models\WhatsappTrack;
+use Illuminate\Support\Facades\URL;
 
 class Whatsapp
 {
@@ -20,12 +21,16 @@ class Whatsapp
         //for live number
         //$auth = base64_encode(WAUTH);
 
+        $url = URL::to('/');
+        // echo $url . "/whatsapp_status";
+        // exit;
+
         $data = [
             "channel" => "whatsapp",
             "source" => "+13253077759",
             "destination" => [$d['contact']],
             "content" => $d['content'],
-            "events_url" => "https://presolv360.com/functions/whatsapp_status.php",
+            "events_url" => $url . "/whatsapp_status",
         ];
 
         // $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
@@ -50,10 +55,11 @@ class Whatsapp
 
 
         $res = Curl::request($url, $data, $type, $auth);
+        print_r($res);
+        exit;
         $res1 = json_decode($res, true);
 
-        // print_r($res1);
-        // exit;
+
         if ($res1) {
 
             if (array_key_exists('text', $d['content'])) {
@@ -74,7 +80,6 @@ class Whatsapp
                 ];
 
                 WhatsappTrack::create($data1);
-
             } else {
 
                 $data2 = [
@@ -93,7 +98,6 @@ class Whatsapp
                 ];
 
                 WhatsappTrack::create($data2);
-
             }
 
             //     return true;
