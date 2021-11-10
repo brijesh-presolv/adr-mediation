@@ -55,8 +55,8 @@ class Whatsapp
 
 
         $res = Curl::request($url, $data, $type, $auth);
-        print_r($res);
-        exit;
+        // print_r($res);
+        // exit;
         $res1 = json_decode($res, true);
 
 
