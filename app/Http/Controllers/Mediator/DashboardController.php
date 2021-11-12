@@ -492,7 +492,6 @@ class DashboardController extends Controller {
         $mid = "M" . sprintf("%06d", $id);
         $sendEamils = array();
         foreach ($involedUser as $inv) {
-            if ($inv->address1 != null && $inv->name != null) {
 
                 $sendEamils[] = $inv->userEmail;
 
@@ -516,7 +515,6 @@ class DashboardController extends Controller {
                 //     'event' => 'SEND_ADDI_DOC_ADM'
                 // ];
                 // $access = Whatsapp::sendWamessage($dwa2);
-            }
         }
         SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
 
@@ -538,7 +536,7 @@ class DashboardController extends Controller {
             $filesE[] = url("storage/app/" . $f["file_name"]);
         }
         foreach ($involedUser as $inv) {
-            if ($inv->address1 != null && $inv->name != null) {
+            
 
                 $sendEamils[] = $inv->userEmail;
 
@@ -562,7 +560,6 @@ class DashboardController extends Controller {
                 //     'event' => 'SEND_ADDI_DOC_ADM'
                 // ];
                 // $access = Whatsapp::sendWamessage($dwa2);
-            }
         }
         if ($mediator) {
             $sendEamils[] = $mediator->email;
@@ -602,7 +599,7 @@ class DashboardController extends Controller {
             $filesE[] = url("storage/app/" . $f["file_path"]);
         }
         foreach ($involedUser as $inv) {
-            if ($inv->address1 != null && $inv->name != null) {
+         
                 $sendEamils[] = $inv->userEmail;
 
                 // settlement agreement
@@ -624,7 +621,6 @@ class DashboardController extends Controller {
                 //     'event' => 'SEND_SETT_AGRE_ADM'
                 // ];
                 // $access = Whatsapp::sendWamessage($dwa2);
-            }
         }
         if ($mediator) {
             $sendEamils[] = $mediator->email;

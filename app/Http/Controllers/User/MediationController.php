@@ -180,7 +180,7 @@ class MediationController extends Controller
             $cid = "M" . sprintf("%06d", $med->id);
 
 
-            $e = Email::send($usr->email, '00838919-cdac-4515-ba1d-fa98918036b5', ['-caseid-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
+            $e = Email::send($usr->email, env('EMAIL_L1', ''), ['-caseid-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
 
 
 
@@ -283,7 +283,7 @@ class MediationController extends Controller
 
                 $party_name = $InvoledUser->name;
 
-                $e = Email::send($InvoledUserP1->userEmail, '8c86c224-75e5-4cfd-8bc2-f3305df4d3f3', ['-caseid-' => $mid, '-partyname-' => $party_name], $InvoledUserP1->name);
+                $e = Email::send($InvoledUserP1->userEmail, env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''), ['-caseid-' => $mid, '-name-' => $party_name], $InvoledUserP1->name);
 
                 $var = ['-rp-', '-cid-'];
                 $var1 = [$party_name, $mid];
@@ -497,13 +497,16 @@ class MediationController extends Controller
 
         $cid = "M" . sprintf("%06d", $request->case_id);
 
-
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
+        ->where("mediators_mediation_cases_status.status", "=", 1)
+        ->first();
 
 
         $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $request->case_id])->first();
 
-        $e = Email::send($InvoledUserP1->userEmail, 'a469fac2-a496-43dd-a64a-bc5fbd782880', ['-caseid-' => $cid, '-type-' => 'Party'], $InvoledUserP1->name);
-
+        $e = Email::send($InvoledUserP1->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ['-caseid-' => $cid, '-type-' => 'Party'], $InvoledUserP1->name);
+       
 
         //other
 
@@ -511,15 +514,58 @@ class MediationController extends Controller
 
 
 
-
+        $responding_party = "";
         foreach ($InvoledUser as $key => $value) {
+            if($value->name != "") {
+                $responding_party = $value->name;
+            }
 
-            $e = Email::send($value->userEmail, '048a86d0-f750-4c99-9718-64529ca45725', ['-caseid-' => $cid, '-partyname-' => $InvoledUserP1->name], $value->name);
+            $e = Email::send($value->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ['-caseid-' => $cid, '-partyname-' => $InvoledUserP1->name], $value->name);
+
+            $var = ['-cid-', '-cl-'];
+                $var1 = [$cid, $InvoledUserP1->name];
+                $content1 = WaTemplate::getcontent('withdrawal_responding');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $request->case_id,
+                    'contact' => "+91" . $value->userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'WDRN_USER'
+                ];
+
+                $access = Whatsapp::sendWamessage($dwa1);
         }
 
+        $var = ['-cid-', '-rp-'];
+        $var1 = [$cid, $responding_party];
+        $content1 = WaTemplate::getcontent('withdrawal_initiating');
+        $content = str_replace($var, $var1, $content1);
+        $dwa1 = [
+            'caseid' => $request->case_id,
+            'contact' => "+91" . $InvoledUserP1->userPhone,
+            'content' => ['text' => $content],
+            // 'casetype' => 2,
+            'event' => 'WDRN_USER'
+        ];
+        $access = Whatsapp::sendWamessage($dwa1);
 
+        if ($mediator) {
+            Email::send($mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $cid, "-responding-" => $InvoledUserP1->name, "-type-" => "Mediator"], $mediator->username);
 
+            $var = ['-cid-'];
+            $var1 = [$cid];
+            $content1 = WaTemplate::getcontent('withdrawal_mediator');
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $request->case_id,
+                'contact' => "+91" . $mediator->mobile_number,
+                'content' => ['text' => $content],
+                // 'casetype' => 2,
+                'event' => 'WDRN_USER'
+            ];
 
+            $access = Whatsapp::sendWamessage($dwa1);
+        }
 
 
         $mediation_status_log = new Mediation_status_log;
