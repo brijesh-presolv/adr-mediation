@@ -130,7 +130,9 @@ use App\Models\InvoledUser;
 
                         <td>
                             
-                            <span class="badge badge-success ">{{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}
+                            <span class="badge badge-success ">@if (isset($value->casestatus->description))
+                                
+                             {{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}@endif</span>
                         </td>
                         </tr>
                     <?php } ?>

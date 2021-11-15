@@ -11,5 +11,8 @@ class WhatsappLog extends Model
 
     protected $table = 'whatsapp_log';
 
+    const UPDATED_AT = null;
+
+
     protected $fillable = ['request_id', 'created_time', 'sent_time', 'delivered_time', 'updated_time', 'status', 'response'];
 }
