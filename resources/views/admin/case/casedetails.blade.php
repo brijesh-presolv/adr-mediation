@@ -30,11 +30,10 @@
                             <td>
 
                                 <?php
-                                $pcount = 0;
-
                                 foreach ($case->party as $key => $value) {
-                                    if ($pcount > 0) {
+                                    if ($key > 0) {
                                         ?>
+                                        @if($value->name != "")
                                         @if($value->name != "")
                                         @lang('case.name'): {{ $value->name}}<br>
                                         @endif
@@ -48,12 +47,33 @@
                                         @lang('case.address'): <?= $value->address1 . ' ' . $value->address2 . ' ' . $value->city . ', ' . $value->pincode . ', ' . $value->state . ' ' . $value->country ?><br>
                                         @endif
                                         <br>
-                                        <?php
+                                        @endif
                                         
+                                        <?php
                                     }
-                                    $pcount++;
-                                }
-                                ?>
+                                }?>
+                                @if($case->otherRespondentDetails != "")
+                                    {{$case->otherRespondentDetails}}<br>
+                                @endif
+                                <?php
+                                foreach ($case->party as $key => $value) {
+                                    if ($key > 0) {
+                                        ?>
+                                        @if($value->name == "")
+                                        
+                                        @if($value->userEmail != "")
+                                        @lang('case.emai'): {{ $value->userEmail}}<br>   
+                                        @endif 
+                                        @if($value->userPhone != "")
+                                        @lang('case.phone'): {{ $value->userPhone}}<br>
+                                        @endif
+                                        
+                                        @endif
+                                        <br>
+                                        <?php
+                                    }
+                                }?>
+                                
                             </td>
                         </tr>
                         <tr>

@@ -117,7 +117,7 @@ return [
     //comon word
     "initiating_party" => "Initiating party",
     "name" => "Name",
-    "emai" => "Emai",
+    "emai" => "Email",
     "phone" => "Phone",
     "address" => "Address",
     "issue" => "Issue",
