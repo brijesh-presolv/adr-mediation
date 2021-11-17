@@ -4,7 +4,6 @@ namespace App\Http\Helpers;
 
 use App\Http\Helpers\Curl;
 use App\Models\WhatsappTrack;
-use Illuminate\Support\Facades\URL;
 
 class Whatsapp
 {
@@ -21,16 +20,14 @@ class Whatsapp
         //for live number
         //$auth = base64_encode(WAUTH);
 
-        // $eventUrl = route('whatsapp_status');
-
         $data = [
             "channel" => "whatsapp",
             "source" => "+13253077759",
             "destination" => [$d['contact']],
             "content" => $d['content'],
-            // "events_url" => $eventUrl,
-            "events_url" => "https://presolv360.com/functions/whatsapp_status.php",
+             "events_url" => route('whatsapp_status'),
         ];
+        // $eventUrl = route('whatsapp_status');
 
         // $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
 
@@ -40,7 +37,7 @@ class Whatsapp
         //     "destination" => [$d['contact']],
         //     // "destination" => $d['contact'],
         //     "content" => $d['content'],
-        //     // "events_url" => Common_function::status(),
+        //     "events_url" => route('whatsapp_status'),
         // ];
 
         //+918591275735 - live no.
@@ -53,11 +50,9 @@ class Whatsapp
 
 
         $res = Curl::request($url, $data, $type, $auth);
-        // Common_function::status($res);
         $res1 = json_decode($res, true);
-        // print_r($res1);
-        // exit;
-        
+
+       
         if ($res1) {
 
             if (array_key_exists('text', $d['content'])) {
@@ -102,7 +97,8 @@ class Whatsapp
             // } else {
 
             //     return false;
-            return true;
+            // }
+           return true;
             // }
         } else {
             return false;

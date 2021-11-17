@@ -180,7 +180,7 @@ class MediationController extends Controller
             $cid = "M" . sprintf("%06d", $med->id);
 
 
-            $e = Email::send($usr->email, env('EMAIL_L1', ''), ['-caseid-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
+            $e = Email::send($usr->email, env('EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
 
 
 
@@ -283,6 +283,7 @@ class MediationController extends Controller
 
                 $party_name = $InvoledUser->name;
 
+                // $e = Email::send($InvoledUserP1->userEmail, '8c86c224-75e5-4cfd-8bc2-f3305df4d3f3', ['-caseid-' => $mid, '-partyname-' => $party_name], $InvoledUserP1->name);
                 $e = Email::send($InvoledUserP1->userEmail, env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''), ['-caseid-' => $mid, '-name-' => $party_name], $InvoledUserP1->name);
 
                 $var = ['-rp-', '-cid-'];
@@ -498,15 +499,15 @@ class MediationController extends Controller
         $cid = "M" . sprintf("%06d", $request->case_id);
 
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-        ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
-        ->where("mediators_mediation_cases_status.status", "=", 1)
-        ->first();
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
 
 
         $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $request->case_id])->first();
 
         $e = Email::send($InvoledUserP1->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ['-caseid-' => $cid, '-type-' => 'Party'], $InvoledUserP1->name);
-       
+
 
         //other
 
@@ -516,13 +517,16 @@ class MediationController extends Controller
 
         $responding_party = "";
         foreach ($InvoledUser as $key => $value) {
-            if($value->name != "") {
+            if ($value->name != "") {
                 $responding_party = $value->name;
             }
 
-            $e = Email::send($value->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ['-caseid-' => $cid, '-partyname-' => $InvoledUserP1->name], $value->name);
+            if ($value->userEmail != "") {
+                $e = Email::send($value->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ['-caseid-' => $cid, '-partyname-' => $InvoledUserP1->name], $value->name);
+            }
 
-            $var = ['-cid-', '-cl-'];
+            if ($value->userPhone != "") {
+                $var = ['-cid-', '-cl-'];
                 $var1 = [$cid, $InvoledUserP1->name];
                 $content1 = WaTemplate::getcontent('withdrawal_responding');
                 $content = str_replace($var, $var1, $content1);
@@ -534,6 +538,7 @@ class MediationController extends Controller
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
+            }
         }
 
         $var = ['-cid-', '-rp-'];
@@ -767,6 +772,8 @@ class MediationController extends Controller
                 $iniParty->pincode = $cldetails->pincode;
                 $iniParty->state = $cldetails->state;
                 $iniParty->country = $cldetails->country;
+                $iniParty->isOnboarded = 1;
+
                 $iniParty->created_at = date('Y-m-d H:s:i');
                 $iniParty->updated_at = date('Y-m-d H:s:i');
                 $iniParty->save();
@@ -784,38 +791,35 @@ class MediationController extends Controller
             $resParty->pincode = $value['8'];
             $resParty->state = $value['9'];
             $resParty->country = $value['10'];
+            $resParty->isClaimant = 1;
             $resParty->created_at = date('Y-m-d H:s:i');
             $resParty->updated_at = date('Y-m-d H:s:i');
             $resParty->save();
 
-            
+
             // $otherDetails = array_merge(["email" => explode(',', $value[21]), 'mobile' => explode(',', $value[22])]);
 
             $otherResEmail = explode(',', $value[15]);
             $otherResMobile = explode(',', $value[16]);
 
+            $forloopcnt = max(count($otherResEmail), count($otherResMobile));
 
-            for($i = 0; $i < count($otherResEmail); $i++) {
-                if($i == count($otherResEmail)-1) {
-                    $otherDetails[$i] = new InvoledUser();
-                    $otherDetails[$i]->userPlanId = $med->id;
-                    $otherDetails[$i]->userEmail = $otherResEmail[$i];
-                    $otherDetails[$i]->userPhone = $otherResMobile[$i];
-                    $otherDetails[$i]->joinCode = $this->joinCode();
-                    $otherDetails[$i]->created_at = date('Y-m-d H:s:i');
-                    $otherDetails[$i]->updated_at = date('Y-m-d H:s:i');
-                    $otherDetails[$i]->save();
-                } else {
-                    $otherDetails[$i] = new InvoledUser();
-                    $otherDetails[$i]->userPlanId = $med->id;
-                    $otherDetails[$i]->userEmail = $otherResEmail[$i];
-                    $otherDetails[$i]->userPhone = $otherResMobile[$i];
-                    $otherDetails[$i]->joinCode = $this->joinCode();
-                    $otherDetails[$i]->created_at = date('Y-m-d H:s:i');
-                    $otherDetails[$i]->updated_at = date('Y-m-d H:s:i');
-                    $otherDetails[$i]->save();
-                }
 
+            for ($i = 0; $i < $forloopcnt; $i++) {
+                // for($j = 0; $j < count($otherResMobile); $j++) {
+
+
+                $otherDetails = new InvoledUser();
+                $otherDetails->userPlanId = $med->id;
+                $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i]) : "";
+                $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
+                $otherDetails->joinCode = $this->joinCode();
+                $otherDetails->isClaimant = 1;
+                $otherDetails->created_at = date('Y-m-d H:s:i');
+                $otherDetails->updated_at = date('Y-m-d H:s:i');
+                $otherDetails->save();
+
+                // }
             }
 
 
@@ -824,7 +828,7 @@ class MediationController extends Controller
             // }
             // $otherResEmail = explode(',', $value[21]);
             // $otherResMobile = explode(',', $value[22]);
-            
+
 
 
         }

@@ -29,7 +29,7 @@ Route::match(['POST', 'GET'], '/resendotp', [App\Http\Controllers\HomeController
 
 Route::match(['GET', 'POST'], '/verify', [App\Http\Controllers\HomeController::class, 'verify'])->name('verify');
 
-Route::match(['POST'], '/whatsapp_status', [App\Http\Controllers\WhatsappStatus::class, 'status'])->name('whatsapp_status');
+Route::match(['GET', 'POST'], '/whatsapp_status', [App\Http\Controllers\WhatsappStatus::class, 'status'])->name('whatsapp_status');
 
 //Route::get('/login', [App\Http\Controllers\HomeController::class, 'login'])->name('login');
 

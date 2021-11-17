@@ -87,7 +87,7 @@
                             </td>
                         </tr>
                     </table>
-                    <?php if($case->documentPath){ $doc='storage/app/public/mediation/'.$case->id.'/'.$case->documentPath;
+                    <?php if($case->documentPath != "NULL"){ $doc='storage/app/public/mediation/'.$case->id.'/'.$case->documentPath;
                                     ?>
 
                                      <table class="table table-bordered">

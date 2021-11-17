@@ -205,7 +205,7 @@
                                         <td>Circumstances disclosing any past or present relationship with, or interest in, any of the parties or in relation to the subject-matter in dispute, whether financial, business, professional or other kind, which is likely to impair your independence or impartiality (list out)</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars2" id="particulars2" rows="3">Na</textarea>
+                                                <textarea class="form-control" name="particulars2" id="particulars2" rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -213,7 +213,7 @@
                                         <td>Circumstances which are likely to affect your ability to devote sufficient time to the mediation and in particular your </td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars3" id="particulars3" rows="3">Na</textarea>
+                                                <textarea class="form-control" name="particulars3" id="particulars3" rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -221,7 +221,7 @@
                                         <td>ability to complete the entire mediation within the time limits prescribed under the Rules</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars4" id="particulars4" rows="3">Na</textarea>
+                                                <textarea class="form-control" name="particulars4" id="particulars4" rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -333,7 +333,6 @@ var userTable = $('#request').DataTable({
                     }
                     } else {
                         if(data[i].name != null) {
-
                         d = d + `<p class="text-danger get_party" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
                         }
                     }
@@ -454,7 +453,6 @@ $('#acceptModal').on('show.bs.modal', function (event) {
 
     var dd = "";
     data.each(function (index) {
-        
         if (index <= 1) {
             if (index == 0) {
                 dd = dd + `<tr>`;
@@ -477,8 +475,7 @@ $('#acceptModal').on('show.bs.modal', function (event) {
                 dd = dd + `</tr>`;
             }
 
-        } 
-        else {
+        } else {
             dd = dd + `<tr>
                     <td></td>
                     <td>

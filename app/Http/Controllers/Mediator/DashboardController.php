@@ -22,15 +22,16 @@ use DB;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 
-class DashboardController extends Controller {
+class DashboardController extends Controller
+{
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct() {
-        
+    public function __construct()
+    {
     }
 
     /**
@@ -38,7 +39,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index() {
+    public function index()
+    {
         return view('mediator.dashboard');
     }
 
@@ -47,7 +49,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function newrequest() {
+    public function newrequest()
+    {
         $mediationDetails = Mediation_Details::where("user_id", "=", Auth::user()->id)->first();
         return view('mediator.newrequest', compact('mediationDetails'));
     }
@@ -57,15 +60,16 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function newjson() {
+    public function newjson()
+    {
 
         $loginUser = Auth::user()->id;
         $newrequestData = DB::table('mediation_case')
-                //->select('mediation_case.*')
-                ->join('mediators_mediation_cases_status', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
-                ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 0])
-                ->where("mediation_case.confirm_status", "!=", 2)
-                ->get();
+            //->select('mediation_case.*')
+            ->join('mediators_mediation_cases_status', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
+            ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 0])
+            ->where("mediation_case.confirm_status", "!=", 2)
+            ->get();
         // dd($newrequestData);
         $arraydata = array();
 
@@ -73,7 +77,7 @@ class DashboardController extends Controller {
         foreach ($newrequestData as $d) {
             $arraydata[] = [
                 "id" => $d->mediation_case_id,
-                "party" => InvoledUser::select('name', 'userPhone', 'address1', 'address2', 'userEmail', 'isOnboarded')->where(['userPlanid' => $d->mediation_case_id])->get(),
+                "party" => InvoledUser::select('name', 'userPhone', 'address1', 'address2', 'userEmail', 'isOnboarded')->where(['userPlanid' => $d->mediation_case_id])->whereNotNull('address1')->get(),
                 "comments" => "tesr",
                 "caseId" => $d->mediation_case_id,
                 "case_issue" => $d->issue,
@@ -90,7 +94,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function ongoing() {
+    public function ongoing()
+    {
         $confirm_status = 1;
         return view('mediator.ongoing', compact('confirm_status'));
     }
@@ -100,7 +105,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function closed() {
+    public function closed()
+    {
         $confirm_status = 2;
         return view('mediator.close', compact("confirm_status"));
     }
@@ -110,7 +116,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function profile() {
+    public function profile()
+    {
 
         $loginUser = Auth::user()->id;
         $profileData = User::find($loginUser);
@@ -122,7 +129,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function statusChange(Request $request) {
+    public function statusChange(Request $request)
+    {
         if ($request->status == 1) {
             $caseid = $request->mediation_case_id;
             $consentDisclosures = ConsentDisclosures::where("mediation_case_id", "=", $caseid)->first();
@@ -160,9 +168,9 @@ class DashboardController extends Controller {
 
 
         DB::table('mediators_mediation_cases_status')
-                ->where('mediator_id', Auth::user()->id)
-                ->where('mediation_case_id', $caseid)
-                ->update(['status' => $request->status, 'updated_at' => now()]);
+            ->where('mediator_id', Auth::user()->id)
+            ->where('mediation_case_id', $caseid)
+            ->update(['status' => $request->status, 'updated_at' => now()]);
         return response()->json(["msg" => "staus Update"]);
     }
 
@@ -171,7 +179,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function addSession(Request $request) {
+    public function addSession(Request $request)
+    {
         $dataToInsert = [
             'case_id' => $request->caseId,
             'session_date' => $request->sessionDate . "/" . $request->sessionTime,
@@ -180,20 +189,22 @@ class DashboardController extends Controller {
             'session_party_ids' => json_encode($request->session_party_ids),
             'scheduled_by' => Auth::user()->id,
         ];
-
         DB::table('manage_session')->insert($dataToInsert);
-        foreach ($request->session_party_ids as $pary_id) {
-            $data = InvoledUser::where("userId", $pary_id)->where("userPlanId", $request->caseId)->first();
-            $this->sned_session($request->zoomId, $request->caseId, $data->userEmail, $data->name, $request->sessionDate . "/" . $request->sessionTime, $data->userPhone);
+        // foreach ($request->session_party_ids as $pary_id) {
+        $data = InvoledUser::where("userPlanId", $request->caseId)->get();
+        foreach ($data as $party) {
+            $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
         }
         $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
-                ->where("mediators_mediation_cases_status.status", "=", 1)
-                ->first();
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        //  dd($mediator);
+
         if ($mediator) {
             $id = "M" . sprintf("%06d", $request->caseId);
             SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
-        
+
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$request->sessionDate . "/" . $request->sessionTime, $id, $request->zoomId];
             $content1 = WaTemplate::getcontent('l10_session_schedule');
@@ -205,8 +216,7 @@ class DashboardController extends Controller {
                 'event' => 'SESS_SCHE_MED'
             ];
 
-            // print_r($dwa1);
-            // exit;
+
             $access = Whatsapp::sendWamessage($dwa1);
         }
         return true;
@@ -217,7 +227,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getAddedSesion(Request $request) {
+    public function getAddedSesion(Request $request)
+    {
 
         $sessionData = DB::table('manage_session')->where('scheduled_by', $request->mediator_id)->get();
         $sn = 1;
@@ -250,12 +261,13 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function viewSupporting(Request $request) {
+    public function viewSupporting(Request $request)
+    {
 
         $sessionData = DB::table('manage_files')
-                ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
-                ->where('manage_files.case_id', $request->id)
-                ->get();
+            ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
+            ->where('manage_files.case_id', $request->id)
+            ->get();
         $sn = 1;
         foreach ($sessionData as $value) {
 
@@ -275,12 +287,13 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function viewSettelment(Request $request) {
+    public function viewSettelment(Request $request)
+    {
 
         $sessionData = DB::table('document_settlements')
-                ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
-                ->where('document_settlements.mediation_case_id', $request->id)
-                ->get();
+            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+            ->where('document_settlements.mediation_case_id', $request->id)
+            ->get();
         $sn = 1;
         foreach ($sessionData as $value) {
 
@@ -300,29 +313,33 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function rejectedCaseView() {
+    public function rejectedCaseView()
+    {
         $loginUser = Auth::user()->id;
         $rejected_case = DB::table('mediators_mediation_cases_status')
-                        ->select('mediators_mediation_cases_status.*', 'user_involved_in_agreement.userid')
-                        ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
-                        ->join('user_involved_in_agreement',
-                                function ($join) {
-                            $join->on('user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')
-                            ->where('user_involved_in_agreement.isClaimant', '=', '0');
-                        })
-                        ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->get();
+            ->select('mediators_mediation_cases_status.*', 'user_involved_in_agreement.userid')
+            ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
+            ->join(
+                'user_involved_in_agreement',
+                function ($join) {
+                    $join->on('user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')
+                        ->where('user_involved_in_agreement.isClaimant', '=', '0');
+                }
+            )
+            ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->get();
 
         //dd($rejected_case);
         return view('mediator.reject', compact("rejected_case"));
     }
 
-    public function json($role = 0) {
+    public function json($role = 0)
+    {
         $cases = MedCase::select("mediation_case.*", "users.username as mediator_username", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
-                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediation_case.confirm_status", "=", $role)
-                ->where('mediator_id', "=", Auth::user()->id)
-                ->get();
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediation_case.confirm_status", "=", $role)
+            ->where('mediator_id', "=", Auth::user()->id)
+            ->get();
         $arraydata = array();
         foreach ($cases as $d) {
             $arraydata[] = [
@@ -335,14 +352,15 @@ class DashboardController extends Controller {
         return response()->json(["data" => $arraydata]);
     }
 
-    public function casedetails($id) {
+    public function casedetails($id)
+    {
 
 
         $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
-                ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-                ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where('mediation_case.id', '=', $id)
-                ->first();
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where('mediation_case.id', '=', $id)
+            ->first();
 
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
@@ -353,16 +371,17 @@ class DashboardController extends Controller {
         $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->get();
 
 
-        return view('admin.case.casedetails', compact("case"));
+        return view('mediator.casedetails', compact("case"));
     }
 
-    public function jsonOngoing($role = 0) {
+    public function jsonOngoing($role = 0)
+    {
         $cases = DB::table('mediators_mediation_cases_status')
-                        ->select("mediation_case.*")
-                        ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
-                        ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
-                        ->where('confirm_status', "=", 1)
-                        ->where(['mediator_id' => Auth::user()->id, 'mediators_mediation_cases_status.status' => 1])->get();
+            ->select("mediation_case.*")
+            ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
+            ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
+            ->where('confirm_status', "=", 1)
+            ->where(['mediator_id' => Auth::user()->id, 'mediators_mediation_cases_status.status' => 1])->get();
         $arraydata = array();
         foreach ($cases as $d) {
             $arraydata[] = [
@@ -379,7 +398,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function storeMultiFile(Request $request) {
+    public function storeMultiFile(Request $request)
+    {
 
         $validatedData = $request->validate([
             'files' => 'required',
@@ -411,12 +431,13 @@ class DashboardController extends Controller {
         }
     }
 
-    public function getConsentAndDisclosures($id) {
+    public function getConsentAndDisclosures($id)
+    {
         $data["case"] = MedCase::where("id", "=", $id)->first();
         $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
-                ->where("mediation_case_id", "=", $id)
-                ->first();
+            ->where("mediation_case_id", "=", $id)
+            ->first();
         if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
             return abort(404);
         }
@@ -429,7 +450,8 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function settelmenSaveClose(Request $request) {
+    public function settelmenSaveClose(Request $request)
+    {
 
         $validatedData = $request->validate([
             'Settelmentfiles' => 'required',
@@ -457,32 +479,38 @@ class DashboardController extends Controller {
         }
     }
 
-    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone) {
-        $mid = "M" . sprintf("%06d", $id);
-        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
-        
-        $var = ['-dt-', '-cid-', '-link-'];
-        $var1 = [$date, $mid, $url];
-        $content1 = WaTemplate::getcontent('l10_session_schedule');
-        $content = str_replace($var, $var1, $content1);
-        $dwa1 = [
-            'caseid' => $id,
-            'contact' => "+91" . $userPhone,
-            'content' => ['text' => $content],
-            'event' => 'SESS_SCHE_ADM'
-        ];
+    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone)
+    {
 
-        $access = Whatsapp::sendWamessage($dwa1);
-        
+        $mid = "M" . sprintf("%06d", $id);
+        if ($email_id != "") {
+            SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+        }
+
+        if ($userPhone != "") {
+            $var = ['-dt-', '-cid-', '-link-'];
+            $var1 = [$date, $mid, $url];
+            $content1 = WaTemplate::getcontent('l10_session_schedule');
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $id,
+                'contact' => "+91" . $userPhone,
+                'content' => ['text' => $content],
+                'event' => 'SESS_SCHE_ADM'
+            ];
+
+            $access = Whatsapp::sendWamessage($dwa1);
+        }
         return true;
     }
 
-    public function send_attechment_party($id) {
+    public function send_attechment_party($id)
+    {
         $data["case"] = MedCase::where("id", "=", $id)->first();
         $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
-                ->where("mediation_case_id", "=", $id)
-                ->first();
+            ->where("mediation_case_id", "=", $id)
+            ->first();
         if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
             return abort(404);
         }
@@ -490,13 +518,11 @@ class DashboardController extends Controller {
         Storage::put('public/mediation/' . $data["case"]->id . '/' . "M" . sprintf("%06d", $id) . "_party.pdf", $pdf->output());
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mid = "M" . sprintf("%06d", $id);
-        $sendEamils = array();
         foreach ($involedUser as $inv) {
-
-                $sendEamils[] = $inv->userEmail;
-
-                // additional_doc
-
+            if ($inv->userEmail != "") {
+                SendGrid::send($inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
+            }
+            if ($inv->userPhone != "") {
                 $var = ['-cid-'];
                 $var1 = [$mid];
                 $content1 = WaTemplate::getcontent('mediator_appointment');
@@ -508,21 +534,14 @@ class DashboardController extends Controller {
                     'event' => 'SEND_APPO_MED'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
-                // $dwa2 = [
-                //     'caseid' => $id,
-                //     'contact' => "+91" .  $inv->userPhone,
-                //     'content' => ['media' => ['url' => $filesE, 'caption' => 'Additional Document ' . $mid]],
-                //     'event' => 'SEND_ADDI_DOC_ADM'
-                // ];
-                // $access = Whatsapp::sendWamessage($dwa2);
+            }
         }
-        SendGrid::send($sendEamils, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
-
 
         return true;
     }
 
-    public function send_upload_file_party($id, $files) {
+    public function send_upload_file_party($id, $files)
+    {
 
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -536,12 +555,12 @@ class DashboardController extends Controller {
             $filesE[] = url("storage/app/" . $f["file_name"]);
         }
         foreach ($involedUser as $inv) {
-            
 
+            if ($inv->userEmail != "") {
                 $sendEamils[] = $inv->userEmail;
-
-                // additional_doc
-
+            }
+            // additional_doc
+            if ($inv->userPhone != "") {
                 $var = ['-cid-'];
                 $var1 = [$mid];
                 $content1 = WaTemplate::getcontent('additional_doc');
@@ -553,17 +572,22 @@ class DashboardController extends Controller {
                     'event' => 'SEND_ADDI_DOC_MED'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
-                // $dwa2 = [
-                //     'caseid' => $id,
-                //     'contact' => "+91" .  $inv->userPhone,
-                //     'content' => ['media' => ['url' => $filesE, 'caption' => 'Additional Document ' . $mid]],
-                //     'event' => 'SEND_ADDI_DOC_ADM'
-                // ];
-                // $access = Whatsapp::sendWamessage($dwa2);
+
+                // dd($access);
+            }
+            // $dwa2 = [
+            //     'caseid' => $id,
+            //     'contact' => "+91" .  $inv->userPhone,
+            //     'content' => ['media' => ['url' => $filesE, 'caption' => 'Additional Document ' . $mid]],
+            //     'event' => 'SEND_ADDI_DOC_ADM'
+            // ];
+            // $access = Whatsapp::sendWamessage($dwa2);
         }
+        // echo ("error");
+        // exit;
         if ($mediator) {
             $sendEamils[] = $mediator->email;
-            
+
             $var = ['-cid-'];
             $var1 = [$mid];
             $content1 = WaTemplate::getcontent('additional_doc_med');
@@ -575,17 +599,20 @@ class DashboardController extends Controller {
                 'event' => 'SEND_ADDI_DOC_MED'
             ];
 
-           
+
             $access = Whatsapp::sendWamessage($dwa1);
         }
+        // dd($sendEamils);
 
-       
-        SendGrid::send($sendEamils, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        foreach ($sendEamils as $email) {
+            SendGrid::send($email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        }
 
         return true;
     }
 
-    public function send_settlement_agreement_party($id, $files) {
+    public function send_settlement_agreement_party($id, $files)
+    {
 
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -599,10 +626,11 @@ class DashboardController extends Controller {
             $filesE[] = url("storage/app/" . $f["file_path"]);
         }
         foreach ($involedUser as $inv) {
-         
+            if ($inv->userEmail != "") {
                 $sendEamils[] = $inv->userEmail;
-
-                // settlement agreement
+            }
+            // settlement agreement
+            if ($inv->userPhone != "") {
                 $var = ['-cid-'];
                 $var1 = [$mid];
                 $content1 = WaTemplate::getcontent('settlement_agreement');
@@ -614,17 +642,18 @@ class DashboardController extends Controller {
                     'event' => 'SEND_SETT_AGRE_MED'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
-                // $dwa2 = [
-                //     'caseid' => $id,
-                //     'contact' => "+91" . $inv->userPhone,
-                //     'content' => ['media' => ['url' => $filesE, 'caption' => 'settlement agreement ' . $mid]],
-                //     'event' => 'SEND_SETT_AGRE_ADM'
-                // ];
-                // $access = Whatsapp::sendWamessage($dwa2);
+            }
+            // $dwa2 = [
+            //     'caseid' => $id,
+            //     'contact' => "+91" . $inv->userPhone,
+            //     'content' => ['media' => ['url' => $filesE, 'caption' => 'settlement agreement ' . $mid]],
+            //     'event' => 'SEND_SETT_AGRE_ADM'
+            // ];
+            // $access = Whatsapp::sendWamessage($dwa2);
         }
         if ($mediator) {
             $sendEamils[] = $mediator->email;
-            
+
             $var = ['-cid-'];
             $var1 = [$mid];
             $content1 = WaTemplate::getcontent('settlement_agreement_med');
@@ -636,12 +665,13 @@ class DashboardController extends Controller {
                 'event' => 'SEND_SETT_AGRE_MED'
             ];
 
-           
+
             $access = Whatsapp::sendWamessage($dwa1);
         }
-        
-        SendGrid::send($sendEamils, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        foreach ($sendEamils as $email) {
+
+            SendGrid::send($email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        }
         return true;
     }
-
 }

@@ -41,8 +41,8 @@ class CaseController extends Controller
      */
     public function index()
     {
-        $allUsers = User::where("role", "=", 0)->get();
         $users = User::where("role", "=", 1)->get();
+        $allUsers = User::where("role", "=", 0)->get();
         $confirm_status = 0;
         return view('admin.case.index', compact("confirm_status", "users", "allUsers"));
     }
@@ -249,19 +249,16 @@ class CaseController extends Controller
             'session_party_ids' => json_encode($request->session_party_ids),
             'scheduled_by' => Auth::user()->id,
         ];
-
-        foreach ($request->session_party_ids as $pary_id) {
-            $data = InvoledUser::where("userId", $pary_id)->where("userPlanId", $request->caseId)->first();
-            // print_r($d);
-            // exit;
-            $this->sned_session($request->zoomId, $request->caseId, $data->userEmail, $data->name, $request->sessionDate . "/" . $request->sessionTime, $data->userPhone);
+        // foreach ($request->session_party_ids as $pary_id) {
+        $data = InvoledUser::where("userPlanId", $request->caseId)->get();
+        foreach ($data as $party) {
+            $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
         }
-        // exit;
-        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+
+        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-
         if ($mediator) {
             $id = "M" . sprintf("%06d", $request->caseId);
             SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
@@ -327,13 +324,12 @@ class CaseController extends Controller
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediation_case.confirm_status", "=", $role)
             ->get();
-        // dd($cases);
         $arraydata = array();
         foreach ($cases as $d) {
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->whereNotNull('address1')->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }
@@ -434,7 +430,7 @@ class CaseController extends Controller
 
 
                     $code = $inv->joinCode;
-                    $s = SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-joincode-" => $inv->joinCode, "-claimant-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
+                    $s = SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
                 }
 
 
@@ -555,6 +551,8 @@ class CaseController extends Controller
         $ini_userPlanId = "";
         $responding_email = [];
         $responding_phone = [];
+
+        // $mid = "M" . sprintf("%06d", $id);
         // $responding_phone = "";
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
@@ -564,7 +562,9 @@ class CaseController extends Controller
                 $initiating_email = $inv->userEmail;
             } else if ($inv->isOnboarded == 0) {
                 $code = $inv->joinCode;
-                $responding_party = $inv->name;
+                if ($inv->name != "") {
+                    $responding_party = $inv->name;
+                }
                 $responding_email[] = $inv->userEmail;
                 $responding_phone[] = $inv->userPhone;
                 // SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
@@ -581,16 +581,21 @@ class CaseController extends Controller
             // continue;
 
         }
+        foreach ($responding_email as $email) {
+            if ($email != "") {
+                SendGrid::send($email, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+            }
+        }
 
-        if (isset($responding_phone)) {
-            foreach ($responding_phone as $phone) {
+        foreach ($responding_phone as $phone) {
+            if ($phone != "") {
                 $var = ['-cid-', '-ip-'];
                 $var1 = [Common_function::getsixdigitid('sc', $inv->userPlanId), $initiating_party];
                 $content1 = WaTemplate::getcontent('l4_mediation_party2');
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $inv->userPlanId,
-                    'contact' => "+91" . $inv->userPhone,
+                    'contact' => "+91" . $phone,
                     'content' => ['text' => $content],
                     'event' => 'ACPTARB_ADM'
                 ];
@@ -648,24 +653,27 @@ class CaseController extends Controller
     public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone)
     {
         $mid = "M" . sprintf("%06d", $id);
-        SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+        if ($email_id != "") {
+            SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+        }
+        if ($userPhone != "") {
 
-        $var = ['-dt-', '-cid-', '-link-'];
-        $var1 = [$date, $mid, $url];
-        $content1 = WaTemplate::getcontent('l10_session_schedule');
-        $content = str_replace($var, $var1, $content1);
-        $dwa1 = [
-            'caseid' => $id,
-            'contact' => "+91" . $userPhone,
-            'content' => ['text' => $content],
-            'event' => 'SESS_SCHE_ADM'
-        ];
+            $var = ['-dt-', '-cid-', '-link-'];
+            $var1 = [$date, $mid, $url];
+            $content1 = WaTemplate::getcontent('l10_session_schedule');
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $id,
+                'contact' => "+91" . $userPhone,
+                'content' => ['text' => $content],
+                'event' => 'SESS_SCHE_ADM'
+            ];
 
-        // print_r($dwa1);
-        // exit;
+            // print_r($dwa1);
+            // exit;
 
-        $access = Whatsapp::sendWamessage($dwa1);
-
+            $access = Whatsapp::sendWamessage($dwa1);
+        }
         return true;
     }
 
@@ -681,32 +689,55 @@ class CaseController extends Controller
         $initiating_party = "";
         $initiating_phone = "";
         $responding_party = "";
+        $initiating_email = "";
+        $responding_email = [];
+        $responding_phone = [];
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
                 $initiating_party = $inv->name;
                 $initiating_phone = $inv->userPhone;
+                $initiating_email = $inv->userEmail;
+
                 SendGrid::send($inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
-            } else if ($inv->isOnboarded == 0 && $inv->address1 != null && $inv->name != null) {
-                $responding_party = $inv->name;
-                SendGrid::send($inv->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
-
-                $var = ['-cid-', '-cl-'];
-                $var1 = [$mid, $initiating_party];
-                $content1 = WaTemplate::getcontent('withdrawal_responding');
-                $content = str_replace($var, $var1, $content1);
-                $dwa1 = [
-                    'caseid' => $id,
-                    'contact' => "+91" . $inv->userPhone,
-                    'content' => ['text' => $content],
-                    'event' => 'WDRN_ADM'
-                ];
-
-                // print_r($dwa1);
-                // exit;
-                $access = Whatsapp::sendWamessage($dwa1);
+            } else {
+                if ($inv->name != "") {
+                    $responding_party = $inv->name;
+                }
+                $responding_email[] = $inv->userEmail;
+                $responding_phone[] = $inv->userPhone;
             }
         }
-        if ($responding_party != "" && $initiating_phone != "") {
+
+        if (isset($responding_email)) {
+            foreach ($responding_email as $email) {
+                if ($email != "") {
+                    SendGrid::send($email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                }
+            }
+        }
+
+        if (isset($responding_phone)) {
+            foreach ($responding_phone as $phone) {
+                if ($phone != "") {
+                    $var = ['-cid-', '-cl-'];
+                    $var1 = [$mid, $initiating_party];
+                    $content1 = WaTemplate::getcontent('withdrawal_responding');
+                    $content = str_replace($var, $var1, $content1);
+                    $dwa1 = [
+                        'caseid' => $id,
+                        'contact' => "+91" . $phone,
+                        'content' => ['text' => $content],
+                        'event' => 'WDRN_ADM'
+                    ];
+
+                    // print_r($dwa1);
+                    // exit;
+                    $access = Whatsapp::sendWamessage($dwa1);
+                }
+            }
+        }
+
+        if ($responding_party != "") {
             $var = ['-cid-', '-rp-'];
             $var1 = [$mid, $responding_party];
             $content1 = WaTemplate::getcontent('withdrawal_initiating');
@@ -750,20 +781,21 @@ class CaseController extends Controller
     public function sned_resolved($id)
     {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
-        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
         $mid = "M" . sprintf("%06d", $id);
         $initiating_party = "";
-        $initiating_phone = "";
-
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
                 $initiating_party = $inv->name;
-                $initiating_phone = $inv->userPhone;
-            } else if ($inv->isOnboarded == 0 && $inv->address1 != null && $inv->name != null) {
+            }
+            if ($inv->userEmail != "") {
                 SendGrid::send($inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+            }
+
+            if ($inv->userPhone != "") {
                 $var = ['-cid-'];
                 $var1 = [$mid];
                 $content1 = WaTemplate::getcontent('med_resolved_clamant');
@@ -778,25 +810,8 @@ class CaseController extends Controller
                 $access = Whatsapp::sendWamessage($dwa1);
             }
         }
-        if ($initiating_phone != "") {
-            $var = ['-cid-'];
-            $var1 = [$mid];
-            $content1 = WaTemplate::getcontent('med_resolved_clamant');
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $id,
-                'contact' => "+91" . $initiating_phone,
-                'content' => ['text' => $content],
-                'event' => 'RESO_ADM'
-            ];
-
-            // print_r($dwa1);
-            // exit;
-            $access = Whatsapp::sendWamessage($dwa1);
-        }
         if ($mediator) {
             SendGrid::send($mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
-
             $var = ['-cid-'];
             $var1 = [$mid];
             $content1 = WaTemplate::getcontent('med_resolved_clamant');
@@ -808,8 +823,6 @@ class CaseController extends Controller
                 'event' => 'RESO_ADM'
             ];
 
-            // print_r($dwa1);
-            // exit;
             $access = Whatsapp::sendWamessage($dwa1);
         }
         return true;
@@ -818,20 +831,21 @@ class CaseController extends Controller
     public function sned_unresolved($id)
     {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
-        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
 
         $mid = "M" . sprintf("%06d", $id);
         $initiating_party = "";
-        $initiating_phone = "";
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
                 $initiating_party = $inv->name;
-                $initiating_phone = $inv->userPhone;
-            } else if ($inv->isOnboarded == 0 && $inv->address1 != null && $inv->name != null) {
+            }
+            if ($inv->userEmail != "") {
                 SendGrid::send($inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+            }
+            if ($inv->userPhone != "") {
                 $var = ['-cid-'];
                 $var1 = [$mid];
                 $content1 = WaTemplate::getcontent('med_unresolved_clamant');
@@ -843,31 +857,11 @@ class CaseController extends Controller
                     'event' => 'UNRESO_ADM'
                 ];
 
-                // print_r($dwa1);
-                // exit;
                 $access = Whatsapp::sendWamessage($dwa1);
             }
         }
-
-        if ($initiating_phone != "") {
-            $var = ['-cid-'];
-            $var1 = [$mid];
-            $content1 = WaTemplate::getcontent('med_unresolved_clamant');
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $id,
-                'contact' => "+91" . $initiating_phone,
-                'content' => ['text' => $content],
-                'event' => 'UNRESO_ADM'
-            ];
-
-            // print_r($dwa1);
-            // exit;
-            $access = Whatsapp::sendWamessage($dwa1);
-        }
         if ($mediator) {
-            SendGrid::send($mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
-
+            SendGrid::send($mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
             $var = ['-cid-'];
             $var1 = [$mid];
             $content1 = WaTemplate::getcontent('med_unresolved_clamant');
@@ -879,8 +873,6 @@ class CaseController extends Controller
                 'event' => 'UNRESO_ADM'
             ];
 
-            // print_r($dwa1);
-            // exit;
             $access = Whatsapp::sendWamessage($dwa1);
         }
         return true;
@@ -921,22 +913,24 @@ class CaseController extends Controller
         }
         foreach ($involedUser as $inv) {
 
-
-            $sendEamils[] = $inv->userEmail;
-
+            if ($inv->userEmail != "") {
+                $sendEamils[] = $inv->userEmail;
+            }
             // additional_doc
 
-            $var = ['-cid-'];
-            $var1 = [$mid];
-            $content1 = WaTemplate::getcontent('additional_doc');
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $id,
-                'contact' => "+91" .  $inv->userPhone,
-                'content' => ['text' => $content],
-                'event' => 'SEND_ADDI_DOC_ADM'
-            ];
-            $access = Whatsapp::sendWamessage($dwa1);
+            if ($inv->userPhone != "") {
+                $var = ['-cid-'];
+                $var1 = [$mid];
+                $content1 = WaTemplate::getcontent('additional_doc');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $id,
+                    'contact' => "+91" .  $inv->userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'SEND_ADDI_DOC_ADM'
+                ];
+                $access = Whatsapp::sendWamessage($dwa1);
+            }
             // $dwa2 = [
             //     'caseid' => $id,
             //     'contact' => "+91" .  $inv->userPhone,
@@ -964,8 +958,9 @@ class CaseController extends Controller
             $access = Whatsapp::sendWamessage($dwa1);
         }
 
-        SendGrid::send($sendEamils, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
-
+        foreach ($sendEamils as $email) {
+            SendGrid::send($email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        }
 
         return true;
     }
@@ -984,20 +979,24 @@ class CaseController extends Controller
             $filesE[] = url("storage/app/" . $f["file_path"]);
         }
         foreach ($involedUser as $inv) {
-            $sendEamils[] = $inv->userEmail;
+            if ($inv->userEmail != "") {
+                $sendEamils[] = $inv->userEmail;
+            }
 
-            // settlement agreement
-            $var = ['-cid-'];
-            $var1 = [$mid];
-            $content1 = WaTemplate::getcontent('settlement_agreement');
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $id,
-                'contact' => "+91" . $inv->userPhone,
-                'content' => ['text' => $content],
-                'event' => 'SEND_SETT_AGRE_ADM'
-            ];
-            $access = Whatsapp::sendWamessage($dwa1);
+            if ($inv->userPhone != "") {
+                // settlement agreement
+                $var = ['-cid-'];
+                $var1 = [$mid];
+                $content1 = WaTemplate::getcontent('settlement_agreement');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $id,
+                    'contact' => "+91" . $inv->userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'SEND_SETT_AGRE_ADM'
+                ];
+                $access = Whatsapp::sendWamessage($dwa1);
+            }
             // $dwa2 = [
             //     'caseid' => $id,
             //     'contact' => "+91" . $inv->userPhone,
@@ -1024,12 +1023,12 @@ class CaseController extends Controller
             $access = Whatsapp::sendWamessage($dwa1);
         }
 
-        SendGrid::send($sendEamils, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
-
+        foreach ($sendEamils as $email) {
+            SendGrid::send($email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        }
 
         return true;
     }
-
     public function csvToArray($file)
     {
         $rows = array();
@@ -1248,8 +1247,8 @@ class CaseController extends Controller
 
                 $otherDetails = new InvoledUser();
                 $otherDetails->userPlanId = $med->id;
-                $otherDetails->userEmail = isset($otherResEmail[$i]) ? $otherResEmail[$i] : "";
-                $otherDetails->userPhone = isset($otherResMobile[$i]) ? $otherResMobile[$i] : "";
+                $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i])  : "";
+                $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
                 $otherDetails->joinCode = $this->joinCode();
                 $otherDetails->isClaimant = 1;
                 $otherDetails->created_at = date('Y-m-d H:s:i');
