@@ -51,58 +51,49 @@
                     <p>{{$party[0]->userEmail }}</p>
                     <p>{{$party[0]->userPhone }}</p>
                 </td>
-                <td>
-                    @if(isset($party[1]))
-                    <p>{{$party[1]->name}}</p>
-                    <p>{{$party[1]->address1}} {{$party[1]->address2}}</p>
-                    @php
-                    $address = array();
-                    $address[]=$party[1]->city." - ".$party[1]->pincode;
-                    $address[]=$party[1]->state;
-                    $address[]=$party[1]->country;
-                    @endphp
-                    <p>{{ implode(", ",$address) }}</p>
-                    <p>{{$party[1]->userEmail }}</p>
-                    <p>{{$party[1]->userPhone }}</p>
-                    @endif
-                </td>
-            </tr>
-            @foreach($party as $key=>$p)
-            @if($key>1)
-            <tr>
-                <td></td>
-                <td>
+                <td >
+
+                    @foreach($party as $key=>$p)
+                    @if($key!=0)
+                    @if ($p->name != "")  
                     @if($p->name != "")
                     <p>{{$p->name}}</p>
                     @endif
                     @if($p->address1 != "")
-                    <p>{{$p->address1}} {{$p->address2}}</p>
-                    @endif
-                    @php
-                    $address = array();
-                    if($p->city != "" && $p->pincode != "") {
-                    $address[]=$p->city." - ".$p->pincode;
-                    }
-                    if($p->state != "") {
-                    $address[]=$p->state;
-                    }
-                    if($p->country != "") {
-                    $address[]=$p->country;
-                    }
-                    @endphp
-                    @if($p->address != "") 
-                    <p>{{ implode(", ",$address) }}</p>
+                    <p>{{$p->address1}} {{$p->address2}}, {{$p->city}}, {{$p->pincode}}</p>
+                    <p>{{$p->state}} {{$p->country}}</p>
                     @endif
                     @if($p->userEmail != "")
-                    <p>{{$p->userEmail }}</p>
+                    <p>{{$p->userEmail}}</p>
                     @endif
                     @if($p->userPhone != "")
-                    <p>{{$p->userPhone }}</p>
+                    <p>{{$p->userPhone}}</p>
                     @endif
+                    <br>
+                    @endif
+                    @endif
+                    @endforeach
+                    @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
+                    <p>{{$case->otherRespondentDetails}}</p>
+                    @endif
+                    <br>
+                    @foreach($party as $key=>$p)
+                    @if($key!=0)
+                    @if ($p->name == "") 
+                    @if($p->userEmail != "")
+                    <p>{{$p->userEmail}}</p>
+                    @endif
+                    @if($p->userPhone != "")
+                    <p>{{$p->userPhone}}</p>
+                    @endif
+                    <br>
+                    @endif
+                    @endif
+                    @endforeach
                 </td>
             </tr>
-            @endif
-            @endforeach            
+            
+
         </tbody>
     </table>
     <br/><br/>
