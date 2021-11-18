@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class WhatsappTrack extends Model
 {
@@ -23,4 +24,20 @@ class WhatsappTrack extends Model
         'credits_charged',
         'full_resp',
     ];
+
+    public static function getByCaseIdWh($id)
+    {
+
+        // $q = "select whatsapp_tracking.*, wl.status as wlstatus,wl.created_at as wldate,wl.request_id from whatsapp_tracking 
+   
+        //  right join whatsapp_log wl on whatsapp_tracking.request_uuid=wl.request_id
+   
+        //  where caseid='$id' order by whatsapp_tracking.created_at asc";
+
+         $result = WhatsappTrack::select('whatsapp_tracking.*', 'wl.status as wlstatus','wl.created_at as wldate','wl.request_id')
+                    ->rightJoin('whatsapp_log as wl', DB::raw('wl.request_id'), '=', DB::raw('whatsapp_tracking.request_uuid'))
+                    ->where('caseid', $id)->orderBy('whatsapp_tracking.created_at', 'ASC')->get();
+
+        return $result;
+    }
 }

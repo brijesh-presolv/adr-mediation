@@ -278,7 +278,9 @@ $(function () {
             },
             {"data": "case.id",
                 render: function (data) {
-                    return "M" + pad(data, 6);
+                    var button = "M" + pad(data, 6);
+                    button = button+`<br><a href="{{ url('admin/track/') }}/` + data + `" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
+                    return button;
                 }
             },
             {"data": "date"},

@@ -17,6 +17,7 @@ use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
 use App\Models\WaTemplate;
+use App\Models\WhatsappTrack;
 use DB;
 use PDF;
 use Auth;
@@ -1303,5 +1304,19 @@ class CaseController extends Controller
 
             exit();
         }
+    }
+
+    public function track($id)
+    {
+        $whatsapp = WhatsappTrack::getByCaseIdWh($id);
+        // $casedetails = MedCase::getcasebyId($id);
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            // ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+
+        // dd($whatsapp);
+        return view('admin.case.track', compact("whatsapp", "id", "mediator"));
+        
     }
 }
