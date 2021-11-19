@@ -602,6 +602,18 @@ class CaseController extends Controller
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
+
+                $var_file = ['-caseid-'];
+                $var1_file = [Common_function::getsixdigitid('sc', $ini_userPlanId)];
+                $content1_file = WaTemplate::getcontent('mediation_invitation_letter_file');
+                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                $dwa2 = [
+                    'caseid' => $ini_userPlanId,
+                    'contact' => "+91" . $phone,
+                    'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => $content_file]],
+                    'event' => 'ACPTARB_ADM'
+                ];
+                $access = Whatsapp::sendWamessage($dwa2);
             }
         }
 
@@ -624,13 +636,17 @@ class CaseController extends Controller
             ];
 
             $access = Whatsapp::sendWamessage($dwa1);
-            // $dwa2 = [
-            //     'caseid' => $ini_userPlanId,
-            //     'contact' => "+91" . $initiating_phone,
-            //     'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => 'Invitation to Mediate ' . Common_function::getsixdigitid('sc', $ini_userPlanId)]],
-            //     'event' => 'ACPTARB_ADM'
-            // ];
-            // $access = Whatsapp::sendWamessage($dwa2);
+            $var_file = ['-caseid-'];
+            $var1_file = [Common_function::getsixdigitid('sc', $ini_userPlanId)];
+            $content1_file = WaTemplate::getcontent('mediation_invitation_letter_file');
+            $content_file = str_replace($var_file, $var1_file, $content1_file);
+            $dwa2 = [
+                'caseid' => $ini_userPlanId,
+                'contact' => "+91" . $initiating_phone,
+                'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => $content_file]],
+                'event' => 'ACPTARB_ADM'
+            ];
+            $access = Whatsapp::sendWamessage($dwa2);
         }
 
 
