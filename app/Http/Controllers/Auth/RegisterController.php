@@ -178,11 +178,11 @@ class RegisterController extends Controller
         }
 
         if($user->role=='0'){
-        $email=SendGrid::send($user->email, '5e3c0043-6349-4dc6-9886-23795ccb5f27', ['-otp-'=>strval($user->emailotp)]);
+        $email=SendGrid::send($user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-'=>strval($user->emailotp)]);
 
         } else if($user->role=='1'){
 
-            $email=SendGrid::send($user->email, '0980bfd2-1743-4106-a861-eb64204cae94', ['-otp-'=>strval($user->emailotp)],$user->name);
+            $email=SendGrid::send($user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-'=>strval($user->emailotp)],$user->name);
 
         }
 
