@@ -21,10 +21,15 @@
 <link rel="icon" type="image/x-icon" href="{{url('/assert/')}}/img/icon.png" />
 
 <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/fontawesome/css/all.min.css">
+<link rel="stylesheet" href="{{url('/assert/')}}/css/sweetalert2.css">
+<link rel="stylesheet" href="{{url('/assert/')}}/css/style_slide.css">
+
   <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/home.css">
-  <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/all.min.css">
-  <link rel="stylesheet" href="{{url('/assert/')}}/css/sweetalert2.css">
-  <link rel="stylesheet" href="https://www.presolv360.com/presolv360/css/style_slide.css">
+  {{-- <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/all.min.css"> --}}
+
+
+  {{-- <link rel="stylesheet" href="https://www.presolv360.com/presolv360/css/style_slide.css"> --}}
 
 
 
@@ -65,12 +70,15 @@
   }
   </style>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css">
+<link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/OwlCarousel/dist/assets/owl.carousel.min.css">
+<link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/OwlCarousel/dist/assets/owl.theme.default.css">
+
+  {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"> --}}
+{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css"> --}}
 
 
-  <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+  {{-- <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet"> --}}
 
 
 
@@ -121,7 +129,7 @@ margin-left: -5px;
 	<div class="container">
 		  <a class="navbar-brand" href="{{url('/')}}">
 
-		  	<img src="{{url('/assert/')}}/img/logo_mediacje.png" class="img-fluid home-logo">
+		  	<img src="{{url('/assert/')}}/img/logo_mediacje.png" loading="lazy" class="img-fluid home-logo">
 		  </a>
 		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		    <span class="navbar-toggler-icon"></span>
@@ -130,7 +138,7 @@ margin-left: -5px;
 		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
 		    <ul class="navbar-nav ml-auto">
 		      <li class="nav-item active">
-		        <a class="nav-link abtbtn" href="about_us">O mediacji<span class="sr-only">(current)</span></a>
+		        <a class="nav-link abtbtn" href="about_us">About<span class="sr-only">(current)</span></a>
 		      </li>
 
           <li>
@@ -149,7 +157,7 @@ margin-left: -5px;
 
 
           <?php } else { ?>
-		      			        <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="login">Zaloguj się</a>
+		      			        <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="login">Login</a>
                       <?php } ?>
 
             </li>
@@ -276,15 +284,15 @@ function resolvsubmit(){
   <div class="row justify-content-center">
     <div class="col-md-12">
       <div class="section-title text-center pb-25">
-<h2 class="title">Get In Touch</h2><p></p>
-<p>Nunc id dui at sapien faucibus fermentum ut vel diam. Nullam tempus, nunc id efficitur sagittis, urna est ultricies eros, ac porta sem turpis quis leo.</p>
+{{-- <h2 class="title">Get In Touch</h2><p></p> --}}
+{{-- <p>Now that's worth it at the throat of the fermented or the wise man. There is no time, now that the arrows are made, it is just a urn of eros, and a gateway to the disgraceful man who is the lion.</p> --}}
 </div>
     </div>
 <div class="col-lg-4 col-md-6 col-sm-7">
 <div class="card text-center mt-30">
   <div class="card-body">
       <div class="contact-icon">
-      <i class="fa fa-hand-pointer"></i>
+      <h2><i class="fas fa-map-marker-alt"></i></h2>
       </div>
       <div class="contact-content">
       <h4>Locate us</h4>
@@ -298,10 +306,10 @@ function resolvsubmit(){
   <div class="card-body">
 
 <div class="contact-icon">
-<i class="fa fa-hand-pointer"></i>
+<h2><i class="fas fa-phone-alt"></i></h2>
 </div>
 <div class="contact-content">
-<h4>Zadzwoń do nas</h4>
+<h4>Call us</h4>
 <p><a href="tel:022-20821102" target="_top">Tel 721 782 222</a></p>
 </div>
 </div>
@@ -312,10 +320,10 @@ function resolvsubmit(){
   <div class="card-body">
 
     <div class="contact-icon">
-    <i class="fa fa-hand-pointer"></i>
+    <h2><i class="fas fa-edit"></i></h2>
     </div>
     <div class="contact-content">
-    <h4> Napisz do nas</h4>
+    <h4> Write to us</h4>
     <p><a href="mailto:info@pdm24.pl" target="_top">info@pdm24.pl</a></p>
     </div>
   </div>
@@ -332,33 +340,19 @@ function resolvsubmit(){
   <div class="container">
       <div class="row pb-5">
       <div class="col-md-7">
-         <h5 class="mb-3">PORTAL DLA MEDIACJI ONLINE</h5>
-         <p>jest nowatorskim rozwiązaniem
-technologicznym, które jest dedykowane dla
-stron konfliktu i profesjonalnych mediatorów,
-żeby ułatwić ugodowe rozwiązywanie sporów
-online w łatwy, poufny i bezpieczny sposób z
-dostępem przez całą dobę.
-Portal Dla Mediacji Online powstał dzięki
-współpracy z firmą Edgecraft Solutions Private
-Limited z Indii prowadzonej przez Urszulę
-Ciołeszyńską - Prezes fundacji Polska Sieć
-Ambasadorów Przedsiębiorczości Kobiet oraz
-Henryka Stężałę - Prezesa Zarządu TENSOFT w
-konsultacji z ekspertem mediacji –
-doświadczoną Adwokat i Mediator Anetą
-Gibek-Wiśniewską.</p>
+         <h5 class="mb-3">Disclaimer</h5>
+         <p>Presolv360 is owned by Edgecraft Solutions Private Limited, an Indian Company incorporated under the provisions of the Companies Act, 2013. It is not a law firm and does not provide legal advice. The use of any materials or services is not a substitute for legal advice. Only a legal practitioner can provide legal advice. A legal practitioner should be consulted for any legal advice or matter. No Attorney-Client relationship is created by use of these materials or services.</p>
       </div>
       <div class="col-md-2">
-         <h5 class="mb-3">Ważne linki</h5>
-         <a href="https://presolv360.com/faqs" target="_blank"><p>Pytania i odpowiedzi</p></a>
-         <a href="https://presolv360.com/terms_conditions" target="_blank"><p>Regulamin i warunki</p></a>
-         <a href="https://presolv360.com/privacy_policy" target="_blank"><p>Polityka prywatności</p></a>
-         <a href="https://presolv360.com/odr_standard" target="_blank"><p>Nasze standardy</p></a>
+         <h5 class="mb-3">Important Links</h5>
+         <a href="https://presolv360.com/faqs" target="_blank"><p>FAQs</p></a>
+         <a href="https://presolv360.com/terms_conditions" target="_blank"><p>Terms & Conditions</p></a>
+         <a href="https://presolv360.com/privacy_policy" target="_blank"><p>Privacy Policy</p></a>
+         <a href="https://presolv360.com/odr_standard" target="_blank"><p>Standards</p></a>
 
       </div>
       <div class="col-md-3">
-         <h5 class="mb-3">Bądźmy w kontakcie</h5>
+         <h5 class="mb-3">Stay Connected</h5>
          <div class="social">
           <a href="https://www.linkedin.com/company/presolv360/" target="_blank"><i class="fab fa-linkedin"></i></a>
                     <a href="https://twitter.com/presolv360" target="_blank"><i class="fab fa-twitter" ></i></a>
@@ -490,8 +484,12 @@ media.</div>
  <script>
  var DOMAIN = "{{url('/')}}";
   </script>
+<script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js" async></script>
+
 <script type="text/javascript" src="{{url('/assert/')}}/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.js"></script>
+{{-- <script src="{{url('/assert/')}}/OwlCarousel/owl.carousel.js"> </script> --}}
+
 
 <script src="{{url('/assert/')}}/js/brand-slider.js"></script>
 
@@ -503,10 +501,10 @@ media.</div>
 <script src="{{url('/assert/')}}/js/slick.js"></script>
 
 
-   <!-- <script src="{{url('/assert/')}}js/slick.js"></script>  -->
+   {{-- <!-- <script src="{{url('/assert/')}}js/slick.js"></script>  --> --}}
 
         <script src="{{url('/assert/')}}/js/sweetalert2.js"></script>
-         <script src="//code.tidio.co/whiaumb73nws3xz5su24odtrgpni9etf.js" async></script>
+         {{-- <script src="//code.tidio.co/whiaumb73nws3xz5su24odtrgpni9etf.js" async></script> --}}
         @yield('extra-js')
 
 
@@ -877,12 +875,12 @@ $('.panel-group').on('shown.bs.collapse', toggleIcon);
 
 </script>
 
-<script src="https://presolv360.com/asset/js/plyr.js"></script>
-<script>
+{{-- <script src="https://presolv360.com/asset/js/plyr.js"></script> --}}
+{{-- <script>
     const player = new Plyr('#video2');
     const player2 = new Plyr('#video1');
 
-</script>
+</script> --}}
  </body>
 </html>
 </body>
