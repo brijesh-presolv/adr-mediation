@@ -323,11 +323,12 @@ class CaseController extends Controller
                 $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
             })
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->where("mediation_case.confirm_status", "=", $role)
+            ->where("mediation_case.confirm_status", "=", $role)->orderBy('mediation_case.id', 'DESC')
             ->get();
         $arraydata = array();
-        foreach ($cases as $d) {
+        foreach ($cases as $key => $d) {
             $arraydata[] = [
+                "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
                 "party" => InvoledUser::select('name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->whereNotNull('address1')->get(),
