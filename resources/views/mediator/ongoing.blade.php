@@ -254,7 +254,6 @@ $(function () {
     var userTable = $('#users').DataTable({
         "ajax": '{{ route("mediator.case.jsonOngoing",$confirm_status) }}',
         "responsive": true,
-        "order": [[1, "desc"]],
         "columns": [
             {"data": "case.id",
                 render: function (data, type, row, meta) {
@@ -280,9 +279,13 @@ $(function () {
                     var d = "";
                     for (i in data) {
                         if (data[i].userId != 0) {
+                            if(data[i].name != null) {
                             d = d + `<span class="text-success party_name" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
+                            }
                         } else {
+                            if(data[i].name != null) {
                             d = d + `<span class="text-danger" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
+                            }
                         }
                     }
                     return d;

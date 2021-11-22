@@ -76,10 +76,7 @@
                                 
                             </td>
                         </tr>
-                        <tr>
-                            <td>@lang('case.otherRespondentDetails')</td>
-                            <td>{{$case->otherRespondentDetails}}</td>
-                        </tr>
+                        
                         <tr>
                             <td>@lang('case.issue')</td>
                             <td>{{$case->issue}}</td>

@@ -269,7 +269,7 @@ $(function () {
     var userTable = $('#users').DataTable({
         "ajax": '{{ route("mediator.case.json",$confirm_status) }}',
         "responsive": true,
-        "order": [[1, "desc"]],
+        // "order": [[1, "desc"]],
         "columns": [
             {"data": "case.id",
                 render: function (data, type, row, meta) {
@@ -294,9 +294,13 @@ $(function () {
                     var d = "";
                     for (i in data) {
                         if (data[i].isOnboarded == 1) {
+                            if(data[i].name != null) {
                             d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
+                            }
                         } else {
+                            if(data[i].name != null) {
                             d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
+                            }
                         }
                     }
                     return d;

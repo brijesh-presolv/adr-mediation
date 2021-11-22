@@ -68,14 +68,15 @@ class DashboardController extends Controller
             //->select('mediation_case.*')
             ->join('mediators_mediation_cases_status', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
             ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 0])
-            ->where("mediation_case.confirm_status", "!=", 2)
+            ->where("mediation_case.confirm_status", "!=", 2)->orderBy('mediation_case.id', 'DESC')
             ->get();
         // dd($newrequestData);
         $arraydata = array();
 
 
-        foreach ($newrequestData as $d) {
+        foreach ($newrequestData as $key => $d) {
             $arraydata[] = [
+                "key" => $key + 1,
                 "id" => $d->mediation_case_id,
                 "party" => InvoledUser::select('name', 'userPhone', 'address1', 'address2', 'userEmail', 'isOnboarded')->where(['userPlanid' => $d->mediation_case_id])->whereNotNull('address1')->get(),
                 "comments" => "tesr",
@@ -326,7 +327,7 @@ class DashboardController extends Controller
                         ->where('user_involved_in_agreement.isClaimant', '=', '0');
                 }
             )
-            ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->get();
+            ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->orderBy('mediation_case.id', 'DESC')->get();
 
         //dd($rejected_case);
         return view('mediator.reject', compact("rejected_case"));
@@ -338,7 +339,7 @@ class DashboardController extends Controller
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediation_case.confirm_status", "=", $role)
-            ->where('mediator_id', "=", Auth::user()->id)
+            ->where('mediator_id', "=", Auth::user()->id)->orderBy('mediation_case.id', 'DESC')
             ->get();
         $arraydata = array();
         foreach ($cases as $d) {
@@ -381,7 +382,7 @@ class DashboardController extends Controller
             ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
             ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
             ->where('confirm_status', "=", 1)
-            ->where(['mediator_id' => Auth::user()->id, 'mediators_mediation_cases_status.status' => 1])->get();
+            ->where(['mediator_id' => Auth::user()->id, 'mediators_mediation_cases_status.status' => 1])->orderBy('mediation_case.id', 'DESC')->get();
         $arraydata = array();
         foreach ($cases as $d) {
             $arraydata[] = [

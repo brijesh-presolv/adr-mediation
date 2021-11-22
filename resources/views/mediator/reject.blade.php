@@ -43,6 +43,7 @@ use App\Models\InvoledUser;
 
                       <?php $sno = 1; ?>
                     @foreach($rejected_case as $data)  
+
                     <input type="hidden" name="" id="createdBy" value="{{ $data->mediator_id }}">
 
                     <tr>
@@ -52,14 +53,17 @@ use App\Models\InvoledUser;
                         
                         <td>
                             <?php 
-                            $invuser=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$data->userid])->get();
-
+                            $invuser=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$data->mediation_case_id])->get();
                             foreach ($invuser as $key => $value) {
 
                             if($value->isOnboarded==1){
+                                if($value->name != null) {
                                 echo '<span class="text-success">'.$value->name.'</span></br>';
+                                }
                             } else{
+                                if($value->name != null) {
                                 echo '<span class="text-danger">'.$value->name.'</span></br>';
+                                }
                             }   
                         }
                         ?>

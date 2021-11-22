@@ -23,6 +23,7 @@
                 <thead>
                     <tr>
                         <th>Sr. No</th>
+                        <th>Select</th>
                         <th>Case Id</th>
                         <th>Date</th>
                         <th>Party Details</th>
@@ -31,6 +32,18 @@
                     </tr>
                 </thead>
             </table>
+            <div class="row">
+                <div class="col-md-2">
+
+                    <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input type="checkbox" id="selectalldir"> Select All Cases</label>
+
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-success btn-sm blkbtn" id="bulkAcceptBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Accept</button>
+                    <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Reject</button>
+                </div>
+                
+            </div>
         </div>
     </div>
 </div>
@@ -312,7 +325,14 @@ var userTable = $('#request').DataTable({
     "responsive": true,
     "order": [[1, "desc"]],
     "columns": [
-        {"data": "id"},
+        {"data": "key"},
+        {"data": "id",
+            render: function (data, type, row) {
+                var button = "";
+                button = button + `<input type="checkbox" class="blkchk" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">`;
+                return button;
+            }
+        },
         {"data": "caseId",
             render: function (data, type, row) {
                 return "M" + pad(data, 6)
@@ -330,7 +350,7 @@ var userTable = $('#request').DataTable({
                     if (data[i].isOnboarded == 1) {
                         if(data[i].name != null) {
                         d = d + `<p class="text-success party_name get_party" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
-                    }
+                        }
                     } else {
                         if(data[i].name != null) {
                         d = d + `<p class="text-danger get_party" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
@@ -572,7 +592,225 @@ $(document).on('click', "#statuschang", function () {
 
 });
 
+$("#selectalldir").change(function () {
+      if (this.checked) {
+        $("#bulkAcceptBtn").show();
+        $("#bulkRejectBtn").show();
+        $(".blkchk").each(function () {
+          $(this).prop("checked", true);
+        });
+      } else {
+        $(".blkchk").each(function () {
+          $(this).prop("checked", false);
+        });
+        $("#bulkAcceptBtn").hide();
+        $("#bulkRejectBtn").hide();
 
+      }
+    });
+
+    $(document).on("change", ".blkchk", function () {
+      if (this.checked) {
+        $("#bulkAcceptBtn").show();
+        $("#bulkRejectBtn").show();
+      } else {
+        $("#bulkAcceptBtn").hide();
+        $("#bulkRejectBtn").hide();
+      }
+    });
+
+    $("#bulkAcceptBtn").click(function () {
+        var ctcnt = 0;
+
+      var blkclon = false;
+
+      var arbid = $(this).data("arb");
+
+
+      $(".blkchk").each(function () {
+        if (this.checked) {
+          blkclon = true;
+          ctcnt++;
+
+        }
+      });
+
+      if (blkclon == false) {
+        swal({
+          title: "Select arbitration to accept",
+          text: "",
+          type: "error",
+        });
+      } else {
+
+        swal({
+            // text: ctcnt + " cases selected to accept",
+            title: "Are you sure?",
+            text: "to accept this request!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then(function (willDelete) {
+            if (willDelete) {
+                var ids = null;
+                $(".blkchk").each(function () {
+                  if (this.checked) {
+                    var id = $(this).data("caseid");
+
+                    $('#acceptModal').find('input[name="mediation_case_id"]').val(id);
+
+                    $.ajax({
+                        url: '{{ route("mediator.activeDeactive") }}',
+                        method: "post",
+                        data: $('#acceptForm').serialize(),
+                    }).done(function (data) {
+                        userTable.ajax.reload()
+                        swal("Request Accepted!", {
+                            icon: "success",
+                        });
+                    });
+                    // console.log(ids);
+                  }
+                });
+                
+            } else {
+                $('#acceptForm').find("textarea[name='particulars2']").val("");
+                $('#acceptForm').find("textarea[name='particulars2']").text("");
+                $('#acceptForm').find("textarea[name='particulars3']").val("");
+                $('#acceptForm').find("textarea[name='particulars3']").text("");
+                $('#acceptForm').find("textarea[name='particulars4']").val("");
+                $('#acceptForm').find("textarea[name='particulars4']").text("");
+                swal("Your imaginary file is safe!");
+            }
+
+                
+                
+        });
+
+        // swal
+        //   .queue([
+        //     {
+        //       title: "Are you sure?",
+        //       text: ctcnt + " cases selected to accept",
+        //       type: "info",
+        //       allowOutsideClick: false,
+        //       showCancelButton: true,
+        //       confirmButtonColor: "#41B314",
+        //       cancelButtonColor: "#F9354C",
+        //       confirmButtonText: "Confirm",
+        //       showLoaderOnConfirm: true,
+        //       preConfirm: function () {
+        //         var ids = null;
+
+        //         $(".blkchk").each(function () {
+        //           if (this.checked) {
+        //             var id = $(this).data("caseid");
+
+        //             if (ids == null) {
+        //               ids = id;
+        //             } else {
+        //               ids = ids + "," + id;
+        //             }
+        //             console.log(ids);
+        //           }
+                  
+        //         });
+
+        //         // $.ajax({
+        //         //   url: DOMAIN + "functions/ajx_requests.php",
+        //         //   method: "POST",
+        //         //   dataType: "JSON",
+        //         //   data: { ids: ids, arbid: arbid, case: "arbacceptarbblk" },
+        //         //   success: function (result) {
+        //         //     console.log(result);
+
+        //         //     if (JSON.parse(result["result"]).response == "success") {
+        //         //       swal({
+        //         //         title: "Arbitrations accepted",
+        //         //         text: "",
+        //         //         type: "success",
+        //         //       });
+
+        //         //       setTimeout(function () {
+        //         //         window.location.reload();
+        //         //       }, 5000);
+        //         //     } else {
+        //         //       swal({
+        //         //         title: "Please try again",
+        //         //         text: "",
+        //         //         type: "error",
+        //         //       });
+        //         //     }
+        //         //   },
+        //         //   error: function (err) {
+        //         //     console.log(err);
+        //         //   },
+        //         // });
+        //       },
+        //     }
+        //   ]);
+        //   .catch(swal.noop);
+      }
+    });
+
+    $("#bulkRejectBtn").click(function () {
+        var ctcnt = 0;
+
+      var blkclon = false;
+
+      var mediatorid = $(this).data("arb");
+
+
+      $(".blkchk").each(function () {
+        if (this.checked) {
+          blkclon = true;
+          ctcnt++;
+
+        }
+      });
+
+      if (blkclon == false) {
+        swal({
+          title: "Select arbitration to accept",
+          text: "",
+          type: "error",
+        });
+      } else {
+
+        var status = 2;
+        swal({
+            title: "Are you sure?",
+            text: "to Reject these request!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $(".blkchk").each(function () {
+                  if (this.checked) {
+                    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+                    var caseid = $(this).data("caseid");
+
+                    $.ajax({
+                        url: '{{ route("mediator.activeDeactive") }}',
+                        method: "post",
+                        data: {caseid: caseid, mediator_id: mediatorid, status: status, '_token': csrf},
+                    }).done(function (data) {
+                        userTable.ajax.reload()
+                        swal("Request Rejected!", {
+                            icon: "success",
+                        });
+                    });
+                  }
+                });
+
+            } else {
+                swal("Your imaginary file is safe!");
+            }
+        });
+        
+      }
+    });
 
 
 
