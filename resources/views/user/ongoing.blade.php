@@ -40,6 +40,7 @@ use App\Models\InvoledUser;
                 <thead>
                     <tr>
                         <th>@lang('case.Sr. No')</th>
+                        <th>Select</th>
                         <th>@lang('case.case_id')</th>
                         <th>@lang('case.date')</th>
                         <th>@lang('case.case_details')</th>
@@ -69,6 +70,7 @@ use App\Models\InvoledUser;
 
                         ?>
                         <td>{{$i++}}</td>
+                        <td><input type="checkbox" class="blkchk" data-caseid="{{$value->caseid}}"></td>
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
                         <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->caseid)}}">@lang('case.btn_case_details')</a></td>
@@ -138,6 +140,17 @@ use App\Models\InvoledUser;
                     <?php } ?>
                 </tbody>
             </table>
+            <div class="row">
+                <div class="col-md-2">
+
+                    <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input type="checkbox" id="selectalldir"> Select All Cases</label>
+
+                </div>
+                <div class="col-md-4">
+                    <button class="blkbtn btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModalForBulk" id="bulkWithdrawBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Withdraw</button>
+                </div>
+                
+            </div>
         </div>
     </div>
 </div>
@@ -192,6 +205,34 @@ use App\Models\InvoledUser;
                 </button>
             </div>
             <form id="withdrawForm" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="case_id" class="form-control" >
+                    @csrf
+
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">@lang('case.withdraw_comment'):</label>
+                        <textarea class="form-control" name="withdraw_comment"  required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
+                    <button type="submit" class="btn btn-primary">@lang('case.btn_close_request')</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="withdrawModalForBulk" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="withdrawModalLabel">@lang('case.withdraw_modal_title')</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="withdrawFormForBulk" method="post">
                 <div class="modal-body">
                     <input type="hidden" name="case_id" class="form-control" >
                     @csrf
@@ -377,6 +418,82 @@ use App\Models\InvoledUser;
 
 
         });
+
+
+        $("#selectalldir").change(function () {
+      if (this.checked) {
+        $("#bulkWithdrawBtn").show();
+        $(".blkchk").each(function () {
+          $(this).prop("checked", true);
+        });
+      } else {
+        $(".blkchk").each(function () {
+          $(this).prop("checked", false);
+        });
+        $("#bulkWithdrawBtn").hide();
+
+      }
+    });
+
+    $(document).on("change", ".blkchk", function () {
+      if (this.checked) {
+        $("#bulkWithdrawBtn").show();
+      } else {
+        $("#bulkWithdrawBtn").hide();
+      }
+    });
+
+    $('#withdrawFormForBulk').on('submit', function (e) {
+        e.preventDefault();
+        swal({
+            title: "Are you sure?",
+            text: "Withdraw case!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $(".blkchk").each(function () {
+                  if (this.checked) {
+                    var id = $(this).data("caseid");
+                    $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
+
+
+                    $.ajax({
+                        type: 'post',
+                        url: '{{ route("user.case.withdraw") }}',
+                        data: $('#withdrawFormForBulk').serialize(),
+                        beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                
+                            });
+                        },
+                        success: function (data) {
+
+                            swal("withdraw successfully!", {
+                                icon: "success",
+                            }).then(function(){
+
+                                location.reload();
+                            })
+                            $('#withdrawModalForBulk').modal("hide");
+                        },
+                        error:function(err){
+
+                            console.log(err);
+                        }
+                    });
+                  }
+                });
+            } else {
+                swal("Cancel Withdraw Request!");
+            }
+        });
+        return false;
+    });
         
     </script>
 

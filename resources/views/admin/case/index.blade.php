@@ -357,6 +357,14 @@ $("#selectalldir").change(function () {
                         url: '{{ route("admin.case.reject_status") }}',
                         method: "post",
                         data: {id: id, '_token': csrf},
+                        beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                
+                            });
+                        },
                     }).done(function (data) {
                         userTable.ajax.reload();
                         swal("@lang('case.reject_successfully')", {
@@ -379,7 +387,6 @@ $(document).on('submit', "#MidaterFormForBulk", function () {
     var blkclon = false;
 
     var midater = $(this).find("select[name='midater']").val();
-    console.log(midater);
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
     $(".blkchk").each(function () {
         if (this.checked) {
@@ -412,11 +419,26 @@ $(document).on('submit', "#MidaterFormForBulk", function () {
                         url: '{{ route("admin.case.midater_add") }}',
                         method: "post",
                         data: {id: id, midater: midater, '_token': csrf},
+                        beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                            });
+                        },
                     }).done(function (data) {        
                         $.ajax({
                             url: '{{ route("admin.case.confirm_status") }}',
                             method: "post",
                             data: {id: id, '_token': csrf},
+                            beforeSend: function() {
+                                swal({
+                                    title: 'Loading...',
+                                    showConfirmButton: false,
+                                    buttons: false,
+                                    
+                                });
+                            },
                         }).done(function (data) {
                             userTable.ajax.reload()
                             swal("@lang('case.confirm_successfully')", {

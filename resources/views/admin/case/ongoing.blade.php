@@ -16,6 +16,7 @@
                 <thead>
                     <tr>
                         <th>@lang('case.serial_number')</th>
+                        <th>Select</th>
                         <th>@lang('case.case_id') </th>
                         <th>@lang('case.date') <a href="#" data-toggle="tooltip" title="" data-original-title="Date and time of raising the 'Request for Mediation'."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                         <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title="" data-original-title="Click here to view the 'Request for Mediation'."><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -29,6 +30,17 @@
                     </tr>
                 </thead>
             </table>
+            <div class="row">
+                <div class="col-md-2">
+
+                    <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input type="checkbox" id="selectalldir"> Select All Cases</label>
+
+                </div>
+                <div class="col-md-4">
+                    <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal" data-target="#withdrawModalForBulk" id="bulkCloseBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Close</button>
+                </div>
+                
+            </div>
         </div>
     </div>
 </div>
@@ -71,6 +83,40 @@
                 </button>
             </div>
             <form id="withdrawForm" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="case_id" class="form-control" >
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Status:</label>
+                        <select class="form-control" name="status"  required>
+                            <option value="">---select status---</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}">@lang('case.btn_withdrawn')</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}">@lang('case.btn_resolved')</option>
+                            <option value="{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}">@lang('case.btn_unresolved')</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">@lang('case.share_privet_comment_textarea'):</label>
+                        <textarea class="form-control" name="withdraw_comment"  ></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
+                    <button type="submit" class="btn btn-primary">@lang('case.btn_close_request')</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="withdrawModalForBulk" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="withdrawModalLabel">@lang('case.request_close')</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="withdrawFormForBulk" method="post">
                 <div class="modal-body">
                     <input type="hidden" name="case_id" class="form-control" >
                     <div class="form-group">
@@ -245,11 +291,18 @@ $(function () {
     var userTable = $('#users').DataTable({
         "ajax": '{{ route("admin.case.json",$confirm_status) }}',
         "responsive": true,
-        "order": [[1, "desc"]],
+        // "order": [[1, "desc"]],
         "columns": [
             {"data": "case.id",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+            {"data": "case",
+                render: function (data, type, row) {
+                    var button = "";
+                    button = button + `<input type="checkbox" class="blkchk" data-caseid="` + data.id + `">`;
+                    return button;
                 }
             },
             {"data": "case.id",
@@ -338,6 +391,75 @@ $(function () {
             },
         ],
     });
+
+
+    $("#selectalldir").change(function () {
+      if (this.checked) {
+        $("#bulkCloseBtn").show();
+        $(".blkchk").each(function () {
+          $(this).prop("checked", true);
+        });
+      } else {
+        $(".blkchk").each(function () {
+          $(this).prop("checked", false);
+        });
+        $("#bulkCloseBtn").hide();
+
+      }
+    });
+
+    $(document).on("change", ".blkchk", function () {
+      if (this.checked) {
+        $("#bulkCloseBtn").show();
+      } else {
+        $("#bulkCloseBtn").hide();
+      }
+    });
+
+    $('#withdrawFormForBulk').on('submit', function (e) {
+        e.preventDefault();
+        swal({
+            title: "@lang('case.are_you_sure')",
+            text: "@lang('case.change_status')",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $(".blkchk").each(function () {
+                  if (this.checked) {
+                    var id = $(this).data("caseid");
+                    $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
+
+                    $.ajax({
+                        type: 'post',
+                        url: '{{ route("admin.case.withdraw") }}',
+                        data: $('#withdrawFormForBulk').serialize(),
+                        beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                            });
+                        },
+                        success: function () {
+                            // alert('form was submitted');
+                            userTable.ajax.reload(null, false);
+                            swal("@lang('case.status_change_successfully')", {
+                                icon: "success",
+                            });
+                            $('#withdrawModalForBulk').modal("hide");
+                        }
+                    });
+                  }
+                });
+            } else {
+                swal("@lang('case.request_canseled')");
+            }
+        });
+        return false;
+    });
+
     $(document).on('submit', "#MidaterForm", function () {
         var id = $(this).find("input[name='id']").val();
         var midater = $(this).find("select[name='midater']").val();
@@ -367,12 +489,14 @@ $(function () {
         });
         return false;
     });
+
     $('#withdrawModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var recipient = button.data('id');
         var modal = $(this)
         modal.find('.modal-body input[name="case_id"]').val(recipient);
     });
+    
     $('#commentModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var id = button.data('id');
@@ -455,6 +579,13 @@ $(function () {
                     type: 'post',
                     url: '{{ route("admin.case.withdraw") }}',
                     data: $('#withdrawForm').serialize(),
+                    beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                            });
+                        },
                     success: function () {
                         // alert('form was submitted');
                         userTable.ajax.reload(null, false);

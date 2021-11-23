@@ -663,6 +663,14 @@ $("#selectalldir").change(function () {
                         url: '{{ route("mediator.activeDeactive") }}',
                         method: "post",
                         data: $('#acceptForm').serialize(),
+                        beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                
+                            });
+                        },
                     }).done(function (data) {
                         userTable.ajax.reload()
                         swal("Request Accepted!", {
@@ -795,6 +803,14 @@ $("#selectalldir").change(function () {
                         url: '{{ route("mediator.activeDeactive") }}',
                         method: "post",
                         data: {caseid: caseid, mediator_id: mediatorid, status: status, '_token': csrf},
+                        beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                
+                            });
+                        },
                     }).done(function (data) {
                         userTable.ajax.reload()
                         swal("Request Rejected!", {
