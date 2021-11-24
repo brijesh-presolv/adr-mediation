@@ -535,6 +535,18 @@ class DashboardController extends Controller
                     'event' => 'SEND_APPO_MED'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
+
+                $var_file = ['-caseid-'];
+                $var1_file = [$mid];
+                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                $dwa2 = [
+                    'caseid' => $id,
+                    'contact' => "+91" . $inv->userPhone,
+                    'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $data["case"]->id . "/" . $mid . "_party.pdf"), 'caption' => $content_file]],
+                    'event' => 'ACPTARB_ADM'
+                ];
+                $access = Whatsapp::sendWamessage($dwa2);
             }
         }
 

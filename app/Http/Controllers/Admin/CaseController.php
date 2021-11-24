@@ -256,7 +256,7 @@ class CaseController extends Controller
             $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
         }
 
-        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
@@ -799,7 +799,7 @@ class CaseController extends Controller
     public function sned_resolved($id)
     {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
-        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
@@ -849,7 +849,7 @@ class CaseController extends Controller
     public function sned_unresolved($id)
     {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
-        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
