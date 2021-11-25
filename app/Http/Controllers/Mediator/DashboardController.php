@@ -544,7 +544,7 @@ class DashboardController extends Controller
                     'caseid' => $id,
                     'contact' => "+91" . $inv->userPhone,
                     'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $data["case"]->id . "/" . $mid . "_party.pdf"), 'caption' => $content_file]],
-                    'event' => 'ACPTARB_ADM'
+                    'event' => 'SEND_APPO_MED'
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }
