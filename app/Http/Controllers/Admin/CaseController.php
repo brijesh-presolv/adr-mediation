@@ -567,10 +567,11 @@ class CaseController extends Controller
                 if ($inv->name != "") {
                     $responding_party = $inv->name;
                 }
-                $responding_email[] = $inv->userEmail;
                 $responding_phone[] = $inv->userPhone;
                 // SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
-
+                if ($inv->userEmail != "") {
+                    SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+                }
 
                 // $dwa2 = [
                 //     'caseid' => $inv->userPlanId,
@@ -583,11 +584,7 @@ class CaseController extends Controller
             // continue;
 
         }
-        foreach ($responding_email as $email) {
-            if ($email != "") {
-                SendGrid::send($email, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
-            }
-        }
+        
 
         foreach ($responding_phone as $phone) {
             if ($phone != "") {
