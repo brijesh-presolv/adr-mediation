@@ -16,6 +16,7 @@ use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
+use App\Models\EmailTrack;
 use App\Models\WaTemplate;
 use App\Models\WhatsappTrack;
 use DB;
@@ -1099,10 +1100,13 @@ class CaseController extends Controller
             foreach ($csv as $key => $v) {
                 $i = $key + 1;
 
-                for ($n = 1; $n < 16; $n++) {
-                    if ($v[$n] == '' and $n != 3) {
-                        $errormsg .= "Please fill all the required details to proceed at line no $i ";
-                    }
+                for ($n = 0; $n < 20; $n++) {
+                    if ($v[$n] == '') {
+
+                        if($n != 15 and $n != 16 and $n != 17) {
+                            $errormsg .= "Please fill all the required details to proceed at line no $i";
+                        }
+                    }   
                 }
                 if ($v[3] == '') {
                     $errormsg .= "Please Enter EmailId at line no $i ";
@@ -1324,13 +1328,16 @@ class CaseController extends Controller
     {
         $whatsapp = WhatsappTrack::getByCaseIdWh($id);
         // $casedetails = MedCase::getcasebyId($id);
+        $email = EmailTrack::getByCaseId($id);
+        // $ = EmailTrack::getidfCaseId($id);
+
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             // ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
 
         // dd($whatsapp);
-        return view('admin.case.track', compact("whatsapp", "id", "mediator"));
+        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email"));
         
     }
 }

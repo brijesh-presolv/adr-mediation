@@ -1,23 +1,54 @@
-@section('title', 'Whatsapp Track M'.sprintf('%06d',$id))
 @extends('admin.layouts.app')
+@section('title', 'Track M'.sprintf('%06d',$id))
 
 
 @section('breadcrumb')
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.home')</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">Whatsapp-Track</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">Track</a></li>
 <!-- end page title -->
 @endsection
 @section('content')
 
+<?php
+function mapEmail($d,$e){
+    
+    if($d['user1email']==$e){
+
+    return ['type'=>'Claimant','name'=>$d['user1name'],'id'=>1];
+} else if($d['user2email']==$e){
+
+return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
+} else if($d['arbemail']==$e){
+  
+  return ['type'=>'Arbitrator','name'=>$d['arbname'],'id'=>3];
+} else{
+  
+  if($d['OtherEmail']!=''){
+
+     if(in_array($e,explode(',',$d['OtherEmail']))){
+
+     return ['type'=>'Other Respondent','name'=>$d['Other Respondent'],'id'=>2];
+   }
+
+   return ['type'=>'Claimant','name'=>$d['user1name'],'id'=>1];
+}
+
+  
+}
+
+}
+?>
 
 <div class="card">
+
     <div class="card-body">
+        <h5>WhatsApp Track </h5>
         <section>
             <div class="row">
                 <div class="col-md-12">
                     
-                    <table  id="track" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <table  id="whatsappTrack" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     
                         <thead>
                         <tr>
@@ -55,6 +86,58 @@
                           @endforeach
                           
 
+                       
+                      </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5>Email Track </h5>
+
+        <section>
+            <div class="row">
+                <div class="col-md-12">
+                    
+                    <table  id="emailTrack" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    
+                        <thead>
+                        <tr>
+                            <th>Event Title</th>
+                            <th>Event Description</th>
+                            <th>Event Date</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Date</th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                        
+                        @foreach($email as $value)
+                        <?php $date = new DateTime($value->created_at);?>
+
+                        <tr>
+                        <td>{{$value->event}}</td>
+                        <td></td>
+                        <td>{{$date->format('d-m-Y H:i:s')}}</td>
+                        <td></td>
+                        <td>{{$value->edemail}}</td>
+                        <td>{{ucfirst($value->edevent)}}
+                            @if($value->edevent=='click')
+                            <br />
+                            <span title='{{$value->url}}' style='cursor: pointer;color: green;'><b>Link</b></span>
+                            @endif</td>
+                        <td>{{date('d-m-Y H:i:s', $value->timestamp)}}</td>
+                        </tr>
+                        @endforeach
                        
                       </tbody>
                     </table>
@@ -123,7 +206,6 @@ $('#myModal230 .modal-body span').append( $(this).data('msg'));
 
 
         $(document).ready( function() {
-            $('#users').DataTable();
 
         $('.viewmsg').on('click',function(){
             // console.log($(this).data('msg'));
@@ -133,7 +215,14 @@ $('#myModal230 .modal-body span').append( $(this).data('msg'));
 
         $('#myModal230 .modal-body span').append( $(this).data('msg'));
 
+
+
         });
+        $('#whatsappTrack').DataTable();
+
+        $('#emailTrack').DataTable();
+
+
         });
         
     </script>
