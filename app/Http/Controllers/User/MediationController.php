@@ -175,12 +175,15 @@ class MediationController extends Controller
                 $inv->save();
             }
 
-
+            $d = [
+                'event' => 'SUBMIT_FORM',
+                'case_id' => $med->id,
+            ];
 
             $cid = "M" . sprintf("%06d", $med->id);
 
 
-            $e = Email::send($usr->email, env('EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
+            $e = Email::send($d, $usr->email, env('EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
 
 
 
@@ -270,7 +273,10 @@ class MediationController extends Controller
             $InvoledUser->joincode = null;
             $InvoledUser->isOnboarded = '1';
             $InvoledUser->userid = Auth::user()->id;
-
+            $d = [
+                'event' => 'ONBOAR_USER',
+                'case_id' => $InvoledUser->userPlanId,
+            ];
             if ($InvoledUser->save()) {
 
 
@@ -284,7 +290,7 @@ class MediationController extends Controller
                 $party_name = $InvoledUser->name;
 
                 // $e = Email::send($InvoledUserP1->userEmail, '8c86c224-75e5-4cfd-8bc2-f3305df4d3f3', ['-caseid-' => $mid, '-partyname-' => $party_name], $InvoledUserP1->name);
-                $e = Email::send($InvoledUserP1->userEmail, env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''), ['-caseid-' => $mid, '-name-' => $party_name], $InvoledUserP1->name);
+                $e = Email::send($d, $InvoledUserP1->userEmail, env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''), ['-caseid-' => $mid, '-name-' => $party_name], $InvoledUserP1->name);
 
                 $var = ['-rp-', '-cid-'];
                 $var1 = [$party_name, $mid];
@@ -493,7 +499,10 @@ class MediationController extends Controller
         $user->confirm_status = 2;
         $user->withdraw = $request->withdraw_comment;
         $user->save();
-
+        $d = [
+            'event' => 'WDRN_USER',
+            'case_id' => $request->case_id,
+        ];
         //p1
 
         $cid = "M" . sprintf("%06d", $request->case_id);
@@ -506,7 +515,7 @@ class MediationController extends Controller
 
         $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $request->case_id])->first();
 
-        $e = Email::send($InvoledUserP1->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ['-caseid-' => $cid, '-type-' => 'Party'], $InvoledUserP1->name);
+        $e = Email::send($d, $InvoledUserP1->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ['-caseid-' => $cid, '-type-' => 'Party'], $InvoledUserP1->name);
 
 
         //other
@@ -522,7 +531,7 @@ class MediationController extends Controller
             }
 
             if ($value->userEmail != "") {
-                $e = Email::send($value->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ['-caseid-' => $cid, '-partyname-' => $InvoledUserP1->name], $value->name);
+                $e = Email::send($d, $value->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ['-caseid-' => $cid, '-partyname-' => $InvoledUserP1->name], $value->name);
             }
 
             if ($value->userPhone != "") {
@@ -555,7 +564,7 @@ class MediationController extends Controller
         $access = Whatsapp::sendWamessage($dwa1);
 
         if ($mediator) {
-            Email::send($mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $cid, "-responding-" => $InvoledUserP1->name, "-type-" => "Mediator"], $mediator->username);
+            Email::send($d, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $cid, "-responding-" => $InvoledUserP1->name, "-type-" => "Mediator"], $mediator->username);
 
             $var = ['-cid-'];
             $var1 = [$cid];
@@ -804,22 +813,22 @@ class MediationController extends Controller
 
             $forloopcnt = max(count($otherResEmail), count($otherResMobile));
 
+            if ($otherResEmail[0] != "" or $otherResMobile[0] != "") {
 
-            for ($i = 0; $i < $forloopcnt; $i++) {
-                // for($j = 0; $j < count($otherResMobile); $j++) {
+                for ($i = 0; $i < $forloopcnt; $i++) {
+                    // for($j = 0; $j < count($otherResMobile); $j++) {
 
 
-                $otherDetails = new InvoledUser();
-                $otherDetails->userPlanId = $med->id;
-                $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i]) : "";
-                $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
-                $otherDetails->joinCode = $this->joinCode();
-                $otherDetails->isClaimant = 1;
-                $otherDetails->created_at = date('Y-m-d H:s:i');
-                $otherDetails->updated_at = date('Y-m-d H:s:i');
-                $otherDetails->save();
-
-                // }
+                    $otherDetails = new InvoledUser();
+                    $otherDetails->userPlanId = $med->id;
+                    $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i]) : "";
+                    $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
+                    $otherDetails->joinCode = $this->joinCode();
+                    $otherDetails->isClaimant = 1;
+                    $otherDetails->created_at = date('Y-m-d H:s:i');
+                    $otherDetails->updated_at = date('Y-m-d H:s:i');
+                    $otherDetails->save();
+                }
             }
 
 

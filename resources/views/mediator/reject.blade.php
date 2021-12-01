@@ -48,8 +48,8 @@ use App\Models\InvoledUser;
 
                     <tr>
                         <td>{{ $sno }}</td>
-                        <td>M0000<span id="caseId">{{ $data->mediation_case_id  }}</span></td>
-                        <td>{{ date('d-m-Y', strtotime($data->created_at))}}</td>
+                        <td>{{"M" . sprintf("%06d", $data->mediation_case_id)}}</td>
+                        <td>{{date('d-m-Y', strtotime($data->created_at))}}</td>
                         
                         <td>
                             <?php 

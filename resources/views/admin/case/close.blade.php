@@ -256,7 +256,7 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
 $(function () {
-    $("#sessionDate").datepicker({minDate: 0});
+    $("#sessionDate").datepicker({minDate: 0, dateFormat: 'dd/mm/yy'});
 });</script>
 
 <script>
@@ -538,6 +538,16 @@ $(function () {
             type: 'post',
             url: '{{ route("admin.case.addSession") }}',
             data: $('#addSessionForm').serialize(),
+            beforeSend: function() {
+                $('#addSession-modal').modal("hide");
+
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                allowOutsideClick: false,
+                            });
+                        },
             success: function () {
                 // alert('form was submitted');
                 swal("session created!", {

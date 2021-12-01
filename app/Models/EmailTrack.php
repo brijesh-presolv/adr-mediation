@@ -14,15 +14,12 @@ class EmailTrack extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'caseid',
-        'casetype',
+        'case_id',
+        'userid',
         'event',
-        'contact',
-        'content',
-        'media',
-        'request_uuid',
-        'credits_charged',
-        'full_resp',
+        'email',
+        'sg_message_id',
+        'status',
     ];
 
     public static function getByCaseId($id){

@@ -242,7 +242,10 @@ class CaseController extends Controller
     public function addSession(Request $request)
     {
         // echo $request->zoomId;
-
+        $d = [
+            'event' => 'SESS_SCHE_ADM',
+            'case_id' => $request->caseId,
+        ];
         $dataToInsert = [
             'case_id' => $request->caseId,
             'session_date' => $request->sessionDate . "/" . $request->sessionTime,
@@ -263,7 +266,7 @@ class CaseController extends Controller
             ->first();
         if ($mediator) {
             $id = "M" . sprintf("%06d", $request->caseId);
-            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
+            SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
 
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$request->sessionDate . "/" . $request->sessionTime, $id, $request->zoomId];
@@ -351,6 +354,10 @@ class CaseController extends Controller
 
     public function updatecase(Request $request, $id)
     {
+        $d = [
+            'event' => 'PARTIES_FOR_ONBOARDING',
+            'case_id' => $id,
+        ];
         $med = MedCase::find($id);
         if (!$med) {
             return abort(404);
@@ -433,7 +440,7 @@ class CaseController extends Controller
 
 
                     $code = $inv->joinCode;
-                    $s = SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
+                    $s = SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
                 }
 
 
@@ -554,7 +561,10 @@ class CaseController extends Controller
         $ini_userPlanId = "";
         $responding_email = [];
         $responding_phone = [];
-
+        $d = [
+            'event' => 'ACPTARB_ADM',
+            'case_id' => $id,
+        ];
         // $mid = "M" . sprintf("%06d", $id);
         // $responding_phone = "";
         foreach ($involedUser as $inv) {
@@ -571,7 +581,8 @@ class CaseController extends Controller
                 $responding_phone[] = $inv->userPhone;
                 // SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
                 if ($inv->userEmail != "") {
-                    SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+
+                    SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
                 }
 
                 // $dwa2 = [
@@ -585,7 +596,7 @@ class CaseController extends Controller
             // continue;
 
         }
-        
+
 
         foreach ($responding_phone as $phone) {
             if ($phone != "") {
@@ -619,7 +630,7 @@ class CaseController extends Controller
 
         if ($responding_party != "") {
 
-            SendGrid::send($initiating_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+            SendGrid::send($d, $initiating_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
 
 
             $var = ['-cid-', '-rp-'];
@@ -657,20 +668,29 @@ class CaseController extends Controller
     {
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $initiating_party = "";
+        $d = [
+            'event' => 'REJECTED_ADM',
+            'case_id' => $id,
+        ];
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
                 $party_name = $inv->name;
                 $id = "M" . sprintf("%06d", $id);
-                SendGrid::send($inv->userEmail, env('L8_CASE_REJECTED', ''), ["-caseid-" => $id, "-responding-" => $party_name], $inv->name);
+                SendGrid::send($d, $inv->userEmail, env('L8_CASE_REJECTED', ''), ["-caseid-" => $id, "-responding-" => $party_name], $inv->name);
             }
         }
     }
 
     public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone)
     {
+        // dd($date);
         $mid = "M" . sprintf("%06d", $id);
+        $d = [
+            'event' => 'SESS_SCHE_ADM',
+            'case_id' => $id,
+        ];
         if ($email_id != "") {
-            SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
         }
         if ($userPhone != "") {
 
@@ -708,13 +728,17 @@ class CaseController extends Controller
         $initiating_email = "";
         $responding_email = [];
         $responding_phone = [];
+        $d = [
+            'event' => 'WDRN_ADM',
+            'case_id' => $id,
+        ];
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
                 $initiating_party = $inv->name;
                 $initiating_phone = $inv->userPhone;
                 $initiating_email = $inv->userEmail;
 
-                SendGrid::send($inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
+                SendGrid::send($d, $inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
             } else {
                 if ($inv->name != "") {
                     $responding_party = $inv->name;
@@ -727,7 +751,7 @@ class CaseController extends Controller
         if (isset($responding_email)) {
             foreach ($responding_email as $email) {
                 if ($email != "") {
-                    SendGrid::send($email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                    SendGrid::send($d, $email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
                 }
             }
         }
@@ -772,7 +796,7 @@ class CaseController extends Controller
             $access = Whatsapp::sendWamessage($dwa1);
         }
         if ($mediator) {
-            SendGrid::send($mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            SendGrid::send($d, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
 
             $var = ['-cid-'];
             $var1 = [$mid];
@@ -803,12 +827,16 @@ class CaseController extends Controller
             ->first();
         $mid = "M" . sprintf("%06d", $id);
         $initiating_party = "";
+        $d = [
+            'event' => 'RESO_ADM',
+            'case_id' => $id,
+        ];
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
                 $initiating_party = $inv->name;
             }
             if ($inv->userEmail != "") {
-                SendGrid::send($inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
 
             if ($inv->userPhone != "") {
@@ -827,7 +855,7 @@ class CaseController extends Controller
             }
         }
         if ($mediator) {
-            SendGrid::send($mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            SendGrid::send($d, $mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
             $var = ['-cid-'];
             $var1 = [$mid];
             $content1 = WaTemplate::getcontent('med_resolved_clamant');
@@ -854,12 +882,16 @@ class CaseController extends Controller
 
         $mid = "M" . sprintf("%06d", $id);
         $initiating_party = "";
+        $d = [
+            'event' => 'UNRESO_ADM',
+            'case_id' => $id,
+        ];
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
                 $initiating_party = $inv->name;
             }
             if ($inv->userEmail != "") {
-                SendGrid::send($inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
             if ($inv->userPhone != "") {
                 $var = ['-cid-'];
@@ -877,7 +909,7 @@ class CaseController extends Controller
             }
         }
         if ($mediator) {
-            SendGrid::send($mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            SendGrid::send($d, $mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
             $var = ['-cid-'];
             $var1 = [$mid];
             $content1 = WaTemplate::getcontent('med_unresolved_clamant');
@@ -898,7 +930,11 @@ class CaseController extends Controller
     {
         $user = User::where("id", $mediator_id)->first();
         $mid = "M" . sprintf("%06d", $id);
-        SendGrid::send($user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $mid], $user->name);
+        $d = [
+            'event' => 'MEDI_ADD_ADM',
+            'case_id' => $id,
+        ];
+        SendGrid::send($d, $user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $mid], $user->name);
         $var = ['-cid-'];
         $var1 = [$mid];
         $content1 = WaTemplate::getcontent('consent_mediator');
@@ -924,6 +960,10 @@ class CaseController extends Controller
         $mid = "M" . sprintf("%06d", $id);
         $sendEamils = array();
         $filesE = array();
+        $d = [
+            'event' => 'SEND_ADDI_DOC_ADM',
+            'case_id' => $id,
+        ];
         foreach ($files as $f) {
             $filesE[] = url("storage/app/" . $f["file_name"]);
         }
@@ -975,7 +1015,7 @@ class CaseController extends Controller
         }
 
         foreach ($sendEamils as $email) {
-            SendGrid::send($email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+            SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
         }
 
         return true;
@@ -991,6 +1031,10 @@ class CaseController extends Controller
         $mid = "M" . sprintf("%06d", $id);
         $sendEamils = array();
         $filesE = array();
+        $d = [
+            'event' => 'SEND_SETT_AGRE_ADM',
+            'case_id' => $id,
+        ];
         foreach ($files as $f) {
             $filesE[] = url("storage/app/" . $f["file_path"]);
         }
@@ -1040,7 +1084,7 @@ class CaseController extends Controller
         }
 
         foreach ($sendEamils as $email) {
-            SendGrid::send($email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+            SendGrid::send($d, $email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
         }
 
         return true;
@@ -1103,10 +1147,10 @@ class CaseController extends Controller
                 for ($n = 0; $n < 20; $n++) {
                     if ($v[$n] == '') {
 
-                        if($n != 15 and $n != 16 and $n != 17) {
+                        if ($n != 15 and $n != 16 and $n != 17) {
                             $errormsg .= "Please fill all the required details to proceed at line no $i";
                         }
-                    }   
+                    }
                 }
                 if ($v[3] == '') {
                     $errormsg .= "Please Enter EmailId at line no $i ";
@@ -1256,26 +1300,25 @@ class CaseController extends Controller
 
             $otherResEmail = explode(',', $value[15]);
             $otherResMobile = explode(',', $value[16]);
-
+            // dd($otherResEmail);
             $forloopcnt = max(count($otherResEmail), count($otherResMobile));
+            // dd($forloopcnt);
+            if ($otherResEmail[0] != "" or $otherResMobile[0] != "") {
+                // dd("if");
+                for ($i = 0; $i < $forloopcnt; $i++) {
+                    // for($j = 0; $j < count($otherResMobile); $j++) {
 
-
-            for ($i = 0; $i < $forloopcnt; $i++) {
-                // for($j = 0; $j < count($otherResMobile); $j++) {
-
-
-                $otherDetails = new InvoledUser();
-                $otherDetails->userPlanId = $med->id;
-                $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i])  : "";
-                $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
-                $otherDetails->joinCode = $this->joinCode();
-                $otherDetails->isClaimant = 1;
-                $otherDetails->created_at = date('Y-m-d H:s:i');
-                $otherDetails->updated_at = date('Y-m-d H:s:i');
-                $otherDetails->save();
-
-                // }
-            }
+                    $otherDetails = new InvoledUser();
+                    $otherDetails->userPlanId = $med->id;
+                    $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i])  : "";
+                    $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
+                    $otherDetails->joinCode = $this->joinCode();
+                    $otherDetails->isClaimant = 1;
+                    $otherDetails->created_at = date('Y-m-d H:s:i');
+                    $otherDetails->updated_at = date('Y-m-d H:s:i');
+                    $otherDetails->save();
+                }
+            } 
         }
 
         return redirect('/admin/case/new-request')->with(['success' => 'Success']);
@@ -1338,6 +1381,5 @@ class CaseController extends Controller
 
         // dd($whatsapp);
         return view('admin.case.track', compact("whatsapp", "id", "mediator", "email"));
-        
     }
 }

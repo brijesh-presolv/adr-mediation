@@ -52,6 +52,7 @@
                                         <?php
                                     }
                                 }?>
+                                {{-- {{dd($case)}} --}}
                                 @if($case->otherRespondentDetails != "")
                                     {{$case->otherRespondentDetails}}<br>
                                 @endif
@@ -76,12 +77,22 @@
                                 
                             </td>
                         </tr>
-                        
+                        <tr>
+                            <td>Dispute Category</td>
+                            <td>{{$case->disputeCategory}}</td>
+                        </tr>
+                        <tr>
+                            <td>Disptued Amount</td>
+                            <td>{{$case->amount}}</td>
+                        </tr>
                         <tr>
                             <td>@lang('case.issue')</td>
                             <td>{{$case->issue}}</td>
                         </tr>
-                        
+                        <tr>
+                            <td>Agreement Date</td>
+                            <td>{{$case->created_at}}</td>
+                        </tr>
                         <?php if ($case->mfirstname) { ?>
                             <tr>
                                 <td>@lang('case.mediator')</td>

@@ -140,19 +140,19 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Name<span style="color:red; ">*</span></label>
-                                <input type="text" name="name[]" class="form-control" value="<?= isset($InvoledUser[$i]['name']) ? $InvoledUser[$i]['name'] : ''; ?>"   required>
+                                <input type="text" name="name[]" class="form-control" value="<?= isset($InvoledUser[$i]['name']) ? $InvoledUser[$i]['name'] : ''; ?>"   >
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Email <span style="color:red; ">*</span></label>
-                                <input type="email" name="email[]" class="form-control" value="<?= isset($InvoledUser[$i]['userEmail']) ? $InvoledUser[$i]['userEmail'] : ''; ?>"   required>
+                                <input type="email" name="email[]" class="form-control" value="<?= isset($InvoledUser[$i]['userEmail']) ? $InvoledUser[$i]['userEmail'] : ''; ?>"   >
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Phone <span style="color:red; ">*</span></label>
-                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>"   required  minlength="8" maxlength="15" data-smk-pattern="[0-9\s-+]{8,15}">
+                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>"     minlength="8" maxlength="15" data-smk-pattern="[0-9\s-+]{8,15}">
                             </div>
                         </div>
                     </div>
@@ -160,7 +160,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Address line 1 <span style="color:red; ">*</span></label>
-                                <input name="add1[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['address1']) ? $InvoledUser[$i]['address1'] : ''; ?>"   required>
+                                <input name="add1[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['address1']) ? $InvoledUser[$i]['address1'] : ''; ?>"   >
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -172,7 +172,7 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>City <span style="color:red; ">*</span></label>
-                                <input name="city[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['city']) ? $InvoledUser[$i]['city'] : ''; ?>"  required  data-smk-msg="Enter valid city">
+                                <input name="city[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['city']) ? $InvoledUser[$i]['city'] : ''; ?>"    data-smk-msg="Enter valid city">
                             </div>
                         </div>
                     </div>
@@ -180,19 +180,19 @@ function isreadonlys($rows) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Pincode <span style="color:red; ">*</span></label>
-                                <input name="pincode[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['pincode']) ? $InvoledUser[$i]['pincode'] : ''; ?>" required  minlength="5" maxlength="10" data-smk-msg="Enter vaild pincode" data-smk-pattern="[a-zA-Z0-9\s-]{5,10}">
+                                <input name="pincode[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['pincode']) ? $InvoledUser[$i]['pincode'] : ''; ?>"   minlength="5" maxlength="10" data-smk-msg="Enter vaild pincode" data-smk-pattern="[a-zA-Z0-9\s-]{5,10}">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>State <span style="color:red; ">*</span></label>
-                                <input name="state[]"  list="stateData"  type="text" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>"   required=""  data-smk-msg="Enter valid state">
+                                <input name="state[]"  list="stateData"  type="text" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>"    data-smk-msg="Enter valid state">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Country <span style="color:red; ">*</span></label>
-                                <input list="countryData" name="country[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : ''; ?>"   required  data-smk-msg="Enter valid country">
+                                <input list="countryData" name="country[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : ''; ?>"     data-smk-msg="Enter valid country">
                                 <input type="hidden" name="invid[]" class="form-control" value="{{$InvoledUser[$i]['id']}}" >
                             </div>
                         </div>
@@ -263,59 +263,8 @@ function isreadonlys($rows) {
         </section>
     </div>
 </div>
-<datalist id="stateData">
-    <option>
-        dolnośląskie
-    </option>
-    <option>
-        kujawsko-pomorskie
-    </option>
-    <option>
-        lubelskie
-    </option>
-    <option>
-        lubuskie
-    </option>
-    <option>
-        łódzkie
-    </option>
-    <option>
-        małopolskie
-    </option>
-    <option>
-        mazowieckie
-    </option>
-    <option>
-        opolskie
-    </option>
-    <option>
-        podkarpackie
-    </option>
-    <option>
-        podlaskie
-    </option>
-    <option>
-        pomorskie
-    </option>
-    <option>
-        śląskie
-    </option>
-    <option>
-        świętokrzyskie
-    </option>
-    <option>
-        warmińsko-mazurskie
-    </option>
-    <option>
-        wielkopolskie
-    </option>
-    <option>
-        zachodniopomorskie
-    </option>
-</datalist>
-<datalist id="countryData">
-    <option>Polska</option>
-</datalist>
+
+
 @endsection
 
 @section('head')

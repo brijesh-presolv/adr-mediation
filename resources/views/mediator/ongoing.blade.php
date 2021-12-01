@@ -283,7 +283,7 @@
 
 <script type="text/javascript">
 $(function () {
-    $("#sessionDate").datepicker({minDate: 0});
+    $("#sessionDate").datepicker({minDate: 0, dateFormat: 'dd/mm/yy'});
 });
 </script>
 <script>
@@ -662,6 +662,16 @@ $(function () {
             type: 'post',
             url: '{{ route("mediator.case.addSession") }}',
             data: $('#addSessionForm').serialize(),
+            beforeSend: function() {
+                $('#addSession-modal').modal("hide");
+
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                allowOutsideClick: false,
+                            });
+                        },
             success: function () {
                 // alert('form was submitted');
                 swal("session created!", {

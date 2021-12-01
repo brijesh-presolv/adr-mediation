@@ -44,13 +44,16 @@ class HomeController extends Controller {
 
 
 
-
+                        $d = [
+                            'event' => 'VARIFY_EMAIL',
+                            'userid' => Auth::user()->id,
+                        ];
 
                         if ($usr->role == '1') {
 
                             $type = 'Mediator';
 
-                            Email::send($usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
+                            Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
 
 
 
@@ -59,7 +62,7 @@ class HomeController extends Controller {
 
                         $type = 'User';
 
-                        Email::send($usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
+                        Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
 
 
                         if ($request->session()->has('newcase')) {
@@ -142,9 +145,12 @@ class HomeController extends Controller {
                 $usr->password = Hash::make($pwd);
 
                 $usr->save();
+                $d = [
+                    'event' => 'FORGOT_PASSWORD',
+                    'userid' => $usr->id,
+                ];
 
-
-                Email::send($usr->email, env('EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
+                Email::send($d, $usr->email, env('EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
 
                 echo json_encode(['response' => 'success']);
 
@@ -175,7 +181,12 @@ class HomeController extends Controller {
                     $type = 'Mediator';
                 }
 
-                Email::send($usr->email, env('EMAIL3_OF_FORGOTUSERNAME', ''), ['-type-' => $type, '-name-' => $usr->username], $usr->first_name . ' ' . $usr->last_name);
+                $d = [
+                    'event' => 'FORGOT_USERNAME',
+                    'userid' => $usr->id,
+                ];
+
+                Email::send($d, $usr->email, env('EMAIL3_OF_FORGOTUSERNAME', ''), ['-type-' => $type, '-name-' => $usr->username], $usr->first_name . ' ' . $usr->last_name);
 
                 echo json_encode(['response' => 'success']);
 
@@ -197,12 +208,15 @@ class HomeController extends Controller {
             $usr = User::where(['username' => $u['id']])->first();
 
             if ($usr) {
-
+                $d = [
+                    'event' => 'RESEND_OTP',
+                    'userid' => $usr->id,
+                ];
                 if ($usr->role == '0') {
-                    $email = Email::send($usr->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
+                    $email = Email::send($d, $usr->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
                 } else if ($usr->role == '1') {
 
-                    $email = Email::send($usr->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
+                    $email = Email::send($d, $usr->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
                 }
 
                 echo json_encode(['response' => 'success']);

@@ -201,10 +201,13 @@ class DashboardController extends Controller
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
         //  dd($mediator);
-
+        $d = [
+            'event' => 'SESS_SCHE_MED',
+            'case_id' => $request->caseId,
+        ];
         if ($mediator) {
             $id = "M" . sprintf("%06d", $request->caseId);
-            SendGrid::send($mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
+            SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
 
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$request->sessionDate . "/" . $request->sessionTime, $id, $request->zoomId];
@@ -482,10 +485,13 @@ class DashboardController extends Controller
 
     public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone)
     {
-
+        $d = [
+            'event' => 'SESS_SCHE_ADM',
+            'case_id' => $id,
+        ];
         $mid = "M" . sprintf("%06d", $id);
         if ($email_id != "") {
-            SendGrid::send($email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
         }
 
         if ($userPhone != "") {
@@ -519,9 +525,13 @@ class DashboardController extends Controller
         Storage::put('public/mediation/' . $data["case"]->id . '/' . "M" . sprintf("%06d", $id) . "_party.pdf", $pdf->output());
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mid = "M" . sprintf("%06d", $id);
+        $d = [
+            'event' => 'SEND_APPO_MED',
+            'case_id' => $id,
+        ];
         foreach ($involedUser as $inv) {
             if ($inv->userEmail != "") {
-                SendGrid::send($inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
+                SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
             }
             if ($inv->userPhone != "") {
                 $var = ['-cid-'];
@@ -567,6 +577,10 @@ class DashboardController extends Controller
         foreach ($files as $f) {
             $filesE[] = url("storage/app/" . $f["file_name"]);
         }
+        $d = [
+            'event' => 'SEND_ADDI_DOC_MED',
+            'case_id' => $id,
+        ];
         foreach ($involedUser as $inv) {
 
             if ($inv->userEmail != "") {
@@ -618,7 +632,7 @@ class DashboardController extends Controller
         // dd($sendEamils);
 
         foreach ($sendEamils as $email) {
-            SendGrid::send($email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+            SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
         }
 
         return true;
@@ -638,6 +652,10 @@ class DashboardController extends Controller
         foreach ($files as $f) {
             $filesE[] = url("storage/app/" . $f["file_path"]);
         }
+        $d = [
+            'event' => 'SEND_SETT_AGRE_MED',
+            'case_id' => $id,
+        ];
         foreach ($involedUser as $inv) {
             if ($inv->userEmail != "") {
                 $sendEamils[] = $inv->userEmail;
@@ -683,7 +701,7 @@ class DashboardController extends Controller
         }
         foreach ($sendEamils as $email) {
 
-            SendGrid::send($email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+            SendGrid::send($d, $email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
         }
         return true;
     }
