@@ -242,6 +242,8 @@ class CaseController extends Controller
     public function addSession(Request $request)
     {
         // echo $request->zoomId;
+
+        // dd();
         $d = [
             'event' => 'SESS_SCHE_ADM',
             'case_id' => $request->caseId,
@@ -254,12 +256,10 @@ class CaseController extends Controller
             'session_party_ids' => json_encode($request->session_party_ids),
             'scheduled_by' => Auth::user()->id,
         ];
-        // foreach ($request->session_party_ids as $pary_id) {
-        $data = InvoledUser::where("userPlanId", $request->caseId)->get();
-        foreach ($data as $party) {
+        foreach ($request->session_party_ids as $party_id) {
+            $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
             $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
         }
-
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -948,6 +948,40 @@ class CaseController extends Controller
 
         $access = Whatsapp::sendWamessage($dwa1);
         return true;
+    }
+
+    public function storeMultiFile(Request $request)
+    {
+
+        
+        $validatedData = $request->validate([
+            'files' => 'required',
+            'files.*' => 'mimes:csv,txt,xlx,xls,pdf',
+        ]);
+
+        if ($request->TotalFiles > 0) {
+
+            for ($x = 0; $x < $request->TotalFiles; $x++) {
+
+                if ($request->hasFile('files' . $x)) {
+                    $file = $request->file('files' . $x);
+
+                    $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                    $insert[$x]['file_name'] = $path;
+                    $insert[$x]['uploaded_by'] = Auth::user()->id;
+                    $insert[$x]['case_id'] = $request->caseId;
+                    // $insert[$x]['path'] = $path;
+                }
+            }
+            // dd($insert);
+            // die();
+            // File::insert($insert);
+            DB::table('manage_files')->insert($insert, $insert);
+            $this->send_upload_file_party($request->caseId, $insert);
+            return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
+        } else {
+            return response()->json(["message" => "Please try again."]);
+        }
     }
 
     public function send_upload_file_party($id, $files)

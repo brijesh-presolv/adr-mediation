@@ -153,6 +153,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
 
     Route::match(['post', 'get'], 'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
+    Route::post('upload-files', [App\Http\Controllers\Admin\CaseController::class, 'storeMultiFile'])->name('admin.case.storeMultiFile');
 
     //track
     Route::get('track/{id}', [App\Http\Controllers\Admin\CaseController::class, 'track'])->name('admin.case.track');

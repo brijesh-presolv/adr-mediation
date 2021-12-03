@@ -38,11 +38,88 @@
                 </div>
                 <div class="col-md-4">
                     <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal" data-target="#withdrawModalForBulk" id="bulkCloseBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Close</button>
+                    <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal" data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting Documents</button>
+                
                 </div>
                 
             </div>
         </div>
     </div>
+</div>
+<div class="modal fade" id="uploadSupportingDocsModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-white">Upload Supporting Documents</h4>
+                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="multi-file-upload-ajax" method="POST"  action="javascript:void(0)" accept-charset="utf-8" enctype="multipart/form-data" >
+                    @csrf
+                    <input type="hidden" name="caseId" id="caseIdF1" value="">
+                    <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple  />
+                    <br>
+                    <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
+                    <br>
+                    <br>
+                </form>
+                <table class="table table-bordered" id="supportingDocumnet"> 
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>file</th>
+                            <th>Upload By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                    <span>Close</span>
+                </button> 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="uploadSupportingDocsModalForBulk" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-white">Upload Supporting Documents</h4>
+                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadFormModalForBulk" method="POST"  action="javascript:void(0)" accept-charset="utf-8" enctype="multipart/form-data" >
+                    @csrf
+                    <input type="hidden" name="caseId" id="caseIdF1" value="">
+                    <input type="file" name="files[]" id="filesForBulk" class="dropify" data-height="150" multiple  />
+                    <br>
+                    <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
+                    <br>
+                    <br>
+                </form>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                    <span>Close</span>
+                </button> 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div>
 <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -367,6 +444,7 @@ $(function () {
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
+                    button = button + ` <button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">Upload Supporting</button>`;
                     button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-teal waves-light waves-effect btn-sm">@lang('case.btn_close')</button>`;
                     return button;
                 }
@@ -396,6 +474,8 @@ $(function () {
     $("#selectalldir").change(function () {
       if (this.checked) {
         $("#bulkCloseBtn").show();
+        $("#bulkUpload").show();
+
         $(".blkchk").each(function () {
           $(this).prop("checked", true);
         });
@@ -404,6 +484,7 @@ $(function () {
           $(this).prop("checked", false);
         });
         $("#bulkCloseBtn").hide();
+        $("#bulkUpload").hide();
 
       }
     });
@@ -411,8 +492,11 @@ $(function () {
     $(document).on("change", ".blkchk", function () {
       if (this.checked) {
         $("#bulkCloseBtn").show();
+        $("#bulkUpload").show();
       } else {
         $("#bulkCloseBtn").hide();
+        $("#bulkUpload").hide();
+
       }
     });
 
@@ -458,6 +542,96 @@ $(function () {
             }
         });
         return false;
+    });
+
+    $('#uploadFormModalForBulk').on('submit', function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        let TotalFiles = $('#filesForBulk')[0].files.length;
+        let files = $('#filesForBulk')[0];
+        for (let i = 0; i < TotalFiles; i++) {
+            formData.append('files' + i, files.files[i]);
+        }
+        formData.append('TotalFiles', TotalFiles);
+        $(".blkchk").each(function () {
+            if (this.checked) {
+                formData.delete('caseId');
+                var id = $(this).data("caseid");
+                // $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
+                formData.append('caseId', id);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route("admin.case.storeMultiFile") }}',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: (data) => {
+                        //this.reset();
+                        swal("Files has been uploaded!", {
+                            icon: "success",
+                        }).then(function() {
+                            location.reload();
+                        });
+                        $("#uploadSupportingDocsModalForBulk").modal("hide");
+                    },
+                    error: function (data) {
+                        //alert(data.responseJSON.errors.files[0]);
+                        console.log(data);
+                    }
+                });
+            }
+            
+        });
+    });
+
+    $('#uploadSupportingDocsModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var recipient = button.data('id');
+        $.ajax({
+            type: 'post',
+            url: '{{ route("admin.case.viewSupporting") }}',
+            data: {id: recipient},
+            success: function (data) {
+                $("#supportingDocumnet tbody").html('');
+                $("#supportingDocumnet tbody").append(data);
+                //$("#supportingDocumnet").datatable();
+            }
+        });
+        $('#caseIdF1').val(recipient);
+    });
+
+    $('#multi-file-upload-ajax').submit(function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        let TotalFiles = $('#files')[0].files.length;
+        let files = $('#files')[0];
+        for (let i = 0; i < TotalFiles; i++) {
+            formData.append('files' + i, files.files[i]);
+        }
+        formData.append('TotalFiles', TotalFiles);
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("admin.case.storeMultiFile") }}',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: (data) => {
+                //this.reset();
+                swal("Files has been uploaded!", {
+                    icon: "success",
+                });
+                $("#uploadSupportingDocsModal").modal("hide");
+            },
+            error: function (data) {
+                //alert(data.responseJSON.errors.files[0]);
+                console.log(data);
+            }
+        });
     });
 
     $(document).on('submit', "#MidaterForm", function () {

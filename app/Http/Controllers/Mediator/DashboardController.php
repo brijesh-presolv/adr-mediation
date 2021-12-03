@@ -182,6 +182,8 @@ class DashboardController extends Controller
      */
     public function addSession(Request $request)
     {
+        dd($request->session_party_ids);
+        dd("hello");
         $dataToInsert = [
             'case_id' => $request->caseId,
             'session_date' => $request->sessionDate . "/" . $request->sessionTime,
@@ -192,8 +194,8 @@ class DashboardController extends Controller
         ];
         DB::table('manage_session')->insert($dataToInsert);
         // foreach ($request->session_party_ids as $pary_id) {
-        $data = InvoledUser::where("userPlanId", $request->caseId)->get();
-        foreach ($data as $party) {
+        foreach ($request->session_party_ids as $party_id) {
+            $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
             $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
         }
         $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
