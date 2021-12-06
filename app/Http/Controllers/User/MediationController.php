@@ -80,8 +80,10 @@ class MediationController extends Controller
 
 
             //udpate mediation case
-
             $med->issue = $r['issue'];
+            $med->disputeCategory = $r['disputeCategory'];
+            $med->amount = $r['amount'];
+
             // $med->documentPath = $filename;
             $med->updated_at = date("Y-m-d H:i:s");
             $med->save();

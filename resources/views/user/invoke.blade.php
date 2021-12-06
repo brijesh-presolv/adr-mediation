@@ -99,24 +99,7 @@ function isreadonlys($rows) {
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
 
-                            <datalist id="state">
-                                <option>dolnośląskie</option>
-                                <option>kujawsko-pomorskie</option>
-                                <option>lubelskie</option>
-                                <option>lubuskie</option>
-                                <option>łódzkie</option>
-                                <option>małopolskie</option>
-                                <option>mazowieckie</option>
-                                <option>opolskie</option>
-                                <option>podkarpackie</option>
-                                <option>podlaskie</option>
-                                <option>pomorskie</option>
-                                <option>śląskie</option>
-                                <option>świętokrzyskie</option>
-                                <option>warmińsko-mazurskie</option>
-                                <option>wielkopolskie</option>
-                                <option>zachodniopomorskie</option>
-                            </datalist>
+                            
                             <input type="text" name="userstate" id="userstate" list="state" class="form-control" value="<?= $user->state?>">
 
                         </div>
@@ -242,14 +225,49 @@ function isreadonlys($rows) {
                 <div class="row">
                     <div class="col-md-12">
                         <hr>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Dispute Category <span style="color:red; ">*</span></label>
+                            <input class="form-control" name="disputeCategory" required="" value="<?= $medcase->disputeCategory ?>" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Dispute Amount <span style="color:red; ">*</span></label>
+                            <input class="form-control" name="amount" required="" value="<?= $medcase->amount ?>" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr>
                         <div class="form-group">
                             <label>Dispute details <span style="color:red; ">*</span></label>
                             <textarea class="form-control" rows="4" name="issue" required=""><?= $medcase->issue ?></textarea>
                         </div>
                     </div>
 
+                    <div class="col-md-12">
+                        <hr>
+                        <div class="form-group">
+                            <input type="checkbox" value="1" name="confirmsDetails" required="" />
+                            <label>The Initiating Party confirms that the details provided above are true, accurate, current and complete and requests that the dispute be referred to Presolv360 for resolution via Mediation360 <span style="color:red; ">*</span></label>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="checkbox" value="1" name="Terms" required="" />
+                            <label>The Initiating Party accepts and agrees to abide by Presolv360’s Dispute Resolution Rules (governing, inter alia, appointment of mediation, procedure, role of parties, settlement, termination, confidentiality) Terms & Conditions and Privacy Policy <span style="color:red; ">*</span></label>
+                        </div>
+                    </div>
+
                 </div>
             </section>
+            
         </form>
         <section>
             <div class="row">

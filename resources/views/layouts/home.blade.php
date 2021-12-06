@@ -599,7 +599,7 @@ $('#npd').change(function(){
 
 
  $('#npd,#Damount').change(function(){
-        if($('#npd').val() == 'more_than_3' || $('#Damount').val() == "Above Rs. 5 crore"){
+        if($('#npd').val() == 'more_than_10' || $('#Damount').val() == "Above Rs. 5 crore"){
 
                $('.cntctus').show();
                $('.sbmtt').hide();

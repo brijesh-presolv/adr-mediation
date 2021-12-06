@@ -981,7 +981,14 @@ width: 250px;" alt=""></div>
                                         <!-- <option value="">Please select option</option> -->
                                         <option value="2" selected>2</option>
                                         <option value="3">3</option>
-                                        <option value="more_than_3">More than 3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="more_than_10">More than 10</option>
                                       </optgroup>
                                         
                                     </select>
