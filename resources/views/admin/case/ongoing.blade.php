@@ -38,7 +38,7 @@
                 </div>
                 <div class="col-md-4">
                     <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal" data-target="#withdrawModalForBulk" id="bulkCloseBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Close</button>
-                    <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal" data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting Documents</button>
+                    <button class="blkbtn btn btn-primary waves-light waves-effect btn-sm" data-toggle="modal" data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting Documents</button>
                 
                 </div>
                 

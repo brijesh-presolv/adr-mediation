@@ -639,18 +639,20 @@ class DashboardController extends Controller
                 'event' => 'SEND_ADDI_DOC_MED'
             ];
             $access = Whatsapp::sendWamessage($dwa1);
+            foreach ($filesE as $file) {
 
-            $var_file = ['-caseid-'];
-            $var1_file = [$mid];
-            $content1_file = WaTemplate::getcontent('mediation_consent_doc');
-            $content_file = str_replace($var_file, $var1_file, $content1_file);
-            $dwa2 = [
-                'caseid' => $id,
-                'contact' => "+91" . $mediator->mobile_number,
-                'content' => ['media' => ['url' => $filesE, 'caption' => $content_file]],
-                'event' => 'SEND_ADDI_DOC_MED'
-            ];
-            $access = Whatsapp::sendWamessage($dwa2);
+                $var_file = ['-caseid-'];
+                $var1_file = [$mid];
+                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                $dwa2 = [
+                    'caseid' => $id,
+                    'contact' => "+91" . $mediator->mobile_number,
+                    'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
+                    'event' => 'SEND_ADDI_DOC_MED'
+                ];
+                $access = Whatsapp::sendWamessage($dwa2);
+            }
         }
         // dd($sendEamils);
 
