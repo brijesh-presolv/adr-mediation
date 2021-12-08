@@ -22,9 +22,9 @@
         </style>
     </head>
     <body>
-    <htmlpageheader name="page-header" >
+    {{-- <htmlpageheader name="page-header" > --}}
         <h3 class="text-center"><u>Mediator’s Consent and Disclosures</u></h3>
-    </htmlpageheader>
+    {{-- </htmlpageheader> --}}
     <p class="text-center">
         See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)
     </p>

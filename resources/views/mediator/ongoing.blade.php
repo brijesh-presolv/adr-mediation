@@ -237,12 +237,12 @@
             <form id="addSessionFormForBulk">
 
                 <input type="hidden" name="createdBy" id="createdByF" value="{{Auth::id()}}">
-                <input type="hidden" name="caseId" id="caseIdF" value="">
+                <input type="hidden" name="caseId"  value="">
 
                 <div class="custom-modal-text ">
 
                     <span>Session Date :</span>
-                    <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate" placeholder="Select session date" data-validation="required">
+                    <input type="text" autocomplete="off" id="sessionDateForBulk" class="form-control" name="sessionDate" placeholder="Select session date" data-validation="required">
 
                     <span>Session Time :</span>
                     <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time" data-validation="required">
@@ -252,10 +252,10 @@
 
                     <span>Note :</span>
                     <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
-                    <span>Party :</span>
+                    {{-- <span>Party :</span>
                     <div id="sessionPartyForBulk">
 
-                    </div>
+                    </div> --}}
                     <div class="text-center">    
                         <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
                     </div>
@@ -360,6 +360,7 @@
 <script type="text/javascript">
 $(function () {
     $("#sessionDate").datepicker({minDate: 0, dateFormat: 'dd/mm/yy'});
+    $("#sessionDateForBulk").datepicker({minDate: 0, dateFormat: 'dd/mm/yy'});
 });
 </script>
 <script>
@@ -624,6 +625,42 @@ $(function () {
         });
     });
 
+    $('#addSessionFormForBulk').on('submit', function (e) {
+        e.preventDefault();
+        
+        $(".blkchk").each(function () {
+            if (this.checked) {
+                var id = $(this).data("caseid");
+                $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route("mediator.addSession") }}',
+                    data: $('#addSessionFormForBulk').serialize(),
+                    beforeSend: function() {
+                        $('#addSessionModelForBulk').modal("hide");
+
+                                    swal({
+                                        title: 'Loading...',
+                                        showConfirmButton: false,
+                                        buttons: false,
+                                        allowOutsideClick: false,
+                                    });
+                                },
+                    success: function () {
+                        // alert('form was submitted');
+                        swal("session created!", {
+                            icon: "success",
+                        }).then(function () {
+                            location.reload();
+                        });
+                        // $('#addSession-modal').modal("hide");
+                    }
+                });
+            }
+            
+        });
+    });
+
     $('#withdrawModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var recipient = button.data('id');
@@ -778,29 +815,29 @@ $(function () {
         var mediator = button.data('mediator');
         $('#caseIdF').val(recipient);
     });
-    $('#addSessionModelForBulk').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var data = button.parent().parent().find(".party_name");
-        $("#sessionPartyForBulk").html("");
-        data.each(function () {
-            var party_id = $(this).data("id")
-            var party_name = $(this).text()
-            var text = `<div class="form-group form-check">
-                <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `" data-validation="checkbox_group" data-validation-qty="min1">
-                <label class="form-check-label" for="party` + party_id + `">` + party_name + `</label>
-              </div>`;
-            $("#sessionPartyForBulk").append(text);
-        });
-        var recipient = button.data('id');
-        var mediator = button.data('mediator');
-        $('#caseIdF').val(recipient);
-    });
+    // $('#addSessionModelForBulk').on('show.bs.modal', function (event) {
+    //     var button = $(event.relatedTarget);
+    //     var data = button.parent().parent().find(".party_name");
+    //     $("#sessionPartyForBulk").html("");
+    //     data.each(function () {
+    //         var party_id = $(this).data("id")
+    //         var party_name = $(this).text()
+    //         var text = `<div class="form-group form-check">
+    //             <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `" data-validation="checkbox_group" data-validation-qty="min1">
+    //             <label class="form-check-label" for="party` + party_id + `">` + party_name + `</label>
+    //           </div>`;
+    //         $("#sessionPartyForBulk").append(text);
+    //     });
+    //     var recipient = button.data('id');
+    //     var mediator = button.data('mediator');
+    //     $('#caseIdF').val(recipient);
+    // });
     $('#addSessionForm').on('submit', function (e) {
 
         e.preventDefault();
         $.ajax({
             type: 'post',
-            url: '{{ route("mediator.case.addSession") }}',
+            url: '{{ route("mediator.addSession") }}',
             data: $('#addSessionForm').serialize(),
             beforeSend: function() {
                 $('#addSession-modal').modal("hide");
@@ -828,7 +865,7 @@ $(function () {
         var csrf = document.querySelector('meta[name="csrf-token"]').content;
         $.ajax({
             type: 'post',
-            url: '{{ route("mediator.case.getAddedSesion") }}',
+            url: '{{ route("mediator.getAddedSesion") }}',
             data: {mediator_id: sheduledBy_Id, caseid: caseid, '_token': csrf},
             success: function (data) {
                 $('#sessRecId tbody').html(data);

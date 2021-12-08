@@ -243,22 +243,57 @@ class CaseController extends Controller
     {
         // echo $request->zoomId;
 
-        // dd();
+        // dd($request->all());
         $d = [
             'event' => 'SESS_SCHE_ADM',
             'case_id' => $request->caseId,
         ];
-        $dataToInsert = [
-            'case_id' => $request->caseId,
-            'session_date' => $request->sessionDate . "/" . $request->sessionTime,
-            'note' => $request->note,
-            'zoom_id' => $request->zoomId,
-            'session_party_ids' => json_encode($request->session_party_ids),
-            'scheduled_by' => Auth::user()->id,
-        ];
-        foreach ($request->session_party_ids as $party_id) {
-            $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
-            $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+        // $dataToInsert = [
+        //     'case_id' => $request->caseId,
+        //     'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+        //     'note' => $request->note,
+        //     'zoom_id' => $request->zoomId,
+        //     'session_party_ids' => json_encode($request->session_party_ids),
+        //     'scheduled_by' => Auth::user()->id,
+        // ];
+        // foreach ($request->session_party_ids as $party_id) {
+        //     $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
+        //     $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+        // }
+        if(isset($request->session_party_ids)) {
+            $dataToInsert = [
+                'case_id' => $request->caseId,
+                'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+                'note' => $request->note,
+                'zoom_id' => $request->zoomId,
+                'session_party_ids' => json_encode($request->session_party_ids),
+                'scheduled_by' => Auth::user()->id,
+            ];
+            DB::table('manage_session')->insert($dataToInsert);
+            foreach ($request->session_party_ids as $party_id) {
+                $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
+                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+                
+            }
+            
+
+        } else {
+            $allParty = InvoledUser::where("userPlanId", $request->caseId)->where("isOnboarded", 1)->get();
+            $party_ids = array();
+            foreach($allParty as $party) {
+                $party_ids[] = $party->userId;
+                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+            }
+            // dd($party_ids);
+            $dataToInsert = [
+                'case_id' => $request->caseId,
+                'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+                'note' => $request->note,
+                'zoom_id' => $request->zoomId,
+                'session_party_ids' => json_encode($party_ids),
+                'scheduled_by' => Auth::user()->id,
+            ];
+            DB::table('manage_session')->insert($dataToInsert);
         }
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
@@ -283,7 +318,6 @@ class CaseController extends Controller
             // exit;
             $access = Whatsapp::sendWamessage($dwa1);
         }
-        DB::table('manage_session')->insert($dataToInsert);
 
         return true;
     }
@@ -1173,7 +1207,7 @@ class CaseController extends Controller
         }
         if ($errormsg == '') {
             $csv = $this->csvToArray($tmpName);
-            if (count($csv[0]) != 20) {
+            if (count($csv[0]) != 15) {
                 $errormsg .= "Invalid csv file";
             }
 
@@ -1181,10 +1215,10 @@ class CaseController extends Controller
             foreach ($csv as $key => $v) {
                 $i = $key + 1;
 
-                for ($n = 0; $n < 20; $n++) {
+                for ($n = 0; $n < 15; $n++) {
                     if ($v[$n] == '') {
 
-                        if ($n != 15 and $n != 16 and $n != 17) {
+                        if ($n != 10 and $n != 11 and $n != 12) {
                             $errormsg .= "Please fill all the required details to proceed at line no $i";
                         }
                     }
@@ -1200,33 +1234,26 @@ class CaseController extends Controller
                     $errormsg .= "Invalid mobile number at line no $i ";
                 }
 
-                // validate pincode
-                if (!filter_var($v[8], FILTER_SANITIZE_NUMBER_INT)) {
-                    $errormsg .= "Invalid pincode at line no $i ";
-                }
-
-                if (strlen($v[8]) != 6) {
-                    $errormsg .= "Invalid pincode at line no $i ";
-                }
+                
 
                 //validate date
-                if (strpos($v[12], '-')) {
-                    $dt = str_replace('-', '/', $v[12]);
-                    $v[12] = $dt;
+                if (strpos($v[7], '-')) {
+                    $dt = str_replace('-', '/', $v[7]);
+                    $v[7] = $dt;
                 }
 
-                $dt = explode('/', $v[12]);
+                $dt = explode('/', $v[7]);
 
                 if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
 
                     $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
                 }
 
-                if ($v[18] != 'Yes') {
+                if ($v[13] != 'Yes') {
                     $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
                 }
 
-                if ($v[19] != 'Yes') {
+                if ($v[14] != 'Yes') {
 
                     $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
                 }
@@ -1258,11 +1285,11 @@ class CaseController extends Controller
 
             $data['userid'] = $claimantid;
             $data['disputeCategory'] = $value['0'];
-            $data['noOfParties'] = count(explode(',', $value[15])) + 1;
+            $data['noOfParties'] = count(explode(',', $value[10])) + 1;
             $data['amount'] = $value['1'];
-            $data['issue'] = $value['13'];
+            $data['issue'] = $value['8'];
             $data['confirm_status'] = 0;
-            $data['otherRespondentDetails'] = $value[17];
+            $data['otherRespondentDetails'] = $value[12];
             $med = MedCase::create($data);
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();
@@ -1323,20 +1350,20 @@ class CaseController extends Controller
             $resParty->userPhone = $value['4'];
             $resParty->name = $value['2'];
             $resParty->joinCode = $this->joinCode();
-            $resParty->address1 = $value['5'];
-            $resParty->address2 = $value['6'];
-            $resParty->city = $value['7'];
-            $resParty->pincode = $value['8'];
-            $resParty->state = $value['9'];
-            $resParty->country = $value['10'];
+            $resParty->fulladdress = $value['5'];
+            // $resParty->address2 = $value['6'];
+            // $resParty->city = $value['7'];
+            // $resParty->pincode = $value['8'];
+            // $resParty->state = $value['9'];
+            // $resParty->country = $value['10'];
             $resParty->isClaimant = 1;
             $resParty->created_at = date('Y-m-d H:s:i');
             $resParty->updated_at = date('Y-m-d H:s:i');
             $resParty->save();
 
 
-            $otherResEmail = explode(',', $value[15]);
-            $otherResMobile = explode(',', $value[16]);
+            $otherResEmail = explode(',', $value[10]);
+            $otherResMobile = explode(',', $value[11]);
             // dd($otherResEmail);
             $forloopcnt = max(count($otherResEmail), count($otherResMobile));
             // dd($forloopcnt);

@@ -45,6 +45,8 @@
                                         @endif
                                         @if($value->address1 != "")
                                         @lang('case.address'): <?= $value->address1 . ' ' . $value->address2 . ' ' . $value->city . ', ' . $value->pincode . ', ' . $value->state . ' ' . $value->country ?><br>
+                                        @else
+                                        @lang('case.address'): <?= $value->fulladdress ?><br>
                                         @endif
                                         <br>
                                         @endif

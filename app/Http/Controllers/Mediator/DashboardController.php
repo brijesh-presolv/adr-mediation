@@ -182,21 +182,50 @@ class DashboardController extends Controller
      */
     public function addSession(Request $request)
     {
-        dd($request->session_party_ids);
-        dd("hello");
-        $dataToInsert = [
-            'case_id' => $request->caseId,
-            'session_date' => $request->sessionDate . "/" . $request->sessionTime,
-            'note' => $request->note,
-            'zoom_id' => $request->zoomId,
-            'session_party_ids' => json_encode($request->session_party_ids),
-            'scheduled_by' => Auth::user()->id,
-        ];
-        DB::table('manage_session')->insert($dataToInsert);
+        // dd($request->session_party_ids);
+        // dd("hello");
+        
+        // exit;
         // foreach ($request->session_party_ids as $pary_id) {
-        foreach ($request->session_party_ids as $party_id) {
-            $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
-            $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+        
+        // foreach ($request->session_party_ids as $party_id) {
+        //     $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
+        //     $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+        // }
+
+        if(isset($request->session_party_ids)) {
+            foreach ($request->session_party_ids as $party_id) {
+                $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
+                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+                
+            }
+            $dataToInsert = [
+                'case_id' => $request->caseId,
+                'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+                'note' => $request->note,
+                'zoom_id' => $request->zoomId,
+                'session_party_ids' => json_encode($request->session_party_ids),
+                'scheduled_by' => Auth::user()->id,
+            ];
+            DB::table('manage_session')->insert($dataToInsert);
+
+        } else {
+            $allParty = InvoledUser::where("userPlanId", $request->caseId)->where("isOnboarded", 1)->get();
+            $party_ids = array();
+            foreach($allParty as $party) {
+                $party_ids[] = $party->userId;
+                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+            }
+            // dd($party_ids);
+            $dataToInsert = [
+                'case_id' => $request->caseId,
+                'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+                'note' => $request->note,
+                'zoom_id' => $request->zoomId,
+                'session_party_ids' => json_encode($party_ids),
+                'scheduled_by' => Auth::user()->id,
+            ];
+            DB::table('manage_session')->insert($dataToInsert);
         }
         $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
@@ -236,10 +265,12 @@ class DashboardController extends Controller
     public function getAddedSesion(Request $request)
     {
 
-        $sessionData = DB::table('manage_session')->where('scheduled_by', $request->mediator_id)->get();
+
+        $sessionData = DB::table('manage_session')->where('case_id', $request->caseid)->get();
         $sn = 1;
+        $dataArray = array();
+
         foreach ($sessionData as $value) {
-            $dataArray = array();
             if (!is_null($value->session_party_ids)) {
                 $dataArray = json_decode($value->session_party_ids);
             }

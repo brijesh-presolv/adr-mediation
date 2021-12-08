@@ -679,16 +679,20 @@ class MediationController extends Controller
         if ($errormsg == '') {
             $csv = $this->csvToArray($tmpName);
             // dd(count($csv[0]));
-            if (count($csv[0]) != 20) {
+            if (count($csv[0]) != 15) {
                 $errormsg .= "Invalid csv file";
             }
             $errormsg .= '';
             foreach ($csv as $key => $v) {
+                // dd($v[5]);
                 $i = $key + 1;
 
-                for ($n = 1; $n < 16; $n++) {
-                    if ($v[$n] == '' and $n != 3) {
+                for ($n = 1; $n < 15; $n++) {
+                    if ($v[$n] == '') {
+                        if ($n != 10 and $n != 11 and $n != 12) {
+
                         $errormsg .= "Please fill all the required details to proceed at line no $i ";
+                        }
                     }
                 }
                 if ($v[3] == '') {
@@ -702,33 +706,25 @@ class MediationController extends Controller
                     $errormsg .= "Invalid mobile number at line no $i ";
                 }
 
-                // validate pincode
-                if (!filter_var($v[8], FILTER_SANITIZE_NUMBER_INT)) {
-                    $errormsg .= "Invalid pincode at line no $i ";
-                }
-
-                if (strlen($v[8]) != 6) {
-                    $errormsg .= "Invalid pincode at line no $i ";
-                }
 
                 //validate date
-                if (strpos($v[12], '-')) {
-                    $dt = str_replace('-', '/', $v[12]);
-                    $v[12] = $dt;
+                if (strpos($v[7], '-')) {
+                    $dt = str_replace('-', '/', $v[7]);
+                    $v[7] = $dt;
                 }
 
-                $dt = explode('/', $v[12]);
+                $dt = explode('/', $v[7]);
 
                 if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
 
                     $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
                 }
 
-                if ($v[18] != 'Yes') {
+                if ($v[13] != 'Yes') {
                     $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
                 }
 
-                if ($v[19] != 'Yes') {
+                if ($v[14] != 'Yes') {
 
                     $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
                 }
@@ -759,11 +755,11 @@ class MediationController extends Controller
             // dd();
             $data['userid'] = $uploaded_by;
             $data['disputeCategory'] = $value['0'];
-            $data['noOfParties'] = count(explode(',', $value[15])) + 1;
-            $data['amount'] = $value['1'];
-            $data['issue'] = $value['13'];
+            $data['noOfParties'] = count(explode(',', $value[10])) + 1;
+            $data['amount'] = $value[1];
+            $data['issue'] = $value[8];
             $data['confirm_status'] = 0;
-            $data['otherRespondentDetails'] = $value[17];
+            $data['otherRespondentDetails'] = $value[12];
             $med = MedCase::create($data);
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $uploaded_by])->first();
@@ -796,12 +792,13 @@ class MediationController extends Controller
             $resParty->userPhone = $value['4'];
             $resParty->name = $value['2'];
             $resParty->joinCode = $this->joinCode();
-            $resParty->address1 = $value['5'];
-            $resParty->address2 = $value['6'];
-            $resParty->city = $value['7'];
-            $resParty->pincode = $value['8'];
-            $resParty->state = $value['9'];
-            $resParty->country = $value['10'];
+            $resParty->fulladdress = $value['5'];
+            // $resParty->address1 = $value['5'];
+            // $resParty->address2 = $value['6'];
+            // $resParty->city = $value['7'];
+            // $resParty->pincode = $value['8'];
+            // $resParty->state = $value['9'];
+            // $resParty->country = $value['10'];
             $resParty->isClaimant = 1;
             $resParty->created_at = date('Y-m-d H:s:i');
             $resParty->updated_at = date('Y-m-d H:s:i');
@@ -810,8 +807,8 @@ class MediationController extends Controller
 
             // $otherDetails = array_merge(["email" => explode(',', $value[21]), 'mobile' => explode(',', $value[22])]);
 
-            $otherResEmail = explode(',', $value[15]);
-            $otherResMobile = explode(',', $value[16]);
+            $otherResEmail = explode(',', $value[10]);
+            $otherResMobile = explode(',', $value[11]);
 
             $forloopcnt = max(count($otherResEmail), count($otherResMobile));
 

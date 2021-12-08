@@ -39,10 +39,52 @@
                 <div class="col-md-4">
                     <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal" data-target="#withdrawModalForBulk" id="bulkCloseBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Close</button>
                     <button class="blkbtn btn btn-primary waves-light waves-effect btn-sm" data-toggle="modal" data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting Documents</button>
+                    <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target="#addSessionModelForBulk" id="bulkSession" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>"><span class="mdi mdi-pencil-plus"></span></button>
                 
                 </div>
                 
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="addSessionModelForBulk" class="modal fade"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal-demo">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Session</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span><span class="sr-only">Close</span>
+                </button>
+            </div>
+
+            <form id="addSessionFormForBulk">
+
+                <input type="hidden" name="createdBy" id="createdByF" value="{{Auth::id()}}">
+                <input type="hidden" name="caseId"  value="">
+
+                <div class="custom-modal-text ">
+
+                    <span>Session Date :</span>
+                    <input type="text" autocomplete="off" id="sessionDateForBulk" class="form-control" name="sessionDate" placeholder="Select session date" data-validation="required">
+
+                    <span>Session Time :</span>
+                    <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time" data-validation="required">
+
+                    <span>Zoom Id :</span>
+                    <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id" data-validation="required">
+
+                    <span>Note :</span>
+                    <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
+                    {{-- <span>Party :</span>
+                    <div id="sessionPartyForBulk">
+
+                    </div> --}}
+                    <div class="text-center">    
+                        <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -354,6 +396,8 @@
 <script type="text/javascript">
 $(function () {
     $("#sessionDate").datepicker({minDate: 0, dateFormat: 'dd/mm/yy'});
+    $("#sessionDateForBulk").datepicker({minDate: 0, dateFormat: 'dd/mm/yy'});
+
 });</script>
 <script>
     $.validate();
@@ -475,6 +519,7 @@ $(function () {
       if (this.checked) {
         $("#bulkCloseBtn").show();
         $("#bulkUpload").show();
+        $("#bulkSession").show();
 
         $(".blkchk").each(function () {
           $(this).prop("checked", true);
@@ -485,6 +530,7 @@ $(function () {
         });
         $("#bulkCloseBtn").hide();
         $("#bulkUpload").hide();
+        $("#bulkSession").hide();
 
       }
     });
@@ -493,13 +539,50 @@ $(function () {
       if (this.checked) {
         $("#bulkCloseBtn").show();
         $("#bulkUpload").show();
+        $("#bulkSession").show();
+
       } else {
         $("#bulkCloseBtn").hide();
         $("#bulkUpload").hide();
+        $("#bulkSession").hide();
 
       }
     });
+    $('#addSessionFormForBulk').on('submit', function (e) {
+        e.preventDefault();
+        
+        $(".blkchk").each(function () {
+            if (this.checked) {
+                var id = $(this).data("caseid");
+                $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route("admin.case.addSession") }}',
+                    data: $('#addSessionFormForBulk').serialize(),
+                    beforeSend: function() {
+                        $('#addSessionModelForBulk').modal("hide");
 
+                                    swal({
+                                        title: 'Loading...',
+                                        showConfirmButton: false,
+                                        buttons: false,
+                                        allowOutsideClick: false,
+                                    });
+                                },
+                    success: function () {
+                        // alert('form was submitted');
+                        swal("session created!", {
+                            icon: "success",
+                        }).then(function () {
+                            location.reload();
+                        });
+                        // $('#addSession-modal').modal("hide");
+                    }
+                });
+            }
+            
+        });
+    });
     $('#withdrawFormForBulk').on('submit', function (e) {
         e.preventDefault();
         swal({
