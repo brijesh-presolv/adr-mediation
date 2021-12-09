@@ -760,6 +760,7 @@ class MediationController extends Controller
             $data['issue'] = $value[8];
             $data['confirm_status'] = 0;
             $data['otherRespondentDetails'] = $value[12];
+            $data['proposedSolution'] = $value[9];
             $med = MedCase::create($data);
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $uploaded_by])->first();
@@ -823,7 +824,7 @@ class MediationController extends Controller
                     $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i]) : "";
                     $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
                     $otherDetails->joinCode = $this->joinCode();
-                    $otherDetails->isClaimant = 1;
+                    $otherDetails->isClaimant = $i + 1;
                     $otherDetails->created_at = date('Y-m-d H:s:i');
                     $otherDetails->updated_at = date('Y-m-d H:s:i');
                     $otherDetails->save();

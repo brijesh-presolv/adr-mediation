@@ -87,6 +87,12 @@
                             <td>Disptued Amount</td>
                             <td>{{$case->amount}}</td>
                         </tr>
+                        @if($case->proposedSolution != NULL) 
+                        <tr>
+                            <td>Proposed Solution</td>
+                            <td>{{$case->proposedSolution}}</td>
+                        </tr>
+                        @endif
                         <tr>
                             <td>@lang('case.issue')</td>
                             <td>{{$case->issue}}</td>

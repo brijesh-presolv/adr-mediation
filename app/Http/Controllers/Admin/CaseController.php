@@ -260,7 +260,7 @@ class CaseController extends Controller
         //     $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
         //     $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
         // }
-        if(isset($request->session_party_ids)) {
+        if (isset($request->session_party_ids)) {
             $dataToInsert = [
                 'case_id' => $request->caseId,
                 'session_date' => $request->sessionDate . "/" . $request->sessionTime,
@@ -273,14 +273,11 @@ class CaseController extends Controller
             foreach ($request->session_party_ids as $party_id) {
                 $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
                 $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
-                
             }
-            
-
         } else {
             $allParty = InvoledUser::where("userPlanId", $request->caseId)->where("isOnboarded", 1)->get();
             $party_ids = array();
-            foreach($allParty as $party) {
+            foreach ($allParty as $party) {
                 $party_ids[] = $party->userId;
                 $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
             }
@@ -369,7 +366,9 @@ class CaseController extends Controller
                 "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->whereNotNull('address1')->get(),
+                "party" => InvoledUser::select('name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->where(function($q) {
+                    $q->where('address1', '!=', null)->orWhere('fulladdress', '!=', null);
+                })->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }
@@ -404,6 +403,7 @@ class CaseController extends Controller
         if ($request->method() == 'POST') {
             $r = $request->post();
             //udpate mediation case
+            $med->proposedSolution = $r['proposedSolution'];
             $med->issue = $r['issue'];
             $med->updated_at = date("Y-m-d H:i:s");
             $med->save();
@@ -435,7 +435,6 @@ class CaseController extends Controller
 
 
             //update responding party
-
 
 
 
@@ -480,16 +479,21 @@ class CaseController extends Controller
 
                 $inv->userPhone = $r['phone'][$i];
                 $inv->name = $r['name'][$i];
-                $inv->address1 = $r['add1'][$i];
 
-                if ($r['add2'][$i] == '') {
-                    $r['add2'][$i] = 'null';
+                if (isset($r['add1'][$i])) {
+                    $inv->address1 = $r['add1'][$i];
+
+                    if ($r['add2'][$i] == '') {
+                        $r['add2'][$i] = 'null';
+                    }
+                    $inv->address2 = $r['add2'][$i];
+                    $inv->city = $r['city'][$i];
+                    $inv->pincode = $r['pincode'][$i];
+                    $inv->state = $r['state'][$i];
+                    $inv->country = $r['country'][$i];
+                } elseif (isset($r['fulladdress'][$i])) {
+                    $inv->fulladdress = $r['fulladdress'][$i];
                 }
-                $inv->address2 = $r['add2'][$i];
-                $inv->city = $r['city'][$i];
-                $inv->pincode = $r['pincode'][$i];
-                $inv->state = $r['state'][$i];
-                $inv->country = $r['country'][$i];
                 $inv->isClaimant = $i + 1;
 
 
@@ -612,7 +616,7 @@ class CaseController extends Controller
                 if ($inv->name != "") {
                     if ($responding_party == "") {
                         $responding_party = $inv->name;
-                    } 
+                    }
                 }
                 $responding_phone[] = $inv->userPhone;
                 // SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
@@ -990,7 +994,7 @@ class CaseController extends Controller
     public function storeMultiFile(Request $request)
     {
 
-        
+
         $validatedData = $request->validate([
             'files' => 'required',
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf',
@@ -1234,7 +1238,7 @@ class CaseController extends Controller
                     $errormsg .= "Invalid mobile number at line no $i ";
                 }
 
-                
+
 
                 //validate date
                 if (strpos($v[7], '-')) {
@@ -1290,6 +1294,7 @@ class CaseController extends Controller
             $data['issue'] = $value['8'];
             $data['confirm_status'] = 0;
             $data['otherRespondentDetails'] = $value[12];
+            $data['proposedSolution'] = $value[9];
             $med = MedCase::create($data);
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();
@@ -1377,12 +1382,12 @@ class CaseController extends Controller
                     $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i])  : "";
                     $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
                     $otherDetails->joinCode = $this->joinCode();
-                    $otherDetails->isClaimant = 1;
+                    $otherDetails->isClaimant = $i + 1;
                     $otherDetails->created_at = date('Y-m-d H:s:i');
                     $otherDetails->updated_at = date('Y-m-d H:s:i');
                     $otherDetails->save();
                 }
-            } 
+            }
         }
 
         return redirect('/admin/case/new-request')->with(['success' => 'Success']);

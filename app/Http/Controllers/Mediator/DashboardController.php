@@ -78,7 +78,9 @@ class DashboardController extends Controller
             $arraydata[] = [
                 "key" => $key + 1,
                 "id" => $d->mediation_case_id,
-                "party" => InvoledUser::select('name', 'userPhone', 'address1', 'address2', 'userEmail', 'isOnboarded')->where(['userPlanid' => $d->mediation_case_id])->whereNotNull('address1')->get(),
+                "party" => InvoledUser::select('name', 'userPhone', 'address1', 'address2', 'userEmail', 'isOnboarded', 'fulladdress')->where(['userPlanid' => $d->mediation_case_id])->where(function($q) {
+                    $q->where('address1', '!=', null)->orWhere('fulladdress', '!=', null);
+                })->get(),
                 "comments" => "tesr",
                 "caseId" => $d->mediation_case_id,
                 "case_issue" => $d->issue,
@@ -132,6 +134,9 @@ class DashboardController extends Controller
      */
     public function statusChange(Request $request)
     {
+        
+
+        // dd($mediator);
         if ($request->status == 1) {
             $caseid = $request->mediation_case_id;
             $consentDisclosures = ConsentDisclosures::where("mediation_case_id", "=", $caseid)->first();
@@ -551,6 +556,10 @@ class DashboardController extends Controller
         $data["consent_disclosures"] = ConsentDisclosures::join("users", "consent_disclosures.mediator_id", "=", "users.id")
             ->where("mediation_case_id", "=", $id)
             ->first();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
         if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
             return abort(404);
         }
@@ -562,6 +571,9 @@ class DashboardController extends Controller
             'event' => 'SEND_APPO_MED',
             'case_id' => $id,
         ];
+        if($mediator){
+            SendGrid::send($d, $mediator->email, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
+        }
         foreach ($involedUser as $inv) {
             if ($inv->userEmail != "") {
                 SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));

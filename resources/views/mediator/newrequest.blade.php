@@ -350,8 +350,17 @@ var userTable = $('#request').DataTable({
                     if (data[i].isOnboarded == 1) {
                         if(data[i].name != null) {
                         d = d + `<p class="text-success party_name get_party" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
-                        }
+                    }
                     } 
+                    else {
+                        if(data[i].name != null) {
+                            if(data[i].address1 != null) {
+                            d = d + `<p class="text-danger get_party d-none " data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
+                            } else {
+                            d = d + `<p class="text-danger get_party d-none" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].fulladdress + `">` + data[i].name + `</p>`;
+                            }
+                        }
+                    }
                 }
                 return d;
             }

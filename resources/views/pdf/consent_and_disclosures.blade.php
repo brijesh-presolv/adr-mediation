@@ -63,6 +63,9 @@
                     <p>{{$p->address1}} {{$p->address2}}, {{$p->city}}, {{$p->pincode}}</p>
                     <p>{{$p->state}} {{$p->country}}</p>
                     @endif
+                    @if($p->fulladdress != "")
+                    <p>{{$p->fulladdress}} </p>
+                    @endif
                     @if($p->userEmail != "")
                     <p>{{$p->userEmail}}</p>
                     @endif
