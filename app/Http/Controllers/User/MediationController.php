@@ -255,9 +255,12 @@ class MediationController extends Controller
             $code = $r['joincode'];
 
             $email = Auth::user()->email;
+            $phone = Auth::user()->mobile_number;
 
 
-            $InvoledUser = InvoledUser::where(['joincode' => $code, 'userEmail' => $email])->first();
+            $InvoledUser = InvoledUser::where(['joincode' => $code])->where(function($q) use($email, $phone) {
+                $q->orWhere('userEmail', $email)->orWhere('userPhone', $phone);
+            })->first();
 
 
             if (!$InvoledUser) {
@@ -275,6 +278,10 @@ class MediationController extends Controller
             $InvoledUser->joincode = null;
             $InvoledUser->isOnboarded = '1';
             $InvoledUser->userid = Auth::user()->id;
+            if($InvoledUser->name == null) {
+                $InvoledUser->name = Auth::user()->first_name . ' ' . Auth::user()->last_name;
+            }
+
             $d = [
                 'event' => 'ONBOAR_USER',
                 'case_id' => $InvoledUser->userPlanId,
