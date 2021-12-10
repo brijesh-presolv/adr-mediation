@@ -277,7 +277,7 @@ use App\Models\InvoledUser;
         $(document).ready(function(){
 
 
-          $('#users').DataTable();
+        //   $('#users').DataTable();
 
 
 
@@ -323,6 +323,15 @@ use App\Models\InvoledUser;
                     type: 'post',
                     url: '{{ route("user.join") }}',
                     data: $('#joincode').serialize(),
+                    beforeSend: function() {
+
+                    swal({
+                        title: 'Loading...',
+                        showConfirmButton: false,
+                        buttons: false,
+                        allowOutsideClick: false,
+                    });
+                    },
                     success: function (res) {
 
 
@@ -381,6 +390,15 @@ use App\Models\InvoledUser;
                     type: 'post',
                     url: '{{ route("user.case.withdraw") }}',
                     data: $('#withdrawForm').serialize(),
+                    beforeSend: function() {
+
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                allowOutsideClick: false,
+                            });
+                        },
                     success: function (data) {
 
 
@@ -420,7 +438,7 @@ use App\Models\InvoledUser;
         });
 
 
-        $("#selectalldir").change(function () {
+    $("#selectalldir").change(function () {
       if (this.checked) {
         $("#bulkWithdrawBtn").show();
         $(".blkchk").each(function () {
