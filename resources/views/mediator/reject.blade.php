@@ -3,7 +3,7 @@ use App\Models\InvoledUser;
 ?>
 
 @extends('mediator.layouts.app')
-@section('title', 'Users')
+@section('title', 'Rejected')
 
 @section('breadcrumb')
       <!-- start page title -->

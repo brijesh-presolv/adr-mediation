@@ -81,6 +81,7 @@ class MediationController extends Controller
 
             //udpate mediation case
             $med->issue = $r['issue'];
+            $med->proposedSolution = $r['proposedSolution'];
             $med->disputeCategory = $r['disputeCategory'];
             $med->amount = $r['amount'];
 
@@ -156,16 +157,16 @@ class MediationController extends Controller
                 $inv->userPhone = $r['phone'][$i];
                 $inv->name = $r['name'][$i];
                 $inv->joinCode = $this->joinCode();
-                $inv->address1 = $r['add1'][$i];
+                $inv->fulladdress = $r['fulladdress'][$i];
 
-                if ($r['add2'][$i] == '') {
-                    $r['add2'][$i] = '';
-                }
-                $inv->address2 = $r['add2'][$i];
-                $inv->city = $r['city'][$i];
-                $inv->pincode = $r['pincode'][$i];
-                $inv->state = $r['state'][$i];
-                $inv->country = $r['country'][$i];
+                // if ($r['add2'][$i] == '') {
+                //     $r['add2'][$i] = '';
+                // }
+                // $inv->address2 = $r['add2'][$i];
+                // $inv->city = $r['city'][$i];
+                // $inv->pincode = $r['pincode'][$i];
+                // $inv->state = $r['state'][$i];
+                // $inv->country = $r['country'][$i];
                 $inv->isClaimant = $i + 1;
 
 

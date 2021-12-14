@@ -52,9 +52,13 @@ use App\Models\InvoledUser;
                         foreach ($value->party as $key => $v) {
 
                             if($v->isOnboarded==1){
+                                if($v->name) {
                                 echo '<span class="text-success">'.$v->name.'</span></br>';
+                                }
                             } else{
+                                if($v->name) {
                                 echo '<span class="text-danger">'.$v->name.'</span></br>';
+                                }
                             }
                             
                         }

@@ -234,9 +234,14 @@ var userTable = $('#users').DataTable({
                     // console.log(data[i].documentPath);
 
                     if (data[i].isOnboarded == 1) {
+                        if(data[i].name != null) {
                         d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
-                    } else {
+                        }
+                    } 
+                    else {
+                        if(data[i].name != null) {
                         d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
+                        }
                     }
                 }
 

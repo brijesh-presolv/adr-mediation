@@ -295,9 +295,13 @@ $(function () {
                     var d = "";
                     for (i in data) {
                         if (data[i].isOnboarded == 1) {
+                            if(data[i].name != null) {
                             d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
+                            }
                         } else {
+                            if(data[i].name != null) {
                             d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
+                            }
                         }
                     }
                     return d;

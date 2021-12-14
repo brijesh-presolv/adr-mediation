@@ -176,13 +176,20 @@ class RegisterController extends Controller
         if ($response = $this->registered($request, $user)) {
             return $response;
         }
+        // dd();
+
+
+        $d = [
+            'event' => 'VARIFY_EMAIL',
+            'userid' => $user->id,
+        ];
 
         if($user->role=='0'){
-        $email=SendGrid::send($user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-'=>strval($user->emailotp)]);
+        $email=SendGrid::send($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-'=>strval($user->emailotp)]);
 
         } else if($user->role=='1'){
 
-            $email=SendGrid::send($user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-'=>strval($user->emailotp)],$user->name);
+            $email=SendGrid::send($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-'=>strval($user->emailotp)],$user->name);
 
         }
 

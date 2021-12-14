@@ -78,9 +78,7 @@ class DashboardController extends Controller
             $arraydata[] = [
                 "key" => $key + 1,
                 "id" => $d->mediation_case_id,
-                "party" => InvoledUser::select('name', 'userPhone', 'address1', 'address2', 'userEmail', 'isOnboarded', 'fulladdress')->where(['userPlanid' => $d->mediation_case_id])->where(function($q) {
-                    $q->where('address1', '!=', null)->orWhere('fulladdress', '!=', null);
-                })->get(),
+                "party" => InvoledUser::select('name', 'userPhone', 'address1', 'address2', 'userEmail', 'isOnboarded', 'fulladdress')->where(['userPlanid' => $d->mediation_case_id])->get(),
                 "comments" => "tesr",
                 "caseId" => $d->mediation_case_id,
                 "case_issue" => $d->issue,
@@ -123,7 +121,11 @@ class DashboardController extends Controller
     {
 
         $loginUser = Auth::user()->id;
-        $profileData = User::find($loginUser);
+        $profileData = User::select('users.*', 'mediation_details.experience')
+                ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+                ->where('users.id', $loginUser)->first();
+        // find($loginUser);
+        // $mediation_details
         return view('mediator.profile', compact('profileData'));
     }
 

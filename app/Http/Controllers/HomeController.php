@@ -57,7 +57,7 @@ class HomeController extends Controller {
 
 
 
-                            return redirect()->route('mediator.dashboard');
+                            return redirect()->route('mediator.profile.firstupdate');
                         }
 
                         $type = 'User';

@@ -1,5 +1,5 @@
 @extends('mediator.layouts.app')
-@section('title', 'Users')
+@section('title', 'New Request')
 
 @section('breadcrumb')
 <!-- start page title -->
@@ -355,9 +355,9 @@ var userTable = $('#request').DataTable({
                     else {
                         if(data[i].name != null) {
                             if(data[i].address1 != null) {
-                            d = d + `<p class="text-danger get_party d-none " data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
+                            d = d + `<p class="text-danger get_party  " data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
                             } else {
-                            d = d + `<p class="text-danger get_party d-none" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].fulladdress + `">` + data[i].name + `</p>`;
+                            d = d + `<p class="text-danger get_party " data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].fulladdress + `">` + data[i].name + `</p>`;
                             }
                         }
                     }

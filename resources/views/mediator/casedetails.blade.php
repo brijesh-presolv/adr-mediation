@@ -1,4 +1,4 @@
-@section('title', 'Casedetails M'.sprintf('%06d',$case->id))
+@section('title', 'Case M'.sprintf('%06d',$case->id))
 @extends('mediator.layouts.app')
 
 
@@ -45,7 +45,7 @@
                                         @endif
                                         @if($value->address1 != "")
                                         @lang('case.address'): <?= $value->address1 . ' ' . $value->address2 . ' ' . $value->city . ', ' . $value->pincode . ', ' . $value->state . ' ' . $value->country ?><br>
-                                        @else
+                                        @elseif($value->fulladdress != "")
                                         @lang('case.address'): <?= $value->fulladdress ?><br>
                                         @endif
                                         <br>
@@ -86,16 +86,17 @@
                             <td>Disptued Amount</td>
                             <td>{{$case->amount}}</td>
                         </tr>
+                        <tr>
+                            <td>@lang('case.issue')</td>
+                            <td>{{$case->issue}}</td>
+                        </tr>
                         @if($case->proposedSolution != NULL) 
                         <tr>
                             <td>Proposed Solution</td>
                             <td>{{$case->proposedSolution}}</td>
                         </tr>
                         @endif
-                        <tr>
-                            <td>@lang('case.issue')</td>
-                            <td>{{$case->issue}}</td>
-                        </tr>
+                        
                         <tr>
                             <td>Agreement Date</td>
                             <td>{{$case->created_at}}</td>

@@ -162,48 +162,16 @@ function isreadonlys($rows) {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-12">
                             <div class="form-group">
-                                <label>Address line 1 <span style="color:red; ">*</span></label>
-                                <input name="add1[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['address1']) ? $InvoledUser[$i]['address1'] : ''; ?>" <?= isreadonly($rows) ?>  required>
+                                <label>Address <span style="color:red; ">*</span></label>
+                                <textarea name="fulladdress[]" rows="4" type="text" class="form-control" required><?= isset($InvoledUser[$i]['fulladdress']) ? $InvoledUser[$i]['fulladdress'] : ''; ?></textarea>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Address line 2</label>
-                                <input name="add2[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['address2']) ? $InvoledUser[$i]['address2'] : ''; ?>" <?= isreadonly($rows) ?>  >
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>City <span style="color:red; ">*</span></label>
-                                <input name="city[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['city']) ? $InvoledUser[$i]['city'] : ''; ?>" <?= isreadonly($rows) ?>  required  data-smk-msg="Enter valid city">
-                            </div>
-                        </div>
+                        
+                        
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Pincode <span style="color:red; ">*</span></label>
-                                <input name="pincode[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['pincode']) ? $InvoledUser[$i]['pincode'] : ''; ?>" <?= isreadonly($rows) ?>   minlength="5" maxlength="10" data-smk-msg="Enter vaild pincode"  data-smk-pattern="[a-zA-Z0-9\s-]{5,10}">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>State <span style="color:red; ">*</span></label>
-                                 <input type="text" name="state[]" id="state" list="state" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>">
-
-
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Country <span style="color:red; ">*</span></label>
-
-                                <input type="text" name="country[]" id="country" list="" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : 'Polska'; ?>">
-                            </div>
-                        </div>
-                    </div>
+                    
                 <?php } ?>
             </section>
 
@@ -247,6 +215,13 @@ function isreadonlys($rows) {
                         <div class="form-group">
                             <label>Dispute details <span style="color:red; ">*</span></label>
                             <textarea class="form-control" rows="4" name="issue" required=""><?= $medcase->issue ?></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <hr>
+                        <div class="form-group">
+                            <label>Proposed Solution <span style="color:red; ">*</span></label>
+                            <textarea class="form-control" rows="4" name="proposedSolution" required=""><?= $medcase->proposedSolution ?></textarea>
                         </div>
                     </div>
 

@@ -117,7 +117,12 @@ class ProfileController extends Controller {
             'username' => $request->username,
         ];
 
+        $exp = [
+            'experience' => $request->expName,
+        ];
+
         User::where('id', $id)->update($dataToUpdate);
+        Mediation_Details::where('user_id', $id)->update($exp);
         return redirect('mediator/profile')->with('key', "profile update succesfully");
     }
 

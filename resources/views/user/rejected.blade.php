@@ -2,12 +2,12 @@
 use App\Models\InvoledUser;
 ?>
 @extends('user.layouts.app')
-@section('title', 'Closed')
+@section('title', 'Rejected')
 
 @section('breadcrumb')
       <!-- start page title -->
        <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Closed </a></li>
+       <li class="breadcrumb-item"><a href="javascript: void(0);">Rejected</a></li>
     <!-- end page title -->
 @endsection
 
@@ -59,9 +59,13 @@ use App\Models\InvoledUser;
                         foreach ($value->party as $key => $v) {
 
                             if($v->isOnboarded==1){
+                                if($v->name != "") {
                                 echo '<span class="text-success">'.$v->name.'</span></br>';
+                                }
                             } else{
+                                if($v->name != "") {
                                 echo '<span class="text-danger">'.$v->name.'</span></br>';
+                                }
                             }
                             
                         }

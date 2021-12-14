@@ -151,6 +151,14 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="field-5" class="control-label">Experience : </label>
+                                                <input type="text" name="expName"  value="{{ $profileData->experience }}"  class="form-control" id="field-5">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Close</button>

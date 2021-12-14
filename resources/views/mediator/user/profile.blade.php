@@ -63,63 +63,12 @@
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
                             <input type="text" list="stateData" value="{{Auth::user()->state}}"  class="form-control" id="state" name="state">
-                            <datalist id="stateData">
-                                <option>
-                                    dolnośląskie
-                                </option>
-                                <option>
-                                    kujawsko-pomorskie
-                                </option>
-                                <option>
-                                    lubelskie
-                                </option>
-                                <option>
-                                    lubuskie
-                                </option>
-                                <option>
-                                    łódzkie
-                                </option>
-                                <option>
-                                    małopolskie
-                                </option>
-                                <option>
-                                    mazowieckie
-                                </option>
-                                <option>
-                                    opolskie
-                                </option>
-                                <option>
-                                    podkarpackie
-                                </option>
-                                <option>
-                                    podlaskie
-                                </option>
-                                <option>
-                                    pomorskie
-                                </option>
-                                <option>
-                                    śląskie
-                                </option>
-                                <option>
-                                    świętokrzyskie
-                                </option>
-                                <option>
-                                    warmińsko-mazurskie
-                                </option>
-                                <option>
-                                    wielkopolskie
-                                </option>
-                                <option>
-                                    zachodniopomorskie
-                                </option>
-                            </datalist>
+                            
                         </div>
                         <div class="form-group col-md-4">
                             <label for="country">country</label>
                             <input list="countryData" class="form-control" id="country" name="country">
-                            <datalist id="countryData">
-                               <option>Polska</option>
-                            </datalist>
+                            
                         </div>
                         <div class="form-group col-md-6">
                             <label for="area_of_specialization">@lang('user.area_of_specialization')</label>
