@@ -30,8 +30,9 @@ class EmailTrack extends Model
 
         // where case_id='$id' and casetype='$t' order by email_tracking.created_at asc" ;
 
-        $result = EmailTrack::select('email_tracking.*', 'ed.event as edevent','ed.url as url', 'ed.created_at as eddate', 'ed.timestamp as timestamp', 'ed.email as edemail')
+        $result = EmailTrack::select('email_tracking.*', 'ec.title', 'ec.description', 'ec.whdescription', 'ed.event as edevent','ed.url as url', 'ed.created_at as eddate', 'ed.timestamp as timestamp', 'ed.email as edemail')
                     ->rightJoin('etrack_data as ed', DB::raw('ed.etrackId'), '=', DB::raw('email_tracking.id'))
+                    ->rightJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('email_tracking.event'))
                     ->where('case_id', $id)->orderBy('email_tracking.created_at', 'ASC')->get();
 
         // return $result=self::find_by_sql($q);

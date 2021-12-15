@@ -9,7 +9,9 @@
         <meta content="Coderthemes" name="author" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <!-- App favicon -->
-        <link rel="shortcut icon" href="{{url('')}}/assets/images/favicon.ico">
+        {{-- <link rel="shortcut icon" href="{{url('')}}/assets/images/favicon.ico"> --}}
+        <link rel="icon" type="image/x-icon" href="{{url('/assert/')}}/img/icon.png" />
+
         <!-- @yield('head') -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <!-- App css -->

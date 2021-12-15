@@ -429,15 +429,15 @@ $(function () {
             {"data": "case.id",
                 render: function (data) {
                     var button = "M" + pad(data, 6);
-                    button = button+`<br><a href="{{ url('admin/track/') }}/` + data + `" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
+                    button = button+`<br><a href="{{ url('admin/track/') }}/` + data + `" target="_blank" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
                     return button;
                 }
             },
             {"data": "date"},
             {"data": "case.id",
                 render: function (data) {
-                    var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                    button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" class="btn btn-info waves-effect waves-light btn-sm" title="@lang('case.btn_case_details_edit')"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
+                    var button = ` <a href="{{ url('admin/casedetails/') }}/` + data + `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                    button = button+ ` <a href="{{ url('admin/updatecase/') }}/` + data + `" target="_blank" class="btn btn-info waves-effect waves-light btn-sm" title="@lang('case.btn_case_details_edit')"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
                     return button;
                 }
             },

@@ -240,7 +240,7 @@ class DashboardController extends Controller
             ->first();
         //  dd($mediator);
         $d = [
-            'event' => 'SESS_SCHE_MED',
+            'event' => 'SESS_SCHE',
             'case_id' => $request->caseId,
         ];
         if ($mediator) {
@@ -255,7 +255,7 @@ class DashboardController extends Controller
                 'caseid' => $request->caseId,
                 'contact' => "+91" . $mediator->mobile_number,
                 'content' => ['text' => $content],
-                'event' => 'SESS_SCHE_MED'
+                'event' => 'SESS_SCHE'
             ];
 
 
@@ -526,7 +526,7 @@ class DashboardController extends Controller
     public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone)
     {
         $d = [
-            'event' => 'SESS_SCHE_ADM',
+            'event' => 'SESS_SCHE',
             'case_id' => $id,
         ];
         $mid = "M" . sprintf("%06d", $id);
@@ -543,7 +543,7 @@ class DashboardController extends Controller
                 'caseid' => $id,
                 'contact' => "+91" . $userPhone,
                 'content' => ['text' => $content],
-                'event' => 'SESS_SCHE_ADM'
+                'event' => 'SESS_SCHE'
             ];
 
             $access = Whatsapp::sendWamessage($dwa1);
@@ -624,8 +624,8 @@ class DashboardController extends Controller
         foreach ($files as $f) {
             $filesE[] = url("storage/app/" . $f["file_name"]);
         }
-        $d = [
-            'event' => 'SEND_ADDI_DOC_MED',
+        $d1 = [
+            'event' => 'SEND_ADDI_DOC',
             'case_id' => $id,
         ];
         foreach ($involedUser as $inv) {
@@ -643,7 +643,7 @@ class DashboardController extends Controller
                     'caseid' => $id,
                     'contact' => "+91" .  $inv->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'SEND_ADDI_DOC_MED'
+                    'event' => 'SEND_ADDI_DOC'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
                 foreach ($filesE as $file) {
@@ -655,7 +655,7 @@ class DashboardController extends Controller
                         'caseid' => $id,
                         'contact' => "+91" . $inv->userPhone,
                         'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
-                        'event' => 'SEND_ADDI_DOC_MED'
+                        'event' => 'SEND_ADDI_DOC'
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
                 }
@@ -702,7 +702,7 @@ class DashboardController extends Controller
         // dd($sendEamils);
 
         foreach ($sendEamils as $email) {
-            SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+            SendGrid::send($d1, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
         }
 
         return true;
@@ -723,7 +723,7 @@ class DashboardController extends Controller
             $filesE[] = url("storage/app/" . $f["file_path"]);
         }
         $d = [
-            'event' => 'SEND_SETT_AGRE_MED',
+            'event' => 'SEND_SETT_AGRE',
             'case_id' => $id,
         ];
         foreach ($involedUser as $inv) {
@@ -740,7 +740,7 @@ class DashboardController extends Controller
                     'caseid' => $id,
                     'contact' => "+91" . $inv->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'SEND_SETT_AGRE_MED'
+                    'event' => 'SEND_SETT_AGRE'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
             }

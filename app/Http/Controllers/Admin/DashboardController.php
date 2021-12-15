@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\MedCase;
 use App\Models\InvoledUser;
+use App\Rules\MatchOldPassword;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class DashboardController extends Controller {
 
@@ -40,4 +43,79 @@ class DashboardController extends Controller {
         return view('admin.dashboard', compact('usersCount', 'allCasesCount', 'respondingPartiesCount', 'resolvedCount', 'ongoingCount', 'newCount'));
     }
 
+    public function profile()
+    {
+
+        $loginUser = Auth::user()->id;
+        $profileData = User::select('*')
+                // ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+                ->where('id', $loginUser)->first();
+        // find($loginUser);
+        // $mediation_details
+        return view('admin.profile', compact('profileData'));
+    }
+
+    public function changePassword($id) {
+
+        $data = User::find($id);
+        return view('admin.changePassword', compact('data'));
+    }
+
+    public function updateProfile($id,Request $request) {
+
+        // dd($request->all());
+        
+        if($request->an == 'cp'){
+
+            $request->validate([
+                    'current_password' => ['required', new MatchOldPassword],
+                    'new_password' => ['required'],
+                    'new_confirm_password' => ['same:new_password','required'],
+                ],
+                [
+                    'current_password.required'=>'Enter Current Password*',    
+                    'new_password.required'=>'Enter new Password*',    
+                    'new_confirm_password.required'=>'Enter Confirm Password*',    
+                    'new_confirm_password.same'=>'New password is not matched with confirm password please re-enter*',    
+                ],
+                );
+
+              User::find(auth()->user()->id)->update(['password'=> Hash::make($request->new_password)]);
+                return redirect('admin/profile')->with('key', "Password Update Succesfully");
+        }
+
+
+
+        // $valid =  $request->validate([
+        //         'firstName' => ['required'],
+        //         'lastName' => ['required'],
+        //         'email' => ['email','required','unique:users'],
+        //         'mobile_number' => ['unique:users'],
+        //     ],
+        //     [
+        //         'firstName.required'=>'first name cant empty*',    
+        //         'lastName.required'=>'Last name cant empty*',    
+        //         'email.email'=>'invalid email address*',     
+        //         'email.required'=>'Please Enter Email*', 
+        //         'email.unique'=>'This Email already used*',
+        //         'mobile_number.unique'=>'This Mobile No. already used*',
+        //     ]
+        //     );
+        // dd($valid);
+        
+        $dataToUpdate = [
+            'first_name' => ucfirst($request->firstName),
+            'last_name' => ucfirst($request->lastName),
+            'email' => $request->email,
+            'mobile_number' => $request->mobile,
+            'username' => $request->username,
+        ];
+
+        // dd($dataToUpdate);
+
+        User::where('id',$id)->update($dataToUpdate);
+        return redirect('admin/profile')->with('key', "Profile Updated Succesfully");
+
+
+    }
 }

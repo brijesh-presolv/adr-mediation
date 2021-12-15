@@ -509,10 +509,7 @@ class MediationController extends Controller
         $user->confirm_status = 2;
         $user->withdraw = $request->withdraw_comment;
         $user->save();
-        $d = [
-            'event' => 'WDRN_USER',
-            'case_id' => $request->case_id,
-        ];
+        
         //p1
 
         $cid = "M" . sprintf("%06d", $request->case_id);
@@ -522,10 +519,22 @@ class MediationController extends Controller
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
 
+        $d1 = [
+            'event' => 'WDRN_PARTY',
+            'case_id' => $request->case_id,
+        ];
+        $d2 = [
+            'event' => 'WDRN_OTHER_PARTY',
+            'case_id' => $request->case_id,
+        ];
+        $d3 = [
+            'event' => 'WDRN_MED',
+            'case_id' => $request->case_id,
+        ];
 
         $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $request->case_id])->first();
 
-        $e = Email::send($d, $InvoledUserP1->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ['-caseid-' => $cid, '-type-' => 'Party'], $InvoledUserP1->name);
+        $e = Email::send($d1, $InvoledUserP1->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ['-caseid-' => $cid, '-type-' => 'Party'], $InvoledUserP1->name);
 
 
         //other
@@ -541,7 +550,7 @@ class MediationController extends Controller
             }
 
             if ($value->userEmail != "") {
-                $e = Email::send($d, $value->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ['-caseid-' => $cid, '-partyname-' => $InvoledUserP1->name], $value->name);
+                $e = Email::send($d2, $value->userEmail, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ['-caseid-' => $cid, '-partyname-' => $InvoledUserP1->name], $value->name);
             }
 
             if ($value->userPhone != "") {
@@ -553,7 +562,7 @@ class MediationController extends Controller
                     'caseid' => $request->case_id,
                     'contact' => "+91" . $value->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'WDRN_USER'
+                    'event' => 'WDRN_OTHER_PARTY'
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
@@ -569,12 +578,12 @@ class MediationController extends Controller
             'contact' => "+91" . $InvoledUserP1->userPhone,
             'content' => ['text' => $content],
             // 'casetype' => 2,
-            'event' => 'WDRN_USER'
+            'event' => 'WDRN_PARTY'
         ];
         $access = Whatsapp::sendWamessage($dwa1);
 
         if ($mediator) {
-            Email::send($d, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $cid, "-responding-" => $InvoledUserP1->name, "-type-" => "Mediator"], $mediator->username);
+            Email::send($d3, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $cid, "-responding-" => $InvoledUserP1->name, "-type-" => "Mediator"], $mediator->username);
 
             $var = ['-cid-'];
             $var1 = [$cid];
@@ -585,7 +594,7 @@ class MediationController extends Controller
                 'contact' => "+91" . $mediator->mobile_number,
                 'content' => ['text' => $content],
                 // 'casetype' => 2,
-                'event' => 'WDRN_USER'
+                'event' => 'WDRN_MED'
             ];
 
             $access = Whatsapp::sendWamessage($dwa1);

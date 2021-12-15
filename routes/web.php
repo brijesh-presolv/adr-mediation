@@ -131,7 +131,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     //    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
     //    Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
     //    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
-    //    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
+    Route::get('profile', [App\Http\Controllers\Admin\DashboardController::class, 'profile'])->name('admin.profile');
+    Route::get('change-password/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'changePassword'])->name('admin.change.password');
+    Route::post('edit-profile/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'updateProfile'])->name('admin.profile.update');
+
     //case
     Route::get('casedetails/{id}', [App\Http\Controllers\Admin\CaseController::class, 'casedetails'])->name('admin.case.casedetails');
     Route::get('case/new-request', [App\Http\Controllers\Admin\CaseController::class, 'index'])->name('admin.case.newrequest');

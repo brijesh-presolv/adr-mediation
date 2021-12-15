@@ -107,7 +107,7 @@ use App\Models\InvoledUser;
                         <td><?= 'M'.sprintf('%06d',$value->id) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->created_at))?></td>
 
-                        <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" href="{{route('user.casedetails',$value->id)}}" >View</a></td>
+                        <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" target="_blank" href="{{route('user.casedetails',$value->id)}}" >View</a></td>
 
                         <td>
 

@@ -242,18 +242,19 @@ function isreadonlys($rows) {
                     <div class="col-md-12">
                         <hr>
                         <div class="form-group">
+                            <label>Dispute details <span style="color:red; ">*</span></label>
+                            <textarea class="form-control" rows="4" name="issue" required=""><?= $medcase->issue ?></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <hr>
+                        <div class="form-group">
                             <label>Proposed Solution <span style="color:red; ">*</span></label>
                             <textarea class="form-control" rows="3" name="proposedSolution" ><?= $medcase->proposedSolution ?></textarea>
                         </div>
                     </div>
                     {{-- @endif --}}
-                    <div class="col-md-12">
-                        <hr>
-                        <div class="form-group">
-                            <label>Dispute details <span style="color:red; ">*</span></label>
-                            <textarea class="form-control" rows="4" name="issue" required=""><?= $medcase->issue ?></textarea>
-                        </div>
-                    </div>
+                    
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Supporting document</label><br>

@@ -52,6 +52,7 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                     
                         <thead>
                         <tr>
+                            <th>Sr. No.</th>
                             <th>Event Title</th>
                             <th>Event Description</th>
                             <th>Event Date</th>
@@ -66,13 +67,14 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                         </tr>
                       </thead>
                       <tbody>
-                          @foreach ($whatsapp as $value)
+                          @foreach ($whatsapp as $key => $value)
                           <?php $date = new DateTime($value->created_at);?>
                           <?php $wldate = new DateTime($value->wldate); ?>
                           
                           <tr>
-                              <td>{{$value->event}}</td>
-                              <td></td>
+                              <td>{{$key + 1}}</td>
+                              <td>{{$value->title}}</td>
+                              <td>{{$value->whdescription}}</td>
                               <td>{{$date->format('d-m-Y H:i:s')}}</td>
                               <td> <button class="btn btn-primary viewmsg" data-toggle="modal" data-target="#myModal230"  data-msg="{{str_replace(['::',';;'],['‘','’'],$value->content)}}">View</button>
                               </td>
@@ -109,6 +111,7 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                     
                         <thead>
                         <tr>
+                            <th>Sr. No.</th>
                             <th>Event Title</th>
                             <th>Event Description</th>
                             <th>Event Date</th>
@@ -121,12 +124,14 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                       </thead>
                       <tbody>
                         
-                        @foreach($email as $value)
+                        @foreach($email as $key => $value)
+                        {{-- {{dd($value)}} --}}
                         <?php $date = new DateTime($value->created_at);?>
 
                         <tr>
-                        <td>{{$value->event}}</td>
-                        <td></td>
+                        <td>{{$key + 1}}</td>
+                        <td>{{$value->title}}</td>
+                        <td>{{$value->description}}</td>
                         <td>{{$date->format('d-m-Y H:i:s')}}</td>
                         <td></td>
                         <td>{{$value->edemail}}</td>

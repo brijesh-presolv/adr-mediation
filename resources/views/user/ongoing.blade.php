@@ -73,7 +73,7 @@ use App\Models\InvoledUser;
                         <td><input type="checkbox" class="blkchk" data-caseid="{{$value->caseid}}"></td>
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
-                        <td><a class="btn   btn-sm btn-primary label label-success" href="{{route('user.casedetails',$value->caseid)}}">@lang('case.btn_case_details')</a></td>
+                        <td><a class="btn   btn-sm btn-primary label label-success" target="_blank" href="{{route('user.casedetails',$value->caseid)}}">@lang('case.btn_case_details')</a></td>
 
                         <td><?php
 
@@ -120,7 +120,7 @@ use App\Models\InvoledUser;
 
                             <?php } if($value->consent>0){?>
                             <br>
-                            <a href="{{route('user.disclosures',$value->caseid)}}" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a>
+                            <a href="{{route('user.disclosures',$value->caseid)}}" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a>
                         <?php } ?>
                         </td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>

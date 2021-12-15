@@ -245,7 +245,7 @@ class CaseController extends Controller
 
         // dd($request->all());
         $d = [
-            'event' => 'SESS_SCHE_ADM',
+            'event' => 'SESS_SCHE',
             'case_id' => $request->caseId,
         ];
         // $dataToInsert = [
@@ -308,7 +308,7 @@ class CaseController extends Controller
                 'caseid' => $request->caseId,
                 'contact' => "+91" . $mediator->mobile_number,
                 'content' => ['text' => $content],
-                'event' => 'SESS_SCHE_ADM'
+                'event' => 'SESS_SCHE'
             ];
 
             // print_r($dwa1);
@@ -386,7 +386,7 @@ class CaseController extends Controller
     public function updatecase(Request $request, $id)
     {
         $d = [
-            'event' => 'PARTIES_FOR_ONBOARDING',
+            'event' => 'ACPTARB_ADM',
             'case_id' => $id,
         ];
         $med = MedCase::find($id);
@@ -725,7 +725,7 @@ class CaseController extends Controller
         // dd($date);
         $mid = "M" . sprintf("%06d", $id);
         $d = [
-            'event' => 'SESS_SCHE_ADM',
+            'event' => 'SESS_SCHE',
             'case_id' => $id,
         ];
         if ($email_id != "") {
@@ -741,7 +741,7 @@ class CaseController extends Controller
                 'caseid' => $id,
                 'contact' => "+91" . $userPhone,
                 'content' => ['text' => $content],
-                'event' => 'SESS_SCHE_ADM'
+                'event' => 'SESS_SCHE'
             ];
 
             // print_r($dwa1);
@@ -767,8 +767,17 @@ class CaseController extends Controller
         $initiating_email = "";
         $responding_email = [];
         $responding_phone = [];
-        $d = [
-            'event' => 'WDRN_ADM',
+        
+        $d1 = [
+            'event' => 'WDRN_PARTY',
+            'case_id' => $id,
+        ];
+        $d2 = [
+            'event' => 'WDRN_OTHER_PARTY',
+            'case_id' => $id,
+        ];
+        $d3 = [
+            'event' => 'WDRN_MED',
             'case_id' => $id,
         ];
         foreach ($involedUser as $inv) {
@@ -777,7 +786,7 @@ class CaseController extends Controller
                 $initiating_phone = $inv->userPhone;
                 $initiating_email = $inv->userEmail;
 
-                SendGrid::send($d, $inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
+                SendGrid::send($d1, $inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
             } else {
                 if ($inv->name != "") {
                     $responding_party = $inv->name;
@@ -790,7 +799,7 @@ class CaseController extends Controller
         if (isset($responding_email)) {
             foreach ($responding_email as $email) {
                 if ($email != "") {
-                    SendGrid::send($d, $email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                    SendGrid::send($d2, $email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
                 }
             }
         }
@@ -806,7 +815,7 @@ class CaseController extends Controller
                         'caseid' => $id,
                         'contact' => "+91" . $phone,
                         'content' => ['text' => $content],
-                        'event' => 'WDRN_ADM'
+                        'event' => 'WDRN_OTHER_PARTY'
                     ];
 
                     // print_r($dwa1);
@@ -826,7 +835,7 @@ class CaseController extends Controller
                 'contact' => "+91" . $initiating_phone,
                 'content' => ['text' => $content],
                 // 'casetype' => 2,
-                'event' => 'WDRN_ADM'
+                'event' => 'WDRN_PARTY'
             ];
 
             // print_r($dwa1);
@@ -835,7 +844,7 @@ class CaseController extends Controller
             $access = Whatsapp::sendWamessage($dwa1);
         }
         if ($mediator) {
-            SendGrid::send($d, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            SendGrid::send($d3, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
 
             $var = ['-cid-'];
             $var1 = [$mid];
@@ -846,7 +855,7 @@ class CaseController extends Controller
                 'contact' => "+91" . $mediator->mobile_number,
                 'content' => ['text' => $content],
                 // 'casetype' => 2,
-                'event' => 'WDRN_ADM'
+                'event' => 'WDRN_MED'
             ];
 
             // print_r($dwa1);
@@ -1034,7 +1043,7 @@ class CaseController extends Controller
         $sendEamils = array();
         $filesE = array();
         $d = [
-            'event' => 'SEND_ADDI_DOC_ADM',
+            'event' => 'SEND_ADDI_DOC',
             'case_id' => $id,
         ];
         foreach ($files as $f) {
@@ -1056,7 +1065,7 @@ class CaseController extends Controller
                     'caseid' => $id,
                     'contact' => "+91" .  $inv->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'SEND_ADDI_DOC_ADM'
+                    'event' => 'SEND_ADDI_DOC'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
             }
@@ -1080,7 +1089,7 @@ class CaseController extends Controller
                 'caseid' => $id,
                 'contact' => "+91" . $mediator->mobile_number,
                 'content' => ['text' => $content],
-                'event' => 'SEND_ADDI_DOC_ADM'
+                'event' => 'SEND_ADDI_DOC_MED'
             ];
 
 
@@ -1105,7 +1114,7 @@ class CaseController extends Controller
         $sendEamils = array();
         $filesE = array();
         $d = [
-            'event' => 'SEND_SETT_AGRE_ADM',
+            'event' => 'SEND_SETT_AGRE',
             'case_id' => $id,
         ];
         foreach ($files as $f) {
@@ -1126,7 +1135,7 @@ class CaseController extends Controller
                     'caseid' => $id,
                     'contact' => "+91" . $inv->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'SEND_SETT_AGRE_ADM'
+                    'event' => 'SEND_SETT_AGRE'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
             }
@@ -1149,7 +1158,7 @@ class CaseController extends Controller
                 'caseid' => $id,
                 'contact' => "+91" . $mediator->mobile_number,
                 'content' => ['text' => $content],
-                'event' => 'SEND_SETT_AGRE_ADM'
+                'event' => 'SEND_SETT_AGRE_MED'
             ];
 
 
@@ -1440,7 +1449,7 @@ class CaseController extends Controller
         // $casedetails = MedCase::getcasebyId($id);
         $email = EmailTrack::getByCaseId($id);
         // $ = EmailTrack::getidfCaseId($id);
-
+        // dd($email);
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             // ->where("mediators_mediation_cases_status.status", "=", 1)

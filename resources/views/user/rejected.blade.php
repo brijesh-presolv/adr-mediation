@@ -49,7 +49,7 @@ use App\Models\InvoledUser;
                         <td>{{$i++}}</td>
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
-                        <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" href="{{route('user.casedetails',$value->caseid)}}">View</a></td>
+                        <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" target="_blank" href="{{route('user.casedetails',$value->caseid)}}">View</a></td>
 
                         
                         <td><?php
