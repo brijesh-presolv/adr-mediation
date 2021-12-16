@@ -15,7 +15,7 @@
             <div class="card-header">
                 <h3>Profile Update</h3>
             </div>
-            <form action="{{ route('mediator.profile_save') }}" method="post">
+            <form action="{{ route('mediator.profile_save') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="id" value="{{ Auth::user()->id }}">
                 <div class="card-body">
@@ -67,7 +67,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="country">country</label>
-                            <input list="countryData" class="form-control" id="country" name="country">
+                            <input list="countryData" class="form-control" value="{{Auth::user()->country}}" id="country" name="country">
                             
                         </div>
                         <div class="form-group col-md-6">
@@ -92,11 +92,15 @@
                         </div>
                         <div class="form-group col-md-12">
                             <label for="linked_in_profile_link">@lang('user.linkedin_profile_link')</label>
-                            <input type="url" class="form-control" id="linked_in_profile_link" value="{{isset($medi->linked_in_profile_link)?$medi->no_of_arbitrations:"" }}" name="linked_in_profile_link">
+                            <input type="url" class="form-control" id="linked_in_profile_link" value="{{isset($medi->linked_in_profile_link)?$medi->linked_in_profile_link:"" }}" name="linked_in_profile_link">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="experience">@lang('user.experience')</label>
                             <textarea class="form-control" id="experience" name="experience" required>{{ isset($medi->experience)?$medi->experience:"" }}</textarea>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="signature">Upload Signature</label>
+                            <input type="file" class="form-control" id="signature"  name="signature">
                         </div>
                         <div class="form-group col-md-4  d-none">
                             <label for="field1">@lang('user.field_1')</label>

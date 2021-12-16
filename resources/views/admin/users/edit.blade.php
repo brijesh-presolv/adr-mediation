@@ -13,7 +13,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box">
-            <form action="{{route('admin.users.update')}}" method="post">
+            <form action="{{route('admin.users.update')}}" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="id" value="{{$user->id}}">
                 <h4 class="header-title"><b>@lang('user.edit_title')</b></h4>
                 @csrf
@@ -59,64 +59,15 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="country">country</label>
-                            <input list="countryData" class="form-control" id="country" name="country" data-validation="required length" data-validation-length="4-10">
-                            <datalist id="countryData">
+                            <input list="countryData" class="form-control" id="country" name="country" value="{{$user->country}}" data-validation="required length" data-validation-length="4-10">
+                            {{-- <datalist id="countryData">
                                 <option>Polska</option>
-                            </datalist>
+                            </datalist> --}}
                         </div>
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
                             <input list="stateData"  class="form-control" id="state" value="{{$user->state}}" name="state">
-                            <datalist id="stateData">
-                                <option>
-                                    dolnośląskie
-                                </option>
-                                <option>
-                                    kujawsko-pomorskie
-                                </option>
-                                <option>
-                                    lubelskie
-                                </option>
-                                <option>
-                                    lubuskie
-                                </option>
-                                <option>
-                                    łódzkie
-                                </option>
-                                <option>
-                                    małopolskie
-                                </option>
-                                <option>
-                                    mazowieckie
-                                </option>
-                                <option>
-                                    opolskie
-                                </option>
-                                <option>
-                                    podkarpackie
-                                </option>
-                                <option>
-                                    podlaskie
-                                </option>
-                                <option>
-                                    pomorskie
-                                </option>
-                                <option>
-                                    śląskie
-                                </option>
-                                <option>
-                                    świętokrzyskie
-                                </option>
-                                <option>
-                                    warmińsko-mazurskie
-                                </option>
-                                <option>
-                                    wielkopolskie
-                                </option>
-                                <option>
-                                    zachodniopomorskie
-                                </option>
-                            </datalist>
+                            
                         </div>
                         <div class="form-group col-md-4">
                             <label for="city">@lang('user.city')</label>
@@ -151,7 +102,7 @@
                         </div>
                         <div class="form-group col-md-12">
                             <label for="linked_in_profile_link">@lang('user.linkedin_profile_link')</label>
-                            <input type="url" class="form-control" id="linked_in_profile_link" value="{{isset($medi->linked_in_profile_link)?$medi->no_of_arbitrations:"" }}" name="linked_in_profile_link">
+                            <input type="url" class="form-control" id="linked_in_profile_link" value="{{isset($medi->linked_in_profile_link)?$medi->linked_in_profile_link:"" }}" name="linked_in_profile_link">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="experience">@lang('user.experience')</label>
@@ -169,12 +120,16 @@
                             <label for="field1">@lang('user.field_3')</label>
                             <input type="text" class="form-control" id="field3" name="field3">
                         </div>
+                        <div class="form-group col-md-6">
+                            <label for="signature">Upload Signature</label>
+                            <input type="file" class="form-control" id="signature"  name="signature">
+                        </div>
                         @endif
-                        <div class="form-group col-md-4">
-                            <label for="state">@lang('user.state')</label>
+                        <div class="form-group col-md-6">
+                            <label for="state">Status</label>
                             <select name="status" class="form-control">
-                                <option value="1">@lang('user.approve')</option>
-                                <option value="0">@lang('user.unapprove')</option>
+                                <option {{(isset($user->isDone) && $user->isDone=='1')?"selected":"" }} value="1">@lang('user.approve')</option>
+                                <option {{(isset($user->isDone) && $user->isDone=='0')?"selected":"" }} value="0">@lang('user.unapprove')</option>
 
                             </select>
                         </div>

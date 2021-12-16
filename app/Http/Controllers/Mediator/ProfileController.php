@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller {
 
@@ -42,6 +43,17 @@ class ProfileController extends Controller {
         $user->state = $request->state;
         $user->country = $request->country;
         $user->isDone = 1;
+        if($request->hasFile('signature')) {
+            if($user->signature_photo != null) {
+                Storage::delete('public/signature/' . $request->id . '/' . $user->signature_photo);
+            }
+            $extension = $request->file('signature')->getClientOriginalExtension();
+            $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+            Storage::put('public/signature/' . $request->id . '/' . $name, file_get_contents($request->signature));
+        } 
+        if(isset($name)) {
+            $user->signature_photo = $name;
+        }
         $user->save();
         $isMedi = Mediation_Details::where("user_id", "=", $request->id)->first();
         if (empty($isMedi)) {

@@ -28,6 +28,7 @@
     <p class="text-center">
         See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)
     </p>
+    {{-- {{$consent_disclosures}} --}}
     <u>Details of the Dispute</u>
     <table width="100%" border="1" cellspacing="0" cellpadding="10">
         <thead>
@@ -166,9 +167,12 @@
     <br /><br /><br />
     <p>I confirm that the details provided above are true, accurate, current and complete and acknowledge that a copy of the consent and disclosures will be provided to the parties.</p>
     <p>By checking this box, I accept and agree to conduct the mediation in accordance with the Rules and confirm that I shall abide by the <a href="#">Code</a>, <a href="#">Terms</a> & <a href="#">Conditions and Privacy Policy</a>.</p>
-    <br /><br /><br /><br />
+    <br /><br /><br /><br /> <br /><br/>
     <h4 class="text-right">
-        <small>{{$consent_disclosures->first_name}} {{$consent_disclosures->last_name}}</small><br />Mediator &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        @if($consent_disclosures->signature_photo != null) 
+            <img width="10%" src="{{Config::get('constants.signature_path')}}/{{$consent_disclosures->id}}/{{$consent_disclosures->signature_photo}}" />
+        @endif
+        <br/><small>{{$consent_disclosures->first_name}} {{$consent_disclosures->last_name}}</small><br />Mediator 
     </h4>
 </body>
 </html>

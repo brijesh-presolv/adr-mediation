@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\Mediation_Details;
 use App\Models\AreaOfSpecialization;
 use App\Http\Helpers\SendGrid;
+use Illuminate\Support\Facades\Storage;
+
 class UsersController extends Controller {
 
     /**
@@ -71,10 +73,10 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function edit(Request $request) {
-        $user = User::findOrFail($request->id);
+    public function edit($id, Request $request) {
+        $user = User::findOrFail($id);
         $areaOfSpecialization = AreaOfSpecialization::all();
-        $medi = Mediation_Details::where("user_id", "=", $request->id)->first();
+        $medi = Mediation_Details::where("user_id", "=", $id)->first();
         return view('admin.users.edit', compact("user", "medi", "areaOfSpecialization"));
     }
 
@@ -84,6 +86,10 @@ class UsersController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function update(Request $request) {
+        // dd();
+        
+        // dd("else"); 
+
         $user = User::find($request->id);
         $user->first_name = ucfirst($request->first_name);
         $user->last_name = ucfirst($request->last_name);
@@ -99,12 +105,20 @@ class UsersController extends Controller {
         $user->state = $request->state;
         $user->country = $request->country;
         if (isset($request->status)) {
-            $user->status = $request->status;
+            $user->isDone = $request->status;
         }
 
-
-
-
+        if($request->hasFile('signature')) {
+            if($user->signature_photo != null) {
+                Storage::delete('public/signature/' . $request->id . '/' . $user->signature_photo);
+            }
+            $extension = $request->file('signature')->getClientOriginalExtension();
+            $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+            Storage::put('public/signature/' . $request->id . '/' . $name, file_get_contents($request->signature));
+        } 
+        if(isset($name)) {
+            $user->signature_photo = $name;
+        }
         $user->save();
         if ($user->role == 1) {
             $isMedi = Mediation_Details::where("user_id", "=", $request->id)->first();

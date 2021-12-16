@@ -124,7 +124,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     //users
     Route::get('users/list/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'index'])->defaults('role', "user")->name('admin.users.list');
     Route::get('users/json/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'json'])->defaults('role', 0)->name('admin.users.json');
-    Route::post('users/edit', [App\Http\Controllers\Admin\UsersController::class, 'edit'])->name('admin.users.edit');
+    Route::match(['post', 'get'], 'users/edit/{id}', [App\Http\Controllers\Admin\UsersController::class, 'edit'])->name('admin.users.edit');
     Route::post('users/update', [App\Http\Controllers\Admin\UsersController::class, 'update'])->name('admin.users.update');
     Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
     Route::post('users/status-change-approve', [App\Http\Controllers\Admin\UsersController::class, 'statusChangeApprove'])->name('admin.users.status_change_approvel');

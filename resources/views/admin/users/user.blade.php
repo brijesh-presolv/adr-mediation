@@ -102,8 +102,8 @@ var userTable = $('#users').DataTable({
         },
         {"data": "id", sortable: false,
             render: function (data, type, row) {
-                var button = `<form method="post" action="{{route('admin.users.edit')}}"> @csrf <button type="submit" value="` + data + `" name="id" class="btn btn-primary"><i class="fas fa-user-edit"></i></button></form> `;
-                button += ` <form method="post" action="{{route('admin.users.edit')}}"> @csrf <button type="submit"  value="` + data + `" name="id"  class="btn btn-danger"><i class="far fa-trash-alt"></i></button></form>`;
+                var button = `<form method="post" action="{{route('admin.users.edit', '')}}/`+data+`"> @csrf <button type="submit" value="` + data + `" name="id" class="btn btn-primary"><i class="fas fa-user-edit"></i></button></form> `;
+                button += ` <form method="post" > @csrf <button type="submit"  value="` + data + `" name="id"  class="btn btn-danger"><i class="far fa-trash-alt"></i></button></form>`;
                 return button;
             }
         },
