@@ -772,6 +772,7 @@ class MediationController extends Controller
             // dd();
             $data['userid'] = $uploaded_by;
             $data['disputeCategory'] = $value['0'];
+            $data['natureOfAgreement'] = $value['6'];
             $data['noOfParties'] = count(explode(',', $value[10])) + 1;
             $data['amount'] = $value[1];
             $data['issue'] = $value[8];

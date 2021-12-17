@@ -7,6 +7,7 @@
        <li class="breadcrumb-item"><a href="javascript: void(0);">Update password </a></li>
     <!-- end page title -->
 @endsection
+@section('page_title', 'Change password')
 
 @section('content')
 <div class="row">

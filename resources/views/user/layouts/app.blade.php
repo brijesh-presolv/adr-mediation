@@ -100,7 +100,8 @@
                                      @yield('breadcrumb')
                                 </ol>
                             </div>
-                            <h4 class="page-title">@yield('title')</h4>
+                            <h4 class="page-title">@yield('page_title')</h4>
+
 
                         </div>
                     </div>

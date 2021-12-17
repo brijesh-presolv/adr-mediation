@@ -7,6 +7,7 @@
 <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.ongoing_request')</a></li>
 <!-- end page title -->
 @endsection
+@section('page_title',"Ongoing Request")
 
 @section('content')
 <div class="row">

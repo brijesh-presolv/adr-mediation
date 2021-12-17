@@ -45,7 +45,8 @@ class WhatsappStatus extends Controller
                 'delivered_time' => $delivered_time,
                 'updated_time' => $updated_time,
                 'status' => $status,
-                'response' => $json
+                'response' => $json,
+                'created_at' => date('Y-m-d H:s:i')
             ]);
 
 

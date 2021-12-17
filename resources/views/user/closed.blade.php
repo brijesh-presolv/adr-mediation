@@ -10,6 +10,7 @@ use App\Models\InvoledUser;
        <li class="breadcrumb-item"><a href="javascript: void(0);">Closed </a></li>
     <!-- end page title -->
 @endsection
+@section('page_title', 'Closed')
 
 @section('content')
 <div class="row">

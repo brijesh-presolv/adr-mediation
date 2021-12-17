@@ -7,6 +7,7 @@
 <li class="breadcrumb-item"><a href="javascript: void(0);">Profile </a></li>
 <!-- end page title -->
 @endsection
+@section('page_title', 'Users')
 
 @section('content')
 <div class="row">

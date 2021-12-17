@@ -8,6 +8,8 @@
 <li class="breadcrumb-item"><a href="javascript: void(0);">Track</a></li>
 <!-- end page title -->
 @endsection
+@section('page_title', 'Track for Case ID: M'.sprintf('%06d',$id))
+
 @section('content')
 
 <?php

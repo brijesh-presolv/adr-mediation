@@ -30,6 +30,7 @@ class User extends Authenticatable
         'emailotp',
         'smsotp',
         'isActive',
+        'signature_photo',
     ];
 
     /**

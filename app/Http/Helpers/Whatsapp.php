@@ -15,30 +15,30 @@ class Whatsapp
         $url = "https://api.karix.io/message/";
 
         //sandbox testing
-        $auth = base64_encode("7f88f3bf-478a-45d9-aa82-08ca650a3838:1f244c14-7ee9-4cf8-90d1-96c49e9a38bd");
+        // $auth = base64_encode("7f88f3bf-478a-45d9-aa82-08ca650a3838:1f244c14-7ee9-4cf8-90d1-96c49e9a38bd");
 
         //for live number
         //$auth = base64_encode(WAUTH);
 
-        $data = [
-            "channel" => "whatsapp",
-            "source" => "+13253077759",
-            "destination" => [$d['contact']],
-            "content" => $d['content'],
-             "events_url" => route('whatsapp_status'),
-        ];
-        // $eventUrl = route('whatsapp_status');
-
-        // $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
-
         // $data = [
         //     "channel" => "whatsapp",
-        //     "source" => "+918591275735",
+        //     "source" => "+13253077759",
         //     "destination" => [$d['contact']],
-        //     // "destination" => $d['contact'],
         //     "content" => $d['content'],
-        //     "events_url" => route('whatsapp_status'),
+        //      "events_url" => route('whatsapp_status'),
         // ];
+        // $eventUrl = route('whatsapp_status');
+
+        $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
+
+        $data = [
+            "channel" => "whatsapp",
+            "source" => "+918591275735",
+            "destination" => [$d['contact']],
+            // "destination" => $d['contact'],
+            "content" => $d['content'],
+            "events_url" => route('whatsapp_status'),
+        ];
 
         //+918591275735 - live no.
         //+13253077759 - sandbox no.
@@ -60,7 +60,7 @@ class Whatsapp
 
                 $data1 = [
 
-                    'caseid' => $d['caseid'],
+                    'caseid' => isset($d['caseid']) ? $d['caseid'] : null,
                     'contact' => $d['contact'],
                     'content' => implode(" ", str_replace(['‘', '’'], ['::', ';;'], $d['content'])),
                     'event' => $d['event'],
@@ -77,7 +77,7 @@ class Whatsapp
 
                 $data2 = [
 
-                    'caseid' => $d['caseid'],
+                    'caseid' => isset($d['caseid']) ? $d['caseid'] : null,
                     'contact' => $d['contact'],
                     'content' => "",
                     'media' => $d['content']['media']['url'],

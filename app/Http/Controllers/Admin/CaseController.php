@@ -1296,6 +1296,7 @@ class CaseController extends Controller
 
             $data['userid'] = $claimantid;
             $data['disputeCategory'] = $value['0'];
+            $data['natureOfAgreement'] = $value['6'];
             $data['noOfParties'] = count(explode(',', $value[10])) + 1;
             $data['amount'] = $value['1'];
             $data['issue'] = $value['8'];

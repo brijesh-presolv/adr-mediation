@@ -3,11 +3,14 @@
 
 
 @section('breadcrumb')
+
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.home')</a></li>
 <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.casedetails')</a></li>
 <!-- end page title -->
 @endsection
+@section('page_title', 'Details for Case ID: M'.sprintf('%06d',$case->id))
+
 @section('content')
 
 <div class="card">
@@ -83,8 +86,14 @@
                             <td>Dispute Category</td>
                             <td>{{$case->disputeCategory}}</td>
                         </tr>
+                        @if($case->natureOfAgreement != NULL) 
                         <tr>
-                            <td>Disptued Amount</td>
+                            <td>Nature of Agreement</td>
+                            <td>{{$case->natureOfAgreement}}</td>
+                        </tr>
+                        @endif
+                        <tr>
+                            <td>Disputed Amount</td>
                             <td>{{$case->amount}}</td>
                         </tr>
                         <tr>

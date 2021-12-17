@@ -25,6 +25,8 @@ function isreadonlys($rows) {
 <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.invoke')</a></li>
 <!-- end page title -->
 @endsection
+@section('page_title', 'Update mediation')
+
 @section('content')
 
 <div class="card">

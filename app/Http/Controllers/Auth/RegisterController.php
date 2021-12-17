@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
 use App\Http\Helpers\SendGrid;
+use App\Http\Helpers\Whatsapp;
 use App\Models\InvoledUser;
 
 class RegisterController extends Controller
@@ -38,26 +39,24 @@ class RegisterController extends Controller
      */
     //protected $redirectTo = RouteServiceProvider::HOME;
 
-     protected function redirectTo(){
+    protected function redirectTo()
+    {
 
-       if (Auth::check() && (Auth::user()->role == 0)) {
+        if (Auth::check() && (Auth::user()->role == 0)) {
 
-        if(Auth::user()->emailotp!=null){
-          
-          return route('verify');
-      } else{
-           return route('user.dashboard');
-      }
+            if (Auth::user()->emailotp != null) {
 
-      
+                return route('verify');
+            } else {
+                return route('user.dashboard');
+            }
         } else if (Auth::check() && (Auth::user()->role == 1)) {
 
-            if(Auth::user()->emailotp!=null){
-          
-          return route('verify');
-      }
-           return route('mediator.dashboard');
-           
+            if (Auth::user()->emailotp != null) {
+
+                return route('verify');
+            }
+            return route('mediator.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 2)) {
             return route('admin.dashboard');
         }
@@ -84,12 +83,12 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255','unique:users'],
-            'mobile_number' => ['required', 'string', 'max:255','unique:users'],
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
+            'mobile_number' => ['required', 'string', 'max:255', 'unique:users'],
             'organization' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'actype'=>['required'],
+            'actype' => ['required'],
 
         ]);
     }
@@ -105,11 +104,11 @@ class RegisterController extends Controller
 
         //check if user role
 
-        if($data['actype']==1){
+        if ($data['actype'] == 1) {
 
-            $role=0;
-        } else if($data['actype']==2){
-            $role=1;
+            $role = 0;
+        } else if ($data['actype'] == 2) {
+            $role = 1;
         }
 
 
@@ -117,46 +116,39 @@ class RegisterController extends Controller
         $InvoledUser = InvoledUser::where(['userEmail' => $data['email']])->first();
 
 
-        if($InvoledUser){
+        if ($InvoledUser) {
 
 
-             return User::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'username' => $data['username'],
-            'mobile_number' => $data['mobile_number'],
-            'organization' => $data['organization'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role'=>$role,
-            'emailotp'=>rand('100000','999999'),
-            'smsotp'=>rand('100000','999999'),
-            'isActive'=>1,
-            'status'=>1,
+            return User::create([
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'username' => $data['username'],
+                'mobile_number' => $data['mobile_number'],
+                'organization' => $data['organization'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'role' => $role,
+                'emailotp' => rand('100000', '999999'),
+                'smsotp' => rand('100000', '999999'),
+                'isActive' => 1,
+                'status' => 1,
 
-        ]);
+            ]);
+        } else {
 
-
-
-        } else{
-
-             return User::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'username' => $data['username'],
-            'mobile_number' => $data['mobile_number'],
-            'organization' => $data['organization'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role'=>$role,
-            'emailotp'=>rand('100000','999999'),
-            'smsotp'=>rand('100000','999999'),
-        ]);
-
-
-
+            return User::create([
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'username' => $data['username'],
+                'mobile_number' => $data['mobile_number'],
+                'organization' => $data['organization'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'role' => $role,
+                'emailotp' => rand('100000', '999999'),
+                'smsotp' => rand('100000', '999999'),
+            ]);
         }
-
     }
 
     /**
@@ -184,13 +176,31 @@ class RegisterController extends Controller
             'userid' => $user->id,
         ];
 
-        if($user->role=='0'){
-        $email=SendGrid::send($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-'=>strval($user->emailotp)]);
+        if ($user->role == '0') {
+            $email = SendGrid::send($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
+            // $var = ['-cid-', '-ip-'];
+            // $var1 = [];
+            // $content1 = WaTemplate::getcontent('l4_mediation_party2');
+            // $content = str_replace($var, $var1, $content1);
+            // $dwa1 = [
+            //     // 'userid' => $user->id,
+            //     'contact' => "+91" . $user->mobile_number,
+            //     'content' => ['text' => "Dear User, verify your account" . strval($user->smsotp)],
+            //     'event' => 'VARIFY'
+            // ];
 
-        } else if($user->role=='1'){
+            // $access = Whatsapp::sendWamessage($dwa1);
+        } else if ($user->role == '1') {
 
-            $email=SendGrid::send($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-'=>strval($user->emailotp)],$user->name);
+            // $dwa1 = [
+            //     // 'userid' => $user->id,
+            //     'contact' => "+91" . $user->mobile_number,
+            //     'content' => ['text' => "Dear Mediator, verify your account" . strval($user->smsotp)],
+            //     'event' => 'VARIFY'
+            // ];
+            // $access = Whatsapp::sendWamessage($dwa1);
 
+            $email = SendGrid::send($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
         }
 
         // if (!Auth::user()->isActive) {
@@ -199,10 +209,7 @@ class RegisterController extends Controller
         // }
 
         return $request->wantsJson()
-                    ? new JsonResponse([], 201)
-                    : redirect($this->redirectPath());
+            ? new JsonResponse([], 201)
+            : redirect($this->redirectPath());
     }
-
-
-   
 }
