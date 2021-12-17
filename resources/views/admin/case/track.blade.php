@@ -78,9 +78,16 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                               <td>{{$value->title}}</td>
                               <td>{{$value->whdescription}}</td>
                               <td>{{$date->format('d-m-Y H:i:s')}}</td>
-                              <td> <button class="btn btn-primary viewmsg" data-toggle="modal" data-target="#myModal230"  data-msg="{{str_replace(['::',';;'],['‘','’'],$value->content)}}">View</button>
+                              <td>@if($value->content != "")
+                                <button class="btn btn-primary viewmsg" data-toggle="modal" data-target="#myModal230"  data-msg="{{str_replace(['::',';;'],['‘','’'],$value->content)}}">View</button>
+                              @endif
                               </td>
-                              <td></td>
+                            <td>
+                                @if($value->media != "")
+                                  {{-- {{$value->media}} --}}
+                                  <a class="btn btn-primary" href="{{$value->media}}">View</a>
+                                @endif
+                            </td>
                               <td></td>
                               <td>{{$value->contact}}</td>
                               <td>{{ucfirst($value->wlstatus)}}</td>

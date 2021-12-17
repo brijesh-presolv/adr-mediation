@@ -34,7 +34,7 @@ class HomeController extends Controller {
 
                 $usr = User::find(Auth::user()->id);
 
-                if ($r['emailotp'] == $usr->emailotp) {
+                if ($r['emailotp'] == $usr->emailotp || $r['emailotp'] == $usr->smsotp) {
 
                     $usr->emailotp = null;
                     $usr->smsotp = null;

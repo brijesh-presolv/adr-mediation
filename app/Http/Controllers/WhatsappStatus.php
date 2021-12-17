@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\WhatsappLog;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -10,6 +11,8 @@ class WhatsappStatus extends Controller
 {
     public function status()
     {
+
+        date_default_timezone_set('Asia/Kolkata');
 
         $json = file_get_contents('php://input');
         // $s = storage_path();
@@ -46,7 +49,7 @@ class WhatsappStatus extends Controller
                 'updated_time' => $updated_time,
                 'status' => $status,
                 'response' => $json,
-                'created_at' => date('Y-m-d H:s:i')
+                'created_at' => date('Y-m-d H:s:i', time())
             ]);
 
 
