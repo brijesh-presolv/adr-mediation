@@ -9,19 +9,22 @@ use Session;
 use App\Http\Helpers\SendGrid as Email;
 use Illuminate\Support\Facades\Hash;
 
-class HomeController extends Controller {
+class HomeController extends Controller
+{
 
     /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index() {
+    public function index()
+    {
 
         return view('welcome');
     }
 
-    public function verify(Request $request) {
+    public function verify(Request $request)
+    {
 
 
 
@@ -75,7 +78,6 @@ class HomeController extends Controller {
                             }
 
                             return redirect()->route('user.dashboard');
-
                         } else {
 
                             if (!Auth::user()->isActive) {
@@ -97,7 +99,8 @@ class HomeController extends Controller {
         }
     }
 
-    public function mediation(Request $request) {
+    public function mediation(Request $request)
+    {
 
 
 
@@ -117,7 +120,8 @@ class HomeController extends Controller {
         }
     }
 
-    public function forgotpassword(Request $request) {
+    public function forgotpassword(Request $request)
+    {
 
         if ($request->post()) {
 
@@ -161,7 +165,8 @@ class HomeController extends Controller {
         echo json_encode(['response' => 'error']);
     }
 
-    public function forgotusername(Request $request) {
+    public function forgotusername(Request $request)
+    {
 
 
         if ($request->post()) {
@@ -197,15 +202,21 @@ class HomeController extends Controller {
         echo json_encode(['response' => 'error']);
     }
 
-    public function resendotp(Request $request) {
+    public function resendotp(Request $request)
+    {
 
 
         if ($request->post()) {
 
             $u = $request->post();
 
-
             $usr = User::where(['username' => $u['id']])->first();
+
+            $authKey = "353508AvZMtgYOFj601cf6a9P1";
+            $flowId = "61c1b6867a651c70fb40ebd2";
+            $url = "https://api.msg91.com/api/v5/flow/";
+            $senderId = "Prsolv";
+
 
             if ($usr) {
                 $d = [
@@ -214,6 +225,38 @@ class HomeController extends Controller {
                 ];
                 if ($usr->role == '0') {
                     $email = Email::send($d, $usr->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
+
+                    
+
+                    //Multiple mobiles numbers separated by comma
+                    $mobileNumber = $usr->mobile_number;
+                   
+                    $ch = curl_init();
+                    curl_setopt_array($ch, [
+                        CURLOPT_URL => $url,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => "{\n  \"flow_id\": \"$flowId\",\n  \"sender\": \"$senderId\",\n  \"mobiles\": \"$mobileNumber\",\n  \"otp\": \"$usr->smsotp\"\n  }",
+                        CURLOPT_HTTPHEADER => [
+                          "authkey: " . $authKey,
+                          "content-type: application/JSON"
+                        ],
+                      ]);
+                      
+                      $response = curl_exec($ch);
+                      
+
+                    dd($response);
+                    //Print error if any
+                    if (curl_errno($ch)) {
+                        echo 'error:' . curl_error($ch);
+                    }
+
+                    curl_close($ch);
                 } else if ($usr->role == '1') {
 
                     $email = Email::send($d, $usr->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);

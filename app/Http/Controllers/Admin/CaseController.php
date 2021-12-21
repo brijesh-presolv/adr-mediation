@@ -532,7 +532,7 @@ class CaseController extends Controller
                 }
             }
 
-
+            dd($invitation);
 
             //remove involed
 
