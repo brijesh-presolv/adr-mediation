@@ -107,6 +107,7 @@ class CaseController extends Controller
 
     public function confirmStatus(Request $request)
     {
+        // dd("hello");
         $medCas = MedCase::find($request->id);
         $medCas->confirm_status = 1;
         $medCas->save();
@@ -121,7 +122,11 @@ class CaseController extends Controller
         // generate pdf
         $invitation = $this->invitation_mediate($request->id);
 
-        $invmodel = new InvitationFiles();
+        $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+        if (!isset($invmodel)) {
+            // dd("if");
+            $invmodel = new InvitationFiles();
+        }
         $invmodel->case_id = $request->id;
         $invmodel->file_name = $invitation;
         $invmodel->save();
@@ -211,6 +216,7 @@ class CaseController extends Controller
 
     public function midaterAdd(Request $request)
     {
+
         $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $request->id)
             ->where(function ($q) {
                 $q->where("status", "=", 0)
@@ -235,8 +241,33 @@ class CaseController extends Controller
             $MedCaseStatus->status = 0;
             $MedCaseStatus->save();
         }
+
+        // generate pdf
+        $invitation = $this->mediator_appointment($request->id, $request->midater);
+
+        $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+
+        if (!isset($invmodel)) {
+            $invmodel = new InvitationFiles();
+        }
+        $invmodel->case_id = $request->id;
+        $invmodel->file_name_mediator_appointment = $invitation;
+        $invmodel->save();
+
+
         $this->send_mediatorAdd($request->id, $request->midater);
         return response()->json(["msg" => "midater Added"]);
+    }
+
+    public function mediator_appointment($id, $medid)
+    {
+        $data["mediator"] = User::find($medid);
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $pdf = PDF::loadView('pdf.mediator_appointment_letter', $data);
+        $name = 'mediator_appoinment_letter_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
+        Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        return $name;
     }
 
     public function addSession(Request $request)
@@ -385,8 +416,13 @@ class CaseController extends Controller
 
     public function updatecase(Request $request, $id)
     {
-        $d = [
+        $d1 = [
             'event' => 'ACPTARB_ADM_RES',
+            'case_id' => $id,
+        ];
+
+        $d2 = [
+            'event' => 'ACPTARB_ADM_INI',
             'case_id' => $id,
         ];
         $med = MedCase::find($id);
@@ -494,16 +530,49 @@ class CaseController extends Controller
                 $inv->save();
                 // dd($inv);
 
-                $invitation = $this->invitation_mediate($id);
+            }
 
+            // dd($invitation);
+
+            //remove involed
+
+            if ($r['rminv'] != '') {
+
+                foreach (explode(',', $r['rminv']) as $key => $value) {
+
+                    InvoledUser::find($value)->delete();
+                }
+            }
+
+            $invitation = $this->invitation_mediate($id);
+
+            $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+
+            if (!isset($invmodel)) {
                 $invmodel = new InvitationFiles();
-                $invmodel->case_id = $request->id;
-                $invmodel->file_name = $invitation;
-                $invmodel->save();
+            }
+            $invmodel->case_id = $request->id;
+            $invmodel->file_name = $invitation;
+            $invmodel->save();
 
-                if ($inv->address1 != null || $inv->fulladdress != null) {
+            $InvoledUserMsg = InvoledUser::where(['userPlanId' => $med->id])->where(function ($q) {
+                $q->orWhere('address1', '!=', null)->orWhere('fulladdress', '!=', null);
+            })->get();
 
-                    $s = SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
+            // dd($InvoledUser);
+            $responding_party = "";
+            $initiating_phone = "";
+            $initiating_email = "";
+            foreach ($InvoledUserMsg as $value) {
+
+                if ($value->isClaimant != 0) {
+
+                    if ($responding_party == "") {
+                        $responding_party = $value->name;
+                    }
+
+
+                    $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => $pone->name], $value->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
 
                     $var = ['-cid-', '-ip-'];
                     $var1 = ["M" . sprintf("%06d", $id), $pone->name];
@@ -511,7 +580,7 @@ class CaseController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $inv->userPhone,
+                        'contact' => "+91" . $value->userPhone,
                         'content' => ['text' => $content],
                         'event' => 'ACPTARB_ADM_RES'
                     ];
@@ -524,23 +593,49 @@ class CaseController extends Controller
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $inv->userPhone,
+                        'contact' => "+91" . $value->userPhone,
                         'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => $content_file]],
                         'event' => 'ACPTARB_ADM_RES'
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
+                } else {
+                    if ($initiating_phone == "") {
+                        $initiating_phone = $inv->userPhone;
+                    }
+                    if ($initiating_email == "") {
+                        $initiating_email = $inv->userEmail;
+                    }
                 }
-            }
+                if ($responding_party != "") {
+                    // dd($responding_party);
 
-            dd($invitation);
+                    SendGrid::send($d2, $initiating_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
 
-            //remove involed
 
-            if ($r['rminv'] != '') {
+                    $var = ['-cid-', '-rp-'];
+                    $var1 = [Common_function::getsixdigitid('sc', $id), $responding_party];
+                    $content1 = WaTemplate::getcontent('l4_mediation_initiating');
+                    $content = str_replace($var, $var1, $content1);
+                    $dwa1 = [
+                        'caseid' => $id,
+                        'contact' => "+91" . $initiating_phone,
+                        'content' => ['text' => $content],
+                        // 'casetype' => 2,
+                        'event' => 'ACPTARB_ADM_INI'
+                    ];
 
-                foreach (explode(',', $r['rminv']) as $key => $value) {
-
-                    InvoledUser::find($value)->delete();
+                    $access = Whatsapp::sendWamessage($dwa1);
+                    $var_file = ['-caseid-'];
+                    $var1_file = [Common_function::getsixdigitid('sc', $id)];
+                    $content1_file = WaTemplate::getcontent('mediation_invitation_letter_file');
+                    $content_file = str_replace($var_file, $var1_file, $content1_file);
+                    $dwa2 = [
+                        'caseid' => $id,
+                        'contact' => "+91" . $initiating_phone,
+                        'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => $content_file]],
+                        'event' => 'ACPTARB_ADM_INI'
+                    ];
+                    $access = Whatsapp::sendWamessage($dwa2);
                 }
             }
 

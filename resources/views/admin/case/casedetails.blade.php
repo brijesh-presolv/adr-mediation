@@ -132,6 +132,23 @@
                                 <?php } ?>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Mediator Appointment Letter</td>
+                            <td>
+
+                                <?php
+                                if ($case->invitation) {
+                                    if($case->invitation->file_name_mediator_appointment != null) {
+                                    $doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->invitation->file_name_mediator_appointment;
+                                    ?>
+                                    <a href="{{url($doc)}}" target="_blank">@lang('case.view')</a>
+                                    <?php } else { ?>
+                                        @lang('case.na')
+                                <?php } } else { ?>
+                                    @lang('case.na')
+                                <?php } ?>
+                            </td>
+                        </tr>
                     </table>
                     <?php if($case->documentPath != "NULL"){ $doc='storage/app/public/mediation/'.$case->id.'/'.$case->documentPath;
                                     ?>
