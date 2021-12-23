@@ -22,10 +22,25 @@ use Auth;
 use Validator;
 use DB;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 use PDF;
 
 class MediationController extends Controller
 {
+
+    public function requestLetter($id)
+    {
+        // $data["mediator"] = User::find($medid);
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        $data["ini"] = InvoledUser::select('user_involved_in_agreement.*', 'usr.organization')
+            ->leftJoin('users as usr', DB::raw('usr.id'), '=', DB::raw('user_involved_in_agreement.userId'))
+            ->where("userPlanId", "=", $id)->where('isClaimant', 0)->first();
+        $data["res"] = InvoledUser::where("userPlanId", "=", $id)->where('isClaimant', '<>', 0)->first();
+        $pdf = PDF::loadView('pdf.request_letter', $data);
+        $name = 'request_letter_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
+        Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        return $name;
+    }
 
     public function invoke(Request $request)
     {
@@ -46,19 +61,16 @@ class MediationController extends Controller
             }
         }
 
-
+        
         //fetch all involved users
 
         $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
 
-
-
-
         if ($request->method() == 'POST' && $InvoledUser == null) {
 
+            
 
-
-
+            
 
             // //upload file
             // $filename = '';
@@ -177,7 +189,10 @@ class MediationController extends Controller
 
                 $inv->save();
             }
-
+            $letter = $this->requestLetter($_GET['id']);
+            // dd($med);
+            $med->request_letter = $letter;
+            $med->save();
             $d = [
                 'event' => 'SUBMIT_FORM',
                 'case_id' => $med->id,

@@ -138,7 +138,7 @@ margin-left: -5px;
 		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
 		    <ul class="navbar-nav ml-auto">
 		      <li class="nav-item active">
-		        <a class="nav-link abtbtn" href="about_us">About<span class="sr-only">(current)</span></a>
+		        <a class="nav-link abtbtn" target="_blank" href="https://presolv360.com/about_us">About<span class="sr-only">(current)</span></a>
 		      </li>
 
           <li>

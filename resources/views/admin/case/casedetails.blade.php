@@ -51,6 +51,9 @@
                                         @elseif($value->fulladdress != "")
                                         @lang('case.address'): <?= $value->fulladdress ?><br>
                                         @endif
+                                        @if($value->joinCode != "")
+                                        JoinCode:  {{ $value->joinCode}}<br>   
+                                        @endif 
                                         <br>
                                         @endif
                                         
@@ -72,6 +75,9 @@
                                         @endif 
                                         @if($value->userPhone != "")
                                         @lang('case.phone'): {{ $value->userPhone}}<br>
+                                        @endif
+                                        @if($value->joinCode != "")
+                                        JoinCode:  {{ $value->joinCode}}<br>   
                                         @endif
                                         
                                         @endif

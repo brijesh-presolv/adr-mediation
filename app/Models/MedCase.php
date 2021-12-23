@@ -11,7 +11,7 @@ class MedCase extends Model
     use HasFactory;
 
     protected $table = 'mediation_case';
-    protected $fillable = ['userid', 'disputeCategory', 'natureOfAgreement', 'noOfParties', 'amount', 'proposedSolution', 'issue', 'confirm_status', 'documentPath', 'withdraw', 'otherRespondentDetails'];
+    protected $fillable = ['userid', 'disputeCategory', 'natureOfAgreement', 'noOfParties', 'amount', 'proposedSolution', 'issue', 'confirm_status', 'documentPath', 'withdraw', 'otherRespondentDetails', 'request_letter'];
 
     static function getcasebyId($id)
     {

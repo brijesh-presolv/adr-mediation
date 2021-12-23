@@ -189,44 +189,38 @@ class DashboardController extends Controller
      */
     public function addSession(Request $request)
     {
-        // dd($request->session_party_ids);
-        // dd("hello");
+        // echo $request->zoomId;
+        $time = date( "g:i A", strtotime($request->sessionTime));
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $request->caseId,
+        ];
         
-        // exit;
-        // foreach ($request->session_party_ids as $pary_id) {
-        
-        // foreach ($request->session_party_ids as $party_id) {
-        //     $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
-        //     $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
-        // }
-
-        if(isset($request->session_party_ids)) {
-            foreach ($request->session_party_ids as $party_id) {
-                $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
-                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
-                
-            }
+        if (isset($request->session_party_ids)) {
             $dataToInsert = [
                 'case_id' => $request->caseId,
-                'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+                'session_date' => $request->sessionDate . "/" . $time,
                 'note' => $request->note,
                 'zoom_id' => $request->zoomId,
                 'session_party_ids' => json_encode($request->session_party_ids),
                 'scheduled_by' => Auth::user()->id,
             ];
             DB::table('manage_session')->insert($dataToInsert);
-
+            foreach ($request->session_party_ids as $party_id) {
+                $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
+                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
+            }
         } else {
             $allParty = InvoledUser::where("userPlanId", $request->caseId)->where("isOnboarded", 1)->get();
             $party_ids = array();
-            foreach($allParty as $party) {
+            foreach ($allParty as $party) {
                 $party_ids[] = $party->userId;
-                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
             // dd($party_ids);
             $dataToInsert = [
                 'case_id' => $request->caseId,
-                'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+                'session_date' => $request->sessionDate . "/" . $time,
                 'note' => $request->note,
                 'zoom_id' => $request->zoomId,
                 'session_party_ids' => json_encode($party_ids),
@@ -234,21 +228,16 @@ class DashboardController extends Controller
             ];
             DB::table('manage_session')->insert($dataToInsert);
         }
-        $mediator = Mediators_mediation_cases_status::select("email", "username")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-        //  dd($mediator);
-        $d = [
-            'event' => 'SESS_SCHE',
-            'case_id' => $request->caseId,
-        ];
         if ($mediator) {
             $id = "M" . sprintf("%06d", $request->caseId);
-            SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
+            SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
 
             $var = ['-dt-', '-cid-', '-link-'];
-            $var1 = [$request->sessionDate . "/" . $request->sessionTime, $id, $request->zoomId];
+            $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
             $content1 = WaTemplate::getcontent('l10_session_schedule');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
@@ -258,9 +247,11 @@ class DashboardController extends Controller
                 'event' => 'SESS_SCHE'
             ];
 
-
+            // print_r($dwa1);
+            // exit;
             $access = Whatsapp::sendWamessage($dwa1);
         }
+
         return true;
     }
 
@@ -283,8 +274,12 @@ class DashboardController extends Controller
             }
             $user = array();
             foreach ($dataArray as $d) {
-                $dd = User::find($d);
-                $user[] = $dd->first_name . " " . $dd->last_name;
+                $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                if (isset($dd)) {
+                    if ($dd->name != null) {
+                        $user[] = $dd->name;
+                    }
+                }
             }
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
@@ -560,8 +555,9 @@ class DashboardController extends Controller
             ->first();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
-            ->where("mediators_mediation_cases_status.status", "=", 1)
+            // ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
+        // dd($mediator);
         if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
             return abort(404);
         }

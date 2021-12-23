@@ -273,15 +273,14 @@ class CaseController extends Controller
     public function addSession(Request $request)
     {
         // echo $request->zoomId;
-
-        // dd($request->all());
+        $time = date( "g:i A", strtotime($request->sessionTime));
         $d = [
             'event' => 'SESS_SCHE',
             'case_id' => $request->caseId,
         ];
         // $dataToInsert = [
         //     'case_id' => $request->caseId,
-        //     'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+        //     'session_date' => $request->sessionDate . "/" . $time,
         //     'note' => $request->note,
         //     'zoom_id' => $request->zoomId,
         //     'session_party_ids' => json_encode($request->session_party_ids),
@@ -289,12 +288,12 @@ class CaseController extends Controller
         // ];
         // foreach ($request->session_party_ids as $party_id) {
         //     $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
-        //     $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+        //     $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
         // }
         if (isset($request->session_party_ids)) {
             $dataToInsert = [
                 'case_id' => $request->caseId,
-                'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+                'session_date' => $request->sessionDate . "/" . $time,
                 'note' => $request->note,
                 'zoom_id' => $request->zoomId,
                 'session_party_ids' => json_encode($request->session_party_ids),
@@ -302,20 +301,20 @@ class CaseController extends Controller
             ];
             DB::table('manage_session')->insert($dataToInsert);
             foreach ($request->session_party_ids as $party_id) {
-                $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
-                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+                $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->first();
+                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
         } else {
-            $allParty = InvoledUser::where("userPlanId", $request->caseId)->where("isOnboarded", 1)->get();
+            $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
             $party_ids = array();
             foreach ($allParty as $party) {
                 $party_ids[] = $party->userId;
-                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $request->sessionTime, $party->userPhone);
+                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
             // dd($party_ids);
             $dataToInsert = [
                 'case_id' => $request->caseId,
-                'session_date' => $request->sessionDate . "/" . $request->sessionTime,
+                'session_date' => $request->sessionDate . "/" . $time,
                 'note' => $request->note,
                 'zoom_id' => $request->zoomId,
                 'session_party_ids' => json_encode($party_ids),
@@ -329,10 +328,10 @@ class CaseController extends Controller
             ->first();
         if ($mediator) {
             $id = "M" . sprintf("%06d", $request->caseId);
-            SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $request->sessionTime, "-type-" => "Mediator"], $mediator->username);
+            SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
 
             $var = ['-dt-', '-cid-', '-link-'];
-            $var1 = [$request->sessionDate . "/" . $request->sessionTime, $id, $request->zoomId];
+            $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
             $content1 = WaTemplate::getcontent('l10_session_schedule');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
@@ -364,8 +363,12 @@ class CaseController extends Controller
             }
             $user = array();
             foreach ($dataArray as $d) {
-                $dd = User::find($d);
-                $user[] = $dd->first_name . " " . $dd->last_name;
+                $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                if (isset($dd)) {
+                    if ($dd->name != null) {
+                        $user[] = $dd->name;
+                    }
+                }
             }
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
