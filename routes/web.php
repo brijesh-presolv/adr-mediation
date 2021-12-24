@@ -123,7 +123,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
     //users
     Route::get('users/list/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'index'])->defaults('role', "user")->name('admin.users.list');
-    Route::get('users/json/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'json'])->defaults('role', 0)->name('admin.users.json');
+    Route::get('users/jsonApprove/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'jsonApprove'])->defaults('role', 0)->name('admin.users.jsonApprove');
+    Route::get('users/jsonUnapprove/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'jsonUnapprove'])->defaults('role', 0)->name('admin.users.jsonUnapprove');
     Route::match(['post', 'get'], 'users/edit/{id}', [App\Http\Controllers\Admin\UsersController::class, 'edit'])->name('admin.users.edit');
     Route::post('users/update', [App\Http\Controllers\Admin\UsersController::class, 'update'])->name('admin.users.update');
     Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
@@ -154,6 +155,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('view-settelment', [App\Http\Controllers\Admin\CaseController::class, 'viewSettelment'])->name('admin.case.viewSettelment');
     Route::post('view-supporting', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
+
+    Route::get('view-session/{id}', [App\Http\Controllers\Admin\CaseController::class, 'sessionPdf'])->name('admin.case.sessionPdf');
+
 
     Route::match(['post', 'get'], 'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
     Route::post('upload-files', [App\Http\Controllers\Admin\CaseController::class, 'storeMultiFile'])->name('admin.case.storeMultiFile');

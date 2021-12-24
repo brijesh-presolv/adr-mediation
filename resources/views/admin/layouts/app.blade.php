@@ -18,6 +18,7 @@
         <link href="{{url('assets/')}}/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
         <link href="{{url('assets/')}}/css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="{{url('assets/')}}/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+        <link href="{{url('resources/')}}/css/app.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
 
 
         <!-- Dynamic pages css comes -->

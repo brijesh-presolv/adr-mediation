@@ -318,7 +318,7 @@
                     </tbody>
                 </table>
                 <hr>    
-                <div class="text-center">
+                <div id="sessionShowBtn"class="text-center">
                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
                         <span>@lang('case.btn_close')</span>
                     </button>  
@@ -938,7 +938,16 @@ $(function () {
             url: '{{ route("admin.case.getAddedSesion") }}',
             data: {mediator_id: sheduledBy_Id, caseid: caseid, '_token': csrf},
             success: function (data) {
-                $('#sessRecId tbody').html(data);
+                if(data != "") {
+                    // console.log(caseid);
+                    var link = '{{route("admin.case.sessionPdf", '')}}'+'/'+caseid;
+                    // console.log(link);
+                    var pdfButton = "<a target='_blank' href='"+link+"' class='btn btn-primary'><span>View PDF</span></button>"
+                    $('#sessRecId tbody').html(data);
+                    $('#sessionShowBtn').append(pdfButton);
+                } else {
+                    $('#sessRecId tbody').html("No Session");
+                }
             }
 
         });

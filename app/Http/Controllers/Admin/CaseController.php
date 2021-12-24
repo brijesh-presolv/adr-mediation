@@ -81,6 +81,7 @@ class CaseController extends Controller
         }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
         return $pdf->stream('document.pdf');
+
     }
 
     public function casedetails($id)
@@ -347,6 +348,15 @@ class CaseController extends Controller
         }
 
         return true;
+    }
+
+    public function sessionPdf($id) {
+        // dd($id);
+        $data['caseId'] = $id;
+        $data["sessionData"] = DB::table('manage_session')->where('case_id', $id)->get();
+        $pdf = PDF::loadView('pdf.view_session', $data);
+        return $pdf->download('session_M'.sprintf('%06d', $id).'.pdf');
+        // dd($sessionData);
     }
 
     public function getAddedSesion(Request $request)

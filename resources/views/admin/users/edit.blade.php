@@ -43,12 +43,7 @@
                             <label for="organization">@lang('user.organization')</label>
                             <input type="text" class="form-control" id="organization" name="organization"  value="{{$user->organization}}"  data-validation="required">
                         </div>
-                        <div class="form-group col-md-6">
-                            <label for="country_code">@lang('user.country_code')</label>
-                            <select class="form-control" id="country_code" name="country_code" >
-                                <option>48</option>
-                            </select>
-                        </div>                        
+                                              
                         <div class="form-group col-md-6">
                             <label for="address">@lang('user.address1')</label>
                             <input type="text" class="form-control" id="address" name="address" value="{{$user->address}}">
@@ -64,7 +59,7 @@
                                 <option>Polska</option>
                             </datalist> --}}
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-6">
                             <label for="state">@lang('user.state')</label>
                             <input list="stateData"  class="form-control" id="state" value="{{$user->state}}" name="state">
                             
@@ -77,6 +72,13 @@
                             <label for="pincode">@lang('user.pincode')</label>
                             <input type="number" class="form-control" id="pincode" name="pincode" value="{{$user->pincode}}"  data-validation="required">
                         </div>
+                        <div class="form-group col-md-4">
+                            <label for="country_code">@lang('user.country_code')</label>
+                            {{-- <select class="form-control" id="country_code" name="country_code" >
+                                <option>48</option>
+                            </select> --}}
+                            <input type="number" class="form-control" id="country_code" name="country_code" value="{{$user->country_code}}"  data-validation="required">
+                        </div>  
 
 
                         @if($user->role==1)

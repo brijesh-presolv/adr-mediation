@@ -148,8 +148,13 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function json($role = 0) {
-        $users = User::where("role", "=", $role)->get();
+    public function jsonApprove($role = 0) {
+        $users = User::where("role", "=", $role)->where('status', 1)->get();
+        return response()->json(["data" => $users]);
+    }
+
+    public function jsonUnapprove($role = 0) {
+        $users = User::where("role", "=", $role)->where('status', 0)->get();
         return response()->json(["data" => $users]);
     }
 
