@@ -45,14 +45,25 @@ class ProfileController extends Controller {
         $user->isDone = 1;
         if($request->hasFile('signature')) {
             if($user->signature_photo != null) {
-                Storage::delete('public/signature/' . $request->id . '/' . $user->signature_photo);
+                Storage::delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
             }
             $extension = $request->file('signature')->getClientOriginalExtension();
             $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
-            Storage::put('public/signature/' . $request->id . '/' . $name, file_get_contents($request->signature));
+            $s = Storage::put('public/mediator/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+        }
+        if($request->hasFile('profilePic')) {
+            if($user->profile_pic != null) {
+                Storage::delete('public/mediator/' . $request->id . '/profile/' . $user->profile_pic);
+            }
+            $extension = $request->file('profilePic')->getClientOriginalExtension();
+            $profilename = 'Mediator_Profile_Pic' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+            $s = Storage::put('public/mediator/' . $request->id . '/profile/' . $profilename, file_get_contents($request->profilePic));
         } 
         if(isset($name)) {
             $user->signature_photo = $name;
+        }
+        if(isset($profilename)) {
+            $user->profile_pic = $profilename;
         }
         $user->save();
         $isMedi = Mediation_Details::where("user_id", "=", $request->id)->first();

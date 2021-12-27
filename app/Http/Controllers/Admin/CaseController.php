@@ -255,7 +255,6 @@ class CaseController extends Controller
         $invmodel->file_name_mediator_appointment = $invitation;
         $invmodel->save();
 
-
         $this->send_mediatorAdd($request->id, $request->midater);
         return response()->json(["msg" => "midater Added"]);
     }
@@ -1537,9 +1536,27 @@ class CaseController extends Controller
                     $otherDetails->save();
                 }
             }
+
+            $letter = $this->requestLetter($med->id);
+            $med->request_letter = $letter;
+            $med->save();
         }
 
         return redirect('/admin/case/new-request')->with(['success' => 'Success']);
+    }
+
+    public function requestLetter($id)
+    {
+        // $data["mediator"] = User::find($medid);
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        $data["ini"] = InvoledUser::select('user_involved_in_agreement.*', 'usr.organization')
+            ->leftJoin('users as usr', DB::raw('usr.id'), '=', DB::raw('user_involved_in_agreement.userId'))
+            ->where("userPlanId", "=", $id)->where('isClaimant', 0)->first();
+        $data["res"] = InvoledUser::where("userPlanId", "=", $id)->where('isClaimant', '<>', 0)->first();
+        $pdf = PDF::loadView('pdf.request_letter', $data);
+        $name = 'request_letter_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
+        Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        return $name;
     }
 
     public function documentUpload(Request $request, $id)

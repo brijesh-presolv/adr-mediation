@@ -118,6 +118,20 @@
                             </tr>
                         <?php } ?>
                         <tr>
+                            <td>Request Letter</td>
+                            <td>
+                                <?php
+                                if ($case->request_letter) {
+
+                                    $doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->request_letter;
+                                    ?>
+                                    <a href="{{url($doc)}}" target="_blank">@lang('case.view')</a>
+                                <?php } else { ?>
+                                    @lang('case.na')
+                                <?php } ?>
+                            </td>
+                        </tr>
+                        <tr>
                             <td>@lang('case.invitation_to_mediate')</td>
                             <td>
 

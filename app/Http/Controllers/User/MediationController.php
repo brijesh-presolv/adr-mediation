@@ -864,7 +864,9 @@ class MediationController extends Controller
                 }
             }
 
-
+            $letter = $this->requestLetter($med->id);
+            $med->request_letter = $letter;
+            $med->save();
             // foreach($otherDetails as $values) {
             //     foreach($values)
             // }

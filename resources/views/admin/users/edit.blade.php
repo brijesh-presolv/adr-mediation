@@ -124,10 +124,20 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="signature">Upload Signature</label>
+                            @if($user->signature_photo != null) 
+                                <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{$user->id}}/signature/{{$user->signature_photo}}" /> 
+                            @endif
                             <input type="file" class="form-control" id="signature"  name="signature">
                         </div>
-                        @endif
                         <div class="form-group col-md-6">
+                            <label for="signature">Upload Profile Pic</label>
+                            @if($user->profile_pic != null) 
+                                <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{$user->id}}/profile/{{$user->profile_pic}}" /> 
+                            @endif
+                            <input type="file" class="form-control" id="profilePic"  name="profilePic">
+                        </div>
+                        @endif
+                        <div class="form-group col-md-4">
                             <label for="state">Status</label>
                             <select name="status" class="form-control">
                                 <option {{(isset($user->isDone) && $user->isDone=='1')?"selected":"" }} value="1">@lang('user.approve')</option>

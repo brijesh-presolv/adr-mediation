@@ -212,51 +212,48 @@ class HomeController extends Controller
 
             $usr = User::where(['username' => $u['id']])->first();
 
-            $authKey = "353508AvZMtgYOFj601cf6a9P1";
-            $flowId = "61c1b6867a651c70fb40ebd2";
-            $url = "https://api.msg91.com/api/v5/flow/";
+            $authKey = env('SMS_AUTH_KEY', '');
+            $flowId = env('SMS_FLOW_KEY', '');
+            $url = env('SMS_FLOW_API', '');
             $senderId = "Prsolv";
 
 
             if ($usr) {
+                $mobileNumber = "+91" . $usr->mobile_number;
+
                 $d = [
                     'event' => 'RESEND_OTP',
                     'userid' => $usr->id,
                 ];
+
+                $ch = curl_init();
+                curl_setopt_array($ch, [
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => "{\n  \"flow_id\": \"$flowId\",\n  \"sender\": \"$senderId\",\n  \"mobiles\": \"$mobileNumber\",\n  \"otp\": \"$usr->smsotp\"\n  }",
+                    CURLOPT_HTTPHEADER => [
+                        "authkey: {$authKey}",
+                        "content-type: application/JSON"
+                    ],
+                ]);
+
+                $response = curl_exec($ch);
+
+
+                // dd($response);
+                //Print error if any
+                if (curl_errno($ch)) {
+                    echo 'error:' . curl_error($ch);
+                }
+
+                curl_close($ch);
                 if ($usr->role == '0') {
                     $email = Email::send($d, $usr->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
-
-                    
-
-                    //Multiple mobiles numbers separated by comma
-                    $mobileNumber = $usr->mobile_number;
-                   
-                    $ch = curl_init();
-                    curl_setopt_array($ch, [
-                        CURLOPT_URL => $url,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => "",
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 30,
-                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_CUSTOMREQUEST => "POST",
-                        CURLOPT_POSTFIELDS => "{\n  \"flow_id\": \"$flowId\",\n  \"sender\": \"$senderId\",\n  \"mobiles\": \"$mobileNumber\",\n  \"otp\": \"$usr->smsotp\"\n  }",
-                        CURLOPT_HTTPHEADER => [
-                          "authkey: " . $authKey,
-                          "content-type: application/JSON"
-                        ],
-                      ]);
-                      
-                      $response = curl_exec($ch);
-                      
-
-                    dd($response);
-                    //Print error if any
-                    if (curl_errno($ch)) {
-                        echo 'error:' . curl_error($ch);
-                    }
-
-                    curl_close($ch);
                 } else if ($usr->role == '1') {
 
                     $email = Email::send($d, $usr->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);

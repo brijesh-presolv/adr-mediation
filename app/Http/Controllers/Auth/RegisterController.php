@@ -176,80 +176,43 @@ class RegisterController extends Controller
             'userid' => $user->id,
         ];
 
+        $authKey = env('SMS_AUTH_KEY', '');
+        $flowId = env('SMS_FLOW_KEY', '');
+        $url = env('SMS_FLOW_API', '');
+        $senderId = "Prsolv";
+        $mobileNumber = "+91" . $user->mobile_number;
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => "{\n  \"flow_id\": \"$flowId\",\n  \"sender\": \"$senderId\",\n  \"mobiles\": \"$mobileNumber\",\n  \"otp\": \"$user->smsotp\"\n  }",
+            CURLOPT_HTTPHEADER => [
+                "authkey: {$authKey}",
+                "content-type: application/JSON"
+            ],
+        ]);
+
+        $response = curl_exec($ch);
+
+
+        // dd($response);
+        //Print error if any
+        if (curl_errno($ch)) {
+            echo 'error:' . curl_error($ch);
+        }
+
+        curl_close($ch);
+
         if ($user->role == '0') {
             $email = SendGrid::send($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
-
-            $authKey = "183860A5Nl59j2wa5a22b1cc";
-
-            //Multiple mobiles numbers separated by comma
-            $mobileNumber = $user->mobile_number;
-
-            //Sender ID,While using route4 sender id should be 6 characters long.
-            $senderId = "Prsolv";
-            $otp = "Your Presolv360 OTP is: {$user->smsotp}";
-            //Your message to send, Add URL encoding here.
-            $message = urlencode($otp);
-
-            //Define route 
-            $route = "4";
-            //Prepare you post parameters
-            $postData = array(
-                'authkey' => $authKey,
-                'mobiles' => $mobileNumber,
-                'message' => $message,
-                'sender' => $senderId,
-                'route' => $route
-            );
-
-            //API URL
-            $url = "https://control.msg91.com/api/sendhttp.php";
-
-            // init the resource
-            $ch = curl_init();
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => $postData
-            ));
-
-
-            //Ignore SSL certificate verification
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-
-            //get response
-            $output = curl_exec($ch);
-
-            // dd($output);
-            //Print error if any
-            if (curl_errno($ch)) {
-                echo 'error:' . curl_error($ch);
-            }
-
-            curl_close($ch);
-            // $var = ['-cid-', '-ip-'];
-            // $var1 = [];
-            // $content1 = WaTemplate::getcontent('l4_mediation_party2');
-            // $content = str_replace($var, $var1, $content1);
-            // $dwa1 = [
-            //     // 'userid' => $user->id,
-            //     'contact' => "+91" . $user->mobile_number,
-            //     'content' => ['text' => "Dear User, verify your account" . strval($user->smsotp)],
-            //     'event' => 'VARIFY'
-            // ];
-
-            // $access = Whatsapp::sendWamessage($dwa1);
+            
         } else if ($user->role == '1') {
-
-            // $dwa1 = [
-            //     // 'userid' => $user->id,
-            //     'contact' => "+91" . $user->mobile_number,
-            //     'content' => ['text' => "Dear Mediator, verify your account" . strval($user->smsotp)],
-            //     'event' => 'VARIFY'
-            // ];
-            // $access = Whatsapp::sendWamessage($dwa1);
 
             $email = SendGrid::send($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
         }

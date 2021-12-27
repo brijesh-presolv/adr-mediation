@@ -1,5 +1,5 @@
 @extends('mediator.layouts.app')
-@section('title', 'Users')
+@section('title', 'Mediator')
 
 @section('breadcrumb')
 <!-- start page title -->
@@ -7,6 +7,7 @@
 <li class="breadcrumb-item"><a href="javascript: void(0);">Profile </a></li>
 <!-- end page title -->
 @endsection
+@section('pageTitleOnDashboard', 'Mediator')
 
 @section('content')
 <div class="row">
@@ -61,7 +62,8 @@
                     <!-- <a href="#custom-modal" class="btn btn-dark waves-effect waves-light mt-3" data-animation="blur" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" >Edit profile</a>
                     -->
                     <!-- Responsive modal -->
-                    <button class="btn btn-dark waves-effect waves-light mt-3" data-toggle="modal" data-target="#custom-modal">Edit profile</button>
+                    {{-- <button class="btn btn-dark waves-effect waves-light mt-3" id="editModel" data-toggle="modal" data-target="#custom-modal">Edit profile</button> --}}
+                    <a href="{{route('mediator.profile.firstupdate')}}" class="btn btn-dark waves-effect waves-light mt-3" id="editModel">Edit profile</a>
                     <!-- Accordion modal -->
 
                     <ul class="social-links list-inline mt-4">
@@ -77,9 +79,7 @@
                     </ul>
 
                 </div>
-                @if($errors->has('firstName'))
-                <div class="text-danger"><b>{{ $errors->first('firstName') }}</b></div>
-                @endif
+                
                 <!-- end card-box -->
                 <!-- edite profile Modal -->      
                 <div id="custom-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
@@ -91,7 +91,7 @@
 
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 class="modal-title mt-0">Modal Content is Responsive</h4>
+                                    <h4 class="modal-title mt-0">Mediator Profile</h4>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -102,12 +102,18 @@
                                             <div class="form-group">
                                                 <label for="field-1" class="control-label">First Name : </label>
                                                 <input type="text" name="firstName"  value="{{ $profileData->first_name }}"  class="form-control" id="field-1" >
+                                                @if($errors->has('firstName'))
+                                                <div class="text-danger"><b>{{ $errors->first('firstName') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="field-2" class="control-label">Last name : </label>
                                                 <input type="text" name="lastName"  value="{{ $profileData->last_name }}"  class="form-control" id="field-2" >
+                                                @if($errors->has('lastName'))
+                                                <div class="text-danger"><b>{{ $errors->first('lastName') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -116,6 +122,9 @@
                                             <div class="form-group">
                                                 <label for="field-3" class="control-label">Email : </label>
                                                 <input type="email" name="email"  value="{{ $profileData->email }}"  class="form-control" id="field-3" >
+                                                @if($errors->has('email'))
+                                                <div class="text-danger"><b>{{ $errors->first('email') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -124,6 +133,9 @@
                                             <div class="form-group">
                                                 <label for="field-3" class="control-label">Username : </label>
                                                 <input type="text" name="username"  value="{{ $profileData->username }}"  class="form-control" id="field-3" >
+                                                @if($errors->has('username'))
+                                                <div class="text-danger"><b>{{ $errors->first('username') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -140,6 +152,9 @@
                                             <div class="form-group">
                                                 <label for="field-4" class="control-label">Mobile Number : </label>
                                                 <input type="text" name="mobile"  value="{{ $profileData->mobile_number }}" data-validation="required custom length" data-validation-length="8-15" data-validation-regexp="^([0-9\s+-]+)$"  class="form-control" id="field-4" >
+                                                @if($errors->has('mobile'))
+                                                <div class="text-danger"><b>{{ $errors->first('mobile') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -184,6 +199,19 @@
 @section('footer')
 <script>
     $.validate();
+
+    var errorMobile = "{!! $errors->first('mobile') !!}";
+    var errorEmail = "{!! $errors->first('email') !!}";
+    var errorUsername = "{!! $errors->first('username') !!}";
+    var errorFirstName = "{!! $errors->first('firstName') !!}";
+    var errorLastName = "{!! $errors->first('lastName') !!}";
+
+
+    // console.log(error);
+    if(errorMobile != "" || errorEmail != "" || errorUsername != "" || errorFirstName != "" || errorLastName != "") {
+        // console.log(errorMobile);
+        $("#editModel").click();
+    }
 </script>
 @endsection
 

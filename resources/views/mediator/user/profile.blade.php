@@ -12,6 +12,9 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
+            @if(Session::has('key'))
+                    <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('key') }}</p>
+                @endif
             <div class="card-header">
                 <h3>Profile Update</h3>
             </div>
@@ -70,6 +73,12 @@
                             <input list="countryData" class="form-control" value="{{Auth::user()->country}}" id="country" name="country">
                             
                         </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-3" class="control-label">Change Your Password : </label>
+                                <a href="{{ route('mediator.change.password',['id'=> Auth::user()->id]) }}" class="btn-sm btn-warning px-2" >Change Password </a>
+                            </div>
+                        </div>
                         <div class="form-group col-md-6">
                             <label for="area_of_specialization">@lang('user.area_of_specialization')</label>
                             <select  class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="" id="area_of_specialization" name="area_of_specialization[]" data-validation="required">
@@ -98,9 +107,19 @@
                             <label for="experience">@lang('user.experience')</label>
                             <textarea class="form-control" id="experience" name="experience" required>{{ isset($medi->experience)?$medi->experience:"" }}</textarea>
                         </div>
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-md-6">
                             <label for="signature">Upload Signature</label>
+                            @if(Auth::user()->signature_photo != null) 
+                                <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{Auth::user()->id}}/signature/{{Auth::user()->signature_photo}}" /> 
+                            @endif
                             <input type="file" class="form-control" id="signature"  name="signature">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="signature">Upload Profile Pic</label>
+                            @if(Auth::user()->profile_pic != null) 
+                                <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{Auth::user()->id}}/profile/{{Auth::user()->profile_pic}}" /> 
+                            @endif
+                            <input type="file" class="form-control" id="profilePic"  name="profilePic">
                         </div>
                         <div class="form-group col-md-4  d-none">
                             <label for="field1">@lang('user.field_1')</label>
