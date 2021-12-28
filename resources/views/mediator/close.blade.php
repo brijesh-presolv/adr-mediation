@@ -427,21 +427,21 @@ $(function () {
                     //console.log(data[0]);
                     if (data[i].username == '{{Auth::user()->username}}') {
                         var msg = `<div class="col-md-12 text-right border-top">
-                            <div class="row">
-                                            <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
-                                            <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                </div>           
-                                 <p>` + data[i].comment + `</p>
-                        </div>`;
+                                <div class="row">
+                                                <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
+                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                    </div>           
+                                    <p>` + data[i].comment + `</p>
+                            </div>`;
                         $("#commentView").append(msg);
                     } else {
                         var msg = `<div class="col-md-12 border-top">
-                            <div class="row">
-                                            <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                            <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
-                                </div>           
-                                 <p>` + data[i].comment + `</p>
-                        </div>`;
+                                <div class="row">
+                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                                <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
+                                    </div>           
+                                    <p>` + data[i].comment + `</p>
+                            </div>`;
                         $("#commentView").append(msg);
                     }
                 }

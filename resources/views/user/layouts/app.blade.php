@@ -86,7 +86,7 @@
         <!-- Start Page Content here -->
         <!-- ============================================================== -->
 
-        <div class="content-page" style="background-color: #e1e1e1;">
+        <div class="content-page">
             <div class="content">
 
                 <!-- Start Content-->
@@ -124,7 +124,7 @@
             
 
             <!-- Footer Start -->
-            <footer class="footer">
+            {{-- <footer class="footer">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
@@ -132,7 +132,7 @@
                         </div>
                     </div>
                 </div>
-            </footer>
+            </footer> --}}
             <!-- end Footer -->
 
         </div>

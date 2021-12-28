@@ -47,6 +47,7 @@
                                 <th>email</th>
                                 <th>mobile number</th>
                                 <th>User Type</th>
+                                <th>Created At</th>
                                 <th>Active/Inactive</th>
                                 <th>Approve/Unapprove</th>
                                 <th></th>
@@ -72,6 +73,7 @@
                                 <th>email</th>
                                 <th>mobile number</th>
                                 <th>User Type</th>
+                                <th>Created At</th>
                                 <th>Active/Inactive</th>
                                 <th>Approve/Unapprove</th>
                                 <th></th>
@@ -144,6 +146,7 @@ function DataTables(tableID, url) {
                         return role;
                     }
                 },
+                {"data": "created_at"},
                 {"data": "isActive",
                     render: function (data, type, row) {
                         var button = `<div class="form-group">

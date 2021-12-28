@@ -50,7 +50,8 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\User\MediationController::class, 'getConsentAndDisclosures'])->name('user.disclosures');
 
 
-
+    Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('user.case.comment_view');
+    Route::post('case/comment-action', [App\Http\Controllers\Admin\CaseController::class, 'commentAction'])->name('user.case.comment');
 
 
     Route::get('casedetails/{id}', [App\Http\Controllers\User\MediationController::class, 'casedetails'])->name('user.casedetails');

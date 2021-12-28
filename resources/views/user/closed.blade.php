@@ -26,7 +26,7 @@ use App\Models\InvoledUser;
                         <th>Case Details</th>
                         <th>Party Details</th>
                         <th>Mediator</th>
-
+                        <th>Comment</th>
                         <th>Session</th>
                         <th>Settelment Agreement</th>
 
@@ -89,6 +89,7 @@ use App\Models\InvoledUser;
                             <a href="{{route('user.disclosures',$value->caseid)}}" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a>
                         <?php } ?>
                         </td>
+                        <td><button type="button" data-type="0", data-typename="Share" data-id="{{$value->caseid}}" data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Share</button></td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
                         <td>
 
@@ -162,6 +163,36 @@ use App\Models\InvoledUser;
     <!-- /.modal-dialog -->
 </div>
 
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Share</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="commentForm" method="post">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="case_id" class="form-control" >
+                    <input type="hidden" name="type" class="form-control" >
+
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Comment:</label>
+                        <textarea class="form-control" name="comment"  required></textarea>
+                    </div>
+                    <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">save comment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -312,6 +343,79 @@ use App\Models\InvoledUser;
 
 
         });
+
+    
+        $('#commentModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var typename = button.data('typename');
+        var type = button.data('type');
+        var modal = $(this);
+        var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        $("#commentView").html("");
+        $.ajax({
+            type: 'post',
+            url: '{{ route("user.case.comment_view") }}',
+            data: {type: type, case_id: id, _token: csrf},
+            success: function (data) {
+                for (i in data) {
+                    //console.log(data[0]);
+                    if (data[i].username == '{{Auth::user()->username}}') {
+                        var msg = `<div class="col-md-12 text-right border-top">
+                                <div class="row">
+                                                <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
+                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                    </div>           
+                                    <p>` + data[i].comment + `</p>
+                            </div>`;
+                        $("#commentView").append(msg);
+                    } else {
+                        var msg = `<div class="col-md-12 border-top">
+                                <div class="row">
+                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                                <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
+                                    </div>           
+                                    <p>` + data[i].comment + `</p>
+                            </div>`;
+                        $("#commentView").append(msg);
+                    }
+                }
+            }
+        });
+
+        modal.find('#commentModalLabel').text(typename);
+        modal.find('.modal-body input[name="type"]').val(type);
+        modal.find('.modal-body input[name="case_id"]').val(id);
+    });
+
+    $('#commentForm').on('submit', function (e) {
+        e.preventDefault();
+        swal({
+            title: "Are you sure?",
+            text: "add this comment!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route("user.case.comment") }}',
+                    data: $('#commentForm').serialize(),
+                    success: function () {
+                        swal("comment save successfully!", {
+                            icon: "success",
+                        });
+                        $('#commentForm')[0].reset();
+                        $('#commentModal').modal("hide");
+                    }
+                });
+            } else {
+                swal("comment not added!");
+            }
+        });
+        return false;
+    });
         
     </script>
 

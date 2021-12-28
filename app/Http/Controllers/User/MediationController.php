@@ -28,6 +28,16 @@ use PDF;
 class MediationController extends Controller
 {
 
+    public function commentView(Request $request)
+    {
+        if ($request->type == 1) {
+            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment", DB::raw("DATE_FORMAT(mediation_case_comment.created_at,'%d-%c-%y %h:%i %p') as created"))->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("mediation_case_id", $request->case_id)->get();
+        } else {
+            $mediation_case_comment = Mediation_case_comment::select("users.username", "mediation_case_comment.comment", DB::raw("DATE_FORMAT(mediation_case_comment.created_at,'%d-%c-%y %h:%i %p') as created"))->join("users", "mediation_case_comment.user_id", "=", "users.id")->where("type", $request->type)->where("mediation_case_id", $request->case_id)->get();
+        }
+        return response()->json($mediation_case_comment);
+    }
+
     public function requestLetter($id)
     {
         // $data["mediator"] = User::find($medid);
