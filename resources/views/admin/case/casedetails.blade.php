@@ -198,11 +198,25 @@
                                 <th colspan="2">@lang('case.supporting_documents')</th>
                             </tr>
 
-                            <tr>
                                 <?php foreach ($case->supporting_document as $k => $v) { ?>
+                                    <tr>
 
                                     <td><?= basename($v->file_name) ?></td>
-
+                                    <?php $userAccess = App\Models\InvoledUser::where('userPlanId', $case->id)->get();?>
+                                        
+                                    <td>
+                                        <?php $accessParty = explode(',', $v->access); ?>
+                                        @foreach ($userAccess as $key => $item)
+                                        @if ($item->name != null)
+                                        @foreach ($accessParty as $accessId)
+                                        <input type="checkbox" data-manageid={{$v->id}} name="party[]" {{$accessId == $item->id ? "checked" : ""}}  class="partyShare" id="party{{$v->id}}" value="{{$item->id}}">
+                                        <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
+                                        @endforeach
+                                        
+                                        @endif
+                                        
+                                        @endforeach
+                                    </td>
                                     <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>
                                 </tr>
                             <?php } ?>
@@ -217,4 +231,42 @@
 
     </div>
 </div>
+@endsection
+
+@section('footer')
+<script>
+    // let party = [];
+    // $("input:checkbox[name=party]:checked").each(function(){
+    //         party.push($(this).val());
+    // });
+    // console.log(party);
+    $(document).ready(function () {
+        $(document).on('change', ".partyShare", function () {
+        // var id = $(this).val();
+        var manageid = $(this).data('manageid');
+        var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        var checkedId = "";
+        var uncheckedId = "";
+        if ($(this).is(':checked')) {
+            // var status = 1;
+            checkedId = $(this).val();
+        } else {
+            uncheckedId = $(this).val();
+        }
+        console.log(manageid);
+        console.log("checkedId : ", checkedId);
+        console.log("uncheckedId : ", uncheckedId);
+
+        $.ajax({
+            url: '{{ route("admin.users.docs_access_change") }}',
+            method: "post",
+            data: {manageid: manageid, checkedId: checkedId, uncheckedId: uncheckedId, '_token': csrf},
+        }).done(function (data) {
+            // .reload()
+            // console.log(data);
+            location.reload();
+        });
+        });
+    });
+</script>
 @endsection

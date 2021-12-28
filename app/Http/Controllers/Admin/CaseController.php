@@ -409,7 +409,7 @@ class CaseController extends Controller
                 "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('id','name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }
@@ -1141,10 +1141,11 @@ class CaseController extends Controller
     public function storeMultiFile(Request $request)
     {
 
-
+        // dd($request->docs_party_ids);
         $validatedData = $request->validate([
             'files' => 'required',
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf',
+            // 'docs_party_ids' => 'required',
         ]);
 
         if ($request->TotalFiles > 0) {
@@ -1156,6 +1157,8 @@ class CaseController extends Controller
 
                     $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                     $insert[$x]['file_name'] = $path;
+                    $insert[$x]['access'] = $request->docs_party_ids;
+                    $insert[$x]['mediator_access'] = $request->shareMediator;
                     $insert[$x]['uploaded_by'] = Auth::user()->id;
                     $insert[$x]['case_id'] = $request->caseId;
                     // $insert[$x]['path'] = $path;
@@ -1616,5 +1619,40 @@ class CaseController extends Controller
 
         // dd($whatsapp);
         return view('admin.case.track', compact("whatsapp", "id", "mediator", "email"));
+    }
+
+    public function docsAccessChange(Request $request) 
+    {
+        // dd($request->all());
+        $manage_file = SupportingDocument::find($request->manageid);
+        // dd($manage_file);
+        if($request->checkedId != null) {
+            // dd($manage_file->access);
+            if($manage_file->access == null) {
+                $manage_file->access = $request->checkedId;
+            } else {
+                $manage_file->access = $manage_file->access . ',' . $request->checkedId;
+            }
+            // dd($x);
+        } 
+        if($request->uncheckedId != null) {
+            $manageAccess = explode(',', $manage_file->access);
+            if (($key = array_search($request->uncheckedId, $manageAccess)) !== false) {
+                unset($manageAccess[$key]);
+                // dd($key);
+            }
+            if(empty($manageAccess)) {
+                $manage_file->access = null;
+            } else {
+                $manage_file->access = implode(',', $manageAccess);
+            }
+            // dd($manageAccess);
+        }
+        if($manage_file->save()) {
+            return response()->json(["code" => 200, "message"=>"success"]);
+        } else {
+            return response()->json(["code" => 200, "message"=>"error"]);
+        }
+        
     }
 }

@@ -57,7 +57,7 @@
             <div class="modal-body">
                 <form id="uploadFormModalForBulk" method="POST"  action="javascript:void(0)" accept-charset="utf-8" enctype="multipart/form-data" >
                     @csrf
-                    <input type="hidden" name="caseId" id="caseIdF1" value="">
+                    <input type="hidden" name="caseId" value="">
                     <input type="file" name="files[]" id="filesForBulk" class="dropify" data-height="150" multiple  />
                     <br>
                     <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
@@ -120,8 +120,11 @@
                 <form id="multi-file-upload-ajax" method="POST"  action="javascript:void(0)" accept-charset="utf-8" enctype="multipart/form-data" >
                     @csrf
                     <input type="hidden" name="caseId" id="caseIdF1" value="">
-                    <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple  />
-                    <br>
+                    <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />
+                    <br><br>
+                    <span>Share With @lang('case.session_party'):</span>
+                    <div class="form-group" id="PartyDocs">
+                    </div>
                     <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
                     <br>
                     <br>
@@ -410,7 +413,11 @@ $(function () {
                     for (i in data) {
                         if (data[i].userId != 0) {
                             if(data[i].name != null) {
-                            d = d + `<span class="text-success party_name" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
+                            d = d + `<span class="text-success party_name" data-inid="`+data[i].id+`" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
+                            }
+                        } else {
+                            if(data[i].name != null) {
+                            d = d + `<span class="text-danger party_name" data-inid="`+data[i].id+`" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
                             }
                         }
                     }
@@ -556,10 +563,16 @@ $(function () {
         var formData = new FormData(this);
         let TotalFiles = $('#files')[0].files.length;
         let files = $('#files')[0];
+        let party = [];
+        $("input:checkbox[name=docs_party_ids]:checked").each(function(){
+            party.push($(this).val());
+        });
         for (let i = 0; i < TotalFiles; i++) {
             formData.append('files' + i, files.files[i]);
         }
         formData.append('TotalFiles', TotalFiles);
+        formData.append('docs_party_ids', party);
+
         $.ajax({
             type: 'POST',
             url: '{{ route("mediator.storeMultiFile") }}',
@@ -785,6 +798,18 @@ $(function () {
     $('#uploadSupportingDocsModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var recipient = button.data('id');
+        // console.log(recipient);
+        var data = button.parent().parent().find(".party_name");
+        $("#PartyDocs").html("");
+        data.each(function () {
+            var party_id = $(this).data("inid")
+            var party_name = $(this).text()
+            var text = `<div class="form-check">
+                <input type="checkbox" value="` + party_id + `" class="form-check-input" name="docs_party_ids" id="party" >
+                <label class="form-check-label" for="party">` + party_name + `</label>
+              </div>`;
+            $("#PartyDocs").append(text);
+        });
         $.ajax({
             type: 'post',
             url: '{{ route("mediator.viewSupporting") }}',

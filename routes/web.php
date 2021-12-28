@@ -137,6 +137,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('change-password/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'changePassword'])->name('admin.change.password');
     Route::post('edit-profile/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'updateProfile'])->name('admin.profile.update');
 
+    Route::post('users/docsAccessChange', [App\Http\Controllers\Admin\CaseController::class, 'docsAccessChange'])->name('admin.users.docs_access_change');
+
+
     //case
     Route::get('casedetails/{id}', [App\Http\Controllers\Admin\CaseController::class, 'casedetails'])->name('admin.case.casedetails');
     Route::get('case/new-request', [App\Http\Controllers\Admin\CaseController::class, 'index'])->name('admin.case.newrequest');

@@ -426,7 +426,7 @@ class DashboardController extends Controller
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded', 'userId')->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('id','name', 'isOnboarded', 'userId')->where(['userPlanid' => $d->id])->get(),
             ];
         }
         return response()->json(["data" => $arraydata]);
@@ -443,6 +443,7 @@ class DashboardController extends Controller
         $validatedData = $request->validate([
             'files' => 'required',
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf',
+            // 'docs_party_ids' => 'required',
         ]);
 
         if ($request->TotalFiles > 0) {
@@ -454,6 +455,7 @@ class DashboardController extends Controller
 
                     $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                     $insert[$x]['file_name'] = $path;
+                    $insert[$x]['access'] = $request->docs_party_ids;
                     $insert[$x]['uploaded_by'] = Auth::user()->id;
                     $insert[$x]['case_id'] = $request->caseId;
                     // $insert[$x]['path'] = $path;

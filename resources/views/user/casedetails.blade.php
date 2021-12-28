@@ -169,20 +169,35 @@
                         </tr>
                         </table>
                     <?php } ?>
-                    <?php if (count($case->supporting_document) > 0) { ?>
+                    <?php if (count($case->supporting_document) > 0) {                             
+                        ?>
                         <table class="table table-bordered">
                             <tr >
                                 <th colspan="2">@lang('case.supporting_documents')</th>
                             </tr>
 
+                                <?php foreach ($case->supporting_document as $k => $v) { 
+                                    // dd($v);
+                                    ?>
                             <tr>
-                                <?php foreach ($case->supporting_document as $k => $v) { ?>
 
-                                    <td><?= basename($v->file_name) ?></td>
-
-                                    <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>
-                                </tr>
+                                    @if($v->access != null) 
+                                    <?php $accessId = explode(',', $v->access);  ?>
+                                    @foreach ($accessId as $item) 
+                                        <?php $userAccess = App\Models\InvoledUser::find($item);?>
+                                        @if(isset($userAccess))
+                                        @if($userAccess->userId == Auth::user()->id)
+                                        <td><?= basename($v->file_name) ?></td>
+                                        <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>
+                                        @endif
+                                        @endif
+                                    @endforeach
+                                    
+                                    @endif
+                        </tr>
+                                    
                             <?php } ?>
+
 
 
                         </table>
