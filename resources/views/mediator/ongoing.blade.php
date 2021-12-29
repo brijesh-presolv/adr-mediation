@@ -122,7 +122,7 @@
                     <input type="hidden" name="caseId" id="caseIdF1" value="">
                     <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />
                     <br><br>
-                    <span>Share With @lang('case.session_party'):</span>
+                    <span>Share With :</span>
                     <div class="form-group" id="PartyDocs">
                     </div>
                     <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">

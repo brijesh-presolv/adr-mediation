@@ -179,6 +179,7 @@
 
                             <tr>
                                 <?php foreach ($case->supporting_document as $k => $v) { ?>
+                                    {{-- @if($v->) --}}
 
                                     <td><?= basename($v->file_name) ?></td>
 

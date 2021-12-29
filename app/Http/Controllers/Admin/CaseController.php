@@ -36,6 +36,29 @@ class CaseController extends Controller
     {
     }
 
+    public function viewSupporting(Request $request)
+    {
+
+        $sessionData = DB::table('manage_files')
+            ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
+            ->where('manage_files.case_id', $request->id)
+            ->get();
+        $sn = 1;
+        foreach ($sessionData as $value) {
+            // if($value->mediator_access == 1) {
+
+            echo "<tr>";
+            echo "<td>" . $sn . "</td>";
+            echo "<td><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+            echo "<td>" . $value->username . "</td>";
+            echo "</tr>";
+
+            $sn++;
+            // }
+        }
+        return;
+    }
+
     /**
      * Show the application users.
      *
@@ -1158,7 +1181,7 @@ class CaseController extends Controller
                     $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                     $insert[$x]['file_name'] = $path;
                     $insert[$x]['access'] = $request->docs_party_ids;
-                    $insert[$x]['mediator_access'] = $request->shareMediator;
+                    $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 0;
                     $insert[$x]['uploaded_by'] = Auth::user()->id;
                     $insert[$x]['case_id'] = $request->caseId;
                     // $insert[$x]['path'] = $path;
@@ -1654,5 +1677,16 @@ class CaseController extends Controller
             return response()->json(["code" => 200, "message"=>"error"]);
         }
         
+    }
+
+    public function mediatorAccessChange(Request $request)
+    {
+        $manage_file = SupportingDocument::find($request->manageid);
+        $manage_file->mediator_access = $request->mediatorAccess;
+        if($manage_file->save()) {
+            return response()->json(["code" => 200, "message"=>"success"]);
+        } else {
+            return response()->json(["code" => 200, "message"=>"error"]);
+        }
     }
 }

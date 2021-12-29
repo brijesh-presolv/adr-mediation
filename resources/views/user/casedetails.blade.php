@@ -175,13 +175,13 @@
                             <tr >
                                 <th colspan="2">@lang('case.supporting_documents')</th>
                             </tr>
-
+                            {{-- {{dd($case->supporting_document)}} --}}
                                 <?php foreach ($case->supporting_document as $k => $v) { 
                                     // dd($v);
                                     ?>
                             <tr>
 
-                                    @if($v->access != null) 
+                                    {{-- @if($v->access != null)  --}}
                                     <?php $accessId = explode(',', $v->access);  ?>
                                     @foreach ($accessId as $item) 
                                         <?php $userAccess = App\Models\InvoledUser::find($item);?>
@@ -193,7 +193,7 @@
                                         @endif
                                     @endforeach
                                     
-                                    @endif
+                                    {{-- @endif --}}
                         </tr>
                                     
                             <?php } ?>

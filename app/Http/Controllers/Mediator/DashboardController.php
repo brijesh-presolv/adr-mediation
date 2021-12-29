@@ -306,9 +306,11 @@ class DashboardController extends Controller
         $sessionData = DB::table('manage_files')
             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
             ->where('manage_files.case_id', $request->id)
+            ->where('mediator_access', 1)
             ->get();
         $sn = 1;
         foreach ($sessionData as $value) {
+            // if($value->mediator_access == 1) {
 
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
@@ -317,6 +319,7 @@ class DashboardController extends Controller
             echo "</tr>";
 
             $sn++;
+            // }
         }
         return;
     }
@@ -407,7 +410,7 @@ class DashboardController extends Controller
         $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
 
 
-        $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->get();
+        $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->where('mediator_access', 1)->get();
 
 
         return view('mediator.casedetails', compact("case"));
@@ -456,6 +459,7 @@ class DashboardController extends Controller
                     $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                     $insert[$x]['file_name'] = $path;
                     $insert[$x]['access'] = $request->docs_party_ids;
+                    $insert[$x]['mediator_access'] = 1;
                     $insert[$x]['uploaded_by'] = Auth::user()->id;
                     $insert[$x]['case_id'] = $request->caseId;
                     // $insert[$x]['path'] = $path;

@@ -138,6 +138,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('edit-profile/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'updateProfile'])->name('admin.profile.update');
 
     Route::post('users/docsAccessChange', [App\Http\Controllers\Admin\CaseController::class, 'docsAccessChange'])->name('admin.users.docs_access_change');
+    Route::post('users/mediatorAccessChange', [App\Http\Controllers\Admin\CaseController::class, 'mediatorAccessChange'])->name('admin.users.mediator_access_change');
 
 
     //case
@@ -157,7 +158,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('admin.case.comment_view');
     Route::post('case/settelmen-upload', [App\Http\Controllers\Admin\CaseController::class, 'settelmenUpload'])->name('admin.case.settelmen_upload');
     Route::post('view-settelment', [App\Http\Controllers\Admin\CaseController::class, 'viewSettelment'])->name('admin.case.viewSettelment');
-    Route::post('view-supporting', [App\Http\Controllers\Mediator\DashboardController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
+    Route::post('view-supporting', [App\Http\Controllers\Admin\CaseController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
 
     Route::get('view-session/{id}', [App\Http\Controllers\Admin\CaseController::class, 'sessionPdf'])->name('admin.case.sessionPdf');

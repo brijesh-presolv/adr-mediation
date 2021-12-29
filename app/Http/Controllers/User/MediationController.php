@@ -520,7 +520,7 @@ class MediationController extends Controller
         $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
 
 
-        $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->get();
+        $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->where('access', "!=", null)->get();
 
         return view('user.casedetails', compact("case"));
     }

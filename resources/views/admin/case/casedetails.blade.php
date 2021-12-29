@@ -195,7 +195,10 @@
                     <?php if (count($case->supporting_document) > 0) { ?>
                         <table class="table table-bordered">
                             <tr >
-                                <th colspan="2">@lang('case.supporting_documents')</th>
+                                <th>@lang('case.supporting_documents')</th>
+                                <th>Share With</th>
+                                <th>Share With Mediator?</th>
+                                <th></th>
                             </tr>
 
                                 <?php foreach ($case->supporting_document as $k => $v) { ?>
@@ -208,15 +211,24 @@
                                         <?php $accessParty = explode(',', $v->access); ?>
                                         @foreach ($userAccess as $key => $item)
                                         @if ($item->name != null)
-                                        @foreach ($accessParty as $accessId)
-                                        <input type="checkbox" data-manageid={{$v->id}} name="party[]" {{$accessId == $item->id ? "checked" : ""}}  class="partyShare" id="party{{$v->id}}" value="{{$item->id}}">
-                                        <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
-                                        @endforeach
-                                        
+                                        @if(in_array($item->id, $accessParty))
+                                            <input type="checkbox" data-manageid={{$v->id}} name="party[]"  checked class="partyShare" id="party{{$v->id}}" value="{{$item->id}}">
+                                            <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
+                                        @else
+                                        <input type="checkbox" data-manageid={{$v->id}} name="party[]"   class="partyShare" id="party{{$v->id}}" value="{{$item->id}}">
+                                            <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
+                                        @endif
                                         @endif
                                         
                                         @endforeach
                                     </td>
+                                    <td><div class="form-group">
+                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                        <input type="checkbox" id="status_change_approvel{{$v->id}}" name=="user_status" value="{{$v->id}}" class="custom-control-input status_change_approvel" {{$v->mediator_access == 1 ? "checked" : ""}}>
+                                        <label class="custom-control-label" for="status_change_approvel{{$v->id}}"> </label>
+                                    </div></div>
+                                    </td>
+                                    
                                     <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>
                                 </tr>
                             <?php } ?>
@@ -235,11 +247,7 @@
 
 @section('footer')
 <script>
-    // let party = [];
-    // $("input:checkbox[name=party]:checked").each(function(){
-    //         party.push($(this).val());
-    // });
-    // console.log(party);
+    
     $(document).ready(function () {
         $(document).on('change', ".partyShare", function () {
         // var id = $(this).val();
@@ -266,6 +274,29 @@
             // console.log(data);
             location.reload();
         });
+        });
+
+        $(document).on('change', ".status_change_approvel", function () {
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            var manageid = $(this).val();
+            var mediatorAccess;
+            if ($(this).is(':checked')) {
+                mediatorAccess = 1;
+            } else {
+                mediatorAccess = 0;
+            }
+            $.ajax({
+                url: '{{ route("admin.users.mediator_access_change") }}',
+                method: "post",
+                data: {'manageid': manageid, 'mediatorAccess': mediatorAccess, '_token': csrf},
+            }).done(function (data) {
+                // .reload()
+                // console.log(data);
+                location.reload();
+            });
+
+            // console.log(mediatorAccess);
+
         });
     });
 </script>
