@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mediator;
 
 use Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\Common_function;
 use App\Models\User;
 use App\Models\MedCase;
 use App\Models\Mediation_Details;
@@ -169,9 +170,11 @@ class DashboardController extends Controller
                 $consentDisclosures->particulars4 = $request->particulars4;
             }
             $consentDisclosures->save();
+            Common_function::MedNotification($caseid, "SEND_APPO_MED", Auth::user()->id);
             $this->send_attechment_party($caseid);
         } else {
             $caseid = $request->caseid;
+            Common_function::MedNotification($caseid, "REJECTED_MED", Auth::user()->id);
         }
 
 
@@ -228,6 +231,7 @@ class DashboardController extends Controller
             ];
             DB::table('manage_session')->insert($dataToInsert);
         }
+        Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id);
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -469,6 +473,7 @@ class DashboardController extends Controller
             // die();
             // File::insert($insert);
             DB::table('manage_files')->insert($insert, $insert);
+            Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_MED", Auth::user()->id);
             $this->send_upload_file_party($request->caseId, $insert);
             return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
         } else {
@@ -517,6 +522,7 @@ class DashboardController extends Controller
                 }
             }
             DB::table('document_settlements')->insert($insert);
+            Common_function::MedNotification($request->caseId, "SEND_SETT_AGRE_MED", Auth::user()->id);
             $this->send_settlement_agreement_party($request->caseId, $insert);
             return response()->json(["message" => 'Ajax Multiple fIle has been uploaded']);
         } else {

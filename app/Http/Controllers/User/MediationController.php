@@ -210,6 +210,7 @@ class MediationController extends Controller
 
             $cid = "M" . sprintf("%06d", $med->id);
 
+            Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id);
 
             $e = Email::send($d, $usr->email, env('EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
 
@@ -314,6 +315,7 @@ class MediationController extends Controller
             ];
             if ($InvoledUser->save()) {
 
+                Common_function::MedNotification($InvoledUser->userPlanId, "ONBOAR_USER", Auth::user()->id);
 
                 //fetch init parry
                 $mid = "M" . sprintf("%06d", $InvoledUser->userPlanId);
@@ -877,6 +879,9 @@ class MediationController extends Controller
             $letter = $this->requestLetter($med->id);
             $med->request_letter = $letter;
             $med->save();
+
+            Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id);
+
             // foreach($otherDetails as $values) {
             //     foreach($values)
             // }

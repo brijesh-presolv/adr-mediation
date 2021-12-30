@@ -122,6 +122,8 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('notification', [App\Http\Controllers\Admin\DashboardController::class, 'Notification'])->name('admin.notification');
+    
     //users
     Route::get('users/list/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'index'])->defaults('role', "user")->name('admin.users.list');
     Route::get('users/jsonApprove/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'jsonApprove'])->defaults('role', 0)->name('admin.users.jsonApprove');

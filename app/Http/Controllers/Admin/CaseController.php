@@ -104,7 +104,6 @@ class CaseController extends Controller
         }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
         return $pdf->stream('document.pdf');
-
     }
 
     public function casedetails($id)
@@ -154,6 +153,7 @@ class CaseController extends Controller
         $invmodel->case_id = $request->id;
         $invmodel->file_name = $invitation;
         $invmodel->save();
+        Common_function::MedNotification($request->id, "ACPTARB_ADM", Auth::user()->id);
         //send invitation 
         $this->sned_invitation($request->id, $invitation);
 
@@ -162,6 +162,7 @@ class CaseController extends Controller
 
     public function withdrawStatus(Request $request)
     {
+        // dd(Auth::user()->role);
         $user = MedCase::find($request->case_id);
         $user->confirm_status = 2;
         $user->withdraw = $request->withdraw_comment;
@@ -173,12 +174,27 @@ class CaseController extends Controller
         $mediation_status_log->status = $request->status;
         if (Mediation_status_log::STATUS_WITHDRAWN == $request->status) {
             $mediation_status_log->description = "Request Withdrawn";
+            if (Auth::user()->role == 1) {
+                Common_function::MedNotification($request->case_id, "WDRN_BY_MED", Auth::user()->id);
+            } else {
+                Common_function::MedNotification($request->case_id, "WDRN_BY_ADMIN", Auth::user()->id);
+            }
             $this->sned_withdrawal($request->case_id);
         } else if (Mediation_status_log::STATUS_RESOLVED == $request->status) {
             $mediation_status_log->description = "Request Resolved";
+            if (Auth::user()->role == 1) {
+                Common_function::MedNotification($request->case_id, "RES_BY_MED", Auth::user()->id);
+            } else {
+                Common_function::MedNotification($request->case_id, "RES_BY_ADMIN", Auth::user()->id);
+            }
             $this->sned_resolved($request->case_id);
         } else if (Mediation_status_log::STATUS_UNRESOLVED == $request->status) {
             $mediation_status_log->description = "Request Unresolved";
+            if (Auth::user()->role == 1) {
+                Common_function::MedNotification($request->case_id, "UNRES_BY_MED", Auth::user()->id);
+            } else {
+                Common_function::MedNotification($request->case_id, "UNRES_BY_ADMIN", Auth::user()->id);
+            }
             $this->sned_unresolved($request->case_id);
         }
         $mediation_status_log->save();
@@ -209,6 +225,26 @@ class CaseController extends Controller
         $mediation_case_comment->type = $request->type;
         $mediation_case_comment->comment = $request->comment;
         $mediation_case_comment->save();
+        $event = "";
+        if (Auth::user()->role == 0) {
+            if($request->type == 0) {
+                $event = "COMM_USER_SHARE";
+            }
+        } else if (Auth::user()->role == 1) {
+            if($request->type == 0) {
+                $event = "COMM_MED_SHARE";
+            } else {
+                $event = "COMM_MED_PRIVATE";
+            }
+        } else {
+            if($request->type == 0) {
+                $event = "COMM_ADM_SHARE";
+            } else {
+                $event = "COMM_ADM_PRIVATE";
+            }
+        }
+        // dd($event);
+        Common_function::MedNotification($request->case_id, $event, Auth::user()->id);
         return response()->json(["msg" => "Closed Case"]);
     }
 
@@ -234,6 +270,7 @@ class CaseController extends Controller
         $mediation_status_log->status = 3;
         $mediation_status_log->description = "Request Reject";
         $mediation_status_log->save();
+        Common_function::MedNotification($request->id, "REJECTED_ADM", Auth::user()->id);
         $this->sned_reject($request->id);
         return response()->json(["msg" => "Rejected Case"]);
     }
@@ -277,6 +314,7 @@ class CaseController extends Controller
         $invmodel->case_id = $request->id;
         $invmodel->file_name_mediator_appointment = $invitation;
         $invmodel->save();
+        Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
 
         $this->send_mediatorAdd($request->id, $request->midater);
         return response()->json(["msg" => "midater Added"]);
@@ -296,7 +334,7 @@ class CaseController extends Controller
     public function addSession(Request $request)
     {
         // echo $request->zoomId;
-        $time = date( "g:i A", strtotime($request->sessionTime));
+        $time = date("g:i A", strtotime($request->sessionTime));
         $d = [
             'event' => 'SESS_SCHE',
             'case_id' => $request->caseId,
@@ -345,6 +383,7 @@ class CaseController extends Controller
             ];
             DB::table('manage_session')->insert($dataToInsert);
         }
+        Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id);
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -372,12 +411,13 @@ class CaseController extends Controller
         return true;
     }
 
-    public function sessionPdf($id) {
+    public function sessionPdf($id)
+    {
         // dd($id);
         $data['caseId'] = $id;
         $data["sessionData"] = DB::table('manage_session')->where('case_id', $id)->get();
         $pdf = PDF::loadView('pdf.view_session', $data);
-        return $pdf->download('session_M'.sprintf('%06d', $id).'.pdf');
+        return $pdf->download('session_M' . sprintf('%06d', $id) . '.pdf');
         // dd($sessionData);
     }
 
@@ -432,7 +472,7 @@ class CaseController extends Controller
                 "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('id','name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('id', 'name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }
@@ -738,6 +778,7 @@ class CaseController extends Controller
                 }
             }
             DB::table('document_settlements')->insert($insert);
+            Common_function::MedNotification($request->caseId, "SEND_SETT_AGRE_ADMIN", Auth::user()->id);
             $this->send_settlement_agreement_party($request->caseId, $insert);
             return response()->json(["message" => 'Ajax Multiple fIle has been uploaded']);
         } else {
@@ -1191,6 +1232,7 @@ class CaseController extends Controller
             // die();
             // File::insert($insert);
             DB::table('manage_files')->insert($insert, $insert);
+            Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id);
             $this->send_upload_file_party($request->caseId, $insert);
             return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
         } else {
@@ -1644,49 +1686,48 @@ class CaseController extends Controller
         return view('admin.case.track', compact("whatsapp", "id", "mediator", "email"));
     }
 
-    public function docsAccessChange(Request $request) 
+    public function docsAccessChange(Request $request)
     {
         // dd($request->all());
         $manage_file = SupportingDocument::find($request->manageid);
         // dd($manage_file);
-        if($request->checkedId != null) {
+        if ($request->checkedId != null) {
             // dd($manage_file->access);
-            if($manage_file->access == null) {
+            if ($manage_file->access == null) {
                 $manage_file->access = $request->checkedId;
             } else {
                 $manage_file->access = $manage_file->access . ',' . $request->checkedId;
             }
             // dd($x);
-        } 
-        if($request->uncheckedId != null) {
+        }
+        if ($request->uncheckedId != null) {
             $manageAccess = explode(',', $manage_file->access);
             if (($key = array_search($request->uncheckedId, $manageAccess)) !== false) {
                 unset($manageAccess[$key]);
                 // dd($key);
             }
-            if(empty($manageAccess)) {
+            if (empty($manageAccess)) {
                 $manage_file->access = null;
             } else {
                 $manage_file->access = implode(',', $manageAccess);
             }
             // dd($manageAccess);
         }
-        if($manage_file->save()) {
-            return response()->json(["code" => 200, "message"=>"success"]);
+        if ($manage_file->save()) {
+            return response()->json(["code" => 200, "message" => "success"]);
         } else {
-            return response()->json(["code" => 200, "message"=>"error"]);
+            return response()->json(["code" => 200, "message" => "error"]);
         }
-        
     }
 
     public function mediatorAccessChange(Request $request)
     {
         $manage_file = SupportingDocument::find($request->manageid);
         $manage_file->mediator_access = $request->mediatorAccess;
-        if($manage_file->save()) {
-            return response()->json(["code" => 200, "message"=>"success"]);
+        if ($manage_file->save()) {
+            return response()->json(["code" => 200, "message" => "success"]);
         } else {
-            return response()->json(["code" => 200, "message"=>"error"]);
+            return response()->json(["code" => 200, "message" => "error"]);
         }
     }
 }

@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
+class Notification extends Model {
+
+    use HasFactory;
+
+    protected $table = 'mednotification';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'case_id',
+        'event',
+        'userid',
+        'userip'
+    ];
+
+    public static function notificationData()
+    {
+
+         $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
+                    ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->orderBy('mednotification.id', 'DESC')->get();
+
+        return $result;
+    }
+
+}

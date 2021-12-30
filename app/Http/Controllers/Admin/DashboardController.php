@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\MedCase;
 use App\Models\InvoledUser;
+use App\Models\Notification;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -117,5 +118,18 @@ class DashboardController extends Controller {
         return redirect('admin/profile')->with('key', "Profile Updated Succesfully");
 
 
+    }
+
+    public function Notification()
+    {
+        $view = Notification::where('view', 0)->get();
+        foreach($view as $item) {
+            $item->view = 1;
+            $item->save();
+        }
+        $data = Notification::notificationData();
+        // dd($data);
+        return view('admin.case.notification', compact('data'));
+        
     }
 }

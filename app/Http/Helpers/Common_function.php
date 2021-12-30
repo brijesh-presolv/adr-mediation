@@ -8,7 +8,7 @@ use App\Http\Helpers\Curl;
 use App\Models\Arbcase;
 use PDF;
 use App\Models\Arb_notification;
-
+use App\Models\Notification;
 
 class Common_function
 {
@@ -162,6 +162,20 @@ class Common_function
     //         $ipaddress = 'UNKNOWN';
     //     return $ipaddress;
     // }
+
+    public static function MedNotification($caseid, $event, $userId)
+    {
+        $data = [
+            'userid' => $userId,
+            'case_id' => $caseid,
+            'event' => $event,
+            // 'userip' => self::get_client_ip(),
+        ];
+
+        Notification::create($data);
+
+        return true;
+    }
 
        public static function getsixdigitid($type, $id)
     {
