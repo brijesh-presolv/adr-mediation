@@ -67,21 +67,23 @@ use App\Models\InvoledUser;
 
 
                         ?></td>
-                        <td>
+                         <td>
 
                             <button class="btn btn-info btn-sm"><?=  $value->mediator  ?></button>
                             
                              <?php if($value->mstatus==0){ ?>
                                 <br>
                                 <span class="badge badge-warning">@lang('case.status_pending')</span>
-                            <?php } else if($value->mstatus==1){ ?>
+                            <?php } else if($value->mstatus==1){ $date = date('d-m-Y', strtotime($value->update));?>
                                 <br>
                                 <span class="badge badge-success">@lang('case.status_accepted')</span>
-
-                            <?php } else { ?>
+                                <br>
+                                <span class="badge badge-success">Date of Consent: {{$date}}</span>
+                            <?php } else { $date = date('d-m-Y', strtotime($value->update));?>
 
                                  <br>
-                                <span class="badge badge-success">@lang('case.status_rejected')</span>
+                                <span class="badge badge-danger">@lang('case.status_rejected')</span>
+                                <br><span class="badge badge-danger">Date of Rejection: {{$date}}</span>
 
                             <?php } if($value->consent>0){?>
 

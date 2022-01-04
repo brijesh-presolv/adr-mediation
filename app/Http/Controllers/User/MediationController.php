@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid as Email;
+use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
 use App\Models\ConsentDisclosures;
 use App\Models\WaTemplate;
@@ -27,6 +28,154 @@ use PDF;
 
 class MediationController extends Controller
 {
+
+    public function storeMultiFile(Request $request)
+    {
+        // dd($request->all());
+        $validatedData = $request->validate([
+            'files' => 'required',
+            'files.*' => 'mimes:csv,txt,xlx,xls,pdf',
+            // 'docs_party_ids' => 'required',
+        ]);
+        $inuser = InvoledUser::where('userId', Auth::user()->id)->where('userPlanId', $request->caseId)->first();
+        if($request->docs_party_ids == null) {
+            $totalAccess = $inuser->id;
+        } else {
+            $totalAccess = $inuser->id . "," . $request->docs_party_ids;
+        }
+        // dd($totalAccess);
+        if ($request->TotalFiles > 0) {
+
+            for ($x = 0; $x < $request->TotalFiles; $x++) {
+
+                if ($request->hasFile('files' . $x)) {
+                    $file = $request->file('files' . $x);
+
+                    $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                    $insert[$x]['file_name'] = $path;
+                    $insert[$x]['access'] = $totalAccess ;
+                    $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 0;
+                    $insert[$x]['uploaded_by'] = Auth::user()->id;
+                    $insert[$x]['case_id'] = $request->caseId;
+                    // $insert[$x]['path'] = $path;
+                }
+            }
+            // dd($insert);
+            // die();
+            // File::insert($insert);
+            DB::table('manage_files')->insert($insert);
+            Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_USER", Auth::user()->id);
+            $this->send_upload_file_party($request->caseId, $insert);
+            return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
+        }
+    }
+
+    public function send_upload_file_party($id, $files)
+    {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            // ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "M" . sprintf("%06d", $id);
+        $sendEamils = array();
+        $filesE = array();
+        $d = [
+            'event' => 'SEND_ADDI_DOC',
+            'case_id' => $id,
+        ];
+        foreach ($files as $f) {
+            $filesE[] = url("storage/app/" . $f["file_name"]);
+        }
+        foreach ($involedUser as $inv) {
+
+            if ($inv->userEmail != "") {
+                $sendEamils[] = $inv->userEmail;
+            }
+            // additional_doc
+
+            if ($inv->userPhone != "") {
+                $var = ['-cid-'];
+                $var1 = [$mid];
+                $content1 = WaTemplate::getcontent('additional_doc');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $id,
+                    'contact' => "+91" .  $inv->userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'SEND_ADDI_DOC'
+                ];
+                $access = Whatsapp::sendWamessage($dwa1);
+            }
+            // $dwa2 = [
+            //     'caseid' => $id,
+            //     'contact' => "+91" .  $inv->userPhone,
+            //     'content' => ['media' => ['url' => $filesE, 'caption' => 'Additional Document ' . $mid]],
+            //     'event' => 'SEND_ADDI_DOC_ADM'
+            // ];
+            // $access = Whatsapp::sendWamessage($dwa2);
+
+        }
+        if ($mediator) {
+            // $sendEamils[] = $mediator->email;
+            $d2 = [
+                'event' => 'SEND_ADDI_DOC_MED',
+                'case_id' => $id,
+            ];
+            SendGrid::send($d2, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+
+            $var = ['-cid-'];
+            $var1 = [$mid];
+            $content1 = WaTemplate::getcontent('additional_doc_med');
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $id,
+                'contact' => "+91" . $mediator->mobile_number,
+                'content' => ['text' => $content],
+                'event' => 'SEND_ADDI_DOC_MED'
+            ];
+
+
+            $access = Whatsapp::sendWamessage($dwa1);
+        }
+
+        foreach ($sendEamils as $email) {
+            SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        }
+
+        return true;
+    }
+
+    public function viewSupporting(Request $request)
+    {
+        $sessionData = DB::table('manage_files')
+            ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
+            ->where('manage_files.case_id', $request->id)
+            // ->where('mediator_access', 1)
+            ->where('access', "!=", null)
+            ->get();
+        $sn = 1;
+        foreach ($sessionData as $value) {
+            // if($value->mediator_access == 1) {
+            $accessId = explode(',', $value->access);
+            foreach ($accessId as $item) {
+                $userAccess = InvoledUser::find($item);
+                if (isset($userAccess)) {
+                    if ($userAccess->userId == Auth::user()->id) {
+                        echo "<tr>";
+                        echo "<td>" . $sn . "</td>";
+                        echo "<td><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+                        echo "<td>" . $value->username . "</td>";
+                        echo "</tr>";
+
+                        $sn++;
+                    }
+                }
+            }
+            // }
+        }
+        return;
+    }
 
     public function commentView(Request $request)
     {
@@ -71,16 +220,16 @@ class MediationController extends Controller
             }
         }
 
-        
+
         //fetch all involved users
 
         $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
 
         if ($request->method() == 'POST' && $InvoledUser == null) {
 
-            
 
-            
+
+
 
             // //upload file
             // $filename = '';
@@ -285,7 +434,7 @@ class MediationController extends Controller
             $phone = Auth::user()->mobile_number;
 
 
-            $InvoledUser = InvoledUser::where(['joincode' => $code])->where(function($q) use($email, $phone) {
+            $InvoledUser = InvoledUser::where(['joincode' => $code])->where(function ($q) use ($email, $phone) {
                 $q->orWhere('userEmail', $email)->orWhere('userPhone', $phone);
             })->first();
 
@@ -305,8 +454,14 @@ class MediationController extends Controller
             $InvoledUser->joincode = null;
             $InvoledUser->isOnboarded = '1';
             $InvoledUser->userid = Auth::user()->id;
-            if($InvoledUser->name == null) {
+            if ($InvoledUser->name == null) {
                 $InvoledUser->name = Auth::user()->first_name . ' ' . Auth::user()->last_name;
+            }
+            if($InvoledUser->userEmail == null) {
+                $InvoledUser->userEmail = Auth::user()->email;
+            }
+            if($InvoledUser->userPhone == null) {
+                $InvoledUser->userPhone = Auth::user()->mobile_number;
             }
 
             $d = [
@@ -384,7 +539,7 @@ class MediationController extends Controller
         // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus')
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update')
             ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 1])
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
@@ -396,7 +551,7 @@ class MediationController extends Controller
         $ongoing = [];
 
         foreach ($new as $key => $value) {
-            $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+            $in = InvoledUser::select('id', 'userId', 'name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
             $value->party = $in;
 
             $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
@@ -410,7 +565,7 @@ class MediationController extends Controller
     public function closed()
     {
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'mediation_case.withdraw', 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus')
+        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'mediation_case.withdraw', 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update')
             ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
@@ -536,7 +691,7 @@ class MediationController extends Controller
         $user->confirm_status = 2;
         $user->withdraw = $request->withdraw_comment;
         $user->save();
-        
+
         //p1
 
         $cid = "M" . sprintf("%06d", $request->case_id);
@@ -735,7 +890,7 @@ class MediationController extends Controller
                     if ($v[$n] == '') {
                         if ($n != 10 and $n != 11 and $n != 12) {
 
-                        $errormsg .= "Please fill all the required details to proceed at line no $i ";
+                            $errormsg .= "Please fill all the required details to proceed at line no $i ";
                         }
                     }
                 }

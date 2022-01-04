@@ -146,7 +146,12 @@ function DataTables(tableID, url) {
                         return role;
                     }
                 },
-                {"data": "created_at"},
+                {"data": "id", 
+                    render:function(data, type, row) {
+                        var date = new Date(row.created_at);
+                        return  date.toLocaleDateString('en-GB');
+                    }
+                },
                 {"data": "isActive",
                     render: function (data, type, row) {
                         var button = `<div class="form-group">

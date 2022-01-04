@@ -49,7 +49,7 @@ use App\Models\InvoledUser;
                         <th>@lang('case.mediator')</th>
                         <th>Comment</th>
                         <th>@lang('case.session')</th>
-                        {{-- <th>@lang('case.action')</th> --}}
+                        <th>@lang('case.action')</th>
                         <th>@lang('case.status_logs')</th>
                     </tr>
                 </thead>
@@ -89,7 +89,14 @@ use App\Models\InvoledUser;
                         if(isset($value->party)){
 
                         foreach ($value->party as $key => $v) {
+                            // dd($v);
 
+                            if($v->userId != Auth::user()->id) {
+                                if($v->name != "") {
+                                    echo '<span class="text-success party_name d-none" data-inid="'.$v->id.'">'.$v->name.'</span>';
+                                } 
+                            }
+                           
                             if($v->isOnboarded==1){
                                 if($v->name != "") {
                                 echo '<span class="text-success">'.$v->name.'</span></br>';
@@ -111,14 +118,17 @@ use App\Models\InvoledUser;
                             <?php if($value->mstatus==0){ ?>
                                 <br>
                                 <span class="badge badge-warning">@lang('case.status_pending')</span>
-                            <?php } else if($value->mstatus==1){ ?>
+                            <?php } else if($value->mstatus==1){ $date = date('d-m-Y', strtotime($value->update)); ?>
                                 <br>
                                 <span class="badge badge-success">@lang('case.status_accepted')</span>
+                                <br>
+                                <span class="badge badge-success">Date of Consent: {{$date}}</span>
 
-                            <?php } else { ?>
+                            <?php } else { $date = date('d-m-Y', strtotime($value->update)); ?>
 
                                  <br>
                                 <span class="badge badge-success">@lang('case.status_rejected')</span>
+                                <span class="badge badge-danger">Date of Rejection: {{$date}}</span>
 
                             <?php } if($value->consent>0){?>
                             <br>
@@ -129,7 +139,7 @@ use App\Models\InvoledUser;
 
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
 
-
+                        <td><button value="{{$value->caseid}}"  data-id="{{$value->caseid}}" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">Upload Supporting</button></td>
                         {{-- <td>
                              <?php if($value->userid==Auth::user()->id){ ?>
                         <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->caseid?>">@lang('case.btn_withdraw')</button>
@@ -161,6 +171,54 @@ use App\Models\InvoledUser;
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="uploadSupportingDocsModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-white">Upload Supporting Documents</h4>
+                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="multi-file-upload-ajax" method="POST"  action="javascript:void(0)" accept-charset="utf-8" enctype="multipart/form-data" >
+                    @csrf
+                    <input type="hidden" name="caseId" id="caseIdF1" value="">
+                    <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />
+                    <br><br>
+                    <label>Share With Mediator?</label><input class="ml-2" type="radio" name="shareMediator" id="shareYes" checked value="1">Yes<input class="ml-2" type="radio" name="shareMediator" id="shareNo" value="0">No
+                    <br>
+                    <span>Share With :</span>
+                    <div class="form-group" id="PartyDocs">
+                    </div>
+                    <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
+                    <br>
+                    <br>
+                </form>
+                <table class="table table-bordered" id="supportingDocumnet"> 
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>file</th>
+                            <th>Upload By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                    <span>Close</span>
+                </button> 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div>
 
 <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
@@ -475,6 +533,83 @@ use App\Models\InvoledUser;
         });
 
 
+        $('#uploadSupportingDocsModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var recipient = button.data('id');
+        var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        // console.log(recipient);
+        var data = button.parent().parent().find(".party_name");
+        console.log(data);
+        $("#PartyDocs").html("");
+        data.each(function () {
+            var party_id = $(this).data("inid")
+            var party_name = $(this).text()
+            var text = `<div class="form-check">
+                <input type="checkbox" value="` + party_id + `" class="form-check-input" name="docs_party_ids" id="party" >
+                <label class="form-check-label" for="party">` + party_name + `</label>
+              </div>`;
+            $("#PartyDocs").append(text);
+        });
+        $.ajax({
+            type: 'post',
+            url: '{{ route("user.viewSupporting") }}',
+            data: {id: recipient, _token: csrf},
+            success: function (data) {
+                $("#supportingDocumnet tbody").html('');
+                $("#supportingDocumnet tbody").append(data);
+                //$("#supportingDocumnet").datatable();
+            }
+        });
+        $('#caseIdF1').val(recipient);
+    });
+
+    $('#multi-file-upload-ajax').submit(function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        let TotalFiles = $('#files')[0].files.length;
+        let files = $('#files')[0];
+        let party = [];
+        let shareMediator;
+        $("input:checkbox[name=docs_party_ids]:checked").each(function(){
+            party.push($(this).val());
+        });
+        $("input:radio[name=shareMediator]:checked").each(function(){
+            shareMediator = $(this).val();
+        });
+        // if(party == "") {
+        //     party = $('#party').val();
+        // } else {
+        //     party = party + $('#party').val();
+        // }
+        for (let i = 0; i < TotalFiles; i++) {
+            formData.append('files' + i, files.files[i]);
+        }
+        formData.append('TotalFiles', TotalFiles);
+        formData.append('docs_party_ids', party);
+        formData.append('shareMediator', shareMediator);
+        // console.log(party);
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("user.storeMultiFile") }}',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: (data) => {
+                //this.reset();
+                swal("Files has been uploaded!", {
+                    icon: "success",
+                });
+                $("#uploadSupportingDocsModal").modal("hide");
+            },
+            error: function (data) {
+                //alert(data.responseJSON.errors.files[0]);
+                console.log(data);
+            }
+        });
+    });
+    
     $("#selectalldir").change(function () {
       if (this.checked) {
         $("#bulkWithdrawBtn").show();

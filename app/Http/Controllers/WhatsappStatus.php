@@ -2,10 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helpers\Common_function;
+use App\Models\MedCase;
+use App\Models\Testing;
 use App\Models\WhatsappLog;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Helpers\SendGrid;
+use App\Http\Helpers\Whatsapp;
+use App\Models\InvoledUser;
+use App\Models\WaTemplate;
 
 class WhatsappStatus extends Controller
 {
@@ -18,17 +26,16 @@ class WhatsappStatus extends Controller
         // $s = storage_path();
         // print_r($s);
         // exit;
-        $myFile = storage_path()."/whatsapp_status/testFile" . date('Y-m-d_H:i:s') . ".txt";
+        $myFile = storage_path() . "/whatsapp_status/testFile" . date('Y-m-d_H:i:s') . ".txt";
         try {
             file_put_contents($myFile, $json);
-            
         } catch (Exception $e) {
 
             echo $e->getMessage();
         }
-        
+
         $data = json_decode($json, true);
-        
+
         if ($data) {
 
 
@@ -59,5 +66,59 @@ class WhatsappStatus extends Controller
             }
         }
         exit;
+    }
+
+    public function SendInvitation()
+    {
+       
+        $date = \Carbon\Carbon::today()->subDays(2);
+        $date = $date->format('Y-m-d');
+        $cases = MedCase::select('mediation_case.*', 'iu.*', 'if.file_name')
+            ->rightJoin('user_involved_in_agreement as iu', DB::raw('iu.userPlanId'), '=', DB::raw('mediation_case.id'))
+            ->leftJoin('invitation_files as if', DB::raw('if.case_id'), '=', DB::raw('mediation_case.id'))
+            ->where('iu.isOnboarded', 0)
+            ->where('if.file_name', '!=', null)
+            ->whereDate('mediation_case.created_at', $date)->get();
+
+        foreach ($cases as $value) {
+           $initiating_party = InvoledUser::where('userPlanId', $value->userPlanId)->where('isClaimant', 0)->first();
+            // dd($initiating_party);
+            $d = [
+                'event' => 'ACPTARB_ADM_RES',
+                'case_id' => $value->userPlanId,
+            ];
+            if ($value->userEmail != null) {
+                $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
+            }
+            if($value->userPhone != null) {
+                $var = ['-cid-', '-ip-'];
+                $var1 = ["M" . sprintf("%06d", $value->userPlanId), $initiating_party];
+                $content1 = WaTemplate::getcontent('l4_mediation_party2');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $value->userPlanId,
+                    'contact' => "+91" . $value->userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'ACPTARB_ADM_RES'
+                ];
+
+                $access = Whatsapp::sendWamessage($dwa1);
+
+                $var_file = ['-caseid-'];
+                $var1_file = ["M" . sprintf("%06d", $value->userPlanId)];
+                $content1_file = WaTemplate::getcontent('mediation_invitation_letter_file');
+                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                $dwa2 = [
+                    'caseid' =>  $value->userPlanId,
+                    'contact' => "+91" . $value->userPhone,
+                    'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name), 'caption' => $content_file]],
+                    'event' => 'ACPTARB_ADM_RES'
+                ];
+                $access = Whatsapp::sendWamessage($dwa2);
+            }
+        }
+
+        return true;
+
     }
 }

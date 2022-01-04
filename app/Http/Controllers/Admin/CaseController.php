@@ -76,6 +76,7 @@ class CaseController extends Controller
     {
         $users = User::where("role", "=", 1)->get();
         $confirm_status = 1;
+        // dd($users);
         return view('admin.case.ongoing', compact("confirm_status", "users"));
     }
 
@@ -458,24 +459,31 @@ class CaseController extends Controller
 
     public function json($role = 0)
     {
-        $cases = MedCase::select("mediation_case.*", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+        $cases = MedCase::select("mediation_case.*",  DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", "mediators_mediation_cases_status.updated_at as update")
             ->leftJoin("mediators_mediation_cases_status", function ($join) {
                 $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
                 $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
             })
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            // ->leftJoin("mediation_status_logs", "mediation_status_logs.mediation_case_id", "=", "mediation_case.id")
+            // ->where("mediation_status_logs.status", "=", $role)
             ->where("mediation_case.confirm_status", "=", $role)->orderBy('mediation_case.id', 'DESC')
             ->get();
         $arraydata = array();
+        // dd($cases);
+        // exit;
         foreach ($cases as $key => $d) {
+            $actionDate = date('d-m-Y', strtotime($d->update));
             $arraydata[] = [
                 "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
+                "mediator_action_date" => $actionDate,
                 "case" => $d,
                 "party" => InvoledUser::select('id', 'name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }
+        // dd($arraydata);
         return response()->json(["data" => $arraydata]);
     }
 

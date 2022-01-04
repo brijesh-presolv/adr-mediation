@@ -468,15 +468,19 @@ $(function () {
             {"data": "case.mediator_username",
                 render: function (data, type, row) {
                     var button = "";
+                        // return  date.toLocaleDateString('en-GB');
                     button = button + `<button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-mediator="` + row.case.mediator_id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info btn-sm">` + data + ` </button>`;
                     if (row.case.mediator_status == 0) {
-                        button = button + `<br><span class="badge badge-warning">@lang('case.status_pending')</span><br> `;
+                        button = button + `<br><span class="badge badge-warning">@lang('case.status_pending')</span>`;
                     } else if (row.case.mediator_status == 1) {
-                        button = button + `<br><span class="badge badge-success">@lang('case.status_accepted')</span><br> `;
-                        button = button + ` <a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
+                        button = button + `<br><span class="badge badge-success">@lang('case.status_accepted')</span>`;
+                        button = button + `<br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
+                        button = button + `<br><span class="badge badge-success">Date of Consent: `+row.mediator_action_date+`</span>`;
                     } else {
                         button = button + `<br><span class="badge badge-danger">@lang('case.status_rejected')</span>`;
+                        button = button + `<br><span class="badge badge-danger">Date of Rejection: `+row.mediator_action_date+`</span>`;
                     }
+                    
                     return button;
                 }
             },
@@ -508,6 +512,7 @@ $(function () {
                 render: function (data, type, row) {
                     var button = "";
                     for (i in data) {
+                        // return data;
                         if (data[i].status == '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_ADMIN }}' || data[i].status == '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}') {
                             button = button + `<span class="badge badge-success">` + data[i].description + ` | At : ` + data[i].created + `</span><br>`;
                         }

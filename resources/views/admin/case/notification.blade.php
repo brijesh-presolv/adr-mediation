@@ -27,6 +27,7 @@ $alertarr=[
     'SEND_SETT_AGRE_MED'=>'secondary',
     'SEND_ADDI_DOC_ADMIN'=>'secondary',
     'SEND_ADDI_DOC_MED'=>'secondary',
+    'SEND_ADDI_DOC_USER' => 'secondary',
     'WDRN_BY_ADMIN'=>'danger',
     'ONBOAR_USER'=>'info',
     'SUBMIT_FORM'=>'info',

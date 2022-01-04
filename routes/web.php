@@ -32,7 +32,7 @@ Route::match(['GET', 'POST'], '/verify', [App\Http\Controllers\HomeController::c
 Route::match(['GET', 'POST'], '/whatsapp_status', [App\Http\Controllers\WhatsappStatus::class, 'status'])->name('whatsapp_status');
 
 //Route::get('/login', [App\Http\Controllers\HomeController::class, 'login'])->name('login');
-
+Route::get('/sendInvitation', [App\Http\Controllers\WhatsappStatus::class, 'SendInvitation'])->name('sendInvitation');
 
 
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
@@ -60,6 +60,9 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
 
     Route::post('view-settelment', [App\Http\Controllers\User\MediationController::class, 'viewSettelment'])->name('user.viewSettelment');
 
+
+    Route::post('view-supporting', [App\Http\Controllers\User\MediationController::class, 'viewSupporting'])->name('user.viewSupporting');
+    Route::post('upload-files', [App\Http\Controllers\User\MediationController::class, 'storeMultiFile'])->name('user.storeMultiFile');
 
 
     //profile
