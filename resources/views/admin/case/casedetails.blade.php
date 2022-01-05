@@ -198,13 +198,16 @@
                                 <th>@lang('case.supporting_documents')</th>
                                 <th>Share With</th>
                                 <th>Share With Mediator?</th>
+                                <th>Uploaded By</th>
                                 <th></th>
                             </tr>
 
                                 <?php foreach ($case->supporting_document as $k => $v) { ?>
+                                    {{-- {{dd($v->username)}} --}}
                                     <tr>
 
-                                    <td><?= basename($v->file_name) ?></td>
+                                    <td><?= basename($v->file_name) ?>
+                                    </td>
                                     <?php $userAccess = App\Models\InvoledUser::where('userPlanId', $case->id)->get();?>
                                         
                                     <td>
@@ -212,10 +215,10 @@
                                         @foreach ($userAccess as $key => $item)
                                         @if ($item->name != null)
                                         @if(in_array($item->id, $accessParty))
-                                            <input type="checkbox" data-manageid={{$v->id}} name="party[]"  checked class="partyShare" id="party{{$v->id}}" value="{{$item->id}}">
+                                            <input type="checkbox" data-manageid={{$v->id}} name="party[]"  checked class="partyShare" id="party{{$v->id}}" value="{{$item->id}}" data-filepath="{{$v->file_name}}">
                                             <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
                                         @else
-                                        <input type="checkbox" data-manageid={{$v->id}} name="party[]"   class="partyShare" id="party{{$v->id}}" value="{{$item->id}}">
+                                            <input type="checkbox" data-manageid={{$v->id}} name="party[]"   class="partyShare" id="party{{$v->id}}" value="{{$item->id}}" data-filepath="{{$v->file_name}}">
                                             <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
                                         @endif
                                         @endif
@@ -224,11 +227,12 @@
                                     </td>
                                     <td><div class="form-group">
                                     <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                        <input type="checkbox" id="status_change_approvel{{$v->id}}" name=="user_status" value="{{$v->id}}" class="custom-control-input status_change_approvel" {{$v->mediator_access == 1 ? "checked" : ""}}>
+                                        <input type="checkbox" id="status_change_approvel{{$v->id}}" name=="user_status" value="{{$v->id}}" class="custom-control-input status_change_approvel" {{$v->mediator_access == 1 ? "checked" : ""}} data-filepath="{{$v->file_name}}" data-caseid="{{$case->id}}">
                                         <label class="custom-control-label" for="status_change_approvel{{$v->id}}"> </label>
                                     </div></div>
                                     </td>
-                                    
+                                    <td>{{$v->username}}</td>
+                                    {{-- <td>{{$v}}</td> --}}
                                     <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>
                                 </tr>
                             <?php } ?>
@@ -252,6 +256,7 @@
         $(document).on('change', ".partyShare", function () {
         // var id = $(this).val();
         var manageid = $(this).data('manageid');
+        var filename_path = $(this).data('filepath');
         var csrf = document.querySelector('meta[name="csrf-token"]').content;
         var checkedId = "";
         var uncheckedId = "";
@@ -261,14 +266,14 @@
         } else {
             uncheckedId = $(this).val();
         }
-        console.log(manageid);
+        console.log(filename_path);
         console.log("checkedId : ", checkedId);
         console.log("uncheckedId : ", uncheckedId);
 
         $.ajax({
             url: '{{ route("admin.users.docs_access_change") }}',
             method: "post",
-            data: {manageid: manageid, checkedId: checkedId, uncheckedId: uncheckedId, '_token': csrf},
+            data: {manageid: manageid, checkedId: checkedId, uncheckedId: uncheckedId, filename_path: filename_path, '_token': csrf},
         }).done(function (data) {
             // .reload()
             // console.log(data);
@@ -279,6 +284,8 @@
         $(document).on('change', ".status_change_approvel", function () {
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
             var manageid = $(this).val();
+            var filename_path = $(this).data('filepath');
+            var caseid = $(this).data('caseid');
             var mediatorAccess;
             if ($(this).is(':checked')) {
                 mediatorAccess = 1;
@@ -288,7 +295,7 @@
             $.ajax({
                 url: '{{ route("admin.users.mediator_access_change") }}',
                 method: "post",
-                data: {'manageid': manageid, 'mediatorAccess': mediatorAccess, '_token': csrf},
+                data: {'manageid': manageid, 'mediatorAccess': mediatorAccess, 'filename_path': filename_path, 'caseid': caseid, '_token': csrf},
             }).done(function (data) {
                 // .reload()
                 // console.log(data);

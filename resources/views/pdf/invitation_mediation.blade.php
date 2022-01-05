@@ -85,7 +85,9 @@ $ldate = $lastdate->format('d-m-Y');
     </table>
     <br>
 
-
+    <?php 
+    use App\Models\User;
+     $inparty = User::find($party[0]->userId); ?>
     <table class="table_" cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <th width="50%" >
@@ -97,7 +99,7 @@ $ldate = $lastdate->format('d-m-Y');
         </tr>
         <tr>
             <td >
-                <p>{{$party[0]->name}}</p>
+                <p>{{isset($inparty->organization) ? $inparty->organization : $party[0]->name}}</p>
                 <p>{{$party[0]->address1}} {{$party[0]->address2}}, {{$party[0]->city}}, {{$party[0]->pincode}}</p>
                 <p>{{$party[0]->state}} {{$party[0]->country}}</p>
                 <p>{{$party[0]->userEmail}}</p>

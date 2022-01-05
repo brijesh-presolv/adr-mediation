@@ -68,10 +68,12 @@ $meddate = $meddate->format('d-m-Y');
     <p class="text-center">Case ID: M{{sprintf('%06d', $case->id)}}  |  Date: {{$meddate}}</p> <br>
     <h2 class="text-center">Appointment Letter</h2>
 
-    <p class="text-center">(See Rule 6of Section 3of Presolv360’s Dispute Resolution Rules)</p><br>
+    <p class="text-center">(See Rule 6of Section 3 of Presolv360’s Dispute Resolution Rules)</p><br>
     <p>Dear {{$mediator->first_name}} {{$mediator->last_name}},</p>
     <h4>Sub: Appointment to act as Mediator </h4>
-
+    <?php 
+    use App\Models\User;
+     $inparty = User::find($party[0]->userId); ?>
     <table class="table_" cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <th width="50%" >
@@ -83,7 +85,7 @@ $meddate = $meddate->format('d-m-Y');
         </tr>
         <tr>
             <td >
-                <p>{{$party[0]->name}}</p>
+                <p>{{isset($inparty->organization) ? $inparty->organization : $party[0]->name}}</p>
                 <p>{{$party[0]->address1}} {{$party[0]->address2}}, {{$party[0]->city}}, {{$party[0]->pincode}}</p>
                 <p>{{$party[0]->state}} {{$party[0]->country}}</p>
                 <p>{{$party[0]->userEmail}}</p>
@@ -136,10 +138,10 @@ $meddate = $meddate->format('d-m-Y');
 
     </table><br>
 
-    <p style="text-indent: 4em;">Desirous of arriving at an amicable resolution, the <b>{{$party[0]->name}}</b> has approached Presolv360 to facilitate a mutually acceptable resolution via electronic mediation.</p>
+    <p style="text-indent: 4em;">Desirous of arriving at an amicable resolution, the <b>{{isset($inparty->organization) ? $inparty->organization : $party[0]->name}}</b> has approached Presolv360 to facilitate a mutually acceptable resolution via electronic mediation.</p>
     <p style="text-indent: 4em;">Presolv360, an independent Online Dispute Resolution (“ODR”) platform enlisted by the Department of Justice, Government of India and recognized as a Mediation Institution, has been requested to do the needful and administer electronic mediation on the platform available at <a href="https://www.presolv360.com/">https://www.presolv360.com/</a> in accordance with its Dispute Resolution Rules ("Rules"). Presolv360 is a neutral institution that provides complete administrative and technical support to the parties to conduct the proceedings online, has no interest in the outcome of the dispute and has no conflict of interest.</p>
-    <p style="text-indent: 4em;">We have been requested to appoint an independent, qualified and competent Mediator from the Panel of Mediators on behalf of all the parties and administer the proceedings in accordance with the Rules.Further, as per Rule 6 of Section 3 of the Rules, the mediation proceedings shall be carried out by a sole mediator and Presolv360 shall be empowered to appoint the Mediator from the Panel of Mediators.</p>
-    <p style="text-indent: 4em;">Accordingly, you have been appointed to act as the Mediator and we request you to shall intimate your acceptance and consent, alongwith the necessary disclosures, or refusal, to act as a mediator, as per the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”) within the prescribed time limit.</p>
+    <p style="text-indent: 4em;">We have been requested to appoint an independent, qualified and competent Mediator from the Panel of Mediators on behalf of all the parties and administer the proceedings in accordance with the Rules. Further, as per Rule 6 of Section 3 of the Rules, the mediation proceedings shall be carried out by a sole mediator and Presolv360 shall be empowered to appoint the Mediator from the Panel of Mediators.</p>
+    <p style="text-indent: 4em;">Accordingly, you have been appointed to act as the Mediator and we request you to intimate your acceptance and consent, alongwith the necessary disclosures, or refusal, to act as a mediator, as per the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”) within the prescribed time limit.</p>
     <p style="text-indent: 4em;">Kindly note that your appointment shall be governed by the Code and the proceedings shall be carried out in accordance with the Rules. </p>
     <br><br>
     <table cellspacing="0" cellpadding="10" width="100%">

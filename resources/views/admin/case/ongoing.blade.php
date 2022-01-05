@@ -475,10 +475,10 @@ $(function () {
                     } else if (row.case.mediator_status == 1) {
                         button = button + `<br><span class="badge badge-success">@lang('case.status_accepted')</span>`;
                         button = button + `<br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
-                        button = button + `<br><span class="badge badge-success">Date of Consent: `+row.mediator_action_date+`</span>`;
+                        button = button + `<br><span class="badge badge-success">Date of Consent: `+row.mediator_create_action_date+`</span>`;
                     } else {
                         button = button + `<br><span class="badge badge-danger">@lang('case.status_rejected')</span>`;
-                        button = button + `<br><span class="badge badge-danger">Date of Rejection: `+row.mediator_action_date+`</span>`;
+                        button = button + `<br><span class="badge badge-danger">Date of Rejection: `+row.mediator_create_action_date+`</span>`;
                     }
                     
                     return button;

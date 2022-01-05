@@ -318,7 +318,7 @@ $(function () {
                         // var date = new Date(row.mediator_status.updated_at);
                         //button = button + `<br><span class="badge badge-success">Accepted</span> <br> `;
                         button = button + ` <br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
-                        button = button + `<br><span class="badge badge-success">Date of Consent: `+row.mediator_action_date+`</span>`;
+                        button = button + `<br><span class="badge badge-success">Date of Consent: `+row.mediator_create_action_date+`</span>`;
 
                     
                     }

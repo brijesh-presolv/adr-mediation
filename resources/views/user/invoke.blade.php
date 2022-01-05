@@ -203,7 +203,7 @@ function isreadonlys($rows) {
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Dispute Amount <span style="color:red; ">*</span></label>
-                            <input class="form-control" name="amount" required="" value="<?= $medcase->amount ?>" />
+                            <input class="form-control" name="amount" required="" />
                         </div>
                     </div>
                 </div>

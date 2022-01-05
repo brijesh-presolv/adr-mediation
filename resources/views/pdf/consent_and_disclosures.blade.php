@@ -1,10 +1,9 @@
+
 <?php
 $meddate = new DateTime($consent_disclosures->created_at);
 
 $meddate = $meddate->format('d-m-Y');
 ?>
-
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -27,7 +26,6 @@ $meddate = $meddate->format('d-m-Y');
                 text-align: right;
             }
         </style>
-        {{-- <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/> --}}
     </head>
     <body>
     {{-- <htmlpageheader name="page-header" > --}}
@@ -36,8 +34,7 @@ $meddate = $meddate->format('d-m-Y');
     <p class="text-center">
         See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)
     </p>
-    {{-- {{$meddate}} --}}
-
+    {{-- {{dd($consent_disclosures)}} --}}
     <u>Details of the Dispute</u>
     <table width="100%" border="1" cellspacing="0" cellpadding="10">
         <thead>
@@ -176,12 +173,10 @@ $meddate = $meddate->format('d-m-Y');
     <br /><br /><br />
     <p>&#10004;  I confirm that the details provided above are true, accurate, current and complete and acknowledge that a copy of the consent and disclosures will be provided to the parties.</p>
     <p>&#10004;  By checking this box, I accept and agree to conduct the mediation in accordance with the Rules and confirm that I shall abide by the <a href="#">Code</a>, <a href="#">Terms</a> & <a href="#">Conditions and Privacy Policy</a>.</p>
-    <br />
-    <p>Date: {{$meddate}}</p>
-    <br /> <br /><br/>
+    <br /><p>Date: {{$meddate}}</p><br /> <br /><br/>
     <h4 class="text-right">
         @if($consent_disclosures->signature_photo != null) 
-            <img width="10%" src="{{Config::get('constants.signature_path')}}/{{$consent_disclosures->id}}/{{$consent_disclosures->signature_photo}}" />
+            <img width="10%" src="{{Config::get('constants.mediator_path')}}/{{$consent_disclosures->medId}}/signature/{{$consent_disclosures->signature_photo}}" />
         @endif
         <br/><small>{{$consent_disclosures->first_name}} {{$consent_disclosures->last_name}}</small><br />Mediator 
     </h4>

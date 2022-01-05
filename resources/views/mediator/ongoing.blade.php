@@ -581,6 +581,16 @@ $(function () {
             contentType: false,
             processData: false,
             dataType: 'json',
+            beforeSend: function() {
+                        // $('#uploadSupportingDocsModal').modal("hide");
+
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                allowOutsideClick: false,
+                            });
+                        },
             success: (data) => {
                 //this.reset();
                 swal("Files has been uploaded!", {
@@ -619,6 +629,16 @@ $(function () {
                     contentType: false,
                     processData: false,
                     dataType: 'json',
+                    beforeSend: function() {
+                        // $('#uploadSupportingDocsModal').modal("hide");
+
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                allowOutsideClick: false,
+                            });
+                        },
                     success: (data) => {
                         //this.reset();
                         swal("Files has been uploaded!", {

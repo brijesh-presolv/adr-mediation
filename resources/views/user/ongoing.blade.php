@@ -596,12 +596,22 @@ use App\Models\InvoledUser;
             contentType: false,
             processData: false,
             dataType: 'json',
+            beforeSend: function() {
+                        // $('#uploadSupportingDocsModal').modal("hide");
+                        $("#uploadSupportingDocsModal").modal("hide");
+
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                allowOutsideClick: false,
+                            });
+                        },
             success: (data) => {
                 //this.reset();
                 swal("Files has been uploaded!", {
                     icon: "success",
                 });
-                $("#uploadSupportingDocsModal").modal("hide");
             },
             error: function (data) {
                 //alert(data.responseJSON.errors.files[0]);

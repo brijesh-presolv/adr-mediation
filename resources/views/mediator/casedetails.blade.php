@@ -174,7 +174,8 @@
                     <?php if (count($case->supporting_document) > 0) { ?>
                         <table class="table table-bordered">
                             <tr >
-                                <th colspan="2">@lang('case.supporting_documents')</th>
+                                <th>@lang('case.supporting_documents')</th>
+                                <th>Uploaded By</th>
                             </tr>
 
                             <tr>
@@ -182,7 +183,7 @@
                                     {{-- @if($v->) --}}
 
                                     <td><?= basename($v->file_name) ?></td>
-
+                                    <td>{{$v->username}}</td>
                                     <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>
                                 </tr>
                             <?php } ?>
