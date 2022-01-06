@@ -124,7 +124,7 @@ class CaseController extends Controller
 
 
         // $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->get();
-        $case->supporting_document = DB::table('manage_files')
+        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', 'users.username')
             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
             ->where('manage_files.case_id', $case->id)
             ->get();
@@ -485,7 +485,7 @@ class CaseController extends Controller
                 "mediator_action_date" => $actionDate,
                 "mediator_create_action_date" => $createDate,
                 "case" => $d,
-                "party" => InvoledUser::select('id', 'name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('id', 'name', 'isOnboarded', "userId", DB::raw("DATE_FORMAT(onboardedDate,'%d-%c-%y') as onboardedDate"))->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
             ];
         }
@@ -1265,25 +1265,26 @@ class CaseController extends Controller
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
-            // ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
         $mid = "M" . sprintf("%06d", $id);
         $sendEamils = array();
         $filesE = array();
-        $access = array();
+        // $access = array();
         $d = [
             'event' => 'SEND_ADDI_DOC',
             'case_id' => $id,
         ];
         foreach ($files as $f) {
             $filesE[] = url("storage/app/" . $f["file_name"]);
-            $access[] = $f["access"];
+            
+            $access = explode(',', $f["access"]);
             $mediatorAccess = $f["mediator_access"];
         }
-        // dd($access);
+        
         foreach ($involedUser as $inv) {
             // dd($inv->id);
-            if (is_array($access) && in_array($inv->id, $access)) {
+            if (in_array($inv->id, $access)) {
                 // dd("if");
 
                 if ($inv->userEmail != "") {

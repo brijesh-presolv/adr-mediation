@@ -59,7 +59,7 @@ $alertarr=[
                 <div class="col-md-12">
                     <div class="alert alert-{{$alertarr[$item->event]}}" role="alert">
                         M{{sprintf('%06d',$item->case_id)}} : {{$item->idescription}}
-                        <span class="float-right">{{date('d-m-Y',strtotime($item->created_at))}}</span>
+                        <span class="float-right">{{date('d-m-Y h:m:s A',strtotime($item->created_at))}}</span>
             
                     </div>
                     

@@ -50,6 +50,9 @@
                                         @elseif($value->fulladdress != "")
                                         @lang('case.address'): <?= $value->fulladdress ?><br>
                                         @endif
+                                        @if($value->onboardedDate != "")
+                                        Date of Onboarded: {{date('d-m-Y', strtotime($value->onboardedDate))}}<br>   
+                                        @endif
                                         <br>
                                         @endif
                                         

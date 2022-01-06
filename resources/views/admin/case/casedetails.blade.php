@@ -54,6 +54,9 @@
                                         @if($value->joinCode != "")
                                         JoinCode:  {{ $value->joinCode}}<br>   
                                         @endif 
+                                        @if($value->onboardedDate != "")
+                                        Date of Onboarded: {{date('d-m-Y', strtotime($value->onboardedDate))}}<br>   
+                                        @endif
                                         <br>
                                         @endif
                                         

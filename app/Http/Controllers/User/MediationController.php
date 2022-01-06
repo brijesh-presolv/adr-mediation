@@ -490,6 +490,7 @@ class MediationController extends Controller
 
             $InvoledUser->joincode = null;
             $InvoledUser->isOnboarded = '1';
+            $InvoledUser->onboardedDate = now();
             $InvoledUser->userid = Auth::user()->id;
             if ($InvoledUser->name == null) {
                 $InvoledUser->name = Auth::user()->first_name . ' ' . Auth::user()->last_name;

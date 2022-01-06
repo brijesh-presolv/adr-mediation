@@ -456,6 +456,7 @@ $(function () {
                             if(data[i].name != null) {
                             d = d + `<span class="text-success party_name" data-inid="`+data[i].id+`" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
                             }
+                            
                         } else {
                             if(data[i].name != null) {
                             d = d + `<span class="text-danger party_name" data-inid="`+data[i].id+`" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;

@@ -10,4 +10,13 @@ class SupportingDocument extends Model
     use HasFactory;
 
     protected $table = 'manage_files';
+
+    protected $fillable = [
+        'case_id',
+        'file_name',
+        'uploaded_by',
+        'access',
+        'mediator_access'
+    ];
+
 }
