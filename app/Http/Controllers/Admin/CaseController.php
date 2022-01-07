@@ -17,6 +17,7 @@ use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
 use App\Models\EmailTrack;
+use App\Models\Reminder;
 use App\Models\WaTemplate;
 use App\Models\WhatsappTrack;
 use DB;
@@ -147,6 +148,9 @@ class CaseController extends Controller
         $mediation_status_log->description = "Request Confirm";
         $mediation_status_log->save();
 
+        $reminder = new Reminder;
+        $reminder->case_Id = $request->id;
+        $reminder->save();
         // generate pdf
         $invitation = $this->invitation_mediate($request->id);
 

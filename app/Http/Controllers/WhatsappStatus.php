@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
 use App\Models\InvoledUser;
+use App\Models\Reminder;
 use App\Models\WaTemplate;
 
 class WhatsappStatus extends Controller
@@ -73,26 +74,33 @@ class WhatsappStatus extends Controller
        
         $date = \Carbon\Carbon::today()->subDays(2);
         $date = $date->format('Y-m-d');
-        $cases = MedCase::select('mediation_case.*', 'iu.*', 'if.file_name')
+        $cases = MedCase::select('mediation_case.*', 'iu.*', 'if.file_name', 'remainder.send_reminder')
+            ->leftJoin('remainder', DB::raw('remainder.case_Id'), '=', DB::raw('mediation_case.id'))
             ->rightJoin('user_involved_in_agreement as iu', DB::raw('iu.userPlanId'), '=', DB::raw('mediation_case.id'))
             ->leftJoin('invitation_files as if', DB::raw('if.case_id'), '=', DB::raw('mediation_case.id'))
             ->where('iu.isOnboarded', 0)
+            ->where('mediation_case.confirm_status', 1)
             ->where('if.file_name', '!=', null)
-            ->whereDate('mediation_case.created_at', $date)->get();
+            ->where('remainder.send_reminder', 0)
+            ->whereDate('remainder.created_at', $date)->get();
+        // dd($cases);
+        // $sussces = array();
+
+        // var_dump($cases);
 
         foreach ($cases as $value) {
            $initiating_party = InvoledUser::where('userPlanId', $value->userPlanId)->where('isClaimant', 0)->first();
-            // dd($initiating_party);
+            // dd($initiating_party->name);
             $d = [
                 'event' => 'ACPTARB_ADM_RES',
                 'case_id' => $value->userPlanId,
             ];
             if ($value->userEmail != null) {
-                $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
+                $sussces[] = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
             }
             if($value->userPhone != null) {
                 $var = ['-cid-', '-ip-'];
-                $var1 = ["M" . sprintf("%06d", $value->userPlanId), $initiating_party];
+                $var1 = ["M" . sprintf("%06d", $value->userPlanId), $initiating_party->name];
                 $content1 = WaTemplate::getcontent('l4_mediation_party2');
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
@@ -102,11 +110,11 @@ class WhatsappStatus extends Controller
                     'event' => 'ACPTARB_ADM_RES'
                 ];
 
-                $access = Whatsapp::sendWamessage($dwa1);
+                $sussces[] = Whatsapp::sendWamessage($dwa1);
 
                 $var_file = ['-caseid-'];
                 $var1_file = ["M" . sprintf("%06d", $value->userPlanId)];
-                $content1_file = WaTemplate::getcontent('mediation_invitation_letter_file');
+                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' =>  $value->userPlanId,
@@ -114,11 +122,15 @@ class WhatsappStatus extends Controller
                     'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name), 'caption' => $content_file]],
                     'event' => 'ACPTARB_ADM_RES'
                 ];
-                $access = Whatsapp::sendWamessage($dwa2);
+                $sussces[] = Whatsapp::sendWamessage($dwa2);
             }
+            $remainder = Reminder::where('case_Id', $value->userPlanId)->first();
+            $remainder->send_reminder = 1;
+            $remainder->save();
         }
-
-        return true;
+        echo "Success";
+        exit;
+        // print_r($sussces);
 
     }
 }

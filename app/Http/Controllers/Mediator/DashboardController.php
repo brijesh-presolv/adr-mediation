@@ -181,7 +181,7 @@ class DashboardController extends Controller
         DB::table('mediators_mediation_cases_status')
             ->where('mediator_id', Auth::user()->id)
             ->where('mediation_case_id', $caseid)
-            ->update(['status' => $request->status, 'created_at' => now(), 'updated_at' => now()]);
+            ->update(['status' => $request->status, 'updated_at' => now()]);
         return response()->json(["msg" => "staus Update"]);
     }
 
