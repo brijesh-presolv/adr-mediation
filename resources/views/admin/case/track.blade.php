@@ -93,7 +93,12 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                               <td></td>
                               <td>{{$value->contact}}</td>
                               <td>{{ucfirst($value->wlstatus)}}</td>
-                              <td>{{$wldate->format('d-m-Y H:i:s')}}</td>
+                              {{-- <td>{{$wldate->format('d-m-Y H:i:s')}}</td> --}}
+                              <td><?php  
+                                // date_default_timezone_set('Asia/Kolkata');
+                                $time = new DateTime($value->sent_time, new DateTimeZone('UTC'));
+                                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                 ?>   {{$time->format('d-m-Y H:i:s')}}</td>
                            </tr>
                               
                           @endforeach

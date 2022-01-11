@@ -484,7 +484,7 @@ media.</div>
  <script>
  var DOMAIN = "{{url('/')}}";
   </script>
-<script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js" async></script>
+{{-- <script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js" async></script> --}}
 
 <script type="text/javascript" src="{{url('/assert/')}}/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.js"></script>

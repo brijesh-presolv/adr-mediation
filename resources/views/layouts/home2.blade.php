@@ -499,7 +499,7 @@ media.</div>
    <script src="https://presolv360.com/public/js/lib/slick-carousel/slick.js"></script> 
 
         <script src="https://presolv360.com/presolv360/js/sweetalert2.js"></script>
-        <script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js"></script>
+        {{-- <script src="//code.tidio.co/us2r7rp6mpmnzat0gxobxzr6ilx4fjqn.js"></script> --}}
         
 
         <script type="text/javascript">

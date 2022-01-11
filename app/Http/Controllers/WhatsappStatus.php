@@ -21,7 +21,7 @@ class WhatsappStatus extends Controller
     public function status()
     {
 
-        date_default_timezone_set('Asia/Kolkata');
+        // date_default_timezone_set('Asia/Kolkata');
 
         $json = file_get_contents('php://input');
         // $s = storage_path();
