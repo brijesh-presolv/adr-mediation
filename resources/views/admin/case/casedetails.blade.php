@@ -202,6 +202,7 @@
                                 <th>Share With</th>
                                 <th>Share With Mediator?</th>
                                 <th>Uploaded By</th>
+                                <th>Date</th>
                                 <th></th>
                             </tr>
 
@@ -235,7 +236,7 @@
                                     </div></div>
                                     </td>
                                     <td>{{$v->username}}</td>
-                                    {{-- <td>{{$v}}</td> --}}
+                                    <td>{{date('d-m-Y', strtotime($v->created_at))}}</td>
                                     <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>
                                 </tr>
                             <?php } ?>

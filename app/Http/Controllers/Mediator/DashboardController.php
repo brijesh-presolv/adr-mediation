@@ -416,7 +416,7 @@ class DashboardController extends Controller
 
         // $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->where('mediator_access', 1)->get();
 
-        $case->supporting_document = DB::table('manage_files')
+        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', 'users.username')
             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
             ->where('manage_files.case_id', $case->id)
             ->get();

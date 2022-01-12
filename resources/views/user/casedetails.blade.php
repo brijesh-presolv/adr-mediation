@@ -178,6 +178,8 @@
                             <tr >
                                 <th>@lang('case.supporting_documents')</th>
                                 <th>Uploaded By</th>
+                                <th>Date</th>
+                                <th></th>
                             </tr>
                             {{-- {{dd($case->supporting_document)}} --}}
                                 <?php foreach ($case->supporting_document as $k => $v) { 
@@ -193,6 +195,7 @@
                                         @if($userAccess->userId == Auth::user()->id)
                                         <td><?= basename($v->file_name) ?></td>
                                         <td>{{$v->username}}</td>
+                                        <td>{{date('d-m-Y', strtotime($v->created_at))}}</td>
                                         <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>
                                         @endif
                                         @endif

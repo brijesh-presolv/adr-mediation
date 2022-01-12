@@ -85,7 +85,7 @@ $meddate = $meddate->format('d-m-Y');
         </tr>
         <tr>
             <td >
-                <p>{{isset($inparty->organization) ? $inparty->organization : $party[0]->name}}</p>
+                <p>{{isset($inparty->organization) ? $inparty->organization . " through its authorized representative " . $party[0]->name : $party[0]->name}}</p>
                 <p>{{$party[0]->address1}} {{$party[0]->address2}}, {{$party[0]->city}}, {{$party[0]->pincode}}</p>
                 <p>{{$party[0]->state}} {{$party[0]->country}}</p>
                 <p>{{$party[0]->userEmail}}</p>

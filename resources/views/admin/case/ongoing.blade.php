@@ -105,7 +105,7 @@
                     <input type="hidden" name="caseId" id="caseIdF1" value="">
                     <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />
                     <br><br>
-                    <label>Share With Mediator?</label><input class="ml-2" type="radio" name="shareMediator" id="shareYes" checked value="1">Yes<input class="ml-2" type="radio" name="shareMediator" id="shareNo" value="0">No
+                    <div id="mediatorDocs"></div>
                     <br>
                     <span>Share With :</span>
                     <div class="form-group" id="PartyDocs">
@@ -472,13 +472,13 @@ $(function () {
                         // return  date.toLocaleDateString('en-GB');
                     button = button + `<button value="` + row.case.id + `"  data-id="` + row.case.id + `" data-mediator="` + row.case.mediator_id + `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info btn-sm">` + data + ` </button>`;
                     if (row.case.mediator_status == 0) {
-                        button = button + `<br><span class="badge badge-warning">@lang('case.status_pending')</span>`;
+                        button = button + `<br><span class="badge badge-warning mediator_action" data-mediatoraction="`+row.case.mediator_status+`">@lang('case.status_pending')</span>`;
                     } else if (row.case.mediator_status == 1) {
-                        button = button + `<br><span class="badge badge-success">@lang('case.status_accepted')</span>`;
+                        button = button + `<br><span class="badge badge-success mediator_action" data-mediatoraction="`+row.case.mediator_status+`">@lang('case.status_accepted')</span>`;
                         button = button + `<br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case.id + `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
                         button = button + `<br><span class="badge badge-success">Date of Consent: `+row.mediator_create_action_date+`</span>`;
                     } else {
-                        button = button + `<br><span class="badge badge-danger">@lang('case.status_rejected')</span>`;
+                        button = button + `<br><span class="badge badge-danger mediator_action" data-mediatoraction="`+row.case.mediator_status+`">@lang('case.status_rejected')</span>`;
                         // button = button + `<br><span class="badge badge-danger">Date of Rejection: `+row.mediator_create_action_date+`</span>`;
                     }
                     
@@ -691,7 +691,22 @@ $(function () {
         var button = $(event.relatedTarget);
         var recipient = button.data('id');
         var data = button.parent().parent().find(".party_name");
+        var mediatorData = button.parent().parent().find(".mediator_action");
+        // console.log(mediatorData);
         $("#PartyDocs").html("");
+        $("#mediatorDocs").html("");
+        mediatorData.each(function() {
+            var action = $(this).data("mediatoraction");
+            var mtext = "";
+            if(action == 1) {
+                mtext = `<label>Share With Mediator?</label><input class="ml-2" type="radio" name="shareMediator" id="shareYes" checked value="1">Yes
+                            <input class="ml-2" type="radio" name="shareMediator" id="shareNo" value="0">No`;
+            } else {
+                mtext = `<input class="ml-2 d-none" type="radio" name="shareMediator" id="shareNo" checked value="0">`;
+            }
+            $("#mediatorDocs").append(mtext);
+            // console.log(mtext);
+        });
         data.each(function () {
             var party_id = $(this).data("inid")
             var party_name = $(this).text()
