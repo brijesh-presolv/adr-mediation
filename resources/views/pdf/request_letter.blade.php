@@ -58,7 +58,7 @@ $meddate = $meddate->format('d-m-Y');
     <body>
 
     
-    <br><br><p>@if($ini->organization != null) {{$ini->organization}} @endif <br>@if($ini->address1 != null) {{$ini->address1}} <br> {{$ini->address2}} <br> {{$ini->city}}, {{$ini->pincode}} 
+    <br><br><p>@if($ini->organization != null) {{$ini->organization}} @else {{$ini->name}} @endif <br>@if($ini->address1 != null) {{$ini->address1}} <br> {{$ini->address2}} <br> {{$ini->city}}, {{$ini->pincode}} 
         <br> {{$ini->state}}, {{$ini->country}}
          @endif<br>@if($ini->userEmail != null) {{$ini->userEmail}} <br> @endif @if($ini->userPhone != null) {{$ini->userPhone}} @endif</p>
     <p>Date: {{$meddate}} </p>
