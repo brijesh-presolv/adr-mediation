@@ -162,7 +162,24 @@ class CaseController extends Controller
         $invmodel->case_id = $request->id;
         $invmodel->file_name = $invitation;
         $invmodel->save();
-        Common_function::MedNotification($request->id, "ACPTARB_ADM", Auth::user()->id);
+
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->id)
+            ->first();
+        $inv_id = "";
+        $inv = InvoledUser::select('id')->where('userPlanId', $request->id)->get();
+        foreach ($inv as $v) {
+            if ($inv_id == "") {
+                $inv_id = $v->id;
+            } else {
+                $inv_id = $inv_id . "," . $v->id;
+            }
+        }
+        // dd($mediator->id);
+
+
+        Common_function::MedNotification($request->id, "ACPTARB_ADM", Auth::user()->id, $mediator->id, $inv_id);
+
         //send invitation 
         $this->sned_invitation($request->id, $invitation);
 
@@ -181,28 +198,41 @@ class CaseController extends Controller
         $mediation_status_log->user_id = Auth::user()->id;
         $mediation_status_log->mediation_case_id = $request->case_id;
         $mediation_status_log->status = $request->status;
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
+            ->first();
+        $inv_id = "";
+        $inv = InvoledUser::select('id')->where('userPlanId', $request->case_id)->get();
+        foreach ($inv as $v) {
+            if ($inv_id == "") {
+                $inv_id = $v->id;
+            } else {
+                $inv_id = $inv_id . "," . $v->id;
+            }
+        }
+        // dd($mediator);
         if (Mediation_status_log::STATUS_WITHDRAWN == $request->status) {
             $mediation_status_log->description = "Request Withdrawn";
             if (Auth::user()->role == 1) {
-                Common_function::MedNotification($request->case_id, "WDRN_BY_MED", Auth::user()->id);
+                Common_function::MedNotification($request->case_id, "WDRN_BY_MED", Auth::user()->id, $mediator->id, $inv_id);
             } else {
-                Common_function::MedNotification($request->case_id, "WDRN_BY_ADMIN", Auth::user()->id);
+                Common_function::MedNotification($request->case_id, "WDRN_BY_ADMIN", Auth::user()->id, $mediator->id, $inv_id);
             }
             $this->sned_withdrawal($request->case_id);
         } else if (Mediation_status_log::STATUS_RESOLVED == $request->status) {
             $mediation_status_log->description = "Request Resolved";
             if (Auth::user()->role == 1) {
-                Common_function::MedNotification($request->case_id, "RES_BY_MED", Auth::user()->id);
+                Common_function::MedNotification($request->case_id, "RES_BY_MED", Auth::user()->id, $mediator->id, $inv_id);
             } else {
-                Common_function::MedNotification($request->case_id, "RES_BY_ADMIN", Auth::user()->id);
+                Common_function::MedNotification($request->case_id, "RES_BY_ADMIN", Auth::user()->id, $mediator->id, $inv_id);
             }
             $this->sned_resolved($request->case_id);
         } else if (Mediation_status_log::STATUS_UNRESOLVED == $request->status) {
             $mediation_status_log->description = "Request Unresolved";
             if (Auth::user()->role == 1) {
-                Common_function::MedNotification($request->case_id, "UNRES_BY_MED", Auth::user()->id);
+                Common_function::MedNotification($request->case_id, "UNRES_BY_MED", Auth::user()->id, $mediator->id, $inv_id);
             } else {
-                Common_function::MedNotification($request->case_id, "UNRES_BY_ADMIN", Auth::user()->id);
+                Common_function::MedNotification($request->case_id, "UNRES_BY_ADMIN", Auth::user()->id, $mediator->id, $inv_id);
             }
             $this->sned_unresolved($request->case_id);
         }
@@ -252,8 +282,20 @@ class CaseController extends Controller
                 $event = "COMM_ADM_PRIVATE";
             }
         }
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
+            ->first();
+        $inv_id = "";
+        $inv = InvoledUser::select('id')->where('userPlanId', $request->case_id)->get();
+        foreach ($inv as $v) {
+            if ($inv_id == "") {
+                $inv_id = $v->id;
+            } else {
+                $inv_id = $inv_id . "," . $v->id;
+            }
+        }
         // dd($event);
-        Common_function::MedNotification($request->case_id, $event, Auth::user()->id);
+        Common_function::MedNotification($request->case_id, $event, Auth::user()->id, $mediator->id, $inv_id);
         return response()->json(["msg" => "Closed Case"]);
     }
 
@@ -279,7 +321,19 @@ class CaseController extends Controller
         $mediation_status_log->status = 3;
         $mediation_status_log->description = "Request Reject";
         $mediation_status_log->save();
-        Common_function::MedNotification($request->id, "REJECTED_ADM", Auth::user()->id);
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->id)
+            ->first();
+        $inv_id = "";
+        $inv = InvoledUser::select('id')->where('userPlanId', $request->id)->get();
+        foreach ($inv as $v) {
+            if ($inv_id == "") {
+                $inv_id = $v->id;
+            } else {
+                $inv_id = $inv_id . "," . $v->id;
+            }
+        }
+        Common_function::MedNotification($request->id, "REJECTED_ADM", Auth::user()->id, $mediator->id, $inv_id);
         $this->sned_reject($request->id);
         return response()->json(["msg" => "Rejected Case"]);
     }
@@ -323,7 +377,7 @@ class CaseController extends Controller
         $invmodel->case_id = $request->id;
         $invmodel->file_name_mediator_appointment = $invitation;
         $invmodel->save();
-        Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
+        // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
 
         $this->send_mediatorAdd($request->id, $request->midater);
         return response()->json(["msg" => "midater Added"]);
@@ -369,11 +423,22 @@ class CaseController extends Controller
                 'session_party_ids' => json_encode($request->session_party_ids),
                 'scheduled_by' => Auth::user()->id,
             ];
+            $inv_id = "";
             DB::table('manage_session')->insert($dataToInsert);
             foreach ($request->session_party_ids as $party_id) {
                 $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->first();
+                if($inv_id == "") {
+                    $inv_id = $party->id;
+                } else {
+                    $inv_id = $inv_id . "," . $party->id;
+                }
                 $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
+            $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+            Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
         } else {
             $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
             $party_ids = array();
@@ -391,8 +456,23 @@ class CaseController extends Controller
                 'scheduled_by' => Auth::user()->id,
             ];
             DB::table('manage_session')->insert($dataToInsert);
+            $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+            Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
         }
-        Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id);
+        // Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id);
+
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -651,7 +731,7 @@ class CaseController extends Controller
             $InvoledUserMsg = InvoledUser::where(['userPlanId' => $med->id])->get();
             // dd($InvoledUserMsg);
             $responding_party = "";
-           
+
             foreach ($InvoledUserMsg as $value) {
 
                 if ($value->isClaimant > 0) {
@@ -690,7 +770,7 @@ class CaseController extends Controller
                         ];
                         $access = Whatsapp::sendWamessage($dwa2);
                     }
-                } 
+                }
             }
             // dd($initiating_phone);
             if ($responding_party != "") {
@@ -793,7 +873,19 @@ class CaseController extends Controller
                 }
             }
             DB::table('document_settlements')->insert($insert);
-            Common_function::MedNotification($request->caseId, "SEND_SETT_AGRE_ADMIN", Auth::user()->id);
+            $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->first();
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+            Common_function::MedNotification($request->caseId, "SEND_SETT_AGRE_ADMIN", Auth::user()->id, $mediatorNoti->id, $inv_id);
             $this->send_settlement_agreement_party($request->caseId, $insert);
             return response()->json(["message" => 'Ajax Multiple fIle has been uploaded']);
         } else {
@@ -1223,7 +1315,7 @@ class CaseController extends Controller
         // dd($request->docs_party_ids);
         $validatedData = $request->validate([
             'files' => 'required',
-            'files.*' => 'mimes:csv,txt,xlx,xls,pdf',
+            'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
             // 'docs_party_ids' => 'required',
         ]);
 
@@ -1247,7 +1339,23 @@ class CaseController extends Controller
             // die();
             // File::insert($insert);
             DB::table('manage_files')->insert($insert, $insert);
-            Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id);
+            $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->first();
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+            if ($request->shareMediator == 0) {
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, $request->docs_party_ids);
+            } else {
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id, $mediatorNoti->id, $request->docs_party_ids);
+            }
             $this->send_upload_file_party($request->caseId, $insert);
             return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
         } else {

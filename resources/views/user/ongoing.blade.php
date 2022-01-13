@@ -41,7 +41,7 @@ use App\Models\InvoledUser;
                 <thead>
                     <tr>
                         <th>@lang('case.Sr. No')</th>
-                        <th>Select</th>
+                        {{-- <th>Select</th> --}}
                         <th>@lang('case.case_id')</th>
                         <th>@lang('case.date')</th>
                         <th>@lang('case.case_details')</th>
@@ -72,7 +72,7 @@ use App\Models\InvoledUser;
 
                         ?>
                         <td>{{$i++}}</td>
-                        <td><input type="checkbox" class="blkchk" data-caseid="{{$value->caseid}}"></td>
+                        {{-- <td><input type="checkbox" class="blkchk" data-caseid="{{$value->caseid}}"></td> --}}
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
                         <td><a class="btn   btn-sm btn-primary label label-success" target="_blank" href="{{route('user.casedetails',$value->caseid)}}">@lang('case.btn_case_details')</a></td>
@@ -89,19 +89,19 @@ use App\Models\InvoledUser;
                         if(isset($value->party)){
 
                         foreach ($value->party as $key => $v) {
-                            // dd($v);
-
+                            // dd($v->userId);
                             if($v->userId != Auth::user()->id) {
                                 if($v->name != "") {
                                     echo '<span class="text-success party_name d-none" data-inid="'.$v->id.'">'.$v->name.'</span>';
                                 } 
                             }
-                           
+
                             if($v->isOnboarded==1){
                                 if($v->name != "") {
                                 echo '<span class="text-success">'.$v->name.'</span></br>';
                                 }
-                            } else{
+                            } 
+                            else{
                                 if($v->name != "") {
                                 echo '<span class="text-danger">'.$v->name.'</span></br>';
                                 }
@@ -117,17 +117,18 @@ use App\Models\InvoledUser;
 
                             <?php if($value->mstatus==0){ ?>
                                 <br>
-                                <span class="badge badge-warning">@lang('case.status_pending')</span>
+                                <span class="badge badge-warning mediator_action" data-mediatoraction="{{$value->mstatus}}">@lang('case.status_pending')</span>
                             <?php } else if($value->mstatus==1){ $date = date('d-m-Y', strtotime($value->create)); ?>
                                 <br>
-                                <span class="badge badge-success">@lang('case.status_accepted')</span>
+                                <span class="badge badge-success mediator_action" data-mediatoraction="{{$value->mstatus}}">@lang('case.status_accepted')</span>
                                 <br>
                                 <span class="badge badge-success">Date of Consent: {{$date}}</span>
 
-                            <?php } else { ?>
+                            <?php } else {  ?>
 
                                  <br>
-                                <span class="badge badge-success">@lang('case.status_rejected')</span>
+                                <span class="badge badge-danger mediator_action" data-mediatoraction="{{$value->mstatus}}">@lang('case.status_rejected')</span><br>
+                                {{-- <span class="badge badge-danger">Date of Rejection: {{$date}}</span> --}}
 
                             <?php } if($value->consent>0){?>
                             <br>
@@ -137,8 +138,9 @@ use App\Models\InvoledUser;
                         <td><button type="button" data-type="0", data-typename="Share" data-id="{{$value->caseid}}" data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Share</button></td>
 
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
-
                         <td><button value="{{$value->caseid}}"  data-id="{{$value->caseid}}" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">Upload Supporting</button></td>
+
+
                         {{-- <td>
                              <?php if($value->userid==Auth::user()->id){ ?>
                         <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->caseid?>">@lang('case.btn_withdraw')</button>
@@ -151,13 +153,13 @@ use App\Models\InvoledUser;
                             
                             <span class="badge badge-success ">@if (isset($value->casestatus->description))
                                 
-                             {{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}@endif</span>
+                            {{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}@endif</span>
                         </td>
                         </tr>
                     <?php } ?>
                 </tbody>
             </table>
-            <div class="row">
+            {{-- <div class="row">
                 <div class="col-md-2">
 
                     <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input type="checkbox" id="selectalldir"> Select All Cases</label>
@@ -167,7 +169,7 @@ use App\Models\InvoledUser;
                     <button class="blkbtn btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModalForBulk" id="bulkWithdrawBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Withdraw</button>
                 </div>
                 
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>
@@ -186,9 +188,12 @@ use App\Models\InvoledUser;
                 <form id="multi-file-upload-ajax" method="POST"  action="javascript:void(0)" accept-charset="utf-8" enctype="multipart/form-data" >
                     @csrf
                     <input type="hidden" name="caseId" id="caseIdF1" value="">
-                    <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />
+                    {{-- <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />
                     <br><br>
-                    <label>Share With Mediator?</label><input class="ml-2" type="radio" name="shareMediator" id="shareYes" checked value="1">Yes<input class="ml-2" type="radio" name="shareMediator" id="shareNo" value="0">No
+                    <label>Share With Mediator?</label><input class="ml-2" type="radio" name="shareMediator" id="shareYes" checked value="1">Yes<input class="ml-2" type="radio" name="shareMediator" id="shareNo" value="0">No --}}
+                    <div id="file_select"></div>
+                    <br><br>
+                    <div id="mediatorDocs"></div>
                     <br>
                     <span>Share With :</span>
                     <div class="form-group" id="PartyDocs">
@@ -252,7 +257,7 @@ use App\Models\InvoledUser;
 </div>
 
 <div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg" style="overflow-x: initial !important;">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title text-white">@lang('case.session_title')</h4>
@@ -261,7 +266,7 @@ use App\Models\InvoledUser;
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="overflow-x: auto;">
                 <table class="table" id="sessRecId">
                     <thead>
                     <th scope="col">@lang('case.serial_number')</th>
@@ -276,9 +281,12 @@ use App\Models\InvoledUser;
                     </tbody>
                 </table>
                 <hr>    
+                
+            </div>
+            <div class="modal-footer">
                 <div class="text-center">
                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                         <span>@lang('case.btn_close')</span>
+                        <span>Close</span>
                     </button>  
                 </div>
             </div>
@@ -371,10 +379,6 @@ use App\Models\InvoledUser;
         $(document).ready(function(){
 
 
-        //   $('#users').DataTable();
-
-
-
 
 
             $('#viewSession-modal').on('show.bs.modal', function (event) {
@@ -419,13 +423,13 @@ use App\Models\InvoledUser;
                     data: $('#joincode').serialize(),
                     beforeSend: function() {
 
-                    swal({
-                        title: 'Loading...',
-                        showConfirmButton: false,
-                        buttons: false,
-                        allowOutsideClick: false,
-                    });
-                    },
+                        swal({
+                            title: 'Loading...',
+                            showConfirmButton: false,
+                            buttons: false,
+                            allowOutsideClick: false,
+                        });
+                        },
                     success: function (res) {
 
 
@@ -486,13 +490,13 @@ use App\Models\InvoledUser;
                     data: $('#withdrawForm').serialize(),
                     beforeSend: function() {
 
-                            swal({
-                                title: 'Loading...',
-                                showConfirmButton: false,
-                                buttons: false,
-                                allowOutsideClick: false,
-                            });
-                        },
+                    swal({
+                        title: 'Loading...',
+                        showConfirmButton: false,
+                        buttons: false,
+                        allowOutsideClick: false,
+                    });
+                    },
                     success: function (data) {
 
 
@@ -532,14 +536,32 @@ use App\Models\InvoledUser;
         });
 
 
-        $('#uploadSupportingDocsModal').on('show.bs.modal', function (event) {
+    $('#uploadSupportingDocsModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var recipient = button.data('id');
         var csrf = document.querySelector('meta[name="csrf-token"]').content;
         // console.log(recipient);
         var data = button.parent().parent().find(".party_name");
-        console.log(data);
+        // console.log(data);
+        var mediatorData = button.parent().parent().find(".mediator_action");
+
         $("#PartyDocs").html("");
+        $("#mediatorDocs").html("");
+        $("#file_select").html("");
+        var fileSelect = `<input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />`;
+        $("#file_select").append(fileSelect);
+        mediatorData.each(function() {
+            var action = $(this).data("mediatoraction");
+            var mtext = "";
+            if(action == 1) {
+                mtext = `<label>Share With Mediator?</label><input class="ml-2" type="radio" name="shareMediator" id="shareYes" checked value="1">Yes
+                            <input class="ml-2" type="radio" name="shareMediator" id="shareNo" value="0">No`;
+            } else {
+                mtext = `<input class="ml-2 d-none" type="radio" name="shareMediator" id="shareNo" checked value="0">`;
+            }
+            $("#mediatorDocs").append(mtext);
+            // console.log(mtext);
+        });
         data.each(function () {
             var party_id = $(this).data("inid")
             var party_name = $(this).text()
@@ -596,8 +618,7 @@ use App\Models\InvoledUser;
             processData: false,
             dataType: 'json',
             beforeSend: function() {
-                        // $('#uploadSupportingDocsModal').modal("hide");
-                        $("#uploadSupportingDocsModal").modal("hide");
+                        $('#uploadSupportingDocsModal').modal("hide");
 
                             swal({
                                 title: 'Loading...',
@@ -611,6 +632,7 @@ use App\Models\InvoledUser;
                 swal("Files has been uploaded!", {
                     icon: "success",
                 });
+                // $("#uploadSupportingDocsModal").modal("hide");
             },
             error: function (data) {
                 //alert(data.responseJSON.errors.files[0]);
@@ -618,8 +640,9 @@ use App\Models\InvoledUser;
             }
         });
     });
-    
-    $("#selectalldir").change(function () {
+
+
+        $("#selectalldir").change(function () {
       if (this.checked) {
         $("#bulkWithdrawBtn").show();
         $(".blkchk").each(function () {
@@ -693,7 +716,7 @@ use App\Models\InvoledUser;
         });
         return false;
     });
-
+        
     $('#commentModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var id = button.data('id');
@@ -765,7 +788,7 @@ use App\Models\InvoledUser;
         });
         return false;
     });
-        
+
     </script>
 
 @endsection

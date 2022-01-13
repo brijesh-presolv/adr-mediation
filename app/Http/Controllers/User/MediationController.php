@@ -17,6 +17,7 @@ use App\Http\Helpers\SendGrid as Email;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
 use App\Models\ConsentDisclosures;
+use App\Models\Notification;
 use App\Models\WaTemplate;
 use Session;
 use Auth;
@@ -28,6 +29,17 @@ use PDF;
 
 class MediationController extends Controller
 {
+
+    public function Notification()
+    {
+        // $view = Notification::where('view', 0)->get();
+        // foreach($view as $item) {
+        //     $item->view = 1;
+        //     $item->save();
+        // }
+        $data = Notification::userNotification();
+        return view('user.notification', compact('data'));
+    }
 
     public function storeMultiFile(Request $request)
     {
@@ -64,7 +76,14 @@ class MediationController extends Controller
             // die();
             // File::insert($insert);
             DB::table('manage_files')->insert($insert);
-            Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_USER", Auth::user()->id);
+            $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                    ->first();
+            if($request->shareMediator == 0) {
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_USER", Auth::user()->id, null, $totalAccess);
+            } else {
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_USER", Auth::user()->id, $mediatorNoti->id, $totalAccess);
+            }
             $this->send_upload_file_party($request->caseId, $insert);
             return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
         }
@@ -396,7 +415,17 @@ class MediationController extends Controller
 
             $cid = "M" . sprintf("%06d", $med->id);
 
-            Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id);
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $med->id)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+            Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id, null, $inv_id);
+            // Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id);
 
             $e = Email::send($d, $usr->email, env('EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
 
@@ -508,7 +537,20 @@ class MediationController extends Controller
             ];
             if ($InvoledUser->save()) {
 
-                Common_function::MedNotification($InvoledUser->userPlanId, "ONBOAR_USER", Auth::user()->id);
+                $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $InvoledUser->userPlanId)
+                    ->first();
+                $inv_id = "";
+                $inv = InvoledUser::select('id')->where('userPlanId', $InvoledUser->userPlanId)->get();
+                foreach ($inv as $v) {
+                    if ($inv_id == "") {
+                        $inv_id = $v->id;
+                    } else {
+                        $inv_id = $inv_id . "," . $v->id;
+                    }
+                }
+
+                Common_function::MedNotification($InvoledUser->userPlanId, "ONBOAR_USER", Auth::user()->id, $mediatorNoti->id, $inv_id);
 
                 //fetch init parry
                 $mid = "M" . sprintf("%06d", $InvoledUser->userPlanId);
@@ -1077,7 +1119,16 @@ class MediationController extends Controller
             $med->request_letter = $letter;
             $med->save();
 
-            Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id);
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $med->id)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+            Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id, null, $inv_id);
 
             // foreach($otherDetails as $values) {
             //     foreach($values)

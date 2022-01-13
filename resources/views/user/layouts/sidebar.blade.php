@@ -25,6 +25,14 @@
                     </a>
                 </li>
                 <li>
+                    <a  href="{{route('user.notification')}}" class="waves-effect waves-light" style="color: #575a65;">
+                        <i class="far fa-bell"> 
+                            {{-- @if($notification > 0) <span class="badge badge-success notification-count"> {{$notification}} </span> @endif --}}
+                        </i>
+                        <span style="color: #000000;"> <b> Notification </b> </span>
+                    </a>
+                </li>
+                <li>
                     <a  href="{{route('user.newrequest')}}"  class="waves-effect waves-light" style="color: #575a65;" >
                         <i class="fas fa-chalkboard-teacher"></i>
                         <span  style="color: #000000;">  <b> @lang('site.Pending')  </b></span>

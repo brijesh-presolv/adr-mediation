@@ -37,6 +37,8 @@ Route::get('/sendInvitation', [App\Http\Controllers\WhatsappStatus::class, 'Send
 
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('notification', [App\Http\Controllers\User\MediationController::class, 'Notification'])->name('user.notification');
+
     Route::match(['post', 'get', 'put'], 'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
     Route::match(['post', 'get'], 'newcase', [App\Http\Controllers\User\MediationController::class, 'newcase'])->name('user.newcase');
     Route::match(['get'], 'newrequest', [App\Http\Controllers\User\MediationController::class, 'newrequest'])->name('user.newrequest');
@@ -83,6 +85,8 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
 
 Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\Mediator\DashboardController::class, 'index'])->name('mediator.dashboard');
+    Route::get('notification', [App\Http\Controllers\Mediator\DashboardController::class, 'Notification'])->name('mediator.notification');
+
     Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('mediator.newrequest');
     Route::get('newjson', [App\Http\Controllers\Mediator\DashboardController::class, 'newjson'])->name('mediator.newjson');
     Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('mediator.ongoing');

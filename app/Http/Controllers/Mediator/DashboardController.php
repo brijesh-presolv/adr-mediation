@@ -18,6 +18,7 @@ use App\Models\InvitationFiles;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
 use App\Models\Mediators_mediation_cases_status;
+use App\Models\Notification;
 use App\Models\WaTemplate;
 use DB;
 use PDF;
@@ -50,6 +51,20 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
+    public function Notification()
+    {
+        $view = Notification::where('view_mediator', 0)->where('mediator_id', Auth::user()->id)->get();
+        foreach($view as $item) {
+            $item->view_mediator = 1;
+            $item->save();
+        }
+        $data = Notification::mediatornotificationData();
+        // dd($data);
+        return view('mediator.notification', compact('data'));
+        
+    }
+
     public function newrequest()
     {
         $mediationDetails = Mediation_Details::where("user_id", "=", Auth::user()->id)->first();
@@ -139,7 +154,16 @@ class DashboardController extends Controller
     {
 
 
-        // dd($mediator);
+        // dd($mediator);$inv_id = "";
+        $inv_id = "";
+        $inv = InvoledUser::select('id')->where('userPlanId', $request->mediation_case_id)->get();
+        foreach ($inv as $v) {
+            if ($inv_id == "") {
+                $inv_id = $v->id;
+            } else {
+                $inv_id = $inv_id . "," . $v->id;
+            }
+        }
         if ($request->status == 1) {
             $caseid = $request->mediation_case_id;
             $consentDisclosures = ConsentDisclosures::where("mediation_case_id", "=", $caseid)->first();
@@ -170,11 +194,11 @@ class DashboardController extends Controller
                 $consentDisclosures->particulars4 = $request->particulars4;
             }
             $consentDisclosures->save();
-            Common_function::MedNotification($caseid, "SEND_APPO_MED", Auth::user()->id);
+            Common_function::MedNotification($caseid, "SEND_APPO_MED", Auth::user()->id, Auth::user()->id, $inv_id);
             $this->send_attechment_party($caseid);
         } else {
             $caseid = $request->caseid;
-            Common_function::MedNotification($caseid, "REJECTED_MED", Auth::user()->id);
+            Common_function::MedNotification($caseid, "REJECTED_MED", Auth::user()->id, Auth::user()->id, $inv_id);
         }
 
 
@@ -209,10 +233,19 @@ class DashboardController extends Controller
                 'scheduled_by' => Auth::user()->id,
             ];
             DB::table('manage_session')->insert($dataToInsert);
+            $inv_id = "";
+
             foreach ($request->session_party_ids as $party_id) {
                 $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
+                if($inv_id == "") {
+                    $inv_id = $party->id;
+                } else {
+                    $inv_id = $inv_id . "," . $party->id;
+                }
                 $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
+            
+            Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, Auth::user()->id, $inv_id);
         } else {
             $allParty = InvoledUser::where("userPlanId", $request->caseId)->where("isOnboarded", 1)->get();
             $party_ids = array();
@@ -230,8 +263,18 @@ class DashboardController extends Controller
                 'scheduled_by' => Auth::user()->id,
             ];
             DB::table('manage_session')->insert($dataToInsert);
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+            Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, Auth::user()->id, $inv_id);
         }
-        Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id);
+        // Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id);
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -477,7 +520,7 @@ class DashboardController extends Controller
             // die();
             // File::insert($insert);
             DB::table('manage_files')->insert($insert, $insert);
-            Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_MED", Auth::user()->id);
+            Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_MED", Auth::user()->id, Auth::user()->id, $request->docs_party_ids);
             $this->send_upload_file_party($request->caseId, $insert);
             return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
         } else {
@@ -526,7 +569,16 @@ class DashboardController extends Controller
                 }
             }
             DB::table('document_settlements')->insert($insert);
-            Common_function::MedNotification($request->caseId, "SEND_SETT_AGRE_MED", Auth::user()->id);
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+            Common_function::MedNotification($request->caseId, "SEND_SETT_AGRE_MED", Auth::user()->id, Auth::user()->id,$inv_id);
             $this->send_settlement_agreement_party($request->caseId, $insert);
             return response()->json(["message" => 'Ajax Multiple fIle has been uploaded']);
         } else {

@@ -1,3 +1,18 @@
+<?php 
+use App\Models\Notification;
+
+$notification = Notification::where('view_mediator', 0)->where('mediator_id', Auth::user()->id)->count();
+?>
+
+<style>
+    .notification-count {
+        font-size: 0.7em;
+        position: absolute;
+        top: 0.2em;
+        left: 2.5em;
+    }
+</style>
+
 <div class="left-side-menu usersidebar">
 
                 <div class="slimscroll-menu">
@@ -13,6 +28,12 @@
                                 <a  href="{{route('mediator.dashboard')}}" class="waves-effect waves-light">
                                     <i class="mdi mdi-view-dashboard"></i>
                                     <span>  Dashboard  </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a  href="{{route('mediator.notification')}}" class="waves-effect waves-light">
+                                    <i class="far fa-bell"> @if($notification > 0) <span class="badge badge-success notification-count"> {{$notification}} </span> @endif</i>
+                                    <span>  Notification  </span>
                                 </a>
                             </li>
                             <li>

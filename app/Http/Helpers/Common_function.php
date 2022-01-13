@@ -163,14 +163,27 @@ class Common_function
     //     return $ipaddress;
     // }
 
-    public static function MedNotification($caseid, $event, $userId)
+    public static function MedNotification($caseid, $event, $uploaded_by, $medId = null, $userId = null)
     {
-        $data = [
-            'userid' => $userId,
-            'case_id' => $caseid,
-            'event' => $event,
-            // 'userip' => self::get_client_ip(),
-        ];
+        if($event == "COMM_ADM_PRIVATE" || $event == "COMM_MED_PRIVATE") {
+            $data = [
+                'uploaded_by' => $uploaded_by,
+                'case_id' => $caseid,
+                'event' => $event,
+                'mediator_id' => $medId,
+                'user_id' => $userId,
+                'view_user' => 2,
+            ];
+        } else {
+            $data = [
+                'uploaded_by' => $uploaded_by,
+                'case_id' => $caseid,
+                'event' => $event,
+                'mediator_id' => $medId,
+                'user_id' => $userId,
+            ];
+        }
+        
 
         Notification::create($data);
 

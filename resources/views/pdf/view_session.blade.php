@@ -74,7 +74,7 @@ $ldate = $lastdate->format('d-m-Y');
     </center>
 
 
-    <h2 class="text-center">View Session PDF</h2>
+    <h2 class="text-center">Session Scheduling Details</h2>
 
     <h4 class="text-center">Case Id : M{{sprintf('%06d', $caseId)}}</h4>
     
