@@ -87,11 +87,59 @@
 
 </div>
 
-<div class="row admindash">
-    <!-- end col -->
+<div class="row">
     <div class="col-lg-12">
         <h4 class="page-title"></h4>
     </div>
+    <div class="col-lg-6 col-xl-3">
+        <div class="card widget-box-three">
+            <div class="card-body">
+                <div class="float-right mt-2">
+                    <i class="mdi mdi-av-timer display-3 m-0"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">Unresolved Cases</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$unresolvedCount}}</span> </h2>
+                    <p class="text-muted mt-2 m-0">Number of unresolved case</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- end col -->
+
+    <div class="col-lg-6 col-xl-3">
+        <div class="card widget-box-three">
+            <div class="card-body">
+                <div class="float-right mt-2">
+                    <i class="mdi mdi-av-timer display-3 m-0"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">Withdrawn Cases</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$WithdrawnCount}}</span></h2>
+                    <p class="text-muted mt-2 m-0">Number of withdrawn case</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end col -->
+
+    <div class="col-lg-6 col-xl-3">
+        <div class="card widget-box-three">
+            <div class="card-body">
+                <div class="float-right mt-2">
+                    <i class="mdi mdi-av-timer display-3 m-0"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">Rejected Cases</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$rejectedCount}}</span> </h2>
+                    <p class="text-muted mt-2 m-0">Number of rejected case</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- end col -->
     <div class="col-lg-6 col-xl-3">
         <div class="card widget-box-three">
             <div class="card-body">
@@ -107,6 +155,30 @@
             </div>
         </div>
     </div>
+    <!-- end col -->
+
+</div>
+
+<div class="row admindash">
+    <!-- end col -->
+    <div class="col-lg-12">
+        <h4 class="page-title"></h4>
+    </div>
+    {{-- <div class="col-lg-6 col-xl-3">
+        <div class="card widget-box-three">
+            <div class="card-body">
+                <div class="float-right mt-2">
+                    <i class="mdi mdi-av-timer display-3 m-0"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">@lang('case.respondingPartiesCases')</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$respondingPartiesCount}}</span></h2>
+                    <p class="text-muted mt-2 m-0">@lang('case.respondingPartiesDiscription')</p>
+                </div>
+
+            </div>
+        </div>
+    </div> --}}
     <div class="col-lg-6 col-xl-3">
         <div class="card widget-box-three">
             <div class="card-body">
@@ -114,9 +186,54 @@
                     <i class="mdi mdi-account-convert display-3 m-0"></i>
                 </div>
                 <div class="overflow-hidden">
-                    <p class="text-uppercase font-weight-medium text-truncate mb-2">@lang('case.users')</p>
-                    <h2 class="mb-0"><span data-plugin="counterup">{{$usersCount}}</span></h2>
-                    <p class="text-muted mt-2 m-0">@lang('case.usersDiscription')</p>
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">Approve @lang('case.users')</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$approveUsersCount}}</span></h2>
+                    <p class="text-muted mt-2 m-0">Total number of approve users</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xl-3">
+        <div class="card widget-box-three">
+            <div class="card-body">
+                <div class="float-right mt-2">
+                    <i class="mdi mdi-account-convert display-3 m-0"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">Unapprove @lang('case.users')</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$unapproveUsersCount}}</span></h2>
+                    <p class="text-muted mt-2 m-0">Total number of unapprove users</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xl-3">
+        <div class="card widget-box-three">
+            <div class="card-body">
+                <div class="float-right mt-2">
+                    <i class="mdi mdi-account-convert display-3 m-0"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">Approve @lang('case.mediator')</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$approveMediatorCount}}</span></h2>
+                    <p class="text-muted mt-2 m-0">Total number of approve mediator</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xl-3">
+        <div class="card widget-box-three">
+            <div class="card-body">
+                <div class="float-right mt-2">
+                    <i class="mdi mdi-account-convert display-3 m-0"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="text-uppercase font-weight-medium text-truncate mb-2">Unapprove @lang('case.mediator')</p>
+                    <h2 class="mb-0"><span data-plugin="counterup">{{$unapproveMediatorCount}}</span></h2>
+                    <p class="text-muted mt-2 m-0">Total number of unapprove mediator</p>
                 </div>
 
             </div>
