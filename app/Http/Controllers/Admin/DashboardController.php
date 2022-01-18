@@ -37,7 +37,7 @@ class DashboardController extends Controller {
         $newCount = 0;
         $usersCount = User::whereIn("role", [0, 1])->count();
         $allCasesCount = MedCase::count();
-        $respondingPartiesCount = InvoledUser::where("joinCode", null)->count();
+        $respondingPartiesCount = InvoledUser::where("joinCode", null)->where("isOnboarded", 1)->where('isClaimant', "<>", 0)->count();
         $resolvedCount = MedCase::where("confirm_status", 2)->count();
         $ongoingCount = MedCase::where("confirm_status", 1)->count();
         $newCount = MedCase::where("confirm_status", 0)->count();

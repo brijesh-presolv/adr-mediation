@@ -77,9 +77,9 @@ class MediationController extends Controller
             // File::insert($insert);
             DB::table('manage_files')->insert($insert);
             $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
-                    ->first();
-            if($request->shareMediator == 0) {
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->first();
+            if ($request->shareMediator == 0) {
                 Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_USER", Auth::user()->id, null, $totalAccess);
             } else {
                 Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_USER", Auth::user()->id, $mediatorNoti->id, $totalAccess);
@@ -972,7 +972,7 @@ class MediationController extends Controller
 
                 for ($n = 1; $n < 15; $n++) {
                     if ($v[$n] == '') {
-                        if ($n != 10 and $n != 11 and $n != 12) {
+                        if ($n != 10 and $n != 11 and $n != 12 and $n != 7) {
 
                             $errormsg .= "Please fill all the required details to proceed at line no $i ";
                         }
@@ -989,18 +989,20 @@ class MediationController extends Controller
                     $errormsg .= "Invalid mobile number at line no $i ";
                 }
 
+                if ($v[7] != "") {
 
-                //validate date
-                if (strpos($v[7], '-')) {
-                    $dt = str_replace('-', '/', $v[7]);
-                    $v[7] = $dt;
-                }
+                    //validate date
+                    if (strpos($v[7], '-')) {
+                        $dt = str_replace('-', '/', $v[7]);
+                        $v[7] = $dt;
+                    }
 
-                $dt = explode('/', $v[7]);
+                    $dt = explode('/', $v[7]);
 
-                if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
+                    if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
 
-                    $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
+                        $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
+                    }
                 }
 
                 if ($v[13] != 'Yes') {
@@ -1039,6 +1041,7 @@ class MediationController extends Controller
             $data['userid'] = $uploaded_by;
             $data['disputeCategory'] = $value['0'];
             $data['natureOfAgreement'] = $value['6'];
+            $data['agreementDate'] = $value['7'];
             $data['noOfParties'] = count(explode(',', $value[10])) + 1;
             $data['amount'] = $value[1];
             $data['issue'] = $value[8];

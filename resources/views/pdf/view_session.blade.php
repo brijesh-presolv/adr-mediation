@@ -37,7 +37,7 @@ $ldate = $lastdate->format('d-m-Y');
             .text-right{
                 text-align: right;
             }
-            .table_{
+            .table{
 
                 margin:0 auto;
                 width: 100%;
@@ -47,22 +47,44 @@ $ldate = $lastdate->format('d-m-Y');
                 margin-bottom:20px;
 
             }
+            .table th{
+                border:solid;
+                border-width:1px;
+                padding:10px;
+
+            }
+
+            .table td{
+                border-width:1px;
+                padding:10px;
+                border:solid;
+            }
+
+            .table_{
+                margin:0 auto;
+                width: 100%;
+                border:solid;
+                border-width:1px;
+                border-collapse:collapse;
+                margin-bottom:20px;
+            }
             .table_ th{
                 border:solid;
                 border-width:1px;
+                padding:10px;
+
+                /* overflow: hidden; */
             }
 
             .table_ td{
-                border-top:solid;
                 border-width:1px;
                 padding:10px;
                 border:solid;
-                border-width:1px;
-            }
 
-            .table_ th{
-                padding:10px;
+                /* overflow: hidden; */
             }
+           
+
         </style>
     </head>
     <body>
@@ -77,9 +99,84 @@ $ldate = $lastdate->format('d-m-Y');
     <h2 class="text-center">Session Scheduling Details</h2>
 
     <h4 class="text-center">Case Id : M{{sprintf('%06d', $caseId)}}</h4>
-    
+    <?php 
+    use App\Models\User;
+     $inparty = User::find($party[0]->userId); ?>
+    <table class="table" cellspacing="0" cellpadding="10" width="100%">
+        <tr>
+            <th width="50%" >
+                Initiating Party:
+            </th>
+            <th>
+                Responding Party:
+            </th>
+        </tr>
+        <tr>
+            <td >
+                <p>{{isset($inparty->organization) ? $inparty->organization : $party[0]->name}}</p>
+                <p>{{$party[0]->address1}} {{$party[0]->address2}}, {{$party[0]->city}}, {{$party[0]->pincode}}</p>
+                <p>{{$party[0]->state}} {{$party[0]->country}}</p>
+                <p>{{$party[0]->userEmail}}</p>
+                <p>{{$party[0]->userPhone}}</p>
+            </td>
+            <td >
 
-    <table class="table_" cellspacing="0" cellpadding="10" width="100%">
+                @foreach($party as $key=>$p)
+                @if($key!=0)
+                @if ($p->name != "")  
+                @if($p->name != "")
+                <p>{{$p->name}}</p>
+                @endif
+                @if($p->address1 != "")
+                <p>{{$p->address1}} {{$p->address2}}, {{$p->city}}, {{$p->pincode}}</p>
+                <p>{{$p->state}} {{$p->country}}</p>
+                @endif
+                @if($p->fulladdress != "")
+                <p>{{$p->fulladdress}} </p>
+                @endif
+                @if($p->userEmail != "")
+                <p>{{$p->userEmail}}</p>
+                @endif
+                @if($p->userPhone != "")
+                <p>{{$p->userPhone}}</p>
+                @endif
+                <br>
+                @endif
+                @endif
+                @endforeach
+                @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
+                <p>{{$case->otherRespondentDetails}}</p>
+                @endif
+                <br>
+                @foreach($party as $key=>$p)
+                @if($key!=0)
+                @if ($p->name == "") 
+                @if($p->userEmail != "")
+                <p>{{$p->userEmail}}</p>
+                @endif
+                @if($p->userPhone != "")
+                <p>{{$p->userPhone}}</p>
+                @endif
+                <br>
+                @endif
+                @endif
+                @endforeach
+            </td>
+        </tr>
+
+    </table>
+
+    <table class="table_" >
+        {{-- <colgroup>
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 10%;">
+            <col span="1" style="width: 45%;">
+         </colgroup> --}}
+       
+
         <tr>
             <th>
                 Sr. No.
@@ -88,9 +185,9 @@ $ldate = $lastdate->format('d-m-Y');
                 Scheduling done on
             </th>
             <th>Session scheduled for</th>
-            <th>Zoom Id</th>
-            <th>Note</th>
-            <th>Meeting User</th>
+            <th>VC Details</th>
+            <th>Notes</th>
+            <th>Participants</th>
         </tr>
         @foreach ($sessionData as $key => $value)
             <?php
@@ -102,17 +199,25 @@ $ldate = $lastdate->format('d-m-Y');
                 $dd = InvoledUser::where('userId', $d)->where('userPlanId', $caseId)->first();
                 if (isset($dd)) {
                     if ($dd->name != null) {
-                        $user[] = $dd->name;
+                    if($dd->isClaimant == 0){
+                        $user[] = "Initiating Party: " . $dd->name;
+                    } else {
+                        $user[] = "Responding Party: " . $dd->name;
+                    }
                     }
                 }
-            } ?>
+            }
+            if(isset($mediator)) {
+                $user[] = "Mediator: " . $mediator->first_name . " " . $mediator->last_name;
+            }
+             ?>
             <tr>
-                <td>{{$key + 1}}</td>
-                <td>{{$value->created_at}}</td>
-                <td>{{$value->session_date}}</td>
-                <td>{{$value->zoom_id}}</td>
-                <td>{{$value->note}}</td>
-                <td>{{implode(", ", $user)}}</td>
+                <td style="width: 7%">{{$key + 1}}</td>
+                <td style="width: 15%">{{$value->created_at}}</td>
+                <td style="width: 15%">{{$value->session_date}}</td>
+                <td style="width: 15%">{{$value->zoom_id}}</td>
+                <td style="width: 24%">{{$value->note}}</td>
+                <td>@foreach($user as $name) {{$name}} <br> @endforeach</td>
             </tr>
         @endforeach
         {{-- <tr>

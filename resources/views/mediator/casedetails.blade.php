@@ -108,10 +108,12 @@
                         </tr>
                         @endif
                         
+                        @if($case->agreementDate != NULL) 
                         <tr>
                             <td>Agreement Date</td>
-                            <td>{{$case->created_at}}</td>
+                            <td>{{$case->agreementDate}}</td>
                         </tr>
+                        @endif
                         
                         <?php if ($case->mfirstname) { ?>
                             <tr>

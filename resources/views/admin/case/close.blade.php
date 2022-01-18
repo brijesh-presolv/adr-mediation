@@ -86,7 +86,7 @@
     </div>
 </div>
 <div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg" style="overflow-x: initial !important;">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title text-white">@lang('case.session_title')</h4>
@@ -95,7 +95,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="overflow-x: auto;">
                 <table class="table" id="sessRecId">
                     <thead>
                     <th scope="col">@lang('case.session_serial_number')</th>
@@ -109,11 +109,15 @@
                     </tbody>
                 </table>
                 <hr>
+                
+            </div>
+            <div class="modal-footer">
                 <div class="text-center">
-                    <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                        <span>@lang('case.session_close')</span>
-                    </button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">
+                        <span>Close</span>
+                    </button>  
                 </div>
+                <div id="sessionShowBtn" class="text-center"></div>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -576,7 +580,20 @@ $(function () {
             url: '{{ route("admin.case.getAddedSesion") }}',
             data: {mediator_id: sheduledBy_Id, caseid: caseid, '_token': csrf},
             success: function (data) {
-                $('#sessRecId tbody').html(data);
+                var pdfButton = "";
+                if(data != "") {
+                    // console.log(caseid);
+                    var link = '{{route("admin.case.sessionPdf", '')}}'+'/'+caseid;
+                    // console.log(link);
+                    pdfButton = "<a target='_blank' href='"+link+"' class='btn btn-success'><span>Download PDF</span></button>"
+                    $('#sessRecId tbody').html(data);
+                    $('#sessionShowBtn').html(pdfButton);
+                } else {
+                    $('#sessRecId tbody').html("No Session");
+                    $('#sessionShowBtn').html(pdfButton);
+
+                }
+                // $('#sessRecId tbody').html(data);
             }
 
         });

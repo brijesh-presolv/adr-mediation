@@ -427,7 +427,7 @@ class CaseController extends Controller
             DB::table('manage_session')->insert($dataToInsert);
             foreach ($request->session_party_ids as $party_id) {
                 $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->first();
-                if($inv_id == "") {
+                if ($inv_id == "") {
                     $inv_id = $party->id;
                 } else {
                     $inv_id = $inv_id . "," . $party->id;
@@ -503,10 +503,17 @@ class CaseController extends Controller
     public function sessionPdf($id)
     {
         // dd($id);
+        $data["case"] = MedCase::find($id);
+        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["mediator"] = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.first_name", "users.last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+        ->where("mediators_mediation_cases_status.status", "=", 1)
+        ->first();
         $data['caseId'] = $id;
         $data["sessionData"] = DB::table('manage_session')->where('case_id', $id)->get();
+
         $pdf = PDF::loadView('pdf.view_session', $data);
-        return $pdf->download('session_M' . sprintf('%06d', $id) . '.pdf');
+        return $pdf->stream('whateveryourviewname.pdf');
         // dd($sessionData);
     }
 
@@ -782,7 +789,7 @@ class CaseController extends Controller
                 if ($pone->userPhone != "") {
 
                     $var = ['-cid-', '-rp-'];
-                    $var1 = [Common_function::getsixdigitid('sc', $id), $responding_party];
+                    $var1 = ["M" . sprintf("%06d", $id), $responding_party];
                     $content1 = WaTemplate::getcontent('l4_mediation_initiating');
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
@@ -795,8 +802,8 @@ class CaseController extends Controller
 
                     $access = Whatsapp::sendWamessage($dwa1);
                     $var_file = ['-caseid-'];
-                    $var1_file = [Common_function::getsixdigitid('sc', $id)];
-                    $content1_file = WaTemplate::getcontent('mediation_invitation_letter_file');
+                    $var1_file = ["M" . sprintf("%06d", $id)];
+                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
@@ -1603,7 +1610,7 @@ class CaseController extends Controller
                 for ($n = 0; $n < 15; $n++) {
                     if ($v[$n] == '') {
 
-                        if ($n != 10 and $n != 11 and $n != 12) {
+                        if ($n != 10 and $n != 11 and $n != 12 and $n != 7) {
                             $errormsg .= "Please fill all the required details to proceed at line no $i";
                         }
                     }
@@ -1620,18 +1627,19 @@ class CaseController extends Controller
                 }
 
 
+                if ($v[7] != "") {
+                    //validate date
+                    if (strpos($v[7], '-')) {
+                        $dt = str_replace('-', '/', $v[7]);
+                        $v[7] = $dt;
+                    }
 
-                //validate date
-                if (strpos($v[7], '-')) {
-                    $dt = str_replace('-', '/', $v[7]);
-                    $v[7] = $dt;
-                }
+                    $dt = explode('/', $v[7]);
 
-                $dt = explode('/', $v[7]);
+                    if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
 
-                if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
-
-                    $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
+                        $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
+                    }
                 }
 
                 if ($v[13] != 'Yes') {
@@ -1667,10 +1675,11 @@ class CaseController extends Controller
         foreach ($csv as $k => $value) {
             // dd( count(explode(',', $value[15])) + 1);
             // exit;
-
+            // dd($value[7]);
             $data['userid'] = $claimantid;
             $data['disputeCategory'] = $value['0'];
             $data['natureOfAgreement'] = $value['6'];
+            $data['agreementDate'] = $value['7'];
             $data['noOfParties'] = count(explode(',', $value[10])) + 1;
             $data['amount'] = $value['1'];
             $data['issue'] = $value['8'];
