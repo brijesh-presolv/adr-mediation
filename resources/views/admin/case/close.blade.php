@@ -332,13 +332,13 @@ $(function () {
                 render: function (data, type, row) {
                     var button = "";
                     button = button + `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
-                        button +=` <span class="badge-success badge private_total">`+row.private_count+`</span>`;
+                    button +=` <span class="badge-success badge private_total">`+row.private_count+`</span>`;
                     if(row.private_view_count != 0){
                     button += ` <span class="badge badge-danger private_unseen">` +row.private_view_count +`</span>`;
                     }
                     button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">@lang('case.btn_share')</button>`;
-                    if(row.share_view_count !==0){
-                    button += ` <span class="badge  badge-danger share_unseen">`+row.share_view_count+` </span>`;
+                    if(row.share_view_count !== 0){
+                        button += ` <span class="badge  badge-danger share_unseen">`+row.share_view_count+` </span>`;
                     }
                     button += ` <span class="badge badge-success share_total">`+row.share_count+`</span></div>`;
                     return button;

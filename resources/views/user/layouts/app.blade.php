@@ -24,14 +24,14 @@
 
     <style>
         .share_total {
-                position: absolute;
-                top: -0.8em; 
-                left: 4em
+                position: absolute !important;
+                top: -0.8em !important; 
+                left: 4em !important;
             }
             .share_unseen {
-                position: absolute;
-                top: -0.8em; 
-                left: 2.5em
+                position: absolute !important;
+                top: -0.8em !important; 
+                left: 2.5em !important;
             }
     </style>
 
