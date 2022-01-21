@@ -26,8 +26,8 @@
         <style type="text/css">
             .table .btn{
     padding: 0px 10px;
-}
-.private_total {
+    }
+    .private_total {
         position: absolute;
         top: -0.8em; 
         left: 4em
