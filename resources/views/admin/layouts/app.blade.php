@@ -27,6 +27,26 @@
             .table .btn{
     padding: 0px 10px;
 }
+.private_total {
+        position: absolute;
+        top: -0.8em; 
+        left: 4em
+    }
+    .private_unseen {
+        position: absolute;
+        top: -0.8em; 
+        left: 2.5em
+    }
+    .share_total {
+        position: absolute;
+        top: -0.8em; 
+        left: 9.5em
+    }
+    .share_unseen {
+        position: absolute;
+        top: -0.8em; 
+        left: 8em
+    }
         </style>
         @yield('head')
     </head>
@@ -174,8 +194,6 @@
 
         <script src="{{url('assets/')}}/libs/morris-js/morris.min.js"></script>
         <script src="{{url('assets/')}}/libs/raphael/raphael.min.js"></script>
-        {{-- <script src="{{url('assets/')}}/libs/jquery/jquery-3.2.1.min.js"></script> --}}
-
 
         <script src="{{url('assets/')}}/js/pages/dashboard.init.js"></script>
         <script src="{{url('assets/')}}/form-validator/jquery.form-validator.js"></script>
@@ -191,11 +209,7 @@
         </script>
 
         <!-- Dynamic pages js comes and other files-->
-        <script>
-        $(document).ready(function() {
-            $('#track').DataTable();
-        });
-        </script>
+
         @yield('footer')
     </body>
 

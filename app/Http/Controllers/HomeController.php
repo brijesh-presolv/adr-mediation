@@ -41,16 +41,16 @@ class HomeController extends Controller
 
                     $usr->emailotp = null;
                     $usr->smsotp = null;
-
+                    $d = [
+                        'event' => 'VARIFY_EMAIL',
+                        'userid' => Auth::user()->id,
+                    ];
 
                     if ($usr->save()) {
 
 
 
-                        $d = [
-                            'event' => 'VARIFY_EMAIL',
-                            'userid' => Auth::user()->id,
-                        ];
+
 
                         if ($usr->role == '1') {
 
@@ -191,7 +191,8 @@ class HomeController extends Controller
                     'userid' => $usr->id,
                 ];
 
-                Email::send($d, $usr->email, env('EMAIL3_OF_FORGOTUSERNAME', ''), ['-type-' => $type, '-name-' => $usr->username], $usr->first_name . ' ' . $usr->last_name);
+                $email = Email::send($d, $usr->email, env('EMAIL3_OF_FORGOTUSERNAME', ''), ['-type-' => $type, '-name-' => $usr->username], $usr->first_name . ' ' . $usr->last_name);
+                // dd($email);
 
                 echo json_encode(['response' => 'success']);
 
@@ -210,21 +211,18 @@ class HomeController extends Controller
 
             $u = $request->post();
 
-            $usr = User::where(['username' => $u['id']])->first();
-
             $authKey = env('SMS_AUTH_KEY', '');
             $flowId = env('SMS_FLOW_KEY', '');
             $url = env('SMS_FLOW_API', '');
             $senderId = "Prsolv";
 
-
+            $usr = User::where(['username' => $u['id']])->first();
+            $d = [
+                'event' => 'RESEND_OTP',
+                'userid' => $usr->id,
+            ];
             if ($usr) {
                 $mobileNumber = "+91" . $usr->mobile_number;
-
-                $d = [
-                    'event' => 'RESEND_OTP',
-                    'userid' => $usr->id,
-                ];
 
                 $ch = curl_init();
                 curl_setopt_array($ch, [
@@ -252,6 +250,7 @@ class HomeController extends Controller
                 }
 
                 curl_close($ch);
+
                 if ($usr->role == '0') {
                     $email = Email::send($d, $usr->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
                 } else if ($usr->role == '1') {

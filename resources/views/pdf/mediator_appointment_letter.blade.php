@@ -68,7 +68,7 @@ $meddate = $meddate->format('d-m-Y');
     <p class="text-center">Case ID: M{{sprintf('%06d', $case->id)}}  |  Date: {{$meddate}}</p> <br>
     <h2 class="text-center">Appointment Letter</h2>
 
-    <p class="text-center">(See Rule 6of Section 3 of Presolv360’s Dispute Resolution Rules)</p><br>
+    <p class="text-center">(See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules)</p><br>
     <p>Dear {{$mediator->first_name}} {{$mediator->last_name}},</p>
     <h4>Sub: Appointment to act as Mediator </h4>
     <?php 

@@ -37,7 +37,7 @@ use App\Models\InvoledUser;
     <div class="col-sm-12">
         <div class="card-box table-responsive">
             <h4 class="header-title"><b>@lang('site.Ongoing') </b></h4>
-            <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <table  id="datatable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
                         <th>@lang('case.Sr. No')</th>
@@ -60,17 +60,18 @@ use App\Models\InvoledUser;
                     $id='';
 
                     foreach ($ongoing as $key => $value) {?>
+                    <?php 
+
+                    if($value->caseid==$id){
+                        continue;
+                    }
+
+                    $id=$value->caseid;
+
+                    ?>
                      <tr>
 
-                        <?php 
-
-                        if($value->caseid==$id){
-                            continue;
-                        }
-
-                        $id=$value->caseid;
-
-                        ?>
+                        
                         <td>{{$i++}}</td>
                         {{-- <td><input type="checkbox" class="blkchk" data-caseid="{{$value->caseid}}"></td> --}}
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
@@ -135,7 +136,12 @@ use App\Models\InvoledUser;
                             <a href="{{route('user.disclosures',$value->caseid)}}" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a>
                         <?php } ?>
                         </td>
-                        <td><button type="button" data-type="0", data-typename="Share" data-id="{{$value->caseid}}" data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Share</button></td>
+                        <td><div class="position-relative"><button type="button" data-type="0", data-typename="Share" data-id="{{$value->caseid}}" data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Share</button>
+                            @if ($value->share_view_count != 0)    
+                            <span class="badge badge-danger share_unseen">{{$value->share_view_count}}</span>
+                            @endif
+                            <span class="badge-success badge share_total">{{$value->share_count}}</span>
+                        </div></td>
 
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
                         <td><button value="{{$value->caseid}}"  data-id="{{$value->caseid}}" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">Upload Supporting</button></td>
@@ -149,12 +155,12 @@ use App\Models\InvoledUser;
                     </td> --}}
 
 
-                        <td>
+                    <td>
                             
-                            <span class="badge badge-success ">@if (isset($value->casestatus->description))
-                                
-                            {{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}@endif</span>
-                        </td>
+                        <span class="badge badge-success ">@if (isset($value->casestatus->description))
+                            
+                        {{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}@endif</span>
+                    </td>
                         </tr>
                     <?php } ?>
                 </tbody>
@@ -230,7 +236,7 @@ use App\Models\InvoledUser;
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="commentModalLabel">Share</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" id="commentmodal-close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -248,7 +254,7 @@ use App\Models\InvoledUser;
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="commentModal-close" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">save comment</button>
                 </div>
             </form>
@@ -256,8 +262,8 @@ use App\Models\InvoledUser;
     </div>
 </div>
 
-<div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg" style="overflow-x: initial !important;">
+<div class="modal fade h-75" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title text-white">@lang('case.session_title')</h4>
@@ -266,7 +272,7 @@ use App\Models\InvoledUser;
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="overflow-x: auto;">
+            <div class="modal-body">
                 <table class="table" id="sessRecId">
                     <thead>
                     <th scope="col">@lang('case.serial_number')</th>
@@ -280,15 +286,13 @@ use App\Models\InvoledUser;
                     <tbody>
                     </tbody>
                 </table>
-                <hr>    
                 
             </div>
             <div class="modal-footer">
-                <div class="text-center">
                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
                         <span>Close</span>
                     </button>  
-                </div>
+                <div id="sessionShowBtn" class="text-center"></div>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -399,7 +403,19 @@ use App\Models\InvoledUser;
             url: '{{ route("user.sessions") }}',
             data: {caseid:caseid, '_token': csrf},
             success: function (data) {
-            $('#sessRecId tbody').html(data);
+                var pdfButton = "";
+                if(data != "") {
+                    // console.log(caseid);
+                    var link = '{{route("user.case.sessionPdf", '')}}'+'/'+caseid;
+                    // console.log(link);
+                    pdfButton = "<a target='_blank' href='"+link+"' class='btn btn-success'><span>Download PDF</span></button>"
+                    $('#sessRecId tbody').html(data);
+                    $('#sessionShowBtn').html(pdfButton);
+                } else {
+                    $('#sessRecId tbody').html("No Session");
+                    $('#sessionShowBtn').html(pdfButton);
+
+                }
             }
 
     });
@@ -724,7 +740,11 @@ use App\Models\InvoledUser;
         var type = button.data('type');
         var modal = $(this);
         var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        var urlpdf = '{{route("user.case.commentPDF",'','')}}'+'/'+id+'/'+type;
+
         $("#commentView").html("");
+        $('#commentForm .modal-footer #DownLoadPdf').remove();
+
         $.ajax({
             type: 'post',
             url: '{{ route("user.case.comment_view") }}',
@@ -752,12 +772,19 @@ use App\Models\InvoledUser;
                         $("#commentView").append(msg);
                     }
                 }
+                if(data[i] != null){
+                        $('#commentForm .modal-footer').append("<a href="+urlpdf+"><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>");
+                }
             }
         });
 
         modal.find('#commentModalLabel').text(typename);
         modal.find('.modal-body input[name="type"]').val(type);
         modal.find('.modal-body input[name="case_id"]').val(id);
+    });
+
+    $('#commentModal-close').on('click', function() {
+        location.reload();
     });
 
     $('#commentForm').on('submit', function (e) {
@@ -777,6 +804,8 @@ use App\Models\InvoledUser;
                     success: function () {
                         swal("comment save successfully!", {
                             icon: "success",
+                        }).then(function() {
+                            location.reload();
                         });
                         $('#commentForm')[0].reset();
                         $('#commentModal').modal("hide");

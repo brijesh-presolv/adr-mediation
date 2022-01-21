@@ -72,7 +72,6 @@ $ldate = $lastdate->format('d-m-Y');
                 border:solid;
                 border-width:1px;
                 padding:10px;
-
                 /* overflow: hidden; */
             }
 
@@ -80,7 +79,6 @@ $ldate = $lastdate->format('d-m-Y');
                 border-width:1px;
                 padding:10px;
                 border:solid;
-
                 /* overflow: hidden; */
             }
            

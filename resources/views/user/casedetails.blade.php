@@ -60,7 +60,7 @@
                                     }
                                 }?>
                                 @if($case->otherRespondentDetails != "")
-                                    {{$case->otherRespondentDetails}}<br>
+                                @lang('case.otherRespondentDetails'): {{$case->otherRespondentDetails}}<br>
                                 @endif
                                 <?php
                                 foreach ($case->party as $key => $value) {
@@ -83,7 +83,7 @@
                                 
                             </td>
                         </tr>
-                        
+                       
                         <tr>
                             <td>Dispute Category</td>
                             <td>{{$case->disputeCategory}}</td>
@@ -109,10 +109,12 @@
                         </tr>
                         @endif
                         
+                        @if($case->agreementDate != NULL) 
                         <tr>
                             <td>Agreement Date</td>
-                            <td>{{$case->created_at}}</td>
+                            <td>{{$case->agreementDate}}</td>
                         </tr>
+                        @endif
                         
                         <?php if ($case->mfirstname) { ?>
                             <tr>
@@ -166,14 +168,13 @@
                             
                             <td>
 
-                               <a href="{{url($doc)}}" target="_blank">Download</a>
+                               <a href="{{url($doc)}}" class="btn btn-sm btn-success" target="_blank">View</a>
                                 
                             </td>
                         </tr>
                         </table>
                     <?php } ?>
-                    <?php if (count($case->supporting_document) > 0) {                             
-                        ?>
+                    <?php if (count($case->supporting_document) > 0) { ?>
                         <table class="table table-bordered">
                             <tr >
                                 <th>@lang('case.supporting_documents')</th>
@@ -181,13 +182,11 @@
                                 <th>Date</th>
                                 <th></th>
                             </tr>
-                            {{-- {{dd($case->supporting_document)}} --}}
-                                <?php foreach ($case->supporting_document as $k => $v) { 
-                                    // dd($v);
-                                    ?>
-                            <tr>
 
-                                    {{-- @if($v->access != null)  --}}
+                                <?php foreach ($case->supporting_document as $k => $v) { ?>
+                                    <tr>
+
+                                    @if($v->access != null) 
                                     <?php $accessId = explode(',', $v->access);  ?>
                                     @foreach ($accessId as $item) 
                                         <?php $userAccess = App\Models\InvoledUser::find($item);?>
@@ -201,9 +200,9 @@
                                         @endif
                                     @endforeach
                                     
-                                    {{-- @endif --}}
-                        </tr>
-                                    
+                                    @endif
+                            </tr>
+
                             <?php } ?>
 
 

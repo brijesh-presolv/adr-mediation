@@ -86,10 +86,6 @@ class UsersController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function update(Request $request) {
-        // dd();
-        
-        // dd("else"); 
-
         $user = User::find($request->id);
         $user->first_name = ucfirst($request->first_name);
         $user->last_name = ucfirst($request->last_name);
@@ -107,7 +103,6 @@ class UsersController extends Controller {
         if (isset($request->status)) {
             $user->isDone = $request->status;
         }
-
         if($request->hasFile('signature')) {
             if($user->signature_photo != null) {
                 Storage::delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
@@ -130,6 +125,9 @@ class UsersController extends Controller {
         if(isset($profilename)) {
             $user->profile_pic = $profilename;
         }
+
+
+
         $user->save();
         if ($user->role == 1) {
             $isMedi = Mediation_Details::where("user_id", "=", $request->id)->first();

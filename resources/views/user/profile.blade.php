@@ -43,10 +43,12 @@
                                     <th scope="row"> <strong>Mobile : </strong></th>
                                     <td><span class="ml-4">{{ $profileData->mobile_number }}</span></td>
                                 </tr>
+                                @if($profileData->organization != null)
                                 <tr>
                                     <th scope="row"> <strong>Organization : </strong></th>
                                     <td><span class="ml-4">{{ $profileData->organization }}</span></td>
                                 </tr>
+                                @endif
                                 {{-- <th scope="row"> <strong>Address : </strong></th>
                             <td><span class="ml-4">{{ $profileData->address }}</span></td>
                             </tr>
@@ -71,7 +73,7 @@
                     <!-- <a href="#custom-modal" class="btn btn-dark waves-effect waves-light mt-3" data-animation="blur" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" >Edit profile</a>
                     -->
                     <!-- Responsive modal -->
-                    <button class="btn btn-dark waves-effect waves-light mt-3" data-toggle="modal" data-target="#custom-modal">Edit profile</button>
+                    <button class="btn btn-dark waves-effect waves-light mt-3" id="editModel" data-toggle="modal" data-target="#custom-modal">Edit profile</button>
                     <!-- Accordion modal -->
 
                     <ul class="social-links list-inline mt-4">
@@ -87,9 +89,7 @@
                     </ul>
 
                 </div>
-                @if($errors->has('firstName'))
-                <div class="text-danger"><b>{{ $errors->first('firstName') }}</b></div>
-                @endif
+                
                 <!-- end card-box -->
                 <!-- edite profile Modal -->      
                 <div id="custom-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
@@ -112,12 +112,18 @@
                                             <div class="form-group">
                                                 <label for="field-1" class="control-label">First Name : </label>
                                                 <input type="text" name="firstName"  value="{{ $profileData->first_name }}"  class="form-control" id="field-1" >
+                                                @if($errors->has('firstName'))
+                                                <div class="text-danger"><b>{{ $errors->first('firstName') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="field-2" class="control-label">Last name : </label>
                                                 <input type="text" name="lastName"  value="{{ $profileData->last_name }}"  class="form-control" id="field-2" >
+                                                @if($errors->has('lastName'))
+                                                <div class="text-danger"><b>{{ $errors->first('lastName') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -126,6 +132,9 @@
                                             <div class="form-group">
                                                 <label for="field-3" class="control-label">Email : </label>
                                                 <input type="email" name="email"  value="{{ $profileData->email }}"  class="form-control" id="field-3" >
+                                                @if($errors->has('email'))
+                                                <div class="text-danger"><b>{{ $errors->first('email') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -134,6 +143,9 @@
                                             <div class="form-group">
                                                 <label for="field-3" class="control-label">Username : </label>
                                                 <input type="text" name="username"  value="{{ $profileData->username }}"  class="form-control" id="field-3" >
+                                                @if($errors->has('username'))
+                                                <div class="text-danger"><b>{{ $errors->first('username') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -149,9 +161,13 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="field-4" class="control-label">Mobile Number : </label>
-                                                <input type="text" name="mobile"  value="{{ $profileData->mobile_number }}"  class="form-control" data-validation="required custom length" data-validation-length="8-15" data-validation-regexp="^([0-9\s+-]+)$" id="field-4" >
+                                                <input type="text" name="mobile"  value="{{ $profileData->mobile_number }}"  class="form-control"  >
+                                                @if($errors->has('mobile'))
+                                                <div class="text-danger"><b>{{ $errors->first('mobile') }}</b></div>
+                                                @endif
                                             </div>
                                         </div>
+                                        
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
@@ -191,56 +207,7 @@
                                             <div class="form-group">
                                                 <label for="state">@lang('user.state')</label>
                                                 <input type="text" list="stateData"  class="form-control" id="state" name="state" value="{{ $profileData->state }}">
-                                                <datalist id="stateData">
-                                                    <option>
-                                                        dolnośląskie
-                                                    </option>
-                                                    <option>
-                                                        kujawsko-pomorskie
-                                                    </option>
-                                                    <option>
-                                                        lubelskie
-                                                    </option>
-                                                    <option>
-                                                        lubuskie
-                                                    </option>
-                                                    <option>
-                                                        łódzkie
-                                                    </option>
-                                                    <option>
-                                                        małopolskie
-                                                    </option>
-                                                    <option>
-                                                        mazowieckie
-                                                    </option>
-                                                    <option>
-                                                        opolskie
-                                                    </option>
-                                                    <option>
-                                                        podkarpackie
-                                                    </option>
-                                                    <option>
-                                                        podlaskie
-                                                    </option>
-                                                    <option>
-                                                        pomorskie
-                                                    </option>
-                                                    <option>
-                                                        śląskie
-                                                    </option>
-                                                    <option>
-                                                        świętokrzyskie
-                                                    </option>
-                                                    <option>
-                                                        warmińsko-mazurskie
-                                                    </option>
-                                                    <option>
-                                                        wielkopolskie
-                                                    </option>
-                                                    <option>
-                                                        zachodniopomorskie
-                                                    </option>
-                                                </datalist>
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -282,6 +249,20 @@
 @section('footer')
 <script>
     $.validate();
+
+    var errorMobile = "{!! $errors->first('mobile') !!}";
+    var errorEmail = "{!! $errors->first('email') !!}";
+    var errorUsername = "{!! $errors->first('username') !!}";
+    var errorFirstName = "{!! $errors->first('firstName') !!}";
+    var errorLastName = "{!! $errors->first('lastName') !!}";
+
+
+    // console.log(error);
+    if(errorMobile != "" || errorEmail != "" || errorUsername != "" || errorFirstName != "" || errorLastName != "") {
+        // console.log(errorMobile);
+        $("#editModel").click();
+    }
+
 </script>
 @endsection
 

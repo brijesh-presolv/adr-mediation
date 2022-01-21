@@ -27,6 +27,7 @@ use App\Models\InvoledUser;
                         <th>Party Details</th>
                         <th>Mediator</th>
                         <th>Comment</th>
+
                         <th>Session</th>
                         <th>Settelment Agreement</th>
 
@@ -53,11 +54,12 @@ use App\Models\InvoledUser;
                         foreach ($value->party as $key => $v) {
 
                             if($v->isOnboarded==1){
-                                if($v->name) {
+                                if($v->name != "") {
                                 echo '<span class="text-success">'.$v->name.'</span></br>';
                                 }
-                            } else{
-                                if($v->name) {
+                            } 
+                            else{
+                                if($v->name != "") {
                                 echo '<span class="text-danger">'.$v->name.'</span></br>';
                                 }
                             }
@@ -67,7 +69,7 @@ use App\Models\InvoledUser;
 
 
                         ?></td>
-                         <td>
+                        <td>
 
                             <button class="btn btn-info btn-sm"><?=  $value->mediator  ?></button>
                             
@@ -83,6 +85,7 @@ use App\Models\InvoledUser;
 
                                  <br>
                                 <span class="badge badge-danger">@lang('case.status_rejected')</span>
+                                {{-- <br><span class="badge badge-danger">Date of Rejection: {{$date}}</span> --}}
 
                             <?php } if($value->consent>0){?>
 
@@ -90,7 +93,12 @@ use App\Models\InvoledUser;
                             <a href="{{route('user.disclosures',$value->caseid)}}" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">Disclosure</a>
                         <?php } ?>
                         </td>
-                        <td><button type="button" data-type="0", data-typename="Share" data-id="{{$value->caseid}}" data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Share</button></td>
+                        <td> <div class="position-relative"><button type="button" data-type="0", data-typename="Share" data-id="{{$value->caseid}}" data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Share</button>
+                        @if ($value->share_view_count != 0)    
+                        <span class="badge badge-danger share_unseen">{{$value->share_view_count}}</span>
+                        @endif
+                        <span class="badge-success badge share_total">{{$value->share_count}}</span>
+                        </div></td>
                         <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
                         <td>
 
@@ -126,44 +134,6 @@ use App\Models\InvoledUser;
     </div>
 </div>
 
-
-
-<div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Session Records</h4>
-                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <table class="table" id="sessRecId">
-                    <thead>
-                    <th scope="col">S.No. </th>
-                    <th scope="col">Scheduling done on:</th>
-                    <th scope="col">Session scheduled for:</th>
-                    <th scope="col">Zoom Id :</th>
-                    <th scope="col">Note :</th>
-                    <th scope="col">Party</th>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <hr>    
-                <div class="text-center">
-                    <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                        <span>Close</span>
-                    </button>  
-                </div>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-
 <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -187,13 +157,51 @@ use App\Models\InvoledUser;
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="commentModal-close" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">save comment</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<div class="modal fade h-75" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-white">Session Records</h4>
+                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="sessRecId">
+                    <thead>
+                    <th scope="col">S.No. </th>
+                    <th scope="col">Scheduling done on:</th>
+                    <th scope="col">Session scheduled for:</th>
+                    <th scope="col">Zoom Id :</th>
+                    <th scope="col">Note :</th>
+                    <th scope="col">Party</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                
+            </div>
+            <div class="modal-footer">
+                    <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                        <span>Close</span>
+                    </button>  
+                <div id="sessionShowBtn" class="text-center"></div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 
 <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -298,7 +306,19 @@ use App\Models\InvoledUser;
             url: '{{ route("user.sessions") }}',
             data: {caseid:caseid, '_token': csrf},
             success: function (data) {
-            $('#sessRecId tbody').html(data);
+                var pdfButton = "";
+                if(data != "") {
+                    // console.log(caseid);
+                    var link = '{{route("user.case.sessionPdf", '')}}'+'/'+caseid;
+                    // console.log(link);
+                    pdfButton = "<a target='_blank' href='"+link+"' class='btn btn-success'><span>Download PDF</span></button>"
+                    $('#sessRecId tbody').html(data);
+                    $('#sessionShowBtn').html(pdfButton);
+                } else {
+                    $('#sessRecId tbody').html("No Session");
+                    $('#sessionShowBtn').html(pdfButton);
+
+                }
             }
 
     });
@@ -345,7 +365,6 @@ use App\Models\InvoledUser;
 
         });
 
-    
         $('#commentModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var id = button.data('id');
@@ -353,7 +372,11 @@ use App\Models\InvoledUser;
         var type = button.data('type');
         var modal = $(this);
         var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        var urlpdf = '{{route("user.case.commentPDF",'','')}}'+'/'+id+'/'+type;
+
         $("#commentView").html("");
+        $('#commentForm .modal-footer #DownLoadPdf').remove();
+
         $.ajax({
             type: 'post',
             url: '{{ route("user.case.comment_view") }}',
@@ -381,12 +404,19 @@ use App\Models\InvoledUser;
                         $("#commentView").append(msg);
                     }
                 }
+                if(data[i] != null){
+                        $('#commentForm .modal-footer').append("<a href="+urlpdf+"><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>");
+                }
             }
         });
 
         modal.find('#commentModalLabel').text(typename);
         modal.find('.modal-body input[name="type"]').val(type);
         modal.find('.modal-body input[name="case_id"]').val(id);
+    });
+    
+    $('#commentModal-close').on('click', function() {
+        location.reload();
     });
 
     $('#commentForm').on('submit', function (e) {
@@ -406,6 +436,8 @@ use App\Models\InvoledUser;
                     success: function () {
                         swal("comment save successfully!", {
                             icon: "success",
+                        }).then(function() {
+                            location.reload();
                         });
                         $('#commentForm')[0].reset();
                         $('#commentModal').modal("hide");

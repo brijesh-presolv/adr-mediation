@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
 use App\Http\Helpers\SendGrid;
-use App\Http\Helpers\Whatsapp;
 use App\Models\InvoledUser;
 
 class RegisterController extends Controller
@@ -168,14 +167,10 @@ class RegisterController extends Controller
         if ($response = $this->registered($request, $user)) {
             return $response;
         }
-        // dd();
-
-
         $d = [
             'event' => 'VARIFY_EMAIL',
             'userid' => $user->id,
         ];
-
         $authKey = env('SMS_AUTH_KEY', '');
         $flowId = env('SMS_FLOW_KEY', '');
         $url = env('SMS_FLOW_API', '');
@@ -211,7 +206,6 @@ class RegisterController extends Controller
 
         if ($user->role == '0') {
             $email = SendGrid::send($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
-            
         } else if ($user->role == '1') {
 
             $email = SendGrid::send($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);

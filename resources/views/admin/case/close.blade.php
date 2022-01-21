@@ -9,6 +9,7 @@
 @endsection
 @section('page_title',"Close Request")
 
+
 @section('content')
 <div class="row">
     <div class="col-sm-12">
@@ -78,15 +79,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.share_privet_btn_close')</button>
+                    <button type="button" class="btn btn-secondary" id="commentModal-close" data-dismiss="modal">@lang('case.share_privet_btn_close')</button>
                     <button type="submit" class="btn btn-primary">@lang('case.share_privet_btn_save')</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg" style="overflow-x: initial !important;">
+<div class="modal fade h-75" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title text-white">@lang('case.session_title')</h4>
@@ -95,7 +96,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="overflow-x: auto;">
+            <div class="modal-body">
                 <table class="table" id="sessRecId">
                     <thead>
                     <th scope="col">@lang('case.session_serial_number')</th>
@@ -112,11 +113,9 @@
                 
             </div>
             <div class="modal-footer">
-                <div class="text-center">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">
                         <span>Close</span>
                     </button>  
-                </div>
                 <div id="sessionShowBtn" class="text-center"></div>
             </div>
         </div>
@@ -332,8 +331,16 @@ $(function () {
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
+                    button = button + `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
+                        button +=` <span class="badge-success badge private_total">`+row.private_count+`</span>`;
+                    if(row.private_view_count != 0){
+                    button += ` <span class="badge badge-danger private_unseen">` +row.private_view_count +`</span>`;
+                    }
                     button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">@lang('case.btn_share')</button>`;
+                    if(row.share_view_count !==0){
+                    button += ` <span class="badge  badge-danger share_unseen">`+row.share_view_count+` </span>`;
+                    }
+                    button += ` <span class="badge badge-success share_total">`+row.share_count+`</span></div>`;
                     return button;
                 }
             },
@@ -428,7 +435,9 @@ $(function () {
                 // alert('form was submitted');
                 swal("@lang('case.settelment_has_been_uploaded')", {
                     icon: "success",
-                });
+                }).then(function() {
+                               location.reload();
+                           });
                 $("#settelmentModal").modal("hide");
                 userTable.ajax.reload(null, false);
             }
@@ -440,7 +449,11 @@ $(function () {
         var typename = button.data('typename');
         var type = button.data('type');
         var modal = $(this)
+        var urlpdf = '{{route("admin.case.commentPDF",'','')}}'+'/'+id+'/'+type;
+
         $("#commentView").html("");
+        $('#commentForm .modal-footer #DownLoadPdf').remove();
+
         $.ajax({
             type: 'post',
             url: '{{ route("admin.case.comment_view") }}',
@@ -468,6 +481,9 @@ $(function () {
                         $("#commentView").append(msg);
                     }
                 }
+                if(data[i] != null){
+                        $('#commentForm .modal-footer').append("<a href="+urlpdf+"><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>");
+                }
             }
         });
 
@@ -475,6 +491,11 @@ $(function () {
         modal.find('.modal-body input[name="type"]').val(type);
         modal.find('.modal-body input[name="case_id"]').val(id);
     });
+
+    $('#commentModal-close').on('click', function() {
+        userTable.ajax.reload(null, false);
+    });
+
     $('#commentForm').on('submit', function (e) {
         e.preventDefault();
         swal({
@@ -492,7 +513,8 @@ $(function () {
                     success: function () {
                         swal("@lang('case.comment_save_successfully')", {
                             icon: "success",
-                        });
+                        }).then(function() {
+                           });
                         $('#commentForm')[0].reset();
                         $('#commentModal').modal("hide");
                     }
@@ -500,6 +522,8 @@ $(function () {
             } else {
                 swal("@lang('case.comment_not_added')");
             }
+            userTable.ajax.reload(null, false);
+
         });
         return false;
     });
@@ -528,7 +552,9 @@ $(function () {
                         userTable.ajax.reload(null, false);
                         swal("@lang('case.status_change_successfully')", {
                             icon: "success",
-                        });
+                        }).then(function() {
+                               location.reload();
+                           });
                         $('#withdrawModal').modal("hide");
                     }
                 });
@@ -565,7 +591,9 @@ $(function () {
                 // alert('form was submitted');
                 swal("session created!", {
                     icon: "success",
-                });
+                }).then(function() {
+                               location.reload();
+                           });
                 $('#addSession-modal').modal("hide");
             }
         });
@@ -593,7 +621,6 @@ $(function () {
                     $('#sessionShowBtn').html(pdfButton);
 
                 }
-                // $('#sessRecId tbody').html(data);
             }
 
         });

@@ -41,9 +41,14 @@
                         </div>
                         <div class="form-group col-md-12">
                             <label for="organization">@lang('user.organization')</label>
-                            <input type="text" class="form-control" id="organization" name="organization"  value="{{$user->organization}}"  data-validation="required">
+                            <input type="text" class="form-control" id="organization" name="organization"  value="{{$user->organization}}"  data-validation=" @if($user->role==1) required @endif">
                         </div>
-                                              
+                        <div class="form-group col-md-6">
+                            <label for="country_code">@lang('user.country_code')</label>
+                            <select class="form-control" id="country_code" name="country_code" >
+                                <option>48</option>
+                            </select>
+                        </div>                        
                         <div class="form-group col-md-6">
                             <label for="address">@lang('user.address1')</label>
                             <input type="text" class="form-control" id="address" name="address" value="{{$user->address}}">
@@ -59,10 +64,59 @@
                                 <option>Polska</option>
                             </datalist> --}}
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
                             <input list="stateData"  class="form-control" id="state" value="{{$user->state}}" name="state">
-                            
+                            {{-- <datalist id="stateData">
+                                <option>
+                                    dolnośląskie
+                                </option>
+                                <option>
+                                    kujawsko-pomorskie
+                                </option>
+                                <option>
+                                    lubelskie
+                                </option>
+                                <option>
+                                    lubuskie
+                                </option>
+                                <option>
+                                    łódzkie
+                                </option>
+                                <option>
+                                    małopolskie
+                                </option>
+                                <option>
+                                    mazowieckie
+                                </option>
+                                <option>
+                                    opolskie
+                                </option>
+                                <option>
+                                    podkarpackie
+                                </option>
+                                <option>
+                                    podlaskie
+                                </option>
+                                <option>
+                                    pomorskie
+                                </option>
+                                <option>
+                                    śląskie
+                                </option>
+                                <option>
+                                    świętokrzyskie
+                                </option>
+                                <option>
+                                    warmińsko-mazurskie
+                                </option>
+                                <option>
+                                    wielkopolskie
+                                </option>
+                                <option>
+                                    zachodniopomorskie
+                                </option>
+                            </datalist> --}}
                         </div>
                         <div class="form-group col-md-4">
                             <label for="city">@lang('user.city')</label>
@@ -72,13 +126,6 @@
                             <label for="pincode">@lang('user.pincode')</label>
                             <input type="number" class="form-control" id="pincode" name="pincode" value="{{$user->pincode}}"  data-validation="required">
                         </div>
-                        <div class="form-group col-md-4">
-                            <label for="country_code">@lang('user.country_code')</label>
-                            {{-- <select class="form-control" id="country_code" name="country_code" >
-                                <option>48</option>
-                            </select> --}}
-                            <input type="number" class="form-control" id="country_code" name="country_code" value="{{$user->country_code}}"  data-validation="required">
-                        </div>  
 
 
                         @if($user->role==1)
@@ -125,7 +172,7 @@
                         <div class="form-group col-md-6">
                             <label for="signature">Upload Signature</label>
                             @if($user->signature_photo != null) 
-                                <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{$user->id}}/signature/{{$user->signature_photo}}" /> 
+                                <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{$user->id}}/signature/{{$user->signature_photo}}" />  
                             @endif
                             <input type="file" class="form-control" id="signature"  name="signature">
                         </div>

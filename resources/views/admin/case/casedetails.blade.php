@@ -3,7 +3,6 @@
 
 
 @section('breadcrumb')
-
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.home')</a></li>
 <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.casedetails')</a></li>
@@ -53,7 +52,7 @@
                                         @endif
                                         @if($value->joinCode != "")
                                         JoinCode:  {{ $value->joinCode}}<br>   
-                                        @endif 
+                                        @endif
                                         @if($value->onboardedDate != "")
                                         Date of Onboarded: {{date('d-m-Y', strtotime($value->onboardedDate))}}<br>   
                                         @endif
@@ -63,9 +62,8 @@
                                         <?php
                                     }
                                 }?>
-                                {{-- {{dd($case)}} --}}
                                 @if($case->otherRespondentDetails != "")
-                                    {{$case->otherRespondentDetails}}<br>
+                                @lang('case.otherRespondentDetails'): {{$case->otherRespondentDetails}}<br>
                                 @endif
                                 <?php
                                 foreach ($case->party as $key => $value) {
@@ -82,7 +80,6 @@
                                         @if($value->joinCode != "")
                                         JoinCode:  {{ $value->joinCode}}<br>   
                                         @endif
-                                        
                                         @endif
                                         <br>
                                         <?php
@@ -91,6 +88,7 @@
                                 
                             </td>
                         </tr>
+                        
                         <tr>
                             <td>Dispute Category</td>
                             <td>{{$case->disputeCategory}}</td>
@@ -115,12 +113,15 @@
                             <td>{{$case->proposedSolution}}</td>
                         </tr>
                         @endif
+                        
+                        
                         @if($case->agreementDate != NULL) 
                         <tr>
                             <td>Agreement Date</td>
                             <td>{{$case->agreementDate}}</td>
                         </tr>
                         @endif
+                        
                         <?php if ($case->mfirstname) { ?>
                             <tr>
                                 <td>@lang('case.mediator')</td>
@@ -190,7 +191,7 @@
                             
                             <td>
 
-                               <a href="{{url($doc)}}" target="_blank">Download</a>
+                               <a href="{{url($doc)}}" class="btn btn-sm btn-success" target="_blank">View</a>
                                 
                             </td>
                         </tr>
@@ -207,12 +208,10 @@
                                 <th></th>
                             </tr>
 
+                            <tr>
                                 <?php foreach ($case->supporting_document as $k => $v) { ?>
-                                    {{-- {{dd($v->username)}} --}}
-                                    <tr>
 
-                                    <td><?= basename($v->file_name) ?>
-                                    </td>
+                                    <td><?= basename($v->file_name) ?></td>
                                     <?php $userAccess = App\Models\InvoledUser::where('userPlanId', $case->id)->get();?>
                                         
                                     <td>
@@ -223,7 +222,7 @@
                                             <input type="checkbox" data-manageid={{$v->id}} name="party[]"  checked class="partyShare" id="party{{$v->id}}" value="{{$item->id}}" data-filepath="{{$v->file_name}}">
                                             <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
                                         @else
-                                            <input type="checkbox" data-manageid={{$v->id}} name="party[]"   class="partyShare" id="party{{$v->id}}" value="{{$item->id}}" data-filepath="{{$v->file_name}}">
+                                        <input type="checkbox" data-manageid={{$v->id}} name="party[]"   class="partyShare" id="party{{$v->id}}" value="{{$item->id}}" data-filepath="{{$v->file_name}}">
                                             <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
                                         @endif
                                         @endif
@@ -231,10 +230,10 @@
                                         @endforeach
                                     </td>
                                     <td><div class="form-group">
-                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                        <input type="checkbox" id="status_change_approvel{{$v->id}}" name=="user_status" value="{{$v->id}}" class="custom-control-input status_change_approvel" {{$v->mediator_access == 1 ? "checked" : ""}} data-filepath="{{$v->file_name}}" data-caseid="{{$case->id}}">
-                                        <label class="custom-control-label" for="status_change_approvel{{$v->id}}"> </label>
-                                    </div></div>
+                                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                            <input type="checkbox" id="status_change_approvel{{$v->id}}" name=="user_status" value="{{$v->id}}" class="custom-control-input status_change_approvel" {{$v->mediator_access == 1 ? "checked" : ""}} data-filepath="{{$v->file_name}}" data-caseid="{{$case->id}}">
+                                            <label class="custom-control-label" for="status_change_approvel{{$v->id}}"> </label>
+                                        </div></div>
                                     </td>
                                     <td>{{$v->username}}</td>
                                     <td>{{date('d-m-Y', strtotime($v->created_at))}}</td>
@@ -271,9 +270,9 @@
         } else {
             uncheckedId = $(this).val();
         }
-        console.log(filename_path);
-        console.log("checkedId : ", checkedId);
-        console.log("uncheckedId : ", uncheckedId);
+        // console.log(manageid);
+        // console.log("checkedId : ", checkedId);
+        // console.log("uncheckedId : ", uncheckedId);
 
         $.ajax({
             url: '{{ route("admin.users.docs_access_change") }}',

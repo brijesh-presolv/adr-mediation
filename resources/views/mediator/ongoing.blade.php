@@ -7,6 +7,7 @@
 <li class="breadcrumb-item"><a href="javascript: void(0);">Ongoing Request</a></li>
 <!-- end page title -->
 @endsection
+@section('pageTitleOnDashboard', 'Ongoing Request')
 
 @section('content')
 <div class="row">
@@ -40,6 +41,47 @@
                 </div>
                 
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="addSessionModelForBulk" class="modal fade"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal-demo">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Session</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span><span class="sr-only">Close</span>
+                </button>
+            </div>
+
+            <form id="addSessionFormForBulk">
+
+                <input type="hidden" name="createdBy" id="createdByF" value="{{Auth::id()}}">
+                <input type="hidden" name="caseId" value="">
+
+                <div class="custom-modal-text ">
+
+                    <span>Session Date :</span>
+                    <input type="text" autocomplete="off" id="sessionDateForBulk" class="form-control" name="sessionDate" placeholder="Select session date" data-validation="required">
+
+                    <span>Session Time :</span>
+                    <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time" data-validation="required">
+
+                    <span>Zoom Id :</span>
+                    <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id" data-validation="required">
+
+                    <span>Note :</span>
+                    <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes" data-validation="required"></textarea>
+                    {{-- <span>Party :</span>
+                    <div id="sessionPartyForBulk">
+
+                    </div> --}}
+                    <div class="text-center">    
+                        <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -99,7 +141,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="commentModal-close" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">save comment</button>
                 </div>
             </form>
@@ -122,7 +164,7 @@
                     <input type="hidden" name="caseId" id="caseIdF1" value="">
                     <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />
                     <br><br>
-                    <span>Share With :</span>
+                    <span>Share With:</span>
                     <div class="form-group" id="PartyDocs">
                     </div>
                     <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
@@ -152,8 +194,8 @@
     <!-- /.modal-dialog -->
 </div>
 
-<div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade h-75" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title text-white">Session Records</h4>
@@ -175,12 +217,15 @@
                     <tbody>
                     </tbody>
                 </table>
-                <hr>    
-                <div class="text-center">
+                  
+                
+            </div>
+            <div class="modal-footer">
                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
                         <span>Close</span>
                     </button>  
-                </div>
+                <div id="sessionShowBtn" class="text-center"></div>
+
             </div>
         </div>
         <!-- /.modal-content -->
@@ -214,51 +259,11 @@
                     <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id" data-validation="required">
 
                     <span>Note :</span>
-                    <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
+                    <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes" data-validation="required"></textarea>
                     <span>Party :</span>
                     <div id="sessionParty">
 
                     </div>
-                    <div class="text-center">    
-                        <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div id="addSessionModelForBulk" class="modal fade"  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal-demo">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Session</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span>&times;</span><span class="sr-only">Close</span>
-                </button>
-            </div>
-
-            <form id="addSessionFormForBulk">
-
-                <input type="hidden" name="createdBy" id="createdByF" value="{{Auth::id()}}">
-                <input type="hidden" name="caseId"  value="">
-
-                <div class="custom-modal-text ">
-
-                    <span>Session Date :</span>
-                    <input type="text" autocomplete="off" id="sessionDateForBulk" class="form-control" name="sessionDate" placeholder="Select session date" data-validation="required">
-
-                    <span>Session Time :</span>
-                    <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime" placeholder="Select session Time" data-validation="required">
-
-                    <span>Zoom Id :</span>
-                    <input type="text" id="zoomId" class="form-control" name="zoomId" placeholder="Paste meeting Id Or Zoom Id" data-validation="required">
-
-                    <span>Note :</span>
-                    <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"></textarea>
-                    {{-- <span>Party :</span>
-                    <div id="sessionPartyForBulk">
-
-                    </div> --}}
                     <div class="text-center">    
                         <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
                     </div>
@@ -364,6 +369,7 @@
 $(function () {
     $("#sessionDate").datepicker({minDate: 0, dateFormat: 'dd/mm/yy'});
     $("#sessionDateForBulk").datepicker({minDate: 0, dateFormat: 'dd/mm/yy'});
+
 });
 </script>
 <script>
@@ -379,7 +385,7 @@ $(function () {
     var userTable = $('#users').DataTable({
         "ajax": '{{ route("mediator.case.jsonOngoing",$confirm_status) }}',
         "responsive": true,
-        
+        // "order": [[1, "desc"]],
         "columns": [
             {"data": "case.id",
                 render: function (data, type, row, meta) {
@@ -412,7 +418,7 @@ $(function () {
                     var d = "";
                     for (i in data) {
                         if (data[i].userId != 0) {
-                            if(data[i].name != null) {
+                        if(data[i].name != null) {
                             d = d + `<span class="text-success party_name" data-inid="`+data[i].id+`" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
                             }
                         } else {
@@ -427,8 +433,16 @@ $(function () {
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                    button = button + `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                    button +=` <span class="badge-success badge private_total">`+row.private_count+`</span>`;
+                    if(row.private_view_count != 0){
+                    button += ` <span class="badge badge-danger private_unseen">` +row.private_view_count +`</span>`;
+                    }
                     button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                    if(row.share_view_count !==0){
+                    button += ` <span class="badge  badge-danger share_unseen">`+row.share_view_count+` </span>`;
+                    }
+                    button += ` <span class="badge badge-success share_total">`+row.share_count+`</span></div>`;
                     return button;
                 }
             },
@@ -451,12 +465,12 @@ $(function () {
         ],
     });
 
-
     $("#selectalldir").change(function () {
       if (this.checked) {
         $("#bulkCloseBtn").show();
         $("#bulkUpload").show();
         $("#bulkSession").show();
+
         $(".blkchk").each(function () {
           $(this).prop("checked", true);
         });
@@ -472,22 +486,107 @@ $(function () {
     });
 
     $(document).on("change", ".blkchk", function () {
+        var case_count = 0;
+        $(".blkchk").each(function () {
+        if (this.checked) {
+          case_count++;
+        }
+       });
       if (this.checked) {
         $("#bulkCloseBtn").show();
         $("#bulkUpload").show();
         $("#bulkSession").show();
+
       } else {
+        if (case_count == 0) {  
+
         $("#bulkCloseBtn").hide();
         $("#bulkUpload").hide();
         $("#bulkSession").hide();
+        }
       }
+      if($('#selectalldir').is(':checked')){
+         $("#bulkAcceptBtn").show();
+         $("#bulkRejectBtn").show();
+       }if(case_count == 0){
+         $("#bulkAcceptBtn").hide();
+         $("#bulkRejectBtn").hide();
+         $("#selectalldir").prop("checked", false);
+       }
     });
-
-    $('#withdrawFormForBulk').on('submit', function (e) {
+    $('#addSessionFormForBulk').on('submit', function (e) {
         e.preventDefault();
+        var withdrawcount = [];
+        var count = 0;
+        $(".blkchk").each(function () {
+            if(this.checked){
+               count++;
+            }
+            withdrawcount.push(count);
+          });
+
+        var withdrawcountTotal = Math.max.apply(Math, withdrawcount); 
         swal({
             title: "@lang('case.are_you_sure')",
-            text: "@lang('case.change_status')",
+            text: withdrawcountTotal+" Cases are selected",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then(function (willDelete) {
+            if (willDelete) {
+                $(".blkchk").each(function () {
+                    if (this.checked) {
+                        var id = $(this).data("caseid");
+                        $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
+                        $.ajax({
+                            type: 'post',
+                            url: '{{ route("mediator.addSession") }}',
+                            data: $('#addSessionFormForBulk').serialize(),
+                            beforeSend: function() {
+                                $('#addSession-modal').modal("hide");
+
+                                            swal({
+                                                title: 'Loading...',
+                                                showConfirmButton: false,
+                                                buttons: false,
+                                                allowOutsideClick: false,
+                                            });
+                                        },
+                            success: function () {
+                                // alert('form was submitted');
+                                swal("session created!", {
+                                    icon: "success",
+                                }).then(function () {
+                                    location.reload();
+                                });
+                                $('#addSession-modal').modal("hide");
+                            }
+                        });
+                    }
+                    
+                });
+            }
+            else{
+            swal("@lang('case.request_canseled')");
+            }
+        });
+        
+    });
+    $('#withdrawFormForBulk').on('submit', function (e) {
+        e.preventDefault();
+        var withdrawcount = [];
+        var count = 0;
+        $(".blkchk").each(function () {
+            if(this.checked){
+               count++;
+            }
+            withdrawcount.push(count);
+          });
+
+        var withdrawcountTotal = Math.max.apply(Math, withdrawcount); 
+        swal({
+            title: "@lang('case.are_you_sure')",
+            text: withdrawcountTotal +" Cases selected",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -515,6 +614,8 @@ $(function () {
                             userTable.ajax.reload(null, false);
                             swal("@lang('case.status_change_successfully')", {
                                 icon: "success",
+                            }).then(function() {
+                                location.reload();
                             });
                             $('#withdrawModalForBulk').modal("hide");
                         }
@@ -528,6 +629,82 @@ $(function () {
         return false;
     });
 
+    $('#uploadFormModalForBulk').on('submit', function (e) {
+        e.preventDefault();
+        var withdrawcount = [];
+
+            var count = 0;
+            $(".blkchk").each(function () {
+            if(this.checked){
+               count++;
+            }
+            withdrawcount.push(count);
+          });
+
+        var withdrawcountTotal = Math.max.apply(Math, withdrawcount);
+        var formData = new FormData(this);
+        let TotalFiles = $('#filesForBulk')[0].files.length;
+        let files = $('#filesForBulk')[0];
+        for (let i = 0; i < TotalFiles; i++) {
+            formData.append('files' + i, files.files[i]);
+        }
+        formData.append('TotalFiles', TotalFiles);
+        swal({
+            title: "Are you sure?",
+            text: withdrawcountTotal +" Cases selected",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then(function (willDelete) { 
+            if (willDelete) {
+                $(".blkchk").each(function () {
+                    if (this.checked) {
+                        formData.delete('caseId');
+                        var id = $(this).data("caseid");
+                        // $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
+                        formData.append('caseId', id);
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route("mediator.storeMultiFile") }}',
+                            data: formData,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            beforeSend: function() {
+                                // $('#uploadSupportingDocsModal').modal("hide");
+
+                                    swal({
+                                        title: 'Loading...',
+                                        showConfirmButton: false,
+                                        buttons: false,
+                                        allowOutsideClick: false,
+                                    });
+                                },
+                            success: (data) => {
+                                //this.reset();
+                                swal("Files has been uploaded!", {
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                                $("#uploadSupportingDocsModalForBulk").modal("hide");
+                            },
+                            error: function (data) {
+                                //alert(data.responseJSON.errors.files[0]);
+                                console.log(data);
+                            }
+                        });
+                    }
+                    
+                });
+            } else {
+                swal("Cancel Confirm Request!");
+            }
+        });
+        
+    });
 
     $(document).on('submit', "#MidaterForm", function () {
         var id = $(this).find("input[name='id']").val();
@@ -545,9 +722,19 @@ $(function () {
                     url: '{{ route("admin.case.midater_add") }}',
                     method: "post",
                     data: {id: id, midater: midater, '_token': csrf},
+                    beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                
+                            });
+                        },
                 }).done(function (data) {
                     swal("mediator assigned successfully!", {
                         icon: "success",
+                    }).then(function() {
+                        location.reload();
                     });
                     userTable.ajax.reload();
                     $('#midaterAdd').modal("hide");
@@ -572,7 +759,6 @@ $(function () {
         }
         formData.append('TotalFiles', TotalFiles);
         formData.append('docs_party_ids', party);
-
         $.ajax({
             type: 'POST',
             url: '{{ route("mediator.storeMultiFile") }}',
@@ -595,6 +781,8 @@ $(function () {
                 //this.reset();
                 swal("Files has been uploaded!", {
                     icon: "success",
+                }).then(function() {
+                    location.reload();
                 });
                 $("#uploadSupportingDocsModal").modal("hide");
             },
@@ -602,95 +790,6 @@ $(function () {
                 //alert(data.responseJSON.errors.files[0]);
                 console.log(data);
             }
-        });
-    });
-
-    $('#uploadFormModalForBulk').on('submit', function (e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        let TotalFiles = $('#filesForBulk')[0].files.length;
-        let files = $('#filesForBulk')[0];
-        for (let i = 0; i < TotalFiles; i++) {
-            formData.append('files' + i, files.files[i]);
-        }
-        formData.append('TotalFiles', TotalFiles);
-        $(".blkchk").each(function () {
-            if (this.checked) {
-                formData.delete('caseId');
-                var id = $(this).data("caseid");
-                // $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
-                formData.append('caseId', id);
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route("mediator.storeMultiFile") }}',
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    beforeSend: function() {
-                        // $('#uploadSupportingDocsModal').modal("hide");
-
-                            swal({
-                                title: 'Loading...',
-                                showConfirmButton: false,
-                                buttons: false,
-                                allowOutsideClick: false,
-                            });
-                        },
-                    success: (data) => {
-                        //this.reset();
-                        swal("Files has been uploaded!", {
-                            icon: "success",
-                        }).then(function() {
-                            location.reload();
-                        });
-                        $("#uploadSupportingDocsModalForBulk").modal("hide");
-                    },
-                    error: function (data) {
-                        //alert(data.responseJSON.errors.files[0]);
-                        console.log(data);
-                    }
-                });
-            }
-            
-        });
-    });
-
-    $('#addSessionFormForBulk').on('submit', function (e) {
-        e.preventDefault();
-        
-        $(".blkchk").each(function () {
-            if (this.checked) {
-                var id = $(this).data("caseid");
-                $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
-                $.ajax({
-                    type: 'post',
-                    url: '{{ route("mediator.addSession") }}',
-                    data: $('#addSessionFormForBulk').serialize(),
-                    beforeSend: function() {
-                        $('#addSessionModelForBulk').modal("hide");
-
-                                    swal({
-                                        title: 'Loading...',
-                                        showConfirmButton: false,
-                                        buttons: false,
-                                        allowOutsideClick: false,
-                                    });
-                                },
-                    success: function () {
-                        // alert('form was submitted');
-                        swal("session created!", {
-                            icon: "success",
-                        }).then(function () {
-                            location.reload();
-                        });
-                        // $('#addSession-modal').modal("hide");
-                    }
-                });
-            }
-            
         });
     });
 
@@ -705,8 +804,11 @@ $(function () {
         var id = button.data('id');
         var typename = button.data('typename');
         var type = button.data('type');
-        var modal = $(this)
+        var modal = $(this);
+        var urlpdf = '{{route("mediator.case.commentPDF",'','')}}'+'/'+id+'/'+type;
+
         $("#commentView").html("");
+        $('#commentForm .modal-footer #DownLoadPdf').remove();
         $.ajax({
             type: 'post',
             url: '{{ route("mediator.case.comment_view") }}',
@@ -716,23 +818,26 @@ $(function () {
                     //console.log(data[0]);
                     if (data[i].username == '{{Auth::user()->username}}') {
                         var msg = `<div class="col-md-12 text-right border-top">
-                                <div class="row">
-                                                <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
-                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                    </div>           
-                                    <p>` + data[i].comment + `</p>
-                            </div>`;
+                            <div class="row">
+                                            <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
+                                            <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
                         $("#commentView").append(msg);
                     } else {
                         var msg = `<div class="col-md-12 border-top">
-                                <div class="row">
-                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                                <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
-                                    </div>           
-                                    <p>` + data[i].comment + `</p>
-                            </div>`;
+                            <div class="row">
+                                            <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                            <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
                         $("#commentView").append(msg);
                     }
+                }
+                if(data[i] != null){
+                        $('#commentForm .modal-footer').append("<a href="+urlpdf+"><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>");
                 }
             }
         });
@@ -741,6 +846,11 @@ $(function () {
         modal.find('.modal-body input[name="type"]').val(type);
         modal.find('.modal-body input[name="case_id"]').val(id);
     });
+
+    $('#commentModal-close').on('click', function() {
+        userTable.ajax.reload(null, false);
+    });
+
     $('#commentForm').on('submit', function (e) {
         e.preventDefault();
         swal({
@@ -759,6 +869,8 @@ $(function () {
                         $('#commentForm')[0].reset();
                         swal("comment save successfully!", {
                             icon: "success",
+                        }).then(function() {
+                            // location.reload();
                         });
                         $('#commentModal').modal("hide");
                     }
@@ -766,6 +878,8 @@ $(function () {
             } else {
                 swal("comment not added!");
             }
+            userTable.ajax.reload(null, false);
+
         });
         return false;
     });
@@ -796,6 +910,8 @@ $(function () {
                         userTable.ajax.reload();
                         swal("status change successfully!", {
                             icon: "success",
+                        }).then(function() {
+                            location.reload();
                         });
                         $('#withdrawModal').modal("hide");
                     }
@@ -818,7 +934,6 @@ $(function () {
     $('#uploadSupportingDocsModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var recipient = button.data('id');
-        // console.log(recipient);
         var data = button.parent().parent().find(".party_name");
         $("#PartyDocs").html("");
         data.each(function () {
@@ -860,29 +975,12 @@ $(function () {
         var mediator = button.data('mediator');
         $('#caseIdF').val(recipient);
     });
-    // $('#addSessionModelForBulk').on('show.bs.modal', function (event) {
-    //     var button = $(event.relatedTarget);
-    //     var data = button.parent().parent().find(".party_name");
-    //     $("#sessionPartyForBulk").html("");
-    //     data.each(function () {
-    //         var party_id = $(this).data("id")
-    //         var party_name = $(this).text()
-    //         var text = `<div class="form-group form-check">
-    //             <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `" data-validation="checkbox_group" data-validation-qty="min1">
-    //             <label class="form-check-label" for="party` + party_id + `">` + party_name + `</label>
-    //           </div>`;
-    //         $("#sessionPartyForBulk").append(text);
-    //     });
-    //     var recipient = button.data('id');
-    //     var mediator = button.data('mediator');
-    //     $('#caseIdF').val(recipient);
-    // });
     $('#addSessionForm').on('submit', function (e) {
 
         e.preventDefault();
         $.ajax({
             type: 'post',
-            url: '{{ route("mediator.addSession") }}',
+            url: '{{ route("mediator.case.addSession") }}',
             data: $('#addSessionForm').serialize(),
             beforeSend: function() {
                 $('#addSession-modal').modal("hide");
@@ -898,6 +996,8 @@ $(function () {
                 // alert('form was submitted');
                 swal("session created!", {
                     icon: "success",
+                }).then(function() {
+                    location.reload();
                 });
                 $('#addSession-modal').modal("hide");
             }
@@ -910,10 +1010,23 @@ $(function () {
         var csrf = document.querySelector('meta[name="csrf-token"]').content;
         $.ajax({
             type: 'post',
-            url: '{{ route("mediator.getAddedSesion") }}',
+            url: '{{ route("mediator.case.getAddedSesion") }}',
             data: {mediator_id: sheduledBy_Id, caseid: caseid, '_token': csrf},
             success: function (data) {
-                $('#sessRecId tbody').html(data);
+                var pdfButton = "";
+                if(data != "") {
+                    // console.log(caseid);
+                    var link = '{{route("mediator.case.sessionPdf", '')}}'+'/'+caseid;
+                    // console.log(link);
+                    pdfButton = "<a target='_blank' href='"+link+"' class='btn btn-success'><span>Download PDF</span></button>"
+                    $('#sessRecId tbody').html(data);
+                    $('#sessionShowBtn').html(pdfButton);
+                } else {
+                    $('#sessRecId tbody').html("No Session");
+                    $('#sessionShowBtn').html(pdfButton);
+
+                }
+                // $('#sessRecId tbody').html(data);
             }
 
         });

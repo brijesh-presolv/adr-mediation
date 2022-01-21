@@ -19,6 +19,28 @@
         <link href="{{url('assets/')}}/css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="{{url('assets/')}}/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
 
+        <style>
+            .private_total {
+                position: absolute;
+                top: -0.8em; 
+                left: 4.5em
+            }
+            .private_unseen {
+                position: absolute;
+                top: -0.8em; 
+                left: 3em
+            }
+            .share_total {
+                position: absolute;
+                top: -0.8em; 
+                left: 10em
+            }
+            .share_unseen {
+                position: absolute;
+                top: -0.8em; 
+                left: 8.5em
+            }
+        </style>
         <!-- Dynamic pages css comes -->
         @yield('head')
     </head>
@@ -118,7 +140,8 @@
                                             @yield('breadcrumb')
                                         </ol>
                                     </div>
-                                    @yield('pageTitleOnDashboard')
+                                    <h4 class="page-title">@yield('pageTitleOnDashboard')</h4>
+                                    {{-- @yield('pageTitleOnDashboard') --}}
                                 </div>
                             </div>
                         </div>

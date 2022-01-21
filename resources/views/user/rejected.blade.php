@@ -63,7 +63,8 @@ use App\Models\InvoledUser;
                                 if($v->name != "") {
                                 echo '<span class="text-success">'.$v->name.'</span></br>';
                                 }
-                            } else{
+                            } 
+                            else{
                                 if($v->name != "") {
                                 echo '<span class="text-danger">'.$v->name.'</span></br>';
                                 }

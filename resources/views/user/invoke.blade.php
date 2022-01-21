@@ -99,17 +99,14 @@ function isreadonlys($rows) {
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
 
-                            
-                            <input type="text" name="userstate" id="userstate" list="state" class="form-control" value="<?= $user->state?>">
-
+                            <input type="text" name="userstate" id="userstate"  class="form-control" value="<?= $user->state?>">
+                           
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Country <span style="color:red; ">*</span></label>
-                            <select class="form-control" id="usercountry" name="usercountry">
-                                <option>Polska</option>
-                            </select>
+                            <input type="text" class="form-control" id="usercountry" name="usercountry" value="<?= $user->country?>">
                         </div>
                     </div>
                 </div>
@@ -144,31 +141,30 @@ function isreadonlys($rows) {
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Name<span style="color:red; ">*</span></label>
-                                <input type="text" name="name[]" class="form-control" value="<?= isset($InvoledUser[$i]['name']) ? $InvoledUser[$i]['name'] : ''; ?>" <?= isreadonly($rows) ?>  required>
+                                <label>Name</label>
+                                <input type="text" name="name[]" class="form-control" value="<?= isset($InvoledUser[$i]['name']) ? $InvoledUser[$i]['name'] : ''; ?>" <?= isreadonly($rows) ?>  >
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Email <span style="color:red; ">*</span></label>
-                                <input type="email" name="email[]" class="form-control" value="<?= isset($InvoledUser[$i]['userEmail']) ? $InvoledUser[$i]['userEmail'] : ''; ?>" <?= isreadonly($rows) ?>  required>
+                                <label>Email </label>
+                                <input type="email" name="email[]" class="form-control" value="<?= isset($InvoledUser[$i]['userEmail']) ? $InvoledUser[$i]['userEmail'] : ''; ?>" <?= isreadonly($rows) ?>  >
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Phone <span style="color:red; ">*</span></label>
-                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>  required  data-smk-pattern="[a-zA-Z0-9\s-+]{8,15}" minlength="8" maxlength="15" data-smk-msg="Enter vaild phone number" >
+                                <label>Phone </label>
+                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>    data-smk-pattern="[a-zA-Z0-9\s-+]{8,15}" minlength="8" maxlength="15" data-smk-msg="Enter vaild phone number" >
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>Address <span style="color:red; ">*</span></label>
-                                <textarea name="fulladdress[]" rows="4" type="text" class="form-control" required><?= isset($InvoledUser[$i]['fulladdress']) ? $InvoledUser[$i]['fulladdress'] : ''; ?></textarea>
+                                <label>Address </label>
+                                <textarea name="fulladdress[]" rows="4" type="text" class="form-control" ><?= isset($InvoledUser[$i]['fulladdress']) ? $InvoledUser[$i]['fulladdress'] : ''; ?></textarea>
                             </div>
                         </div>
-                        
                         
                     </div>
                     
@@ -225,6 +221,8 @@ function isreadonlys($rows) {
                         </div>
                     </div>
 
+                    
+
                     <div class="col-md-12">
                         <hr>
                         <div class="form-group">
@@ -242,7 +240,6 @@ function isreadonlys($rows) {
 
                 </div>
             </section>
-            
         </form>
         <section>
             <div class="row">

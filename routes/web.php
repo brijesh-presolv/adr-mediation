@@ -3,13 +3,13 @@
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
-Route::get('/clear-cache', function () {
+Route::get('/clear-cache', function() {
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
-    Artisan::call('view:clear');
+	Artisan::call('view:clear');
     return "Cache is cleared";
 });
-Route::get('/admin/login', function () {
+Route::get('/admin/login', function() {
     Auth::logout();
     return view('admin.login');
 });
@@ -20,18 +20,19 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::match(['POST'], '/mediation', [App\Http\Controllers\HomeController::class, 'mediation'])->name('mediation');
 
-Route::match(['POST', 'GET'], '/forgotpassword', [App\Http\Controllers\HomeController::class, 'forgotpassword'])->name('forgotpassword');
-Route::match(['POST', 'GET'], '/forgotusername', [App\Http\Controllers\HomeController::class, 'forgotusername'])->name('forgotusername');
-Route::match(['POST', 'GET'], '/resendotp', [App\Http\Controllers\HomeController::class, 'resendotp'])->name('resendotp');
+Route::match(['POST','GET'], '/forgotpassword', [App\Http\Controllers\HomeController::class, 'forgotpassword'])->name('forgotpassword');
+Route::match(['POST','GET'], '/forgotusername', [App\Http\Controllers\HomeController::class, 'forgotusername'])->name('forgotusername');
+Route::match(['POST','GET'], '/resendotp', [App\Http\Controllers\HomeController::class, 'resendotp'])->name('resendotp');
 
 
 
 
 Route::match(['GET', 'POST'], '/verify', [App\Http\Controllers\HomeController::class, 'verify'])->name('verify');
-
 Route::match(['GET', 'POST'], '/whatsapp_status', [App\Http\Controllers\WhatsappStatus::class, 'status'])->name('whatsapp_status');
 
+
 //Route::get('/login', [App\Http\Controllers\HomeController::class, 'login'])->name('login');
+
 Route::get('/sendInvitation', [App\Http\Controllers\WhatsappStatus::class, 'SendInvitation'])->name('sendInvitation');
 
 
@@ -39,7 +40,7 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('user.dashboard');
     Route::get('notification', [App\Http\Controllers\User\MediationController::class, 'Notification'])->name('user.notification');
 
-    Route::match(['post', 'get', 'put'], 'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
+    Route::match(['post', 'get'], 'invoke', [App\Http\Controllers\User\MediationController::class, 'invoke'])->name('user.invoke');
     Route::match(['post', 'get'], 'newcase', [App\Http\Controllers\User\MediationController::class, 'newcase'])->name('user.newcase');
     Route::match(['get'], 'newrequest', [App\Http\Controllers\User\MediationController::class, 'newrequest'])->name('user.newrequest');
     Route::match(['get'], 'ongoing', [App\Http\Controllers\User\MediationController::class, 'ongoing'])->name('user.ongoing');
@@ -51,9 +52,10 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
 
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\User\MediationController::class, 'getConsentAndDisclosures'])->name('user.disclosures');
 
-
     Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('user.case.comment_view');
     Route::post('case/comment-action', [App\Http\Controllers\Admin\CaseController::class, 'commentAction'])->name('user.case.comment');
+    Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('user.case.commentPDF');
+    Route::get('view-session/{id}', [App\Http\Controllers\Admin\CaseController::class, 'sessionPdf'])->name('user.case.sessionPdf');
 
 
     Route::get('casedetails/{id}', [App\Http\Controllers\User\MediationController::class, 'casedetails'])->name('user.casedetails');
@@ -110,6 +112,7 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::post('settelmen-save-close', [App\Http\Controllers\Mediator\DashboardController::class, 'settelmenSaveClose'])->name('mediator.settelmenSaveClose');
 
     Route::post('get-add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'getAddedSesion'])->name('mediator.getAddedSesion');
+    Route::get('view-session/{id}', [App\Http\Controllers\Admin\CaseController::class, 'sessionPdf'])->name('mediator.case.sessionPdf');
 
     Route::get('rejected-case', [App\Http\Controllers\Mediator\DashboardController::class, 'rejectedCaseView'])->name('mediator.rejectCase');
 
@@ -123,6 +126,9 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::post('case/withdraw-status', [App\Http\Controllers\Admin\CaseController::class, 'withdrawStatus'])->name('mediator.case.withdraw');
     Route::post('case/get-add-session', [App\Http\Controllers\Admin\CaseController::class, 'getAddedSesion'])->name('mediator.case.getAddedSesion');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Mediator\DashboardController::class, 'getConsentAndDisclosures'])->name('mediator.getConsentAndDisclosures');
+
+    Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('mediator.case.commentPDF');
+
 });
 
 
@@ -139,15 +145,17 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('users/update', [App\Http\Controllers\Admin\UsersController::class, 'update'])->name('admin.users.update');
     Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
     Route::post('users/status-change-approve', [App\Http\Controllers\Admin\UsersController::class, 'statusChangeApprove'])->name('admin.users.status_change_approvel');
-    //    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
-    //    Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
-    //    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
+//    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
+//    Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
+//    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
+//    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
     Route::get('profile', [App\Http\Controllers\Admin\DashboardController::class, 'profile'])->name('admin.profile');
     Route::get('change-password/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'changePassword'])->name('admin.change.password');
-    Route::post('edit-profile/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'updateProfile'])->name('admin.profile.update');
-
+    Route::post('edit-profile/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'updateProfile'])->name('admin.profile.update');    
+ 
     Route::post('users/docsAccessChange', [App\Http\Controllers\Admin\CaseController::class, 'docsAccessChange'])->name('admin.users.docs_access_change');
     Route::post('users/mediatorAccessChange', [App\Http\Controllers\Admin\CaseController::class, 'mediatorAccessChange'])->name('admin.users.mediator_access_change');
+    Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('admin.case.commentPDF');
 
 
     //case
@@ -169,18 +177,14 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('view-settelment', [App\Http\Controllers\Admin\CaseController::class, 'viewSettelment'])->name('admin.case.viewSettelment');
     Route::post('view-supporting', [App\Http\Controllers\Admin\CaseController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
-
     Route::get('view-session/{id}', [App\Http\Controllers\Admin\CaseController::class, 'sessionPdf'])->name('admin.case.sessionPdf');
-
-
-    Route::match(['post', 'get'], 'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
+    Route::match(['post','get'],'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
     Route::post('upload-files', [App\Http\Controllers\Admin\CaseController::class, 'storeMultiFile'])->name('admin.case.storeMultiFile');
 
     //track
     Route::get('track/{id}', [App\Http\Controllers\Admin\CaseController::class, 'track'])->name('admin.case.track');
 
-
-    //cases bulk upload
+    //cases bulk upload 
     Route::post('cases/bulkupload', [App\Http\Controllers\Admin\CaseController::class, 'bulkUpload'])->name('admin.bulkUpload');
     Route::put('uploaddocument/{id}', [App\Http\Controllers\Admin\CaseController::class, 'documentUpload'])->name('admin.documentUpload');
 });

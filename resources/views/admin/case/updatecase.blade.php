@@ -110,7 +110,6 @@ function isreadonlys($rows) {
                         </div>
                     </div>
                 </div>
-              
             </section>
 
             <section>
@@ -134,7 +133,8 @@ function isreadonlys($rows) {
 
             for ($i = 0; $i < $rowcount; $i++) {
                 ?>
-
+                @if(isset($InvoledUser[$i]))
+                
                 <section class="respondent" id="{{ 'rowid'.($i+1)}}">
                     <div class="row">
                         <div class="col-md-12">
@@ -159,21 +159,7 @@ function isreadonlys($rows) {
                             </div>
                         </div>
                     </div>
-                    @if($InvoledUser[$i]['fulladdress'] != "") 
-                    <div class="row ">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label>Address <span style="color:red; ">*</span></label>
-                                <textarea name="fulladdress[]" rows="4" type="text" class="form-control" ><?= isset($InvoledUser[$i]['fulladdress']) ? $InvoledUser[$i]['fulladdress'] : ''; ?></textarea>
-                                <input type="hidden" name="invid[]" class="form-control" value="{{$InvoledUser[$i]['id']}}" >
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-12">
-                            <button class="btn badge badge-danger removeresp"  data-id="{{ 'rowid'.($i+1)}}" data-ivid="{{$InvoledUser[$i]['id']}}">Remove</button>
-                        </div>
-                    </div>
-                    @else
+                    @if($InvoledUser[$i]['address1'] != "") 
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -218,9 +204,25 @@ function isreadonlys($rows) {
                             <button class="btn badge badge-danger removeresp"  data-id="{{ 'rowid'.($i+1)}}" data-ivid="{{$InvoledUser[$i]['id']}}">Remove</button>
                         </div>
                     </div>
-                    @endif
+                    @else
                     
+                    <div class="row lastsection">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Address <span style="color:red; ">*</span></label>
+                                <textarea name="fulladdress[]" rows="4" type="text" class="form-control"  ><?= isset($InvoledUser[$i]['fulladdress']) ? $InvoledUser[$i]['fulladdress'] : ''; ?></textarea>
+                                <input type="hidden" name="invid[]" class="form-control" value="{{$InvoledUser[$i]['id']}}" >
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <button class="btn badge badge-danger removeresp"  data-id="{{ 'rowid'.($i+1)}}" data-ivid="{{$InvoledUser[$i]['id']}}">Remove</button>
+                        </div>
+                    </div>
+                    @endif
+
                 </section>
+                @endif
             <?php } ?>
 
 
@@ -240,7 +242,6 @@ function isreadonlys($rows) {
             <?php } ?>
             <section>
                 <div class="row">
-                    {{-- @if($medcase->proposedSolution != "NULL")  --}}
                     <div class="col-md-12">
                         <hr>
                         <div class="form-group">
@@ -255,7 +256,6 @@ function isreadonlys($rows) {
                             <textarea class="form-control" rows="3" name="proposedSolution" ><?= $medcase->proposedSolution ?></textarea>
                         </div>
                     </div>
-                    {{-- @endif --}}
                     
                     <div class="col-md-12">
                         <div class="form-group">
@@ -264,7 +264,7 @@ function isreadonlys($rows) {
                                 <input class="form-control" type="file" name="document"></input>
                                 <?php
                             } else {
-                                if ($medcase->documentPath != "NULL") {
+                                if ($medcase->documentPath != 'NULL') {
                                     ?>
 
                                     <a href="<?= public_path('mediation') . '/' . $medcase->id . '/' . $medcase->documentPath ?>" class="btn badge badge-success" >Supporting Document</a>
@@ -293,7 +293,6 @@ function isreadonlys($rows) {
         </section>
     </div>
 </div>
-
 
 @endsection
 

@@ -1,5 +1,5 @@
 @extends('mediator.layouts.app')
-@section('title', 'New Request')
+@section('title', 'New request')
 
 @section('breadcrumb')
 <!-- start page title -->
@@ -10,10 +10,11 @@
 
 @section('content')
 
+@section('pageTitleOnDashboard', 'New request')
 
-@section('pageTitleOnDashboard')
+{{-- @section('pageTitleOnDashboard')
 <h4 class="page-title">New Request</h4>
-@endsection
+@endsection --}}
 
 
 <div class="row">
@@ -287,7 +288,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="commentModal-close" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">save comment</button>
                 </div>
             </form>
@@ -355,7 +356,7 @@ var userTable = $('#request').DataTable({
                     else {
                         if(data[i].name != null) {
                             if(data[i].address1 != null) {
-                            d = d + `<p class="text-danger get_party  " data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
+                            d = d + `<p class="text-danger get_party " data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
                             } else {
                             d = d + `<p class="text-danger get_party " data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].fulladdress + `">` + data[i].name + `</p>`;
                             }
@@ -368,8 +369,16 @@ var userTable = $('#request').DataTable({
         {"data": "caseId",
             render: function (data, type, row) {
                 var button = "";
-                button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
-                button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                button = button + `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple btn-sm waves-effect ">Private</button>`;
+                button +=` <span class="badge-success badge private_total">`+row.private_count+`</span>`;
+                    if(row.private_view_count != 0){
+                    button += ` <span class="badge badge-danger private_unseen">` +row.private_view_count +`</span>`;
+                    }
+                button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark btn-sm waves-effect ">Share</button>`;
+                if(row.share_view_count !==0){
+                    button += ` <span class="badge  badge-danger share_unseen">`+row.share_view_count+` </span>`;
+                    }
+                    button += ` <span class="badge badge-success share_total">`+row.share_count+`</span></div>`;
                 return button;
             }
         },
@@ -382,8 +391,8 @@ var userTable = $('#request').DataTable({
 // }else{
 // }
 
-                var button = `<button class="btn-sm btn-success acceptBtn" data-issue="` + row.case_issue + `" data-toggle="modal" data-target="#acceptModal" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Accept</button>
-                                    <button class="btn-sm btn-danger" id="statuschang" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Reject</button>`;
+                var button = `<button class="btn btn-success btn-sm acceptBtn" data-issue="` + row.case_issue + `" data-toggle="modal" data-target="#acceptModal" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Accept</button>
+                                    <button class="btn btn-danger btn-sm" id="statuschang" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Reject</button>`;
                 return button;
 
 
@@ -404,8 +413,12 @@ $('#commentModal').on('show.bs.modal', function (event) {
     var id = button.data('id');
     var typename = button.data('typename');
     var type = button.data('type');
-    var modal = $(this)
+    var modal = $(this);
+    var urlpdf = '{{route("mediator.case.commentPDF",'','')}}'+'/'+id+'/'+type;
+
     $("#commentView").html("");
+    $('#commentForm .modal-footer #DownLoadPdf').remove();
+
     $.ajax({
         type: 'post',
         url: '{{ route("mediator.case.comment_view") }}',
@@ -433,6 +446,9 @@ $('#commentModal').on('show.bs.modal', function (event) {
                     $("#commentView").append(msg);
                 }
             }
+            if(data[i] != null){
+                        $('#commentForm .modal-footer').append("<a href="+urlpdf+"><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>");
+                }
         }
     });
 
@@ -440,6 +456,11 @@ $('#commentModal').on('show.bs.modal', function (event) {
     modal.find('.modal-body input[name="type"]').val(type);
     modal.find('.modal-body input[name="case_id"]').val(id);
 });
+
+$('#commentModal-close').on('click', function() {
+        userTable.ajax.reload(null, false);
+    });
+
 $('#commentForm').on('submit', function (e) {
     e.preventDefault();
     swal({
@@ -457,6 +478,8 @@ $('#commentForm').on('submit', function (e) {
                 success: function () {
                     swal("comment save successfully!", {
                         icon: "success",
+                    }).then(function() {
+                        // location.reload();
                     });
                     $('#commentForm')[0].reset();
                     $('#commentModal').modal("hide");
@@ -465,6 +488,8 @@ $('#commentForm').on('submit', function (e) {
         } else {
             swal("comment not added!");
         }
+        userTable.ajax.reload(null, false);
+
     });
     return false;
 });
@@ -530,10 +555,20 @@ $(document).on('submit', "#acceptForm", function () {
                 url: '{{ route("mediator.activeDeactive") }}',
                 method: "post",
                 data: $('#acceptForm').serialize(),
+                beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                
+                            });
+                        },
             }).done(function (data) {
                 userTable.ajax.reload()
                 swal("Request Accepted!", {
                     icon: "success",
+                }).then(function() {
+                    location.reload();
                 });
 
             });
@@ -575,10 +610,20 @@ $(document).on('click', "#statuschang", function () {
                     url: '{{ route("mediator.activeDeactive") }}',
                     method: "post",
                     data: {caseid: caseid, mediator_id: mediatorid, status: status, '_token': csrf},
+                    beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                
+                            });
+                        },
                 }).done(function (data) {
                     userTable.ajax.reload()
                     swal("Request Rejected!", {
                         icon: "success",
+                    }).then(function() {
+                        location.reload();
                     });
                 });
 
@@ -596,6 +641,7 @@ $(document).on('click', "#statuschang", function () {
 // var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
 });
+
 
 $("#selectalldir").change(function () {
       if (this.checked) {
@@ -615,13 +661,30 @@ $("#selectalldir").change(function () {
     });
 
     $(document).on("change", ".blkchk", function () {
+        var case_count = 0;
+        $(".blkchk").each(function () {
+        if (this.checked) {
+          case_count++;
+        }
+      });
       if (this.checked) {
         $("#bulkAcceptBtn").show();
         $("#bulkRejectBtn").show();
       } else {
+        if (case_count == 0) {  
+
         $("#bulkAcceptBtn").hide();
         $("#bulkRejectBtn").hide();
+        }
       }
+      if($('#selectalldir').is(':checked')){
+         $("#bulkAcceptBtn").show();
+         $("#bulkRejectBtn").show();
+       }if(case_count == 0){
+         $("#bulkAcceptBtn").hide();
+         $("#bulkRejectBtn").hide();
+         $("#selectalldir").prop("checked", false);
+       }
     });
 
     $("#bulkAcceptBtn").click(function () {
@@ -651,7 +714,7 @@ $("#selectalldir").change(function () {
         swal({
             // text: ctcnt + " cases selected to accept",
             title: "Are you sure?",
-            text: "to accept this request!",
+            text: ctcnt + " Cases selected",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -680,6 +743,8 @@ $("#selectalldir").change(function () {
                         userTable.ajax.reload()
                         swal("Request Accepted!", {
                             icon: "success",
+                        }).then(function() {
+                            location.reload();
                         });
                     });
                     // console.log(ids);
@@ -793,7 +858,7 @@ $("#selectalldir").change(function () {
         var status = 2;
         swal({
             title: "Are you sure?",
-            text: "to Reject these request!",
+            text: ctcnt + " Cases selected",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -820,6 +885,8 @@ $("#selectalldir").change(function () {
                         userTable.ajax.reload()
                         swal("Request Rejected!", {
                             icon: "success",
+                        }).then(function() {
+                            location.reload();
                         });
                     });
                   }
@@ -832,7 +899,6 @@ $("#selectalldir").change(function () {
         
       }
     });
-
 
 
 

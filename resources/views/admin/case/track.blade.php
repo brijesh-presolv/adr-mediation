@@ -13,6 +13,7 @@
 @section('content')
 
 <?php
+
 function mapEmail($d,$e){
     
     if($d['user1email']==$e){
@@ -56,7 +57,7 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                     
                         <thead>
                         <tr>
-                            <th>Sr. No.</th>
+                            <th>ID</th>
                             <th>Event Title</th>
                             <th>Event Description</th>
                             <th>Event Date</th>
@@ -71,36 +72,38 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                         </tr>
                       </thead>
                       <tbody>
-                          @foreach ($whatsapp as $key => $value)
-                          <?php $date = new DateTime($value->created_at);?>
-                          <?php $wldate = new DateTime($value->wldate); ?>
                           
-                          <tr>
-                              <td>{{$key + 1}}</td>
-                              <td>{{$value->title}}</td>
-                              <td>{{$value->whdescription}}</td>
-                              <td>{{$date->format('d-m-Y H:i:s')}}</td>
-                              <td>@if($value->content != "")
-                                <button class="btn btn-primary viewmsg" data-toggle="modal" data-target="#myModal230"  data-msg="{{str_replace(['::',';;'],['‘','’'],$value->content)}}">View</button>
+                          {{-- {{dd($whatsapp)}} --}}
+                          @foreach ($whatsapp as $key => $subvalue)
+                          @foreach($subvalue as $key => $value)
+                            <tr>
+                              <td></td>
+                              <td> @if($key == 0) {{$value->title}}@endif </td>
+                              <td>@if($key == 0){{$value->whdescription}}@endif</td>
+                              <td>@if($key == 0) <?php $date = new DateTime($value->created_at);?> {{$date->format('d-m-Y H:i:s')}} @endif</td>
+                              <td>@if($key == 0) @if($value->content != "")
+                                <button class="btn btn-primary viewmsg" data-toggle="modal" data-target="#myModal230"  data-msg="{{str_replace(['::',';;'],['‘','’'],$value->content)}}">View</button><br><br>
                               @endif
-                              </td>
-                            <td>
+                              @endif</td>
+                              <td> @if($key == 0)
                                 @if($value->media != "")
                                   {{-- {{$value->media}} --}}
-                                  <a class="btn btn-primary" href="{{$value->media}}">View</a>
+                                  <a class="btn btn-primary" href="{{$value->media}}">View</a><br><br>
                                 @endif
-                            </td>
+                                @endif</td>
                               <td></td>
-                              <td>{{$value->contact}}</td>
-                              <td>{{ucfirst($value->wlstatus)}}</td>
-                              {{-- <td>{{$wldate->format('d-m-Y H:i:s')}}</td> --}}
-                              <td><?php  
-                                // date_default_timezone_set('Asia/Kolkata');
-                                $time = new DateTime($value->sent_time, new DateTimeZone('UTC'));
-                                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                                 ?>   {{$time->format('d-m-Y H:i:s')}}</td>
-                           </tr>
-                              
+
+                                <td>{{$value->contact}}</td>
+                                <td>{{ucfirst($value->wlstatus)}}</td>
+                                <td><?php  
+                                  // date_default_timezone_set('Asia/Kolkata');
+                                  $time = new DateTime($value->updated_time, new DateTimeZone('UTC'));
+                                  $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                   ?>   {{$time->format('d-m-Y H:i:s')}}</td>
+                            </tr>
+                          @endforeach
+
+                          
                           @endforeach
                           
 
@@ -127,7 +130,7 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                     
                         <thead>
                         <tr>
-                            <th>Sr. No.</th>
+                            <th>ID</th>
                             <th>Event Title</th>
                             <th>Event Description</th>
                             <th>Event Date</th>
@@ -140,24 +143,30 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                       </thead>
                       <tbody>
                         
-                        @foreach($email as $key => $value)
+                        @foreach($email as $key => $subvalue)
                         {{-- {{dd($value)}} --}}
-                        <?php $date = new DateTime($value->created_at);?>
-
+                        {{-- <?php $date = new DateTime($value->created_at);?> --}}
+                        @foreach ($subvalue as $key => $value)
                         <tr>
-                        <td>{{$key + 1}}</td>
-                        <td>{{$value->title}}</td>
-                        <td>{{$value->description}}</td>
-                        <td>{{$date->format('d-m-Y H:i:s')}}</td>
+                        <td></td>
+                        <td>@if($key == 0) {{$value->title}}@endif </td>
+                        <td>@if($key == 0) {{$value->description}}@endif </td>
+                        <td>@if($key == 0) <?php $date = new DateTime($value->created_at);?> {{$date->format('d-m-Y H:i:s')}}@endif </td>
                         <td></td>
                         <td>{{$value->edemail}}</td>
-                        <td>{{ucfirst($value->edevent)}}
-                            @if($value->edevent=='click')
+                        <td>
+                          {{$value->edevent}} 
+                          @if($value->edevent=='click')
+                          <br><span title='{{$value->url}}' style='cursor: pointer;color: green;'><b>Link</b></span>
                             <br />
-                            <span title='{{$value->url}}' style='cursor: pointer;color: green;'><b>Link</b></span>
-                            @endif</td>
+                          @endif
+                               </td>
+
                         <td>{{date('d-m-Y H:i:s', $value->timestamp)}}</td>
+                        
+                        
                         </tr>
+                        @endforeach
                         @endforeach
                        
                       </tbody>

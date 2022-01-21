@@ -101,7 +101,7 @@
     }
 });
 </script>
-	<style>
+  <style>
  ul li :hover {
     background: #5D9CEC;
 }
@@ -114,9 +114,9 @@ margin-left: -5px;
 </style>
 <style>
 @media (min-width: 768px) and (max-width: 1024px){
-	.widget.widget-about{
-	    padding-right: 10px;
-	}}
+  .widget.widget-about{
+      padding-right: 10px;
+  }}
 </style>
 </head>
   <!--links for carousel end-->
@@ -126,20 +126,20 @@ margin-left: -5px;
 <!-- Header -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top bxshadow ">
 
-	<div class="container">
-		  <a class="navbar-brand" href="{{url('/')}}">
+  <div class="container">
+      <a class="navbar-brand" href="{{url('/')}}">
 
-		  	<img src="{{url('/assert/')}}/img/logo_mediacje.png" loading="lazy" class="img-fluid home-logo">
-		  </a>
-		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		    <span class="navbar-toggler-icon"></span>
-		  </button>
+        <img src="{{url('/assert/')}}/img/logo.png" loading="lazy" class="img-fluid home-logo">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-		    <ul class="navbar-nav ml-auto">
-		      <li class="nav-item active">
-		        <a class="nav-link abtbtn" target="_blank" href="https://presolv360.com/about_us">About<span class="sr-only">(current)</span></a>
-		      </li>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link abtbtn" target="_blank" href="https://presolv360.com/about_us">About<span class="sr-only">(current)</span></a>
+          </li>
 
           <li>
 
@@ -157,7 +157,7 @@ margin-left: -5px;
 
 
           <?php } else { ?>
-		      			        <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="login">Login</a>
+                        <a class="nav-link btn btn-circle-y loginbtn loginbtn2" href="login">Login</a>
                       <?php } ?>
 
             </li>
@@ -168,8 +168,8 @@ margin-left: -5px;
           <?php } ?>
 
           </ul>
-		  </div>
-	</div>
+      </div>
+  </div>
 </nav>
 <div class="loader">
 </div><!-- Header -->
@@ -310,7 +310,7 @@ function resolvsubmit(){
 </div>
 <div class="contact-content">
 <h4>Call us</h4>
-<p><a href="tel:022-20821102" target="_top">Tel 721 782 222</a></p>
+<p><a href="tel:022-20821102" target="_top">Tel +91-8447728708</a></p>
 </div>
 </div>
 </div>
@@ -324,7 +324,7 @@ function resolvsubmit(){
     </div>
     <div class="contact-content">
     <h4> Write to us</h4>
-    <p><a href="mailto:info@pdm24.pl" target="_top">info@pdm24.pl</a></p>
+    <p><a href="mailto:info@presolv360.com" target="_top">info@presolv360.com</a></p>
     </div>
   </div>
 </div>
@@ -366,7 +366,7 @@ function resolvsubmit(){
 
 </div>
 
-<div class="container-fluid footer">
+{{-- <div class="container-fluid footer">
 
   <div class="container">
 
@@ -381,7 +381,7 @@ function resolvsubmit(){
     </div>
   </div>
 
-</div>
+</div> --}}
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content" style="

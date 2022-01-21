@@ -100,6 +100,11 @@ class DashboardController extends Controller
                 "case_issue" => $d->issue,
                 "mediator_id" => $d->mediator_id,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
+                "private_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->mediation_case_id)->count(),
+                "private_view_count" =>Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->mediation_case_id)->where('view_mediator', 0)->count(),
+                "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->mediation_case_id)->count(),
+                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->mediation_case_id)->where('view_mediator',0)->count(),
+
             ];
         }
 
@@ -137,11 +142,10 @@ class DashboardController extends Controller
     {
 
         $loginUser = Auth::user()->id;
+        // $profileData = User::find($loginUser);
         $profileData = User::select('users.*', 'mediation_details.experience')
             ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
             ->where('users.id', $loginUser)->first();
-        // find($loginUser);
-        // $mediation_details
         return view('mediator.profile', compact('profileData'));
     }
 
@@ -152,9 +156,6 @@ class DashboardController extends Controller
      */
     public function statusChange(Request $request)
     {
-
-
-        // dd($mediator);$inv_id = "";
         $inv_id = "";
         $inv = InvoledUser::select('id')->where('userPlanId', $request->mediation_case_id)->get();
         foreach ($inv as $v) {
@@ -216,7 +217,6 @@ class DashboardController extends Controller
      */
     public function addSession(Request $request)
     {
-        // echo $request->zoomId;
         $time = date("g:i A", strtotime($request->sessionTime));
         $d = [
             'event' => 'SESS_SCHE',
@@ -234,9 +234,8 @@ class DashboardController extends Controller
             ];
             DB::table('manage_session')->insert($dataToInsert);
             $inv_id = "";
-
             foreach ($request->session_party_ids as $party_id) {
-                $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->where("isOnboarded", 1)->first();
+                $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->first();
                 if($inv_id == "") {
                     $inv_id = $party->id;
                 } else {
@@ -244,10 +243,10 @@ class DashboardController extends Controller
                 }
                 $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
-            
             Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, Auth::user()->id, $inv_id);
+
         } else {
-            $allParty = InvoledUser::where("userPlanId", $request->caseId)->where("isOnboarded", 1)->get();
+            $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
             $party_ids = array();
             foreach ($allParty as $party) {
                 $party_ids[] = $party->userId;
@@ -274,7 +273,6 @@ class DashboardController extends Controller
             }
             Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, Auth::user()->id, $inv_id);
         }
-        // Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id);
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -310,12 +308,10 @@ class DashboardController extends Controller
     public function getAddedSesion(Request $request)
     {
 
-
-        $sessionData = DB::table('manage_session')->where('case_id', $request->caseid)->get();
+        $sessionData = DB::table('manage_session')->where('scheduled_by', $request->mediator_id)->get();
         $sn = 1;
-        $dataArray = array();
-
         foreach ($sessionData as $value) {
+            $dataArray = array();
             if (!is_null($value->session_party_ids)) {
                 $dataArray = json_decode($value->session_party_ids);
             }
@@ -357,7 +353,6 @@ class DashboardController extends Controller
             ->get();
         $sn = 1;
         foreach ($sessionData as $value) {
-            // if($value->mediator_access == 1) {
 
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
@@ -366,7 +361,6 @@ class DashboardController extends Controller
             echo "</tr>";
 
             $sn++;
-            // }
         }
         return;
     }
@@ -436,6 +430,11 @@ class DashboardController extends Controller
                 "case" => $d,
                 "party" => InvoledUser::select('name', 'isOnboarded', 'userId')->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
+                "private_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->count(),
+                "private_view_count" =>Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->where('view_mediator', 0)->count(),
+                "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->count(),
+                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->where('view_mediator',0)->count(),
+
             ];
         }
         return response()->json(["data" => $arraydata]);
@@ -457,12 +456,11 @@ class DashboardController extends Controller
         $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
 
 
-        // $case->supporting_document = SupportingDocument::where(['case_id' => $case->id])->where('mediator_access', 1)->get();
-
         $case->supporting_document = DB::table('manage_files')->select('manage_files.*', 'users.username')
             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
             ->where('manage_files.case_id', $case->id)
             ->get();
+
 
         return view('mediator.casedetails', compact("case"));
     }
@@ -481,6 +479,10 @@ class DashboardController extends Controller
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
                 "party" => InvoledUser::select('id', 'name', 'isOnboarded', 'userId')->where(['userPlanid' => $d->id])->get(),
+                "private_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->count(),
+                "private_view_count" =>Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->where('view_mediator', 0)->count(),
+                "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->count(),
+                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->where('view_mediator',0)->count(),
             ];
         }
         return response()->json(["data" => $arraydata]);
@@ -496,7 +498,7 @@ class DashboardController extends Controller
 
         $validatedData = $request->validate([
             'files' => 'required',
-            'files.*' => 'mimes:csv,txt,xlx,xls,pdf',
+            'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
             // 'docs_party_ids' => 'required',
         ]);
 
@@ -568,7 +570,6 @@ class DashboardController extends Controller
                     //        ->update(['document_settelment' => $path, "confirm_status" => 2]);
                 }
             }
-            DB::table('document_settlements')->insert($insert);
             $inv_id = "";
             $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
             foreach ($inv as $v) {
@@ -578,7 +579,8 @@ class DashboardController extends Controller
                     $inv_id = $inv_id . "," . $v->id;
                 }
             }
-            Common_function::MedNotification($request->caseId, "SEND_SETT_AGRE_MED", Auth::user()->id, Auth::user()->id,$inv_id);
+            DB::table('document_settlements')->insert($insert);
+            Common_function::MedNotification($request->caseId, "SEND_SETT_AGRE_MED", Auth::user()->id, Auth::user()->id, $inv_id);
             $this->send_settlement_agreement_party($request->caseId, $insert);
             return response()->json(["message" => 'Ajax Multiple fIle has been uploaded']);
         } else {
@@ -625,7 +627,6 @@ class DashboardController extends Controller
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             // ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-        // dd($mediator);
         if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
             return abort(404);
         }
@@ -637,9 +638,9 @@ class DashboardController extends Controller
             'event' => 'SEND_APPO_MED',
             'case_id' => $id,
         ];
-        if ($mediator) {
-            SendGrid::send($d, $mediator->email, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
-        }
+        // if ($mediator) {
+        //     SendGrid::send($d, $mediator->email, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
+        // }
         foreach ($involedUser as $inv) {
             if ($inv->userEmail != "") {
                 SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
@@ -664,7 +665,7 @@ class DashboardController extends Controller
                 $dwa2 = [
                     'caseid' => $id,
                     'contact' => "+91" . $inv->userPhone,
-                    'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $data["case"]->id . "/" . $mid . "_party.pdf"), 'caption' => $content_file]],
+                    'content' => ['media' => ['url' => url("storage/app/public/mediation/" . $data["case"]->id . "/" . $mid . "_party.pdf"), 'caption' => $content_file]],
                     'event' => 'SEND_APPO_MED'
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
@@ -685,16 +686,17 @@ class DashboardController extends Controller
         $mid = "M" . sprintf("%06d", $id);
         $sendEamils = array();
         $filesE = array();
-        $access = array();
-        foreach ($files as $f) {
-            $filesE[] = url("storage/app/" . $f["file_name"]);
-            $access[] = $f["access"];
-            $mediatorAccess = $f["mediator_access"];
-        }
-        $d1 = [
+        // $access = array();
+        $d = [
             'event' => 'SEND_ADDI_DOC',
             'case_id' => $id,
         ];
+        foreach ($files as $f) {
+            $filesE[] = url("storage/app/" . $f["file_name"]);
+            $access = explode(',', $f["access"]);
+            $mediatorAccess = $f["mediator_access"];
+        }
+
         foreach ($involedUser as $inv) {
             if (is_array($access) && in_array($inv->id, $access)) {
 
@@ -714,6 +716,7 @@ class DashboardController extends Controller
                         'event' => 'SEND_ADDI_DOC'
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
+
                     foreach ($filesE as $file) {
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
@@ -740,14 +743,14 @@ class DashboardController extends Controller
         // echo ("error");
         // exit;
         if ($mediator) {
-            // $sendEamils[] = $mediator->email;\
+            // $sendEamils[] = $mediator->email;
             if ($mediatorAccess == 1) {
 
-                $d2 = [
+                $d1 = [
                     'event' => 'SEND_ADDI_DOC_MED',
                     'case_id' => $id,
                 ];
-                SendGrid::send($d2, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+                SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
 
                 $var = ['-cid-'];
                 $var1 = [$mid];
@@ -760,8 +763,8 @@ class DashboardController extends Controller
                     'event' => 'SEND_ADDI_DOC_MED'
                 ];
                 $accessW = Whatsapp::sendWamessage($dwa1);
-                foreach ($filesE as $file) {
 
+                foreach ($filesE as $file) {
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
                     $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -780,9 +783,10 @@ class DashboardController extends Controller
         if (!empty($sendEamils)) {
 
             foreach ($sendEamils as $email) {
-                SendGrid::send($d1, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+                SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
             }
         }
+
         return true;
     }
 
@@ -797,13 +801,13 @@ class DashboardController extends Controller
         $mid = "M" . sprintf("%06d", $id);
         $sendEamils = array();
         $filesE = array();
-        foreach ($files as $f) {
-            $filesE[] = url("storage/app/" . $f["file_path"]);
-        }
         $d = [
             'event' => 'SEND_SETT_AGRE',
             'case_id' => $id,
         ];
+        foreach ($files as $f) {
+            $filesE[] = url("storage/app/" . $f["file_path"]);
+        }
         foreach ($involedUser as $inv) {
             if ($inv->userEmail != "") {
                 $sendEamils[] = $inv->userEmail;
@@ -821,6 +825,20 @@ class DashboardController extends Controller
                     'event' => 'SEND_SETT_AGRE'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
+                foreach ($filesE as $file) {
+
+                    $var_file = ['-caseid-'];
+                    $var1_file = [$mid];
+                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                    $content_file = str_replace($var_file, $var1_file, $content1_file);
+                    $dwa2 = [
+                        'caseid' => $id,
+                        'contact' => "+91" . $inv->userPhone,
+                        'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
+                        'event' => 'SEND_SETT_AGRE'
+                    ];
+                    $access = Whatsapp::sendWamessage($dwa2);
+                }
             }
             // $dwa2 = [
             //     'caseid' => $id,
@@ -831,7 +849,12 @@ class DashboardController extends Controller
             // $access = Whatsapp::sendWamessage($dwa2);
         }
         if ($mediator) {
-            $sendEamils[] = $mediator->email;
+            // $sendEamils[] = $mediator->email;
+            $d1 = [
+                'event' => 'SEND_SETT_AGRE_MED',
+                'case_id' => $id,
+            ];
+            SendGrid::send($d1, $mediator->email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
 
             $var = ['-cid-'];
             $var1 = [$mid];
@@ -843,9 +866,21 @@ class DashboardController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'SEND_SETT_AGRE_MED'
             ];
-
-
             $access = Whatsapp::sendWamessage($dwa1);
+            foreach ($filesE as $file) {
+
+                $var_file = ['-caseid-'];
+                $var1_file = [$mid];
+                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                $dwa2 = [
+                    'caseid' => $id,
+                    'contact' => "+91" . $mediator->mobile_number,
+                    'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
+                    'event' => 'SEND_SETT_AGRE_MED'
+                ];
+                $access = Whatsapp::sendWamessage($dwa2);
+            }
         }
         foreach ($sendEamils as $email) {
 

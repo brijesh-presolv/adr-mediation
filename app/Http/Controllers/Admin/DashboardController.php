@@ -10,6 +10,7 @@ use App\Models\InvoledUser;
 use App\Models\Notification;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DashboardController extends Controller {
@@ -29,7 +30,7 @@ class DashboardController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index() {
-        $approveUsersCount = 0;
+        $usersCount = 0;
         $allCasesCount = 0;
         $respondingPartiesCount = 0;
         $ongoingCount = 0;
@@ -40,7 +41,8 @@ class DashboardController extends Controller {
         $unapproveUsersCount = User::whereIn("role", [0])->where("status", 0)->count();
         $unapproveMediatorCount = User::whereIn("role", [1])->where("status", 0)->count();
         $allCasesCount = MedCase::count();
-        $respondingPartiesCount = InvoledUser::where("joinCode", null)->where("isOnboarded", 1)->where('isClaimant', "<>", 0)->count();
+        $respondingPartiesCount = InvoledUser::where('isClaimant', "<>", 0)->count();
+
         $resolvedCount = MedCase::leftjoin('mediation_status_logs', 'mediation_status_logs.mediation_case_id', '=', 'mediation_case.id')->where("mediation_status_logs.status", 6)->where("mediation_case.confirm_status", 2)->count();
         $unresolvedCount = MedCase::leftjoin('mediation_status_logs', 'mediation_status_logs.mediation_case_id', '=', 'mediation_case.id')->where("mediation_status_logs.status", 7)->where("mediation_case.confirm_status", 2)->count();
         $WithdrawnCount = MedCase::leftjoin('mediation_status_logs', 'mediation_status_logs.mediation_case_id', '=', 'mediation_case.id')->where("mediation_status_logs.status", 5)->where("mediation_case.confirm_status", 2)->count();
@@ -49,6 +51,8 @@ class DashboardController extends Controller {
         $ongoingCount = MedCase::where("confirm_status", 1)->count();
         $newCount = MedCase::where("confirm_status", 0)->count();
         return view('admin.dashboard', compact('approveUsersCount', 'WithdrawnCount', 'unresolvedCount', 'rejectedCount', 'approveMediatorCount', 'unapproveMediatorCount', 'unapproveUsersCount', 'allCasesCount', 'respondingPartiesCount', 'resolvedCount', 'ongoingCount', 'newCount'));
+
+        // return view('admin.dashboard', compact('usersCount', 'allCasesCount', 'respondingPartiesCount', 'resolvedCount', 'ongoingCount', 'newCount'));
     }
 
     public function profile()
@@ -139,4 +143,5 @@ class DashboardController extends Controller {
         return view('admin.case.notification', compact('data'));
         
     }
+
 }

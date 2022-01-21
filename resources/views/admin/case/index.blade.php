@@ -9,6 +9,7 @@
 @endsection
 @section('page_title', "New Request")
 
+
 @section('content')
 <div class="row">
     <div class="col-sm-12">
@@ -35,11 +36,13 @@
                                     <div class="form-group">
                                     <select class="form-control" name="claimant"  required>
                                         <option value="">@lang('Select Claimant')</option>
+                                        @if(isset($allUsers)) 
                                         @foreach($allUsers as $value)
                                         @if ($value->isActive)
                                             <option value="{{$value->id}}">{{$value->first_name}} {{$value->last_name}} - {{$value->organization}}</option>
                                         @endif
                                         @endforeach
+                                        @endif
                                     </select>
                                     {{-- <input type="hidden" name="claimant" value="{{auth()->user()->id}}"> --}}
                                     </div>
@@ -49,10 +52,10 @@
                                     <input type="file" name="csv" id="fileInput" onchange="" class="col-md-12 dropify" data-allowed-file-extensions="csv" required="" data-max-file-size="20M" />
                                 </div>
 
-                                    <input type="Submit"  value="Submit" class="btn btn-primary blkupdbtnsb">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
-                                        <span>@lang('case.btn_close')</span>
-                                </button>
+    <input type="Submit"  value="Submit" class="btn btn-primary blkupdbtnsb">
+    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
+        <span>@lang('case.btn_close')</span>
+   </button>
                             </form>
 
                         </div>
@@ -95,7 +98,7 @@
 
                 </div>
                 <div class="col-md-4">
-                    <button class="btn btn-success btn-sm blkbtn" data-toggle="modal" data-target="#midaterAddForBulk" id="bulkAcceptBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Confirm</button>
+                    <button class="btn btn-success btn-sm blkbtn" data-toggle="modal" data-target="#midaterAddForBulk" id="bulkAcceptBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Approve</button>
                     <button class="btn btn-danger btn-sm blkbtn"  id="bulkRejectBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Reject</button>
                 </div>
                 
@@ -197,7 +200,6 @@ function pad(str, max) {
 var userTable = $('#users').DataTable({
     "ajax": '{{ route("admin.case.json",$confirm_status) }}',
     "responsive": true,
-    // "order": [[1, "desc"]],
     "columns": [
         
         {"data": "key"},
@@ -286,14 +288,13 @@ var userTable = $('#users').DataTable({
                 }
 
                 var button = "";
-                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info `+d+`">@lang('case.btn_confirm')</button>`;
+                button = button + `<button value="` + data + `"  data-id="` + data + `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info `+d+`">Approve</button>`;
                 button = button + ` <button value="` + data + `" class="btn btn-danger reject `+d+`">@lang('case.btn_reject')</button>`;
                 return button;
             }
         },
     ],
 });
-
 
 $("#selectalldir").change(function () {
       if (this.checked) {
@@ -312,14 +313,32 @@ $("#selectalldir").change(function () {
       }
     });
 
+    
+
     $(document).on("change", ".blkchk", function () {
+        var case_count = 0;
+        $(".blkchk").each(function () {
+        if (this.checked) {
+          case_count++;
+        }
+      });
       if (this.checked) {
         $("#bulkAcceptBtn").show();
         $("#bulkRejectBtn").show();
       } else {
+        if (case_count == 0) {  
         $("#bulkAcceptBtn").hide();
         $("#bulkRejectBtn").hide();
+        }
       }
+      if($('#selectalldir').is(':checked')){
+         $("#bulkAcceptBtn").show();
+         $("#bulkRejectBtn").show();
+       }if(case_count == 0){
+         $("#bulkAcceptBtn").hide();
+         $("#bulkRejectBtn").hide();
+         $("#selectalldir").prop("checked", false);
+       }
     });
 
     $("#bulkRejectBtn").click(function () {
@@ -348,7 +367,7 @@ $("#selectalldir").change(function () {
 
         swal({
             title: "Are you sure?",
-            text: "Reject this request!",
+            text: ctcnt+ " Cases selected",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -375,7 +394,9 @@ $("#selectalldir").change(function () {
                         userTable.ajax.reload();
                         swal("@lang('case.reject_successfully')", {
                             icon: "success",
-                        });
+                        }).then(function() {
+                               location.reload();
+                           });
                     });
                   }
                 });
@@ -391,15 +412,22 @@ $("#selectalldir").change(function () {
 $(document).on('submit', "#MidaterFormForBulk", function () {
     // var id = $(this).find("input[name='id']").val();
     var blkclon = false;
+    var withdrawcount = [];
+    var count = 0;
 
     var midater = $(this).find("select[name='midater']").val();
+    
     var csrf = document.querySelector('meta[name="csrf-token"]').content;
     $(".blkchk").each(function () {
         if (this.checked) {
           blkclon = true;
+          count++;
 
         }
+        withdrawcount.push(count);
+
     });
+    var withdrawcountTotal = Math.max.apply(Math, withdrawcount);
 
     if (blkclon == false) {
         swal({
@@ -410,7 +438,7 @@ $(document).on('submit', "#MidaterFormForBulk", function () {
     } else {
         swal({
             title: "@lang('case.are_you_sure')",
-            text: "@lang('case.confirm_this_request')",
+            text: withdrawcountTotal.toString()+ " Cases selected",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -425,13 +453,6 @@ $(document).on('submit', "#MidaterFormForBulk", function () {
                         url: '{{ route("admin.case.midater_add") }}',
                         method: "post",
                         data: {id: id, midater: midater, '_token': csrf},
-                        beforeSend: function() {
-                            swal({
-                                title: 'Loading...',
-                                showConfirmButton: false,
-                                buttons: false,
-                            });
-                        },
                     }).done(function (data) {        
                         $.ajax({
                             url: '{{ route("admin.case.confirm_status") }}',
@@ -449,7 +470,9 @@ $(document).on('submit', "#MidaterFormForBulk", function () {
                             userTable.ajax.reload()
                             swal("@lang('case.confirm_successfully')", {
                                 icon: "success",
-                            });
+                            }).then(function() {
+                               location.reload();
+                           });
                             $('#midaterAddForBulk').modal("hide");
 
                         });
@@ -485,11 +508,21 @@ $(document).on('click', ".reject", function () {
                 url: '{{ route("admin.case.reject_status") }}',
                 method: "post",
                 data: {id: id, '_token': csrf},
+                beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                
+                            });
+                        },
             }).done(function (data) {
                 userTable.ajax.reload();
                 swal("@lang('case.reject_successfully')", {
                     icon: "success",
-                });
+                }).then(function() {
+                        location.reload();
+                    });
             });
         } else {
             swal("@lang('case.cansel_reject_request')");
@@ -512,15 +545,28 @@ $(document).on('submit', "#MidaterForm", function () {
                 url: '{{ route("admin.case.midater_add") }}',
                 method: "post",
                 data: {id: id, midater: midater, '_token': csrf},
-            }).done(function (data) {        
+            }).done(function (data) {
+                swal("@lang('case.mediator_assigned_successfully')", {
+                    icon: "success",
+                });
                 $.ajax({
                     url: '{{ route("admin.case.confirm_status") }}',
                     method: "post",
                     data: {id: id, '_token': csrf},
+                    beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                
+                            });
+                        },
                 }).done(function (data) {
                     userTable.ajax.reload()
                     swal("@lang('case.confirm_successfully')", {
                         icon: "success",
+                    }).then(function() {
+                        location.reload();
                     });
                 });
                 //userTable.ajax.reload();
@@ -542,14 +588,8 @@ $('#midaterAdd').on('show.bs.modal', function (event) {
     var modal = $(this)
     modal.find('.modal-body input[name="id"]').val(recipient)
 });
-$('#midaterAddForBulk').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget) // Button that triggered the modal
-    var recipient = button.data('id') // Extract info from data-* attributes
-    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-    var modal = $(this)
-    modal.find('.modal-body input[name="id"]').val(recipient)
-});
+
+
 
 <?php if(session()->has('success')) {?>
         swal({

@@ -20,6 +20,21 @@
     <link href="{{url('assets/')}}/css/custom.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
 
     <!-- Dynamic pages css comes -->
+
+
+    <style>
+        .share_total {
+                position: absolute;
+                top: -0.8em; 
+                left: 4em
+            }
+            .share_unseen {
+                position: absolute;
+                top: -0.8em; 
+                left: 2.5em
+            }
+    </style>
+
     @yield('head')
 </head>
 
@@ -67,7 +82,7 @@
                 <a href="{{ url('/') }}" class="logo text-center" style="background-color:#fdfdfd ">
                     <span class="logo-lg">
                         <!-- <img src="{{ url('/') }}/assets/images/logo-light.png" alt="" height="18"> -->
-                        <span class="logo-lg-text-light" style="color: #575a65 ">Mediacje</span>
+                        <span class="logo-lg-text-light" style="color: #575a65 ">Mediation</span>
                     </span>
                     <span class="logo-sm">
                         <!-- <span class="logo-sm-text-dark">Z</span> -->
@@ -86,7 +101,7 @@
         <!-- Start Page Content here -->
         <!-- ============================================================== -->
 
-        <div class="content-page">
+        <div class="content-page" >
             <div class="content">
 
                 <!-- Start Content-->
@@ -101,7 +116,6 @@
                                 </ol>
                             </div>
                             <h4 class="page-title">@yield('page_title')</h4>
-
 
                         </div>
                     </div>

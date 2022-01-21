@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Helpers\Common_function;
-use App\Models\MedCase;
-use App\Models\Testing;
-use App\Models\WhatsappLog;
-use Carbon\Carbon;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
 use App\Models\InvoledUser;
+use App\Models\MedCase;
 use App\Models\Reminder;
 use App\Models\WaTemplate;
+use App\Models\WhatsappLog;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class WhatsappStatus extends Controller
 {
@@ -23,20 +21,24 @@ class WhatsappStatus extends Controller
 
         // date_default_timezone_set('Asia/Kolkata');
 
+
         $json = file_get_contents('php://input');
         // $s = storage_path();
         // print_r($s);
         // exit;
-        $myFile = storage_path() . "/whatsapp_status/testFile" . date('Y-m-d_H:i:s') . ".txt";
+        // $myFile = storage_path()."/whatsapp_status/testFile" . date('Y-m-d_H:i:s') . ".txt";
         try {
-            file_put_contents($myFile, $json);
+            // file_put_contents($myFile, $json);
+            Storage::put('public/whatsapp_status/testFile' . date('Y-m-d_H:i:s') . '.txt', $json);
+
+            
         } catch (Exception $e) {
 
             echo $e->getMessage();
         }
-
+        
         $data = json_decode($json, true);
-
+        
         if ($data) {
 
 
@@ -57,7 +59,7 @@ class WhatsappStatus extends Controller
                 'updated_time' => $updated_time,
                 'status' => $status,
                 'response' => $json,
-                'created_at' => date('Y-m-d H:s:i', time())
+                'created_at' => date('Y-m-d H:s:i')
             ]);
 
 
@@ -83,20 +85,16 @@ class WhatsappStatus extends Controller
             ->where('if.file_name', '!=', null)
             ->where('remainder.send_reminder', 0)
             ->whereDate('remainder.created_at', $date)->get();
-        // dd($cases);
-        // $sussces = array();
-
-        // var_dump($cases);
 
         foreach ($cases as $value) {
            $initiating_party = InvoledUser::where('userPlanId', $value->userPlanId)->where('isClaimant', 0)->first();
-            // dd($initiating_party->name);
+            // dd($initiating_party);
             $d = [
                 'event' => 'ACPTARB_ADM_RES',
                 'case_id' => $value->userPlanId,
             ];
             if ($value->userEmail != null) {
-                $sussces[] = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
+                $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
             }
             if($value->userPhone != null) {
                 $var = ['-cid-', '-ip-'];
@@ -110,7 +108,7 @@ class WhatsappStatus extends Controller
                     'event' => 'ACPTARB_ADM_RES'
                 ];
 
-                $sussces[] = Whatsapp::sendWamessage($dwa1);
+                $access = Whatsapp::sendWamessage($dwa1);
 
                 $var_file = ['-caseid-'];
                 $var1_file = ["M" . sprintf("%06d", $value->userPlanId)];
@@ -122,15 +120,16 @@ class WhatsappStatus extends Controller
                     'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name), 'caption' => $content_file]],
                     'event' => 'ACPTARB_ADM_RES'
                 ];
-                $sussces[] = Whatsapp::sendWamessage($dwa2);
+                $access = Whatsapp::sendWamessage($dwa2);
             }
+
             $remainder = Reminder::where('case_Id', $value->userPlanId)->first();
             $remainder->send_reminder = 1;
             $remainder->save();
         }
+
         echo "Success";
         exit;
-        // print_r($sussces);
 
     }
 }

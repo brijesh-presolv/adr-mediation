@@ -31,6 +31,8 @@
                             <td>@lang('case.responding_party')</td>
                             <td>
 
+                                
+
                                 <?php
                                 foreach ($case->party as $key => $value) {
                                     if ($key > 0) {
@@ -60,7 +62,7 @@
                                     }
                                 }?>
                                 @if($case->otherRespondentDetails != "")
-                                    {{$case->otherRespondentDetails}}<br>
+                                @lang('case.otherRespondentDetails'): {{$case->otherRespondentDetails}}<br>
                                 @endif
                                 <?php
                                 foreach ($case->party as $key => $value) {
@@ -83,6 +85,7 @@
                                 
                             </td>
                         </tr>
+                        
                         <tr>
                             <td>Dispute Category</td>
                             <td>{{$case->disputeCategory}}</td>
@@ -170,7 +173,7 @@
                             
                             <td>
 
-                               <a href="{{url($doc)}}" target="_blank">Download</a>
+                               <a href="{{url($doc)}}" class="btn btn-sm btn-success" target="_blank">View</a>
                                 
                             </td>
                         </tr>
@@ -188,11 +191,9 @@
                             <tr>
                                 <?php foreach ($case->supporting_document as $k => $v) { ?>
                                     @if($v->mediator_access == 1) 
-
                                     <td><?= basename($v->file_name) ?></td>
                                     <td>{{$v->username}}</td>
                                     <td>{{date('d-m-Y', strtotime($v->created_at))}}</td>
-
                                     <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>
                                     @endif
                                 </tr>

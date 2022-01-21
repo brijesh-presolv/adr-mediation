@@ -7,6 +7,7 @@
 <li class="breadcrumb-item"><a href="javascript: void(0);">Close Request</a></li>
 <!-- end page title -->
 @endsection
+@section('pageTitleOnDashboard', 'Close Request')
 
 @section('content')
 <div class="row">
@@ -76,15 +77,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="commentModal-close" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">save comment</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<div class="modal fade" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade h-75" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title text-white">Session Records</h4>
@@ -106,12 +107,14 @@
                     <tbody>
                     </tbody>
                 </table>
-                <hr>    
-                <div class="text-center">
-                    <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                        <span>Close</span>
-                    </button>  
-                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                    <span>Close</span>
+                </button>  
+                <div id="sessionShowBtn" class="text-center"></div>
+
             </div>
         </div>
         <!-- /.modal-content -->
@@ -297,7 +300,8 @@ $(function () {
                             if(data[i].name != null) {
                             d = d + `<span class="text-success">` + data[i].name + `</span><br>`;
                             }
-                        } else {
+                        } 
+                        else {
                             if(data[i].name != null) {
                             d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
                             }
@@ -309,8 +313,16 @@ $(function () {
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                    button = button + `<div class="position-relative">  <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                    button +=` <span class="badge-success badge private_total">`+row.private_count+`</span>`;
+                    if(row.private_view_count != 0){
+                    button += ` <span class="badge badge-danger private_unseen">` +row.private_view_count +`</span>`;
+                    }
                     button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                    if(row.share_view_count !==0){
+                    button += ` <span class="badge  badge-danger share_unseen">`+row.share_view_count+` </span>`;
+                    }
+                    button += ` <span class="badge badge-success share_total">`+row.share_count+`</span></div>`;
                     return button;
                 }
             },
@@ -375,6 +387,8 @@ $(function () {
                 // alert('form was submitted');
                 swal("Settelment has been uploaded!", {
                     icon: "success",
+                }).then(function (){
+                    location.reload();
                 });
                 $("#settelmentModal").modal("hide");
                 userTable.ajax.reload();
@@ -416,8 +430,12 @@ $(function () {
         var id = button.data('id');
         var typename = button.data('typename');
         var type = button.data('type');
-        var modal = $(this)
+        var modal = $(this);
+        var urlpdf = '{{route("mediator.case.commentPDF",'','')}}'+'/'+id+'/'+type;
+
         $("#commentView").html("");
+        $('#commentForm .modal-footer #DownLoadPdf').remove();
+
         $.ajax({
             type: 'post',
             url: '{{ route("mediator.case.comment_view") }}',
@@ -427,23 +445,26 @@ $(function () {
                     //console.log(data[0]);
                     if (data[i].username == '{{Auth::user()->username}}') {
                         var msg = `<div class="col-md-12 text-right border-top">
-                                <div class="row">
-                                                <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
-                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                    </div>           
-                                    <p>` + data[i].comment + `</p>
-                            </div>`;
+                            <div class="row">
+                                            <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
+                                            <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
                         $("#commentView").append(msg);
                     } else {
                         var msg = `<div class="col-md-12 border-top">
-                                <div class="row">
-                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                                <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
-                                    </div>           
-                                    <p>` + data[i].comment + `</p>
-                            </div>`;
+                            <div class="row">
+                                            <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                            <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
+                                </div>           
+                                 <p>` + data[i].comment + `</p>
+                        </div>`;
                         $("#commentView").append(msg);
                     }
+                }
+                if(data[i] != null){
+                        $('#commentForm .modal-footer').append("<a href="+urlpdf+"><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>");
                 }
             }
         });
@@ -452,6 +473,11 @@ $(function () {
         modal.find('.modal-body input[name="type"]').val(type);
         modal.find('.modal-body input[name="case_id"]').val(id);
     });
+
+    $('#commentModal-close').on('click', function() {
+        userTable.ajax.reload(null, false);
+    });
+
     $('#commentForm').on('submit', function (e) {
         e.preventDefault();
         swal({
@@ -469,6 +495,8 @@ $(function () {
                     success: function () {
                         swal("comment save successfully!", {
                             icon: "success",
+                        }).then(function () {
+                            // location.reload();
                         });
                         $('#commentForm')[0].reset();
                         $('#commentModal').modal("hide");
@@ -477,6 +505,8 @@ $(function () {
             } else {
                 swal("comment not added!");
             }
+            userTable.ajax.reload(null, false);
+
         });
         return false;
     });
@@ -505,6 +535,8 @@ $(function () {
                         userTable.ajax.reload();
                         swal("status change successfully!", {
                             icon: "success",
+                        }).then(function() {
+                            location.reload();
                         });
                         $('#withdrawModal').modal("hide");
                     }
@@ -542,6 +574,8 @@ $(function () {
                 // alert('form was submitted');
                 swal("session created!", {
                     icon: "success",
+                }).then(function() {
+                    location.reload();
                 });
                 $('#addSession-modal').modal("hide");
             }
@@ -557,7 +591,19 @@ $(function () {
             url: '{{ route("mediator.case.getAddedSesion") }}',
             data: {mediator_id: sheduledBy_Id, caseid: caseid, '_token': csrf},
             success: function (data) {
-                $('#sessRecId tbody').html(data);
+                var pdfButton = "";
+                if(data != "") {
+                    // console.log(caseid);
+                    var link = '{{route("mediator.case.sessionPdf", '')}}'+'/'+caseid;
+                    // console.log(link);
+                    pdfButton = "<a target='_blank' href='"+link+"' class='btn btn-success'><span>Download PDF</span></button>"
+                    $('#sessRecId tbody').html(data);
+                    $('#sessionShowBtn').html(pdfButton);
+                } else {
+                    $('#sessRecId tbody').html("No Session");
+                    $('#sessionShowBtn').html(pdfButton);
+
+                }
             }
 
         });

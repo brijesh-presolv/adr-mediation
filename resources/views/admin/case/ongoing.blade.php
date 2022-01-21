@@ -79,7 +79,7 @@
                     </div>
                     <div class="form-group">
                         <label>@lang('case.session_note'):</label>
-                        <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
+                        <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')" data-validation="required"></textarea>
                     </div>
                     {{-- <span>@lang('case.session_party'):</span>
                     <div class="form-group" id="sessionParty">
@@ -196,7 +196,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
+                    <button type="button" class="btn btn-secondary" id="commentModal-close" data-dismiss="modal">@lang('case.btn_close')</button>
                     <button type="submit" class="btn btn-primary">@lang('case.btn_save_comment')</button>
                 </div>
             </form>
@@ -305,8 +305,8 @@
         </div>
     </div>
 </div>
-<div class="modal fade"  id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg" style="overflow-x: initial !important;">
+<div class="modal fade h-75"  id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-dark">
                 <h4 class="modal-title text-white">@lang('case.session_title')</h4>
@@ -314,7 +314,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="overflow-x: auto;">
+            <div class="modal-body">
                 <table class="table" id="sessRecId">
                     <thead>
                     <th scope="col">@lang('case.serial_number')</th>
@@ -331,11 +331,9 @@
                 
             </div>
             <div class="modal-footer">
-                <div class="text-center">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">
                         <span>Close</span>
                     </button>  
-                </div>
                 <div id="sessionShowBtn" class="text-center"></div>
             </div>
         </div>
@@ -373,7 +371,7 @@
                     </div>
                     <div class="form-group">
                         <label>@lang('case.session_note'):</label>
-                        <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
+                        <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')" data-validation="required"></textarea>
                     </div>
                     <span>@lang('case.session_party'):</span>
                     <div class="form-group" id="sessionParty">
@@ -499,8 +497,16 @@
             {"data": "case.id",
                 render: function (data, type, row) {
                     var button = "";
-                    button = button + ` <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
+                    button = button + `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
+                    button +=` <span class="badge-success badge private_total">`+row.private_count+`</span>`;
+                    if(row.private_view_count != 0){
+                    button += ` <span class="badge badge-danger private_unseen">` +row.private_view_count +`</span>`;
+                    }
                     button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">@lang('case.btn_share')</button>`;
+                    if(row.share_view_count !==0){
+                    button += ` <span class="badge  badge-danger share_unseen">`+row.share_view_count+` </span>`;
+                    }
+                    button += ` <span class="badge badge-success share_total">`+row.share_count+`</span></div>`;
                     return button;
                 }
             },
@@ -563,58 +569,113 @@
     });
 
     $(document).on("change", ".blkchk", function () {
+        var case_count = 0;
+        $(".blkchk").each(function () {
+        if (this.checked) {
+          case_count++;
+        }
       if (this.checked) {
         $("#bulkCloseBtn").show();
         $("#bulkUpload").show();
         $("#bulkSession").show();
 
       } else {
+       if (case_count == 0) {  
+
         $("#bulkCloseBtn").hide();
         $("#bulkUpload").hide();
         $("#bulkSession").hide();
-
+       }
       }
+      if($('#selectalldir').is(':checked')){
+        $("#bulkCloseBtn").show();
+        $("#bulkUpload").show();
+        $("#bulkSession").show();
+       }if(case_count == 0){
+         $("#bulkCloseBtn").hide();
+         $("#bulkUpload").hide();
+         $("#bulkSession").hide();
+         $("#selectalldir").prop("checked", false);
+       }
     });
+})
+
     $('#addSessionFormForBulk').on('submit', function (e) {
         e.preventDefault();
-        
+        var withdrawcount = [];
+        var count = 0;
         $(".blkchk").each(function () {
-            if (this.checked) {
-                var id = $(this).data("caseid");
-                $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
-                $.ajax({
-                    type: 'post',
-                    url: '{{ route("admin.case.addSession") }}',
-                    data: $('#addSessionFormForBulk').serialize(),
-                    beforeSend: function() {
-                        $('#addSessionModelForBulk').modal("hide");
+            if(this.checked){
+               count++;
+            }
+            withdrawcount.push(count);
+          });
 
-                                    swal({
-                                        title: 'Loading...',
-                                        showConfirmButton: false,
-                                        buttons: false,
-                                        allowOutsideClick: false,
-                                    });
-                                },
-                    success: function () {
-                        // alert('form was submitted');
-                        swal("session created!", {
-                            icon: "success",
-                        }).then(function () {
-                            location.reload();
+        var withdrawcountTotal = Math.max.apply(Math, withdrawcount); 
+
+        swal({
+            title: "@lang('case.are_you_sure')",
+            text: withdrawcountTotal.toString()+" Cases are selected",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then(function (willDelete) {
+            if (willDelete) {
+                $(".blkchk").each(function () {
+                    if (this.checked) {
+                        var id = $(this).data("caseid");
+                        $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
+                        $.ajax({
+                            type: 'post',
+                            url: '{{ route("admin.case.addSession") }}',
+                            data: $('#addSessionFormForBulk').serialize(),
+                            beforeSend: function() {
+                                $('#addSessionModelForBulk').modal("hide");
+
+                                            swal({
+                                                title: 'Loading...',
+                                                showConfirmButton: false,
+                                                buttons: false,
+                                                allowOutsideClick: false,
+                                            });
+                                        },
+                            success: function () {
+                                // alert('form was submitted');
+                                swal("session created!", {
+                                    icon: "success",
+                                }).then(function () {
+                                    location.reload();
+                                });
+                                // $('#addSession-modal').modal("hide");
+                            }
                         });
-                        // $('#addSession-modal').modal("hide");
                     }
+                    
                 });
             }
-            
+            else {
+             swal("@lang('case.request_canseled')").then(function () { 
+                 location.reload();
+              });
+            }
         });
+        
     });
     $('#withdrawFormForBulk').on('submit', function (e) {
         e.preventDefault();
+        var withdrawcount = [];
+        var count = 0;
+        $(".blkchk").each(function () {
+            if(this.checked){
+               count++;
+            }
+            withdrawcount.push(count);
+          });
+
+        var withdrawcountTotal = Math.max.apply(Math, withdrawcount); 
         swal({
             title: "@lang('case.are_you_sure')",
-            text: "@lang('case.change_status')",
+            text: withdrawcountTotal.toString()+" Cases are selected",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -691,13 +752,18 @@
         var modal = $(this)
         modal.find('.modal-body input[name="case_id"]').val(recipient);
     });
+
     $('#commentModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var id = button.data('id');
         var typename = button.data('typename');
         var type = button.data('type');
-        var modal = $(this)
+        var modal = $(this);
+        var urlpdf = '{{route("admin.case.commentPDF",'','')}}'+'/'+id+'/'+type;
+
         $("#commentView").html("");
+        $('#commentForm .modal-footer #DownLoadPdf').remove();
+
         $.ajax({
             type: 'post',
             url: '{{ route("admin.case.comment_view") }}',
@@ -725,11 +791,18 @@
                         $("#commentView").append(msg);
                     }
                 }
+                if(data[i] != null){
+                        $('#commentForm .modal-footer').append("<a href="+urlpdf+"><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>");
+                }
             }
         });
         modal.find('#commentModalLabel').text(typename);
         modal.find('.modal-body input[name="type"]').val(type);
         modal.find('.modal-body input[name="case_id"]').val(id);
+    });
+
+    $('#commentModal-close').on('click', function() {
+        userTable.ajax.reload(null, false);
     });
 
     $('#uploadSupportingDocsModal').on('show.bs.modal', function (event) {
@@ -782,7 +855,6 @@
         let TotalFiles = $('#files')[0].files.length;
         let files = $('#files')[0];
         let party = [];
-        let shareMediator;
         $("input:checkbox[name=docs_party_ids]:checked").each(function(){
             party.push($(this).val());
         });
@@ -830,6 +902,16 @@
 
     $('#uploadFormModalForBulk').on('submit', function (e) {
         e.preventDefault();
+        var withdrawcount = [];
+        var count = 0;
+        $(".blkchk").each(function () {
+            if(this.checked){
+               count++;
+            }
+            withdrawcount.push(count);
+          });
+
+        var withdrawcountTotal = Math.max.apply(Math, withdrawcount); 
         var formData = new FormData(this);
         let TotalFiles = $('#filesForBulk')[0].files.length;
         let files = $('#filesForBulk')[0];
@@ -837,48 +919,61 @@
             formData.append('files' + i, files.files[i]);
         }
         formData.append('TotalFiles', TotalFiles);
-        $(".blkchk").each(function () {
-            if (this.checked) {
-                formData.delete('caseId');
-                var id = $(this).data("caseid");
-                // $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
-                formData.append('caseId', id);
+        swal({
+            title: "@lang('case.are_you_sure')",
+            text: withdrawcountTotal.toString() +" Cases selected",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then(function (willDelete) { 
+            if (willDelete) {
+                $(".blkchk").each(function () {
+                if (this.checked) {
+                    formData.delete('caseId');
+                    var id = $(this).data("caseid");
+                    // $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
+                    formData.append('caseId', id);
 
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route("admin.case.storeMultiFile") }}',
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    beforeSend: function() {
-                        $('#uploadSupportingDocsModalForBulk').modal("hide");
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route("admin.case.storeMultiFile") }}',
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        dataType: 'json',
+                        beforeSend: function() {
+                            $('#uploadSupportingDocsModalForBulk').modal("hide");
 
-                            swal({
-                                title: 'Loading...',
-                                showConfirmButton: false,
-                                buttons: false,
-                                allowOutsideClick: false,
+                                swal({
+                                    title: 'Loading...',
+                                    showConfirmButton: false,
+                                    buttons: false,
+                                    allowOutsideClick: false,
+                                });
+                            },
+                        success: (data) => {
+                            //this.reset();
+                            swal("Files has been uploaded!", {
+                                icon: "success",
+                            }).then(function() {
+                                location.reload();
                             });
+                            $("#uploadSupportingDocsModalForBulk").modal("hide");
                         },
-                    success: (data) => {
-                        //this.reset();
-                        swal("Files has been uploaded!", {
-                            icon: "success",
-                        }).then(function() {
-                            location.reload();
-                        });
-                        $("#uploadSupportingDocsModalForBulk").modal("hide");
-                    },
-                    error: function (data) {
-                        //alert(data.responseJSON.errors.files[0]);
-                        console.log(data);
-                    }
-                });
-            }
-            
+                        error: function (data) {
+                            //alert(data.responseJSON.errors.files[0]);
+                            console.log(data);
+                        }
+                    });
+                }
+                
+            });
+            } else {
+                swal("@lang('case.request_canseled')");
+            }  
         });
+        
     });
 
     $('#commentForm').on('submit', function (e) {
@@ -900,7 +995,7 @@
                         swal("@lang('case.comment_save_successfully')", {
                             icon: "success",
                         }).then(function() {
-                               location.reload();
+                            //    location.reload();
                            });
                         $('#commentModal').modal("hide");
                     }
@@ -908,6 +1003,8 @@
             } else {
                 swal("@lang('case.comment_not_added')");
             }
+            userTable.ajax.reload(null, false);
+
         });
         return false;
     });
