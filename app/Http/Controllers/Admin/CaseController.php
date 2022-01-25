@@ -155,6 +155,7 @@ class CaseController extends Controller
     {
         $medCas = MedCase::find($request->id);
         $medCas->confirm_status = 1;
+        $medCas->case_status = 1;
         $medCas->save();
 
         $mediation_status_log = new Mediation_status_log;
@@ -206,6 +207,7 @@ class CaseController extends Controller
     {
         $user = MedCase::find($request->case_id);
         $user->confirm_status = 2;
+        $user->case_status = $request->status;
         $user->withdraw = $request->withdraw_comment;
         $user->save();
 
@@ -376,6 +378,7 @@ class CaseController extends Controller
     {
         $user = MedCase::find($request->id);
         $user->confirm_status = 3;
+        $user->case_status = 3;
         $user->save();
 
         $mediation_status_log = new Mediation_status_log;

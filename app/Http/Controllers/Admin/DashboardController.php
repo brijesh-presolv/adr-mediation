@@ -41,11 +41,15 @@ class DashboardController extends Controller {
         $unapproveUsersCount = User::whereIn("role", [0])->where("status", 0)->count();
         $unapproveMediatorCount = User::whereIn("role", [1])->where("status", 0)->count();
         $allCasesCount = MedCase::count();
-        $respondingPartiesCount = InvoledUser::where('isClaimant', "<>", 0)->count();
+        $respondingPartiesCount = InvoledUser::where('isClaimant', "<>", 0)->where('joinCode', null)->where('isOnboarded', 1)->count();
 
-        $resolvedCount = MedCase::leftjoin('mediation_status_logs', 'mediation_status_logs.mediation_case_id', '=', 'mediation_case.id')->where("mediation_status_logs.status", 6)->where("mediation_case.confirm_status", 2)->count();
-        $unresolvedCount = MedCase::leftjoin('mediation_status_logs', 'mediation_status_logs.mediation_case_id', '=', 'mediation_case.id')->where("mediation_status_logs.status", 7)->where("mediation_case.confirm_status", 2)->count();
-        $WithdrawnCount = MedCase::leftjoin('mediation_status_logs', 'mediation_status_logs.mediation_case_id', '=', 'mediation_case.id')->where("mediation_status_logs.status", 5)->where("mediation_case.confirm_status", 2)->count();
+        $resolvedCount = MedCase::where("case_status", 6)->where("confirm_status", 2)->count();
+        $unresolvedCount = MedCase::where("case_status", 7)->where("confirm_status", 2)->count();
+        $WithdrawnCount = MedCase::where("case_status", 5)->where("confirm_status", 2)->count();
+
+        // $resolvedCount = MedCase::leftjoin('mediation_status_logs', 'mediation_status_logs.mediation_case_id', '=', 'mediation_case.id')->where("mediation_status_logs.status", 6)->where("mediation_case.confirm_status", 2)->count();
+        // $unresolvedCount = MedCase::leftjoin('mediation_status_logs', 'mediation_status_logs.mediation_case_id', '=', 'mediation_case.id')->where("mediation_status_logs.status", 7)->where("mediation_case.confirm_status", 2)->count();
+        // $WithdrawnCount = MedCase::leftjoin('mediation_status_logs', 'mediation_status_logs.mediation_case_id', '=', 'mediation_case.id')->where("mediation_status_logs.status", 5)->where("mediation_case.confirm_status", 2)->count();
 
         $rejectedCount = MedCase::where("confirm_status", 3)->count();
         $ongoingCount = MedCase::where("confirm_status", 1)->count();
