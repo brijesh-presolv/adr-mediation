@@ -90,8 +90,6 @@ Class SendGrid {
 
     public static function Etrack($response, $d, $to, $ns = false)
     {
-
-
         if ($ns == true) {
 
             if(isset($d['userid'])) {
