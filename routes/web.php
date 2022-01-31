@@ -35,7 +35,7 @@ Route::match(['GET', 'POST'], '/whatsapp_status', [App\Http\Controllers\Whatsapp
 
 Route::get('/sendInvitation', [App\Http\Controllers\WhatsappStatus::class, 'SendInvitation'])->name('sendInvitation');
 
-Route::get('/alldata', [App\Http\Controllers\DashboardController::class, 'pastDateData']);
+Route::get('/ivr/acceptcase', [App\Http\Controllers\IvrController::class, 'acceptcase']);
 
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('user.dashboard');
