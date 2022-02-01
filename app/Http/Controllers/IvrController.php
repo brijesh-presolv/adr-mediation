@@ -11,6 +11,8 @@ use App\Models\SupportingDocument;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Helpers\Curl;
+
 
 class IvrController extends Controller {
 
@@ -30,9 +32,18 @@ class IvrController extends Controller {
 
         $date = $date->format('Y-m-d');
        
-        $cases = MedCase::select('mediation_case.*', 'mediators_mediation_cases_status.mediator_id', 'mediators_mediation_cases_status.status', 'mediators_mediation_cases_status.created_at as date')
-            ->leftJoin('mediators_mediation_cases_status', DB::raw('mediators_mediation_cases_status.mediation_case_id'), '=', DB::raw('mediation_case.id'))
-            ->whereDate('mediators_mediation_cases_status.created_at', $date)->get();
+        $cases = MedCase::select('mediation_case.*','mediation_status_logs.created_at as cr')
+            
+            ->leftJoin("mediation_status_logs",function($join){
+
+            $join->on("mediation_status_logs.mediation_case_id","=","mediation_case.id");
+                //->on("mediation_status_logs.status","=",1);
+        })
+            ->whereDate('mediation_status_logs.created_at', $date)
+            ->where('mediation_status_logs.status', '1')
+
+            ->get();
+
       
         $arraydata = array();
         foreach ($cases as $key => $case) {
@@ -77,33 +88,52 @@ class IvrController extends Controller {
                 }
 
 
+                if($contact!=''){
 
-        echo $template='Hello '.$respondent.' a legal case of arbitration has been registered on Presolv three sixty platform against you by '.$claimant;
+                    $data['contact']=$contact;
 
-        echo $auth="MED360AUTH";
 
-        echo $event="ACPTMED_ADM";
+                    $data['template']='Hello '.$respondent.' a legal case of arbitration has been registered on Presolv three sixty platform against you by '.$claimant;
 
-        echo $app="P360MED";
+        $data['auth']="MED360AUTH";
 
-        echo $pivrid="61f7db108353a316";
+        $data['event']="ACPTMED_ADM";
 
-        echo $caseid=$case->id;
+        $data['app']="P360MED";
+
+        $data['pivrid']="61f7db108353a316";
+
+        $data['caseid']=$case->id;
+
+        $url="https://presolv360.com/functions/myopout.php";
+
+
+        $res = Curl::getdata($url, $data, 'POST', 'MED360AUTH');
+
+        var_dump($res);
 
 
        exit();
 
 
+
+
+
+                }
+
+
+
+        
                
             
         }
 
         
+exit();
 
 
 
-
-        return response()->json(["code" => 200, "status" => "success", "data" => $arraydata]);
+        return response()->json(["code" => 2000, "status" => "success", "data" => $arraydata]);
     }
 
 }
