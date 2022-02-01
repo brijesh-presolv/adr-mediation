@@ -539,7 +539,7 @@ class CaseController extends Controller
                 foreach ($request->session_party_ids as $party_id) {
                     // dd($party_id);
 
-                    $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->first();
+                    $party = InvoledUser::where("userPlanId", $request->caseId)->where("id", $party_id)->first();
                     if ($inv_id == "") {
                         $inv_id = $party->id;
                     } else {
@@ -557,7 +557,7 @@ class CaseController extends Controller
             $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
             $party_ids = array();
             foreach ($allParty as $party) {
-                $party_ids[] = $party->userId;
+                $party_ids[] = $party->id;
                 $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
             // dd($party_ids);
@@ -645,10 +645,17 @@ class CaseController extends Controller
             }
             $user = array();
             foreach ($dataArray as $d) {
-                $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                $dd = InvoledUser::where('id', $d)->where('userPlanId', $request->caseid)->first();
                 if (isset($dd)) {
                     if ($dd->name != null) {
                         $user[] = $dd->name;
+                    }
+                } else {
+                    $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                    if (isset($dd)) {
+                        if ($dd->name != null) {
+                            $user[] = $dd->name;
+                        }
                     }
                 }
             }

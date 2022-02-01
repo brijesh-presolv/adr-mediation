@@ -720,10 +720,17 @@ class MediationController extends Controller
             }
             $user = array();
             foreach ($dataArray as $d) {
-                $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                $dd = InvoledUser::where('id', $d)->where('userPlanId', $request->caseid)->first();
                 if (isset($dd)) {
                     if ($dd->name != null) {
                         $user[] = $dd->name;
+                    }
+                } else {
+                    $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                    if (isset($dd)) {
+                        if ($dd->name != null) {
+                            $user[] = $dd->name;
+                        }
                     }
                 }
             }

@@ -123,7 +123,7 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('case/json-ongoing/{confirm_status?}', [App\Http\Controllers\Mediator\DashboardController::class, 'jsonOngoing'])->defaults('confirm_status', 0)->name('mediator.case.jsonOngoing');
     Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('mediator.case.comment_view');
     Route::post('case/comment-action', [App\Http\Controllers\Admin\CaseController::class, 'commentAction'])->name('mediator.case.comment');
-    Route::post('case/add-session', [App\Http\Controllers\Admin\CaseController::class, 'addSession'])->name('mediator.case.addSession');
+    Route::post('case/add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'addSession'])->name('mediator.case.addSession');
     Route::post('case/withdraw-status', [App\Http\Controllers\Admin\CaseController::class, 'withdrawStatus'])->name('mediator.case.withdraw');
     Route::post('case/get-add-session', [App\Http\Controllers\Admin\CaseController::class, 'getAddedSesion'])->name('mediator.case.getAddedSesion');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Mediator\DashboardController::class, 'getConsentAndDisclosures'])->name('mediator.getConsentAndDisclosures');

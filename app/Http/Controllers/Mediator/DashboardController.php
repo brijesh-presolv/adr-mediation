@@ -235,7 +235,7 @@ class DashboardController extends Controller
             DB::table('manage_session')->insert($dataToInsert);
             $inv_id = "";
             foreach ($request->session_party_ids as $party_id) {
-                $party = InvoledUser::where("userPlanId", $request->caseId)->where("userId", $party_id)->first();
+                $party = InvoledUser::where("userPlanId", $request->caseId)->where("id", $party_id)->first();
                 if($inv_id == "") {
                     $inv_id = $party->id;
                 } else {
@@ -243,13 +243,13 @@ class DashboardController extends Controller
                 }
                 $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
-            Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, Auth::user()->id, $inv_id);
+            Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id, Auth::user()->id, $inv_id);
 
         } else {
             $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
             $party_ids = array();
             foreach ($allParty as $party) {
-                $party_ids[] = $party->userId;
+                $party_ids[] = $party->id;
                 $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
             // dd($party_ids);
@@ -271,7 +271,7 @@ class DashboardController extends Controller
                     $inv_id = $inv_id . "," . $v->id;
                 }
             }
-            Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, Auth::user()->id, $inv_id);
+            Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id, Auth::user()->id, $inv_id);
         }
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
@@ -317,10 +317,17 @@ class DashboardController extends Controller
             }
             $user = array();
             foreach ($dataArray as $d) {
-                $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                $dd = InvoledUser::where('id', $d)->where('userPlanId', $request->caseid)->first();
                 if (isset($dd)) {
                     if ($dd->name != null) {
                         $user[] = $dd->name;
+                    }
+                } else {
+                    $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                    if (isset($dd)) {
+                        if ($dd->name != null) {
+                            $user[] = $dd->name;
+                        }
                     }
                 }
             }
