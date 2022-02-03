@@ -963,7 +963,7 @@ $(function () {
         var data = button.parent().parent().find(".party_name");
         $("#sessionParty").html("");
         data.each(function () {
-            var party_id = $(this).data("id")
+            var party_id = $(this).data("inid")
             var party_name = $(this).text()
             var text = `<div class="form-group form-check">
                 <input type="checkbox" value="` + party_id + `" class="form-check-input" name="session_party_ids[]" id="party` + party_id + `" data-validation="checkbox_group" data-validation-qty="min1">

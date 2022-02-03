@@ -203,6 +203,18 @@ $ldate = $lastdate->format('d-m-Y');
                         $user[] = "Responding Party: " . $dd->name;
                     }
                     }
+                } 
+                else {
+                    $dd = InvoledUser::where('id', $d)->where('userPlanId', $caseId)->first();
+                    if(isset($dd)) {
+                        if ($dd->name != null) {
+                        if($dd->isClaimant == 0){
+                            $user[] = "Initiating Party: " . $dd->name;
+                        } else {
+                            $user[] = "Responding Party: " . $dd->name;
+                        }
+                        }
+                    }
                 }
             }
             if(isset($mediator)) {
