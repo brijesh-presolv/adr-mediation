@@ -110,10 +110,7 @@ class IvrController extends Controller {
 
         $res = Curl::getdata($url, $data, 'POST', 'MED360AUTH');
 
-        var_dump($res);
 
-
-       exit();
 
 
 
