@@ -1970,8 +1970,18 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
 
+        $data=[];
+        $data['auth']="MED360AUTH";
+        $data['app']="P360MED";
+        $data['caseid']=$id;
+        $url="https://presolv360.com/functions/ivrtrack.php";
+
+        $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'),true);
+
+        
+
         // dd($whatsapp);
-        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email"));
+        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email","ivr"));
     }
 
     public function mediatorAccessChange(Request $request)

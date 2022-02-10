@@ -178,7 +178,38 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
 
     </div>
 </div>
+<div class="card">
+    <div class="card-body">
+    <div class="row">
+                <div class="col-sm-12">
+                    <h3>IVR Log</h3>
+                        <table id="ivrcase" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Sr. no.</th>
+                                <th>Contact</th>
+                                <th>Status</th>
+                                <th>Date</th>
 
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <?php $i=1; ?>
+                              @foreach($ivr as $key => $value)
+
+                               <tr>
+                                   <td>{{$i}}</td>
+                                   <td>{{$value['phone']}}</td>
+                                   <td>{{$value['status']}}</td>
+                                   <td><?php $date = new DateTime($value['created_at']); $i++; ?> {{$date->format('d-m-Y H:i:s')}}</td>
+                               </tr>
+                              @endforeach
+                          </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
 <div id="myModal230" class="logmodal modal fade " role="dialog">
     <div class="modal-dialog">
   
