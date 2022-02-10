@@ -178,6 +178,7 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
 
     </div>
 </div>
+
 <div class="card">
     <div class="card-body">
     <div class="row">
@@ -196,7 +197,6 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
                           <tbody>
                             <?php $i=1; ?>
                               @foreach($ivr as $key => $value)
-
                                <tr>
                                    <td>{{$i}}</td>
                                    <td>{{$value['phone']}}</td>
@@ -210,6 +210,7 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
             </div>
         </div>
     </div>
+
 <div id="myModal230" class="logmodal modal fade " role="dialog">
     <div class="modal-dialog">
   
