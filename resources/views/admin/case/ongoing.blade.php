@@ -118,7 +118,7 @@
                     <br>
                     <br>
                 </form>
-                <table class="table table-bordered" id="supportingDocumnet"> 
+                <table class="table table-bordered table-responsive" id="supportingDocumnet"> 
                     <thead>
                         <tr>
                             <th>Sr. No</th>
