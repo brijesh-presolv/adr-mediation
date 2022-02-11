@@ -432,7 +432,19 @@ class CaseController extends Controller
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
             // 'docs_party_ids' => 'required',
         ]);
-
+        $inv_id = "";
+        if($request->has('docs_party_ids')) {
+            $inv_id = $request->docs_party_ids;
+        } else {
+            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+        }
         if ($request->TotalFiles > 0) {
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
@@ -442,8 +454,8 @@ class CaseController extends Controller
 
                     $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                     $insert[$x]['file_name'] = $path;
-                    $insert[$x]['access'] = $request->docs_party_ids;
-                    $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 0;
+                    $insert[$x]['access'] = $inv_id;
+                    $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 1;
                     $insert[$x]['uploaded_by'] = Auth::user()->id;
                     $insert[$x]['case_id'] = $request->caseId;
                     // $insert[$x]['path'] = $path;
@@ -457,15 +469,7 @@ class CaseController extends Controller
                 ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
                 ->where("mediators_mediation_cases_status.status", "=", 1)
                 ->first();
-            $inv_id = "";
-            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
-            foreach ($inv as $v) {
-                if ($inv_id == "") {
-                    $inv_id = $v->id;
-                } else {
-                    $inv_id = $inv_id . "," . $v->id;
-                }
-            }
+
             if ($request->shareMediator == 1) {
                 Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
             } else {
@@ -2026,10 +2030,10 @@ class CaseController extends Controller
         $url = "https://presolv360.com/functions/ivrtrack.php";
 
         $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'), true);
-        if($ivr['code']!='200'){
-            $ivr=[];
-        } else{
-            $ivr=$ivr['data'];
+        if ($ivr['code'] != '200') {
+            $ivr = [];
+        } else {
+            $ivr = $ivr['data'];
         }
         // dd($ivr);
         return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr"));
