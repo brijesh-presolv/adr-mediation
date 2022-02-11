@@ -74,7 +74,7 @@ class CaseController extends Controller
 
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
-            echo "<td><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+            echo "<td style='word-break: break-word'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
             echo "<td>" . $value->username . "</td>";
             echo "</tr>";
 
