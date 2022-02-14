@@ -103,6 +103,7 @@
 <!-- Datatable plugin js -->
 <script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
 <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <!-- Datatables init -->
 <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
@@ -177,7 +178,7 @@ function DataTables(tableID, url) {
                 {"data": "id", sortable: false,
                     render: function (data, type, row) {
                         var button = `<form method="post" action="{{route('admin.users.edit', '')}}/`+data+`"> @csrf <button type="submit" value="` + data + `" name="id" class="btn btn-primary"><i class="fas fa-user-edit"></i></button></form> `;
-                        button += ` <form method="post" > @csrf <button type="submit"  value="` + data + `" name="id"  class="btn btn-danger"><i class="far fa-trash-alt"></i></button></form>`;
+                        button += `<button data-id="` + data + `" name="delete" id="userDelete" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>`;
                         return button;
                     }
                 },
@@ -202,6 +203,35 @@ $(document).ready(function () {
       DataTables(tableid, link);
         userTable.ajax.reload( null, false)
       
+    });
+
+    $(document).on('click', '#userDelete', function () {
+        var id = $(this).data('id');
+        
+        swal({
+            title: "Are you sure?",
+            text: "Delete this account",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then(function (willDelete) { 
+            if (willDelete) {
+                // console.log(id);
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route("admin.user.delete") }}',
+                    data: {user_id: id},
+                    success: function () {
+                        swal({
+                            title: "Deleted Successfully",
+                            icon: "success",
+                        }).then(function () {
+                            userTable.ajax.reload( null, false);
+                        })
+                    },
+                });
+            } 
+        });
     });
 
     $(document).on('change', ".statuschang", function () {

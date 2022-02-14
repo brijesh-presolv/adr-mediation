@@ -146,7 +146,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('users/update', [App\Http\Controllers\Admin\UsersController::class, 'update'])->name('admin.users.update');
     Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
     Route::post('users/status-change-approve', [App\Http\Controllers\Admin\UsersController::class, 'statusChangeApprove'])->name('admin.users.status_change_approvel');
-//    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
+    Route::post('user/delete', [App\Http\Controllers\Admin\UsersController::class, 'deleteUser'])->name('admin.user.delete');
 //    Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
 //    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
 //    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');

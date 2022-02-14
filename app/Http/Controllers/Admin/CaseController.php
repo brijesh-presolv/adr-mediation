@@ -159,6 +159,7 @@ class CaseController extends Controller
 
         $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
 
+        $case->appointment = InvitationFiles::where(['case_id' => $case->id])->where('file_name_mediator_appointment', '!=', null)->orderByDesc('id')->limit(1)->first();
 
         $case->supporting_document = DB::table('manage_files')->select('manage_files.*', 'users.username')
             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
@@ -908,11 +909,11 @@ class CaseController extends Controller
 
             $invitation = $this->invitation_mediate($id);
 
-            $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+            // $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
 
-            if (!isset($invmodel)) {
+            // if (!isset($invmodel)) {
                 $invmodel = new InvitationFiles();
-            }
+            // }
             $invmodel->case_id = $request->id;
             $invmodel->file_name = $invitation;
             $invmodel->save();
@@ -996,6 +997,13 @@ class CaseController extends Controller
                     $access = Whatsapp::sendWamessage($dwa2);
                 }
             }
+
+            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+
+            // dd($mediator);
 
             $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
 

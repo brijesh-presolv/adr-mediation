@@ -144,9 +144,9 @@
                             <td>
 
                                 <?php
-                                if ($case->invitation) {
-                                    if($case->invitation->file_name_mediator_appointment != null) {
-                                    $doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->invitation->file_name_mediator_appointment;
+                                if ($case->appointment) {
+                                    if($case->appointment->file_name_mediator_appointment != null) {
+                                    $doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->appointment->file_name_mediator_appointment;
                                     ?>
                                     <a href="{{url($doc)}}" target="_blank">@lang('case.view')</a>
                                     <?php } else { ?>

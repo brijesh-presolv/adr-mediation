@@ -167,4 +167,12 @@ class UsersController extends Controller {
         return response()->json(["data" => $users]);
     }
 
+    public function deleteUser(Request $request)
+    {
+        $user = User::find($request->user_id);
+        // dd($user);
+        $user->delete();
+        return true;
+    }
+
 }
