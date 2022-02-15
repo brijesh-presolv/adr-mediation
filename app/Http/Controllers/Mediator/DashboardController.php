@@ -460,7 +460,8 @@ class DashboardController extends Controller
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
 
-        $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
+        // $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
+        $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->get();
 
         $case->appointment = InvitationFiles::where(['case_id' => $case->id])->where('file_name_mediator_appointment', '!=', null)->orderByDesc('id')->limit(1)->first();
 

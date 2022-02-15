@@ -127,14 +127,24 @@
                         <tr>
                             <td>@lang('case.invitation_to_mediate')</td>
                             <td>
-
                                 <?php
-                                if ($case->invitation) {
-
-                                    $doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->invitation->file_name;
-                                    ?>
-                                    <a href="{{url($doc)}}" target="_blank">@lang('case.view')</a>
-                                <?php } else { ?>
+                                if ($case->invitation) { ?>
+                                    <table style="width: 100%">
+                                    @foreach ($case->invitation as $key => $value) 
+                                        <?php $doc = 'storage/app/public/mediation/' . $case->id . '/' . $value->file_name; ?>
+                                    
+                                    <tr>
+                                        <td style="width: 5%;"><b>{{$key+1}}</b></td>
+                                        @if($key == 0) 
+                                        <td><a href="{{url($doc)}}" target="_blank">{{$value->file_name}}</b></a></td>
+                                        @else
+                                        <td><a href="{{url($doc)}}" target="_blank">{{$value->file_name}}</b></a></td>
+                                        @endif
+                                        {{-- <td><a href="{{url($doc)}}" target="_blank">@lang('case.view')</a></td> --}}
+                                    </tr>
+                                    @endforeach
+                                    </table>
+                                <?php  } else { ?>
                                     @lang('case.na')
                                 <?php } ?>
                             </td>
