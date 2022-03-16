@@ -207,7 +207,7 @@ class CaseController extends Controller
         $invmodel->case_id = $request->id;
         $invmodel->file_name = $invitation;
         $invmodel->save();
-        //send invitation 
+        //send invitation
 
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->id)
@@ -695,21 +695,26 @@ class CaseController extends Controller
             echo "<td>" . $value->zoom_id . "</td>";
             echo "<td>" . $value->note . "</td>";
             echo "<td>" . implode("<br>", $user) . "</td>";
-            if (Auth::user()->role == 2) {
-                echo "<td>
-            <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
-            <button id='DeleteSession' data-id='" . $value->id . "' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
-            </td>";
-            } else {
-                if (Auth::user()->id == $value->scheduled_by) {
-
+            if ($value->is_deleted == 0) {
+                if (Auth::user()->role == 2) {
                     echo "<td>
+            <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
+            <button id='DeleteSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-delete' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
+            </td>";
+                } else if (Auth::user()->role == 1) {
+                    if (Auth::user()->id == $value->scheduled_by) {
+
+                        echo "<td>
                     <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit-mediator' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
-                    <button id='DeleteSession' data-id='" . $value->id . "' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
+                    <button id='DeleteSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-delete-meditor' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
                     </td>";
-                } else {
-                    echo "<td>--</td>";
+                    } else {
+                        echo "<td>--</td>";
+                    }
                 }
+            } else {
+                echo "<td><p style='color:red;'>Deleted</p><button id='viewreason' data-reason='" . $value->delete_reason . "' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-delete-reason' class='btn btn-sm btn-primary px-2'><i class='fas fa-comment-alt'></i></button>
+                </td>";
             }
             echo "</tr>";
 
@@ -761,13 +766,12 @@ class CaseController extends Controller
 
     public function deleteSession(Request $request)
     {
-
         $id = $request->SessId;
 
-        $deleted =  DB::table('manage_session')->where('id', $id)->delete();
-
-        if ($deleted) {
-
+        $deleted = ManageSession::find($id);
+        $deleted->is_deleted = 1;
+        $deleted->delete_reason = $request->reason;
+        if ($deleted->save()) {
             return json_encode(["message" => "success"]);
         } else {
             return json_encode(["message" => "error"]);
@@ -2227,7 +2231,7 @@ class CaseController extends Controller
         $pdf = new PDFMerger();
         $caseid = collect($caseid)->sort();
 
-        // Add all the pages of the PDF to merge 
+        // Add all the pages of the PDF to merge
         foreach ($caseid as $value) {
             $invitation = InvitationFiles::where(['case_id' => $value])->orderByDesc('id')->limit(1)->first();
             if ($invitation->file_name != null) {
@@ -2551,7 +2555,7 @@ class CaseController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
         ]);
 
-        // ---------------------old file log excel download----------------------------------- 
+        // ---------------------old file log excel download-----------------------------------
         // dd($request->all());
         // $caseinfo = [];
 

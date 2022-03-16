@@ -426,6 +426,56 @@
             </div>
         </div>
     </div>
+    <div id="Session-delete-meditor" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1"
+        aria-hidden="true" class="modal-demo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Delete Session</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
+                    </button>
+                </div>
+
+                <form method="post">
+
+                    <input type="hidden" name="createdBy" id="deletecreatedByF" value="{{ Auth::id() }}">
+                    <input type="hidden" name="deSessId" id="deleteSessId">
+
+                    <div class="custom-modal-text ">
+
+                        <div class="form-group">
+                            <label>Reason for Delete</label>
+                            <textarea class="form-control" id="reasondelete" name="reasondelete" placeholder="Reason for Delete"></textarea>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="button" class="btn-sm btn mt-3  btn-secondary"
+                                data-dismiss="modal">Close</button>
+                            <input type="button" id="sessiondeleteform" name="deleteSession"
+                                class="btn-sm btn btn-primary mt-3" value="Submit">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="Session-delete-reason" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1"
+        aria-hidden="true" class="modal-demo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">View Reason</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
+                    </button>
+                </div>
+
+                <div class="modal-body" style="background-color: darkgray; color: white;" id="view_reason"></div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 <!-- Table datatable css -->
@@ -989,7 +1039,7 @@
                                             <div class="col-md-4 text-left"><small class="text-muted">` + data[i]
                                 .created + `</small></div>
                                             <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                </div>           
+                                </div>
                                  <p>` + data[i].comment + `</p>
                         </div>`;
                             $("#commentView").append(msg);
@@ -999,7 +1049,7 @@
                                             <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
                                             <div class="col-md-4 text-right"><small class="text-muted">` + data[i]
                                 .created + `</small></div>
-                                </div>           
+                                </div>
                                  <p>` + data[i].comment + `</p>
                         </div>`;
                             $("#commentView").append(msg);
@@ -1093,7 +1143,12 @@
             });
             return false;
         });
-
+        $('#Session-delete-reason').on('show.bs.modal', function(event) {
+            $("#view_reason").text("");
+            var button = $(event.relatedTarget);
+            var reason = button.data('reason');
+            $("#view_reason").text(reason);
+        });
         $('#midaterAdd').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var recipient = button.data('id');
@@ -1246,7 +1301,7 @@
                             if (session_party.includes(party_id) || session_party.includes(
                                     user_id)) {
                                 // console.log("if",party_id);
-                                // console.log("if",user_id);                            
+                                // console.log("if",user_id);
                                 text = text + `<input type="checkbox" checked value="` +
                                     party_id +
                                     `" class="form-check-input" name="session_party_ids[]" id="party` +
@@ -1257,7 +1312,7 @@
 
                             } else {
                                 // console.log("else",party_id);
-                                // console.log("else",user_id);  
+                                // console.log("else",user_id);
                                 text = text + `<input type="checkbox" value="` + party_id +
                                     `" class="form-check-input" name="session_party_ids[]" id="party` +
                                     party_id + `" data-validation="checkbox_group" data-validation-qty="min1">
@@ -1303,10 +1358,14 @@
                 }
             });
         })
-
-        $(document).on('click', '#DeleteSession', function() {
-            var Sessid = $(this).data('id');
-
+        $('#Session-delete-meditor').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var delid = button.data('id');
+            $("#deleteSessId").val(delid);
+        });
+        $(document).on('click', '#sessiondeleteform', function() {
+            var Sessid = $("#deleteSessId").val();
+            var reason = $("#reasondelete").val();
             swal({
                 title: "Are you sure?",
                 text: "Delete this Session!",
@@ -1319,7 +1378,8 @@
                         type: "POST",
                         url: "{{ route('mediator.DeleteSession') }}",
                         data: {
-                            SessId: Sessid
+                            SessId: Sessid,
+                            reason: reason
                         },
                         dataType: "JSON",
                         success: function(response) {
