@@ -104,12 +104,27 @@ class UsersController extends Controller {
             $user->isDone = $request->status;
         }
         if($request->hasFile('signature')) {
-            if($user->signature_photo != null) {
-                Storage::delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
+            if($user->role == 0) {
+                if($user->signature_photo != null) {
+                    Storage::delete('public/user/' . $request->id . '/signature/' . $user->signature_photo);
+                }
+                $extension = $request->file('signature')->getClientOriginalExtension();
+                $name = 'User_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+                Storage::put('public/user/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+            } else {
+                if($user->signature_photo != null) {
+                    Storage::delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
+                }
+                $extension = $request->file('signature')->getClientOriginalExtension();
+                $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+                Storage::put('public/mediator/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
             }
-            $extension = $request->file('signature')->getClientOriginalExtension();
-            $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
-            Storage::put('public/mediator/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+            // if($user->signature_photo != null) {
+            //     Storage::delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
+            // }
+            // $extension = $request->file('signature')->getClientOriginalExtension();
+            // $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+            // Storage::put('public/mediator/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
         } 
         if($request->hasFile('profilePic')) {
             if($user->profile_pic != null) {
@@ -162,8 +177,13 @@ class UsersController extends Controller {
         return response()->json(["data" => $users]);
     }
 
-    public function jsonUnapprove($role = 0) {
+    public function jsonNewreq($role = 0) {
         $users = User::where("role", "=", $role)->where('status', 0)->where('is_deleted', 0)->get();
+        return response()->json(["data" => $users]);
+    }
+
+    public function jsonUnapprove($role = 0) {
+        $users = User::where("role", "=", $role)->where('is_deleted', 1)->get();
         return response()->json(["data" => $users]);
     }
 

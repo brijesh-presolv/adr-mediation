@@ -41,7 +41,7 @@ use App\Models\InvoledUser;
                 <thead>
                     <tr>
                         <th>@lang('case.Sr. No')</th>
-                        {{-- <th>Select</th> --}}
+                        <th>Select</th>
                         <th>@lang('case.case_id')</th>
                         <th>@lang('case.date')</th>
                         <th>@lang('case.case_details')</th>
@@ -73,7 +73,7 @@ use App\Models\InvoledUser;
 
                         
                         <td>{{$i++}}</td>
-                        {{-- <td><input type="checkbox" class="blkchk" data-caseid="{{$value->caseid}}"></td> --}}
+                        <td><input type="checkbox" class="blkchk" data-caseid="{{$value->caseid}}"></td>
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
                         <td><a class="btn   btn-sm btn-primary label label-success" target="_blank" href="{{route('user.casedetails',$value->caseid)}}">@lang('case.btn_case_details')</a></td>
@@ -99,7 +99,11 @@ use App\Models\InvoledUser;
 
                             if($v->isOnboarded==1){
                                 if($v->name != "") {
-                                echo '<span class="text-success">'.$v->name.'</span></br>';
+                                    if($v->organization != null && $v->isClaimant == 0) {
+                                        echo '<span class="text-success">'.$v->organization.'</span></br>';
+                                     } else {
+                                        echo '<span class="text-success">'.$v->name.'</span></br>';
+                                     }
                                 }
                             } 
                             else{
@@ -155,27 +159,25 @@ use App\Models\InvoledUser;
                     </td> --}}
 
 
-                    <td>
+                        <td>
                             
-                        <span class="badge badge-success ">@if (isset($value->casestatus->description))
-                            
-                        {{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}@endif</span>
-                    </td>
+                            <span class="badge badge-success ">{{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}
+                        </td>
                         </tr>
                     <?php } ?>
                 </tbody>
             </table>
-            {{-- <div class="row">
+            <div class="row">
                 <div class="col-md-2">
 
                     <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input type="checkbox" id="selectalldir"> Select All Cases</label>
 
                 </div>
-                <div class="col-md-4">
-                    <button class="blkbtn btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModalForBulk" id="bulkWithdrawBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Withdraw</button>
+                <div class="col-md-10">
+                    <button class="blkbtn btn btn-sm btn-inline btn-primary"  id="bulkdownloadBtn" style="margin-top:10px; display:none;" >Bulk Download</button>
                 </div>
                 
-            </div> --}}
+            </div>
         </div>
     </div>
 </div>
@@ -658,9 +660,9 @@ use App\Models\InvoledUser;
     });
 
 
-        $("#selectalldir").change(function () {
+    $("#selectalldir").change(function () {
       if (this.checked) {
-        $("#bulkWithdrawBtn").show();
+        $("#bulkdownloadBtn").show();
         $(".blkchk").each(function () {
           $(this).prop("checked", true);
         });
@@ -668,17 +670,129 @@ use App\Models\InvoledUser;
         $(".blkchk").each(function () {
           $(this).prop("checked", false);
         });
-        $("#bulkWithdrawBtn").hide();
+        $("#bulkdownloadBtn").hide();
 
       }
     });
 
     $(document).on("change", ".blkchk", function () {
-      if (this.checked) {
-        $("#bulkWithdrawBtn").show();
-      } else {
-        $("#bulkWithdrawBtn").hide();
-      }
+        var case_count = 0;
+        $(".blkchk").each(function () {
+        if (this.checked) {
+            case_count++;
+        }
+        if (this.checked) {
+            $("#bulkdownloadBtn").show();
+        } else {
+            if (case_count == 0) {  
+                $("#bulkdownloadBtn").hide();
+            }
+        }
+        if($('#selectalldir').is(':checked')){
+            $("#bulkdownloadBtn").show();
+        }
+        if(case_count == 0) {
+            $("#bulkdownloadBtn").hide();
+        }
+        
+        });
+    });
+
+    $('#bulkdownloadBtn').on('click', function (e) {
+        e.preventDefault();
+        var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        var withdrawcount = [];
+        var count = 0;
+        $(".blkchk").each(function () {
+            if(this.checked){
+               count++;
+            }
+            withdrawcount.push(count);
+          });
+
+        var withdrawcountTotal = Math.max.apply(Math, withdrawcount); 
+        
+        swal({
+            title: "@lang('case.are_you_sure')",
+            text: withdrawcountTotal.toString() +" Cases selected",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then(function(willDelete) {
+            if (willDelete) {
+                
+                var cid = "";
+                $(".blkchk").each(function () {
+                    if (this.checked) {
+                        if(cid == "") {
+                            cid = $(this).data("caseid");
+                        } else {
+                            cid = cid + "," + $(this).data("caseid");
+                        }
+                    }
+                });
+                $.ajax({
+                    url: '{{ route("user.case.downloadfilebulk") }}',
+                    type: 'post',
+                    data: {
+                        allcid: cid,
+                        _token: csrf
+                    },
+                    xhrFields: {
+                        responseType: 'blob' // to avoid binary data being mangled on charset conversion
+                    },
+                    success: (blob, status, xhr) => {
+                        if (status == 'nocontent') {
+                            swal({
+                                title: "No files available for this Case!",
+                                text: "",
+                                icon: "error",
+                            });
+                        } else {
+                        var filename = "";
+                        var disposition = xhr.getResponseHeader('Content-Disposition');
+                        if (disposition && disposition.indexOf('attachment') !== -1) {
+                            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                            var matches = filenameRegex.exec(disposition);
+                            if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+
+                        }
+                        
+                        if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                            window.navigator.msSaveBlob(blob, filename);
+                        } else {
+
+                            var URL = window.URL || window.webkitURL;
+                            var downloadUrl = URL.createObjectURL(blob);
+                            if (filename) {
+
+                                var a = document.createElement("a");
+                                if (typeof a.download === 'undefined') {
+                                    window.location.href = downloadUrl;
+                                } else {
+                                    a.href = downloadUrl;
+                                    a.download = filename;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                }
+                            } else {
+                                window.location.href = downloadUrl;
+                            }
+
+                                URL.revokeObjectURL(downloadUrl);
+                                swal({
+                                    text: "Zip downloaded successfully!",
+                                    title: "Thanks!",
+                                    icon: "success",
+                                }).then(function () {
+                                    location.reload();
+                                });
+                        }
+                        }
+                    },
+                });
+            }
+        });
     });
 
     $('#withdrawFormForBulk').on('submit', function (e) {

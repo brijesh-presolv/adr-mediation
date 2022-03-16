@@ -31,7 +31,7 @@ class User extends Authenticatable
         'smsotp',
         'isActive',
         'signature_photo',
-        'is_deleted'
+        'is_deleted',
     ];
 
     /**

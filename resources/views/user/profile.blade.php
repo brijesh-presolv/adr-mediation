@@ -95,7 +95,7 @@
                 <div id="custom-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
                     <div class="modal-dialog">
 
-                        <form action = "{{ route('user.profile.update',['id'=> $profileData->id]) }}" method = "post">
+                        <form action = "{{ route('user.profile.update',['id'=> $profileData->id]) }}" method = "post" enctype="multipart/form-data">
                             <input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
                             <input type = "hidden" name = "profileID" value = "{{ $profileData->id }}">
 
@@ -224,6 +224,17 @@
                                             <div class="form-group">
                                                 <label for="field-5" class="control-label">pincode : </label>
                                                 <input type="text" name="pincode"  value="{{ $profileData->pincode }}" data-validation="required length" data-validation-length="4-10"  class="form-control" id="field-5">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="signature">Upload Signature</label>
+                                                @if($profileData->signature_photo != null) 
+                                                    <br><img  width="12%" src="{{Config::get('constants.user_path')}}/{{$profileData->id}}/signature/{{$profileData->signature_photo}}" />  
+                                                @endif
+                                                <input type="file" class="form-control" id="signature"  name="signature">
                                             </div>
                                         </div>
                                     </div>

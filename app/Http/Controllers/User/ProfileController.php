@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -67,7 +68,7 @@ class ProfileController extends Controller
                 'firstName' => ['required'],
                 'lastName' => ['required'],
                 'email' => ['email', 'required', 'unique:users,email,'.$id],
-                'mobile' => ['required', 'unique:users,mobile_number,'.$id],
+                'mobile' => ['required'],
                 'username' => ['required', 'unique:users,username,'.$id]
             ],
             [
@@ -77,7 +78,6 @@ class ProfileController extends Controller
                 'email.required' => 'Please Enter Email*',
                 'email.unique' => 'This email already taken*',
                 'mobile.required' => 'Please Enter Number*',
-                'mobile.unique' => 'This number already taken*',
                 'username.unique' => 'This username already taken*',
                 'username.required' => 'Please Enter Username*',
             ]
@@ -86,23 +86,34 @@ class ProfileController extends Controller
         // dd("hello");
 
 
-        $dataToUpdate = [
-            'first_name' => ucfirst($request->firstName),
-            'last_name' => ucfirst($request->lastName),
-            'email' => $request->email,
-            'mobile_number' => $request->mobile,
-            'organization' => $request->orgName,
-            'address' => $request->address,
-            'address1' => $request->address1,
-            'city' => $request->city,
-            'state' => $request->state,
-            'country' => $request->country,
-            'pincode' => $request->pincode,
-            'username' => $request->username,
-        ];
+        $dataToUpdate = User::find($id);
+        // dd("hello");
+        $dataToUpdate->first_name = ucfirst($request->firstName);
+        $dataToUpdate->last_name = ucfirst($request->lastName);
+        $dataToUpdate->email = $request->email;
+        $dataToUpdate->mobile_number = $request->mobile;
+        $dataToUpdate->organization = $request->orgName;
+        $dataToUpdate->address = $request->address;
+        $dataToUpdate->address1 = $request->address1;
+        $dataToUpdate->city = $request->city;
+        $dataToUpdate->state = $request->state;
+        $dataToUpdate->country = $request->country;
+        $dataToUpdate->pincode = $request->pincode;
+        $dataToUpdate->username = $request->username;
+        // dd($request->file('signature'));
+        if($request->hasFile('signature')) {
 
-        $user = User::where('id', $id)->update($dataToUpdate);
-        if ($user) {
+            if($dataToUpdate->signature_photo != null) {
+                Storage::delete('public/user/' . $request->id . '/signature/' . $dataToUpdate->signature_photo);
+            }
+            $extension = $request->file('signature')->getClientOriginalExtension();
+            $name = 'User_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+            Storage::put('public/user/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+            $dataToUpdate->signature_photo = $name;
+        }
+
+        // $user = User::where('id', $id)->update($dataToUpdate);
+        if ($dataToUpdate->save()) {
             return redirect('user/profile')->with('key', "Profile Updated Succesfully");
         }
     }

@@ -21,6 +21,7 @@ use App\Models\Mediators_mediation_cases_status;
 use App\Models\Notification;
 use App\Models\WaTemplate;
 use DB;
+use Illuminate\Support\Facades\File;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 
@@ -55,14 +56,13 @@ class DashboardController extends Controller
     public function Notification()
     {
         $view = Notification::where('view_mediator', 0)->where('mediator_id', Auth::user()->id)->get();
-        foreach($view as $item) {
+        foreach ($view as $item) {
             $item->view_mediator = 1;
             $item->save();
         }
         $data = Notification::mediatornotificationData();
         // dd($data);
         return view('mediator.notification', compact('data'));
-        
     }
 
     public function newrequest()
@@ -79,14 +79,17 @@ class DashboardController extends Controller
     public function newjson()
     {
 
+        $draw = $_POST['sEcho'];
+        $row = $_POST['iDisplayStart'];
+        $rowperpage = $_POST['iDisplayLength']; // Rows display per page
+        $indexColumn = $_POST['iSortCol_0'];
+        $columnName = $_POST['mDataProp_' . $indexColumn]; // Column name
+        $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
+
+        $searchValue = $_POST['sSearch'];
         $loginUser = Auth::user()->id;
-        $newrequestData = DB::table('mediation_case')
-            //->select('mediation_case.*')
-            ->join('mediators_mediation_cases_status', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
-            ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 0])
-            ->where("mediation_case.confirm_status", "!=", 2)->orderBy('mediation_case.id', 'DESC')
-            ->get();
-        // dd($newrequestData);
+        $newrequestData = MedCase::newrequestDataMediator($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $loginUser);
+        $newrequestDataCount = MedCase::newrequestDataMediatorCount($searchValue, $loginUser);
         $arraydata = array();
 
 
@@ -94,21 +97,21 @@ class DashboardController extends Controller
             $arraydata[] = [
                 "key" => $key + 1,
                 "id" => $d->mediation_case_id,
-                "party" => InvoledUser::select('name', 'userPhone', 'address1', 'address2', 'userEmail', 'isOnboarded', 'fulladdress')->where(['userPlanid' => $d->mediation_case_id])->get(),
+                "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.userPhone', 'user_involved_in_agreement.address1', 'user_involved_in_agreement.address2', 'user_involved_in_agreement.fulladdress', 'user_involved_in_agreement.userEmail', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $d->id])->get(),
                 "comments" => "tesr",
                 "caseId" => $d->mediation_case_id,
                 "case_issue" => $d->issue,
                 "mediator_id" => $d->mediator_id,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "private_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->mediation_case_id)->count(),
-                "private_view_count" =>Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->mediation_case_id)->where('view_mediator', 0)->count(),
+                "private_view_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->mediation_case_id)->where('view_mediator', 0)->count(),
                 "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->mediation_case_id)->count(),
-                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->mediation_case_id)->where('view_mediator',0)->count(),
+                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->mediation_case_id)->where('view_mediator', 0)->count(),
 
             ];
         }
 
-        return response()->json(["data" => $arraydata]);
+        return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $newrequestDataCount, "iTotalDisplayRecords" => $newrequestDataCount, "aaData" => $arraydata]);
     }
 
     /**
@@ -236,7 +239,7 @@ class DashboardController extends Controller
             $inv_id = "";
             foreach ($request->session_party_ids as $party_id) {
                 $party = InvoledUser::where("userPlanId", $request->caseId)->where("id", $party_id)->first();
-                if($inv_id == "") {
+                if ($inv_id == "") {
                     $inv_id = $party->id;
                 } else {
                     $inv_id = $inv_id . "," . $party->id;
@@ -244,7 +247,6 @@ class DashboardController extends Controller
                 $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
             }
             Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id, Auth::user()->id, $inv_id);
-
         } else {
             $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
             $party_ids = array();
@@ -338,6 +340,15 @@ class DashboardController extends Controller
             echo "<td>" . $value->zoom_id . "</td>";
             echo "<td>" . $value->note . "</td>";
             echo "<td>" . implode("<br>", $user) . "</td>";
+            // if(Auth::user()->id == $value->scheduled_by){
+
+            echo "<td>
+                <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
+                <button id='DeleteSession' data-id='" . $value->id . "' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
+                </td>";
+            // }else{
+            //     echo "<td>--</td>";
+            // }
             echo "</tr>";
 
             $sn++;
@@ -363,7 +374,7 @@ class DashboardController extends Controller
 
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
-            echo "<td style='word-break: break-word'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+            echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
             echo "<td>" . $value->username . "</td>";
             echo "</tr>";
 
@@ -424,27 +435,34 @@ class DashboardController extends Controller
 
     public function json($role = 0)
     {
-        $cases = MedCase::select("mediation_case.*", "users.username as mediator_username", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
-            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->where("mediation_case.confirm_status", "=", $role)
-            ->where('mediator_id', "=", Auth::user()->id)->orderBy('mediation_case.id', 'DESC')
-            ->get();
+        $draw = $_POST['sEcho'];
+        $row = $_POST['iDisplayStart'];
+        $rowperpage = $_POST['iDisplayLength']; // Rows display per page
+        $indexColumn = $_POST['iSortCol_0'];
+        $columnName = $_POST['mDataProp_' . $indexColumn]; // Column name
+        $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
+
+        $searchValue = $_POST['sSearch'];
+
+        $cases = MedCase::getClosedMediator($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role);
+        $casescount = MedCase::getClosedMediatorCount($searchValue, $role);
         $arraydata = array();
         foreach ($cases as $d) {
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('name', 'isOnboarded', 'userId')->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
                 "private_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->count(),
-                "private_view_count" =>Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->where('view_mediator', 0)->count(),
+                "private_view_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->where('view_mediator', 0)->count(),
                 "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->count(),
-                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->where('view_mediator',0)->count(),
+                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->where('view_mediator', 0)->count(),
 
             ];
         }
-        return response()->json(["data" => $arraydata]);
+        return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
+
+        // return response()->json(["data" => $arraydata]);
     }
 
     public function casedetails($id)
@@ -476,25 +494,30 @@ class DashboardController extends Controller
 
     public function jsonOngoing($role = 0)
     {
-        $cases = DB::table('mediators_mediation_cases_status')
-            ->select("mediation_case.*")
-            ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
-            ->join('mediation_case', 'mediation_case.id', '=', 'mediators_mediation_cases_status.mediation_case_id')
-            ->where('confirm_status', "=", 1)
-            ->where(['mediator_id' => Auth::user()->id, 'mediators_mediation_cases_status.status' => 1])->orderBy('mediation_case.id', 'DESC')->get();
+        $draw = $_POST['sEcho'];
+        $row = $_POST['iDisplayStart'];
+        $rowperpage = $_POST['iDisplayLength']; // Rows display per page
+        $indexColumn = $_POST['iSortCol_0'];
+        $columnName = $_POST['mDataProp_' . $indexColumn]; // Column name
+        $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
+
+        $searchValue = $_POST['sSearch'];
+
+        $cases = MedCase::getOngoingMediator($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage);
+        $casescount = MedCase::getOngoingMediatorCount($searchValue);
         $arraydata = array();
         foreach ($cases as $d) {
             $arraydata[] = [
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "case" => $d,
-                "party" => InvoledUser::select('id', 'name', 'isOnboarded', 'userId')->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $d->id])->get(),
                 "private_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->count(),
-                "private_view_count" =>Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->where('view_mediator', 0)->count(),
+                "private_view_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->where('view_mediator', 0)->count(),
                 "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->count(),
-                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->where('view_mediator',0)->count(),
+                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->where('view_mediator', 0)->count(),
             ];
         }
-        return response()->json(["data" => $arraydata]);
+        return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
     }
 
     /**
@@ -541,16 +564,29 @@ class DashboardController extends Controller
 
     public function getConsentAndDisclosures($id)
     {
-        $data["case"] = MedCase::where("id", "=", $id)->first();
-        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
-        $data["consent_disclosures"] = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
+        $data = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
             ->where("mediation_case_id", "=", $id)
             ->first();
-        if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
-            return abort(404);
+        if (isset($data)) {
+            if ($data->file_name != null) {
+                $dis_file_name = $data->file_name;
+                $exist_file = storage_path() . '/app/public/mediation/' . $id . '/' . $dis_file_name;
+            } else {
+                $dis_file_name = "M" . sprintf("%06d", $id) . "_party.pdf";
+                $exist_file = storage_path() . '/app/public/mediation/' . $id . '/' . $dis_file_name;
+            }
+            // dd($exist_file);
+            if (File::exists($exist_file)) {
+                $pdf = file_get_contents($exist_file);
+                return response($pdf, 200, [
+                    'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
+                ]);
+            } else {
+                return "File Not Found";
+            }
+        } else {
+            return "File Not Found";
         }
-        $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
-        return $pdf->stream('document.pdf');
     }
 
     /**
@@ -640,7 +676,10 @@ class DashboardController extends Controller
             return abort(404);
         }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
-        Storage::put('public/mediation/' . $data["case"]->id . '/' . "M" . sprintf("%06d", $id) . "_party.pdf", $pdf->output());
+        $file_name = "M" . sprintf("%06d", $id) . "_party.pdf";
+        Storage::put('public/mediation/' . $data["case"]->id . '/' . $file_name, $pdf->output());
+        $data["consent_disclosures"]->file_name = $file_name;
+        $data["consent_disclosures"]->save();
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mid = "M" . sprintf("%06d", $id);
         $d = [

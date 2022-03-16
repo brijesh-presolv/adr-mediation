@@ -20,6 +20,7 @@ class Notification extends Model {
      */
     protected $fillable = [
         'case_id',
+        'reg_id',
         'event',
         'uploaded_by',
         'mediator_id',

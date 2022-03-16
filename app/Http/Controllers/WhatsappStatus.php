@@ -30,15 +30,13 @@ class WhatsappStatus extends Controller
         try {
             // file_put_contents($myFile, $json);
             Storage::put('public/whatsapp_status/testFile' . date('Y-m-d_H:i:s') . '.txt', $json);
-
-            
         } catch (Exception $e) {
 
             echo $e->getMessage();
         }
-        
+
         $data = json_decode($json, true);
-        
+
         if ($data) {
 
 
@@ -73,7 +71,7 @@ class WhatsappStatus extends Controller
 
     public function SendInvitation()
     {
-       
+
         $date = \Carbon\Carbon::today()->subDays(2);
         $date = $date->format('Y-m-d');
         $cases = MedCase::select('mediation_case.*', 'iu.*', 'if.file_name', 'remainder.send_reminder')
@@ -87,18 +85,20 @@ class WhatsappStatus extends Controller
             ->whereDate('remainder.created_at', $date)->get();
 
         foreach ($cases as $value) {
-           $initiating_party = InvoledUser::where('userPlanId', $value->userPlanId)->where('isClaimant', 0)->first();
+            //    $initiating_party = InvoledUser::where('userPlanId', $value->userPlanId)->where('isClaimant', 0)->first();
+            $initiating_party = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $value->userPlanId)->where('isClaimant', 0)->first();
+
             // dd($initiating_party);
             $d = [
                 'event' => 'ACPTARB_ADM_RES',
                 'case_id' => $value->userPlanId,
             ];
             if ($value->userEmail != null) {
-                $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
+                $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
             }
-            if($value->userPhone != null) {
+            if ($value->userPhone != null) {
                 $var = ['-cid-', '-ip-'];
-                $var1 = ["M" . sprintf("%06d", $value->userPlanId), $initiating_party->name];
+                $var1 = ["M" . sprintf("%06d", $value->userPlanId), ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name];
                 $content1 = WaTemplate::getcontent('l4_mediation_party2');
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
@@ -130,6 +130,5 @@ class WhatsappStatus extends Controller
 
         echo "Success";
         exit;
-
     }
 }

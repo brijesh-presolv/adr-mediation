@@ -3,13 +3,13 @@
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
-Route::get('/clear-cache', function() {
+Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
-	Artisan::call('view:clear');
+    Artisan::call('view:clear');
     return "Cache is cleared";
 });
-Route::get('/admin/login', function() {
+Route::get('/admin/login', function () {
     Auth::logout();
     return view('admin.login');
 });
@@ -20,9 +20,9 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::match(['POST'], '/mediation', [App\Http\Controllers\HomeController::class, 'mediation'])->name('mediation');
 
-Route::match(['POST','GET'], '/forgotpassword', [App\Http\Controllers\HomeController::class, 'forgotpassword'])->name('forgotpassword');
-Route::match(['POST','GET'], '/forgotusername', [App\Http\Controllers\HomeController::class, 'forgotusername'])->name('forgotusername');
-Route::match(['POST','GET'], '/resendotp', [App\Http\Controllers\HomeController::class, 'resendotp'])->name('resendotp');
+Route::match(['POST', 'GET'], '/forgotpassword', [App\Http\Controllers\HomeController::class, 'forgotpassword'])->name('forgotpassword');
+Route::match(['POST', 'GET'], '/forgotusername', [App\Http\Controllers\HomeController::class, 'forgotusername'])->name('forgotusername');
+Route::match(['POST', 'GET'], '/resendotp', [App\Http\Controllers\HomeController::class, 'resendotp'])->name('resendotp');
 
 
 
@@ -57,6 +57,7 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::post('case/comment-action', [App\Http\Controllers\Admin\CaseController::class, 'commentAction'])->name('user.case.comment');
     Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('user.case.commentPDF');
     Route::get('view-session/{id}', [App\Http\Controllers\Admin\CaseController::class, 'sessionPdf'])->name('user.case.sessionPdf');
+    Route::post('case/downloadfilebulk', [App\Http\Controllers\Admin\CaseController::class, 'downloadfilebulk'])->name('user.case.downloadfilebulk');
 
 
     Route::get('casedetails/{id}', [App\Http\Controllers\User\MediationController::class, 'casedetails'])->name('user.casedetails');
@@ -91,7 +92,7 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('notification', [App\Http\Controllers\Mediator\DashboardController::class, 'Notification'])->name('mediator.notification');
 
     Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('mediator.newrequest');
-    Route::get('newjson', [App\Http\Controllers\Mediator\DashboardController::class, 'newjson'])->name('mediator.newjson');
+    Route::post('newjson', [App\Http\Controllers\Mediator\DashboardController::class, 'newjson'])->name('mediator.newjson');
     Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('mediator.ongoing');
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
     Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('mediator.closed');
@@ -115,12 +116,17 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::post('get-add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'getAddedSesion'])->name('mediator.getAddedSesion');
     Route::get('view-session/{id}', [App\Http\Controllers\Admin\CaseController::class, 'sessionPdf'])->name('mediator.case.sessionPdf');
 
+    Route::post('case/edit-session', [App\Http\Controllers\Admin\CaseController::class, 'SendforEditSession'])->name('mediator.SendforEditSession');
+    Route::post('case/update-session', [App\Http\Controllers\Admin\CaseController::class, 'UpdateSession'])->name('mediator.UpdateSession');
+    Route::post('case/delete-session', [App\Http\Controllers\Admin\CaseController::class, 'deleteSession'])->name('mediator.DeleteSession');
+
+
     Route::get('rejected-case', [App\Http\Controllers\Mediator\DashboardController::class, 'rejectedCaseView'])->name('mediator.rejectCase');
 
     Route::post('upload-files', [App\Http\Controllers\Mediator\DashboardController::class, 'storeMultiFile'])->name('mediator.storeMultiFile');
 
-    Route::get('case/json/{confirm_status?}', [App\Http\Controllers\Mediator\DashboardController::class, 'json'])->defaults('confirm_status', 0)->name('mediator.case.json');
-    Route::get('case/json-ongoing/{confirm_status?}', [App\Http\Controllers\Mediator\DashboardController::class, 'jsonOngoing'])->defaults('confirm_status', 0)->name('mediator.case.jsonOngoing');
+    Route::post('case/json/{confirm_status?}', [App\Http\Controllers\Mediator\DashboardController::class, 'json'])->defaults('confirm_status', 0)->name('mediator.case.json');
+    Route::post('case/json-ongoing/{confirm_status?}', [App\Http\Controllers\Mediator\DashboardController::class, 'jsonOngoing'])->defaults('confirm_status', 0)->name('mediator.case.jsonOngoing');
     Route::post('case/comment-view', [App\Http\Controllers\Admin\CaseController::class, 'commentView'])->name('mediator.case.comment_view');
     Route::post('case/comment-action', [App\Http\Controllers\Admin\CaseController::class, 'commentAction'])->name('mediator.case.comment');
     Route::post('case/add-session', [App\Http\Controllers\Mediator\DashboardController::class, 'addSession'])->name('mediator.case.addSession');
@@ -129,7 +135,6 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Mediator\DashboardController::class, 'getConsentAndDisclosures'])->name('mediator.getConsentAndDisclosures');
 
     Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('mediator.case.commentPDF');
-
 });
 
 
@@ -137,23 +142,26 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('notification', [App\Http\Controllers\Admin\DashboardController::class, 'Notification'])->name('admin.notification');
-    
+
     //users
     Route::get('users/list/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'index'])->defaults('role', "user")->name('admin.users.list');
     Route::get('users/jsonApprove/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'jsonApprove'])->defaults('role', 0)->name('admin.users.jsonApprove');
+    Route::get('users/jsonNewreq/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'jsonNewreq'])->defaults('role', 0)->name('admin.users.jsonNewreq');
     Route::get('users/jsonUnapprove/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'jsonUnapprove'])->defaults('role', 0)->name('admin.users.jsonUnapprove');
     Route::match(['post', 'get'], 'users/edit/{id}', [App\Http\Controllers\Admin\UsersController::class, 'edit'])->name('admin.users.edit');
     Route::post('users/update', [App\Http\Controllers\Admin\UsersController::class, 'update'])->name('admin.users.update');
     Route::post('users/statusChange', [App\Http\Controllers\Admin\UsersController::class, 'statusChange'])->name('admin.users.status_change');
     Route::post('users/status-change-approve', [App\Http\Controllers\Admin\UsersController::class, 'statusChangeApprove'])->name('admin.users.status_change_approvel');
     Route::post('user/delete', [App\Http\Controllers\Admin\UsersController::class, 'deleteUser'])->name('admin.user.delete');
-//    Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
-//    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
-//    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
+
+    //    Route::get('new', [App\Http\Controllers\Mediator\DashboardController::class, 'newrequest'])->name('admin.newrequest');
+    //    Route::get('ongoing', [App\Http\Controllers\Mediator\DashboardController::class, 'ongoing'])->name('admin.ongoing');
+    //    Route::get('closed', [App\Http\Controllers\Mediator\DashboardController::class, 'closed'])->name('admin.closed');
+    //    Route::get('profile', [App\Http\Controllers\Mediator\DashboardController::class, 'profile'])->name('admin.profile');
     Route::get('profile', [App\Http\Controllers\Admin\DashboardController::class, 'profile'])->name('admin.profile');
     Route::get('change-password/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'changePassword'])->name('admin.change.password');
-    Route::post('edit-profile/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'updateProfile'])->name('admin.profile.update');    
- 
+    Route::post('edit-profile/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'updateProfile'])->name('admin.profile.update');
+
     Route::post('users/docsAccessChange', [App\Http\Controllers\Admin\CaseController::class, 'docsAccessChange'])->name('admin.users.docs_access_change');
     Route::post('users/mediatorAccessChange', [App\Http\Controllers\Admin\CaseController::class, 'mediatorAccessChange'])->name('admin.users.mediator_access_change');
     Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('admin.case.commentPDF');
@@ -165,7 +173,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('case/ongoing-request', [App\Http\Controllers\Admin\CaseController::class, 'ongoingRequest'])->name('admin.case.ongoingrequest');
     Route::get('case/closed-request', [App\Http\Controllers\Admin\CaseController::class, 'closedRequest'])->name('admin.case.closedrequest');
     Route::get('case/rjected-request', [App\Http\Controllers\Admin\CaseController::class, 'rjectedRequest'])->name('admin.case.rjectedrequest');
-    Route::get('case/json/{confirm_status?}', [App\Http\Controllers\Admin\CaseController::class, 'json'])->defaults('confirm_status', 0)->name('admin.case.json');
+    Route::post('case/json/{confirm_status?}', [App\Http\Controllers\Admin\CaseController::class, 'json'])->defaults('confirm_status', 0)->name('admin.case.json');
     Route::post('case/confirm-status', [App\Http\Controllers\Admin\CaseController::class, 'confirmStatus'])->name('admin.case.confirm_status');
     Route::post('case/reject-status', [App\Http\Controllers\Admin\CaseController::class, 'rejectStatus'])->name('admin.case.reject_status');
     Route::post('case/withdraw-status', [App\Http\Controllers\Admin\CaseController::class, 'withdrawStatus'])->name('admin.case.withdraw');
@@ -179,8 +187,14 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('view-supporting', [App\Http\Controllers\Admin\CaseController::class, 'viewSupporting'])->name('admin.case.viewSupporting');
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Admin\CaseController::class, 'getConsentAndDisclosures'])->name('admin.case.getConsentAndDisclosures');
     Route::get('view-session/{id}', [App\Http\Controllers\Admin\CaseController::class, 'sessionPdf'])->name('admin.case.sessionPdf');
-    Route::match(['post','get'],'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
+    Route::match(['post', 'get'], 'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
     Route::post('upload-files', [App\Http\Controllers\Admin\CaseController::class, 'storeMultiFile'])->name('admin.case.storeMultiFile');
+    Route::post('case/downloadfilebulk', [App\Http\Controllers\Admin\CaseController::class, 'downloadfilebulk'])->name('admin.case.downloadfilebulk');
+
+    Route::post('case/edit-session', [App\Http\Controllers\Admin\CaseController::class, 'SendforEditSession'])->name('admin.case.SendforEditSession');
+    Route::post('case/update-session', [App\Http\Controllers\Admin\CaseController::class, 'UpdateSession'])->name('admin.case.UpdateSession');
+    Route::post('case/delete-session', [App\Http\Controllers\Admin\CaseController::class, 'deleteSession'])->name('admin.case.DeleteSession');
+    Route::post('case/downloadLogInviation', [App\Http\Controllers\Admin\CaseController::class, 'downloadLogInviation'])->name('admin.case.downloadLogInviation');
 
     //track
     Route::get('track/{id}', [App\Http\Controllers\Admin\CaseController::class, 'track'])->name('admin.case.track');

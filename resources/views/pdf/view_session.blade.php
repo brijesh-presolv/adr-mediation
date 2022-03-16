@@ -203,8 +203,7 @@ $ldate = $lastdate->format('d-m-Y');
                         $user[] = "Responding Party: " . $dd->name;
                     }
                     }
-                } 
-                else {
+                } else {
                     $dd = InvoledUser::where('id', $d)->where('userPlanId', $caseId)->first();
                     if(isset($dd)) {
                         if ($dd->name != null) {

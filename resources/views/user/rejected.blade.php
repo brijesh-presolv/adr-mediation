@@ -61,7 +61,11 @@ use App\Models\InvoledUser;
 
                             if($v->isOnboarded==1){
                                 if($v->name != "") {
-                                echo '<span class="text-success">'.$v->name.'</span></br>';
+                                    if($v->organization != null && $v->isClaimant == 0) {
+                                        echo '<span class="text-success">'.$v->organization.'</span></br>';
+                                     } else {
+                                        echo '<span class="text-success">'.$v->name.'</span></br>';
+                                     }
                                 }
                             } 
                             else{

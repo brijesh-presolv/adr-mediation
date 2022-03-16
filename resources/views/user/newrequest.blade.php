@@ -120,7 +120,11 @@ use App\Models\InvoledUser;
 
                             if($v->isOnboarded==1){
                             	 if($v->name != null) {
-                                echo '<span class="text-success">'.$v->name.'</span></br>';
+                                    if($v->organization != null && $v->isClaimant == 0) {
+                                        echo '<span class="text-success">'.$v->organization.'</span></br>';
+                                     } else {
+                                        echo '<span class="text-success">'.$v->name.'</span></br>';
+                                     }
                             	}
                             } 
                             else{
@@ -145,7 +149,7 @@ use App\Models\InvoledUser;
 
                                 <?php
 
-                                if ($value->documentPath !== 'NULL' && $value->documentPath !== "") {
+                                if ($value->documentPath !== 'NULL' && $value->documentPath !== "" && $value->documentPath != NULL) {
                                     ?>
                                     <p  class="btn btn-success btn-sm">{{$value->documentPath}}</p>
                                     <?php

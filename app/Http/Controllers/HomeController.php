@@ -27,72 +27,77 @@ class HomeController extends Controller
     {
 
 
+        if (isset(Auth::user()->emailotp)) {
 
-        if (Auth::user()->emailotp != null) {
-
-
-            if ($request->method() == 'POST') {
-
-                $r = $request->post();
-
-                $usr = User::find(Auth::user()->id);
-
-                if ($r['emailotp'] == $usr->emailotp || $r['emailotp'] == $usr->smsotp) {
-
-                    $usr->emailotp = null;
-                    $usr->smsotp = null;
-                    $d = [
-                        'event' => 'VARIFY_EMAIL',
-                        'userid' => Auth::user()->id,
-                    ];
-
-                    if ($usr->save()) {
+            if (Auth::user()->emailotp != null) {
 
 
+                if ($request->method() == 'POST') {
+
+                    $r = $request->post();
+
+                    $usr = User::find(Auth::user()->id);
+
+                    if ($r['emailotp'] == $usr->emailotp || $r['emailotp'] == $usr->smsotp) {
+
+                        $usr->emailotp = null;
+                        $usr->smsotp = null;
+                        $d = [
+                            'event' => 'VARIFY_EMAIL',
+                            'userid' => Auth::user()->id,
+                        ];
+
+                        if ($usr->save()) {
 
 
 
-                        if ($usr->role == '1') {
 
-                            $type = 'Mediator';
+
+                            if ($usr->role == '1') {
+
+                                $type = 'Mediator';
+
+                                Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
+
+
+
+                                return redirect()->route('mediator.profile.firstupdate');
+                            }
+
+                            $type = 'User';
 
                             Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
 
 
+                            if ($request->session()->has('newcase')) {
 
-                            return redirect()->route('mediator.profile.firstupdate');
-                        }
+                                //return redirect()->route('user.newcase');
 
-                        $type = 'User';
+                                if (!Auth::user()->isActive) {
+                                    Auth::logout();
+                                    return redirect('login')->with('warning', 'Account Under Review.');
+                                }
 
-                        Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
+                                return redirect()->route('user.dashboard');
+                            } else {
 
+                                if (!Auth::user()->isActive) {
+                                    Auth::logout();
+                                    return redirect('login')->with('warning', 'Account Under Review.');
+                                }
 
-                        if ($request->session()->has('newcase')) {
-
-                            //return redirect()->route('user.newcase');
-
-                            if (!Auth::user()->isActive) {
-                                Auth::logout();
-                                return redirect('login')->with('warning', 'Account Under Review.');
+                                return redirect()->route('user.dashboard');
                             }
-
-                            return redirect()->route('user.dashboard');
-                        } else {
-
-                            if (!Auth::user()->isActive) {
-                                Auth::logout();
-                                return redirect('login')->with('warning', 'Account Under Review.');
-                            }
-
-                            return redirect()->route('user.dashboard');
                         }
                     }
                 }
+
+
+                return view('auth/verify');
+            } else {
+
+                return abort(404);
             }
-
-
-            return view('auth/verify');
         } else {
 
             return abort(404);

@@ -65,9 +65,7 @@ $meddate = $meddate->format('d-m-Y');
 
     <p>To,
     <br>Presolv360 Administrator,
-    {{-- <br>3rd Floor, Churchgate House,
-    <br>32 Veer Nariman Road, Fort,
-    <br>Mumbai – 400001 --}}
+    
     <br><a href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
 
     <p>Dear Sir,</p>

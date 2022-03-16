@@ -24,6 +24,7 @@ use Auth;
 use Validator;
 use DB;
 use Exception;
+use Illuminate\Support\Facades\File;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,7 +42,7 @@ class MediationController extends Controller
         $data = Notification::userNotification();
         return view('user.notification', compact('data'));
     }
-    
+
     public function storeMultiFile(Request $request)
     {
         // dd($request->all());
@@ -90,7 +91,7 @@ class MediationController extends Controller
                     $inv_id = $inv_id . "," . $v->id;
                 }
             }
-            if($request->shareMediator == 1) {
+            if ($request->shareMediator == 1) {
                 Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_USER", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
             } else {
                 Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_USER", Auth::user()->id, null, $inv_id);
@@ -222,7 +223,7 @@ class MediationController extends Controller
                     if ($userAccess->userId == Auth::user()->id) {
                         echo "<tr>";
                         echo "<td>" . $sn . "</td>";
-                        echo "<td><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+                        echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
                         echo "<td>" . $value->username . "</td>";
                         echo "</tr>";
 
@@ -595,7 +596,9 @@ class MediationController extends Controller
         $pending = [];
 
         foreach ($new as $key => $value) {
-            $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->id])->get();
+            // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->id])->get();
+            $in = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->id])->get();
+
             $value->party = $in;
 
             $pending[] = $value;
@@ -624,13 +627,15 @@ class MediationController extends Controller
         $ongoing = [];
 
         foreach ($new as $key => $value) {
-            $in = InvoledUser::select('id', 'userId', 'name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+            // $in = InvoledUser::select('id', 'userId', 'name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+            $in = InvoledUser::select('user_involved_in_agreement.id','user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get();
+            
             $value->party = $in;
 
             $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
 
-            $value->share_count = Mediation_case_comment::where("type",0)->where("mediation_case_id",$value->caseid)->count();
-            $value->share_view_count = Mediation_case_comment::where("type",0)->where("mediation_case_id",$value->caseid)->where("view_user",0)->count();
+            $value->share_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->count();
+            $value->share_view_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->where("view_user", 0)->count();
 
             $ongoing[] = $value;
         }
@@ -652,12 +657,14 @@ class MediationController extends Controller
         $closed = [];
 
         foreach ($new as $key => $value) {
-            $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+            // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+            $in = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get();
+            
             $value->party = $in;
 
             $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
-            $value->share_count = Mediation_case_comment::where("type",0)->where("mediation_case_id",$value->caseid)->count();
-            $value->share_view_count = Mediation_case_comment::where("type",0)->where("mediation_case_id",$value->caseid)->where("view_user",0)->count();
+            $value->share_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->count();
+            $value->share_view_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->where("view_user", 0)->count();
 
             $value->casestatus->css = '';
 
@@ -692,7 +699,8 @@ class MediationController extends Controller
         $closed = [];
 
         foreach ($new as $key => $value) {
-            $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+            // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+            $in = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get();
             $value->party = $in;
 
             $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
@@ -911,16 +919,29 @@ class MediationController extends Controller
 
     public function getConsentAndDisclosures($id)
     {
-        $data["case"] = MedCase::where("id", "=", $id)->first();
-        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
-        $data["consent_disclosures"] = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
+        $data = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
             ->where("mediation_case_id", "=", $id)
             ->first();
-        if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
-            return abort(404);
+        if (isset($data)) {
+            if ($data->file_name != null) {
+                $dis_file_name = $data->file_name;
+                $exist_file = storage_path() . '/app/public/mediation/' . $id . '/' . $dis_file_name;
+            } else {
+                $dis_file_name = "M" . sprintf("%06d", $id) . "_party.pdf";
+                $exist_file = storage_path() . '/app/public/mediation/' . $id . '/' . $dis_file_name;
+            }
+            // dd($exist_file);
+            if (File::exists($exist_file)) {
+                $pdf = file_get_contents($exist_file);
+                return response($pdf, 200, [
+                    'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
+                ]);
+            } else {
+                return "File Not Found";
+            }
+        } else {
+            return "File Not Found";
         }
-        $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
-        return $pdf->stream('document.pdf');
     }
 
     public function csvToArray($file)
@@ -978,22 +999,20 @@ class MediationController extends Controller
                 for ($n = 0; $n < 15; $n++) {
                     if ($v[$n] == '') {
 
-                        if ($n != 10 and $n != 11 and $n != 12 and $n != 7) {
+                        if ($n != 10 and $n != 11 and $n != 12 and $n != 7 and $n != 3 and $n != 4) {
                             $errormsg .= "Please fill all the required details to proceed at line no $i";
                         }
                     }
                 }
-                if ($v[3] == '') {
-                    $errormsg .= "Please Enter EmailId at line no $i ";
-                }
-                if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
-                    $errormsg .= "Invalid mobile number at line no $i ";
-                }
+                if ($v[4] != "") {
+                    if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
+                        $errormsg .= "Invalid mobile number at line no $i ";
+                    }
 
-                if (strlen($v[4]) != 10) {
-                    $errormsg .= "Invalid mobile number at line no $i ";
+                    if (strlen($v[4]) != 10) {
+                        $errormsg .= "Invalid mobile number at line no $i ";
+                    }
                 }
-
                 // validate pincode
                 // if (!filter_var($v[8], FILTER_SANITIZE_NUMBER_INT)) {
                 //     $errormsg .= "Invalid pincode at line no $i ";

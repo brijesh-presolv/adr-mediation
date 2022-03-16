@@ -17,6 +17,7 @@ use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
+use App\Models\Batch;
 use App\Models\EmailTrack;
 use App\Models\ManageSession;
 use App\Models\Reminder;
@@ -25,6 +26,8 @@ use App\Models\WhatsappTrack;
 use DB;
 use PDF;
 use Auth;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\File;
 use PDFMerger;
 use Storage;
@@ -79,7 +82,7 @@ class CaseController extends Controller
 
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
-            echo "<td style='word-break: break-word'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+            echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
             echo "<td>" . $value->username . "</td>";
             echo "</tr>";
 
@@ -93,28 +96,32 @@ class CaseController extends Controller
     {
         $users = User::where("role", "=", 1)->get();
         $allUsers = User::where("role", "=", 0)->get();
+        $batchName = Batch::get();
         $confirm_status = 0;
-        return view('admin.case.index', compact("confirm_status", "users", "allUsers"));
+        return view('admin.case.index', compact("confirm_status", "users", "allUsers", "batchName"));
     }
 
     public function ongoingRequest()
     {
         $users = User::where("role", "=", 1)->get();
         $confirm_status = 1;
-        return view('admin.case.ongoing', compact("confirm_status", "users"));
+        $batchName = Batch::get();
+        return view('admin.case.ongoing', compact("confirm_status", "users", "batchName"));
     }
 
     public function closedRequest()
     {
+        $batchName = Batch::get();
         $confirm_status = 2;
-        return view('admin.case.close', compact("confirm_status"));
+        return view('admin.case.close', compact("confirm_status", "batchName"));
     }
 
     public function rjectedRequest()
     {
+        $batchName = Batch::get();
         $users = User::where("role", "=", 1)->get();
         $confirm_status = 3;
-        return view('admin.case.rjected', compact("confirm_status", "users"));
+        return view('admin.case.rjected', compact("confirm_status", "users", "batchName"));
     }
 
     public function getConsentAndDisclosures($id)
@@ -157,6 +164,7 @@ class CaseController extends Controller
 
         $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
 
+        // $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
         $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->get();
 
         $case->appointment = InvitationFiles::where(['case_id' => $case->id])->where('file_name_mediator_appointment', '!=', null)->orderByDesc('id')->limit(1)->first();
@@ -434,7 +442,7 @@ class CaseController extends Controller
             // 'docs_party_ids' => 'required',
         ]);
         $inv_id = "";
-        if($request->has('docs_party_ids')) {
+        if ($request->has('docs_party_ids')) {
             $inv_id = $request->docs_party_ids;
         } else {
             $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
@@ -462,9 +470,7 @@ class CaseController extends Controller
                     // $insert[$x]['path'] = $path;
                 }
             }
-            // dd($insert);
-            // die();
-            // File::insert($insert);
+
             DB::table('manage_files')->insert($insert, $insert);
             $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
@@ -523,7 +529,7 @@ class CaseController extends Controller
         $invmodel->save();
         // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
 
-        $this->send_mediatorAdd($request->id, $request->midater);
+        // $this->send_mediatorAdd($request->id, $request->midater);
         return response()->json(["msg" => "midater Added"]);
     }
 
@@ -714,15 +720,22 @@ class CaseController extends Controller
 
     public function json($role = 0)
     {
-        $cases = MedCase::select("mediation_case.*", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", "consent_disclosures.updated_at as update", "consent_disclosures.created_at as create")
-            ->leftJoin("mediators_mediation_cases_status", function ($join) {
-                $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
-                $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
-            })
-            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
-            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->where("mediation_case.confirm_status", "=", $role)->orderBy('mediation_case.id', 'DESC')
-            ->get();
+        $draw = $_POST['sEcho'];
+        $row = $_POST['iDisplayStart'];
+        $rowperpage = $_POST['iDisplayLength']; // Rows display per page
+        $indexColumn = $_POST['iSortCol_0'];
+        $columnName = $_POST['mDataProp_' . $indexColumn]; // Column name
+        $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
+        $batch_id = "";
+        if (isset($_POST['batch_id'])) {
+            $batch_id = $_POST['batch_id'];
+        }
+        $searchValue = $_POST['sSearch'];
+
+        $casescount = MedCase::getCaseCount($searchValue, $role, $batch_id);
+        $cases = MedCase::getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id);
+
+
         $arraydata = array();
         foreach ($cases as $key => $d) {
             $actionDate = date('d-m-Y', strtotime($d->update));
@@ -733,7 +746,7 @@ class CaseController extends Controller
                 "mediator_action_date" => $actionDate,
                 "mediator_create_action_date" => $createDate,
                 "case" => $d,
-                "party" => InvoledUser::select('id', 'name', 'isOnboarded', "userId")->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),
                 "private_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->count(),
                 "private_view_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->where('view', 0)->count(),
@@ -741,7 +754,9 @@ class CaseController extends Controller
                 "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->where('view', 0)->count(),
             ];
         }
-        return response()->json(["data" => $arraydata]);
+        return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
+
+        // return response()->json(["data" => $arraydata]);
     }
 
     public function deleteSession(Request $request)
@@ -805,7 +820,7 @@ class CaseController extends Controller
             $usr->country = $r['usercountry'];
             $usr->save();
             // update initiating party
-            $inv = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $usr->id])->first();
+            $inv = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $med->id, 'userId' => $usr->id])->first();
             if ($inv) {
                 $inv->address1 = $usr->address;
                 if ($usr->address1 == '') {
@@ -912,7 +927,7 @@ class CaseController extends Controller
             // $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
 
             // if (!isset($invmodel)) {
-                $invmodel = new InvitationFiles();
+            $invmodel = new InvitationFiles();
             // }
             $invmodel->case_id = $request->id;
             $invmodel->file_name = $invitation;
@@ -931,12 +946,12 @@ class CaseController extends Controller
                     }
 
                     if ($value->userEmail != null) {
-                        $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => $pone->name], $value->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+                        $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => ($pone->organization != null) ? $pone->organization : $pone->name], $value->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
                     }
                     if ($value->userPhone != null) {
 
                         $var = ['-cid-', '-ip-'];
-                        $var1 = ["M" . sprintf("%06d", $id), $pone->name];
+                        $var1 = ["M" . sprintf("%06d", $id), ($pone->organization != null) ? $pone->organization : $pone->name];
                         $content1 = WaTemplate::getcontent('l4_mediation_party2');
                         $content = str_replace($var, $var1, $content1);
                         $dwa1 = [
@@ -997,13 +1012,6 @@ class CaseController extends Controller
                     $access = Whatsapp::sendWamessage($dwa2);
                 }
             }
-
-            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
-                ->where("mediators_mediation_cases_status.status", "=", 1)
-                ->first();
-
-            // dd($mediator);
 
             $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
 
@@ -1093,7 +1101,8 @@ class CaseController extends Controller
 
     public function sned_invitation($id, $invitation)
     {
-        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+
 
         $initiating_party = "";
         $initiating_phone = "";
@@ -1114,7 +1123,11 @@ class CaseController extends Controller
         // $responding_phone = "";
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
-                $initiating_party = $inv->name;
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
                 $ini_userPlanId = $inv->userPlanId;
                 $initiating_phone = $inv->userPhone;
                 $initiating_email = $inv->userEmail;
@@ -1261,7 +1274,8 @@ class CaseController extends Controller
 
     public function sned_withdrawal($id)
     {
-        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        // $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -1288,7 +1302,11 @@ class CaseController extends Controller
         ];
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
-                $initiating_party = $inv->name;
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
                 $initiating_phone = $inv->userPhone;
                 $initiating_email = $inv->userEmail;
 
@@ -1374,7 +1392,7 @@ class CaseController extends Controller
 
     public function sned_resolved($id)
     {
-        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -1387,7 +1405,11 @@ class CaseController extends Controller
         ];
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
-                $initiating_party = $inv->name;
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
             }
             if ($inv->userEmail != "") {
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
@@ -1428,7 +1450,7 @@ class CaseController extends Controller
 
     public function sned_unresolved($id)
     {
-        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -1442,7 +1464,11 @@ class CaseController extends Controller
         ];
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
-                $initiating_party = $inv->name;
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
             }
             if ($inv->userEmail != "") {
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
@@ -1774,20 +1800,19 @@ class CaseController extends Controller
                 for ($n = 0; $n < 15; $n++) {
                     if ($v[$n] == '') {
 
-                        if ($n != 10 and $n != 11 and $n != 12 and $n != 7) {
+                        if ($n != 10 and $n != 11 and $n != 12 and $n != 7 and $n != 3 and $n != 4) {
                             $errormsg .= "Please fill all the required details to proceed at line no $i";
                         }
                     }
                 }
-                if ($v[3] == '') {
-                    $errormsg .= "Please Enter EmailId at line no $i ";
-                }
-                if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
-                    $errormsg .= "Invalid mobile number at line no $i ";
-                }
+                if ($v[4] != "") {
+                    if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
+                        $errormsg .= "Invalid mobile number at line no $i ";
+                    }
 
-                if (strlen($v[4]) != 10) {
-                    $errormsg .= "Invalid mobile number at line no $i ";
+                    if (strlen($v[4]) != 10) {
+                        $errormsg .= "Invalid mobile number at line no $i ";
+                    }
                 }
 
                 // validate pincode
@@ -1845,6 +1870,15 @@ class CaseController extends Controller
             }
         }
         //store in database
+        if ($request->batch != null) {
+            $batchdata = [
+                'batch_name' => $request->batch,
+            ];
+            $batch = Batch::where('batch_name', $batchdata['batch_name'])->first();
+            if (!$batch) {
+                $batch = Batch::create($batchdata);
+            }
+        }
         foreach ($csv as $k => $value) {
             // dd( count(explode(',', $value[15])) + 1);
             // exit;
@@ -1859,6 +1893,8 @@ class CaseController extends Controller
             $data['confirm_status'] = 0;
             $data['otherRespondentDetails'] = $value[12];
             $data['proposedSolution'] = $value[9];
+            $data['batch_id'] = isset($batch->id) ? $batch->id : null;
+
             $med = MedCase::create($data);
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();
@@ -2287,5 +2323,384 @@ class CaseController extends Controller
         }
 
         return true;
+    }
+
+    public function downloadLogInviation(Request $request)
+    {
+
+        // dd($request->all());
+        $caseinfo = [];
+        $columnHeader = '';
+        $setData = '';
+        $count = [];
+        $caseid = explode(',', trim($request->ids));
+        foreach ($caseid as $key => $value) {
+            $count[$key] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value)->count();
+        }
+        $forloopcnt = max($count);
+        $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" . "Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
+            "Initiating Registered Office" . "\t" . "Initiating Full Name" . "\t" . "Initiating Email ID" . "\t" . "Initiating WhatsApp / Mobile Number" . "\t" . "Full name of Primary Respondent" . "\t" .
+            "Full Address of Primary Respondent" . "\t" . "Email ID of Primary Respondent" . "\t" . "WhatsApp / Mobile Number of Primary Respondent (10 digit)" . "\t" . "Dispute Category" . "\t" . "Nature of agreement" . "\t" . "Agreement date" . "\t" .  "Disputed amount" . "\t" . "Date of Invitation" . "\t" . "Name of Mediator" . "\t" .
+            "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" . "\t";
+
+        for ($i = 1; $i < $forloopcnt; $i++) {
+            $columnHeader = $columnHeader . "Email ID of Additional Respondent " . $i . "\t" . "WhatsApp / Mobile Number of additional Respondent " . $i . "\t" .
+                "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
+        }
+
+        $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t\n";
+
+        // dd($columnHeader);
+
+        foreach ($caseid as $key => $value) {
+            $data['case'] = MedCase::find($value);
+            // dd($data);
+            $data['claimant'] = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $value)->first();
+            $data['responding'] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value)->get();
+            $data['inviation_file'] = InvitationFiles::where('case_id', $value)->orderByDesc('id')->limit(1)->first();
+
+            $data['mediator'] = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "first_name", "last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $value)
+                ->first();
+            $caseinfo['srno'] = $key + 1;
+            $caseinfo['caseid'] = 'M' . sprintf('%06d', $value);
+            $caseinfo['refid'] = $data['case']->ref_id;
+            $datearb = new DateTime($data['case']->created_at);
+            $caseinfo['datearb'] = $datearb->format('d-m-Y H:i:s');
+            $caseinfo['clorg'] = $data['claimant']->organization;
+            if ($data['claimant']->fulladdress == null) {
+                $caseinfo['cloff'] = $data['claimant']->address1 . ',' . $data['claimant']->address2 . ',' . $data['claimant']->city . ',' . $data['claimant']->pincode . ',' . $data['claimant']->state . ',' . $data['claimant']->country;
+            } else {
+                $caseinfo['cloff'] = $data['claimant']->fulladdress;
+            }
+            $caseinfo['clname'] = $data['claimant']->name;
+            $caseinfo['clemail'] = $data['claimant']->userEmail;
+            $caseinfo['clmob'] = $data['claimant']->userPhone;
+
+            if (isset($data['responding'])) {
+                $caseinfo['respname'] = "";
+                $caseinfo['respadd'] = "";
+                $caseinfo['respemail'] = "";
+                $caseinfo['respmob'] = "";
+
+                foreach ($data['responding'] as $k => $v) {
+
+                    if ($k == 0) {
+
+                        $caseinfo['respname'] = $v->name;
+                        if ($v->fulladdress == null) {
+                            $caseinfo['respadd'] = $v->address1 . ',' . $v->address2 . ',' . $v->city . ',' . $v->pincode . ',' . $v->state . ',' . $v->country;
+                        } else {
+                            $caseinfo['respadd'] = $v->fulladdress;
+                        }
+                        $caseinfo['respemail'] = $v->userEmail;
+                        $caseinfo['respmob'] = $v->userPhone;
+                    }
+                }
+            }
+            $caseinfo['doc'] = $data['case']->disputeCategory;
+            $caseinfo['nature'] = $data['case']->natureOfAgreement;
+            $caseinfo['adate'] = $data['case']->agreementDate;
+            $caseinfo['amt'] = $data['case']->amount;
+            if (isset($data['inviation_file'])) {
+                $invdate = new DateTime($data['inviation_file']->created_at);
+                $caseinfo['invdate'] =  $invdate->format('d-m-Y H:i:s');
+            }
+            $caseinfo['medname'] = isset($data['mediator']) ? strtoupper($data['mediator']->first_name) . " " . strtoupper($data['mediator']->last_name) : "";
+
+            $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $caseinfo['respemail']);
+            $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES", "+91" . $caseinfo['respmob']);
+            $caseinfo['inveds'] = "";
+            $caseinfo['invedd'] = "";
+            $caseinfo['invers'] = "";
+            $caseinfo['inverd'] = "";
+            if (isset($data['emailtrck'])) {
+                foreach ($data['emailtrck'] as $etrck) {
+                    if ($etrck->event  == "delivered") {
+                        $edate1 = new DateTime($etrck->created_at);
+                        $caseinfo['inveds'] = "delivered";
+                        $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                    } else if ($etrck->event  == "open") {
+                        $edate1 = new DateTime($etrck->created_at);
+                        $caseinfo['invers'] = "read";
+                        $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                    }
+                }
+                if ($caseinfo['invers'] != "" && $caseinfo['inveds'] == "") {
+                    $caseinfo['inveds'] = "delivered";
+                    $$caseinfo['invedd'] = $caseinfo['inverd'];
+                }
+            }
+            $caseinfo['invwds'] = "";
+            $caseinfo['invwdd'] = "";
+            $caseinfo['invwrs'] = "";
+            $caseinfo['invwrd'] = "";
+            if (isset($data['whatsapptrck'])) {
+                foreach ($data['whatsapptrck'] as $wtrck) {
+                    if ($wtrck->status  == "delivered") {
+                        $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                        $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                        $caseinfo['invwds'] = "delivered";
+                        $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
+                    } else if ($wtrck->status  == "read") {
+                        $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                        $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                        $caseinfo['invwrs'] = "read";
+                        $caseinfo['invwrd'] = $time->format('d-m-Y H:i:s');
+                    }
+                }
+                if ($caseinfo['invwrs'] != "" && $caseinfo['invwds'] == "") {
+                    $caseinfo['invwds'] = "delivered";
+                    $$caseinfo['invwdd'] = $caseinfo['invwrd'];
+                }
+            }
+            for ($i = 1; $i < $forloopcnt; $i++) {
+                $caseinfo['erespemail' . $i] = "";
+                $caseinfo['erespmob' . $i] = "";
+                $caseinfo['einveds' . $i] = "";
+                $caseinfo['einvedd' . $i] = "";
+                $caseinfo['einvers' . $i] = "";
+                $caseinfo['einverd' . $i] = "";
+                $caseinfo['einvwds' . $i] = "";
+                $caseinfo['einvwdd' . $i] = "";
+                $caseinfo['einvwrs' . $i] = "";
+                $caseinfo['einvwrd' . $i] = "";
+            }
+
+            if (isset($data['responding'])) {
+                foreach ($data['responding'] as $k => $v) {
+                    if ($k != 0) {
+                        $caseinfo['erespemail' . $k] = $v->userEmail;
+                        $caseinfo['erespmob' . $k] = $v->userPhone;
+                        $data['eemailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $v->userEmail);
+                        $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES", "+91" . $v->userPhone);
+                        if (isset($data['eemailtrck'])) {
+                            foreach ($data['eemailtrck'] as $etrck) {
+                                if ($etrck->event  == "delivered") {
+                                    $edate1 = new DateTime($etrck->created_at);
+                                    $caseinfo['einveds' . $k] = "delivered";
+                                    $caseinfo['einvedd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                } else if ($etrck->event  == "open") {
+                                    $edate1 = new DateTime($etrck->created_at);
+                                    $caseinfo['einvers' . $k] = "read";
+                                    $caseinfo['einverd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                }
+                            }
+                            if ($caseinfo['einvers' . $k] != "" && $caseinfo['einveds' . $k] == "") {
+                                $caseinfo['einveds' . $k] = "delivered";
+                                $$caseinfo['einvedd' . $k] = $caseinfo['einverd' . $k];
+                            }
+                        }
+                        if (isset($data['ewhatsapptrck'])) {
+                            foreach ($data['ewhatsapptrck'] as $wtrck) {
+                                if ($wtrck->status  == "delivered") {
+                                    $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                    $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                    $caseinfo['einvwds' . $k] = "delivered";
+                                    $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
+                                } else if ($wtrck->status  == "read") {
+                                    $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                    $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                    $caseinfo['einvwrs' . $k] = "read";
+                                    $caseinfo['einvwrd' . $k] = $time->format('d-m-Y H:i:s');
+                                }
+                            }
+                            if ($caseinfo['einvwrs' . $k] != "" && $caseinfo['einvwds' . $k] == "") {
+                                $caseinfo['einvwds' . $k] = "delivered";
+                                $$caseinfo['einvwdd' . $k] = $caseinfo['einvwrd' . $k];
+                            }
+                        }
+                    }
+                }
+            }
+
+            $data = [];
+            $data['auth'] = "MED360AUTH";
+            $data['app'] = "P360MED";
+            $data['caseid'] = $value;
+            $url = "https://presolv360.com/functions/ivrtrack.php";
+
+            $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'), true);
+            if ($ivr['code'] != '200') {
+                $ivr = [];
+            } else {
+                $ivr = $ivr['data'];
+            }
+            $caseinfo['ivrs'] = "";
+            $caseinfo['ivrdate'] = "";
+            foreach ($ivr as $key => $value) {
+                $time = new DateTime($value['created_at']);
+                $caseinfo['ivrs'] = $value['status'];
+                $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
+            }
+            $rowData = '';
+            foreach ($caseinfo as $value) {
+
+                $value = '"' . $value . '"' . "\t";
+
+                $rowData .= $value;
+            }
+            $setData .= trim($rowData) . "\n";
+        }
+
+        $content = ucwords($columnHeader) . "\n" . $setData . "\n";
+        $file_name = "invitationdeliverdsheet.xls";
+
+        return response($content, 200, [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
+        ]);
+
+        // ---------------------old file log excel download----------------------------------- 
+        // dd($request->all());
+        // $caseinfo = [];
+
+        // $columnHeader = '';
+        // $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" . "Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
+        //     "Initiating Registered Office" . "\t" . "Initiating Full Name" . "\t" . "Initiating Email ID" . "\t" . "Initiating WhatsApp / Mobile Number" . "\t" . "Full name of Primary Respondent" . "\t" .
+        //     "Full Address of Primary Respondent" . "\t" . "Email ID of Primary Respondent" . "\t" . "WhatsApp / Mobile Number of Primary Respondent (10 digit)" . "\t" . "Enter each additional respondent's name, status (eg.: co-borrower, guarantor), address, email ID and mobile number (leave blank if no additional respondent)" . "\t" .
+        //     "Dispute Category" . "\t" . "Nature of agreement" . "\t" . "Agreement date" . "\t" .  "Disputed amount" . "\t" . "Date of Invitation" . "\t" . "Name of Mediator" . "\t" .
+        //     "Invitation email delivery status" . "\t" . "Invitation email delivery date" . "\t" . "Invitation email read status" . "\t" . "Invitation email read date" . "\t" . "Invitation whatsapp delivery status" . "\t" . "Invitation whatsapp delivery date" . "\t" . "Invitation whatsapp read status" . "\t" . "Invitation whatsapp read date" . "\t" .  "Ivr log status" . "\t" . "Ivr log Date" . "\t\n";
+        // $setData = '';
+        // $caseid = explode(',', trim($request->ids));
+
+        // foreach ($caseid as $key => $value) {
+        //     $data['case'] = MedCase::find($value);
+        //     // dd($data);
+        //     $data['claimant'] = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $value)->first();
+        //     $data['responding'] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value)->get();
+        //     $data['inviation_file'] = InvitationFiles::where('case_id', $value)->orderByDesc('id')->limit(1)->first();
+        //     $data['mediator'] = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "first_name", "last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        //         ->where("mediators_mediation_cases_status.mediation_case_id", "=", $value)
+        //         ->first();
+
+        //     $caseinfo['srno'] = $key + 1;
+        //     $caseinfo['caseid'] = 'M' . sprintf('%06d', $value);
+        //     $caseinfo['refid'] = $data['case']->ref_id;
+        //     $datearb = new DateTime($data['case']->created_at);
+        //     $caseinfo['datearb'] = $datearb->format('d-m-Y H:i:s');
+        //     $caseinfo['clorg'] = $data['claimant']->organization;
+        //     if ($data['claimant']->fulladdress == null) {
+        //         $caseinfo['cloff'] = $data['claimant']->address1 . ',' . $data['claimant']->address2 . ',' . $data['claimant']->city . ',' . $data['claimant']->pincode . ',' . $data['claimant']->state . ',' . $data['claimant']->country;
+        //     } else {
+        //         $caseinfo['cloff'] = $data['claimant']->fulladdress;
+        //     }
+        //     $caseinfo['clname'] = $data['claimant']->name;
+        //     $caseinfo['clemail'] = $data['claimant']->userEmail;
+        //     $caseinfo['clmob'] = $data['claimant']->userPhone;
+
+        //     if (isset($data['responding'])) {
+        //         $caseinfo['respname'] = "";
+        //         $caseinfo['respadd'] = "";
+        //         $caseinfo['respemail'] = "";
+        //         $caseinfo['respmob'] = "";
+        //         $caseinfo['otherresp'] = "";
+
+        //         foreach ($data['responding'] as $k => $v) {
+
+        //             if ($k == 0) {
+
+        //                 $caseinfo['respname'] = $v->name;
+        //                 if ($v->fulladdress == null) {
+        //                     $caseinfo['respadd'] = $v->address1 . ',' . $v->address2 . ',' . $v->city . ',' . $v->pincode . ',' . $v->state . ',' . $v->country;
+        //                 } else {
+        //                     $caseinfo['respadd'] = $v->fulladdress;
+        //                 }
+        //                 $caseinfo['respemail'] = $v->userEmail;
+        //                 $caseinfo['respmob'] = $v->userPhone;
+        //             } else {
+        //                 if ($caseinfo['otherresp'] == "") {
+        //                     $caseinfo['otherresp'] = $v->userEmail . ',' . $v->userPhone;
+        //                 } else {
+        //                     $caseinfo['otherresp'] = $caseinfo['otherresp'] . ' | ' . $v->userEmail . ',' . $v->userPhone;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     $caseinfo['doc'] = $data['case']->disputeCategory;
+        //     $caseinfo['nature'] = $data['case']->natureOfAgreement;
+        //     $caseinfo['adate'] = $data['case']->agreementDate;
+        //     $caseinfo['amt'] = $data['case']->amount;
+        //     if (isset($data['inviation_file'])) {
+        //         $invdate = new DateTime($data['inviation_file']->created_at);
+        //         $caseinfo['invdate'] =  $invdate->format('d-m-Y H:i:s');
+        //     }
+        //     $caseinfo['medname'] = strtoupper($data['mediator']->first_name) . " " . strtoupper($data['mediator']->last_name);
+
+        //     $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $caseinfo['respemail']);
+        //     $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES", "+91" . $caseinfo['respmob']);
+        //     $caseinfo['inveds'] = "";
+        //     $caseinfo['invedd'] = "";
+        //     $caseinfo['invers'] = "";
+        //     $caseinfo['inverd'] = "";
+        //     if (isset($data['emailtrck'])) {
+        //         foreach ($data['emailtrck'] as $etrck) {
+        //             if ($etrck->event  == "delivered") {
+        //                 $edate1 = new DateTime($etrck->created_at);
+        //                 $caseinfo['inveds'] = "delivered";
+        //                 $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+        //             } else if ($etrck->event  == "open") {
+        //                 $edate1 = new DateTime($etrck->created_at);
+        //                 $caseinfo['invers'] = "read";
+        //                 $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+        //             }
+        //         }
+        //     }
+        //     $caseinfo['invwds'] = "";
+        //     $caseinfo['invwdd'] = "";
+        //     $caseinfo['invwrs'] = "";
+        //     $caseinfo['invwrd'] = "";
+        //     if (isset($data['whatsapptrck'])) {
+        //         foreach ($data['whatsapptrck'] as $wtrck) {
+        //             if ($wtrck->status  == "delivered") {
+        //                 $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+        //                 $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+        //                 $caseinfo['invwds'] = "delivered";
+        //                 $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
+        //             } else if ($wtrck->status  == "read") {
+        //                 $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+        //                 $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+        //                 $caseinfo['invwrs'] = "read";
+        //                 $caseinfo['invwrd'] = $time->format('d-m-Y H:i:s');
+        //             }
+        //         }
+        //     }
+
+        //     $data = [];
+        //     $data['auth'] = "MED360AUTH";
+        //     $data['app'] = "P360MED";
+        //     $data['caseid'] = $value;
+        //     $url = "https://presolv360.com/functions/ivrtrack.php";
+
+        //     $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'), true);
+        //     if ($ivr['code'] != '200') {
+        //         $ivr = [];
+        //     } else {
+        //         $ivr = $ivr['data'];
+        //     }
+        //     $caseinfo['ivrs'] ="";
+        //     $caseinfo['ivrdate'] ="";
+        //     foreach($ivr as $key => $value) {
+        //         $time = new DateTime($value['created_at']);
+        //         $caseinfo['ivrs'] = $value['status'];
+        //         $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
+        //     }
+        //     $rowData = '';
+        //     foreach ($caseinfo as $value) {
+
+        //         $value = '"' . $value . '"' . "\t";
+
+        //         $rowData .= $value;
+        //     }
+        //     $setData .= trim($rowData) . "\n";
+        // }
+
+        // $content = ucwords($columnHeader) . "\n" . $setData . "\n";
+        // $file_name = "invitationdeliverdsheet.xls";
+
+        // return response($content, 200, [
+        //     'Content-Type' => 'application/octet-stream',
+        //     'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
+        // ]);
     }
 }

@@ -41,7 +41,9 @@ class DashboardController extends Controller {
         $unapproveUsersCount = User::whereIn("role", [0])->where("status", 0)->count();
         $unapproveMediatorCount = User::whereIn("role", [1])->where("status", 0)->count();
         $allCasesCount = MedCase::count();
+        // $respondingPartiesCount = InvoledUser::where('isClaimant', "<>", 0)->count();
         $respondingPartiesCount = InvoledUser::where('isClaimant', "<>", 0)->where('joinCode', null)->where('isOnboarded', 1)->count();
+
 
         $resolvedCount = MedCase::where("case_status", 6)->where("confirm_status", 2)->count();
         $unresolvedCount = MedCase::where("case_status", 7)->where("confirm_status", 2)->count();

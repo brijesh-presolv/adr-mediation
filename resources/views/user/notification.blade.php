@@ -18,6 +18,8 @@ $sdate='';
 
 
 $alertarr=[
+    'USER_REGI'=>'success',
+    'MED_REGI'=>'success',
     'MEDI_ADD_ADM'=>'success',
     'ACPTARB_ADM'=>'primary',
     'SEND_APPO_MED'=>'success',

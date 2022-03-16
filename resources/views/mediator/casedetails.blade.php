@@ -167,7 +167,7 @@
                             </td>
                         </tr>
                     </table>
-                    <?php if($case->documentPath != "NULL"){ $doc='storage/app/public/mediation/'.$case->id.'/'.$case->documentPath;
+                    <?php if($case->documentPath != "NULL" && $case->documentPath != NULL){ $doc='storage/app/public/mediation/'.$case->id.'/'.$case->documentPath;
                                     ?>
 
                                      <table class="table table-bordered">
@@ -193,6 +193,7 @@
                         <table class="table table-bordered">
                             <tr >
                                 <th>@lang('case.supporting_documents')</th>
+                                <th>Share With</th>
                                 <th>Uploaded By</th>
                                 <th>Date</th>
                                 <th></th>
@@ -201,7 +202,22 @@
                             <tr>
                                 <?php foreach ($case->supporting_document as $k => $v) { ?>
                                     @if($v->mediator_access == 1) 
+                                    <?php $userAccess = App\Models\InvoledUser::where('userPlanId', $case->id)->get();?>
                                     <td><?= basename($v->file_name) ?></td>
+                                    <td>
+                                        <?php $accessParty = explode(',', $v->access); ?>
+                                        @foreach ($userAccess as $key => $item)
+                                        @if ($item->name != null)
+                                        @if(in_array($item->id, $accessParty))
+                                            <input type="checkbox" data-manageid={{$v->id}} name="party[]" disabled checked class="partyShare" id="party{{$v->id}}" value="{{$item->id}}" data-filepath="{{$v->file_name}}">
+                                            <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
+                                        @else
+                                        <input type="checkbox" data-manageid={{$v->id}} name="party[]" disabled  class="partyShare" id="party{{$v->id}}" value="{{$item->id}}" data-filepath="{{$v->file_name}}">
+                                            <label class="form-check-label"  for="party{{$v->id}}"> {{$item->name}} </label><br>
+                                        @endif
+                                        @endif
+                                        @endforeach
+                                    </td>
                                     <td>{{$v->username}}</td>
                                     <td>{{date('d-m-Y', strtotime($v->created_at))}}</td>
                                     <td><a class="btn btn-sm btn-success" target="_blank" href="{{url('storage/app/'.$v->file_name)}}">@lang('case.view')</a></td>

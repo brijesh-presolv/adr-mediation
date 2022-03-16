@@ -133,7 +133,7 @@
           <a href="" class="btn btn-circle-y" data-toggle="modal" id="" data-target="#myModalResolve">Get Started </span></a>
           <a href="" class="btn btn-circle-y ml-2 resolvideomodal" data-toggle="modal" id="" data-target="#myModal2">Watch Video </span></a>
           <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Fees</button>
-          <a href="" class="btn btn-circle-y ml-2 clse" target="_blank">Clause </span></a>
+          <a href="https://presolv360.com/dispute_resolution_clause" class="btn btn-circle-y ml-2 clse" target="_blank">Clause</span></a>
           <!--<a href="https://presolv360.com/arbitrator" class="btn btn-circle-y ml-2 clse" target="_blank">Panel of Experts </span></a>-->
       </div>
 
@@ -397,33 +397,33 @@
                                       <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/Radio-one.png" alt=""></div>
                                   </a>
                               </div>
-                               <div class="owl-item">
+                               {{-- <div class="owl-item">
                                   <a href="https://asialawportal.com/2020/09/12/indias-online-dispute-resolution-platform-an-interview-with-namita-shah-co-founder-presolv360/" target="_blank">
                                       <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/AsiaLawPortal.png" style="margin-top: 12px;height: 180px;
 width: 200px;" alt=""></div>
                                   </a>
-                              </div>
-                              <div class="owl-item">
+                              </div> --}}
+                              {{-- <div class="owl-item">
                                   <a href="https://www.livemint.com/opinion/online-views/opinion-collections-and-dispute-resolution-hope-faith-and-more-for-lenders-11599974221412.html" target="_blank">
                                       <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Livemint.png" style="
 height: 165px;
 width: 200px;
 margin-top: 12px;" alt=""></div>
                                   </a>
-                              </div>
-                               <div class="owl-item">
+                              </div> --}}
+                               {{-- <div class="owl-item">
                                   <a href="https://timesofindia.indiatimes.com/india/as-lockdown-slows-down-courts-e-mediation-across-cities-picks-up/articleshow/78204960.cms" target="_blank">
                                       <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/TimesofIndia.png" style="height:150px;width:200px;" alt=""></div>
                                   </a>
-                              </div>
+                              </div> --}}
                               
-                              <div class="owl-item">
+                              {{-- <div class="owl-item">
                                   <a href="https://www.youtube.com/watch?v=jfezqCotG9U" target="_blank">
                                       <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="https://presolv360.com/asset/img/Businessworld_(logo).png" style="margin-top: 76px;
 height: 56px;
 width: 250px;" alt=""></div>
                                   </a>
-                              </div>
+                              </div> --}}
                               <div class="owl-item">
                                   <a href="https://yourstory.com/2020/03/womens-day-women-entrepreneurs-legal-tech-startups" target="_blank">
                                       <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/Yourstory.png" alt=""></div>
@@ -575,7 +575,7 @@ width: 250px;" alt=""></div>
 <div class="modal fade" id="resolvefees" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-    	<div class="modal-header" style="background-color: #0A5185; color: #fff;">
+      <div class="modal-header" style="background-color: #0A5185; color: #fff;">
 
                 
 
@@ -596,8 +596,8 @@ width: 250px;" alt=""></div>
             </div>
 
       <div class="modal-body">
-        The fees will be determined on the basis of the nature and quantum of the dispute. To know the fee applicable to you, contact us at <a href="mailto:info@pdm24.pl" target="_top">info@pdm24.pl</a> or call us on .<a href="tel:+91-721782222"
-                        target="_top">+91-721782222</a>
+        The fees will be determined on the basis of the nature and quantum of the dispute. To know the fee applicable to you, contact us at <a href="mailto:info@presolv360.com" target="_top">info@presolv360.com</a> or call us on .<a href="tel:+91-7710048834"
+                        target="_top">+91-8447728708</a>
       </div>
     </div>
   </div>
@@ -672,7 +672,7 @@ width: 250px;" alt=""></div>
                     <div class="col-md-6 col-12">
 
                         <label for="sel1"></label>
-                        	<input type="" class="form-control" id="sel1" value="2" readonly>
+                          <input type="" class="form-control" id="sel1" value="2" readonly>
                             <!-- <select class="form-control" id="sel1"> -->
 
                                <!--  <option disabled selected value> select an option </option> -->
@@ -835,7 +835,7 @@ width: 250px;" alt=""></div>
 
                     <div class="col-sm-12">
 
-                    	<span style="font-size: 12px;"><b><a href="https://presolv360.com/secure_terms_conditions" style="line-height: 68px;" target="_blank">*Terms & Conditions apply</a></b>  </span>
+                      <span style="font-size: 12px;"><b><a href="https://presolv360.com/secure_terms_conditions" style="line-height: 68px;" target="_blank">*Terms & Conditions apply</a></b>  </span>
 
  <button type="button" class="btn btn-warning"  id="btn_sub1" style="background-color: #FFA600;height:40px;float: right;">Purchase</button>
                     </div>
@@ -1043,7 +1043,7 @@ width: 250px;" alt=""></div>
 
                                 <button type="submit" id="send_submit" name="send_submit" class="btn btn-warning sbmtt" onclick="resolvsubmit()" >Mediation</button>
 
-							
+              
                             </center>
 
 

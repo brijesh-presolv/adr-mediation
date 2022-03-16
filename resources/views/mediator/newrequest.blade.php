@@ -2,10 +2,10 @@
 @section('title', 'New request')
 
 @section('breadcrumb')
-<!-- start page title -->
-<li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">New request </a></li>
-<!-- end page title -->
+    <!-- start page title -->
+    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+    <li class="breadcrumb-item"><a href="javascript: void(0);">New request </a></li>
+    <!-- end page title -->
 @endsection
 
 @section('content')
@@ -20,7 +20,8 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
-            <table  id="request" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <table id="request" class="table table-striped table-bordered dt-responsive nowrap"
+                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
                         <th>Sr. No</th>
@@ -36,14 +37,17 @@
             <div class="row">
                 <div class="col-md-2">
 
-                    <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input type="checkbox" id="selectalldir"> Select All Cases</label>
+                    <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
+                            type="checkbox" id="selectalldir"> Select All Cases</label>
 
                 </div>
                 <div class="col-md-4">
-                    <button class="btn btn-success btn-sm blkbtn" id="bulkAcceptBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Accept</button>
-                    <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn" style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Reject</button>
+                    <button class="btn btn-success btn-sm blkbtn" id="bulkAcceptBtn"
+                        style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Accept</button>
+                    <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn"
+                        style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Reject</button>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -65,7 +69,8 @@
                     <div class="row">
                         <div class="col-lg-12 text-center">
                             <h5>Mediator’s Consent and Disclosures</h5>
-                            <p>See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)</p>
+                            <p>See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the
+                                Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)</p>
                         </div>
                         <div class="col-lg-12">
                             <p><u>Details of the Dispute</u></p>
@@ -99,14 +104,16 @@
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent1" id="consent1yes" value="1" checked>
+                                                    <input class="form-check-input" type="radio" name="consent1"
+                                                        id="consent1yes" value="1" checked>
                                                     <label class="form-check-label" for="consent1yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent1" id="consent1no" value="0" >
+                                                    <input class="form-check-input" type="radio" name="consent1"
+                                                        id="consent1no" value="0">
                                                     <label class="form-check-label" for="consent1no">
                                                         No
                                                     </label>
@@ -115,18 +122,22 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>I am qualified, possess the required competence, knowledge and expertise, and have sufficient time to be able to conduct the mediation proceedings within the time limits prescribed in the Rules</td>
+                                        <td>I am qualified, possess the required competence, knowledge and expertise,
+                                            and have sufficient time to be able to conduct the mediation proceedings
+                                            within the time limits prescribed in the Rules</td>
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2yes" value="1" checked>
+                                                    <input class="form-check-input" type="radio" name="consent2"
+                                                        id="consent2yes" value="1" checked>
                                                     <label class="form-check-label" for="consent2yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent2" id="consent2no" value="0" >
+                                                    <input class="form-check-input" type="radio" name="consent2"
+                                                        id="consent2no" value="0">
                                                     <label class="form-check-label" for="consent2no">
                                                         No
                                                     </label>
@@ -135,18 +146,23 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>I shall be, and remain, independent and neutral throughout the proceedings i.e. from beginning to end and ensure that my words, manner, attitude, body language and process management reflects an impartial and even-handed approach</td>
+                                        <td>I shall be, and remain, independent and neutral throughout the proceedings
+                                            i.e. from beginning to end and ensure that my words, manner, attitude, body
+                                            language and process management reflects an impartial and even-handed
+                                            approach</td>
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent3" id="consent3yes" value="1" checked>
+                                                    <input class="form-check-input" type="radio" name="consent3"
+                                                        id="consent3yes" value="1" checked>
                                                     <label class="form-check-label" for="consent3yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent3" id="consent3no" value="0" >
+                                                    <input class="form-check-input" type="radio" name="consent3"
+                                                        id="consent3no" value="0">
                                                     <label class="form-check-label" for="consent3no">
                                                         No
                                                     </label>
@@ -155,18 +171,22 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>I shall conduct the mediation proceedings in a fair and impartial manner, and endeavour to provide a procedurally fair process in which each party is given an adequate opportunity to participate </td>
+                                        <td>I shall conduct the mediation proceedings in a fair and impartial manner,
+                                            and endeavour to provide a procedurally fair process in which each party is
+                                            given an adequate opportunity to participate </td>
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent4" id="consent4yes" value="1" checked>
+                                                    <input class="form-check-input" type="radio" name="consent4"
+                                                        id="consent4yes" value="1" checked>
                                                     <label class="form-check-label" for="consent4yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent4" id="consent4no" value="0" >
+                                                    <input class="form-check-input" type="radio" name="consent4"
+                                                        id="consent4no" value="0">
                                                     <label class="form-check-label" for="consent4no">
                                                         No
                                                     </label>
@@ -175,18 +195,22 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>I shall maintain utmost confidentiality of all matters relating to mediation proceedings, including all documents, records, and communications, during as well as after its completion</td>
+                                        <td>I shall maintain utmost confidentiality of all matters relating to mediation
+                                            proceedings, including all documents, records, and communications, during as
+                                            well as after its completion</td>
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent5" id="consent5yes" value="1" checked>
+                                                    <input class="form-check-input" type="radio" name="consent5"
+                                                        id="consent5yes" value="1" checked>
                                                     <label class="form-check-label" for="consent5yes">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 &nbsp;&nbsp;
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="consent5" id="consent5no" value="0" >
+                                                    <input class="form-check-input" type="radio" name="consent5"
+                                                        id="consent5no" value="0">
                                                     <label class="form-check-label" for="consent5no">
                                                         No
                                                     </label>
@@ -202,8 +226,8 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Particulars</th> 
-                                        <th>Disclosures</th> 
+                                        <th>Particulars</th>
+                                        <th>Disclosures</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -211,31 +235,41 @@
                                         <td>Experience</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" cols="150" name="particulars1" id="particulars1" rows="3">{{isset($mediationDetails->experience)?$mediationDetails->experience:""}}</textarea>
+                                                <textarea class="form-control" cols="150" name="particulars1"
+                                                    id="particulars1"
+                                                    rows="3">{{ isset($mediationDetails->experience) ? $mediationDetails->experience : '' }}</textarea>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Circumstances disclosing any past or present relationship with, or interest in, any of the parties or in relation to the subject-matter in dispute, whether financial, business, professional or other kind, which is likely to impair your independence or impartiality (list out)</td>
+                                        <td>Circumstances disclosing any past or present relationship with, or interest
+                                            in, any of the parties or in relation to the subject-matter in dispute,
+                                            whether financial, business, professional or other kind, which is likely to
+                                            impair your independence or impartiality (list out)</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars2" id="particulars2" rows="3">NA</textarea>
+                                                <textarea class="form-control" name="particulars2" id="particulars2"
+                                                    rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Circumstances which are likely to affect your ability to devote sufficient time to the mediation and in particular your </td>
+                                        <td>Circumstances which are likely to affect your ability to devote sufficient
+                                            time to the mediation and in particular your </td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars3" id="particulars3" rows="3">NA</textarea>
+                                                <textarea class="form-control" name="particulars3" id="particulars3"
+                                                    rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>ability to complete the entire mediation within the time limits prescribed under the Rules</td>
+                                        <td>ability to complete the entire mediation within the time limits prescribed
+                                            under the Rules</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars4" id="particulars4" rows="3">NA</textarea>
+                                                <textarea class="form-control" name="particulars4" id="particulars4"
+                                                    rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -246,13 +280,17 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" required id="confirm" checked>
                                 <label class="form-check-label" for="confirm">
-                                    I confirm that the details provided above are true, accurate, current and complete and acknowledge that a copy of the consent and disclosures will be provided to the parties.
+                                    I confirm that the details provided above are true, accurate, current and complete
+                                    and acknowledge that a copy of the consent and disclosures will be provided to the
+                                    parties.
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="" id="accept" checked>
-                                <label class="form-check-label" for="accept" >
-                                    By checking this box, I accept and agree to conduct the mediation in accordance with the Rules and confirm that I shall abide by the Code, Terms & Conditions and Privacy Policy.
+                                <label class="form-check-label" for="accept">
+                                    By checking this box, I accept and agree to conduct the mediation in accordance with
+                                    the Rules and confirm that I shall abide by the Code, Terms & Conditions and Privacy
+                                    Policy.
                                 </label>
                             </div>
                         </div>
@@ -277,18 +315,19 @@
             </div>
             <form id="commentForm" method="post">
                 <div class="modal-body">
-                    <input type="hidden" name="case_id" class="form-control" >
-                    <input type="hidden" name="type" class="form-control" >
+                    <input type="hidden" name="case_id" class="form-control">
+                    <input type="hidden" name="type" class="form-control">
 
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Comment:</label>
-                        <textarea class="form-control" name="comment"  required></textarea>
+                        <textarea class="form-control" name="comment" required></textarea>
                     </div>
                     <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="commentModal-close" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="commentModal-close"
+                        data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">save comment</button>
                 </div>
             </form>
@@ -300,8 +339,10 @@
 <!-- Table datatable css -->
 @section('head')
 
-<link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
+    type="text/css" />
+<link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
+    type="text/css" />
 
 @endsection
 
@@ -317,216 +358,268 @@
 
 
 <script>
-function pad(str, max) {
-    str = str.toString();
-    return str.length < max ? pad("0" + str, max) : str;
-}
-var userTable = $('#request').DataTable({
-    "ajax": '{{ route('mediator.newjson') }}',
-    "responsive": true,
-    "order": [[1, "desc"]],
-    "columns": [
-        {"data": "key"},
-        {"data": "id",
-            render: function (data, type, row) {
-                var button = "";
-                button = button + `<input type="checkbox" class="blkchk" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">`;
-                return button;
-            }
-        },
-        {"data": "caseId",
-            render: function (data, type, row) {
-                return "M" + pad(data, 6)
-            }
-        },
-        {"data": "date",
-            render: function (data, type, row) {
-                return row.date
-            }
-        },
-        {"data": "party",
-            render: function (data, type, row) {
-                var d = "";
-                for (i in data) {
-                    if (data[i].isOnboarded == 1) {
-                        if(data[i].name != null) {
-                        d = d + `<p class="text-success party_name get_party" data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
-                    }
-                    } 
-                    else {
-                        if(data[i].name != null) {
-                            if(data[i].address1 != null) {
-                            d = d + `<p class="text-danger get_party " data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].address1 + " " + data[i].address2 + `">` + data[i].name + `</p>`;
-                            } else {
-                            d = d + `<p class="text-danger get_party " data-phone="` + data[i].userPhone + `" data-email="` + data[i].userEmail + `" data-address="` + data[i].fulladdress + `">` + data[i].name + `</p>`;
+    function pad(str, max) {
+        str = str.toString();
+        return str.length < max ? pad("0" + str, max) : str;
+    }
+    var userTable = $('#request').DataTable({
+        "serverMethod": "POST",
+        "sAjaxSource": '{{ route('mediator.newjson') }}',
+        "processing": true,
+        "serverSide": true,
+        // "responsive": true,
+        "lengthMenu": [
+            [10, 25, 50, 100, 250, 500, 1000],
+            [10, 25, 50, 100, 250, 500, 1000],
+        ],
+        "iDisplayLength": 25,
+        "columns": [{
+                "data": "key"
+            },
+            {
+                "data": "id",
+                render: function(data, type, row) {
+                    var button = "";
+                    button = button + `<input type="checkbox" class="blkchk" data-caseid="` + row
+                        .caseId + `" data-mediatorId="` + row.mediator_id + `">`;
+                    return button;
+                }
+            },
+            {
+                "data": "caseId",
+                render: function(data, type, row) {
+                    return "M" + pad(data, 6)
+                }
+            },
+            {
+                "data": "date",
+                render: function(data, type, row) {
+                    return row.date
+                }
+            },
+            {
+                "data": "party",
+                render: function(data, type, row) {
+                    var d = "";
+                    for (i in data) {
+                        if (data[i].isOnboarded == 1) {
+                            if (data[i].name != null) {
+                                if (data[i].organization != null && data[i].isClaimant == 0) {
+                                    d = d +
+                                        `<p class="text-success party_name get_party" data-phone="` +
+                                        data[i].userPhone + `" data-email="` + data[i].userEmail +
+                                        `" data-address="` + data[i].address1 + " " + data[i].address2 +
+                                        `">` + data[i].organization + `</p>`;
+                                } else {
+                                    d = d +
+                                        `<p class="text-success party_name get_party" data-phone="` +
+                                        data[i].userPhone + `" data-email="` + data[i].userEmail +
+                                        `" data-address="` + data[i].address1 + " " + data[i].address2 +
+                                        `">` + data[i].name + `</p>`;
+                                }
+
+                            }
+                        } else {
+                            if (data[i].name != null) {
+                                if (data[i].address1 != null) {
+                                    d = d + `<p class="text-danger get_party " data-phone="` + data[i]
+                                        .userPhone + `" data-email="` + data[i].userEmail +
+                                        `" data-address="` + data[i].address1 + " " + data[i].address2 +
+                                        `">` + data[i].name + `</p>`;
+                                } else {
+                                    d = d + `<p class="text-danger get_party " data-phone="` + data[i]
+                                        .userPhone + `" data-email="` + data[i].userEmail +
+                                        `" data-address="` + data[i].fulladdress + `">` + data[i].name +
+                                        `</p>`;
+                                }
                             }
                         }
                     }
+                    return d;
                 }
-                return d;
-            }
-        },
-        {"data": "caseId",
-            render: function (data, type, row) {
-                var button = "";
-                button = button + `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple btn-sm waves-effect ">Private</button>`;
-                button +=` <span class="badge-success badge private_total">`+row.private_count+`</span>`;
-                    if(row.private_view_count != 0){
-                    button += ` <span class="badge badge-danger private_unseen">` +row.private_view_count +`</span>`;
+            },
+            {
+                "data": "caseId",
+                render: function(data, type, row) {
+                    var button = "";
+                    button = button +
+                        `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` +
+                        data +
+                        `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple btn-sm waves-effect ">Private</button>`;
+                    button += ` <span class="badge-success badge private_total">` + row.private_count +
+                        `</span>`;
+                    if (row.private_view_count != 0) {
+                        button += ` <span class="badge badge-danger private_unseen">` + row
+                            .private_view_count + `</span>`;
                     }
-                button = button + ` <button type="button" data-type="0" data-typename="Share" data-id="` + data + `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark btn-sm waves-effect ">Share</button>`;
-                if(row.share_view_count !==0){
-                    button += ` <span class="badge  badge-danger share_unseen">`+row.share_view_count+` </span>`;
+                    button = button +
+                        ` <button type="button" data-type="0" data-typename="Share" data-id="` + data +
+                        `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark btn-sm waves-effect ">Share</button>`;
+                    if (row.share_view_count !== 0) {
+                        button += ` <span class="badge  badge-danger share_unseen">` + row
+                            .share_view_count + ` </span>`;
                     }
-                    button += ` <span class="badge badge-success share_total">`+row.share_count+`</span></div>`;
-                return button;
+                    button += ` <span class="badge badge-success share_total">` + row.share_count +
+                        `</span></div>`;
+                    return button;
+                }
+            },
+            {
+                "data": "caseId",
+                render: function(data, type, row) {
+
+                    // if(data==1){
+                    //   var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
+                    //     return button;  
+                    // }else{
+                    // }
+
+                    var button = `<button class="btn btn-success btn-sm acceptBtn" data-issue="` + row
+                        .case_issue + `" data-toggle="modal" data-target="#acceptModal" data-caseid="` +
+                        row.caseId + `" data-mediatorId="` + row.mediator_id + `">Accept</button>
+                                    <button class="btn btn-danger btn-sm" id="statuschang" data-caseid="` + row
+                        .caseId + `" data-mediatorId="` + row.mediator_id + `">Reject</button>`;
+                    return button;
+
+
+
+                    //   var button = `<div class="form-group">
+                    //   <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                    //     <input type="checkbox" name=="user_status" id="customSwitch` + row.id + `" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
+                    //     <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
+                    //   </div>
+                    // </div>`;
+                    //   return button;
+                }
             }
-        },
-        {"data": "caseId",
-            render: function (data, type, row) {
+        ],
+    });
+    $('#commentModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('id');
+        var typename = button.data('typename');
+        var type = button.data('type');
+        var modal = $(this);
+        var urlpdf = '{{ route('mediator.case.commentPDF', '', '') }}' + '/' + id + '/' + type;
 
-// if(data==1){
-//   var button = `<button class="btn-sm btn-danger" value="`+data.id+`" id="statuschang">Reject</button>`;
-//     return button;  
-// }else{
-// }
+        $("#commentView").html("");
+        $('#commentForm .modal-footer #DownLoadPdf').remove();
 
-                var button = `<button class="btn btn-success btn-sm acceptBtn" data-issue="` + row.case_issue + `" data-toggle="modal" data-target="#acceptModal" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Accept</button>
-                                    <button class="btn btn-danger btn-sm" id="statuschang" data-caseid="` + row.caseId + `" data-mediatorId="` + row.mediator_id + `">Reject</button>`;
-                return button;
-
-
-
-//   var button = `<div class="form-group">
-//   <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-//     <input type="checkbox" name=="user_status" id="customSwitch` + row.id + `" value="` + row.id + `" class="custom-control-input statuschang" ` + ((data == 1) ? "checked" : "") + `>
-//     <label class="custom-control-label" for="customSwitch` + row.id + `"> </label>
-//   </div>
-// </div>`;
-//   return button;
-            }
-        }
-    ],
-});
-$('#commentModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var id = button.data('id');
-    var typename = button.data('typename');
-    var type = button.data('type');
-    var modal = $(this);
-    var urlpdf = '{{route("mediator.case.commentPDF",'','')}}'+'/'+id+'/'+type;
-
-    $("#commentView").html("");
-    $('#commentForm .modal-footer #DownLoadPdf').remove();
-
-    $.ajax({
-        type: 'post',
-        url: '{{ route("mediator.case.comment_view") }}',
-        data: {type: type, case_id: id},
-        success: function (data) {
-            for (i in data) {
-                //console.log(data[0]);
-                if (data[i].username == '{{Auth::user()->username}}') {
-                    var msg = `<div class="col-md-12 text-right border-top">
+        $.ajax({
+            type: 'post',
+            url: '{{ route('mediator.case.comment_view') }}',
+            data: {
+                type: type,
+                case_id: id
+            },
+            success: function(data) {
+                for (i in data) {
+                    //console.log(data[0]);
+                    if (data[i].username == '{{ Auth::user()->username }}') {
+                        var msg = `<div class="col-md-12 text-right border-top">
                             <div class="row">
-                                            <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
+                                            <div class="col-md-4 text-left"><small class="text-muted">` + data[i]
+                            .created + `</small></div>
                                             <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
                                 </div>           
                                  <p>` + data[i].comment + `</p>
                         </div>`;
-                    $("#commentView").append(msg);
-                } else {
-                    var msg = `<div class="col-md-12 border-top">
+                        $("#commentView").append(msg);
+                    } else {
+                        var msg = `<div class="col-md-12 border-top">
                             <div class="row">
                                             <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                            <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
+                                            <div class="col-md-4 text-right"><small class="text-muted">` + data[i]
+                            .created + `</small></div>
                                 </div>           
                                  <p>` + data[i].comment + `</p>
                         </div>`;
-                    $("#commentView").append(msg);
+                        $("#commentView").append(msg);
+                    }
+                }
+                if (data[i] != null) {
+                    $('#commentForm .modal-footer').append("<a href=" + urlpdf +
+                        "><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>"
+                    );
                 }
             }
-            if(data[i] != null){
-                        $('#commentForm .modal-footer').append("<a href="+urlpdf+"><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>");
-                }
-        }
+        });
+
+        modal.find('#commentModalLabel').text(typename);
+        modal.find('.modal-body input[name="type"]').val(type);
+        modal.find('.modal-body input[name="case_id"]').val(id);
     });
 
-    modal.find('#commentModalLabel').text(typename);
-    modal.find('.modal-body input[name="type"]').val(type);
-    modal.find('.modal-body input[name="case_id"]').val(id);
-});
-
-$('#commentModal-close').on('click', function() {
+    $('#commentModal-close').on('click', function() {
         userTable.ajax.reload(null, false);
     });
 
-$('#commentForm').on('submit', function (e) {
-    e.preventDefault();
-    swal({
-        title: "Are you sure?",
-        text: "add this comment!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-    }).then((willDelete) => {
-        if (willDelete) {
-            $.ajax({
-                type: 'post',
-                url: '{{ route("mediator.case.comment") }}',
-                data: $('#commentForm').serialize(),
-                success: function () {
-                    swal("comment save successfully!", {
-                        icon: "success",
-                    }).then(function() {
-                        // location.reload();
-                    });
-                    $('#commentForm')[0].reset();
-                    $('#commentModal').modal("hide");
-                }
-            });
-        } else {
-            swal("comment not added!");
-        }
-        userTable.ajax.reload(null, false);
+    $('#commentForm').on('submit', function(e) {
+        e.preventDefault();
+        swal({
+            title: "Are you sure?",
+            text: "add this comment!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route('mediator.case.comment') }}',
+                    data: $('#commentForm').serialize(),
+                    success: function() {
+                        swal("comment save successfully!", {
+                            icon: "success",
+                        }).then(function() {
+                            // location.reload();
+                        });
+                        $('#commentForm')[0].reset();
+                        $('#commentModal').modal("hide");
+                    }
+                });
+            } else {
+                swal("comment not added!");
+            }
+            userTable.ajax.reload(null, false);
 
+        });
+        return false;
     });
-    return false;
-});
-$('#acceptModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var data = button.parent().parent().find(".get_party");
-    var caseid = button.data('caseid');
-    var issue = button.data('issue');
-    var modal = $(this);
-    $(this).data("address") + `</td><td></td></tr>`
+    $('#acceptModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget);
+        var data = button.parent().parent().find(".get_party");
+        var caseid = button.data('caseid');
+        var issue = button.data('issue');
+        var modal = $(this);
+        $(this).data("address") + `</td><td></td></tr>`
 
-    var dd = "";
-    data.each(function (index) {
-        if (index <= 1) {
-            if (index == 0) {
-                dd = dd + `<tr>`;
-                dd = dd +
+        var dd = "";
+        data.each(function(index) {
+            if (index <= 1) {
+                if (index == 0) {
+                    dd = dd + `<tr>`;
+                    dd = dd +
                         `<td>
                         <p>` + $(this).text() + `</p>
                         <p>` + $(this).data("address") + `</p>
                         </p>` + $(this).data("phone") + `</p>
                         </p>` + $(this).data("email") + `</p>
                         </td>`;
-            }
-            if (index > 0) {
-                dd = dd +
+                }
+                if (index > 0) {
+                    dd = dd +
                         `<td>
                             <p>` + $(this).text() + `</p>
                             <p>` + $(this).data("address") + `</p>
                             </p>` + $(this).data("phone") + `</p>
                             </p>` + $(this).data("email") + `</p>
                         </td>`;
-                dd = dd + `</tr>`;
-            }
+                    dd = dd + `</tr>`;
+                }
 
-        } else {
-            dd = dd + `<tr>
+            } else {
+                dd = dd + `<tr>
                     <td></td>
                     <td>
                         <p>` + $(this).text() + `</p>
@@ -535,222 +628,44 @@ $('#acceptModal').on('show.bs.modal', function (event) {
                         </p>` + $(this).data("email") + `</p>
                     </td>
                     `;
-        }
-    });
-    modal.find("#partyDetails").find("tbody").html(dd);
-    modal.find('.modal-title').text('Accept Request To : ' + "M" + pad(caseid, 6));
-    modal.find('input[name="mediation_case_id"]').val(caseid);
-    modal.find('#issueModal').text(issue);
-})
-$(document).on('submit', "#acceptForm", function () {
-    swal({
-        title: "Are you sure?",
-        text: "to accept this request!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-    }).then((willDelete) => {
-        if (willDelete) {
-            $.ajax({
-                url: '{{ route("mediator.activeDeactive") }}',
-                method: "post",
-                data: $('#acceptForm').serialize(),
-                beforeSend: function() {
-                            swal({
-                                title: 'Loading...',
-                                showConfirmButton: false,
-                                buttons: false,
-                                
-                            });
-                        },
-            }).done(function (data) {
-                userTable.ajax.reload()
-                swal("Request Accepted!", {
-                    icon: "success",
-                }).then(function() {
-                    location.reload();
-                });
-
-            });
-            $("#acceptModal").modal("hide");
-        } else {
-            $('#acceptForm').find("textarea[name='particulars2']").val("");
-            $('#acceptForm').find("textarea[name='particulars2']").text("");
-            $('#acceptForm').find("textarea[name='particulars3']").val("");
-            $('#acceptForm').find("textarea[name='particulars3']").text("");
-            $('#acceptForm').find("textarea[name='particulars4']").val("");
-            $('#acceptForm').find("textarea[name='particulars4']").text("");
-            swal("Your imaginary file is safe!");
-        }
-    });
-    return false;
-});
-$(document).on('click', "#statuschang", function () {
-    var caseid = $(this).data('caseid');
-    var mediatorid = $(this).data('mediatorid');
-    var do_action = $(this).html();
-
-    var csrf = document.querySelector('meta[name="csrf-token"]').content;
-
-
-
-    /*on reject case*/
-    if (do_action == 'Reject') {
-        var status = 2;
-
+            }
+        });
+        modal.find("#partyDetails").find("tbody").html(dd);
+        modal.find('.modal-title').text('Accept Request To : ' + "M" + pad(caseid, 6));
+        modal.find('input[name="mediation_case_id"]').val(caseid);
+        modal.find('#issueModal').text(issue);
+    })
+    $(document).on('submit', "#acceptForm", function() {
         swal({
             title: "Are you sure?",
-            text: "to Reject these request!",
+            text: "to accept this request!",
             icon: "warning",
             buttons: true,
             dangerMode: true,
         }).then((willDelete) => {
             if (willDelete) {
                 $.ajax({
-                    url: '{{ route("mediator.activeDeactive") }}',
+                    url: '{{ route('mediator.activeDeactive') }}',
                     method: "post",
-                    data: {caseid: caseid, mediator_id: mediatorid, status: status, '_token': csrf},
+                    data: $('#acceptForm').serialize(),
                     beforeSend: function() {
-                            swal({
-                                title: 'Loading...',
-                                showConfirmButton: false,
-                                buttons: false,
-                                
-                            });
-                        },
-                }).done(function (data) {
+                        swal({
+                            title: 'Loading...',
+                            showConfirmButton: false,
+                            buttons: false,
+
+                        });
+                    },
+                }).done(function(data) {
                     userTable.ajax.reload()
-                    swal("Request Rejected!", {
+                    swal("Request Accepted!", {
                         icon: "success",
                     }).then(function() {
                         location.reload();
                     });
+
                 });
-
-            } else {
-                swal("Your imaginary file is safe!");
-            }
-        });
-
-
-
-
-    }
-
-
-// var csrf = document.querySelector('meta[name="csrf-token"]').content;
-
-});
-
-
-$("#selectalldir").change(function () {
-      if (this.checked) {
-        $("#bulkAcceptBtn").show();
-        $("#bulkRejectBtn").show();
-        $(".blkchk").each(function () {
-          $(this).prop("checked", true);
-        });
-      } else {
-        $(".blkchk").each(function () {
-          $(this).prop("checked", false);
-        });
-        $("#bulkAcceptBtn").hide();
-        $("#bulkRejectBtn").hide();
-
-      }
-    });
-
-    $(document).on("change", ".blkchk", function () {
-        var case_count = 0;
-        $(".blkchk").each(function () {
-        if (this.checked) {
-          case_count++;
-        }
-      });
-      if (this.checked) {
-        $("#bulkAcceptBtn").show();
-        $("#bulkRejectBtn").show();
-      } else {
-        if (case_count == 0) {  
-
-        $("#bulkAcceptBtn").hide();
-        $("#bulkRejectBtn").hide();
-        }
-      }
-      if($('#selectalldir').is(':checked')){
-         $("#bulkAcceptBtn").show();
-         $("#bulkRejectBtn").show();
-       }if(case_count == 0){
-         $("#bulkAcceptBtn").hide();
-         $("#bulkRejectBtn").hide();
-         $("#selectalldir").prop("checked", false);
-       }
-    });
-
-    $("#bulkAcceptBtn").click(function () {
-        var ctcnt = 0;
-
-      var blkclon = false;
-
-      var arbid = $(this).data("arb");
-
-
-      $(".blkchk").each(function () {
-        if (this.checked) {
-          blkclon = true;
-          ctcnt++;
-
-        }
-      });
-
-      if (blkclon == false) {
-        swal({
-          title: "Select arbitration to accept",
-          text: "",
-          type: "error",
-        });
-      } else {
-
-        swal({
-            // text: ctcnt + " cases selected to accept",
-            title: "Are you sure?",
-            text: ctcnt + " Cases selected",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then(function (willDelete) {
-            if (willDelete) {
-                var ids = null;
-                $(".blkchk").each(function () {
-                  if (this.checked) {
-                    var id = $(this).data("caseid");
-
-                    $('#acceptModal').find('input[name="mediation_case_id"]').val(id);
-
-                    $.ajax({
-                        url: '{{ route("mediator.activeDeactive") }}',
-                        method: "post",
-                        data: $('#acceptForm').serialize(),
-                        beforeSend: function() {
-                            swal({
-                                title: 'Loading...',
-                                showConfirmButton: false,
-                                buttons: false,
-                                
-                            });
-                        },
-                    }).done(function (data) {
-                        userTable.ajax.reload()
-                        swal("Request Accepted!", {
-                            icon: "success",
-                        }).then(function() {
-                            location.reload();
-                        });
-                    });
-                    // console.log(ids);
-                  }
-                });
-                
+                $("#acceptModal").modal("hide");
             } else {
                 $('#acceptForm').find("textarea[name='particulars2']").val("");
                 $('#acceptForm').find("textarea[name='particulars2']").text("");
@@ -760,128 +675,48 @@ $("#selectalldir").change(function () {
                 $('#acceptForm').find("textarea[name='particulars4']").text("");
                 swal("Your imaginary file is safe!");
             }
-
-                
-                
         });
-
-        // swal
-        //   .queue([
-        //     {
-        //       title: "Are you sure?",
-        //       text: ctcnt + " cases selected to accept",
-        //       type: "info",
-        //       allowOutsideClick: false,
-        //       showCancelButton: true,
-        //       confirmButtonColor: "#41B314",
-        //       cancelButtonColor: "#F9354C",
-        //       confirmButtonText: "Confirm",
-        //       showLoaderOnConfirm: true,
-        //       preConfirm: function () {
-        //         var ids = null;
-
-        //         $(".blkchk").each(function () {
-        //           if (this.checked) {
-        //             var id = $(this).data("caseid");
-
-        //             if (ids == null) {
-        //               ids = id;
-        //             } else {
-        //               ids = ids + "," + id;
-        //             }
-        //             console.log(ids);
-        //           }
-                  
-        //         });
-
-        //         // $.ajax({
-        //         //   url: DOMAIN + "functions/ajx_requests.php",
-        //         //   method: "POST",
-        //         //   dataType: "JSON",
-        //         //   data: { ids: ids, arbid: arbid, case: "arbacceptarbblk" },
-        //         //   success: function (result) {
-        //         //     console.log(result);
-
-        //         //     if (JSON.parse(result["result"]).response == "success") {
-        //         //       swal({
-        //         //         title: "Arbitrations accepted",
-        //         //         text: "",
-        //         //         type: "success",
-        //         //       });
-
-        //         //       setTimeout(function () {
-        //         //         window.location.reload();
-        //         //       }, 5000);
-        //         //     } else {
-        //         //       swal({
-        //         //         title: "Please try again",
-        //         //         text: "",
-        //         //         type: "error",
-        //         //       });
-        //         //     }
-        //         //   },
-        //         //   error: function (err) {
-        //         //     console.log(err);
-        //         //   },
-        //         // });
-        //       },
-        //     }
-        //   ]);
-        //   .catch(swal.noop);
-      }
+        return false;
     });
+    $(document).on('click', "#statuschang", function() {
+        var caseid = $(this).data('caseid');
+        var mediatorid = $(this).data('mediatorid');
+        var do_action = $(this).html();
 
-    $("#bulkRejectBtn").click(function () {
-        var ctcnt = 0;
-
-      var blkclon = false;
-
-      var mediatorid = $(this).data("arb");
+        var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
 
-      $(".blkchk").each(function () {
-        if (this.checked) {
-          blkclon = true;
-          ctcnt++;
 
-        }
-      });
+        /*on reject case*/
+        if (do_action == 'Reject') {
+            var status = 2;
 
-      if (blkclon == false) {
-        swal({
-          title: "Select arbitration to accept",
-          text: "",
-          type: "error",
-        });
-      } else {
-
-        var status = 2;
-        swal({
-            title: "Are you sure?",
-            text: ctcnt + " Cases selected",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then((willDelete) => {
-            if (willDelete) {
-                $(".blkchk").each(function () {
-                  if (this.checked) {
-                    var csrf = document.querySelector('meta[name="csrf-token"]').content;
-                    var caseid = $(this).data("caseid");
-
+            swal({
+                title: "Are you sure?",
+                text: "to Reject these request!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
                     $.ajax({
-                        url: '{{ route("mediator.activeDeactive") }}',
+                        url: '{{ route('mediator.activeDeactive') }}',
                         method: "post",
-                        data: {caseid: caseid, mediator_id: mediatorid, status: status, '_token': csrf},
+                        data: {
+                            caseid: caseid,
+                            mediator_id: mediatorid,
+                            status: status,
+                            '_token': csrf
+                        },
                         beforeSend: function() {
                             swal({
                                 title: 'Loading...',
                                 showConfirmButton: false,
                                 buttons: false,
-                                
+
                             });
                         },
-                    }).done(function (data) {
+                    }).done(function(data) {
                         userTable.ajax.reload()
                         swal("Request Rejected!", {
                             icon: "success",
@@ -889,40 +724,286 @@ $("#selectalldir").change(function () {
                             location.reload();
                         });
                     });
-                  }
-                });
 
-            } else {
-                swal("Your imaginary file is safe!");
-            }
-        });
-        
-      }
+                } else {
+                    swal("Your imaginary file is safe!");
+                }
+            });
+
+
+
+
+        }
+
+
+        // var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
     });
 
 
+    $("#selectalldir").change(function() {
+        if (this.checked) {
+            $("#bulkAcceptBtn").show();
+            $("#bulkRejectBtn").show();
+            $(".blkchk").each(function() {
+                $(this).prop("checked", true);
+            });
+        } else {
+            $(".blkchk").each(function() {
+                $(this).prop("checked", false);
+            });
+            $("#bulkAcceptBtn").hide();
+            $("#bulkRejectBtn").hide();
 
+        }
+    });
+
+    $(document).on("change", ".blkchk", function() {
+        var case_count = 0;
+        $(".blkchk").each(function() {
+            if (this.checked) {
+                case_count++;
+            }
+        });
+        if (this.checked) {
+            $("#bulkAcceptBtn").show();
+            $("#bulkRejectBtn").show();
+        } else {
+            if (case_count == 0) {
+
+                $("#bulkAcceptBtn").hide();
+                $("#bulkRejectBtn").hide();
+            }
+        }
+        if ($('#selectalldir').is(':checked')) {
+            $("#bulkAcceptBtn").show();
+            $("#bulkRejectBtn").show();
+        }
+        if (case_count == 0) {
+            $("#bulkAcceptBtn").hide();
+            $("#bulkRejectBtn").hide();
+            $("#selectalldir").prop("checked", false);
+        }
+    });
+
+    $("#bulkAcceptBtn").click(function() {
+        var ctcnt = 0;
+
+        var blkclon = false;
+
+        var arbid = $(this).data("arb");
+
+
+        $(".blkchk").each(function() {
+            if (this.checked) {
+                blkclon = true;
+                ctcnt++;
+
+            }
+        });
+
+        if (blkclon == false) {
+            swal({
+                title: "Select arbitration to accept",
+                text: "",
+                type: "error",
+            });
+        } else {
+
+            swal({
+                // text: ctcnt + " cases selected to accept",
+                title: "Are you sure?",
+                text: ctcnt + " Cases selected",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then(function(willDelete) {
+                if (willDelete) {
+                    var ids = null;
+                    $(".blkchk").each(function() {
+                        if (this.checked) {
+                            var id = $(this).data("caseid");
+
+                            $('#acceptModal').find('input[name="mediation_case_id"]').val(id);
+
+                            $.ajax({
+                                url: '{{ route('mediator.activeDeactive') }}',
+                                method: "post",
+                                data: $('#acceptForm').serialize(),
+                                beforeSend: function() {
+                                    swal({
+                                        title: 'Loading...',
+                                        showConfirmButton: false,
+                                        buttons: false,
+
+                                    });
+                                },
+                            }).done(function(data) {
+                                userTable.ajax.reload()
+                                swal("Request Accepted!", {
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            });
+                            // console.log(ids);
+                        }
+                    });
+
+                } else {
+                    $('#acceptForm').find("textarea[name='particulars2']").val("");
+                    $('#acceptForm').find("textarea[name='particulars2']").text("");
+                    $('#acceptForm').find("textarea[name='particulars3']").val("");
+                    $('#acceptForm').find("textarea[name='particulars3']").text("");
+                    $('#acceptForm').find("textarea[name='particulars4']").val("");
+                    $('#acceptForm').find("textarea[name='particulars4']").text("");
+                    swal("Your imaginary file is safe!");
+                }
+
+
+
+            });
+
+            // swal
+            //   .queue([
+            //     {
+            //       title: "Are you sure?",
+            //       text: ctcnt + " cases selected to accept",
+            //       type: "info",
+            //       allowOutsideClick: false,
+            //       showCancelButton: true,
+            //       confirmButtonColor: "#41B314",
+            //       cancelButtonColor: "#F9354C",
+            //       confirmButtonText: "Confirm",
+            //       showLoaderOnConfirm: true,
+            //       preConfirm: function () {
+            //         var ids = null;
+
+            //         $(".blkchk").each(function () {
+            //           if (this.checked) {
+            //             var id = $(this).data("caseid");
+
+            //             if (ids == null) {
+            //               ids = id;
+            //             } else {
+            //               ids = ids + "," + id;
+            //             }
+            //             console.log(ids);
+            //           }
+
+            //         });
+
+            //         // $.ajax({
+            //         //   url: DOMAIN + "functions/ajx_requests.php",
+            //         //   method: "POST",
+            //         //   dataType: "JSON",
+            //         //   data: { ids: ids, arbid: arbid, case: "arbacceptarbblk" },
+            //         //   success: function (result) {
+            //         //     console.log(result);
+
+            //         //     if (JSON.parse(result["result"]).response == "success") {
+            //         //       swal({
+            //         //         title: "Arbitrations accepted",
+            //         //         text: "",
+            //         //         type: "success",
+            //         //       });
+
+            //         //       setTimeout(function () {
+            //         //         window.location.reload();
+            //         //       }, 5000);
+            //         //     } else {
+            //         //       swal({
+            //         //         title: "Please try again",
+            //         //         text: "",
+            //         //         type: "error",
+            //         //       });
+            //         //     }
+            //         //   },
+            //         //   error: function (err) {
+            //         //     console.log(err);
+            //         //   },
+            //         // });
+            //       },
+            //     }
+            //   ]);
+            //   .catch(swal.noop);
+        }
+    });
+
+    $("#bulkRejectBtn").click(function() {
+        var ctcnt = 0;
+
+        var blkclon = false;
+
+        var mediatorid = $(this).data("arb");
+
+
+        $(".blkchk").each(function() {
+            if (this.checked) {
+                blkclon = true;
+                ctcnt++;
+
+            }
+        });
+
+        if (blkclon == false) {
+            swal({
+                title: "Select arbitration to accept",
+                text: "",
+                type: "error",
+            });
+        } else {
+
+            var status = 2;
+            swal({
+                title: "Are you sure?",
+                text: ctcnt + " Cases selected",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $(".blkchk").each(function() {
+                        if (this.checked) {
+                            var csrf = document.querySelector('meta[name="csrf-token"]')
+                                .content;
+                            var caseid = $(this).data("caseid");
+
+                            $.ajax({
+                                url: '{{ route('mediator.activeDeactive') }}',
+                                method: "post",
+                                data: {
+                                    caseid: caseid,
+                                    mediator_id: mediatorid,
+                                    status: status,
+                                    '_token': csrf
+                                },
+                                beforeSend: function() {
+                                    swal({
+                                        title: 'Loading...',
+                                        showConfirmButton: false,
+                                        buttons: false,
+
+                                    });
+                                },
+                            }).done(function(data) {
+                                userTable.ajax.reload()
+                                swal("Request Rejected!", {
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            });
+                        }
+                    });
+
+                } else {
+                    swal("Your imaginary file is safe!");
+                }
+            });
+
+        }
+    });
 </script>
 
 @endsection
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

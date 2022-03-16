@@ -161,12 +161,12 @@ $meddate = $meddate->format('d-m-Y');
                 <td>{{$consent_disclosures->particulars2}}</td>
             </tr>
             <tr>
-                <td>Circumstances which are likely to affect your ability to devote sufficient time to the mediation and in particular your </td>
-                <td>{{$consent_disclosures->particulars3}}</td>
+                <td colspan="2">Circumstances which are likely to affect your ability to devote sufficient time to the mediation and in particular your </td>
+                {{-- <td>{{$consent_disclosures->particulars3}}</td> --}}
             </tr>
             <tr>
-                <td>ability to complete the entire mediation within the time limits prescribed under the Rules</td>
-                <td>{{$consent_disclosures->particulars4}}</td>
+                <td colspan="2">ability to complete the entire mediation within the time limits prescribed under the Rules</td>
+                {{-- <td>{{$consent_disclosures->particulars4}}</td> --}}
             </tr>
         </tbody>
     </table>
