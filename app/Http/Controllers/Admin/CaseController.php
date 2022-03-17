@@ -1834,13 +1834,16 @@ class CaseController extends Controller
                     if (strpos($v[7], '-')) {
                         $dt = str_replace('-', '/', $v[7]);
                         $v[7] = $dt;
+                    } else {
+                        $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
                     }
+                    if (strpos($v[7], '-') or strpos($v[7], '/')) {
+                        $dt = explode('/', $v[7]);
 
-                    $dt = explode('/', $v[7]);
+                        if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
 
-                    if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
-
-                        $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
+                            $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
+                        }
                     }
                 }
 
@@ -1970,9 +1973,18 @@ class CaseController extends Controller
             $resParty->updated_at = date('Y-m-d H:s:i');
             $resParty->save();
 
-
-            $otherResEmail = explode(',', $value[10]);
-            $otherResMobile = explode(',', $value[11]);
+            if (strpos($value[10], '/')) {
+                $otherResEmail = explode('/', $value[10]);
+            } else {
+                $otherResEmail = explode(',', $value[10]);
+            }
+            if (strpos($value[11], '/')) {
+                $otherResMobile = explode('/', $value[11]);
+            } else {
+                $otherResMobile = explode(',', $value[11]);
+            }
+            // $otherResEmail = explode(',', $value[10]);
+            // $otherResMobile = explode(',', $value[11]);
 
             $forloopcnt = max(count($otherResEmail), count($otherResMobile));
 

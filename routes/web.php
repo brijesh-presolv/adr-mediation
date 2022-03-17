@@ -144,6 +144,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('notification', [App\Http\Controllers\Admin\DashboardController::class, 'Notification'])->name('admin.notification');
 
     //users
+    Route::post('users/changeRole', [App\Http\Controllers\Admin\UsersController::class, 'ChangeRole'])->name('admin.users.changerole');
     Route::get('users/list/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'index'])->defaults('role', "user")->name('admin.users.list');
     Route::get('users/jsonApprove/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'jsonApprove'])->defaults('role', 0)->name('admin.users.jsonApprove');
     Route::get('users/jsonNewreq/{role?}', [App\Http\Controllers\Admin\UsersController::class, 'jsonNewreq'])->defaults('role', 0)->name('admin.users.jsonNewreq');
@@ -199,7 +200,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     //track
     Route::get('track/{id}', [App\Http\Controllers\Admin\CaseController::class, 'track'])->name('admin.case.track');
 
-    //cases bulk upload 
+    //cases bulk upload
     Route::post('cases/bulkupload', [App\Http\Controllers\Admin\CaseController::class, 'bulkUpload'])->name('admin.bulkUpload');
     Route::put('uploaddocument/{id}', [App\Http\Controllers\Admin\CaseController::class, 'documentUpload'])->name('admin.documentUpload');
 });

@@ -628,8 +628,8 @@ class MediationController extends Controller
 
         foreach ($new as $key => $value) {
             // $in = InvoledUser::select('id', 'userId', 'name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
-            $in = InvoledUser::select('user_involved_in_agreement.id','user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get();
-            
+            $in = InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get();
+
             $value->party = $in;
 
             $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
@@ -659,7 +659,7 @@ class MediationController extends Controller
         foreach ($new as $key => $value) {
             // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
             $in = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get();
-            
+
             $value->party = $in;
 
             $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
@@ -1028,13 +1028,17 @@ class MediationController extends Controller
                     if (strpos($v[7], '-')) {
                         $dt = str_replace('-', '/', $v[7]);
                         $v[7] = $dt;
+                    } else {
+                        $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
                     }
+                    if (strpos($v[7], '-') or strpos($v[7], '/')) {
 
-                    $dt = explode('/', $v[7]);
+                        $dt = explode('/', $v[7]);
 
-                    if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
+                        if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
 
-                        $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY ";
+                            $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
+                        }
                     }
                 }
 
@@ -1126,9 +1130,18 @@ class MediationController extends Controller
 
 
             // $otherDetails = array_merge(["email" => explode(',', $value[21]), 'mobile' => explode(',', $value[22])]);
-
-            $otherResEmail = explode(',', $value[10]);
-            $otherResMobile = explode(',', $value[11]);
+            if (strpos($value[10], '/')) {
+                $otherResEmail = explode('/', $value[10]);
+            } else {
+                $otherResEmail = explode(',', $value[10]);
+            }
+            if (strpos($value[11], '/')) {
+                $otherResMobile = explode('/', $value[11]);
+            } else {
+                $otherResMobile = explode(',', $value[11]);
+            }
+            // $otherResEmail = explode(',', $value[10]);
+            // $otherResMobile = explode(',', $value[11]);
 
             $forloopcnt = max(count($otherResEmail), count($otherResMobile));
 

@@ -146,7 +146,8 @@
                                     <table style="width: 100%">
                                         @foreach ($case->invitation as $key => $value)
                                             <?php $doc = 'storage/app/public/mediation/' . $case->id . '/' . $value->file_name; ?>
-
+                                            <?php $cdate = new DateTime($value->created_at);
+                                            $cdate = $cdate->format('d-m-Y'); ?>
                                             <tr>
                                                 <td style="width: 5%;"><b>{{ $key + 1 }}</b></td>
                                                 @if ($key == 0)
@@ -157,6 +158,8 @@
                                                             target="_blank">{{ $value->file_name }}</b></a></td>
                                                 @endif
                                                 {{-- <td><a href="{{url($doc)}}" target="_blank">@lang('case.view')</a></td> --}}
+                                                <td style="width: 15%;"><b>{{ $cdate }}</b></td>
+
                                             </tr>
                                         @endforeach
                                     </table>

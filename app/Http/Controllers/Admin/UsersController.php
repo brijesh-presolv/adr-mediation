@@ -10,15 +10,16 @@ use App\Models\AreaOfSpecialization;
 use App\Http\Helpers\SendGrid;
 use Illuminate\Support\Facades\Storage;
 
-class UsersController extends Controller {
+class UsersController extends Controller
+{
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct() {
-        
+    public function __construct()
+    {
     }
 
     /**
@@ -26,7 +27,8 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index($role = "user") {
+    public function index($role = "user")
+    {
         if ($role == "mediator") {
             $role = 1;
         } else {
@@ -40,15 +42,16 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function statusChangeApprove(Request $request) {
+    public function statusChangeApprove(Request $request)
+    {
         $user = User::find($request->id);
         $user->status = $request->status;
         $d = [
             'event' => 'APPROVE',
             'userid' => $request->id,
         ];
-        if ($user->role==0 && $request->status == 1) {
-            $err=SendGrid::send($d, $user->email, env('L23_USER_ACCOUNT_ACTIVATION', ''));
+        if ($user->role == 0 && $request->status == 1) {
+            $err = SendGrid::send($d, $user->email, env('L23_USER_ACCOUNT_ACTIVATION', ''));
         } else if ($request->status == 1) {
             SendGrid::send($d, $user->email, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''));
         }
@@ -61,7 +64,8 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function statusChange(Request $request) {
+    public function statusChange(Request $request)
+    {
         $user = User::find($request->id);
         $user->isActive = $request->status;
         $user->save();
@@ -73,7 +77,8 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function edit($id, Request $request) {
+    public function edit($id, Request $request)
+    {
         $user = User::findOrFail($id);
         $areaOfSpecialization = AreaOfSpecialization::all();
         $medi = Mediation_Details::where("user_id", "=", $id)->first();
@@ -85,7 +90,8 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         $user = User::find($request->id);
         $user->first_name = ucfirst($request->first_name);
         $user->last_name = ucfirst($request->last_name);
@@ -103,16 +109,16 @@ class UsersController extends Controller {
         if (isset($request->status)) {
             $user->isDone = $request->status;
         }
-        if($request->hasFile('signature')) {
-            if($user->role == 0) {
-                if($user->signature_photo != null) {
+        if ($request->hasFile('signature')) {
+            if ($user->role == 0) {
+                if ($user->signature_photo != null) {
                     Storage::delete('public/user/' . $request->id . '/signature/' . $user->signature_photo);
                 }
                 $extension = $request->file('signature')->getClientOriginalExtension();
                 $name = 'User_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
                 Storage::put('public/user/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
             } else {
-                if($user->signature_photo != null) {
+                if ($user->signature_photo != null) {
                     Storage::delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
                 }
                 $extension = $request->file('signature')->getClientOriginalExtension();
@@ -125,19 +131,19 @@ class UsersController extends Controller {
             // $extension = $request->file('signature')->getClientOriginalExtension();
             // $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
             // Storage::put('public/mediator/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
-        } 
-        if($request->hasFile('profilePic')) {
-            if($user->profile_pic != null) {
+        }
+        if ($request->hasFile('profilePic')) {
+            if ($user->profile_pic != null) {
                 Storage::delete('public/mediator/' . $request->id . '/profile/' . $user->profile_pic);
             }
             $extension = $request->file('profilePic')->getClientOriginalExtension();
             $profilename = 'Mediator_Profile_Pic' . sprintf('%06d', $request->id) . time() . '.' . $extension;
             $s = Storage::put('public/mediator/' . $request->id . '/profile/' . $profilename, file_get_contents($request->profilePic));
-        } 
-        if(isset($name)) {
+        }
+        if (isset($name)) {
             $user->signature_photo = $name;
         }
-        if(isset($profilename)) {
+        if (isset($profilename)) {
             $user->profile_pic = $profilename;
         }
 
@@ -172,17 +178,20 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function jsonApprove($role = 0) {
+    public function jsonApprove($role = 0)
+    {
         $users = User::where("role", "=", $role)->where('status', 1)->where('is_deleted', 0)->get();
         return response()->json(["data" => $users]);
     }
 
-    public function jsonNewreq($role = 0) {
+    public function jsonNewreq($role = 0)
+    {
         $users = User::where("role", "=", $role)->where('status', 0)->where('is_deleted', 0)->get();
         return response()->json(["data" => $users]);
     }
 
-    public function jsonUnapprove($role = 0) {
+    public function jsonUnapprove($role = 0)
+    {
         $users = User::where("role", "=", $role)->where('is_deleted', 1)->get();
         return response()->json(["data" => $users]);
     }
@@ -196,4 +205,14 @@ class UsersController extends Controller {
         return true;
     }
 
+    public function ChangeRole(Request $request)
+    {
+        $user = User::find($request->userId);
+        $user->role = $request->role;
+        if ($user->save()) {
+            return json_encode(["message" => "success"]);
+        } else {
+            return json_encode(["message" => "error"]);
+        };
+    }
 }

@@ -13,15 +13,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class DashboardController extends Controller {
+class DashboardController extends Controller
+{
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct() {
-        
+    public function __construct()
+    {
     }
 
     /**
@@ -29,17 +30,18 @@ class DashboardController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index() {
+    public function index()
+    {
         $usersCount = 0;
         $allCasesCount = 0;
         $respondingPartiesCount = 0;
         $ongoingCount = 0;
         $resolvedCount = 0;
         $newCount = 0;
-        $approveUsersCount = User::whereIn("role", [0])->where("status", 1)->count();
-        $approveMediatorCount = User::whereIn("role", [1])->where("status", 1)->count();
-        $unapproveUsersCount = User::whereIn("role", [0])->where("status", 0)->count();
-        $unapproveMediatorCount = User::whereIn("role", [1])->where("status", 0)->count();
+        $approveUsersCount = User::whereIn("role", [0])->where("status", 1)->where("is_deleted", 0)->count();
+        $approveMediatorCount = User::whereIn("role", [1])->where("status", 1)->where("is_deleted", 0)->count();
+        $unapproveUsersCount = User::whereIn("role", [0])->where("status", 0)->where("is_deleted", 0)->count();
+        $unapproveMediatorCount = User::whereIn("role", [1])->where("status", 0)->where("is_deleted", 0)->count();
         $allCasesCount = MedCase::count();
         // $respondingPartiesCount = InvoledUser::where('isClaimant', "<>", 0)->count();
         $respondingPartiesCount = InvoledUser::where('isClaimant', "<>", 0)->where('joinCode', null)->where('isOnboarded', 1)->count();
@@ -66,40 +68,43 @@ class DashboardController extends Controller {
 
         $loginUser = Auth::user()->id;
         $profileData = User::select('*')
-                // ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
-                ->where('id', $loginUser)->first();
+            // ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+            ->where('id', $loginUser)->first();
         // find($loginUser);
         // $mediation_details
         return view('admin.profile', compact('profileData'));
     }
 
-    public function changePassword($id) {
+    public function changePassword($id)
+    {
 
         $data = User::find($id);
         return view('admin.changePassword', compact('data'));
     }
 
-    public function updateProfile($id,Request $request) {
+    public function updateProfile($id, Request $request)
+    {
 
         // dd($request->all());
-        
-        if($request->an == 'cp'){
 
-            $request->validate([
+        if ($request->an == 'cp') {
+
+            $request->validate(
+                [
                     'current_password' => ['required', new MatchOldPassword],
                     'new_password' => ['required'],
-                    'new_confirm_password' => ['same:new_password','required'],
+                    'new_confirm_password' => ['same:new_password', 'required'],
                 ],
                 [
-                    'current_password.required'=>'Enter Current Password*',    
-                    'new_password.required'=>'Enter new Password*',    
-                    'new_confirm_password.required'=>'Enter Confirm Password*',    
-                    'new_confirm_password.same'=>'New password is not matched with confirm password please re-enter*',    
+                    'current_password.required' => 'Enter Current Password*',
+                    'new_password.required' => 'Enter new Password*',
+                    'new_confirm_password.required' => 'Enter Confirm Password*',
+                    'new_confirm_password.same' => 'New password is not matched with confirm password please re-enter*',
                 ],
-                );
+            );
 
-              User::find(auth()->user()->id)->update(['password'=> Hash::make($request->new_password)]);
-                return redirect('admin/profile')->with('key', "Password Update Succesfully");
+            User::find(auth()->user()->id)->update(['password' => Hash::make($request->new_password)]);
+            return redirect('admin/profile')->with('key', "Password Update Succesfully");
         }
 
 
@@ -111,16 +116,16 @@ class DashboardController extends Controller {
         //         'mobile_number' => ['unique:users'],
         //     ],
         //     [
-        //         'firstName.required'=>'first name cant empty*',    
-        //         'lastName.required'=>'Last name cant empty*',    
-        //         'email.email'=>'invalid email address*',     
-        //         'email.required'=>'Please Enter Email*', 
+        //         'firstName.required'=>'first name cant empty*',
+        //         'lastName.required'=>'Last name cant empty*',
+        //         'email.email'=>'invalid email address*',
+        //         'email.required'=>'Please Enter Email*',
         //         'email.unique'=>'This Email already used*',
         //         'mobile_number.unique'=>'This Mobile No. already used*',
         //     ]
         //     );
         // dd($valid);
-        
+
         $dataToUpdate = [
             'first_name' => ucfirst($request->firstName),
             'last_name' => ucfirst($request->lastName),
@@ -131,23 +136,19 @@ class DashboardController extends Controller {
 
         // dd($dataToUpdate);
 
-        User::where('id',$id)->update($dataToUpdate);
+        User::where('id', $id)->update($dataToUpdate);
         return redirect('admin/profile')->with('key', "Profile Updated Succesfully");
-
-
     }
 
     public function Notification()
     {
         $view = Notification::where('view', 0)->get();
-        foreach($view as $item) {
+        foreach ($view as $item) {
             $item->view = 1;
             $item->save();
         }
         $data = Notification::notificationData();
         // dd($data);
         return view('admin.case.notification', compact('data'));
-        
     }
-
 }
