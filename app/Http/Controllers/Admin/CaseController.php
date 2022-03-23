@@ -771,7 +771,56 @@ class CaseController extends Controller
         $deleted = ManageSession::find($id);
         $deleted->is_deleted = 1;
         $deleted->delete_reason = $request->reason;
+        // dd($deleted);
         if ($deleted->save()) {
+            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $deleted->case_id)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+            $caseid = "M" . sprintf("%06d", $deleted->case_id);
+            $d1 = [
+                'event' => 'SESS_CEN_PARTY',
+                'case_id' => $deleted->case_id,
+            ];
+            if (!is_null($deleted->session_party_ids)) {
+                $dataArray = json_decode($deleted->session_party_ids);
+            }
+            $userPhone = array();
+
+            if (isset($dataArray)) {
+                foreach ($dataArray as $d) {
+                    $dd = InvoledUser::where('id', $d)->where('userPlanId', $deleted->case_id)->first();
+                    if (isset($dd)) {
+                        if ($dd->userEmail != null) {
+                            SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
+                        }
+                        if ($dd->userPhone != null) {
+                            $userPhone[] = $dd->userPhone;
+                        }
+                    } else {
+                        $dd = InvoledUser::where('userId', $d)->where('userPlanId', $deleted->case_id)->first();
+                        if (isset($dd)) {
+                            if ($dd->userEmail != null) {
+                                SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
+                            }
+                            if ($dd->userPhone != null) {
+                                $userPhone[] = $dd->userPhone;
+                            }
+                        }
+                    }
+                }
+            }
+            $d2 = [
+                'event' => 'SESS_CEN_MED',
+                'case_id' => $deleted->case_id,
+            ];
+            if(isset($mediator)) {
+                if($mediator->email != "") {
+                    SendGrid::send($d2, $mediator->email, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Mediator"], $mediator->username);
+                } 
+            }
+            // SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+
             return json_encode(["message" => "success"]);
         } else {
             return json_encode(["message" => "error"]);

@@ -29,26 +29,34 @@ class MedCase extends Model
             $sql = MedCase::with('user_involed');
         }
         if ($searchValue != '') {
-            $uidSearch = ltrim($searchValue, "M0");
-            if(empty(date_parse($searchValue)['errors'])) {
+            $searchValue = ltrim($searchValue, "M0");
+            if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
+                });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
+            } else {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
+                        
+                        ->orWhereHas('user_involed', function ($t) use ($searchValue) {
+                            $t->where('name', 'LIKE', "%{$searchValue}%");
+                        });
+                });
             }
-
-            $sql->where(function ($query) use ($searchValue, $uidSearch) {
-                $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
-                    ->orWhere('mediation_case.id', 'LIKE', "{$uidSearch}%")
-                    ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
-                    // ->orWhereHas('user_involed',function($t)use($searchValue){
-                    //     $t->where('name', 'LIKE', "%{$searchValue}%");
-                    // });
-            });
         }
         // $subQuery = DB::table('user_involved_in_agreement')
         // ->join('mediation_case', DB::raw('mediation_case.id'), '=', DB::raw('user_involved_in_agreement.userPlanid'))
         // ->skip(0)
         // ->take(1);
-        $cases = $sql->select("mediation_case.*", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", "consent_disclosures.updated_at as update", "consent_disclosures.created_at as create")
+        $sql->select("mediation_case.*", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", "consent_disclosures.updated_at as update", "consent_disclosures.created_at as create")
             ->leftJoin("mediators_mediation_cases_status", function ($join) {
                 $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
                 $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
@@ -57,31 +65,31 @@ class MedCase extends Model
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             // ->leftJoin("user_involved_in_agreement", "user_involved_in_agreement.userPlanid", "=", "mediation_case.id")
             ->where("mediation_case.confirm_status", "=", $role);
-            
 
-            if($columnName == "case.id" && $columnSortOrder == 'asc') {
-                $sql->orderBy('mediation_case.id', 'ASC');
-            } else if($columnName == "date" && $columnSortOrder == 'asc') {
-                $sql->orderBy('mediation_case.created_at', 'ASC');
-            } else if($columnName == "date" && $columnSortOrder == 'desc') {
-                $sql->orderBy('mediation_case.created_at', 'DESC');
-            } else if($columnName == "party" && $columnSortOrder == 'acs') {
-                $sql->with('user_involed',function($t) {
-                    $t->orderBy('name', 'ASC');
-                });
-            } else if($columnName == "party" && $columnSortOrder == 'desc') {
-                $sql->with('user_involed',function($t) {
-                    $t->orderBy('name', 'DESC');
-                });
-            } else if($columnName == "case.mediator_username" && $columnSortOrder == 'asc') {
-                $sql->orderBy('users.first_name', 'ASC');
-            }  else if($columnName == "case.mediator_username" && $columnSortOrder == 'desc') {
-                $sql->orderBy('users.first_name', 'DESC');
-            } else {
-                $sql->orderBy('mediation_case.id', 'DESC');
-            }
 
-            $cases = $sql->skip($row)
+        if ($columnName == "case.id" && $columnSortOrder == 'asc') {
+            $sql->orderBy('mediation_case.id', 'ASC');
+        } else if ($columnName == "date" && $columnSortOrder == 'asc') {
+            $sql->orderBy('mediation_case.created_at', 'ASC');
+        } else if ($columnName == "date" && $columnSortOrder == 'desc') {
+            $sql->orderBy('mediation_case.created_at', 'DESC');
+        } else if ($columnName == "party" && $columnSortOrder == 'acs') {
+            $sql->with('user_involed', function ($t) {
+                $t->orderBy('name', 'ASC');
+            });
+        } else if ($columnName == "party" && $columnSortOrder == 'desc') {
+            $sql->with('user_involed', function ($t) {
+                $t->orderBy('name', 'DESC');
+            });
+        } else if ($columnName == "case.mediator_username" && $columnSortOrder == 'asc') {
+            $sql->orderBy('users.first_name', 'ASC');
+        } else if ($columnName == "case.mediator_username" && $columnSortOrder == 'desc') {
+            $sql->orderBy('users.first_name', 'DESC');
+        } else {
+            $sql->orderBy('mediation_case.id', 'DESC');
+        }
+
+        $cases = $sql->skip($row)
             ->take($rowperpage)->get();
         return $cases;
     }
@@ -94,19 +102,28 @@ class MedCase extends Model
             $sql = MedCase::with('user_involed');
         }
         if ($searchValue != '') {
-            $uidSearch = ltrim($searchValue, "M0");
-            if(empty(date_parse($searchValue)['errors'])) {
+            $searchValue = ltrim($searchValue, "M0");
+            if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
+                });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
+            } else {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
+                        
+                        ->orWhereHas('user_involed', function ($t) use ($searchValue) {
+                            $t->where('name', 'LIKE', "%{$searchValue}%");
+                        });
+                });
             }
-            $sql->where(function ($query) use ($searchValue, $uidSearch) {
-                $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
-                    ->orWhere('mediation_case.id', 'LIKE', "{$uidSearch}%")
-                    ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
-                    // ->orWhereHas('user_involed',function($t)use($searchValue){
-                    //     $t->where('name', 'LIKE', "%{$searchValue}%");
-                    // });
-            });
         }
         $cases = $sql->leftJoin("mediators_mediation_cases_status", function ($join) {
             $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");

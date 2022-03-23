@@ -157,9 +157,9 @@
                                                     <td><a href="{{ url($doc) }}"
                                                             target="_blank">{{ $value->file_name }}</b></a></td>
                                                 @endif
-                                                {{-- <td><a href="{{url($doc)}}" target="_blank">@lang('case.view')</a></td> --}}
                                                 <td style="width: 15%;"><b>{{ $cdate }}</b></td>
 
+                                                {{-- <td><a href="{{url($doc)}}" target="_blank">@lang('case.view')</a></td> --}}
                                             </tr>
                                         @endforeach
                                     </table>
@@ -202,10 +202,10 @@
                                 <th></th>
                             </tr>
 
-                            <?php foreach ($case->supporting_document as $k => $v) { ?>
+                            <?php foreach ($case->supporting_document as $k => $v) { $user_id_array = [];?>
                             @if ($v->access != null)
                                 <?php $accessId = explode(',', $v->access);
-                                $user_id_array = []; ?>
+                                 ?>
                                 @foreach ($accessId as $item)
                                     <?php $userAccess = App\Models\InvoledUser::find($item);
                                     $user_id_array[] = $userAccess->userId;

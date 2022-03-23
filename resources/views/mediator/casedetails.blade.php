@@ -210,7 +210,7 @@
                                 <?php foreach ($case->supporting_document as $k => $v) { ?>
                                 @if ($v->mediator_access == 1)
                                     <?php $userAccess = App\Models\InvoledUser::where('userPlanId', $case->id)->get(); ?>
-                                    <td><?= basename($v->file_name) ?></td>
+                                    <td style="word-break: break-word"><?= basename($v->file_name) ?></td>
                                     <td>
                                         <?php $accessParty = explode(',', $v->access); ?>
                                         @foreach ($userAccess as $key => $item)
