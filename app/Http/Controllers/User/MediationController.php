@@ -665,23 +665,24 @@ class MediationController extends Controller
             $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
             $value->share_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->count();
             $value->share_view_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->where("view_user", 0)->count();
+            
+            if(isset($value->casestatus)) {
+                $value->casestatus->css = '';
 
-            $value->casestatus->css = '';
+                if ($value->casestatus->status == 2) {
 
-            if ($value->casestatus->status == 2) {
+                    $value->casestatus->css = 'danger';
+                } else if ($value->casestatus->status == 5) {
 
-                $value->casestatus->css = 'danger';
-            } else if ($value->casestatus->status == 5) {
+                    $value->casestatus->css = 'danger';
+                } else if ($value->casestatus->status == 6) {
 
-                $value->casestatus->css = 'danger';
-            } else if ($value->casestatus->status == 6) {
+                    $value->casestatus->css = 'success';
+                } else if ($value->casestatus->status == 7) {
 
-                $value->casestatus->css = 'success';
-            } else if ($value->casestatus->status == 7) {
-
-                $value->casestatus->css = 'danger';
+                    $value->casestatus->css = 'danger';
+                }
             }
-
             $closed[] = $value;
         }
 

@@ -43,22 +43,24 @@ class DashboardController extends Controller
         $unapproveUsersCount = User::whereIn("role", [0])->where("status", 0)->where("is_deleted", 0)->count();
         $unapproveMediatorCount = User::whereIn("role", [1])->where("status", 0)->where("is_deleted", 0)->count();
         $allCasesCount = MedCase::count();
-        $data = MedCase::get();
-        $respondingPartiesCount = 0;
-        foreach($data as $value){
-            // dd($value);
-            $respondingParties = InvoledUser::where('userPlanId', $value->id)->where('isClaimant', "<>", 0)->where('joinCode', null)->where('isOnboarded', 1)->get();
-            if(count($respondingParties) > 0) {
-                $respondingPartiesCount++;
-            }
-        }
+        // $data = MedCase::get();
+        // $respondingPartiesCount = 0;
+        // foreach($data as $value){
+        //     // dd($value);
+        //     $respondingParties = InvoledUser::where('userPlanId', $value->id)->where('isClaimant', "<>", 0)->where('joinCode', null)->where('isOnboarded', 1)->first();
+        //     if(isset($respondingParties)) {
+        //         $respondingPartiesCount++;
+        //     }
+        // }
         // $respondingPartiesCount = InvoledUser::where('isClaimant', "<>", 0)->count();
         // $respondingPartiesCount = InvoledUser::where('isClaimant', "<>", 0)->where('joinCode', null)->where('isOnboarded', 1)->count();
         // $respondingPartiesCount = MedCase::join('user_involved_in_agreement', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')
-        //                             ->where('user_involved_in_agreement.isClaimant', "<>", 0)->where('user_involved_in_agreement.joinCode', null)->where('user_involved_in_agreement.isOnboarded', 1)
-        //                             ->count();
-
-
+        //             ->where('user_involved_in_agreement.isClaimant', "<>", 0)->where('user_involved_in_agreement.joinCode', null)->where('user_involved_in_agreement.isOnboarded', 1)
+        //             ->count();
+        $respondingPartiesCount = MedCase::whereHas('user_involed', function ($q){
+            $q->where('isClaimant', '<>', 0)->where('joinCode', null)->where('isOnboarded', 1);
+        })->count();
+        // dd($respondingPartiesCount);
         $resolvedCount = MedCase::where("case_status", 6)->where("confirm_status", 2)->count();
         $unresolvedCount = MedCase::where("case_status", 7)->where("confirm_status", 2)->count();
         $WithdrawnCount = MedCase::where("case_status", 5)->where("confirm_status", 2)->count();

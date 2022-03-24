@@ -108,7 +108,7 @@ use App\Models\InvoledUser;
 
                             <?php 
 
-
+                            if(isset($value->casestatus)) {
                             if ($value->casestatus->status==6){?>
 
                             <button value="<?= $value->caseid ?>"  data-id="<?= $value->caseid ?>" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View</button>
@@ -119,13 +119,14 @@ use App\Models\InvoledUser;
                        <?php } else if ($value->casestatus->status==7){?>
                             <button value="Comment" data-withdraw="{{$value->withdraw}}" data-toggle="modal" data-target="#withdrawModal" class="btn btn-danger waves-effect btn-sm">Unresolved</button>
 
-                       <?php } ?>
+                       <?php } }?>
 
                         </td>
                         <td>
-                            
+                            @if(isset($value->casestatus))
                             <span class="badge badge-{{$value->casestatus->css}} ">{{$value->casestatus->description}} | At: {{$value->casestatus->created}}
                             </span>
+                            @endif
                         </td>
 
                     </tr>
