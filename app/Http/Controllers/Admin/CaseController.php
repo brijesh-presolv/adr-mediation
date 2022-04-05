@@ -785,7 +785,7 @@ class CaseController extends Controller
             if (!is_null($deleted->session_party_ids)) {
                 $dataArray = json_decode($deleted->session_party_ids);
             }
-            $userPhone = array();
+            // $userPhone = array();
 
             if (isset($dataArray)) {
                 foreach ($dataArray as $d) {
@@ -795,7 +795,19 @@ class CaseController extends Controller
                             SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
                         }
                         if ($dd->userPhone != null) {
-                            $userPhone[] = $dd->userPhone;
+
+                            $var = ['-party-', '-date-', '-caseid-'];
+                            $var1 = ["Party", $deleted->session_date, $caseid];
+                            $content1 = WaTemplate::getcontent('L24_cancel_mediation_session');
+                            $content = str_replace($var, $var1, $content1);
+                            $dwa1 = [
+                                'caseid' => $id,
+                                'contact' => "+91" . $dd->userPhone,
+                                'content' => ['text' => $content],
+                                'event' => 'SESS_CEN'
+                            ];
+
+                            $access = Whatsapp::sendWamessage($dwa1);
                         }
                     } else {
                         $dd = InvoledUser::where('userId', $d)->where('userPlanId', $deleted->case_id)->first();
@@ -804,21 +816,49 @@ class CaseController extends Controller
                                 SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
                             }
                             if ($dd->userPhone != null) {
-                                $userPhone[] = $dd->userPhone;
+
+                                $var = ['-party-', '-date-', '-caseid-'];
+                                $var1 = ["Party", $deleted->session_date, $caseid];
+                                $content1 = WaTemplate::getcontent('L24_cancel_mediation_session');
+                                $content = str_replace($var, $var1, $content1);
+                                $dwa1 = [
+                                    'caseid' => $id,
+                                    'contact' => "+91" . $dd->userPhone,
+                                    'content' => ['text' => $content],
+                                    'event' => 'SESS_CEN'
+                                ];
+
+                                $access = Whatsapp::sendWamessage($dwa1);
                             }
                         }
                     }
                 }
             }
             $d2 = [
-                'event' => 'SESS_CEN_MED',
+                'event' => 'SESS_CEN',
                 'case_id' => $deleted->case_id,
             ];
-            if(isset($mediator)) {
-                if($mediator->email != "") {
+            if (isset($mediator)) {
+                if ($mediator->email != "") {
                     SendGrid::send($d2, $mediator->email, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Mediator"], $mediator->username);
-                } 
+                }
+                if ($mediator->mobile_number != "") {
+
+                    $var = ['-party-', '-date-', '-caseid-'];
+                    $var1 = ["Mediator", $deleted->session_date, $caseid];
+                    $content1 = WaTemplate::getcontent('L24_cancel_mediation_session');
+                    $content = str_replace($var, $var1, $content1);
+                    $dwa1 = [
+                        'caseid' => $id,
+                        'contact' => "+91" . $mediator->mobile_number,
+                        'content' => ['text' => $content],
+                        'event' => 'SESS_CEN'
+                    ];
+
+                    $access = Whatsapp::sendWamessage($dwa1);
+                }
             }
+
             // SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
 
             return json_encode(["message" => "success"]);
