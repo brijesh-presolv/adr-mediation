@@ -474,37 +474,90 @@
                     dangerMode: true,
                 }).then((willDelete) => {
                     if (willDelete) {
-                        $(".blkchk").each(function() {
+                        var cids = null;
+                        var idarr = [];
+                        var ctcnt = 0;
+                        $(".blkchk").each(function () {
                             if (this.checked) {
-                                var csrf = document.querySelector('meta[name="csrf-token"]')
-                                .content;
-                                var id = $(this).data("caseid");
-
-                                $.ajax({
-                                    url: '{{ route('admin.case.reject_status') }}',
-                                    method: "post",
-                                    data: {
-                                        id: id,
-                                        '_token': csrf
-                                    },
-                                    beforeSend: function() {
-                                        swal({
-                                            title: 'Loading...',
-                                            showConfirmButton: false,
-                                            buttons: false,
-
-                                        });
-                                    },
-                                }).done(function(data) {
-                                    userTable.ajax.reload();
-                                    swal("@lang('case.reject_successfully')", {
-                                        icon: "success",
-                                    }).then(function() {
-                                        location.reload();
-                                    });
-                                });
+                            ctcnt++;
+                                if (cids == null) {
+                                    cids = $(this).data("caseid");
+                                } else {
+                                    cids = cids + "," + $(this).data("caseid");
+                                }
                             }
                         });
+                        $(".blkchk").each(function () {
+                    
+                            if (this.checked) {
+                            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        
+                            idarr.push({
+                                id: $(this).data("caseid"),
+                                token: csrf,
+                                allcids: cids,
+                                total_row: ctcnt,
+                                log_type: "Bulk Reject",
+                            });
+                            }
+                        });
+                        var burl = '{{ route("admin.case.reject_status") }}';
+                        swal.close();
+                        $(".ccdd").click();
+                        $(".msgDiv").hide();
+                        $(".loading_form").show();
+                        $("#loading_image").show();
+                        $(".close").hide();
+                        $.when
+                        .apply(
+                        $,
+                        $.map(idarr, function (item, i) {
+                            looper = looper.then(function () {
+                                return ajax_request(item, burl);
+            
+                            });
+                            return looper;
+                        })
+                        )
+                        .then(function () {
+                            swal.close();
+                            $("#messccclose").append(
+                                '<br><center><a href="{{route("admin.case.newrequest")}}" class="btn btn-danger btn-lg">Close</a></center>'
+                            );
+                            var objDiv = document.getElementById("messcc");
+                            objDiv.scrollTop = objDiv.scrollHeight;
+                        });
+                        // $(".blkchk").each(function() {
+                        //     if (this.checked) {
+                        //         var csrf = document.querySelector('meta[name="csrf-token"]')
+                        //         .content;
+                        //         var id = $(this).data("caseid");
+
+                        //         $.ajax({
+                        //             url: '{{ route('admin.case.reject_status') }}',
+                        //             method: "post",
+                        //             data: {
+                        //                 id: id,
+                        //                 '_token': csrf
+                        //             },
+                        //             beforeSend: function() {
+                        //                 swal({
+                        //                     title: 'Loading...',
+                        //                     showConfirmButton: false,
+                        //                     buttons: false,
+
+                        //                 });
+                        //             },
+                        //         }).done(function(data) {
+                        //             userTable.ajax.reload();
+                        //             swal("@lang('case.reject_successfully')", {
+                        //                 icon: "success",
+                        //             }).then(function() {
+                        //                 location.reload();
+                        //             });
+                        //         });
+                        //     }
+                        // });
 
                     } else {
                         swal("@lang('case.cansel_reject_request')");
