@@ -18,6 +18,7 @@ use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
 use App\Models\Batch;
+use App\Models\BulkLog;
 use App\Models\EmailTrack;
 use App\Models\ManageSession;
 use App\Models\Reminder;

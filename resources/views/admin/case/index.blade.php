@@ -209,6 +209,76 @@
             </div>
         </div>
     </div>
+
+    <button style="display:none;" type="button" class="btn btn-info btn-lg cc1" data-toggle="modal" data-target="#msg1">MSG</button>
+    <!-- message -->
+    <div id="msg1" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    
+                    <br>
+                    <div class="msgDiv">
+                        
+                    </div>
+                      <div class="loading_form text-center" style="display: none;">
+                    {{-- <center> --}}
+                            
+                        {{-- </center> --}}
+                    <p>Please Wait. Do Not Close Until Close Button Appear.</p>
+
+                    <div style="height: 200px;
+    overflow-y: scroll;" id="mess">
+                        
+                    </div>
+                    <!-- <a>Close</a> -->
+                </div>
+                   
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<div class="row">
+    <div class="col-md-12">
+            <button style="display:none;" class="btn btn-sucess ccdd" data-target="#myModalcc" data-toggle="modal"></button>
+
+
+<div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header d-flex flex-column align-items-center">
+         <button type="button" class="close" data-dismiss="modal">&times;</button> 
+        <br>
+                <div class="loading_form text-center" style="display: none;">
+                    {{-- <center> --}}
+                        <p>Please Wait. Do Not Close Until Close Button Appear.</p>
+                    <span id="loading_image"> 
+                        <img src="{{url('assets/')}}/images/loading_form.gif" >
+                    </span>
+                    {{-- </center> --}}
+                
+                    
+                    <!-- <div><a href="ongoing" class="btn btn-danger btn-lg directionCloseSwal" style="display: none;">Close</a></div> -->
+                </div>
+                <div id="totalPer"></div>
+                <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;' id="messcc">
+                </div>
+                <input type="hidden" id="last_uploaded_id" value="">
+                <div id="messccclose" style="margin-top: 2em;"></div>
+      </div>
+    </div>
+    </div>
+</div>
+
+</div>
+</div>
+
 @endsection
 
 <!-- Table datatable css -->
@@ -395,6 +465,121 @@
                 },
             ],
         });
+
+var insertRow = false;
+var logId = null;
+var insId = null;
+var failId = null;
+
+var ite = [];
+var comp = 0;
+var prc = 0;
+
+var ajax_request = function (item, url) {
+    var deferred = $.Deferred();
+      console.log(item)
+    $.ajax({
+        url: url,
+        dataType: "json",
+        type: "POST",
+        data: {
+            id: item.id,
+            _token: item.token,
+            allcids: item.allcids,
+            total_row: item.total_row,
+            midater : item.midater,
+            log_id: logId,
+            insertRow: insId,
+            faildRow: failId,
+            log_type: item.log_type,
+        },
+        success: function (result) {
+
+            ite.push(result);
+            comp = comp + 1;
+            prc = Math.round(((comp * 100) / item.total_row));
+            $('#tto').html(prc);
+
+            if (logId == null) {
+                $("#loading_image").hide();
+                $("#totalPer").append(
+                "<h5 class='text-center mt-0'>Total " +
+                    item.total_row +
+                " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                );
+            }
+            
+            // if (logId == null) {
+            //     //$(".loading_image").hide();
+            //     $("#blkform1_image").html(
+            //         "<center><h5>Total " +
+            //         item.total_row +
+            //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
+            //     );
+            // }
+
+            logId = result.log_id;
+
+            if (result.response == "success") {
+                if (insId == null) {
+                    insId = result.caseid;
+                    //console.log('insId '+insId);
+                } else {
+                    insId = insId + "," + result.caseid;
+                    //console.log('insId d '+insId);
+                }
+                $("#messcc").append(
+                "<p style='color: green;' class='text-center'>Case ID : M" +
+                result.caseid.toString().padStart(6, "0") + " Success.</p>"
+                );
+                // $("#mess").append(
+                //     "<center>Case Id A00" + result.caseid + " Success.</center>"
+                // );
+            } else {
+                if (failId == null) {
+                    failId = result.caseid;
+                } else {
+                    failId = failId + "," + result.caseid;
+                }
+                $("#messcc").append(
+                "<p style='color: red;' class='text-center'>Case ID : M" +
+                result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                );
+                // $("#mess").append(
+                //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
+                // );
+            }
+            var objDiv = document.getElementById("messcc");
+            objDiv.scrollTop = objDiv.scrollHeight;
+            // var objDiv = document.getElementById("mess");
+            // objDiv.scrollTop = objDiv.scrollHeight;
+            deferred.resolve(result);
+        },
+        error: function (error) {
+            if (failId == null) {
+                failId = item.id;
+            } else {
+                failId = failId + "," + item.id;
+            }
+            $("#messcc").append(
+                "<center style='color: red;'>Case ID : M" +
+                item.cid.toString().padStart(6, "0") + " Failed.</center>"
+            );
+            // $("#mess").append(
+            //     "<center>Case Id A00" + error.caseid + " Failed.</center>"
+            // );
+            var objDiv = document.getElementById("messcc");
+            objDiv.scrollTop = objDiv.scrollHeight;
+            deferred.reject(error);
+        },
+        complete: function () {
+            swal.close();
+        },
+    });
+    return deferred.promise();
+};
+
+var looper = $.Deferred().resolve();
 
         $("#selectalldir").change(function() {
             if (this.checked) {
