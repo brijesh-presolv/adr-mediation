@@ -561,6 +561,43 @@
             </div>
         </div>
     </div>
+    {{-- modal for bulk cases send --}}
+    <div class="row">
+        <div class="col-md-12">
+            <button style="display:none;" class="btn btn-sucess ccdd" data-target="#myModalcc"
+                data-toggle="modal"></button>
+
+
+            <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header d-flex flex-column align-items-center">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <br>
+                            <div class="loading_form text-center" style="display: none;">
+                                {{-- <center> --}}
+                                <p>Please Wait. Do Not Close Until Close Button Appear.</p>
+                                <span id="loading_image">
+                                    <img src="{{ url('assets/') }}/images/loading_form.gif">
+                                </span>
+                                {{-- </center> --}}
+
+
+                                <!-- <div><a href="ongoing" class="btn btn-danger btn-lg directionCloseSwal" style="display: none;">Close</a></div> -->
+                            </div>
+                            <div id="totalPer"></div>
+                            <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;' id="messcc">
+                            </div>
+                            <input type="hidden" id="last_uploaded_id" value="">
+                            <div id="messccclose" style="margin-top: 2em;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 @endsection
 
 <!-- Table datatable css -->
@@ -845,6 +882,338 @@
             ],
         });
 
+        // function start for send one bye one ajax request 
+        var insertRow = false;
+        var logId = null;
+        var insId = null;
+        var failId = null;
+
+        var ite = [];
+        var comp = 0;
+        var prc = 0;
+
+        var ajax_request = function(item, url) {
+            var deferred = $.Deferred();
+
+            $.ajax({
+                url: url,
+                dataType: "json",
+                type: "POST",
+                data: {
+                    case_id: item.id,
+                    _token: item.token,
+                    allcids: item.allcids,
+                    total_row: item.total_row,
+                    log_id: logId,
+                    insertRow: insId,
+                    faildRow: failId,
+                    fsData: item.fsData,
+                    log_type: item.log_type,
+                },
+                success: function(result) {
+
+                    ite.push(result);
+                    comp = comp + 1;
+                    prc = Math.round(((comp * 100) / item.total_row));
+                    $('#tto').html(prc);
+
+                    if (logId == null) {
+                        $("#loading_image").hide();
+                        $("#totalPer").append(
+                            "<h5 class='text-center mt-0'>Total " +
+                            item.total_row +
+                            " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                        );
+                    }
+                    // if (logId == null) {
+                    //     //$(".loading_image").hide();
+                    //     $("#blkform1_image").html(
+                    //         "<center><h5>Total " +
+                    //         item.total_row +
+                    //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
+                    //     );
+                    // }
+
+                    logId = result.log_id;
+
+
+
+                    if (result.response == "success") {
+                        if (insId == null) {
+                            insId = result.caseid;
+                        } else {
+                            insId = insId + "," + result.caseid;
+                        }
+                        $("#messcc").append(
+                            "<p style='color: green;' class='text-center'>Case ID : M" +
+                            result.caseid.toString().padStart(6, "0") + " Success.</p>"
+                        );
+                        // $("#mess").append(
+                        //     "<center>Case Id A00" + result.caseid + " Success.</center>"
+                        // );
+                    } else {
+                        if (failId == null) {
+                            failId = result.caseid;
+                        } else {
+                            failId = failId + "," + result.caseid;
+                        }
+                        $("#messcc").append(
+                            "<p style='color: red;' class='text-center'>Case ID : M" +
+                            result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                        );
+                        // $("#mess").append(
+                        //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
+                        // );
+                    }
+                    var objDiv = document.getElementById("messcc");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    // var objDiv = document.getElementById("mess");
+                    // objDiv.scrollTop = objDiv.scrollHeight;
+                    deferred.resolve(result);
+                },
+                error: function(error) {
+                    if (failId == null) {
+                        failId = item.id;
+                    } else {
+                        failId = failId + "," + item.id;
+                    }
+                    $("#messcc").append(
+                        "<center style='color: red;'>Case ID : M" +
+                        item.cid.toString().padStart(6, "0") + " Failed.</center>"
+                    );
+                    $("#mess").append(
+                        "<center>Case Id A00" + error.caseid + " Failed.</center>"
+                    );
+                    var objDiv = document.getElementById("messcc");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    deferred.reject(error);
+                },
+                complete: function() {
+                    swal.close();
+                },
+            });
+            return deferred.promise();
+        };
+
+        var ajax_request_uploadDocs = function(item, url) {
+            var formData = new FormData();
+            formData.append("caseId", item.id);
+            formData.append("total_row", item.total_row);
+            formData.append("allcids", item.allcids);
+            formData.append("log_id", logId);
+            for (let i = 0; i < item.TotalFiles; i++) {
+                formData.append("files" + i, item.fsData[i]);
+            }
+            formData.append("TotalFiles", item.TotalFiles);
+            formData.append("insertRow", insId);
+            formData.append("faildRow", failId);
+            formData.append("token", item.token);
+
+            var deferred = $.Deferred();
+
+            $.ajax({
+                url: url,
+                dataType: "json",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: formData,
+                cache: false,
+
+                success: function(result) {
+
+                    ite.push(result);
+                    comp = comp + 1;
+                    prc = Math.round(((comp * 100) / item.total_row));
+                    $('#tto').html(prc);
+
+                    if (logId == null) {
+                        $("#loading_image").hide();
+                        $("#totalPer").append(
+                            "<h5 class='text-center mt-0'>Total " +
+                            item.total_row +
+                            " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                        );
+                    }
+
+
+                    // if (logId == null) {
+                    //     //$(".loading_image").hide();
+                    //     $("#blkform1_image").html(
+                    //         "<center><h5>Total " +
+                    //         item.total_row +
+                    //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
+                    //     );
+                    // }
+
+                    logId = result.log_id;
+
+
+
+                    if (result.response == "success") {
+                        if (insId == null) {
+                            insId = result.caseid;
+                         
+                        } else {
+                            insId = insId + "," + result.caseid;
+                        }
+                        $("#messcc").append(
+                            "<p style='color: green;' class='text-center'>Case ID : M" +
+                            result.caseid.toString().padStart(6, "0") + " Success.</p>"
+                        );
+                        // $("#mess").append(
+                        //     "<center>Case Id A00" + result.caseid + " Success.</center>"
+                        // );
+                    } else {
+                        if (failId == null) {
+                            failId = result.caseid;
+                        } else {
+                            failId = failId + "," + result.caseid;
+                        }
+                        $("#messcc").append(
+                            "<p style='color: red;' class='text-center'>Case ID : M" +
+                            result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                        );
+                        // $("#mess").append(
+                        //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
+                        // );
+                    }
+                    var objDiv = document.getElementById("messcc");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    // var objDiv = document.getElementById("mess");
+                    // objDiv.scrollTop = objDiv.scrollHeight;
+                    deferred.resolve(result);
+                },
+                error: function(error) {
+                    if (failId == null) {
+                        failId = item.id;
+                    } else {
+                        failId = failId + "," + item.id;
+                    }
+                    $("#messcc").append(
+                        "<center style='color: red;'>Case ID : M" +
+                        item.cid.toString().padStart(6, "0") + " Failed.</center>"
+                    );
+                    $("#mess").append(
+                        "<center>Case Id A00" + error.caseid + " Failed.</center>"
+                    );
+                    var objDiv = document.getElementById("messcc");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    deferred.reject(error);
+                },
+                complete: function() {
+                    swal.close();
+                },
+            });
+            return deferred.promise();
+        };
+
+        var ajax_request_addSession = function(item, url) {
+            var deferred = $.Deferred();
+
+            $.ajax({
+                url: url,
+                dataType: "json",
+                type: "POST",
+                data: {
+                    caseId: item.id,
+                    fsData: item.fsData,
+                    _token: item.token,
+                    allcids: item.allcids,
+                    total_row: item.total_row,
+                    log_id: logId,
+                    insertRow: insId,
+                    faildRow: failId,
+                    log_type: item.log_type
+                },
+
+                success: function(result) {
+
+                    ite.push(result);
+                    comp = comp + 1;
+                    prc = Math.round(((comp * 100) / item.total_row));
+                    $('#tto').html(prc);
+
+                    if (logId == null) {
+                        $("#loading_image").hide();
+                        $("#totalPer").append(
+                            "<h5 class='text-center mt-0'>Total " +
+                            item.total_row +
+                            " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                        );
+                    }
+
+                    // if (logId == null) {
+                    //     //$(".loading_image").hide();
+                    //     $("#blkform1_image").html(
+                    //         "<center><h5>Total " +
+                    //         item.total_row +
+                    //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
+                    //     );
+                    // }
+
+                    logId = result.log_id;
+
+                    if (result.response == "success") {
+                        if (insId == null) {
+                            insId = result.caseid;
+                         
+                        } else {
+                            insId = insId + "," + result.caseid;
+                        }
+                        $("#messcc").append(
+                            "<p style='color: green;' class='text-center'>Case ID : M" +
+                            result.caseid.toString().padStart(6, "0") + " Success.</p>"
+                        );
+                        // $("#mess").append(
+                        //     "<center>Case Id A00" + result.caseid + " Success.</center>"
+                        // );
+                    } else {
+                        if (failId == null) {
+                            failId = result.caseid;
+                        } else {
+                            failId = failId + "," + result.caseid;
+                        }
+                        $("#messcc").append(
+                            "<p style='color: red;' class='text-center'>Case ID : M" +
+                            result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                        );
+                        // $("#mess").append(
+                        //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
+                        // );
+                    }
+                    var objDiv = document.getElementById("messcc");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    // var objDiv = document.getElementById("mess");
+                    // objDiv.scrollTop = objDiv.scrollHeight;
+                    deferred.resolve(result);
+                },
+                error: function(error) {
+                    if (failId == null) {
+                        failId = item.id;
+                    } else {
+                        failId = failId + "," + item.id;
+                    }
+                    $("#messcc").append(
+                        "<center style='color: red;'>Case ID : M" +
+                        item.cid.toString().padStart(6, "0") + " Failed.</center>"
+                    );
+                    $("#mess").append(
+                        "<center>Case Id A00" + error.caseid + " Failed.</center>"
+                    );
+                    var objDiv = document.getElementById("messcc");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    deferred.reject(error);
+                },
+                complete: function() {
+                    swal.close();
+                },
+            });
+            return deferred.promise();
+        };
+
+        var looper = $.Deferred().resolve();
+
         $("#selectalldir").change(function() {
             if (this.checked) {
                 $("#bulkCloseBtn").show();
@@ -1021,37 +1390,108 @@
                 dangerMode: true,
             }).then(function(willDelete) {
                 if (willDelete) {
+                    var cids = null;
+                    var idarr = [];
+                    var ctcnt = 0;
+                    var result = {};
+
                     $(".blkchk").each(function() {
                         if (this.checked) {
-                            var id = $(this).data("caseid");
-                            $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
-                            $.ajax({
-                                type: 'post',
-                                url: '{{ route('admin.case.addSession') }}',
-                                data: $('#addSessionFormForBulk').serialize(),
-                                beforeSend: function() {
-                                    $('#addSessionModelForBulk').modal("hide");
-
-                                    swal({
-                                        title: 'Loading...',
-                                        showConfirmButton: false,
-                                        buttons: false,
-                                        allowOutsideClick: false,
-                                    });
-                                },
-                                success: function() {
-                                    // alert('form was submitted');
-                                    swal("session created!", {
-                                        icon: "success",
-                                    }).then(function() {
-                                        location.reload();
-                                    });
-                                    // $('#addSession-modal').modal("hide");
-                                }
-                            });
+                            ctcnt++;
+                            if (cids == null) {
+                                cids = $(this).data("caseid");
+                            } else {
+                                cids = cids + "," + $(this).data("caseid");
+                            }
                         }
-
                     });
+
+                    $(".blkchk").each(function() {
+                        if (this.checked) {
+
+                            $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
+                            var id = $(this).data("caseid");
+
+                            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        
+                            $.each($('#addSessionFormForBulk').serializeArray(), function() {
+                                result[this.name] = this.value;
+                            });
+
+                            idarr.push({
+                                id: $(this).data("caseid"),
+                                token: csrf,
+                                allcids: cids,
+                                total_row: ctcnt,
+                                fsData: result,
+                                log_type: "add Session",
+                            });
+
+                        }
+                    });
+
+
+                    var burl = '{{ route('admin.case.addSession') }}';
+                    swal.close();
+                    $(".ccdd").click();
+                    $(".msgDiv").hide();
+                    $(".loading_form").show();
+                    $("#loading_image").show();
+                    $(".close").hide();
+
+                    $.when
+                        .apply(
+                            $,
+                            $.map(idarr, function(item, i) {
+                                looper = looper.then(function() {
+                                  
+                                    return ajax_request_addSession(item, burl);
+
+                                });
+                                return looper;
+
+                            })
+                        )
+                        .then(function() {
+                            swal.close();
+                            // $("#myModalcc").hide();
+                            $("#messccclose").append(
+                                '<br><center><a href="{{ route('admin.case.ongoingrequest') }}" class="btn btn-danger btn-lg">Close</a></center>'
+                            );
+                            var objDiv = document.getElementById("messcc");
+                            objDiv.scrollTop = objDiv.scrollHeight;
+                        });
+                    // $(".blkchk").each(function() {
+                    //     if (this.checked) {
+                    //         var id = $(this).data("caseid");
+                    //         $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
+                    //         $.ajax({
+                    //             type: 'post',
+                    //             url: '{{ route('admin.case.addSession') }}',
+                    //             data: $('#addSessionFormForBulk').serialize(),
+                    //             beforeSend: function() {
+                    //                 $('#addSessionModelForBulk').modal("hide");
+
+                    //                 swal({
+                    //                     title: 'Loading...',
+                    //                     showConfirmButton: false,
+                    //                     buttons: false,
+                    //                     allowOutsideClick: false,
+                    //                 });
+                    //             },
+                    //             success: function() {
+                    //                 // alert('form was submitted');
+                    //                 swal("session created!", {
+                    //                     icon: "success",
+                    //                 }).then(function() {
+                    //                     location.reload();
+                    //                 });
+                    //                 // $('#addSession-modal').modal("hide");
+                    //             }
+                    //         });
+                    //     }
+
+                    // });
                 } else {
                     swal("@lang('case.request_canseled')").then(function() {
                         location.reload();
@@ -1080,36 +1520,105 @@
                 dangerMode: true,
             }).then((willDelete) => {
                 if (willDelete) {
+                    var cids = null;
+                    var Status = $('#status_id').val();
+
+                    var idarr = [];
+                    var ctcnt = 0;
+                    var result = {};
+
+
                     $(".blkchk").each(function() {
                         if (this.checked) {
-                            var id = $(this).data("caseid");
-                            $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]')
-                                .val(id);
+                            ctcnt++;
+                            if (cids == null) {
+                                cids = $(this).data("caseid");
+                            } else {
+                                cids = cids + "," + $(this).data("caseid");
+                            }
+                        }
+                    });
+                    $(".blkchk").each(function() {
 
-                            $.ajax({
-                                type: 'post',
-                                url: '{{ route('admin.case.withdraw') }}',
-                                data: $('#withdrawFormForBulk').serialize(),
-                                beforeSend: function() {
-                                    swal({
-                                        title: 'Loading...',
-                                        showConfirmButton: false,
-                                        buttons: false,
-                                    });
-                                },
-                                success: function() {
-                                    // alert('form was submitted');
-                                    userTable.ajax.reload(null, false);
-                                    swal("@lang('case.status_change_successfully')", {
-                                        icon: "success",
-                                    }).then(function() {
-                                        location.reload();
-                                    });
-                                    $('#withdrawModalForBulk').modal("hide");
-                                }
+                        if (this.checked) {
+                         
+                            $('#withdrawModalForBulk').find('input[name="caseId"]').val(id);
+                            var id = $(this).data("caseid");
+                            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+                         
+                            $.each($('#withdrawFormForBulk').serializeArray(), function() {
+                                result[this.name] = this.value;
+                            });
+                            console.log(result);
+                            idarr.push({
+                                id: $(this).data("caseid"),
+                                token: csrf,
+                                allcids: cids,
+                                total_row: ctcnt,
+                                fsData: result,
+                                log_type: "Bulk withdraw ",
                             });
                         }
                     });
+                    var burl = "{{ route('admin.case.withdraw') }}";
+                    swal.close();
+                    $(".ccdd").click();
+                    $(".msgDiv").hide();
+                    $(".loading_form").show();
+                    $("#loading_image").show();
+                    $(".close").hide();
+                    $.when
+                        .apply(
+                            $,
+                            $.map(idarr, function(item, i) {
+                                looper = looper.then(function() {
+
+                                    return ajax_request(item, burl);
+
+                                });
+                                return looper;
+
+                            })
+                        )
+                        .then(function() {
+                            swal.close();
+                            // $("#myModalcc").hide();
+                            $("#messccclose").append(
+                                '<br><center><a href="{{ route('admin.case.ongoingrequest') }}" class="btn btn-danger btn-lg">Close</a></center>'
+                            );
+                            var objDiv = document.getElementById("messcc");
+                            objDiv.scrollTop = objDiv.scrollHeight;
+                        });
+                    // $(".blkchk").each(function() {
+                    //     if (this.checked) {
+                    //         var id = $(this).data("caseid");
+                    //         $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]')
+                    //             .val(id);
+
+                    //         $.ajax({
+                    //             type: 'post',
+                    //             url: '{{ route('admin.case.withdraw') }}',
+                    //             data: $('#withdrawFormForBulk').serialize(),
+                    //             beforeSend: function() {
+                    //                 swal({
+                    //                     title: 'Loading...',
+                    //                     showConfirmButton: false,
+                    //                     buttons: false,
+                    //                 });
+                    //             },
+                    //             success: function() {
+                    //                 // alert('form was submitted');
+                    //                 userTable.ajax.reload(null, false);
+                    //                 swal("@lang('case.status_change_successfully')", {
+                    //                     icon: "success",
+                    //                 }).then(function() {
+                    //                     location.reload();
+                    //                 });
+                    //                 $('#withdrawModalForBulk').modal("hide");
+                    //             }
+                    //         });
+                    //     }
+                    // });
                 } else {
                     swal("@lang('case.request_canseled')");
                 }
@@ -1330,8 +1839,10 @@
             var formData = new FormData(this);
             let TotalFiles = $('#filesForBulk')[0].files.length;
             let files = $('#filesForBulk')[0];
+            var filesall = [];
             for (let i = 0; i < TotalFiles; i++) {
                 formData.append('files' + i, files.files[i]);
+                filesall[i] = files.files[i];
             }
             formData.append('TotalFiles', TotalFiles);
             swal({
@@ -1342,50 +1853,120 @@
                 dangerMode: true,
             }).then(function(willDelete) {
                 if (willDelete) {
+                    
+                    formData.delete('caseId');
+                    var id = $(this).data("caseid");
+                    // $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
+                    formData.append('caseId', id);
+
+                    var cids = null;
+                    var idarr = [];
+                    var ctcnt = 0;
+
+
                     $(".blkchk").each(function() {
                         if (this.checked) {
-                            formData.delete('caseId');
-                            var id = $(this).data("caseid");
-                            // $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
-                            formData.append('caseId', id);
+                            ctcnt++;
+                            if (cids == null) {
+                                cids = $(this).data("caseid");
+                            } else {
+                                cids = cids + "," + $(this).data("caseid");
+                            }
+                        }
+                    });
 
-                            $.ajax({
-                                type: 'POST',
-                                url: '{{ route('admin.case.storeMultiFile') }}',
-                                data: formData,
-                                cache: false,
-                                contentType: false,
-                                processData: false,
-                                dataType: 'json',
-                                beforeSend: function() {
-                                    $('#uploadSupportingDocsModalForBulk').modal(
-                                        "hide");
 
-                                    swal({
-                                        title: 'Loading...',
-                                        showConfirmButton: false,
-                                        buttons: false,
-                                        allowOutsideClick: false,
-                                    });
-                                },
-                                success: (data) => {
-                                    //this.reset();
-                                    swal("Files has been uploaded!", {
-                                        icon: "success",
-                                    }).then(function() {
-                                        location.reload();
-                                    });
-                                    $("#uploadSupportingDocsModalForBulk").modal(
-                                        "hide");
-                                },
-                                error: function(data) {
-                                    //alert(data.responseJSON.errors.files[0]);
-                                    console.log(data);
-                                }
+                    $(".blkchk").each(function() {
+                        if (this.checked) {
+                            $('#uploadFormModalForBulk').find('.modal-body input[name="case_id"]')
+                                .val(id);
+
+                            // var fileobj = Object.assign({}, file);
+                            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+                            var file;
+
+                            $.map($('#filesForBulk').get(0).files, function(file_m) {
+                                file = file_m;
+                            });
+                            idarr.push({
+                                token: csrf,
+                                id: $(this).data("caseid"),
+                                allcids: cids,
+                                total_row: ctcnt,
+                                fsData: filesall,
+                                TotalFiles: TotalFiles,
+                                log_type: "Upload-document ",
                             });
                         }
-
                     });
+                    
+                    // $.ajax({
+                    //     type: 'POST',
+                    //     url: '{{ route('admin.case.storeMultiFile') }}',
+                    //     data: formData,
+                    //     cache: false,
+                    //     contentType: false,
+                    //     processData: false,
+                    //     dataType: 'json',
+                    //     beforeSend: function() {
+                    //         $('#uploadSupportingDocsModalForBulk').modal(
+                    //             "hide");
+
+                    //         swal({
+                    //             title: 'Loading...',
+                    //             showConfirmButton: false,
+                    //             buttons: false,
+                    //             allowOutsideClick: false,
+                    //         });
+                    //     },
+                    //     success: (data) => {
+                    //         //this.reset();
+                    //         swal("Files has been uploaded!", {
+                    //             icon: "success",
+                    //         }).then(function() {
+                    //             location.reload();
+                    //         });
+                    //         $("#uploadSupportingDocsModalForBulk").modal(
+                    //             "hide");
+                    //     },
+                    //     error: function(data) {
+                    //         //alert(data.responseJSON.errors.files[0]);
+                    //         console.log(data);
+                    //     }
+                    // });
+                        
+
+                    
+                    var burl = "{{ route('admin.case.storeMultiFile') }}";
+                    swal.close();
+                    $(".ccdd").click();
+                    $(".msgDiv").hide();
+                    $(".loading_form").show();
+                    $("#loading_image").show();
+                    $(".close").hide();
+                    $.when
+                        .apply(
+                            $,
+                            $.map(idarr, function(item, i) {
+                                looper = looper.then(function() {
+
+                                    return ajax_request_uploadDocs(item, burl);
+
+                                });
+                                return looper;
+                            })
+                        )
+                        .then(function() {
+                            swal.close();
+                            // $("#myModalcc").hide();
+                            $("#messccclose").html("")
+                            $("#messccclose").html(
+                                '<br><center><a href="{{ route('admin.case.ongoingrequest') }}" class="btn btn-danger btn-lg">Close</a></center>'
+                            );
+                            var objDiv = document.getElementById("messcc");
+                            objDiv.scrollTop = objDiv.scrollHeight;
+                        });
                 } else {
                     swal("@lang('case.request_canseled')");
                 }

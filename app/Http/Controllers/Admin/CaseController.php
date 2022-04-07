@@ -233,57 +233,159 @@ class CaseController extends Controller
 
     public function withdrawStatus(Request $request)
     {
+
+        if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
+            if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
+                $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
+                $log = BulkLog::create([
+                    "selected_ids" => $params['allcids'],
+                    "uploaded_by" => Auth::user()->id,
+                    "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                    "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                    "updated_at" => date('Y-m-d H:i:s'),
+                ]);
+                $log_id = $log->id;
+            }
+        }
+
+        $status = ($request->status != null) ? $request->status : $request->fsData['status'];
         $user = MedCase::find($request->case_id);
         $user->confirm_status = 2;
-        $user->case_status = $request->status;
-        $user->withdraw = $request->withdraw_comment;
-        $user->save();
+        $user->case_status = $status;
+        $user->withdraw = ($request->withdraw_comment != null) ? $request->withdraw_comment : $request->fsData['withdraw_comment'];
 
-        $mediation_status_log = new Mediation_status_log;
-        $mediation_status_log->user_id = Auth::user()->id;
-        $mediation_status_log->mediation_case_id = $request->case_id;
-        $mediation_status_log->status = $request->status;
-        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
-            ->where("mediators_mediation_cases_status.status", "=", 1)
-            ->first();
-        $inv_id = "";
-        $inv = InvoledUser::select('id')->where('userPlanId', $request->case_id)->get();
-        foreach ($inv as $v) {
-            if ($inv_id == "") {
-                $inv_id = $v->id;
+        // $user->withdraw = $request->withdraw_comment;
+        if ($user->save()) {
+
+            $mediation_status_log = new Mediation_status_log;
+            $mediation_status_log->user_id = Auth::user()->id;
+            $mediation_status_log->mediation_case_id = $request->case_id;
+            $mediation_status_log->status = ($request->status != null) ? $request->status : $request->fsData['status'];
+            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $request->case_id)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+            $forWithdrawn = ($request->status != null) ? $request->status : $request->fsData['status'];
+            $forResolved = ($request->status != null) ? $request->status : $request->fsData['status'];
+            $forUnresoved = ($request->status != null) ? $request->status : $request->fsData['status'];
+
+            if (Mediation_status_log::STATUS_WITHDRAWN == $forWithdrawn) {
+
+                $mediation_status_log->description = "Request Withdrawn";
+
+                if (Auth::user()->role == 1) {
+                    Common_function::MedNotification($request->case_id, "WDRN_BY_MED", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
+                } else {
+                    Common_function::MedNotification($request->case_id, "WDRN_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
+                }
+
+                $this->sned_withdrawal($request->case_id);
+            } else if (Mediation_status_log::STATUS_RESOLVED == $forResolved) {
+
+                $mediation_status_log->description = "Request Resolved";
+                if (Auth::user()->role == 1) {
+                    Common_function::MedNotification($request->case_id, "RES_BY_MED", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
+                } else {
+                    Common_function::MedNotification($request->case_id, "RES_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
+                }
+                $this->sned_resolved($request->case_id);
+            } else if (Mediation_status_log::STATUS_UNRESOLVED == $forUnresoved) {
+
+                $mediation_status_log->description = "Request Unresolved";
+                if (Auth::user()->role == 1) {
+                    Common_function::MedNotification($request->case_id, "UNRES_BY_MED", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
+                } else {
+                    Common_function::MedNotification($request->case_id, "UNRES_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
+                }
+                $this->sned_unresolved($request->case_id);
+            }
+            $mediation_status_log->save();
+            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                $success_log = BulkLog::find($_POST['log_id']);
+                // dd($success_log);
+
+                if ($success_log->inserted_row == null) {
+                    $success_log->inserted_row = $request->case_id;
+                    $success_log->save();
+                } else {
+                    if (isset($_POST['insertRow'])) {
+
+                        $insert_row = $_POST['insertRow'] . "," . $request->case_id;
+                        // dd(json_encode(explode(',', $insert_row)));
+                        $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                        $success_log->save();
+                    }
+                }
+
+                return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->case_id]);
+            } else if (isset($log_id)) {
+                $success_log = BulkLog::find($log_id);
+                // dd($success_log);
+
+                if ($success_log->inserted_row == null) {
+                    $success_log->inserted_row = $request->case_id;
+                    $success_log->save();
+                } else {
+                    if (isset($_POST['insertRow'])) {
+
+                        $insert_row = $_POST['insertRow'] . "," . $request->case_id;
+                        // dd(json_encode(explode(',', $insert_row)));
+                        $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                        $success_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->case_id]);
             } else {
-                $inv_id = $inv_id . "," . $v->id;
+                return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->case_id]);
+            }
+        } else {
+
+            // code for failed row 
+            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                $faild_log = BulkLog::find($_POST['log_id']);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->case_id;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+
+                        $faild_row = $_POST['faildRow'] . "," . $request->case_id;
+                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->case_id]);
+            } else if (isset($log_id)) {
+                $faild_log = BulkLog::find($log_id);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->case_id;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+
+                        $faild_row = $_POST['faildRow'] . "," . $request->case_id;
+                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->case_id]);
+            } else {
+                return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->case_id]);
             }
         }
-        if (Mediation_status_log::STATUS_WITHDRAWN == $request->status) {
-            $mediation_status_log->description = "Request Withdrawn";
-            if (Auth::user()->role == 1) {
-                Common_function::MedNotification($request->case_id, "WDRN_BY_MED", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
-            } else {
-                Common_function::MedNotification($request->case_id, "WDRN_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
-            }
-            $this->sned_withdrawal($request->case_id);
-        } else if (Mediation_status_log::STATUS_RESOLVED == $request->status) {
-            $mediation_status_log->description = "Request Resolved";
-            if (Auth::user()->role == 1) {
-                Common_function::MedNotification($request->case_id, "RES_BY_MED", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
-            } else {
-                Common_function::MedNotification($request->case_id, "RES_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
-            }
-            $this->sned_resolved($request->case_id);
-        } else if (Mediation_status_log::STATUS_UNRESOLVED == $request->status) {
-            $mediation_status_log->description = "Request Unresolved";
-            if (Auth::user()->role == 1) {
-                Common_function::MedNotification($request->case_id, "UNRES_BY_MED", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
-            } else {
-                Common_function::MedNotification($request->case_id, "UNRES_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
-            }
-            $this->sned_unresolved($request->case_id);
-        }
-        $mediation_status_log->save();
 
-        return response()->json(["msg" => "withdraw Case"]);
+        // return response()->json(["msg" => "withdraw Case"]);
     }
 
     public function closeStatus(Request $request)
@@ -525,7 +627,7 @@ class CaseController extends Controller
 
 
         $validatedData = $request->validate([
-            'files' => 'required',
+            'files0' => 'required',
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
             // 'docs_party_ids' => 'required',
         ]);
@@ -542,6 +644,36 @@ class CaseController extends Controller
                 }
             }
         }
+        $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+        if ($request->log_id == "null" && $request->allcids != "") {
+            if ($request->log_id == "null" && $request->allcids != "") {
+
+                $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
+                $log = BulkLog::create([
+                    "selected_ids" => $params['allcids'],
+                    "uploaded_by" => Auth::user()->id,
+                    "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                    "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                    "updated_at" => date('Y-m-d H:i:s'),
+                ]);
+                $log_id = $log->id;
+                if ($request->shareMediator == 1) {
+                    Common_function::MedNotification($_POST['allcids'], "SEND_ADDI_DOC_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+                } else {
+                    Common_function::MedNotification($_POST['allcids'], "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, $inv_id);
+                }
+            }
+        } else {
+            if ($request->shareMediator == 1) {
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+            } else {
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, $inv_id);
+            }
+        }
+        
         if ($request->TotalFiles > 0) {
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
@@ -559,21 +691,121 @@ class CaseController extends Controller
                 }
             }
 
-            DB::table('manage_files')->insert($insert, $insert);
-            $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
-                ->where("mediators_mediation_cases_status.status", "=", 1)
-                ->first();
-
-            if ($request->shareMediator == 1) {
-                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
-            } else {
-                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, $inv_id);
-            }
+            $insert_manage = DB::table('manage_files')->insert($insert, $insert);
+            
             $this->send_upload_file_party($request->caseId, $insert);
-            return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
+            if ($insert_manage) {
+
+                // dd($request->log_id);   
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
+
+
+                    $success_log = BulkLog::find($request->log_id);
+
+
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->caseId;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+
+                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+                } else if (isset($log_id)) {
+                    $success_log = BulkLog::find($log_id);
+                    // dd($success_log);
+
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->caseId;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+
+                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+                } else {
+                    return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
+                }
+            } else {
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
+                    $faild_log = BulkLog::find($_POST['log_id']);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->caseId;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+
+                            $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+                } else if (isset($log_id)) {
+                    $faild_log = BulkLog::find($log_id);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->caseId;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+
+                            $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+                } else {
+                    return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
+                }
+            }
         } else {
-            return response()->json(["message" => "Please try again."]);
+            if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
+                $faild_log = BulkLog::find($_POST['log_id']);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->caseId;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+
+                        $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+            } else if (isset($log_id)) {
+                $faild_log = BulkLog::find($log_id);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->caseId;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+
+                        $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+            } else {
+                return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
+            }
         }
     }
 
@@ -671,22 +903,6 @@ class CaseController extends Controller
                 Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
             }
         } else {
-            $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
-            $party_ids = array();
-            foreach ($allParty as $party) {
-                $party_ids[] = $party->id;
-                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
-            }
-            // dd($party_ids);
-            $dataToInsert = [
-                'case_id' => $request->caseId,
-                'session_date' => $request->sessionDate . "/" . $time,
-                'note' => $request->note,
-                'zoom_id' => $request->zoomId,
-                'session_party_ids' => json_encode($party_ids),
-                'scheduled_by' => Auth::user()->id,
-            ];
-            DB::table('manage_session')->insert($dataToInsert);
             $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
                 ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -700,34 +916,138 @@ class CaseController extends Controller
                     $inv_id = $inv_id . "," . $v->id;
                 }
             }
-            Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
-        }
+            if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
+                if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
+                    $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
+                    $log = BulkLog::create([
+                        "selected_ids" => $params['allcids'],
+                        "uploaded_by" => Auth::user()->id,
+                        "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                        "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                        "updated_at" => date('Y-m-d H:i:s'),
+                    ]);
+                    $log_id = $log->id;
 
-        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
-            ->where("mediators_mediation_cases_status.status", "=", 1)
-            ->first();
-        if ($mediator) {
-            $id = "M" . sprintf("%06d", $request->caseId);
-            SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+                    Common_function::MedNotification($_POST['allcids'], "SESS_SCHE_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+                }
+            }
 
-            $var = ['-dt-', '-cid-', '-link-'];
-            $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
-            $content1 = WaTemplate::getcontent('l10_session_schedule');
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $request->caseId,
-                'contact' => "+91" . $mediator->mobile_number,
-                'content' => ['text' => $content],
-                'event' => 'SESS_SCHE'
+            $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
+            $party_ids = array();
+            foreach ($allParty as $party) {
+                $party_ids[] = $party->id;
+                // $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
+                $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time, $party->userPhone);
+            }
+            // dd($party_ids);
+            $dataToInsert = [
+                'case_id' => $request->caseId,
+                'session_date' => ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time,
+                'note' => ($request->note != null) ? $request->note : $request->fsData['note'],
+                'zoom_id' => ($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'],
+                'session_party_ids' => json_encode($party_ids),
+                'scheduled_by' => Auth::user()->id,
             ];
+            $manage_session = DB::table('manage_session')->insert($dataToInsert);
+            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+            if ($mediator) {
+                $id = "M" . sprintf("%06d", $request->caseId);
+                SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
 
-            // print_r($dwa1);
-            // exit;
-            $access = Whatsapp::sendWamessage($dwa1);
+                $var = ['-dt-', '-cid-', '-link-'];
+                $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
+                $content1 = WaTemplate::getcontent('l10_session_schedule');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $request->caseId,
+                    'contact' => "+91" . $mediator->mobile_number,
+                    'content' => ['text' => $content],
+                    'event' => 'SESS_SCHE'
+                ];
+
+                // print_r($dwa1);
+                // exit;
+                $access = Whatsapp::sendWamessage($dwa1);
+            }
+
+
+            if ($manage_session) {
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                    $success_log = BulkLog::find($_POST['log_id']);
+                    // dd($success_log);
+
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->caseId;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+
+                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+                } else if (isset($log_id)) {
+                    $success_log = BulkLog::find($log_id);
+                    // dd($success_log);
+
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->caseId;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+
+                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+                } else {
+                    return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
+                }
+            } else {
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                    $faild_log = BulkLog::find($_POST['log_id']);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->caseId;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+
+                            $faild_row = $_POST['faildRow'] . "," . $request->id;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+                } else if (isset($log_id)) {
+                    $faild_log = BulkLog::find($log_id);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->caseId;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+
+                            $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+                } else {
+                    return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
+                }
+            }
         }
-        // DB::table('manage_session')->insert($dataToInsert);
-
         return true;
     }
 
