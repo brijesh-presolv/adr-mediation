@@ -404,6 +404,19 @@ class CaseController extends Controller
 
     public function rejectStatus(Request $request)
     {
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $inv_id = "";
+        $inv = InvoledUser::select('id')->where('userPlanId', $request->id)->get();
+        foreach ($inv as $v) {
+            if ($inv_id == "") {
+                $inv_id = $v->id;
+            } else {
+                $inv_id = $inv_id . "," . $v->id;
+            }
+        }
         if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
             if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
                 $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
@@ -415,32 +428,22 @@ class CaseController extends Controller
                     "updated_at" => date('Y-m-d H:i:s'),
                 ]);
                 $log_id = $log->id;
+                Common_function::MedNotification($_POST['allcids'], "REJECTED_ADM", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
             }
+        } else {
+            Common_function::MedNotification($request->id, "REJECTED_ADM", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
         }
         $user = MedCase::find($request->id);
         $user->confirm_status = 3;
         $user->case_status = 3;
-        if($user->save()) {
+        if ($user->save()) {
             $mediation_status_log = new Mediation_status_log;
             $mediation_status_log->user_id = Auth::user()->id;
             $mediation_status_log->mediation_case_id = $request->id;
             $mediation_status_log->status = 3;
             $mediation_status_log->description = "Request Reject";
             $mediation_status_log->save();
-            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->id)
-                ->where("mediators_mediation_cases_status.status", "=", 1)
-                ->first();
-            $inv_id = "";
-            $inv = InvoledUser::select('id')->where('userPlanId', $request->id)->get();
-            foreach ($inv as $v) {
-                if ($inv_id == "") {
-                    $inv_id = $v->id;
-                } else {
-                    $inv_id = $inv_id . "," . $v->id;
-                }
-            }
-            Common_function::MedNotification($request->id, "REJECTED_ADM", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
+
             $this->sned_reject($request->id);
             if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                 $success_log = BulkLog::find($_POST['log_id']);
