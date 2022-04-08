@@ -547,7 +547,7 @@ class CaseController extends Controller
                     "updated_at" => date('Y-m-d H:i:s'),
                 ]);
                 $log_id = $log->id;
-                Common_function::MedNotification($_POST['allcids'], "REJECTED_ADM", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
+                Common_function::MedNotification($_POST['allcids'], "REJECTED_ADM", Auth::user()->id, null, null);
             }
         } else {
             Common_function::MedNotification($request->id, "REJECTED_ADM", Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
@@ -665,9 +665,8 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-        if ($request->log_id == "null" && $request->allcids != "") {
+        if (isset($request->log_id) && isset($request->allcids)) {
             if ($request->log_id == "null" && $request->allcids != "") {
-
                 $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
                 $log = BulkLog::create([
                     "selected_ids" => $params['allcids'],
@@ -678,9 +677,9 @@ class CaseController extends Controller
                 ]);
                 $log_id = $log->id;
                 if ($request->shareMediator == 1) {
-                    Common_function::MedNotification($_POST['allcids'], "SEND_ADDI_DOC_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+                    Common_function::MedNotification($_POST['allcids'], "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, null);
                 } else {
-                    Common_function::MedNotification($_POST['allcids'], "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, $inv_id);
+                    Common_function::MedNotification($_POST['allcids'], "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, null);
                 }
             }
         } else {
