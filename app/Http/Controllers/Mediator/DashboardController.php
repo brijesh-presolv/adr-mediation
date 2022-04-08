@@ -17,6 +17,7 @@ use App\Models\SupportingDocument;
 use App\Models\InvitationFiles;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
+use App\Models\BulkLog;
 use App\Models\Mediators_mediation_cases_status;
 use App\Models\Notification;
 use App\Models\WaTemplate;
@@ -168,49 +169,142 @@ class DashboardController extends Controller
                 $inv_id = $inv_id . "," . $v->id;
             }
         }
-        if ($request->status == 1) {
+        if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
+            if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
+                $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
+                $log = BulkLog::create([
+                    "selected_ids" => $params['allcids'],
+                    "uploaded_by" => Auth::user()->id,
+                    "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                    "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                    "updated_at" => date('Y-m-d H:i:s'),
+                ]);
+                $log_id = $log->id;
+                if ($request->fsData['status'] == 1 || $request->status == 1) {
+                    Common_function::MedNotification($_POST['allcids'], "SEND_APPO_MED", Auth::user()->id, Auth::user()->id, null);
+                } else {
+                    Common_function::MedNotification($_POST['allcids'], "REJECTED_MED", Auth::user()->id, Auth::user()->id, null);
+                }
+            }
+        } else {
+            if ($request->fsData['status'] == 1 || $request->status == 1) {
+                Common_function::MedNotification($request->mediation_case_id, "SEND_APPO_MED", Auth::user()->id, Auth::user()->id, $inv_id);
+            } else {
+                Common_function::MedNotification($request->mediation_case_id, "REJECTED_MED", Auth::user()->id, Auth::user()->id, $inv_id);
+            }
+        }
+        if ($request->fsData['status'] == 1 || $request->status == 1) {
             $caseid = $request->mediation_case_id;
             $consentDisclosures = ConsentDisclosures::where("mediation_case_id", "=", $caseid)->first();
             if (empty($consentDisclosures)) {
                 $consentDisclosures = new ConsentDisclosures();
                 $consentDisclosures->mediation_case_id = $caseid;
                 $consentDisclosures->mediator_id = Auth::user()->id;
-                $consentDisclosures->consent1 = $request->consent1;
-                $consentDisclosures->consent2 = $request->consent2;
-                $consentDisclosures->consent3 = $request->consent3;
-                $consentDisclosures->consent4 = $request->consent4;
-                $consentDisclosures->consent5 = $request->consent5;
-                $consentDisclosures->particulars1 = $request->particulars1;
-                $consentDisclosures->particulars2 = $request->particulars2;
-                $consentDisclosures->particulars3 = $request->particulars3;
-                $consentDisclosures->particulars4 = $request->particulars4;
+                $consentDisclosures->consent1 = ($request->consent1 != null) ? $request->consent1 : $request->fsData['consent1'];
+                $consentDisclosures->consent2 = ($request->consent2 != null) ? $request->consent2 : $request->fsData['consent2'];
+                $consentDisclosures->consent3 = ($request->consent3 != null) ? $request->consent3 : $request->fsData['consent3'];
+                $consentDisclosures->consent4 = ($request->consent4 != null) ? $request->consent4 : $request->fsData['consent4'];
+                $consentDisclosures->consent5 = ($request->consent5 != null) ? $request->consent5 : $request->fsData['consent5'];
+                $consentDisclosures->particulars1 = ($request->particulars1 != null) ? $request->particulars1 : $request->fsData['particulars1'];
+                $consentDisclosures->particulars2 = ($request->particulars2 != null) ? $request->particulars2 : $request->fsData['particulars2'];
+                $consentDisclosures->particulars3 = ($request->particulars3 != null) ? $request->particulars3 : $request->fsData['particulars3'] ;
+                $consentDisclosures->particulars4 = ($request->particulars4 != null) ? $request->particulars4 : $request->fsData['particulars4'];
             } else {
                 $consentDisclosures->mediation_case_id = $caseid;
                 $consentDisclosures->mediator_id = Auth::user()->id;
-                $consentDisclosures->consent1 = $request->consent1;
-                $consentDisclosures->consent2 = $request->consent2;
-                $consentDisclosures->consent3 = $request->consent3;
-                $consentDisclosures->consent4 = $request->consent4;
-                $consentDisclosures->consent5 = $request->consent5;
-                $consentDisclosures->particulars1 = $request->particulars1;
-                $consentDisclosures->particulars2 = $request->particulars2;
-                $consentDisclosures->particulars3 = $request->particulars3;
-                $consentDisclosures->particulars4 = $request->particulars4;
+                $consentDisclosures->consent1 = ($request->consent1 != null) ? $request->consent1 : $request->fsData['consent1'];
+                $consentDisclosures->consent2 = ($request->consent2 != null) ? $request->consent2 : $request->fsData['consent2'];
+                $consentDisclosures->consent3 =($request->consent3 != null) ? $request->consent3 : $request->fsData['consent3'];
+                $consentDisclosures->consent4 = ($request->consent4 != null) ? $request->consent4 : $request->fsData['consent4'];
+                $consentDisclosures->consent5 = ($request->consent5 != null) ? $request->consent5 : $request->fsData['consent5'];
+                $consentDisclosures->particulars1 = ($request->particulars1 != null) ? $request->particulars1 : $request->fsData['particulars1'];
+                $consentDisclosures->particulars2 = ($request->particulars2 != null) ? $request->particulars2 : $request->fsData['particulars2'];
+                $consentDisclosures->particulars3 = ($request->particulars3 != null) ? $request->particulars3 : $request->fsData['particulars3'];
+                $consentDisclosures->particulars4 = ($request->particulars4 != null) ? $request->particulars4 : $request->fsData['particulars4'];
             }
             $consentDisclosures->save();
-            Common_function::MedNotification($caseid, "SEND_APPO_MED", Auth::user()->id, Auth::user()->id, $inv_id);
             $this->send_attechment_party($caseid);
         } else {
-            $caseid = $request->caseid;
-            Common_function::MedNotification($caseid, "REJECTED_MED", Auth::user()->id, Auth::user()->id, $inv_id);
+            $caseid = $request->mediation_case_id;
         }
-
-
-        DB::table('mediators_mediation_cases_status')
+        $insertbulk = DB::table('mediators_mediation_cases_status')
             ->where('mediator_id', Auth::user()->id)
             ->where('mediation_case_id', $caseid)
-            ->update(['status' => $request->status, 'updated_at' => now()]);
-        return response()->json(["msg" => "staus Update"]);
+            ->update(['status' => ($request->status != null) ?  $request->status : $request->fsData['status'], 'updated_at' => now()]);
+        if ($insertbulk) {
+            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                $success_log = BulkLog::find($_POST['log_id']);
+
+                
+                if ($success_log->inserted_row == null) {
+                    $success_log->inserted_row = $request->mediation_case_id;
+                    $success_log->save();
+                } else {
+                    if (isset($_POST['insertRow'])) {
+
+                        $insert_row = $_POST['insertRow'] . "," . $request->mediation_case_id;
+                        // dd(json_encode(explode(',', $insert_row)));
+                        $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                        $success_log->save();
+                    }
+                }
+
+                return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->mediation_case_id]);
+            } else if (isset($log_id)) {
+                $success_log = BulkLog::find($log_id);
+                // dd($success_log);
+
+                if ($success_log->inserted_row == null) {
+                    $success_log->inserted_row = $request->mediation_case_id;
+                    $success_log->save();
+                } else {
+                    if (isset($_POST['insertRow'])) {
+
+                        $insert_row = $_POST['insertRow'] . "," . $request->mediation_case_id;
+                        // dd(json_encode(explode(',', $insert_row)));
+                        $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                        $success_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->mediation_case_id]);
+            } else {
+                return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->mediation_case_id]);
+            }
+        } else {
+            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                $faild_log = BulkLog::find($_POST['log_id']);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->mediation_case_id;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+
+                        $faild_row = $_POST['faildRow'] . "," . $request->mediation_case_id;
+                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->mediation_case_id]);
+            } else if (isset($log_id)) {
+                $faild_log = BulkLog::find($log_id);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->mediation_case_id;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+
+                        $faild_row = $_POST['faildRow'] . "," . $request->mediation_case_id;
+                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->mediation_case_id]);
+            } else {
+                return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->mediation_case_id]);
+            }
+        }
     }
 
     /**
