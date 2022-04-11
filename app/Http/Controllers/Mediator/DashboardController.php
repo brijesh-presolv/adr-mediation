@@ -342,32 +342,115 @@ class DashboardController extends Controller
             }
             Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id, Auth::user()->id, $inv_id);
         } else {
-            $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
+            if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
+                if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
+                    $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
+                    $log = BulkLog::create([
+                        "selected_ids" => $params['allcids'],
+                        "uploaded_by" => Auth::user()->id,
+                        "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                        "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                        "updated_at" => date('Y-m-d H:i:s'),
+                    ]);
+                    $log_id = $log->id;
+                    Common_function::MedNotification($_POST['allcids'], "SESS_SCHE_MED", Auth::user()->id, Auth::user()->id, null);
+                } 
+            }
+            
+            $allParty = InvoledUser::where("userPlanId", $request->caseId)->where("isOnboarded", 1)->get();
             $party_ids = array();
             foreach ($allParty as $party) {
-                $party_ids[] = $party->id;
-                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
+                $party_ids[] = $party->userId;
+                $this->sned_session(($request->zoomId != null) ? $request->zoomId : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time, $party->userPhone);
             }
             // dd($party_ids);
             $dataToInsert = [
                 'case_id' => $request->caseId,
-                'session_date' => $request->sessionDate . "/" . $time,
-                'note' => $request->note,
-                'zoom_id' => $request->zoomId,
+                'session_date' => ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time,
+                'note' => ($request->note != null) ? $request->note : $request->fsData['note'],
+                'zoom_id' => ($request->zoomId != null) ? $request->zoomId : $request->fsData['zoomId'],
                 'session_party_ids' => json_encode($party_ids),
                 'scheduled_by' => Auth::user()->id,
             ];
-            DB::table('manage_session')->insert($dataToInsert);
-            $inv_id = "";
-            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
-            foreach ($inv as $v) {
-                if ($inv_id == "") {
-                    $inv_id = $v->id;
+            $manage_session = DB::table('manage_session')->insert($dataToInsert);
+            
+            if($manage_session){
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                    $success_log = BulkLog::find($_POST['log_id']);
+                    // dd($success_log);
+    
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->caseId;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+    
+                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+    
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+                } else if (isset($log_id)) {
+                    $success_log = BulkLog::find($log_id);
+                    // dd($success_log);
+    
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->caseId;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+    
+                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->caseId]);
                 } else {
-                    $inv_id = $inv_id . "," . $v->id;
+                    return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
                 }
+    
+            }else{
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                    $faild_log = BulkLog::find($_POST['log_id']);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->caseId;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+    
+                            $faild_row = $_POST['faildRow'] . "," . $request->id;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+                } else if (isset($log_id)) {
+                    $faild_log = BulkLog::find($log_id);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->caseId;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+    
+                            $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+                } else {
+                    return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
+                }
+    
             }
-            Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id, Auth::user()->id, $inv_id);
+            
         }
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
@@ -623,11 +706,39 @@ class DashboardController extends Controller
     {
 
         $validatedData = $request->validate([
-            'files' => 'required',
+            'files0' => 'required',
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
             // 'docs_party_ids' => 'required',
         ]);
-
+        $inv_id = "";
+        if ($request->has('docs_party_ids')) {
+            $inv_id = $request->docs_party_ids;
+        } else {
+            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+        }
+        if (isset($request->log_id) && isset($request->allcids)) {
+            if ($request->log_id == "null" && $request->allcids != "") {
+                $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
+                $log = BulkLog::create([
+                    "selected_ids" => $params['allcids'],
+                    "uploaded_by" => Auth::user()->id,
+                    "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                    "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                    "updated_at" => date('Y-m-d H:i:s'),
+                ]);
+                $log_id = $log->id;
+                Common_function::MedNotification($_POST['allcids'], "SEND_ADDI_DOC_MED", Auth::user()->id, Auth::user()->id, null);
+            }
+        } else {
+            Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_MED", Auth::user()->id, Auth::user()->id, $inv_id);
+        }
         if ($request->TotalFiles > 0) {
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
@@ -647,12 +758,121 @@ class DashboardController extends Controller
             // dd($insert);
             // die();
             // File::insert($insert);
-            DB::table('manage_files')->insert($insert, $insert);
-            Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_MED", Auth::user()->id, Auth::user()->id, $request->docs_party_ids);
+            $insert_manage = DB::table('manage_files')->insert($insert, $insert);
             $this->send_upload_file_party($request->caseId, $insert);
-            return response()->json(['success' => 'Ajax Multiple fIle has been uploaded']);
+            if($insert_manage){    
+                // dd($request->log_id);   
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
+
+
+                    $success_log = BulkLog::find($request->log_id);
+                    
+                 
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->caseId;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+    
+                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+    
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+                } else if (isset($log_id)) {
+                    $success_log = BulkLog::find($log_id);
+                    // dd($success_log);
+    
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->caseId;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+    
+                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+                } else {
+                    return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
+                }
+
+            }else{
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
+                    $faild_log = BulkLog::find($_POST['log_id']);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->caseId;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+    
+                            $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+                } else if (isset($log_id)) {
+                    $faild_log = BulkLog::find($log_id);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->caseId;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+    
+                            $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+                } else {
+                    return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
+                }
+                
+            }
         } else {
-            return response()->json(["message" => "Please try again."]);
+            if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
+                $faild_log = BulkLog::find($_POST['log_id']);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->caseId;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+
+                        $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+            } else if (isset($log_id)) {
+                $faild_log = BulkLog::find($log_id);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->caseId;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+
+                        $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+            } else {
+                return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
+            }
         }
     }
 
