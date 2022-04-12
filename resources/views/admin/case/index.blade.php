@@ -579,6 +579,147 @@ var ajax_request = function (item, url) {
     return deferred.promise();
 };
 
+var ajax_request_approve = function (item, mediator_url, confirm_url) {
+    var deferred = $.Deferred();
+      console.log(item)
+    $.ajax({
+        url: mediator_url,
+        dataType: "json",
+        type: "POST",
+        data: {
+            id: item.id,
+            _token: item.token,
+            // allcids: item.allcids,
+            // total_row: item.total_row,
+            midater : item.midater,
+            // insertRow: insId,
+            // faildRow: failId,
+            // log_type: item.log_type,
+        },
+        success: function (result) {
+            $.ajax({
+                url: confirm_url,
+                dataType: "json",
+                type: "POST",
+                data: {
+                    id: item.id,
+                    _token: item.token,
+                    allcids: item.allcids,
+                    total_row: item.total_row,
+                    log_id: logId,
+                    insertRow: insId,
+                    faildRow: failId,
+                    log_type: item.log_type,
+                },
+                success: function(result) {
+                    ite.push(result);
+                    comp = comp + 1;
+                    prc = Math.round(((comp * 100) / item.total_row));
+                    $('#tto').html(prc);
+
+                    if (logId == null) {
+                        $("#loading_image").hide();
+                        $("#totalPer").append(
+                        "<h5 class='text-center mt-0'>Total " +
+                            item.total_row +
+                        " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                        );
+                    }
+                    // if (logId == null) {
+                    //     //$(".loading_image").hide();
+                    //     $("#blkform1_image").html(
+                    //         "<center><h5>Total " +
+                    //         item.total_row +
+                    //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
+                    //     );
+                    // }
+
+                    console.log(result.log_id);
+                    logId = result.log_id;
+
+
+
+                    if (result.response == "success") {
+                        if (insId == null) {
+                            insId = result.caseid;
+                            //console.log('insId '+insId);
+                        } else {
+                            insId = insId + "," + result.caseid;
+                            //console.log('insId d '+insId);
+                        }
+                        $("#messcc").append(
+                        "<p style='color: green;' class='text-center'>Case ID : M" +
+                        result.caseid.toString().padStart(6, "0") + " Success.</p>"
+                        );
+                        // $("#mess").append(
+                        //     "<center>Case Id A00" + result.caseid + " Success.</center>"
+                        // );
+                    } else {
+                        if (failId == null) {
+                            failId = result.caseid;
+                        } else {
+                            failId = failId + "," + result.caseid;
+                        }
+                        $("#messcc").append(
+                        "<p style='color: red;' class='text-center'>Case ID : M" +
+                        result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                        );
+                        // $("#mess").append(
+                        //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
+                        // );
+                    }
+                    var objDiv = document.getElementById("messcc");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    // var objDiv = document.getElementById("mess");
+                    // objDiv.scrollTop = objDiv.scrollHeight;
+                    deferred.resolve(result);
+                },
+                error: function (error) {
+                    if (failId == null) {
+                        failId = item.id;
+                    } else {
+                        failId = failId + "," + item.id;
+                    }
+                    $("#messcc").append(
+                        "<center style='color: red;'>Case ID : M" +
+                        item.cid.toString().padStart(6, "0") + " Failed.</center>"
+                    );
+                    // $("#mess").append(
+                    //     "<center>Case Id A00" + error.caseid + " Failed.</center>"
+                    // );
+                    var objDiv = document.getElementById("messcc");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    deferred.reject(error);
+                },
+                complete: function () {
+                    swal.close();
+                },
+            });
+        },
+        // error: function (error) {
+        //     if (failId == null) {
+        //         failId = item.id;
+        //     } else {
+        //         failId = failId + "," + item.id;
+        //     }
+        //     $("#messcc").append(
+        //         "<center style='color: red;'>Case ID : M" +
+        //         item.cid.toString().padStart(6, "0") + " Failed.</center>"
+        //     );
+        //     // $("#mess").append(
+        //     //     "<center>Case Id A00" + error.caseid + " Failed.</center>"
+        //     // );
+        //     var objDiv = document.getElementById("messcc");
+        //     objDiv.scrollTop = objDiv.scrollHeight;
+        //     deferred.reject(error);
+        // },
+        // complete: function () {
+        //     swal.close();
+        // },
+    });
+    return deferred.promise();
+};
+
 var looper = $.Deferred().resolve();
 
         $("#selectalldir").change(function() {
@@ -788,48 +929,111 @@ var looper = $.Deferred().resolve();
                 }).then((willDelete) => {
                     if (willDelete) {
                         // var ids = null;
+
+                        var cids = null;
+                        var idarr = [];
+                        var ctcnt = 0;
+
                         $(".blkchk").each(function() {
                             if (this.checked) {
-                                var id = $(this).data("caseid");
-                                // console.log(id);
-                                $.ajax({
-                                    url: '{{ route('admin.case.midater_add') }}',
-                                    method: "post",
-                                    data: {
-                                        id: id,
-                                        midater: midater,
-                                        '_token': csrf
-                                    },
-                                }).done(function(data) {
-                                    $.ajax({
-                                        url: '{{ route('admin.case.confirm_status') }}',
-                                        method: "post",
-                                        data: {
-                                            id: id,
-                                            '_token': csrf
-                                        },
-                                        beforeSend: function() {
-                                            swal({
-                                                title: 'Loading...',
-                                                showConfirmButton: false,
-                                                buttons: false,
+                                ctcnt++;
+                                if (cids == null) {
+                                    cids = $(this).data("caseid");
+                                } else {
+                                    cids = cids + "," + $(this).data("caseid");
+                                }
+                            }
+                        });
 
-                                            });
-                                        },
-                                    }).done(function(data) {
-                                        userTable.ajax.reload();
-                                        swal("@lang('case.confirm_successfully')", {
-                                            icon: "success",
-                                        }).then(function() {
-                                            location.reload();
-                                        });
-                                        $('#midaterAddForBulk').modal("hide");
+                        $(".blkchk").each(function() {
+                            if (this.checked) {
+                                var caseid = $(this).data("caseid");
 
-                                    });
-                                    //userTable.ajax.reload();
+                                idarr.push({
+                                    id: caseid,
+                                    token: csrf,
+                                    allcids: cids,
+                                    midater: midater,
+                                    total_row: ctcnt,
+                                    log_type: "Bulk Approve",
                                 });
                             }
                         });
+
+                        var add_mediater = '{{ route('admin.case.midater_add') }}';
+                        var confirm = '{{ route('admin.case.confirm_status') }}';
+                        swal.close();
+                        $(".ccdd").click();
+                        $(".msgDiv").hide();
+                        $(".loading_form").show();
+                        $("#loading_image").show();
+                        $(".close").hide();
+                        $.when
+                            .apply(
+                                $,
+                                $.map(idarr, function(item, i) {
+                                    looper = looper.then(function() {
+
+                                        return ajax_request_approve(item, add_mediater, confirm);
+
+                                    });
+                                    return looper;
+
+                                })
+                            )
+                            .then(function() {
+                                swal.close();
+                                // $("#myModalcc").hide();
+                                $("#messccclose").append(
+                                    '<br><center><a href="{{ route('admin.case.newrequest') }}" class="btn btn-danger btn-lg">Close</a></center>'
+                                );
+                                var objDiv = document.getElementById("messcc");
+                                objDiv.scrollTop = objDiv.scrollHeight;
+                            });
+
+
+                        // $(".blkchk").each(function() {
+                        //     if (this.checked) {
+                        //         var id = $(this).data("caseid");
+                        //         // console.log(id);
+                        //         $.ajax({
+                        //             url: '{{ route('admin.case.midater_add') }}',
+                        //             method: "post",
+                        //             data: {
+                        //                 id: id,
+                        //                 midater: midater,
+                        //                 '_token': csrf
+                        //             },
+                        //         }).done(function(data) {
+                        //             $.ajax({
+                        //                 url: '{{ route('admin.case.confirm_status') }}',
+                        //                 method: "post",
+                        //                 data: {
+                        //                     id: id,
+                        //                     '_token': csrf
+                        //                 },
+                        //                 beforeSend: function() {
+                        //                     swal({
+                        //                         title: 'Loading...',
+                        //                         showConfirmButton: false,
+                        //                         buttons: false,
+
+                        //                     });
+                        //                 },
+                        //             }).done(function(data) {
+                        //                 userTable.ajax.reload();
+                        //                 swal("@lang('case.confirm_successfully')", {
+                        //                     icon: "success",
+                        //                 }).then(function() {
+                        //                     location.reload();
+                        //                 });
+                        //                 $('#midaterAddForBulk').modal("hide");
+
+                        //             });
+                        //             //userTable.ajax.reload();
+                        //         });
+                        //     }
+                        // });
 
                     } else {
                         swal("@lang('case.cansel_confirm_request')");

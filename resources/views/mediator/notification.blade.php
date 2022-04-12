@@ -11,6 +11,7 @@
 
 @section('content')
 <?php 
+use App\Models\Mediators_mediation_cases_status;
 
 $sevid='';
 
@@ -52,22 +53,68 @@ $alertarr=[
         <div class="card-body">
             <div class="row">
                 @foreach ($data as $item)
+                @php
+                    $allcase = explode(',', $item->case_id);
+                    sort($allcase);
+                    $adddata = array();
+                    $id = "";
+                    foreach($allcase as $key => $singleid) {
+                        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $singleid)
+                                // ->where("mediators_mediation_cases_status.status", "=", 1)
+                                ->first();
+                        if(isset($mediator)) {
+                            if($mediator->id == Auth::user()->id) {
+                                $adddata[] = $singleid;
+                            }
+                        }
+                            
+                    }
+                    if(!empty($adddata)) {
+                        if(count($adddata) == 1) {
+                            $id = 'M'.sprintf('%06d',$adddata[0]);
+                            
+                        } else {
+                            sort($adddata);
+                            $id = '<select class="form-select alert-'.$alertarr[$item->event].' mr-2">';
+                            foreach($adddata as $key => $singleid) {
+                                // $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                                //     ->where("mediators_mediation_cases_status.mediation_case_id", "=", $singleid)
+                                //     // ->where("mediators_mediation_cases_status.status", "=", 1)
+                                //     ->first();
+                                // dd(Auth::user()->id);
+                                // if(isset($mediator)) {
+                                    // if($mediator->id == Auth::user()->id) {
+                                if($key == 0) {
+                                    $id .= '<option>M'.sprintf('%06d',$singleid).'</option>';
+                                } else {
+                                    $id .= '<option disabled>M'.sprintf('%06d',$singleid).'</option>';
+                                }
+                                    // }
+                                // } 
+                            }
+                            $id .= '</select>';
+                        }
+                    } 
+                @endphp
+                @if($id != "")
                 @if ($sdate != date('d-m-Y',strtotime($item->created_at)))
                 <div class="col-md-12">
                     <p><b>{{date('d-m-Y',strtotime($item->created_at))}}</b></p>
                 </div>
                 @endif
                 {{-- {{dd($data)}} --}}
+                
                 <div class="col-md-12">
                     <div class="alert alert-{{$alertarr[$item->event]}}" role="alert">
-                        M{{sprintf('%06d',$item->case_id)}} : {{$item->idescription}}
+                        <?=$id?> : {{$item->idescription}}
                         <span class="float-right">{{date('d-m-Y h:m:s A',strtotime($item->created_at))}}</span>
             
                     </div>
                     
                 </div>
                 <?php $sdate = date('d-m-Y',strtotime($item->created_at)); ?>
-
+                @endif
                 @endforeach
 
             </div>

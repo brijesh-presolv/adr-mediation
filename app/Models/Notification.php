@@ -46,7 +46,7 @@ class Notification extends Model {
 
          $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
                     ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
-                    ->where('mediator_id', Auth::user()->id)
+                    // ->where('mediator_id', Auth::user()->id)
                     ->orderBy('mednotification.id', 'DESC')->get();
 
         return $result;

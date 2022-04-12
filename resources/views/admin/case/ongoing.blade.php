@@ -1896,7 +1896,7 @@
                                 total_row: ctcnt,
                                 fsData: filesall,
                                 TotalFiles: TotalFiles,
-                                log_type: "Upload-document ",
+                                log_type: "Upload-document",
                             });
                         }
                     });

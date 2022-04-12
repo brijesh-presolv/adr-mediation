@@ -52,6 +52,23 @@ $alertarr=[
         <div class="card-body">
             <div class="row">
                 @foreach ($data as $item)
+                @php
+                    $allcase = explode(',', $item->case_id);
+                    if(count($allcase) == 1) {
+                        $id = 'M'.sprintf('%06d',$allcase[0]);
+                    } else {
+                        sort($allcase);
+                        $id = '<select class="form-select alert-'.$alertarr[$item->event].' mr-2">';
+                        foreach($allcase as $key => $singleid) {
+                            if($key == 0) {
+                                $id .= '<option>M'.sprintf('%06d',$singleid).'</option>';
+                            } else {
+                                $id .= '<option disabled>M'.sprintf('%06d',$singleid).'</option>';
+                            }
+                        }
+                        $id .= '</select>';
+                    }
+                @endphp
                 @if ($sdate != date('d-m-Y',strtotime($item->created_at)))
                 <div class="col-md-12">
                     <p><b>{{date('d-m-Y',strtotime($item->created_at))}}</b></p>
@@ -60,7 +77,7 @@ $alertarr=[
                 {{-- {{dd($data)}} --}}
                 <div class="col-md-12">
                     <div class="alert alert-{{$alertarr[$item->event]}}" role="alert">
-                        @if($item->case_id != null) M{{sprintf('%06d',$item->case_id)}} @else @if($item->role == 0) User Id - @else Mediator Id - @endif {{$item->reg_id}}  @endif : @if($item->idescription != null) {{$item->idescription}} @else New User Registarion @endif
+                        @if($item->case_id != null) <?=$id?> @else @if($item->role == 0) User Id - @else Mediator Id - @endif {{$item->reg_id}}  @endif : @if($item->idescription != null) {{$item->idescription}} @else New User Registarion @endif
                         <span class="float-right">{{date('d-m-Y h:m:s A',strtotime($item->created_at))}}</span>
             
                     </div>
