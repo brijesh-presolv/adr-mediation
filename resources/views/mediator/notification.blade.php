@@ -68,7 +68,6 @@ $alertarr=[
                                 $adddata[] = $singleid;
                             }
                         }
-                            
                     }
                     if(!empty($adddata)) {
                         if(count($adddata) == 1) {
@@ -76,7 +75,7 @@ $alertarr=[
                             
                         } else {
                             sort($adddata);
-                            $id = '<select class="form-select alert-'.$alertarr[$item->event].' mr-2">';
+                            $id = '<select class="form-control-sm alert-'.$alertarr[$item->event].' mr-2">';
                             foreach($adddata as $key => $singleid) {
                                 // $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                                 //     ->where("mediators_mediation_cases_status.mediation_case_id", "=", $singleid)

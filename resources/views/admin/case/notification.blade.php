@@ -58,7 +58,7 @@ $alertarr=[
                         $id = 'M'.sprintf('%06d',$allcase[0]);
                     } else {
                         sort($allcase);
-                        $id = '<select class="form-select alert-'.$alertarr[$item->event].' mr-2">';
+                        $id = '<select class="form-control-sm alert-'.$alertarr[$item->event].' mr-2">';
                         foreach($allcase as $key => $singleid) {
                             if($key == 0) {
                                 $id .= '<option>M'.sprintf('%06d',$singleid).'</option>';

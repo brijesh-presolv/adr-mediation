@@ -54,21 +54,55 @@ $alertarr=[
                 {{-- {{dd($data)}} --}}
 
                 @foreach ($data as $item)
-                <?php $userId = explode(',',$item->user_id); 
-                  ?>
-                @foreach ($userId as $value) 
-                <?php $userAccess = App\Models\InvoledUser::find($value);?>
-                @if(isset($userAccess))
-                @if($userAccess->userId == Auth::user()->id)
+                @php
+                    $allcase = explode(',', $item->case_id);
+                    sort($allcase);
+                    $adddata = array();
+                    $id = "";
+                    foreach($allcase as $key => $singleid) {
+                        $inuser = App\Models\InvoledUser::select('userId')->where('userPlanId', $singleid)->get();
+                        // echo "<pre>";
+                        $alluserid = array();
+                        foreach ($inuser as $key => $value) {
+                            $alluserid[] = $value->userId;
+                        }
+
+                        if(in_array(Auth::user()->id, $alluserid)){
+                            // if($mediator->id == Auth::user()->id) {
+                            $adddata[] = $singleid;
+                            // }
+                        }
+                            
+                    }
+                    if(!empty($adddata)) {
+                        if(count($adddata) == 1) {
+                            $id = 'M'.sprintf('%06d',$adddata[0]);
+                            
+                        } else {
+                            sort($adddata);
+                            $id = '<select class="form-control-sm alert-'.$alertarr[$item->event].' mr-2">';
+                            foreach($adddata as $key => $singleid) {
+                                if($key == 0) {
+                                    $id .= '<option>M'.sprintf('%06d',$singleid).'</option>';
+                                } else {
+                                    $id .= '<option disabled>M'.sprintf('%06d',$singleid).'</option>';
+                                }
+                            }
+                            $id .= '</select>';
+                        }
+                    } 
+                @endphp
+                @if($id != "")
                 @if ($sdate != date('d-m-Y',strtotime($item->created_at)))
                 <div class="col-md-12">
                     <p><b>{{date('d-m-Y',strtotime($item->created_at))}}</b></p>
                 </div>
                 @endif
                 {{-- {{dd($data)}} --}}
+                
                 <div class="col-md-12">
                     <div class="alert alert-{{$alertarr[$item->event]}}" role="alert">
-                        M{{sprintf('%06d',$item->case_id)}} : {{$item->idescription}}
+                        <?=$id?> : {{$item->idescription}}
                         <span class="float-right">{{date('d-m-Y h:m:s A',strtotime($item->created_at))}}</span>
             
                     </div>
@@ -76,8 +110,6 @@ $alertarr=[
                 </div>
                 <?php $sdate = date('d-m-Y',strtotime($item->created_at)); ?>
                 @endif
-                @endif
-                @endforeach
                 @endforeach
             </div>
         </div>
