@@ -7,10 +7,10 @@ use PharIo\Manifest\Email;
 
 Class SendGrid {
 
-    public static $apiKey = "SG.TS18vgiMQOSm_4uY2ZEvyg.bzC2riBYZj2PhtgiJX62QLY5-4iaXJOpAlB63OavyUAfg";
+    public static $apiKey = "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";
 
     public function __construct() {
-        self::$apiKey = env('SENDGRID_API_KEY', 'SG.TS18vgiMQOSm_4uY2ZEvyg.bzC2riBYZj2PhtgiJX62QLY5-4iaXJOpAlB63OavyUAfh');
+        self::$apiKey = env('SENDGRID_API_KEY', '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');
     }
 
     public static function send($d, $to, $templateId, $subs = NULL,
