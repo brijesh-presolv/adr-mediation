@@ -98,7 +98,7 @@ class DashboardController extends Controller
             $arraydata[] = [
                 "key" => $key + 1,
                 "id" => $d->mediation_case_id,
-                "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.userPhone', 'user_involved_in_agreement.address1', 'user_involved_in_agreement.address2', 'user_involved_in_agreement.fulladdress', 'user_involved_in_agreement.userEmail', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $d->id])->get(),
+                "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.userPhone', 'user_involved_in_agreement.address1', 'user_involved_in_agreement.address2', 'user_involved_in_agreement.fulladdress', 'user_involved_in_agreement.userEmail', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $d->mediation_case_id])->get(),
                 "comments" => "tesr",
                 "caseId" => $d->mediation_case_id,
                 "case_issue" => $d->issue,
