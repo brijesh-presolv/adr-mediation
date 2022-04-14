@@ -357,7 +357,7 @@ class DashboardController extends Controller
                 } 
             }
             
-            $allParty = InvoledUser::where("userPlanId", $request->caseId)->where("isOnboarded", 1)->get();
+            $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
             $party_ids = array();
             foreach ($allParty as $party) {
                 $party_ids[] = $party->userId;
