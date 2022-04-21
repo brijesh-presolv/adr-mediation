@@ -92,14 +92,14 @@
                         <input type="file" name="files[]" id="filesForBulk" class="dropify" data-height="150"
                             multiple />
                         <br>
-                        <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
+                        <input type="submit" id="submit" name="addSupportingDocs" class="btn btn-sm btn-primary mt-3">
                         <br>
                         <br>
                     </form>
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal" aria-label="Close">
                         <span>Close</span>
                     </button>
                 </div>
@@ -268,7 +268,7 @@
                         <span>Share With @lang('case.session_party'):</span>
                         <div class="form-group" id="PartyDocs">
                         </div>
-                        <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
+                        <input type="submit" id="submit" name="addSupportingDocs" class="btn btn-sm btn-primary mt-3">
                         <br>
                         <br>
                     </form>
@@ -285,7 +285,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal" aria-label="Close">
                         <span>@lang('case.supporting_close')</span>
                     </button>
                 </div>
@@ -407,6 +407,7 @@
                 minDate: 0,
                 dateFormat: 'dd/mm/yy'
             });
+            $('.dropify').dropify();
         });
     </script>
 
@@ -985,6 +986,7 @@
             var fileSelect =
                 `<input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />`;
             $("#file_select").append(fileSelect);
+            $('.dropify').dropify();
             mediatorData.each(function() {
                 var action = $(this).data("mediatoraction");
                 var mtext = "";

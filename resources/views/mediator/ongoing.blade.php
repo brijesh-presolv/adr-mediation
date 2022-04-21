@@ -524,7 +524,7 @@
     <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
         type="text/css" />
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link href="{{ url('/') }}/assets/libs/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ url('/') }}/assets/libs/dropify/dropify.min.css" rel="stylesheet" type="text/css" /> --}}
 @endsection
 
 
@@ -540,7 +540,7 @@
 
     <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="{{ url('/') }}/assets/libs/dropify/dropify.min.js"></script>
+    {{-- <script src="{{ url('/') }}/assets/libs/dropify/dropify.min.js"></script> --}}
     <script src="{{ url('/') }}/assets/libs/custombox/custombox.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
@@ -554,6 +554,7 @@
                 minDate: 0,
                 dateFormat: 'dd/mm/yy'
             });
+            $('.dropify').dropify();
 
         });
     </script>

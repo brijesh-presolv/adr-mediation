@@ -30,7 +30,7 @@ use App\Models\InvoledUser;
 
                 <!-- Modal content-->
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-body">
 
                         <div class="blkfrmdiv">
                             <h3>Upload .csv file</h3>
@@ -157,7 +157,7 @@ use App\Models\InvoledUser;
                                     <form action="{{route('user.documentUpload', $value->id)}}"  method="post" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
-                                    <input class="form-control dropify" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
+                                    <input class="form-control" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
                                     <p>*Only Pdf zip and rar file allowed</p>
                                     <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
                                     </form>
@@ -198,6 +198,7 @@ use App\Models\InvoledUser;
 
 
      $(document).ready(function(){
+        $('.dropify').dropify();
 
         <?php if(session()->has('success')) {?>
         swal({

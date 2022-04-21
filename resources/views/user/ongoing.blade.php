@@ -568,6 +568,8 @@ use App\Models\InvoledUser;
         $("#file_select").html("");
         var fileSelect = `<input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />`;
         $("#file_select").append(fileSelect);
+        $('.dropify').dropify();
+
         mediatorData.each(function() {
             var action = $(this).data("mediatoraction");
             var mtext = "";

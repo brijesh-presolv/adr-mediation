@@ -302,6 +302,11 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script>
+
+        $(document).ready(function() {
+            $('.dropify').dropify();
+        });
+
         function pad(str, max) {
             str = str.toString();
             return str.length < max ? pad("0" + str, max) : str;

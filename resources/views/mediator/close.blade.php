@@ -274,6 +274,8 @@
                 minDate: 0,
                 dateFormat: 'dd/mm/yy'
             });
+            $('.dropify').dropify();
+
         });
     </script>
 
