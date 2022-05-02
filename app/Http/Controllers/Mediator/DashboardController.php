@@ -364,6 +364,7 @@ class DashboardController extends Controller
                 $access = Whatsapp::sendWamessage($dwa1);
             }
             Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id, Auth::user()->id, $inv_id);
+            return json_encode(['code' => 200, 'response' => 'success']);
         } else {
             if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
                 if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
@@ -782,8 +783,9 @@ class DashboardController extends Controller
             // die();
             // File::insert($insert);
             $insert_manage = DB::table('manage_files')->insert($insert, $insert);
-            $this->send_upload_file_party($request->caseId, $insert);
             if($insert_manage){    
+                $this->send_upload_file_party($request->caseId, $insert);
+
                 // dd($request->log_id);   
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
 
