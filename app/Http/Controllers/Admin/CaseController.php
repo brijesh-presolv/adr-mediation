@@ -240,7 +240,7 @@ class CaseController extends Controller
         $invmodel->save();
         //send invitation
 
-        if($this->sned_invitation($request->id, $invitation)) {
+        if ($this->sned_invitation($request->id, $invitation)) {
             if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                 $success_log = BulkLog::find($_POST['log_id']);
                 // dd($success_log);
@@ -315,8 +315,7 @@ class CaseController extends Controller
             } else {
                 return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->id]);
             }
-        } 
-
+        }
     }
 
     public function withdrawStatus(Request $request)
@@ -797,8 +796,8 @@ class CaseController extends Controller
 
             $insert_manage = DB::table('manage_files')->insert($insert, $insert);
 
-            $this->send_upload_file_party($request->caseId, $insert);
             if ($insert_manage) {
+                $this->send_upload_file_party($request->caseId, $insert);
 
                 // dd($request->log_id);   
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
@@ -953,7 +952,7 @@ class CaseController extends Controller
         $invmodel->save();
         // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
 
-        // $this->send_mediatorAdd($request->id, $request->midater);
+        $this->send_mediatorAdd($request->id, $request->midater);
         return response()->json(["msg" => "midater Added"]);
     }
 
@@ -1005,6 +1004,29 @@ class CaseController extends Controller
                     ->where("mediators_mediation_cases_status.status", "=", 1)
                     ->first();
                 Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+                if ($mediatorNoti) {
+                    $id = "M" . sprintf("%06d", $request->caseId);
+                    SendGrid::send($d, $mediatorNoti->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediatorNoti->username);
+
+                    $var = ['-dt-', '-cid-', '-link-'];
+                    $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
+                    $content1 = WaTemplate::getcontent('l10_session_schedule');
+                    $content = str_replace($var, $var1, $content1);
+                    $dwa1 = [
+                        'caseid' => $request->caseId,
+                        'contact' => "+91" . $mediatorNoti->mobile_number,
+                        'content' => ['text' => $content],
+                        'event' => 'SESS_SCHE'
+                    ];
+
+                    // print_r($dwa1);
+                    // exit;
+                    $access = Whatsapp::sendWamessage($dwa1);
+                }
+                return json_encode(['code' => 200, 'response' => 'success']);
+            } else {
+                return json_encode(['code' => 200, 'response' => 'error']);
             }
         } else {
             $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -1040,8 +1062,6 @@ class CaseController extends Controller
             $party_ids = array();
             foreach ($allParty as $party) {
                 $party_ids[] = $party->id;
-                // $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
-                $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time, $party->userPhone);
             }
             // dd($party_ids);
             $dataToInsert = [
@@ -1053,32 +1073,34 @@ class CaseController extends Controller
                 'scheduled_by' => Auth::user()->id,
             ];
             $manage_session = DB::table('manage_session')->insert($dataToInsert);
-            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
-                ->where("mediators_mediation_cases_status.status", "=", 1)
-                ->first();
-            if ($mediator) {
-                $id = "M" . sprintf("%06d", $request->caseId);
-                SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
-
-                $var = ['-dt-', '-cid-', '-link-'];
-                $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
-                $content1 = WaTemplate::getcontent('l10_session_schedule');
-                $content = str_replace($var, $var1, $content1);
-                $dwa1 = [
-                    'caseid' => $request->caseId,
-                    'contact' => "+91" . $mediator->mobile_number,
-                    'content' => ['text' => $content],
-                    'event' => 'SESS_SCHE'
-                ];
-
-                // print_r($dwa1);
-                // exit;
-                $access = Whatsapp::sendWamessage($dwa1);
-            }
-
-
             if ($manage_session) {
+                $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+                if ($mediator) {
+                    $id = "M" . sprintf("%06d", $request->caseId);
+                    SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+
+                    $var = ['-dt-', '-cid-', '-link-'];
+                    $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
+                    $content1 = WaTemplate::getcontent('l10_session_schedule');
+                    $content = str_replace($var, $var1, $content1);
+                    $dwa1 = [
+                        'caseid' => $request->caseId,
+                        'contact' => "+91" . $mediator->mobile_number,
+                        'content' => ['text' => $content],
+                        'event' => 'SESS_SCHE'
+                    ];
+
+                    // print_r($dwa1);
+                    // exit;
+                    $access = Whatsapp::sendWamessage($dwa1);
+                }
+                foreach ($allParty as $party) {
+                    // $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
+                    $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time, $party->userPhone);
+                }
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                     $success_log = BulkLog::find($_POST['log_id']);
                     // dd($success_log);
