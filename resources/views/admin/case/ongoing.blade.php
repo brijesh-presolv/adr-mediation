@@ -88,55 +88,7 @@
         </div>
     </div>
 
-    <div id="addSessionModelForBulk" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true" class="modal-demo">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Session</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span>&times;</span><span class="sr-only">Close</span>
-                    </button>
-                </div>
-
-                <form id="addSessionFormForBulk">
-
-                    <input type="hidden" name="createdBy" id="createdByF" value="{{ Auth::id() }}">
-                    <input type="hidden" name="caseId" value="">
-
-                    <div class="custom-modal-text ">
-                        <div class="form-group">
-                            <label>@lang('case.session_date') :</label>
-                            <input type="text" autocomplete="off" id="sessionDateForBulk"
-                                class="form-control sessionDateForBulk" name="sessionDate"
-                                placeholder="@lang('case.session_date_placeholder')" data-validation="required">
-                        </div>
-                        <div class="form-group">
-                            <label>@lang('case.session_time'):</label>
-                            <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime"
-                                placeholder="@lang('case.session_time_placeholder')" data-validation="required">
-                        </div>
-                        <div class="form-group">
-                            <label>@lang('case.session_zoom_id') :</label>
-                            <input type="text" id="zoomId" class="form-control" name="zoomId"
-                                placeholder="@lang('case.session_zoom_id_placeholder')" data-validation="required">
-                        </div>
-                        <div class="form-group">
-                            <label>@lang('case.session_note'):</label>
-                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"
-                                data-validation="required"></textarea>
-                        </div>
-                        {{-- <span>@lang('case.session_party'):</span>
-                    <div class="form-group" id="sessionParty">
-                    </div> --}}
-                        <div class="text-center">
-                            <input type="submit" name="@lang('case.session_add_title')" class="btn-sm btn-primary mt-3">
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    
 
     <div class="modal fade" id="uploadSupportingDocsModal" tabindex="-1" role="dialog" aria-hidden="true"
         style="display: none;">
@@ -457,6 +409,55 @@
             </div>
         </div>
     </div>
+    <div id="addSessionModelForBulk" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" class="modal-demo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Session</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span><span class="sr-only">Close</span>
+                    </button>
+                </div>
+
+                <form id="addSessionFormForBulk">
+
+                    <input type="hidden" name="createdBy" id="createdByF" value="{{ Auth::id() }}">
+                    <input type="hidden" name="caseId" value="">
+
+                    <div class="custom-modal-text ">
+                        <div class="form-group">
+                            <label>@lang('case.session_date') :</label>
+                            <input type="text" autocomplete="off" id="sessionDateForBulk"
+                                class="form-control sessionDateForBulk" name="sessionDate"
+                                placeholder="@lang('case.session_date_placeholder')" data-validation="required">
+                        </div>
+                        <div class="form-group">
+                            <label>@lang('case.session_time'):</label>
+                            <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime"
+                                placeholder="@lang('case.session_time_placeholder')" data-validation="required">
+                        </div>
+                        <div class="form-group">
+                            <label>@lang('case.session_zoom_id') :</label>
+                            <input type="text" id="zoomId" class="form-control" name="zoomId"
+                                placeholder="@lang('case.session_zoom_id_placeholder')" data-validation="required">
+                        </div>
+                        <div class="form-group">
+                            <label>@lang('case.session_note'):</label>
+                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"
+                                data-validation="required"></textarea>
+                        </div>
+                        {{-- <span>@lang('case.session_party'):</span>
+                    <div class="form-group" id="sessionParty">
+                    </div> --}}
+                        <div class="text-center">
+                            <input type="submit" name="@lang('case.session_add_title')" class="btn-sm btn-primary mt-3">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div id="Session-edit" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true"
         class="modal-demo">
         <div class="modal-dialog">
@@ -622,16 +623,20 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ url('/') }}/assets/libs/custombox/custombox.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     <script type="text/javascript">
+        $( document ).ready(function() {
+            // $("#sessionDateForBulk").datepicker({
+            //     minDate: 0,
+            //     dateFormat: 'dd/mm/yy'
+            // });
+            $("#sessionDate, #sessionDateForBulk").datepicker({
+                minDate: 0,
+                dateFormat: 'dd/mm/yy'
+            });
+        });
         $(function() {
-            $("#sessionDate").datepicker({
-                minDate: 0,
-                dateFormat: 'dd/mm/yy'
-            });
-            $(".sessionDateForBulk").datepicker({
-                minDate: 0,
-                dateFormat: 'dd/mm/yy'
-            });
+            
             $('.dropify').dropify();
 
         });
