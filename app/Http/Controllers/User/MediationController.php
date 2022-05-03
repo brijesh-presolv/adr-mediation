@@ -1086,6 +1086,8 @@ class MediationController extends Controller
             $data['confirm_status'] = 0;
             $data['otherRespondentDetails'] = $value[12];
             $data['proposedSolution'] = $value[9];
+            $data['bulk_flag'] = 1;
+
             $med = MedCase::create($data);
 
             $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $uploaded_by])->first();

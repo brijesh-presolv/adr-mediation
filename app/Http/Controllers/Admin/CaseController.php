@@ -2524,6 +2524,7 @@ class CaseController extends Controller
             $data['otherRespondentDetails'] = $value[12];
             $data['proposedSolution'] = $value[9];
             $data['batch_id'] = isset($batch->id) ? $batch->id : null;
+            $data['bulk_flag'] = 1;
 
             $med = MedCase::create($data);
 
