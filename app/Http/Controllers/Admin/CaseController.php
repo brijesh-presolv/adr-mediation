@@ -914,6 +914,8 @@ class CaseController extends Controller
 
     public function midaterAdd(Request $request)
     {
+        $medcase = MedCase::find($request->id);
+
         $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $request->id)
             ->where(function ($q) {
                 $q->where("status", "=", 0)
@@ -952,7 +954,9 @@ class CaseController extends Controller
         $invmodel->save();
         // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
 
-        $this->send_mediatorAdd($request->id, $request->midater);
+        if ($medcase->bulk_flag == 0) {
+            $this->send_mediatorAdd($request->id, $request->midater);
+        }
         return response()->json(["msg" => "midater Added"]);
     }
 
@@ -976,6 +980,7 @@ class CaseController extends Controller
             'event' => 'SESS_SCHE',
             'case_id' => $request->caseId,
         ];
+        $medcase = MedCase::find($request->caseId);
         if (isset($request->session_party_ids)) {
             $dataToInsert = [
                 'case_id' => $request->caseId,
@@ -1005,6 +1010,7 @@ class CaseController extends Controller
                     ->first();
                 Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
 
+                // if ($medcase->bulk_flag == 0) {
                 if ($mediatorNoti) {
                     $id = "M" . sprintf("%06d", $request->caseId);
                     SendGrid::send($d, $mediatorNoti->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediatorNoti->username);
@@ -1024,6 +1030,7 @@ class CaseController extends Controller
                     // exit;
                     $access = Whatsapp::sendWamessage($dwa1);
                 }
+                // }
                 return json_encode(['code' => 200, 'response' => 'success']);
             } else {
                 return json_encode(['code' => 200, 'response' => 'error']);
