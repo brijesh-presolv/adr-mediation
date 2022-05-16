@@ -1073,7 +1073,9 @@ class MediationController extends Controller
             }
         }
         // dd($csv);
-        //store in database
+        //store in 
+        $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
+        
         foreach ($csv as $k => $value) {
             // dd();
             $data['userid'] = $uploaded_by;

@@ -2516,6 +2516,7 @@ class CaseController extends Controller
                 $batch = Batch::create($batchdata);
             }
         }
+        $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
         foreach ($csv as $k => $value) {
             // dd( count(explode(',', $value[15])) + 1);
             // exit;
