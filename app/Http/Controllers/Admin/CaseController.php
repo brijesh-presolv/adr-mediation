@@ -2932,7 +2932,6 @@ class CaseController extends Controller
         $result->note = $request->note;
         $result->zoom_id = $request->zoomId;
         $result->session_party_ids = json_encode($request->session_party_ids);
-        $result->save();
         if ($result->save()) {
 
             foreach ($request->session_party_ids as $party_id) {
