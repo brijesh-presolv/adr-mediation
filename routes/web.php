@@ -167,6 +167,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('users/mediatorAccessChange', [App\Http\Controllers\Admin\CaseController::class, 'mediatorAccessChange'])->name('admin.users.mediator_access_change');
     Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('admin.case.commentPDF');
 
+    // batch wise approve
+    Route::post('case/batchwiseapprove', [App\Http\Controllers\Admin\CaseController::class, 'BatchWiseApprove'])->name('admin.case.batchwiseapprove');
+
 
     //case
     Route::get('casedetails/{id}', [App\Http\Controllers\Admin\CaseController::class, 'casedetails'])->name('admin.case.casedetails');

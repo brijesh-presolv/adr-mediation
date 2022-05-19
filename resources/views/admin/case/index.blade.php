@@ -135,7 +135,23 @@
                         <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn"
                             style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Reject</button>
                     </div>
+                    
 
+                </div>
+                <br><br>
+                <div class="row">
+                    <div class="col-md-4">
+                        <select name="batch" id="batchSelectForApprove" class="form-control">
+                            <option value="" selected>Select Batch...</option>
+                            @foreach ($batchName as $value)
+                                <option value={{ $value->id }}>{{ $value->batch_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#batchWiseMidaterAddForBulk" id="batchWiseApproveBtn"
+                         data-arb="<?= Auth::user()->id ?>">Batch Wise Approve</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -206,6 +222,42 @@
                         <button type="submit" class="btn btn-primary">@lang('case.btn_accept')</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="batchWiseMidaterAddForBulk" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">@lang('case.assign_mediator')</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{-- <form id="BatchWiseMidaterFormForBulk" method="post"> --}}
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">@lang('case.form_mediator')</label>
+                            <select class="form-control" id="BatchWiseMidaterSelect" name="midater" required>
+                                <option value="">@lang('case.form_select_mediator')</option>
+                                @foreach ($users as $user)
+                                    @if ($user->isActive)
+                                        <option value="{{ $user->id }}">{{ $user->first_name }}
+                                            {{ $user->last_name }} - {{ $user->organization }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">@lang('case.btn_close')</button>
+                        <button type="button" id="BatchWiseMidaterFormForBulk" class="btn btn-primary">@lang('case.btn_accept')</button>
+                    </div>
+                {{-- </form> --}}
             </div>
         </div>
     </div>
@@ -897,6 +949,103 @@ var looper = $.Deferred().resolve();
 
             }
         });
+
+        $(document).on('click', '#BatchWiseMidaterFormForBulk', function(){
+            var batch_id = $("#batchSelectForApprove :selected").val();
+            var mediator = $("#BatchWiseMidaterSelect :selected").val();
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            if(batch_id === "" || mediator === "") {
+                swal({
+                    title: (batch_id === "") ? "Select Batch" : "Select Mediator",
+                    text: "",
+                    icon: "error",
+                });
+            } else {
+                swal({
+                    title: "@lang('case.are_you_sure')",
+                    text:  "",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then(function(willSuccess) {
+                    if(willSuccess) {
+                        // console.log(batch_id);
+                        $.ajax({
+                            url: "{{ route('admin.case.batchwiseapprove') }}",
+                            dataType: "json",
+                            type: "POST",
+                            data: {
+                                batch_id: batch_id,
+                                mediator: mediator,
+                                _token: csrf,
+                            },
+                            success: function (result) { 
+                                // console.log(result);
+                                // if(result.status == 'success') {
+                                //     swal({
+                                //         title: result.msg,
+                                //         text: "",
+                                //         icon: "error",
+                                //     });
+                                // }
+                                swal({
+                                    title: result.msg,
+                                    text: "",
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            }
+
+                        });
+                    }
+                    // console.log(batch_id);
+
+                });
+            }
+        })
+
+
+        // $('#bulkWiseApproveBtn').on('click', function() {
+        //     // console.log("hello");
+        //     var batch_id = $("#batchSelectForApprove :selected").val();
+        //     var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+        //     if(batch_id === "") {
+        //         swal({
+        //             title: "Select Batch",
+        //             text: "",
+        //             icon: "error",
+        //         });
+        //     } else {
+        //         swal({
+        //             title: "@lang('case.are_you_sure')",
+        //             text:  "",
+        //             icon: "warning",
+        //             buttons: true,
+        //             dangerMode: true,
+        //         }).then(function(willSuccess) {
+        //             if(willSuccess) {
+        //                 // console.log(batch_id);
+        //                 $.ajax({
+        //                     url: "{{ route('admin.case.batchwiseapprove') }}",
+        //                     dataType: "json",
+        //                     type: "POST",
+        //                     data: {
+        //                         id: batch_id,
+        //                         _token: csrf,
+        //                     },
+        //                     success: function (result) { 
+        //                         console.log(result);
+        //                     }
+
+        //                 });
+        //             }
+        //             // console.log(batch_id);
+
+        //         });
+        //     }
+        // });
 
         $(document).on('submit', "#MidaterFormForBulk", function() {
             // var id = $(this).find("input[name='id']").val();
