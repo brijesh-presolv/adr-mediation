@@ -3075,7 +3075,7 @@ class CaseController extends Controller
                 }
                 if ($caseinfo['invers'] != "" && $caseinfo['inveds'] == "") {
                     $caseinfo['inveds'] = "delivered";
-                    $$caseinfo['invedd'] = $caseinfo['inverd'];
+                    $caseinfo['invedd'] = $caseinfo['inverd'];
                 }
             }
             $caseinfo['invwds'] = "";
@@ -3098,7 +3098,7 @@ class CaseController extends Controller
                 }
                 if ($caseinfo['invwrs'] != "" && $caseinfo['invwds'] == "") {
                     $caseinfo['invwds'] = "delivered";
-                    $$caseinfo['invwdd'] = $caseinfo['invwrd'];
+                    $caseinfo['invwdd'] = $caseinfo['invwrd'];
                 }
             }
             for ($i = 1; $i < $forloopcnt; $i++) {
@@ -3135,7 +3135,7 @@ class CaseController extends Controller
                             }
                             if ($caseinfo['einvers' . $k] != "" && $caseinfo['einveds' . $k] == "") {
                                 $caseinfo['einveds' . $k] = "delivered";
-                                $$caseinfo['einvedd' . $k] = $caseinfo['einverd' . $k];
+                                $caseinfo['einvedd' . $k] = $caseinfo['einverd' . $k];
                             }
                         }
                         if (isset($data['ewhatsapptrck'])) {
@@ -3154,7 +3154,7 @@ class CaseController extends Controller
                             }
                             if ($caseinfo['einvwrs' . $k] != "" && $caseinfo['einvwds' . $k] == "") {
                                 $caseinfo['einvwds' . $k] = "delivered";
-                                $$caseinfo['einvwdd' . $k] = $caseinfo['einvwrd' . $k];
+                                $caseinfo['einvwdd' . $k] = $caseinfo['einvwrd' . $k];
                             }
                         }
                     }
@@ -3355,83 +3355,90 @@ class CaseController extends Controller
     {
         // return ($request->all());
 
-        $caseforapprove = MedCase::where('batch_id', $request->batch_id)->where("confirm_status", "=", 0)->take(10)->get();
-        
+        // $caseforapprove = MedCase::where('batch_id', $request->batch_id)->where("confirm_status", "=", 0)->take(10)->get();
 
-        if(count($caseforapprove) != 0) {
-            // return response()->json('Data found');
-            foreach($caseforapprove as $value) {
-                $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $value->id)
-                    ->where(function ($q) {
-                        $q->where("status", "=", 0)
-                            ->orWhere("status", "=", 1);
-                    })
-                    ->count();
-                if ($data == 0) {
-                    Mediators_mediation_cases_status::create([
-                        'mediator_id' => $request->mediator,
-                        'mediation_case_id' => $value->id,
-                        'status' => 0,
-                        'user_type' => 1,
-                    ]);
-                } else {
-                    $MedCaseStatus = Mediators_mediation_cases_status::where(function ($q) {
-                        $q->where("status", "=", 0)
-                            ->orWhere("status", "=", 1);
-                    })
-                        ->where("mediation_case_id", "=", $value->id)
-                        ->first();
-                    $MedCaseStatus->mediator_id = $request->mediator;
-                    $MedCaseStatus->status = 0;
-                    $MedCaseStatus->save();
-                }
-        
-                $invitation = $this->mediator_appointment($value->id, $request->mediator);
-        
-                $invmodel = InvitationFiles::where('case_id', $value->id)->orderByDesc('id')->limit(1)->first();
-        
-                if (!isset($invmodel)) {
-                    $invmodel = new InvitationFiles();
-                }
-                $invmodel->case_id = $value->id;
-                $invmodel->file_name_mediator_appointment = $invitation;
-                $invmodel->save();
-                // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
-
-                $medCas = MedCase::find($value->id);
-                $medCas->confirm_status = 1;
-                $medCas->case_status = 1;
-                $medCas->save();
-
-                $mediation_status_log = new Mediation_status_log;
-                $mediation_status_log->user_id = Auth::user()->id;
-                $mediation_status_log->mediation_case_id = $value->id;
-                $mediation_status_log->status = 1;
-                $mediation_status_log->description = "Request Confirm";
-                $mediation_status_log->save();
-
-                $reminder = new Reminder;
-                $reminder->case_Id = $value->id;
-                $reminder->save();
-
-                // generate pdf
-                $invitation = $this->invitation_mediate($value->id);
-
-                $invmodel = InvitationFiles::where('case_id', $value->id)->orderByDesc('id')->limit(1)->first();
-                if (!isset($invmodel)) {
-                    // dd("if");
-                    $invmodel = new InvitationFiles();
-                }
-                $invmodel->case_id = $value->id;
-                $invmodel->file_name = $invitation;
-                $invmodel->save();
-                $this->sned_invitation($value->id, $invitation);
-            }            
-            return response()->json(["msg" => "midater Added", 'status' => 'success']);
-
-            // dd("if");
+        // return $caseforapprove;
+        // if(count($caseforapprove) != 0) {
+        // return response()->json('Data found');
+        // foreach($caseforapprove as $value) {
+        $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $request->id)
+            ->where(function ($q) {
+                $q->where("status", "=", 0)
+                    ->orWhere("status", "=", 1);
+            })
+            ->count();
+        if ($data == 0) {
+            Mediators_mediation_cases_status::create([
+                'mediator_id' => $request->mediator,
+                'mediation_case_id' => $request->id,
+                'status' => 0,
+                'user_type' => 1,
+            ]);
         } else {
-            return response()->json(['msg'=>'Data not found', 'status' => 'error']);
+            $MedCaseStatus = Mediators_mediation_cases_status::where(function ($q) {
+                $q->where("status", "=", 0)
+                    ->orWhere("status", "=", 1);
+            })
+                ->where("mediation_case_id", "=", $request->id)
+                ->first();
+            $MedCaseStatus->mediator_id = $request->mediator;
+            $MedCaseStatus->status = 0;
+            $MedCaseStatus->save();
         }
+
+        $invitation = $this->mediator_appointment($request->id, $request->mediator);
+
+        $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+
+        if (!isset($invmodel)) {
+            $invmodel = new InvitationFiles();
+        }
+        $invmodel->case_id = $request->id;
+        $invmodel->file_name_mediator_appointment = $invitation;
+        $invmodel->save();
+        // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
+
+        $medCas = MedCase::find($request->id);
+        $medCas->confirm_status = 1;
+        $medCas->case_status = 1;
+        $medCas->save();
+
+        $mediation_status_log = new Mediation_status_log;
+        $mediation_status_log->user_id = Auth::user()->id;
+        $mediation_status_log->mediation_case_id = $request->id;
+        $mediation_status_log->status = 1;
+        $mediation_status_log->description = "Request Confirm";
+        $mediation_status_log->save();
+
+        $reminder = new Reminder;
+        $reminder->case_Id = $request->id;
+        $reminder->save();
+
+        // generate pdf
+        $invitation = $this->invitation_mediate($request->id);
+
+        $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+        if (!isset($invmodel)) {
+            // dd("if");
+            $invmodel = new InvitationFiles();
+        }
+        $invmodel->case_id = $request->id;
+        $invmodel->file_name = $invitation;
+        $invmodel->save();
+        $this->sned_invitation($request->id, $invitation);
+        // }            
+        return response()->json(["msg" => "midater Added", 'status' => 'success']);
+
+        // dd("if");
+        // } else {
+        //     return response()->json(['msg'=>'Data not found', 'status' => 'error']);
+        // }
+    }
+
+    public function GetBatchWiseApprove(Request $request)
+    {
+        $caseforapprove = MedCase::where('batch_id', $request->batch_id)->where("confirm_status", "=", 0)->take(10)->get();
+
+        return $caseforapprove;
     }
 }

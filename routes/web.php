@@ -168,6 +168,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('admin.case.commentPDF');
 
     // batch wise approve
+    Route::post('case/getbatchwiseapprove', [App\Http\Controllers\Admin\CaseController::class, 'GetBatchWiseApprove'])->name('admin.case.getbatchwiseapprove');
     Route::post('case/batchwiseapprove', [App\Http\Controllers\Admin\CaseController::class, 'BatchWiseApprove'])->name('admin.case.batchwiseapprove');
 
 

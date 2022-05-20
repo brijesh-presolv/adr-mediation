@@ -971,16 +971,32 @@ var looper = $.Deferred().resolve();
                     if(willSuccess) {
                         // console.log(batch_id);
                         $.ajax({
-                            url: "{{ route('admin.case.batchwiseapprove') }}",
+                            url: "{{ route('admin.case.getbatchwiseapprove') }}",
                             dataType: "json",
                             type: "POST",
                             data: {
                                 batch_id: batch_id,
-                                mediator: mediator,
                                 _token: csrf,
                             },
                             success: function (result) { 
                                 // console.log(result);
+                                result.map((e)=>{
+                                    // console.log(e.id);
+                                    $.ajax({
+                                        url: "{{ route('admin.case.batchwiseapprove') }}",
+                                        dataType: "json",
+                                        type: "POST",
+                                        data: {
+                                            id: e.id,
+                                            mediator:mediator,
+                                            _token: csrf,
+                                        },
+                                        success: function (result) { 
+                                            console.log(result);
+                                        }
+
+                                    });
+                                })
                                 // if(result.status == 'success') {
                                 //     swal({
                                 //         title: result.msg,
@@ -988,13 +1004,13 @@ var looper = $.Deferred().resolve();
                                 //         icon: "error",
                                 //     });
                                 // }
-                                swal({
-                                    title: result.msg,
-                                    text: "",
-                                    icon: "success",
-                                }).then(function() {
-                                    location.reload();
-                                });
+                                // swal({
+                                //     title: result.msg,
+                                //     text: "",
+                                //     icon: "success",
+                                // }).then(function() {
+                                //     location.reload();
+                                // });
                             }
 
                         });
