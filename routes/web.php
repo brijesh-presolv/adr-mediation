@@ -170,6 +170,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // batch wise approve
     Route::post('case/getbatchwiseapprove', [App\Http\Controllers\Admin\CaseController::class, 'GetBatchWiseApprove'])->name('admin.case.getbatchwiseapprove');
     Route::post('case/batchwiseapprove', [App\Http\Controllers\Admin\CaseController::class, 'BatchWiseApprove'])->name('admin.case.batchwiseapprove');
+    Route::post('case/countbatchwiseapprove', [App\Http\Controllers\Admin\CaseController::class, 'CountBatchWiseApprove'])->name('admin.case.countbatchwiseapprove');
 
 
     //case

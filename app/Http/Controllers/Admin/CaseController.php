@@ -3353,14 +3353,23 @@ class CaseController extends Controller
 
     public function BatchWiseApprove(Request $request)
     {
-        // return ($request->all());
+        // dd($request->all());
 
+        // return ($request->all());
+        // dd($request->mediator);
         // $caseforapprove = MedCase::where('batch_id', $request->batch_id)->where("confirm_status", "=", 0)->take(10)->get();
 
         // return $caseforapprove;
         // if(count($caseforapprove) != 0) {
         // return response()->json('Data found');
         // foreach($caseforapprove as $value) {
+        if ($request->logId != null) {
+            $logdata = BulkLog::find($request->logId);
+            
+        }
+
+        dd($logdata);
+
         $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $request->id)
             ->where(function ($q) {
                 $q->where("status", "=", 0)
@@ -3425,7 +3434,8 @@ class CaseController extends Controller
         $invmodel->case_id = $request->id;
         $invmodel->file_name = $invitation;
         $invmodel->save();
-        $this->sned_invitation($request->id, $invitation);
+        if ($this->sned_invitation($request->id, $invitation)) {
+        }
         // }            
         return response()->json(["msg" => "midater Added", 'status' => 'success']);
 
@@ -3435,10 +3445,47 @@ class CaseController extends Controller
         // }
     }
 
+    public function CountBatchWiseApprove(Request $request)
+    {
+        $totalcount = MedCase::where('batch_id', $request->batch_id)->where("confirm_status", "=", 0)->count();
+
+        // $caseforapprove = MedCase::where('batch_id', $request->batch_id)->where("confirm_status", "=", 0)->take(10)->get();
+
+        return $totalcount;
+    }
+
     public function GetBatchWiseApprove(Request $request)
     {
+        // dd($request->all());
         $caseforapprove = MedCase::where('batch_id', $request->batch_id)->where("confirm_status", "=", 0)->take(10)->get();
+        // dd($caseforapprove);
+        if ($request->logId == null) {
+            $allcids = array();
+            foreach ($caseforapprove as $value) {
+                array_push($allcids, $value->id);
+            }
+            $allcids = implode(',', $allcids);
+            $log = BulkLog::create([
+                "selected_ids" => $allcids,
+                "uploaded_by" => Auth::user()->id,
+                "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                "updated_at" => date('Y-m-d H:i:s'),
+            ]);
+            $log_id = $log->id;
+            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'data' => $caseforapprove]);
+        } else {
+            $data = BulkLog::find($request->logId);
+            $allcids = array();
+            foreach ($caseforapprove as $value) {
+                array_push($allcids, $value->id);
+            }
+            $allcids = implode(',', $allcids);
+            $data->selected_ids = $data->selected_ids . ',' . $allcids;
 
-        return $caseforapprove;
+            // dd($data->selected_ids);
+            $data->save();
+            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $request->logId, 'data' => $caseforapprove]);
+        }
     }
 }

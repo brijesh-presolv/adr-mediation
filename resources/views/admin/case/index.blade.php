@@ -777,6 +777,83 @@ var ajax_request_approve = function (item, mediator_url, confirm_url) {
     return deferred.promise();
 };
 
+var countingcases;
+
+var ajax_request_batch_wise = function (item, confirm_url) {
+    var deferred = $.Deferred();
+    $.ajax({
+        url: confirm_url,
+        dataType: "json",
+        type: "POST",
+        data: {
+            batch_id: item.batch_id,
+            _token: item.token,
+            logId: logId,
+            // allcids: item.allcids,
+            total_row: item.total_row,
+            // midater : item.midater,
+            // insertRow: insId,
+            // faildRow: failId,
+            log_type: item.log_type,
+        },
+        success: function (result) {
+            // console.log(result);
+            logId = result.log_id; 
+            var success = 0;
+            comp = comp + result.data.length;
+            prc = Math.round(((comp * 100) / countingcases));
+            $('#tto').html(prc); 
+
+            result.data.map((e)=>{
+                var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+                $.ajax({
+                    url: "{{ route('admin.case.batchwiseapprove') }}",
+                    dataType: "json",
+                    type: "POST",
+                    data: {
+                        id: e.id,
+                        mediator:item.mediator,
+                        logId: logId,
+                        _token: csrf,
+                    },
+                    success: function (edata) {
+                        
+                        success ++;
+                        $("#messcc").append(
+                        "<p style='color: green;' class='text-center'>Case ID : M" +
+                            e.id.toString().padStart(6, "0") + " Success.</p>"
+                        );
+                        var objDiv = document.getElementById("messcc");
+                        objDiv.scrollTop = objDiv.scrollHeight;
+                        if(success === result.data.length) {
+                            $("#loading_image").hide();
+
+                            $("#totalPer").append(
+                            "<h5 class='text-center mt-0'>Total " +
+                                countingcases +
+                            " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                            );
+                            deferred.resolve(result);
+                        }
+                    },
+                    error: function(err) {
+                        $("#messcc").append(
+                        "<p style='color: red;' class='text-center'>Case ID : M" +
+                            e.id.toString().padStart(6, "0") + " Fail.</p>"
+                        );
+                        deferred.resolve(err);
+                    }
+                });
+            })
+            
+            // deferred.resolve(result);
+        },
+    });
+    return deferred.promise();
+}
+
+
 var looper = $.Deferred().resolve();
 
         $("#selectalldir").change(function() {
@@ -969,34 +1046,85 @@ var looper = $.Deferred().resolve();
                     dangerMode: true,
                 }).then(function(willSuccess) {
                     if(willSuccess) {
+                        var idarr = [];
                         // console.log(batch_id);
                         $.ajax({
-                            url: "{{ route('admin.case.getbatchwiseapprove') }}",
+                            url: "{{ route('admin.case.countbatchwiseapprove') }}",
                             dataType: "json",
                             type: "POST",
                             data: {
                                 batch_id: batch_id,
                                 _token: csrf,
                             },
-                            success: function (result) { 
-                                // console.log(result);
-                                result.map((e)=>{
-                                    // console.log(e.id);
-                                    $.ajax({
-                                        url: "{{ route('admin.case.batchwiseapprove') }}",
-                                        dataType: "json",
-                                        type: "POST",
-                                        data: {
-                                            id: e.id,
-                                            mediator:mediator,
-                                            _token: csrf,
-                                        },
-                                        success: function (result) { 
-                                            console.log(result);
-                                        }
+                            success: function (result) {
+                                $(".ccdd").click();
+                                $(".msgDiv").hide();
+                                $(".loading_form").show();
+                                $("#loading_image").show();
+                                $(".close").hide();
+                                if(result === 0) {
+                                    $("#loading_image").hide();
+                                    $("#messcc").append("<p style='color: red;' class='text-center'>Not found any data this batch.</p>")
+                                    
+                                    var objDiv = document.getElementById("messcc");
+                                    objDiv.scrollTop = objDiv.scrollHeight;
 
+                                } else {
+                                    countingcases = result;
+                                    var actionwork = result/10;
+                                    if(actionwork!==parseInt(actionwork)) {
+                                        actionwork = parseInt(actionwork) + 1;
+                                    } 
+                                    console.log(actionwork);
+                                    for(var i=0; i<actionwork; i++) {
+                                        var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            
+                                        idarr.push({
+                                            batch_id: batch_id,
+                                            mediator: mediator,
+                                            token: csrf,
+                                            total_row: countingcases,
+                                            log_type: "Batch Wise Bulk Approve",
+                                        });
+                                    }
+                                }
+                                var burl = '{{ route("admin.case.getbatchwiseapprove") }}';
+                                swal.close();
+                                $.when
+                                .apply(
+                                $,
+                                $.map(idarr, function (item, i) {
+                                    looper = looper.then(function () {
+                                        return ajax_request_batch_wise(item, burl);
                                     });
+                                    return looper;
                                 })
+                                )
+                                .then(function () {
+                                    swal.close();
+                                    $("#messccclose").append(
+                                        '<br><center><a href="{{route("admin.case.newrequest")}}" class="btn btn-danger btn-lg">Close</a></center>'
+                                    );
+                                    var objDiv = document.getElementById("messcc");
+                                    objDiv.scrollTop = objDiv.scrollHeight;
+                                });
+                                // result.map((e)=>{
+                                //     // console.log(e.id);
+                                //     $.ajax({
+                                //         url: "{{ route('admin.case.batchwiseapprove') }}",
+                                //         dataType: "json",
+                                //         type: "POST",
+                                //         data: {
+                                //             id: e.id,
+                                //             mediator:mediator,
+                                //             _token: csrf,
+                                //         },
+                                //         success: function (result) { 
+                                //             console.log(result);
+                                //         }
+
+                                //     });
+                                // })
                                 // if(result.status == 'success') {
                                 //     swal({
                                 //         title: result.msg,
