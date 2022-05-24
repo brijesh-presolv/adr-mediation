@@ -778,6 +778,7 @@ var ajax_request_approve = function (item, mediator_url, confirm_url) {
 };
 
 var countingcases;
+var notiId = null;
 
 var ajax_request_batch_wise = function (item, confirm_url) {
     var deferred = $.Deferred();
@@ -789,20 +790,30 @@ var ajax_request_batch_wise = function (item, confirm_url) {
             batch_id: item.batch_id,
             _token: item.token,
             logId: logId,
+            notiId: notiId,
             // allcids: item.allcids,
             total_row: item.total_row,
-            // midater : item.midater,
+            midater : item.mediator,
             // insertRow: insId,
             // faildRow: failId,
             log_type: item.log_type,
         },
         success: function (result) {
+            
             // console.log(result);
-            logId = result.log_id; 
             var success = 0;
-            comp = comp + result.data.length;
-            prc = Math.round(((comp * 100) / countingcases));
-            $('#tto').html(prc); 
+            $("#loading_image").hide();
+            if(logId == null) {
+                $("#totalPer").append(
+                "<h5 class='text-center mt-0'>Total " +
+                    countingcases +
+                " Cases, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                );
+            }
+
+            logId = result.log_id;
+            notiId = result.notiId; 
+            
 
             result.data.map((e)=>{
                 var csrf = document.querySelector('meta[name="csrf-token"]').content;
@@ -818,7 +829,6 @@ var ajax_request_batch_wise = function (item, confirm_url) {
                         _token: csrf,
                     },
                     success: function (edata) {
-                        
                         success ++;
                         $("#messcc").append(
                         "<p style='color: green;' class='text-center'>Case ID : M" +
@@ -826,23 +836,23 @@ var ajax_request_batch_wise = function (item, confirm_url) {
                         );
                         var objDiv = document.getElementById("messcc");
                         objDiv.scrollTop = objDiv.scrollHeight;
+                        
                         if(success === result.data.length) {
-                            $("#loading_image").hide();
-
-                            $("#totalPer").append(
-                            "<h5 class='text-center mt-0'>Total " +
-                                countingcases +
-                            " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
-                            );
+                            comp = comp + result.data.length;
+                            prc = Math.round(((comp * 100) / countingcases));
+                            $('#tto').html(prc); 
                             deferred.resolve(result);
                         }
                     },
                     error: function(err) {
+                        success ++;
                         $("#messcc").append(
                         "<p style='color: red;' class='text-center'>Case ID : M" +
                             e.id.toString().padStart(6, "0") + " Fail.</p>"
                         );
-                        deferred.resolve(err);
+                        if(success === result.data.length) {
+                            deferred.resolve(err);
+                        }
                     }
                 });
             })
@@ -1027,6 +1037,8 @@ var looper = $.Deferred().resolve();
             }
         });
 
+        // console.log({{env('NO_OF_REQUEST_SEND', 10)}});
+
         $(document).on('click', '#BatchWiseMidaterFormForBulk', function(){
             var batch_id = $("#batchSelectForApprove :selected").val();
             var mediator = $("#BatchWiseMidaterSelect :selected").val();
@@ -1071,11 +1083,10 @@ var looper = $.Deferred().resolve();
 
                                 } else {
                                     countingcases = result;
-                                    var actionwork = result/10;
+                                    var actionwork = result/{{env('NO_OF_REQUEST_SEND', 10)}};
                                     if(actionwork!==parseInt(actionwork)) {
                                         actionwork = parseInt(actionwork) + 1;
                                     } 
-                                    console.log(actionwork);
                                     for(var i=0; i<actionwork; i++) {
                                         var csrf = document.querySelector('meta[name="csrf-token"]').content;
             

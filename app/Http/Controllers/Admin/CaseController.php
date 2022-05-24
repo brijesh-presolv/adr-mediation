@@ -21,6 +21,7 @@ use App\Models\Batch;
 use App\Models\BulkLog;
 use App\Models\EmailTrack;
 use App\Models\ManageSession;
+use App\Models\Notification;
 use App\Models\Reminder;
 use App\Models\WaTemplate;
 use App\Models\WhatsappTrack;
@@ -3363,12 +3364,8 @@ class CaseController extends Controller
         // if(count($caseforapprove) != 0) {
         // return response()->json('Data found');
         // foreach($caseforapprove as $value) {
-        if ($request->logId != null) {
-            $logdata = BulkLog::find($request->logId);
-            
-        }
 
-        dd($logdata);
+        // dd($logdata);
 
         $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $request->id)
             ->where(function ($q) {
@@ -3410,34 +3407,64 @@ class CaseController extends Controller
         $medCas = MedCase::find($request->id);
         $medCas->confirm_status = 1;
         $medCas->case_status = 1;
-        $medCas->save();
+        if ($medCas->save()) {
+            $mediation_status_log = new Mediation_status_log;
+            $mediation_status_log->user_id = Auth::user()->id;
+            $mediation_status_log->mediation_case_id = $request->id;
+            $mediation_status_log->status = 1;
+            $mediation_status_log->description = "Request Confirm";
+            $mediation_status_log->save();
 
-        $mediation_status_log = new Mediation_status_log;
-        $mediation_status_log->user_id = Auth::user()->id;
-        $mediation_status_log->mediation_case_id = $request->id;
-        $mediation_status_log->status = 1;
-        $mediation_status_log->description = "Request Confirm";
-        $mediation_status_log->save();
+            $reminder = new Reminder;
+            $reminder->case_Id = $request->id;
+            $reminder->save();
 
-        $reminder = new Reminder;
-        $reminder->case_Id = $request->id;
-        $reminder->save();
+            // generate pdf
+            $invitation = $this->invitation_mediate($request->id);
 
-        // generate pdf
-        $invitation = $this->invitation_mediate($request->id);
+            $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+            if (!isset($invmodel)) {
+                // dd("if");
+                $invmodel = new InvitationFiles();
+            }
+            $invmodel->case_id = $request->id;
+            $invmodel->file_name = $invitation;
+            $invmodel->save();
+            $this->sned_invitation($request->id, $invitation);
 
-        $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
-        if (!isset($invmodel)) {
-            // dd("if");
-            $invmodel = new InvitationFiles();
+            
+
+            if ($request->logId != null) {
+                $logdata = BulkLog::find($request->logId);
+
+                if ($logdata->inserted_row == null) {
+                    $logdata->inserted_row = $request->id;
+                } else {
+                    $logdata->inserted_row = $logdata->inserted_row . ',' . $request->id;
+                }
+                $logdata->save();
+            }
+            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $request->logId, "msg" => "midater Added"]);
+
+            // return response()->json(["msg" => "midater Added", 'status' => 'success']);
+
+
+        } else {
+            if ($request->logId != null) {
+                $logdata = BulkLog::find($request->logId);
+
+                if ($logdata->failed_row == null) {
+                    $logdata->failed_row = $request->id;
+                } else {
+                    $logdata->failed_row = $logdata->failed_row . ',' . $request->id;
+                }
+                $logdata->save();
+            }
+            return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $request->logId]);
         }
-        $invmodel->case_id = $request->id;
-        $invmodel->file_name = $invitation;
-        $invmodel->save();
-        if ($this->sned_invitation($request->id, $invitation)) {
-        }
+
+
         // }            
-        return response()->json(["msg" => "midater Added", 'status' => 'success']);
 
         // dd("if");
         // } else {
@@ -3457,7 +3484,7 @@ class CaseController extends Controller
     public function GetBatchWiseApprove(Request $request)
     {
         // dd($request->all());
-        $caseforapprove = MedCase::where('batch_id', $request->batch_id)->where("confirm_status", "=", 0)->take(10)->get();
+        $caseforapprove = MedCase::where('batch_id', $request->batch_id)->where("confirm_status", "=", 0)->take(env('NO_OF_REQUEST_SEND', 10))->get();
         // dd($caseforapprove);
         if ($request->logId == null) {
             $allcids = array();
@@ -3468,12 +3495,27 @@ class CaseController extends Controller
             $log = BulkLog::create([
                 "selected_ids" => $allcids,
                 "uploaded_by" => Auth::user()->id,
-                "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                "total_row" => count($caseforapprove),
                 "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
                 "updated_at" => date('Y-m-d H:i:s'),
             ]);
             $log_id = $log->id;
-            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'data' => $caseforapprove]);
+            if($request->notiId == null) {
+                $noti = [
+                    'uploaded_by' => Auth::user()->id,
+                    'case_id' => $allcids,
+                    'event' => "ACPTARB_ADM",
+                    'mediator_id' => $request->mediator,
+                    'user_id' => null,
+                ];
+                $notidata = Notification::create($noti);
+                // Common_function::MedNotification($request->id, "ACPTARB_ADM", Auth::user()->id, $request->mediator, null);
+            } else {
+                $notidata = Notification::find($request->notiId);
+                $notidata->case_id = $notidata->case_id . ',' . $allcids;
+                $notidata->save();
+            }
+            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'data' => $caseforapprove, 'notiId' => $notidata->id]);
         } else {
             $data = BulkLog::find($request->logId);
             $allcids = array();
@@ -3482,10 +3524,26 @@ class CaseController extends Controller
             }
             $allcids = implode(',', $allcids);
             $data->selected_ids = $data->selected_ids . ',' . $allcids;
+            $data->total_row = $data->total_row + count($caseforapprove);
 
             // dd($data->selected_ids);
             $data->save();
-            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $request->logId, 'data' => $caseforapprove]);
+            if($request->notiId == null) {
+                $noti = [
+                    'uploaded_by' => Auth::user()->id,
+                    'case_id' => $allcids,
+                    'event' => "ACPTARB_ADM",
+                    'mediator_id' => $request->mediator,
+                    'user_id' => null,
+                ];
+                $notidata = Notification::create($noti);
+                // Common_function::MedNotification($request->id, "ACPTARB_ADM", Auth::user()->id, $request->mediator, null);
+            } else {
+                $notidata = Notification::find($request->notiId);
+                $notidata->case_id = $notidata->case_id . ',' . $allcids;
+                $notidata->save();
+            }
+            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $request->logId, 'data' => $caseforapprove, 'notiId' => $notidata->id]);
         }
     }
 }
