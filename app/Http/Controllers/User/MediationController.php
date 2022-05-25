@@ -27,10 +27,14 @@ use Exception;
 use Illuminate\Support\Facades\File;
 use PDF;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Traits\UploadTrait;
+
 
 
 class MediationController extends Controller
 {
+
+    use UploadTrait;
 
     public function Notification()
     {
@@ -246,7 +250,10 @@ class MediationController extends Controller
         $data["res"] = InvoledUser::where("userPlanId", "=", $id)->where('isClaimant', '<>', 0)->first();
         $pdf = PDF::loadView('pdf.request_letter', $data);
         $name = 'request_letter_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
-        Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $name;
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
 

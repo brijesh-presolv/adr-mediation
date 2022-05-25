@@ -17,6 +17,7 @@ use App\Models\InvitationFiles;
 use App\Models\Mediators_mediation_cases_status;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
+use App\Http\Traits\UploadTrait;
 use App\Models\Batch;
 use App\Models\BulkLog;
 use App\Models\EmailTrack;
@@ -37,6 +38,7 @@ use ZipArchive;
 
 class CaseController extends Controller
 {
+    use UploadTrait;
 
     /**
      * Create a new controller instance.
@@ -238,10 +240,10 @@ class CaseController extends Controller
         }
         $invmodel->case_id = $request->id;
         $invmodel->file_name = $invitation;
-        $invmodel->save();
+        // $invmodel->save();
         //send invitation
-
-        if ($this->sned_invitation($request->id, $invitation)) {
+        if($invmodel->save()) {
+        // if ($this->sned_invitation($request->id, $invitation)) {
             if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                 $success_log = BulkLog::find($_POST['log_id']);
                 // dd($success_log);
@@ -968,7 +970,11 @@ class CaseController extends Controller
         $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.mediator_appointment_letter', $data);
         $name = 'mediator_appoinment_letter_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
-        Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $name;
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
 
@@ -1415,7 +1421,11 @@ class CaseController extends Controller
         $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
-        Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $name;
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
 
@@ -1739,6 +1749,9 @@ class CaseController extends Controller
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
 
 
+        $finalFilePath = 'mediation_documents/mediation/' . $id . '/' . $invitation;
+        $whatsappSend = Storage::disk('s3')->url($finalFilePath);
+
         $initiating_party = "";
         $initiating_phone = "";
         $initiating_email = "";
@@ -1775,7 +1788,7 @@ class CaseController extends Controller
                 }
                 $responding_phone[] = $inv->userPhone;
                 if ($inv->userEmail != "") {
-                    SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+                    SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
                 }
                 // SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
 
@@ -1814,7 +1827,7 @@ class CaseController extends Controller
                 $dwa2 = [
                     'caseid' => $ini_userPlanId,
                     'contact' => "+91" . $phone,
-                    'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => $content_file]],
+                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'ACPTARB_ADM_RES'
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
@@ -1824,7 +1837,7 @@ class CaseController extends Controller
 
         if ($responding_party != "") {
 
-            SendGrid::send($d1, $initiating_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+            SendGrid::send($d1, $initiating_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
 
 
             $var = ['-cid-', '-rp-'];
@@ -1848,7 +1861,7 @@ class CaseController extends Controller
             $dwa2 = [
                 'caseid' => $ini_userPlanId,
                 'contact' => "+91" . $initiating_phone,
-                'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => $content_file]],
+                'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                 'event' => 'ACPTARB_ADM_INI'
             ];
             $access = Whatsapp::sendWamessage($dwa2);
@@ -2657,7 +2670,11 @@ class CaseController extends Controller
         $data["res"] = InvoledUser::where("userPlanId", "=", $id)->where('isClaimant', '<>', 0)->first();
         $pdf = PDF::loadView('pdf.request_letter', $data);
         $name = 'request_letter_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
-        Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $name;
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
 

@@ -3,20 +3,22 @@
 namespace App\Http\Helpers;
 
 use App\Models\EmailTrack;
+use Illuminate\Support\Facades\Storage;
 use PharIo\Manifest\Email;
 
 Class SendGrid {
 
-    public static $apiKey = "SG.TS18vgiMQOSm_4uY2ZEvyg.bzC2riBYZj2PhtgiJX62QLY5-4iaXJOpAlB63OavyUAgf";
+    public static $apiKey = "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";
 
     public function __construct() {
-        self::$apiKey = env('SENDGRID_API_KEY', 'SG.TS18vgiMQOSm_4uY2ZEvyg.bzC2riBYZj2PhtgiJX62QLY5-4iaXJOpAlB63OavyUAgf');
+        self::$apiKey = env('SENDGRID_API_KEY', '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');
     }
 
     public static function send($d, $to, $templateId, $subs = NULL,
             $toName = NULL, $file = NULL) {
 
-            // dd($to);
+            // dd(basename($file));
+        
         $response = '';
         $email = new \SendGrid\Mail\Mail();
         $email->setFrom('admin@presolv360.com', 'Presolv360');
@@ -37,9 +39,10 @@ Class SendGrid {
             //attachment
             if (is_array($file)) {
                 foreach ($file as $ff) {
+                    $data = Storage::disk('s3')->get($ff);
                     $attachment = new \SendGrid\Mail\Attachment();
 
-                    $file_encoded = base64_encode(file_get_contents($ff));
+                    $file_encoded = base64_encode($data);
                     $filename = basename($ff);
                     $attachment->setType("application/pdf");
                     $attachment->setContent($file_encoded);
@@ -50,9 +53,11 @@ Class SendGrid {
                     );
                 }
             } else {
+                $data = Storage::disk('s3')->get($file);
+
                 $attachment = new \SendGrid\Mail\Attachment();
 
-                $file_encoded = base64_encode(file_get_contents($file));
+                $file_encoded = base64_encode($data);
                 $filename = basename($file);
                 $attachment->setType("application/pdf");
                 $attachment->setContent($file_encoded);

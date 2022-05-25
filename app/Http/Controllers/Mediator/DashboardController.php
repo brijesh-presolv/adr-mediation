@@ -17,6 +17,7 @@ use App\Models\SupportingDocument;
 use App\Models\InvitationFiles;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\Whatsapp;
+use App\Http\Traits\UploadTrait;
 use App\Models\BulkLog;
 use App\Models\Mediators_mediation_cases_status;
 use App\Models\Notification;
@@ -28,6 +29,8 @@ use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
+
+    use UploadTrait;
 
     /**
      * Create a new controller instance.
@@ -1016,7 +1019,11 @@ class DashboardController extends Controller
         }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
         $file_name = "M" . sprintf("%06d", $id) . "_party.pdf";
-        Storage::put('public/mediation/' . $data["case"]->id . '/' . $file_name, $pdf->output());
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $file_name, $pdf->output());    
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $file_name;
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         $data["consent_disclosures"]->file_name = $file_name;
         $data["consent_disclosures"]->save();
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
@@ -1025,12 +1032,14 @@ class DashboardController extends Controller
             'event' => 'SEND_APPO_MED',
             'case_id' => $id,
         ];
-        // if ($mediator) {
-        //     SendGrid::send($d, $mediator->email, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
-        // }
+        $whatsappSend = Storage::disk('s3')->url($finalFilePath);
+        // dd($uploadS3);
+        if ($mediator) {
+            SendGrid::send($d, $mediator->email, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
+        }
         foreach ($involedUser as $inv) {
             if ($inv->userEmail != "") {
-                SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, url('storage/app/public/mediation/' . $data["case"]->id . '/' . $mid . "_party.pdf"));
+                SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
             }
             if ($inv->userPhone != "") {
                 $var = ['-cid-'];
@@ -1052,7 +1061,7 @@ class DashboardController extends Controller
                 $dwa2 = [
                     'caseid' => $id,
                     'contact' => "+91" . $inv->userPhone,
-                    'content' => ['media' => ['url' => url("storage/app/public/mediation/" . $data["case"]->id . "/" . $mid . "_party.pdf"), 'caption' => $content_file]],
+                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_APPO_MED'
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
