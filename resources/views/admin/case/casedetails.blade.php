@@ -137,9 +137,16 @@
                                 if ($case->request_letter) {
 
                                     $doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->request_letter;
+                                    if(file_exists($doc)) {
                                     ?>
                                     <a href="{{ url($doc) }}" target="_blank">@lang('case.view')</a>
                                     <?php } else { ?>
+                                        <a href="javascript:void(0);" 
+                                        data-url="{{$case->request_letter}}"
+                                        data-id="{{$case->id}}"
+                                        class="btn btn-success secureDownload" 
+                                        data-userid="{{Auth::user()->id}}">Download</a>
+                                    <?php } } else { ?>
                                     @lang('case.na')
                                     <?php } ?>
                                 </td>
@@ -156,13 +163,21 @@
                                             $cdate = $cdate->format('d-m-Y'); ?>
                                             <tr>
                                                 <td style="width: 5%;"><b>{{ $key + 1 }}</b></td>
-                                                @if ($key == 0)
+                                                {{-- @if ($key == 0) --}}
+                                                @if(file_exists($doc))
                                                     <td><a href="{{ url($doc) }}"
                                                             target="_blank"><b>{{ $value->file_name }}</b></a></td>
                                                 @else
-                                                    <td><a href="{{ url($doc) }}"
-                                                            target="_blank"><b>{{ $value->file_name }}</b></a></td>
+                                                    <td><a href="javascript:void(0);" 
+                                                    data-url="{{$value->file_name}}"
+                                                    data-id="{{$case->id}}"
+                                                    class="secureDownload" 
+                                                    data-userid="{{Auth::user()->id}}"><b>{{ $value->file_name }}</b></a></td>
                                                 @endif
+                                                            {{-- @else
+                                                    <td><a href="{{ url($doc) }}"
+                                                            target="_blank"><b>{{ $value->file_name }}</b></a></td> --}}
+                                                {{-- @endif --}}
                                                 {{-- <td><a href="{{url($doc)}}" target="_blank">@lang('case.view')</a></td> --}}
                                                 <td style="width: 15%;"><b>{{ $cdate }}</b></td>
                                             </tr>
@@ -181,9 +196,17 @@
                                 if ($case->appointment) {
                                     if($case->appointment->file_name_mediator_appointment != null) {
                                     $doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->appointment->file_name_mediator_appointment;
+                                    if(file_exists($doc)) {
                                     ?>
                                     <a href="{{ url($doc) }}" target="_blank">@lang('case.view')</a>
-                                    <?php } else { ?>
+                                    <?php }
+                                    else { ?>
+                                        <a href="javascript:void(0);" 
+                                        data-url="{{$case->appointment->file_name_mediator_appointment}}"
+                                        data-id="{{$case->id}}"
+                                        class="btn btn-success secureDownload" 
+                                        data-userid="{{Auth::user()->id}}">Download</a>
+                                    <?php } } else { ?>
                                     @lang('case.na')
                                     <?php } } else { ?>
                                     @lang('case.na')
@@ -207,7 +230,16 @@
 
                                 <td>
 
+                                    @if(file_exists($doc))
                                     <a href="{{ url($doc) }}" class="btn btn-sm btn-success" target="_blank">View</a>
+                                    @else
+                                    <a href="javascript:void(0);" data-folder="user/supportingDocument"
+                                    data-url="{{$case->documentPath}}"
+                                    data-id="{{$case->id}}"
+                                    class="secureDownload" 
+                                    data-userid="{{Auth::user()->id}}">Download</a>
+                                    @endif
+                                    {{-- <a href="{{ url($doc) }}" class="btn btn-sm btn-success" target="_blank">View</a> --}}
 
                                 </td>
                             </tr>
@@ -266,8 +298,19 @@
                                 </td>
                                 <td>{{ $v->username }}</td>
                                 <td>{{ date('d-m-Y', strtotime($v->created_at)) }}</td>
-                                <td><a class="btn btn-sm btn-success" target="_blank"
-                                        href="{{ url('storage/app/' . $v->file_name) }}">@lang('case.view')</a></td>
+                                <td>
+                                    @if(file_exists('storage/app/' . $v->file_name))
+                                    <a class="btn btn-sm btn-success" target="_blank"
+                                        href="{{ url('storage/app/' . $v->file_name) }}">@lang('case.view')</a>
+                                    @else
+                                    <a href="javascript:void(0);" data-folder="supportingDocument"
+                                    data-url="{{$v->file_name}}"
+                                    data-id="{{$case->id}}"
+                                    class="secureDownload" 
+                                    data-userid="{{Auth::user()->id}}">Download</a>
+                                    @endif
+                                    
+                                </td>
                             </tr>
                             <?php } ?>
 
@@ -349,6 +392,72 @@
 
                 // console.log(mediatorAccess);
 
+            });
+
+            $(document).on("click", ".secureDownload", function () {
+                var id = $(this).data("id");
+                var filename = $(this).data("url");
+                var userid = $(this).data("userid");
+                var parentFolder = $(this).data("folder");
+                var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+                $.ajax({
+                url: '{{route("downloadSecure")}}',
+                method: "POST",
+                data: {
+                    id: id,
+                    urlpath: filename,
+                    parentFolder: parentFolder,
+                    user_id: userid,
+                    _token: csrf
+                },
+                xhrFields: {
+                    responseType: "blob", // to avoid binary data being mangled on charset conversion
+                },
+                success: function (blob, status, xhr) {
+                    // check for a filename
+                    var filename = "";
+                    var disposition = xhr.getResponseHeader("Content-Disposition");
+                    if (disposition && disposition.indexOf("attachment") !== -1) {
+                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    var matches = filenameRegex.exec(disposition);
+                    if (matches != null && matches[1])
+                        filename = matches[1].replace(/['"]/g, "");
+                    }
+
+                    if (typeof window.navigator.msSaveBlob !== "undefined") {
+                    // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                    window.navigator.msSaveBlob(blob, filename);
+                    } else {
+                    var URL = window.URL || window.webkitURL;
+                    var downloadUrl = URL.createObjectURL(blob);
+
+                    if (filename) {
+                        // use HTML5 a[download] attribute to specify filename
+                        var a = document.createElement("a");
+                        // safari doesn't support this yet
+                        if (typeof a.download === "undefined") {
+                        window.location.href = downloadUrl;
+                        } else {
+                        a.href = downloadUrl;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        }
+                    } else {
+                        window.location.href = downloadUrl;
+                    }
+
+                    setTimeout(function () {
+                        URL.revokeObjectURL(downloadUrl);
+                    }, 100); // cleanup
+                    }
+                },
+
+                error: function (err) {
+                    console.log(err);
+                },
+                });
             });
         });
     </script>

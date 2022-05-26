@@ -68,9 +68,13 @@ class MediationController extends Controller
 
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
-
-                    $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
-                    $insert[$x]['file_name'] = $path;
+                    $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
+                    // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                    $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
+                    $finalFilePath = $savePath . '/' . $filename;
+                    // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+                    Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
+                    $insert[$x]['file_name'] = $filename;
                     $insert[$x]['access'] = $totalAccess;
                     $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 0;
                     $insert[$x]['uploaded_by'] = Auth::user()->id;
@@ -122,7 +126,8 @@ class MediationController extends Controller
             'case_id' => $id,
         ];
         foreach ($files as $f) {
-            $filesE[] = url("storage/app/" . $f["file_name"]);
+            $filesE[] = 'mediation_documents/mediation/' . $id . '/supportingDocument/' . $f["file_name"];
+            // $filesE[] = url("storage/app/" . $f["file_name"]);
             $access = explode(',', $f["access"]);
             $mediatorAccess = $f["mediator_access"];
         }
@@ -148,6 +153,8 @@ class MediationController extends Controller
                     $accessW = Whatsapp::sendWamessage($dwa1);
 
                     foreach ($filesE as $file) {
+                        $whatsappSend = Storage::disk('s3')->url($file);
+
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
                         $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -155,7 +162,7 @@ class MediationController extends Controller
                         $dwa2 = [
                             'caseid' => $id,
                             'contact' => "+91" . $inv->userPhone,
-                            'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
+                            'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC'
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
@@ -186,6 +193,8 @@ class MediationController extends Controller
                 $accessW = Whatsapp::sendWamessage($dwa1);
 
                 foreach ($filesE as $file) {
+                    $whatsappSend = Storage::disk('s3')->url($file);
+
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
                     $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -193,7 +202,7 @@ class MediationController extends Controller
                     $dwa2 = [
                         'caseid' => $id,
                         'contact' => "+91" . $mediator->mobile_number,
-                        'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
+                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED'
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
@@ -945,7 +954,19 @@ class MediationController extends Controller
                     'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
                 ]);
             } else {
-                return "File Not Found";
+                $filenametostore = 'mediation_documents/mediation/' . $id . '/' . $data->file_name;
+                $s3Client = Storage::cloud()->getAdapter()->getClient();
+
+                $stream = $s3Client->getObject([
+                    'Bucket' => env('AWS_BUCKET'),
+                    'Key'    => $filenametostore
+                ]);
+
+                return response($stream['Body'], 200)->withHeaders([
+                    'Content-Type'        => $stream['ContentType'],
+                    'Content-Length'      => $stream['ContentLength'],
+                    'Content-Disposition' => 'attachment; filename="consent_and_disclosures_' . $data->file_name . '"'
+                ]);
             }
         } else {
             return "File Not Found";
@@ -1240,7 +1261,12 @@ class MediationController extends Controller
             $filename = 'supporting_document' . $med->id . time() . '.' . $selectDocument->getClientOriginalExtension();
             // dd($filename);
 
-            $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
+            // $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
+            $savePath = 'mediation_documents/mediation/' . $med->id . '/user/supportingDocument';
+            $finalFilePath = $savePath . '/' . $filename;
+            // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+            Storage::disk('s3')->put($finalFilePath, file_get_contents($selectDocument));
+
             $med->documentPath = $filename;
             $med->save();
             return redirect('/user/newrequest')->with(['success' => 'Success']);

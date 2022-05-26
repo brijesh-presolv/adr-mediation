@@ -148,7 +148,19 @@ class CaseController extends Controller
                     'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
                 ]);
             } else {
-                return "File Not Found";
+                $filenametostore = 'mediation_documents/mediation/' . $id . '/' . $data->file_name;
+                $s3Client = Storage::cloud()->getAdapter()->getClient();
+
+                $stream = $s3Client->getObject([
+                    'Bucket' => env('AWS_BUCKET'),
+                    'Key'    => $filenametostore
+                ]);
+
+                return response($stream['Body'], 200)->withHeaders([
+                    'Content-Type'        => $stream['ContentType'],
+                    'Content-Length'      => $stream['ContentLength'],
+                    'Content-Disposition' => 'attachment; filename="' . $data->file_name . '"'
+                ]);
             }
         } else {
             return "File Not Found";
@@ -242,8 +254,8 @@ class CaseController extends Controller
         $invmodel->file_name = $invitation;
         // $invmodel->save();
         //send invitation
-        if($invmodel->save()) {
-        // if ($this->sned_invitation($request->id, $invitation)) {
+       $invmodel->save();
+        if ($this->sned_invitation($request->id, $invitation)) {
             if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                 $success_log = BulkLog::find($_POST['log_id']);
                 // dd($success_log);
@@ -786,9 +798,14 @@ class CaseController extends Controller
 
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
-
-                    $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
-                    $insert[$x]['file_name'] = $path;
+                    $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
+                    // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                    $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
+                    $finalFilePath = $savePath . '/' . $filename;
+                    // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+                    Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
+                    // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                    $insert[$x]['file_name'] = $filename;
                     $insert[$x]['access'] = $inv_id;
                     $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 1;
                     $insert[$x]['uploaded_by'] = Auth::user()->id;
@@ -1581,7 +1598,8 @@ class CaseController extends Controller
             $InvoledUserMsg = InvoledUser::where(['userPlanId' => $med->id])->get();
             // dd($InvoledUserMsg);
             $responding_party = "";
-
+            $finalFilePath = 'mediation_documents/mediation/' . $request->id . '/' . $invitation;
+            $whatsappSend = Storage::disk('s3')->url($finalFilePath);
             foreach ($InvoledUserMsg as $value) {
 
                 if ($value->isClaimant > 0) {
@@ -1591,7 +1609,7 @@ class CaseController extends Controller
                     }
 
                     if ($value->userEmail != null) {
-                        $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => ($pone->organization != null) ? $pone->organization : $pone->name], $value->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+                        $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => ($pone->organization != null) ? $pone->organization : $pone->name], $value->name, $finalFilePath);
                     }
                     if ($value->userPhone != null) {
 
@@ -1615,7 +1633,7 @@ class CaseController extends Controller
                         $dwa2 = [
                             'caseid' => $id,
                             'contact' => "+91" . $value->userPhone,
-                            'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => $content_file]],
+                            'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'ACPTARB_ADM_RES'
                         ];
                         $access = Whatsapp::sendWamessage($dwa2);
@@ -1626,7 +1644,7 @@ class CaseController extends Controller
             if ($responding_party != "") {
                 // dd($pone);
                 if ($pone->userEmail != "") {
-                    SendGrid::send($d2, $pone->userEmail, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $pone->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
+                    SendGrid::send($d2, $pone->userEmail, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $pone->name, $finalFilePath);
                 }
 
                 if ($pone->userPhone != "") {
@@ -1651,7 +1669,7 @@ class CaseController extends Controller
                     $dwa2 = [
                         'caseid' => $id,
                         'contact' => "+91" . $pone->userPhone,
-                        'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => $content_file]],
+                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'ACPTARB_ADM_INI'
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
@@ -2195,7 +2213,9 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         foreach ($files as $f) {
-            $filesE[] = url("storage/app/" . $f["file_name"]);
+            // $filesE[] = url("storage/app/" . $f["file_name"]);
+            $filesE[] = 'mediation_documents/mediation/' . $id . '/supportingDocument/' . $f["file_name"];
+
             $access = explode(',', $f["access"]);
             $mediatorAccess = $f["mediator_access"];
         }
@@ -2220,6 +2240,7 @@ class CaseController extends Controller
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
                     foreach ($filesE as $file) {
+                        $whatsappSend = Storage::disk('s3')->url($file);
 
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
@@ -2228,7 +2249,7 @@ class CaseController extends Controller
                         $dwa2 = [
                             'caseid' => $id,
                             'contact' => "+91" . $inv->userPhone,
-                            'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
+                            'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC'
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
@@ -2266,6 +2287,7 @@ class CaseController extends Controller
                 ];
                 $accessW = Whatsapp::sendWamessage($dwa1);
                 foreach ($filesE as $file) {
+                    $whatsappSend = Storage::disk('s3')->url($file);
 
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
@@ -2274,7 +2296,7 @@ class CaseController extends Controller
                     $dwa2 = [
                         'caseid' => $id,
                         'contact' => "+91" . $mediator->mobile_number,
-                        'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
+                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED'
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
@@ -2698,8 +2720,11 @@ class CaseController extends Controller
             } else {
                 $filename = 'supporting_document' . $med->id . time() . '.' . $selectDocument->getClientOriginalExtension();
                 // dd($filename);
-
-                $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
+                $savePath = 'mediation_documents/mediation/' . $med->id . '/user/supportingDocument';
+                $finalFilePath = $savePath . '/' . $filename;
+                // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($selectDocument));
+                // $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
                 $med->documentPath = $filename;
                 $med->save();
                 return redirect('/admin/case/new-request')->with(['success' => 'Success']);

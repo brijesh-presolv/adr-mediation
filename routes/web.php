@@ -37,6 +37,8 @@ Route::get('/sendInvitation', [App\Http\Controllers\WhatsappStatus::class, 'Send
 
 Route::get('/ivr/acceptcase', [App\Http\Controllers\IvrController::class, 'acceptcase']);
 
+Route::post('download-document', [App\Http\Controllers\DownloadDocument::class, 'downloadSecure'])->name('downloadSecure');
+
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('user.dashboard');
     Route::get('notification', [App\Http\Controllers\User\MediationController::class, 'Notification'])->name('user.notification');
