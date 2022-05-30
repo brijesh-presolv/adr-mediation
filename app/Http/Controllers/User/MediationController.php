@@ -236,7 +236,18 @@ class MediationController extends Controller
                     if ($userAccess->userId == Auth::user()->id) {
                         echo "<tr>";
                         echo "<td>" . $sn . "</td>";
-                        echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+                        // echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+                        if(file_exists("storage/app/" . $value->file_name)) {
+                            // dd("hello");
+                            echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</a></td>";
+                        } else {
+                            // dd("else");
+                            echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='supportingDocument'
+                            data-url='".$value->file_name."'
+                            data-id='".$request->id."'
+                            class='secureDownload' 
+                            data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_name, PATHINFO_FILENAME) ."</a></td>";
+                        }
                         echo "<td>" . $value->username . "</td>";
                         echo "</tr>";
 
@@ -925,7 +936,18 @@ class MediationController extends Controller
 
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
-            echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
+            // echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
+            if(file_exists("storage/app/" . $value->file_path)) {
+                // dd("hello");
+                echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</a></td>";
+            } else {
+                // dd("else");
+                echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='settelmentDocument'
+                data-url='".$value->file_path."'
+                data-id='".$request->id."'
+                class='secureDownload' 
+                data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_path, PATHINFO_FILENAME) ."</a></td>";
+            }
             echo "<td>" . ucfirst($value->first_name) . ' ' . ucfirst($value->last_name) . "</td>";
             echo "</tr>";
 

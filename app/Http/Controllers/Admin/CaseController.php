@@ -86,7 +86,18 @@ class CaseController extends Controller
 
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
-            echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
+            echo "";
+            if(file_exists("storage/app/" . $value->file_name)) {
+                // dd("hello");
+                echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</a></td>";
+            } else {
+                // dd("else");
+                echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='supportingDocument'
+                data-url='".$value->file_name."'
+                data-id='".$request->id."'
+                class='secureDownload' 
+                data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_name, PATHINFO_FILENAME) ."</a></td>";
+            }
             echo "<td>" . $value->username . "</td>";
             echo "</tr>";
 
@@ -1709,7 +1720,18 @@ class CaseController extends Controller
 
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
-            echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
+            // echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
+            if(file_exists("storage/app/" . $value->file_path)) {
+                // dd("hello");
+                echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</a></td>";
+            } else {
+                // dd("else");
+                echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='settelmentDocument'
+                data-url='".$value->file_path."'
+                data-id='".$request->id."'
+                class='secureDownload' 
+                data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_path, PATHINFO_FILENAME) ."</a></td>";
+            }
             echo "<td>" . $value->username . "</td>";
             echo "</tr>";
 
@@ -1730,9 +1752,13 @@ class CaseController extends Controller
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
                 if ($request->hasFile('Settelmentfiles' . $x)) {
-                    $file = $request->file('Settelmentfiles' . $x);
-                    $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
-                    $insert[$x]['file_path'] = $path;
+                    $file = $request->file('Settelmentfiles' . $x);        
+                    $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
+                    $savePath = 'mediation_documents/mediation/' . $request->caseId . '/settelmentDocument';
+                    $finalFilePath = $savePath . '/' . $filename;
+                    Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
+                    // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                    $insert[$x]['file_path'] = $filename;
                     $insert[$x]['uploaded_by'] = Auth::user()->id;
                     $insert[$x]['mediation_case_id'] = $request->caseId;
                     //MedCase::where('id', $request->caseId)
@@ -2328,7 +2354,8 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         foreach ($files as $f) {
-            $filesE[] = url("storage/app/" . $f["file_path"]);
+            // $filesE[] = url("storage/app/" . $f["file_path"]);
+            $filesE[] = 'mediation_documents/mediation/' . $id . '/settelmentDocument/' . $f["file_path"];
         }
         foreach ($involedUser as $inv) {
             if ($inv->userEmail != "") {
@@ -2349,6 +2376,7 @@ class CaseController extends Controller
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
                 foreach ($filesE as $file) {
+                    $whatsappSend = Storage::disk('s3')->url($file);
 
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
@@ -2357,7 +2385,7 @@ class CaseController extends Controller
                     $dwa2 = [
                         'caseid' => $id,
                         'contact' => "+91" . $inv->userPhone,
-                        'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
+                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_SETT_AGRE'
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
@@ -2392,6 +2420,8 @@ class CaseController extends Controller
             $access = Whatsapp::sendWamessage($dwa1);
 
             foreach ($filesE as $file) {
+                $whatsappSend = Storage::disk('s3')->url($file);
+
                 $var_file = ['-caseid-'];
                 $var1_file = [$mid];
                 $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -2399,7 +2429,7 @@ class CaseController extends Controller
                 $dwa2 = [
                     'caseid' => $id,
                     'contact' => "+91" . $mediator->mobile_number,
-                    'content' => ['media' => ['url' => $file, 'caption' => $content_file]],
+                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_SETT_AGRE_MED'
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
