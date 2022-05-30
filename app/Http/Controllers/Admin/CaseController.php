@@ -2957,8 +2957,79 @@ class CaseController extends Controller
                     $save_file =  $invitation->file_name;
                     $zip->addFile($exist_file, $save_file);
                     $pdf->addPDF($exist_file, 'all');
+                } else {
+
+                    // --------- First save into local and then add in zip and merge pdf
+
+                    $s3_local = Storage::disk('local')->writeStream('public/mediation/temp/' . $value . '/' . $invitation->file_name, Storage::disk('s3')->readStream('mediation_documents/mediation/' . $value . '/' . $invitation->file_name));
+
+                    $exist_file_local = storage_path() . '/app/public/mediation/temp/' . $value . '/' . $invitation->file_name;
+                    $save_file =  $invitation->file_name;
+
+                    $zip->addFile($exist_file_local, $save_file);
+                    $pdf->addPDF($exist_file_local, 'all');
+
+
+                    // unlink($exist_file_local);
+                    // --------- Successfully add pdf in zip but merge file error
+
+                    // $s3 = Storage::cloud()->getAdapter()->getClient();
+
+                    // $s3->registerStreamWrapper();
+                    // $bucket = env('AWS_BUCKET');
+
+                    // $objects = $s3->ListObjects(array(
+                    //     'Bucket' => $bucket,
+                    //     'Prefix' => 'mediation_documents/mediation/' . $value . '/' . $invitation->file_name,
+                    // ));
+                    // if (!empty($objects['Contents']) && is_array($objects['Contents'])) {
+                    //     foreach ($objects['Contents'] as $object) {
+                    //         if (isset($object['Size']) && $object['Size'] > 0) {
+                    //             $contents = file_get_contents("s3://{$bucket}/{$object['Key']}"); // get file
+                    //             // echo '<br>';
+                    //             // $path = 'cover_letter_' . $value . '.pdf';
+                    //             $firstsavelocal =  Storage::disk('local')->put('public/mediation/temp/' . $value . '/' . $invitation->file_name, $contents);
+                    //             $exist_file_local = storage_path() . '/app/public/mediation/temp/' . $value . '/' . $invitation->file_name;
+    
+                    //             // $zip->addFromString($path, $pdf->output());
+                                
+                                
+                    //             $zip->addFromString($invitation->file_name, $contents); // add file contents in zip
+                                
+                    //             $pdf->addPDF($exist_file_local, 'all');
+                            
+                    //         }
+                    //     }
+                    // }
+
+
+                    // $filenametostore = 'mediation_documents/mediation/' . $value . '/' . $invitation->file_name;
+                    // $save_file =  $invitation->file_name;
+
+                    // $data = Storage::disk('s3')->get($filenametostore);
+
+                    // $pathdata = Storage::disk('s3')->url($filenametostore);
+
+                    // $file_encoded = base64_encode($data);
+                    // // dd($file_encoded);
+                    // $zip->addFile($file_encoded, $save_file);
+                    // // $pdf->addPDF($pathdata, 'all');
+                    
+                    // $firstsavelocal =  Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+                    // $finalFilePath = 'mediation_documents/mediation/' . $value . '/' . $invitation->file_name;
+                    // $exist_file1 = Storage::disk('s3')->get($finalFilePath);
+                    // $exist_file = Storage::disk('s3')->url($finalFilePath);
+                    // $exist_file = storage_path() . '/app/public/mediation/' . $value . '/' . $invitation->file_name;
+                    // $save_file =  $invitation->file_name;
+                    // $zip->addFile($exist_file1, $save_file);
+                    // $pdf->addPDF($exist_file, 'all');
                 }
+                
             }
+            // $exist_file_local_find = storage_path() . '/app/public/mediation/temp/' . $value . '/' . $invitation->file_name;
+            // if(File::exists($exist_file_local_find)) {
+            //     unlink($exist_file_local_find);
+            // }
         }
         $pathForTheMergedPdf = storage_path() . "/app/public/mergeFiles/allinone_" . time() . ".pdf";
         $pdf->merge('file', $pathForTheMergedPdf);
@@ -2966,6 +3037,14 @@ class CaseController extends Controller
         $zip->addFile($pathForTheMergedPdf, basename($pathForTheMergedPdf));
 
         $zip->close();
+        foreach ($caseid as $value) {
+            $invitation = InvitationFiles::where(['case_id' => $value])->orderByDesc('id')->limit(1)->first();
+            $exist_file_local_find = storage_path() . '/app/public/mediation/temp/' . $value;
+            if(File::exists($exist_file_local_find)) {
+                // unlink($exist_file_local_find);
+                File::deleteDirectory($exist_file_local_find);
+            }
+        }
         unlink($pathForTheMergedPdf);
         // dd($request_file_name);
         if (File::exists($download_path)) {
@@ -2973,6 +3052,8 @@ class CaseController extends Controller
 
             $finfo = new \finfo(FILEINFO_MIME_TYPE);
             $fileType = $finfo->file($download_path);
+            unlink($download_path);
+
             return response($fileContent, 200, [
                 'Content-Type' => $fileType,
                 'Content-Disposition' => 'attachment; filename="' . basename($download_path) . '"',
