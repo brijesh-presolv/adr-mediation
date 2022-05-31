@@ -163,6 +163,7 @@ class WhatsappController extends Controller
 
                     'caseid' => $d['caseid'],
                     'contact' => $c,
+                    'content' => "",
                     'media' => $d['oldcontent']['media']['url'],
                     'casetype' => $d['type'],
                     'event' => $d['event'],
