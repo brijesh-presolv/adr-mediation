@@ -20,6 +20,7 @@
         <link href="{{url('assets/')}}/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
         <link href="{{url('resources/')}}/css/app.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
         {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css" integrity="sha512-EZSUkJWTjzDlspOoPSpUFR0o0Xy7jdzW//6qhUkoZ9c4StFkVsp9fbbd0O06p9ELS3H486m4wmrCELjza4JEog==" crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
+        <link href="{{url('assets/')}}/css/dropify.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
 
 
         <!-- Dynamic pages css comes -->
@@ -199,6 +200,8 @@
         <script src="{{url('assets/')}}/js/pages/dashboard.init.js"></script>
         <script src="{{url('assets/')}}/form-validator/jquery.form-validator.js"></script>
         {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
+        <script src="{{url('assets/')}}/js/dropify.min.js"></script>
+        
         <!-- App js -->
         <script src="{{url('assets/')}}/js/app.min.js"></script>
         <script>
