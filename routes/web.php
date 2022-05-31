@@ -211,3 +211,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('cases/bulkupload', [App\Http\Controllers\Admin\CaseController::class, 'bulkUpload'])->name('admin.bulkUpload');
     Route::put('uploaddocument/{id}', [App\Http\Controllers\Admin\CaseController::class, 'documentUpload'])->name('admin.documentUpload');
 });
+
+//notification
+Route::get('notification/email/send', [App\Http\Controllers\Notification\EmailController::class, 'send']);
+
+Route::get('notification/whatsapp/send', [App\Http\Controllers\Notification\WhatsappController::class, 'send']);
