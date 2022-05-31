@@ -87,16 +87,16 @@ class CaseController extends Controller
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
             echo "";
-            if(file_exists("storage/app/" . $value->file_name)) {
+            if (file_exists("storage/app/" . $value->file_name)) {
                 // dd("hello");
                 echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</a></td>";
             } else {
                 // dd("else");
                 echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='supportingDocument'
-                data-url='".$value->file_name."'
-                data-id='".$request->id."'
+                data-url='" . $value->file_name . "'
+                data-id='" . $request->id . "'
                 class='secureDownload' 
-                data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_name, PATHINFO_FILENAME) ."</a></td>";
+                data-userid='" . Auth::user()->id . "'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</a></td>";
             }
             echo "<td>" . $value->username . "</td>";
             echo "</tr>";
@@ -265,7 +265,7 @@ class CaseController extends Controller
         $invmodel->file_name = $invitation;
         // $invmodel->save();
         //send invitation
-       $invmodel->save();
+        $invmodel->save();
         if ($this->sned_invitation($request->id, $invitation)) {
             if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                 $success_log = BulkLog::find($_POST['log_id']);
@@ -1056,7 +1056,7 @@ class CaseController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $request->caseId,
-                        'contact' => "+91" . $mediatorNoti->mobile_number,
+                        'contact' =>  $mediatorNoti->mobile_number,
                         'content' => ['text' => $content],
                         'event' => 'SESS_SCHE'
                     ];
@@ -1130,7 +1130,7 @@ class CaseController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $request->caseId,
-                        'contact' => "+91" . $mediator->mobile_number,
+                        'contact' =>  $mediator->mobile_number,
                         'content' => ['text' => $content],
                         'event' => 'SESS_SCHE'
                     ];
@@ -1378,7 +1378,7 @@ class CaseController extends Controller
                             $content = str_replace($var, $var1, $content1);
                             $dwa1 = [
                                 'caseid' => $deleted->case_id,
-                                'contact' => "+91" . $dd->userPhone,
+                                'contact' =>  $dd->userPhone,
                                 'content' => ['text' => $content],
                                 'event' => 'SESS_CEN'
                             ];
@@ -1399,7 +1399,7 @@ class CaseController extends Controller
                                 $content = str_replace($var, $var1, $content1);
                                 $dwa1 = [
                                     'caseid' => $deleted->case_id,
-                                    'contact' => "+91" . $dd->userPhone,
+                                    'contact' =>  $dd->userPhone,
                                     'content' => ['text' => $content],
                                     'event' => 'SESS_CEN'
                                 ];
@@ -1426,7 +1426,7 @@ class CaseController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $deleted->case_id,
-                        'contact' => "+91" . $mediator->mobile_number,
+                        'contact' =>  $mediator->mobile_number,
                         'content' => ['text' => $content],
                         'event' => 'SESS_CEN'
                     ];
@@ -1630,7 +1630,7 @@ class CaseController extends Controller
                         $content = str_replace($var, $var1, $content1);
                         $dwa1 = [
                             'caseid' => $id,
-                            'contact' => "+91" . $value->userPhone,
+                            'contact' =>  $value->userPhone,
                             'content' => ['text' => $content],
                             'event' => 'ACPTARB_ADM_RES'
                         ];
@@ -1643,7 +1643,7 @@ class CaseController extends Controller
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
-                            'contact' => "+91" . $value->userPhone,
+                            'contact' =>  $value->userPhone,
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'ACPTARB_ADM_RES'
                         ];
@@ -1666,7 +1666,7 @@ class CaseController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $pone->userPhone,
+                        'contact' =>  $pone->userPhone,
                         'content' => ['text' => $content],
                         // 'casetype' => 2,
                         'event' => 'ACPTARB_ADM_INI'
@@ -1679,7 +1679,7 @@ class CaseController extends Controller
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $pone->userPhone,
+                        'contact' =>  $pone->userPhone,
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'ACPTARB_ADM_INI'
                     ];
@@ -1721,16 +1721,16 @@ class CaseController extends Controller
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
             // echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
-            if(file_exists("storage/app/" . $value->file_path)) {
+            if (file_exists("storage/app/" . $value->file_path)) {
                 // dd("hello");
                 echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</a></td>";
             } else {
                 // dd("else");
                 echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='settelmentDocument'
-                data-url='".$value->file_path."'
-                data-id='".$request->id."'
+                data-url='" . $value->file_path . "'
+                data-id='" . $request->id . "'
                 class='secureDownload' 
-                data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_path, PATHINFO_FILENAME) ."</a></td>";
+                data-userid='" . Auth::user()->id . "'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</a></td>";
             }
             echo "<td>" . $value->username . "</td>";
             echo "</tr>";
@@ -1752,7 +1752,7 @@ class CaseController extends Controller
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
                 if ($request->hasFile('Settelmentfiles' . $x)) {
-                    $file = $request->file('Settelmentfiles' . $x);        
+                    $file = $request->file('Settelmentfiles' . $x);
                     $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
                     $savePath = 'mediation_documents/mediation/' . $request->caseId . '/settelmentDocument';
                     $finalFilePath = $savePath . '/' . $filename;
@@ -1839,7 +1839,7 @@ class CaseController extends Controller
 
                 // $dwa2 = [
                 //     'caseid' => $inv->userPlanId,
-                //     'contact' => "+91" . $inv->userPhone,
+                //     'contact' =>  $inv->userPhone,
                 //     'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $id . "/" . $invitation), 'caption' => 'Invitation to Mediate ' . Common_function::getsixdigitid('sc', $inv->userPlanId)]],
                 //     'event' => 'ACPTARB_ADM'
                 // ];
@@ -1857,7 +1857,7 @@ class CaseController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $inv->userPlanId,
-                    'contact' => "+91" . $phone,
+                    'contact' =>  $phone,
                     'content' => ['text' => $content],
                     'event' => 'ACPTARB_ADM_RES'
                 ];
@@ -1870,7 +1870,7 @@ class CaseController extends Controller
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $ini_userPlanId,
-                    'contact' => "+91" . $phone,
+                    'contact' =>  $phone,
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'ACPTARB_ADM_RES'
                 ];
@@ -1890,7 +1890,7 @@ class CaseController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $ini_userPlanId,
-                'contact' => "+91" . $initiating_phone,
+                'contact' =>  $initiating_phone,
                 'content' => ['text' => $content],
                 // 'casetype' => 2,
                 'event' => 'ACPTARB_ADM_INI'
@@ -1904,7 +1904,7 @@ class CaseController extends Controller
             $content_file = str_replace($var_file, $var1_file, $content1_file);
             $dwa2 = [
                 'caseid' => $ini_userPlanId,
-                'contact' => "+91" . $initiating_phone,
+                'contact' =>  $initiating_phone,
                 'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                 'event' => 'ACPTARB_ADM_INI'
             ];
@@ -1951,7 +1951,7 @@ class CaseController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
-                'contact' => "+91" . $userPhone,
+                'contact' =>  $userPhone,
                 'content' => ['text' => $content],
                 'event' => 'SESS_SCHE'
             ];
@@ -2029,7 +2029,7 @@ class CaseController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $phone,
+                        'contact' =>  $phone,
                         'content' => ['text' => $content],
                         'event' => 'WDRN_OTHER_PARTY'
                     ];
@@ -2048,7 +2048,7 @@ class CaseController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
-                'contact' => "+91" . $initiating_phone,
+                'contact' =>  $initiating_phone,
                 'content' => ['text' => $content],
                 // 'casetype' => 2,
                 'event' => 'WDRN_PARTY'
@@ -2068,7 +2068,7 @@ class CaseController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
-                'contact' => "+91" . $mediator->mobile_number,
+                'contact' =>  $mediator->mobile_number,
                 'content' => ['text' => $content],
                 // 'casetype' => 2,
                 'event' => 'WDRN_MED'
@@ -2114,7 +2114,7 @@ class CaseController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $inv->userPhone,
+                    'contact' =>  $inv->userPhone,
                     'content' => ['text' => $content],
                     'event' => 'RESO_ADM'
                 ];
@@ -2130,7 +2130,7 @@ class CaseController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
-                'contact' => "+91" . $mediator->mobile_number,
+                'contact' =>  $mediator->mobile_number,
                 'content' => ['text' => $content],
                 'event' => 'RESO_ADM'
             ];
@@ -2172,7 +2172,7 @@ class CaseController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $inv->userPhone,
+                    'contact' =>  $inv->userPhone,
                     'content' => ['text' => $content],
                     'event' => 'UNRESO_ADM'
                 ];
@@ -2188,7 +2188,7 @@ class CaseController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
-                'contact' => "+91" . $mediator->mobile_number,
+                'contact' =>  $mediator->mobile_number,
                 'content' => ['text' => $content],
                 'event' => 'UNRESO_ADM'
             ];
@@ -2213,7 +2213,7 @@ class CaseController extends Controller
         $content = str_replace($var, $var1, $content1);
         $dwa1 = [
             'caseid' => $id,
-            'contact' => "+91" . $user->mobile_number,
+            'contact' =>  $user->mobile_number,
             'content' => ['text' => $content],
             'event' => 'MEDI_ADD_ADM'
         ];
@@ -2260,7 +2260,7 @@ class CaseController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $id,
-                        'contact' => "+91" .  $inv->userPhone,
+                        'contact' => $inv->userPhone,
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC'
                     ];
@@ -2274,7 +2274,7 @@ class CaseController extends Controller
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
-                            'contact' => "+91" . $inv->userPhone,
+                            'contact' =>  $inv->userPhone,
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC'
                         ];
@@ -2284,7 +2284,7 @@ class CaseController extends Controller
             }
             // $dwa2 = [
             //     'caseid' => $id,
-            //     'contact' => "+91" .  $inv->userPhone,
+            //     'contact' => $inv->userPhone,
             //     'content' => ['media' => ['url' => $filesE, 'caption' => 'Additional Document ' . $mid]],
             //     'event' => 'SEND_ADDI_DOC_ADM'
             // ];
@@ -2307,7 +2307,7 @@ class CaseController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $mediator->mobile_number,
+                    'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
                     'event' => 'SEND_ADDI_DOC_MED'
                 ];
@@ -2321,7 +2321,7 @@ class CaseController extends Controller
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $mediator->mobile_number,
+                        'contact' =>  $mediator->mobile_number,
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED'
                     ];
@@ -2370,7 +2370,7 @@ class CaseController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $inv->userPhone,
+                    'contact' =>  $inv->userPhone,
                     'content' => ['text' => $content],
                     'event' => 'SEND_SETT_AGRE'
                 ];
@@ -2384,7 +2384,7 @@ class CaseController extends Controller
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $inv->userPhone,
+                        'contact' =>  $inv->userPhone,
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_SETT_AGRE'
                     ];
@@ -2393,7 +2393,7 @@ class CaseController extends Controller
             }
             // $dwa2 = [
             //     'caseid' => $id,
-            //     'contact' => "+91" . $inv->userPhone,
+            //     'contact' =>  $inv->userPhone,
             //     'content' => ['media' => ['url' => $filesE, 'caption' => 'settlement agreement ' . $mid]],
             //     'event' => 'SEND_SETT_AGRE_ADM'
             // ];
@@ -2413,7 +2413,7 @@ class CaseController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
-                'contact' => "+91" . $mediator->mobile_number,
+                'contact' =>  $mediator->mobile_number,
                 'content' => ['text' => $content],
                 'event' => 'SEND_SETT_AGRE_MED'
             ];
@@ -2428,7 +2428,7 @@ class CaseController extends Controller
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $mediator->mobile_number,
+                    'contact' =>  $mediator->mobile_number,
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_SETT_AGRE_MED'
                 ];
@@ -2833,7 +2833,7 @@ class CaseController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $request->caseid,
-                        'contact' => "+91" . $mediator->mobile_number,
+                        'contact' =>  $mediator->mobile_number,
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC_MED'
                     ];
@@ -2847,7 +2847,7 @@ class CaseController extends Controller
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $request->caseid,
-                        'contact' => "+91" . $mediator->mobile_number,
+                        'contact' =>  $mediator->mobile_number,
                         'content' => ['media' => ['url' => $filesE, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED'
                     ];
@@ -2911,7 +2911,7 @@ class CaseController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $invUser->userPlanId,
-                        'contact' => "+91" .  $invUser->userPhone,
+                        'contact' => $invUser->userPhone,
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC'
                     ];
@@ -2922,7 +2922,7 @@ class CaseController extends Controller
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $invUser->userPlanId,
-                        'contact' => "+91" . $invUser->userPhone,
+                        'contact' =>  $invUser->userPhone,
                         'content' => ['media' => ['url' => $filesE, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC'
                     ];
@@ -2990,14 +2990,14 @@ class CaseController extends Controller
                     //             // $path = 'cover_letter_' . $value . '.pdf';
                     //             $firstsavelocal =  Storage::disk('local')->put('public/mediation/temp/' . $value . '/' . $invitation->file_name, $contents);
                     //             $exist_file_local = storage_path() . '/app/public/mediation/temp/' . $value . '/' . $invitation->file_name;
-    
+
                     //             // $zip->addFromString($path, $pdf->output());
-                                
-                                
+
+
                     //             $zip->addFromString($invitation->file_name, $contents); // add file contents in zip
-                                
+
                     //             $pdf->addPDF($exist_file_local, 'all');
-                            
+
                     //         }
                     //     }
                     // }
@@ -3014,7 +3014,7 @@ class CaseController extends Controller
                     // // dd($file_encoded);
                     // $zip->addFile($file_encoded, $save_file);
                     // // $pdf->addPDF($pathdata, 'all');
-                    
+
                     // $firstsavelocal =  Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
                     // $finalFilePath = 'mediation_documents/mediation/' . $value . '/' . $invitation->file_name;
                     // $exist_file1 = Storage::disk('s3')->get($finalFilePath);
@@ -3024,7 +3024,6 @@ class CaseController extends Controller
                     // $zip->addFile($exist_file1, $save_file);
                     // $pdf->addPDF($exist_file, 'all');
                 }
-                
             }
             // $exist_file_local_find = storage_path() . '/app/public/mediation/temp/' . $value . '/' . $invitation->file_name;
             // if(File::exists($exist_file_local_find)) {
@@ -3040,7 +3039,7 @@ class CaseController extends Controller
         foreach ($caseid as $value) {
             $invitation = InvitationFiles::where(['case_id' => $value])->orderByDesc('id')->limit(1)->first();
             $exist_file_local_find = storage_path() . '/app/public/mediation/temp/' . $value;
-            if(File::exists($exist_file_local_find)) {
+            if (File::exists($exist_file_local_find)) {
                 // unlink($exist_file_local_find);
                 File::deleteDirectory($exist_file_local_find);
             }
@@ -3112,7 +3111,7 @@ class CaseController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $result->case_id,
-                    'contact' => "+91" . $mediator->mobile_number,
+                    'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
                     'event' => 'SESS_SCHE'
                 ];
@@ -3210,7 +3209,7 @@ class CaseController extends Controller
             $caseinfo['medname'] = isset($data['mediator']) ? strtoupper($data['mediator']->first_name) . " " . strtoupper($data['mediator']->last_name) : "";
 
             $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $caseinfo['respemail']);
-            $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES", "+91" . $caseinfo['respmob']);
+            $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $caseinfo['respmob']);
             $caseinfo['inveds'] = "";
             $caseinfo['invedd'] = "";
             $caseinfo['invers'] = "";
@@ -3274,7 +3273,7 @@ class CaseController extends Controller
                         $caseinfo['erespemail' . $k] = $v->userEmail;
                         $caseinfo['erespmob' . $k] = $v->userPhone;
                         $data['eemailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $v->userEmail);
-                        $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES", "+91" . $v->userPhone);
+                        $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $v->userPhone);
                         if (isset($data['eemailtrck'])) {
                             foreach ($data['eemailtrck'] as $etrck) {
                                 if ($etrck->event  == "delivered") {
@@ -3429,7 +3428,7 @@ class CaseController extends Controller
         //     $caseinfo['medname'] = strtoupper($data['mediator']->first_name) . " " . strtoupper($data['mediator']->last_name);
 
         //     $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $caseinfo['respemail']);
-        //     $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES", "+91" . $caseinfo['respmob']);
+        //     $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $caseinfo['respmob']);
         //     $caseinfo['inveds'] = "";
         //     $caseinfo['invedd'] = "";
         //     $caseinfo['invers'] = "";
@@ -3585,7 +3584,7 @@ class CaseController extends Controller
             $invmodel->save();
             $this->sned_invitation($request->id, $invitation);
 
-            
+
 
             if ($request->logId != null) {
                 $logdata = BulkLog::find($request->logId);
@@ -3653,7 +3652,7 @@ class CaseController extends Controller
                 "updated_at" => date('Y-m-d H:i:s'),
             ]);
             $log_id = $log->id;
-            if($request->notiId == null) {
+            if ($request->notiId == null) {
                 $noti = [
                     'uploaded_by' => Auth::user()->id,
                     'case_id' => $allcids,
@@ -3681,7 +3680,7 @@ class CaseController extends Controller
 
             // dd($data->selected_ids);
             $data->save();
-            if($request->notiId == null) {
+            if ($request->notiId == null) {
                 $noti = [
                     'uploaded_by' => Auth::user()->id,
                     'case_id' => $allcids,

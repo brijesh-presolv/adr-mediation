@@ -357,7 +357,7 @@ class DashboardController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $request->caseId,
-                    'contact' => "+91" . $mediator->mobile_number,
+                    'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
                     'event' => 'SESS_SCHE'
                 ];
@@ -414,7 +414,7 @@ class DashboardController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $request->caseId,
-                    'contact' => "+91" . $mediator->mobile_number,
+                    'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
                     'event' => 'SESS_SCHE'
                 ];
@@ -1038,7 +1038,7 @@ class DashboardController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
-                'contact' => "+91" . $userPhone,
+                'contact' =>  $userPhone,
                 'content' => ['text' => $content],
                 'event' => 'SESS_SCHE'
             ];
@@ -1093,7 +1093,7 @@ class DashboardController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $id,
-                    'contact' => "+91" .  $inv->userPhone,
+                    'contact' =>   $inv->userPhone,
                     'content' => ['text' => $content],
                     'event' => 'SEND_APPO_MED'
                 ];
@@ -1105,7 +1105,7 @@ class DashboardController extends Controller
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $inv->userPhone,
+                    'contact' =>  $inv->userPhone,
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_APPO_MED'
                 ];
@@ -1154,7 +1154,7 @@ class DashboardController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $id,
-                        'contact' => "+91" .  $inv->userPhone,
+                        'contact' =>   $inv->userPhone,
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC'
                     ];
@@ -1169,7 +1169,7 @@ class DashboardController extends Controller
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
-                            'contact' => "+91" . $inv->userPhone,
+                            'contact' =>  $inv->userPhone,
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC'
                         ];
@@ -1179,7 +1179,7 @@ class DashboardController extends Controller
             }
             // $dwa2 = [
             //     'caseid' => $id,
-            //     'contact' => "+91" .  $inv->userPhone,
+            //     'contact' =>   $inv->userPhone,
             //     'content' => ['media' => ['url' => $filesE, 'caption' => 'Additional Document ' . $mid]],
             //     'event' => 'SEND_ADDI_DOC_ADM'
             // ];
@@ -1203,7 +1203,7 @@ class DashboardController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $mediator->mobile_number,
+                    'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
                     'event' => 'SEND_ADDI_DOC_MED'
                 ];
@@ -1218,7 +1218,7 @@ class DashboardController extends Controller
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $mediator->mobile_number,
+                        'contact' =>  $mediator->mobile_number,
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED'
                     ];
@@ -1268,7 +1268,7 @@ class DashboardController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $inv->userPhone,
+                    'contact' =>  $inv->userPhone,
                     'content' => ['text' => $content],
                     'event' => 'SEND_SETT_AGRE'
                 ];
@@ -1282,7 +1282,7 @@ class DashboardController extends Controller
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $inv->userPhone,
+                        'contact' =>  $inv->userPhone,
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_SETT_AGRE'
                     ];
@@ -1291,7 +1291,7 @@ class DashboardController extends Controller
             }
             // $dwa2 = [
             //     'caseid' => $id,
-            //     'contact' => "+91" . $inv->userPhone,
+            //     'contact' =>  $inv->userPhone,
             //     'content' => ['media' => ['url' => $filesE, 'caption' => 'settlement agreement ' . $mid]],
             //     'event' => 'SEND_SETT_AGRE_ADM'
             // ];
@@ -1311,7 +1311,7 @@ class DashboardController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
-                'contact' => "+91" . $mediator->mobile_number,
+                'contact' =>  $mediator->mobile_number,
                 'content' => ['text' => $content],
                 'event' => 'SEND_SETT_AGRE_MED'
             ];
@@ -1325,7 +1325,7 @@ class DashboardController extends Controller
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $mediator->mobile_number,
+                    'contact' =>  $mediator->mobile_number,
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_SETT_AGRE_MED'
                 ];

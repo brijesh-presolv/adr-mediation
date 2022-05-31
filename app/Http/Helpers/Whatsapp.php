@@ -26,12 +26,12 @@ class Whatsapp
             if ($value == '') {
                 continue;
             }
-
-            // if ($i == 1) {
-            //     $c = $value;
-            // } else {
-            //     $c = '+91' . $value;
-            // }
+            // dd(strlen($value));
+            if (strlen($value) == 10) {
+                $value = '+91' . $value;
+            } else {
+                $value = $value;
+            }
 
 
 

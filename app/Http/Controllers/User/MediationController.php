@@ -146,7 +146,7 @@ class MediationController extends Controller
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $id,
-                        'contact' => "+91" .  $inv->userPhone,
+                        'contact' =>   $inv->userPhone,
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC'
                     ];
@@ -161,7 +161,7 @@ class MediationController extends Controller
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
-                            'contact' => "+91" . $inv->userPhone,
+                            'contact' =>  $inv->userPhone,
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC'
                         ];
@@ -186,7 +186,7 @@ class MediationController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $id,
-                    'contact' => "+91" . $mediator->mobile_number,
+                    'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
                     'event' => 'SEND_ADDI_DOC_MED'
                 ];
@@ -201,7 +201,7 @@ class MediationController extends Controller
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
-                        'contact' => "+91" . $mediator->mobile_number,
+                        'contact' =>  $mediator->mobile_number,
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED'
                     ];
@@ -237,16 +237,16 @@ class MediationController extends Controller
                         echo "<tr>";
                         echo "<td>" . $sn . "</td>";
                         // echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
-                        if(file_exists("storage/app/" . $value->file_name)) {
+                        if (file_exists("storage/app/" . $value->file_name)) {
                             // dd("hello");
                             echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</a></td>";
                         } else {
                             // dd("else");
                             echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='supportingDocument'
-                            data-url='".$value->file_name."'
-                            data-id='".$request->id."'
+                            data-url='" . $value->file_name . "'
+                            data-id='" . $request->id . "'
                             class='secureDownload' 
-                            data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_name, PATHINFO_FILENAME) ."</a></td>";
+                            data-userid='" . Auth::user()->id . "'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</a></td>";
                         }
                         echo "<td>" . $value->username . "</td>";
                         echo "</tr>";
@@ -591,7 +591,7 @@ class MediationController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $InvoledUser->userPlanId,
-                    'contact' => "+91" . $InvoledUserP1->userPhone,
+                    'contact' =>  $InvoledUserP1->userPhone,
                     'content' => ['text' => $content],
                     'event' => 'ONBOAR_USER'
                 ];
@@ -692,8 +692,8 @@ class MediationController extends Controller
             $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
             $value->share_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->count();
             $value->share_view_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->where("view_user", 0)->count();
-            
-            if(isset($value->casestatus)) {
+
+            if (isset($value->casestatus)) {
                 $value->casestatus->css = '';
 
                 if ($value->casestatus->status == 2) {
@@ -868,7 +868,7 @@ class MediationController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $request->case_id,
-                    'contact' => "+91" . $value->userPhone,
+                    'contact' =>  $value->userPhone,
                     'content' => ['text' => $content],
                     'event' => 'WDRN_OTHER_PARTY'
                 ];
@@ -883,7 +883,7 @@ class MediationController extends Controller
         $content = str_replace($var, $var1, $content1);
         $dwa1 = [
             'caseid' => $request->case_id,
-            'contact' => "+91" . $InvoledUserP1->userPhone,
+            'contact' =>  $InvoledUserP1->userPhone,
             'content' => ['text' => $content],
             // 'casetype' => 2,
             'event' => 'WDRN_PARTY'
@@ -899,7 +899,7 @@ class MediationController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $request->case_id,
-                'contact' => "+91" . $mediator->mobile_number,
+                'contact' =>  $mediator->mobile_number,
                 'content' => ['text' => $content],
                 // 'casetype' => 2,
                 'event' => 'WDRN_MED'
@@ -937,16 +937,16 @@ class MediationController extends Controller
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
             // echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
-            if(file_exists("storage/app/" . $value->file_path)) {
+            if (file_exists("storage/app/" . $value->file_path)) {
                 // dd("hello");
                 echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</a></td>";
             } else {
                 // dd("else");
                 echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='settelmentDocument'
-                data-url='".$value->file_path."'
-                data-id='".$request->id."'
+                data-url='" . $value->file_path . "'
+                data-id='" . $request->id . "'
                 class='secureDownload' 
-                data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_path, PATHINFO_FILENAME) ."</a></td>";
+                data-userid='" . Auth::user()->id . "'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</a></td>";
             }
             echo "<td>" . ucfirst($value->first_name) . ' ' . ucfirst($value->last_name) . "</td>";
             echo "</tr>";
@@ -1125,7 +1125,7 @@ class MediationController extends Controller
         // dd($csv);
         //store in 
         $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
-        
+
         foreach ($csv as $k => $value) {
             // dd();
             $data['userid'] = $uploaded_by;
