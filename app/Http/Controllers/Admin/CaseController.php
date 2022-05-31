@@ -1377,7 +1377,7 @@ class CaseController extends Controller
                             $content1 = WaTemplate::getcontent('L24_cancel_mediation_session');
                             $content = str_replace($var, $var1, $content1);
                             $dwa1 = [
-                                'caseid' => $id,
+                                'caseid' => $deleted->case_id,
                                 'contact' => "+91" . $dd->userPhone,
                                 'content' => ['text' => $content],
                                 'event' => 'SESS_CEN'
@@ -1398,7 +1398,7 @@ class CaseController extends Controller
                                 $content1 = WaTemplate::getcontent('L24_cancel_mediation_session');
                                 $content = str_replace($var, $var1, $content1);
                                 $dwa1 = [
-                                    'caseid' => $id,
+                                    'caseid' => $deleted->case_id,
                                     'contact' => "+91" . $dd->userPhone,
                                     'content' => ['text' => $content],
                                     'event' => 'SESS_CEN'
@@ -1425,7 +1425,7 @@ class CaseController extends Controller
                     $content1 = WaTemplate::getcontent('L24_cancel_mediation_session');
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
-                        'caseid' => $id,
+                        'caseid' => $deleted->case_id,
                         'contact' => "+91" . $mediator->mobile_number,
                         'content' => ['text' => $content],
                         'event' => 'SESS_CEN'

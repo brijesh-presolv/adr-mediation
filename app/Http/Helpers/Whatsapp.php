@@ -3,15 +3,54 @@
 namespace App\Http\Helpers;
 
 use App\Http\Helpers\Curl;
+use App\Models\WhatsAppQue;
 use App\Models\WhatsappTrack;
 
 class Whatsapp
 {
     public static function sendWamessage($d)
     {
-        // print_r($d);
-        // exit;
+       
+        $ocarr = [];
 
+        $ocarr[] = $d['contact'];
+
+        // if ($oc != '') {
+
+        //     $ocarr = array_merge($ocarr, explode(',', $oc));
+        // }
+
+        // $i = 1;
+        foreach ($ocarr as $key => $value) {
+
+            if ($value == '') {
+                continue;
+            }
+
+            // if ($i == 1) {
+            //     $c = $value;
+            // } else {
+            //     $c = '+91' . $value;
+            // }
+
+
+
+            //que table
+            $arr_e = array();
+            $arr_e['caseid'] = $d['caseid'];
+            $arr_e['contact'] = trim($value);
+            $arr_e['content'] = json_encode($d['content']);
+            $arr_e['casetype'] = 2;
+            $arr_e['event'] = $d['event'];
+
+            if (array_key_exists('media', $d['content'])) {
+                $arr_e['media'] = 1;
+            }
+
+            WhatsAppQue::insert($arr_e);
+        }
+
+        return true;
         // dd(date('Y-m-d H:i:s'));
 
         $url = "https://api.karix.io/message/";
@@ -27,7 +66,7 @@ class Whatsapp
             "source" => "+13253077759",
             "destination" => [$d['contact']],
             "content" => $d['content'],
-             "events_url" => route('whatsapp_status'),
+            "events_url" => route('whatsapp_status'),
         ];
         // $eventUrl = route('whatsapp_status');
 
@@ -47,14 +86,14 @@ class Whatsapp
 
         $data = json_encode($data);
 
-        
+
         $type = "POST";
 
 
         $res = Curl::request($url, $data, $type, $auth);
         $res1 = json_decode($res, true);
 
-       
+
         if ($res1) {
 
             if (array_key_exists('text', $d['content'])) {
@@ -100,7 +139,7 @@ class Whatsapp
 
             //     return false;
             // }
-           return true;
+            return true;
             // }
         } else {
             return false;
