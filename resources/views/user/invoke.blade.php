@@ -255,7 +255,7 @@ function isreadonlys($rows) {
 
 @section('head')
 <link href="{{url('assets/')}}/css/smoke.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
-<link href="{{url('assets/')}}/css/dropify.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+{{-- <link href="{{url('assets/')}}/css/dropify.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" /> --}}
 
 @endsection('head')
 
@@ -265,7 +265,7 @@ function isreadonlys($rows) {
 
 
 <script src="{{url('assets/')}}/js/smoke.js"></script>
-<script src="{{url('assets/')}}/js/dropify.min.js"></script>
+{{-- <script src="{{url('assets/')}}/js/dropify.min.js"></script> --}}
 
 
 
