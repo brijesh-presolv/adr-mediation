@@ -3,6 +3,7 @@
 namespace App\Http\Traits;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Carbon;
 
 
 trait UploadTrait {
