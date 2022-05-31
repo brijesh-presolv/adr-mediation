@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Notification;
 use App\Models\Email_track;
 use App\Models\Email_que;
 use App\Http\Traits\UploadTrait;
+use App\Models\EmailQue;
 use App\Models\System;
 
 class EmailController
@@ -25,7 +26,7 @@ class EmailController
     	
         $limit=500;
 
-        $emails=Email_que::where(['is_sent'=>0,'is_processing'=>0])->orderBy('updated_at','DESC')->limit($limit)->get();
+        $emails=EmailQue::where(['is_sent'=>0,'is_processing'=>0])->orderBy('updated_at','DESC')->limit($limit)->get();
 
         if(count($emails)<1){
             exit();
@@ -42,7 +43,7 @@ class EmailController
 
 
 
-    	$setprocess=Email_que::whereIn('id', $emailproccess)->limit($limit)->update(['is_processing' => 1]);
+    	$setprocess=EmailQue::whereIn('id', $emailproccess)->limit($limit)->update(['is_processing' => 1]);
 
     	//$emails=Email_que::where(['is_sent'=>0,'is_processing'=>1])->orderBy('updated_at','DESC')->limit($limit)->get();
 

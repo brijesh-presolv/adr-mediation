@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Helpers\Curl;
 use App\Models\WhatsappTrack;
-use App\Models\WhatsApp_Que;
 use App\Http\Traits\UploadTrait;
 use App\Models\System;
+use App\Models\WhatsAppQue;
 
 class WhatsappController extends Controller
 { 
@@ -30,7 +30,7 @@ class WhatsappController extends Controller
 
         $limit=500;
 
-        $whapps=WhatsApp_Que::where(['is_sent'=>0,'is_processing'=>0])->orderBy('created_at','DESC')->limit($limit)->get();
+        $whapps=WhatsAppQue::where(['is_sent'=>0,'is_processing'=>0])->orderBy('created_at','DESC')->limit($limit)->get();
 
         if(count($whapps)<1){
             exit();
@@ -47,7 +47,7 @@ class WhatsappController extends Controller
 
 
 
-     $setprocess=WhatsApp_Que::whereIn('id', $whappspr)->limit($limit)->update(['is_processing' => 1]);
+     $setprocess=WhatsAppQue::whereIn('id', $whappspr)->limit($limit)->update(['is_processing' => 1]);
 
 
       foreach ($whapps as $key => $value) {
@@ -177,7 +177,7 @@ class WhatsappController extends Controller
                 WhatsappTrack::insert($data2);
             }
 
-            $que=WhatsApp_Que::where(['is_sent'=>0,'is_processing'=>1,'id'=>$d['id']])->update(['is_processing' => 0,'is_sent'=>1]);;
+            $que=WhatsAppQue::where(['is_sent'=>0,'is_processing'=>1,'id'=>$d['id']])->update(['is_processing' => 0,'is_sent'=>1]);;
 
         
 

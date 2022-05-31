@@ -45,4 +45,14 @@ trait UploadTrait {
             // }
         }
     }
+
+    function getPreSignedUrl($filename, $exp_time)
+    {
+        $filenameForPresignedUrl = ltrim($filename, '/');
+        // $temporarySignedUrl = Storage::disk('s3')->temporaryUrl($filename,  Carbon::now()->addMinutes($exp_time));
+        $disk = Storage::disk('s3');
+        $temporarySignedUrl = $disk->getAwsTemporaryUrl($disk->getDriver()->getAdapter(), $filenameForPresignedUrl, Carbon::now()->addMinutes($exp_time), []);
+        // $preSignedUrl = preg_replace('/([^:])(\/{2,})/', '$1/', $temporarySignedUrl);
+        return $temporarySignedUrl;
+    }
 }
