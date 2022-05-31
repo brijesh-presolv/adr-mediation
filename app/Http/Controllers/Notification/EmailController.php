@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Notification;
 
 
-use App\Models\Email_track;
-use App\Models\Email_que;
 use App\Http\Traits\UploadTrait;
 use App\Models\EmailQue;
+use App\Models\EmailTrack;
 use App\Models\System;
 
 class EmailController
@@ -204,7 +203,7 @@ class EmailController
            $et= self::Etrack($response, $d, $uemail);
 
            if($et==true){
-           	$setprocess=Email_que::where(['id'=>$d['id'],'is_sent'=>0])->limit(1)->update(['is_processing' => 0,'is_sent'=>1]);
+           	$setprocess=EmailQue::where(['id'=>$d['id'],'is_sent'=>0])->limit(1)->update(['is_processing' => 0,'is_sent'=>1]);
            }
         } catch (Exception $e) {
            
@@ -230,7 +229,7 @@ class EmailController
         if ($ns == true) {
             $datarr = ['sg_message_id' => 'false', 'event' => 'Not sent', 'case_id' => $d['case_id'], 'casetype' => $d['type'], 'email' => $to, 'status' => '400', 'created_at' => date('Y-m-d H:i:s')];
 
-            Email_track::insert($datarr);
+            EmailTrack::insert($datarr);
             return true;
         }
         //sent
@@ -247,7 +246,7 @@ class EmailController
 
                 $datarr = ['sg_message_id' => trim($idr[1]), 'event' => $d['event'], 'case_id' => $d['case_id'], 'casetype' => $d['type'], 'email' => $to, 'status' => trim($status), 'created_at' => date('Y-m-d H:i:s')];
 
-                $in=Email_track::insert($datarr);
+                $in=EmailTrack::insert($datarr);
 
                 if($in){
                 	return true;
