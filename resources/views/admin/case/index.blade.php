@@ -865,31 +865,157 @@ var ajax_request_batch_wise = function (item, confirm_url) {
 
 var ajax_request_approve_with_midater_add = function (item, confirm_url) {
     var deferred = $.Deferred();
-    console.log(item.id.length);
+    // console.log(item.id.length);
     // for(var i = 0; i<)
     var complete = 0;
+    // var 
     item.id.map((caseid) => {
-        // console.log(e);
         $.ajax({
-            url: confirm_url,
+            url: "{{ route('admin.case.batchwiseapprove') }}",
             dataType: "json",
             type: "POST",
             data: {
                 id: caseid,
-                _token: item.token,
-                allcids: item.allcids,
-                total_row: item.total_row,
-                // log_id: logId,
-                // insertRow: insId,
-                // faildRow: failId,
-                log_type: item.log_type,
+                mediator:item.midater,
+                // logId: logId,
+                _token: item.token
             },
             success: function(result) {
-                complete++;
+                complete ++;
+                if (result.response == "success") {
+                    if (insId == null) {
+                        insId = result.caseid;
+                    } else {
+                        insId = insId + "," + result.caseid;
+                    }
+                    $("#messcc").append(
+                        "<p style='color: green;' class='text-center'>Case ID : M" +
+                            result.caseid.toString().padStart(6, "0") + " Success.</p>"
+                    );
+                    var objDiv = document.getElementById("messcc");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                    
+                } else {
+                    if (failId == null) {
+                        failId = result.caseid;
+                    } else {
+                        failId = failId + "," + result.caseid;
+                    }
+                    $("#messcc").append(
+                    "<p style='color: red;' class='text-center'>Case ID : M" +
+                        result.caseid.toString().padStart(6, "0") + " Fail.</p>"
+                    );
+                }
+                if(complete === item.id.length) {
+                    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+                    // console.log("insId", insId);
+                    // console.log("failId", failId);
+                    // console.log("complete", complete);
+                    // allcids: item.id,
+                    
+                    $.ajax({
+                        url: confirm_url,
+                        dataType: "json",
+                        type: "POST",
+                        data: {
+                            // id: item.id,
+                            _token: csrf,
+                            allcids: item.allcids,
+                            total_row: item.total_row,
+                            logId: logId,
+                            notiId: notiId,
+                            insertRow: insId,
+                            faildRow: failId,
+                            log_type: item.log_type,
+                            mediator:item.midater,
+                        },
+                        success: function(data) {
+                            $("#loading_image").hide();
+                            if(logId == null) {
+                                $("#totalPer").append(
+                                "<h5 class='text-center mt-0'>Total " +
+                                    item.total_row +
+                                " Cases, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                                );
+                            }
+                            logId = data.log_id;
+                            notiId = data.notiId;
+
+                            comp = comp + item.id.length;
+                            prc = Math.round(((comp * 100) / item.total_row));
+                            $('#tto').html(prc); 
+                            deferred.resolve(result);
+
+                        },
+                        error: function(err) {
+                            // deferred.resolve(err);
+                        }
+                    });
+                }
             },
+            error: function(error) {
+                complete ++;
+                $("#messcc").append(
+                "<p style='color: red;' class='text-center'>Case ID : M" +
+                    caseid.toString().padStart(6, "0") + " Fail.</p>"
+                );
+                if (failId == null) {
+                    failId = caseid;
+                } else {
+                    failId = failId + "," + caseid;
+                }
+                // if(complete === item.id.length) {
+                //     var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+                //     // console.log("insId", insId);
+                //     // console.log("failId", failId);
+                //     // console.log("complete", complete);
+                //     // allcids: item.id,
+                //     $.ajax({
+                //         url: confirm_url,
+                //         dataType: "json",
+                //         type: "POST",
+                //         data: {
+                //             // id: item.id,
+                //             _token: csrf,
+                //             allcids: item.allcids,
+                //             total_row: item.total_row,
+                //             logId: logId,
+                //             notiId: notiId,
+                //             insertRow: insId,
+                //             faildRow: failId,
+                //             log_type: item.log_type,
+                //         },
+                //         success: function(data) {
+                //             $("#loading_image").hide();
+                //             if(logId == null) {
+                //                 $("#totalPer").append(
+                //                 "<h5 class='text-center mt-0'>Total " +
+                //                     item.total_row +
+                //                 " Cases, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                //                 );
+                //             }
+                //             logId = result.log_id;
+                //             notiId = result.notiId;
+
+                //             comp = comp + item.id.length;
+                //             prc = Math.round(((comp * 100) / item.total_row));
+                //             $('#tto').html(prc); 
+                //             deferred.resolve(data);
+                //         },
+                //         error: function(err) {
+                //             deferred.resolve(err);
+                //         }
+                //     });
+                // }
+            }
+
         });
+        console.log(complete);
+
     });
-    console.log(complete);
+    
     // $.ajax({
     //     url: confirm_url,
     //     dataType: "json",
@@ -897,14 +1023,74 @@ var ajax_request_approve_with_midater_add = function (item, confirm_url) {
     //     data: {
     //         id: item.id,
     //         _token: item.token,
-    //         allcids: item.allcids,
+    //         allcids: item.id,
     //         total_row: item.total_row,
-    //         // log_id: logId,
+    //         logId: logId,
+    //         midater : item.midater,
+    //         notiId: notiId,
     //         // insertRow: insId,
     //         // faildRow: failId,
     //         log_type: item.log_type,
     //     },
     //     success: function(result) {
+    //         // console.log(result);
+    //         var success = 0;
+            // $("#loading_image").hide();
+            // if(logId == null) {
+            //     $("#totalPer").append(
+            //     "<h5 class='text-center mt-0'>Total " +
+            //         item.total_row +
+            //     " Cases, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+            //     );
+            // }
+
+            // logId = result.log_id;
+            // notiId = result.notiId; 
+            
+
+    //         item.id.map((e)=>{
+    //             var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+    //             $.ajax({
+    //                 url: "{{ route('admin.case.batchwiseapprove') }}",
+    //                 dataType: "json",
+    //                 type: "POST",
+    //                 data: {
+    //                     id: e,
+    //                     mediator:item.midater,
+    //                     logId: logId,
+    //                     _token: csrf,
+    //                 },
+    //                 success: function (edata) {
+    //                     success ++;
+    //                     $("#messcc").append(
+    //                     "<p style='color: green;' class='text-center'>Case ID : M" +
+    //                         e.toString().padStart(6, "0") + " Success.</p>"
+    //                     );
+    //                     var objDiv = document.getElementById("messcc");
+    //                     objDiv.scrollTop = objDiv.scrollHeight;
+                        
+    //                     if(success === item.id.length) {
+    //                         comp = comp + item.id.length;
+    //                         prc = Math.round(((comp * 100) / item.total_row));
+    //                         $('#tto').html(prc); 
+    //                         deferred.resolve(result);
+    //                     }
+    //                 },
+    //                 error: function(err) {
+    //                     success ++;
+    //                     $("#messcc").append(
+    //                     "<p style='color: red;' class='text-center'>Case ID : M" +
+    //                         e.toString().padStart(6, "0") + " Fail.</p>"
+    //                     );
+    //                     if(success === item.id.length) {
+    //                         deferred.resolve(err);
+    //                     }
+    //                 }
+    //             });
+    //         })
+    //     },
+    // });
     //         ite.push(result);
     //         comp = comp + 1;
     //         prc = Math.round(((comp * 100) / item.total_row));
