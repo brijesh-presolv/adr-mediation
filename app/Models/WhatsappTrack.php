@@ -54,6 +54,9 @@ class WhatsappTrack extends Model
         //  right join whatsapp_log wl on whatsapp_tracking.request_uuid=wl.request_id
 
         //  where caseid='$id' order by whatsapp_tracking.created_at asc";
+        if(strlen($mobile) == 10) {
+            $mobile = '+91'.$mobile;
+        }
         $result = WhatsappTrack::where('caseid', $id)->where('event', $event)
             ->where('media', '!=', null)
             ->where('contact', $mobile)->orderBy('id', 'ASC')->limit(1)->first();
