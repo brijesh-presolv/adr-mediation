@@ -198,6 +198,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::match(['post', 'get'], 'updatecase/{id}', [App\Http\Controllers\Admin\CaseController::class, 'updatecase'])->name('admin.case.update');
     Route::post('upload-files', [App\Http\Controllers\Admin\CaseController::class, 'storeMultiFile'])->name('admin.case.storeMultiFile');
     Route::post('case/downloadfilebulk', [App\Http\Controllers\Admin\CaseController::class, 'downloadfilebulk'])->name('admin.case.downloadfilebulk');
+    // New Api
+    Route::post('case/confirm-status-with-midater-add', [App\Http\Controllers\Admin\CaseController::class, 'confirmStatusWithMidaterAdd'])->name('admin.case.confirm_status_with_midater_add');
+
 
     Route::post('case/edit-session', [App\Http\Controllers\Admin\CaseController::class, 'SendforEditSession'])->name('admin.case.SendforEditSession');
     Route::post('case/update-session', [App\Http\Controllers\Admin\CaseController::class, 'UpdateSession'])->name('admin.case.UpdateSession');
