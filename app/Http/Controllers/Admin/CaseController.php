@@ -3235,28 +3235,32 @@ class CaseController extends Controller
             $caseinfo['invwdd'] = "";
             $caseinfo['invwrs'] = "";
             $caseinfo['invwrd'] = "";
-            dd(($data['whatsapptrck']->created_at));
             if (isset($data['whatsapptrck'])) {
 
-                if(count($data['whatsapptrck']['whatsapp_log']) == 0) {
-                    $time = new DateTime($data['whatsapptrck']->created_at, new DateTimeZone('UTC'));
-                    $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                    $caseinfo['invwds'] = "transmitted";
-                    $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
-                }
-                foreach ($data['whatsapptrck']['whatsapp_log'] as $wtrck) {
-                    if ($wtrck->status  == "delivered") {
-                        $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                if (isset($data['whatsapptrck']['whatsapp_log'])) {
+                    if (count($data['whatsapptrck']['whatsapp_log']) == 0) {
+                        $time = new DateTime($data['whatsapptrck']->created_at, new DateTimeZone('UTC'));
                         $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                        $caseinfo['invwds'] = "delivered";
+                        $caseinfo['invwds'] = "transmitted";
                         $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
-                    } else if ($wtrck->status  == "read") {
-                        $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-                        $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                        $caseinfo['invwrs'] = "read";
-                        $caseinfo['invwrd'] = $time->format('d-m-Y H:i:s');
+                    } else {
+                        foreach ($data['whatsapptrck']['whatsapp_log'] as $wtrck) {
+                            if ($wtrck->status  == "delivered") {
+                                $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                $caseinfo['invwds'] = "delivered";
+                                $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
+                            } else if ($wtrck->status  == "read") {
+                                $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                $caseinfo['invwrs'] = "read";
+                                $caseinfo['invwrd'] = $time->format('d-m-Y H:i:s');
+                            }
+                        }
                     }
                 }
+
+
                 if ($caseinfo['invwrs'] != "" && $caseinfo['invwds'] == "") {
                     $caseinfo['invwds'] = "delivered";
                     $caseinfo['invwdd'] = $caseinfo['invwrd'];
@@ -3300,19 +3304,41 @@ class CaseController extends Controller
                             }
                         }
                         if (isset($data['ewhatsapptrck'])) {
-                            foreach ($data['ewhatsapptrck'] as $wtrck) {
-                                if ($wtrck->status  == "delivered") {
-                                    $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                            if (isset($data['ewhatsapptrck']['whatsapp_log'])) {
+                                if (count($data['ewhatsapptrck']['whatsapp_log']) == 0) {
+                                    $time = new DateTime($data['ewhatsapptrck']->created_at, new DateTimeZone('UTC'));
                                     $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                                    $caseinfo['einvwds' . $k] = "delivered";
+                                    $caseinfo['einvwds' . $k] = "transmitted";
                                     $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
-                                } else if ($wtrck->status  == "read") {
-                                    $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-                                    $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                                    $caseinfo['einvwrs' . $k] = "read";
-                                    $caseinfo['einvwrd' . $k] = $time->format('d-m-Y H:i:s');
+                                } else {
+                                    foreach ($data['ewhatsapptrck']['whatsapp_log'] as $wtrck) {
+                                        if ($wtrck->status  == "delivered") {
+                                            $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                            $caseinfo['einvwds' . $k] = "delivered";
+                                            $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
+                                        } else if ($wtrck->status  == "read") {
+                                            $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                            $caseinfo['einvwrs' . $k] = "read";
+                                            $caseinfo['einvwrd' . $k] = $time->format('d-m-Y H:i:s');
+                                        }
+                                    }
                                 }
                             }
+                            // foreach ($data['ewhatsapptrck'] as $wtrck) {
+                            //     if ($wtrck->status  == "delivered") {
+                            //         $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                            //         $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            //         $caseinfo['einvwds' . $k] = "delivered";
+                            //         $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
+                            //     } else if ($wtrck->status  == "read") {
+                            //         $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                            //         $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            //         $caseinfo['einvwrs' . $k] = "read";
+                            //         $caseinfo['einvwrd' . $k] = $time->format('d-m-Y H:i:s');
+                            //     }
+                            // }
                             if ($caseinfo['einvwrs' . $k] != "" && $caseinfo['einvwds' . $k] == "") {
                                 $caseinfo['einvwds' . $k] = "delivered";
                                 $caseinfo['einvwdd' . $k] = $caseinfo['einvwrd' . $k];
