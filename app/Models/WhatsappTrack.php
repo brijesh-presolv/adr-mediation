@@ -25,6 +25,11 @@ class WhatsappTrack extends Model
         'full_resp',
     ];
 
+    public function whatsapp_log()
+    {
+        return $this->hasMany(WhatsappLog::class, 'request_id', 'request_uuid');
+    }
+
     public static function getByCaseIdWh($id)
     {
 
@@ -57,14 +62,23 @@ class WhatsappTrack extends Model
         if(strlen($mobile) == 10) {
             $mobile = '+91'.$mobile;
         }
-        $result = WhatsappTrack::where('caseid', $id)->where('event', $event)
+        // $result = WhatsappTrack::select('whatsapp_tracking.*', 'wl.status as wlstatus','wl.updated_time as wldate','wl.request_id')
+        //     ->leftJoin('whatsapp_log as wl', DB::raw('wl.request_id'), '=', DB::raw('whatsapp_tracking.request_uuid'))
+        //     ->where('caseid', $id)->where('event', $event)
+        //     ->where('media', '!=', null)
+        //     ->where('contact', $mobile)->orderBy('id', 'ASC')->limit(1)->first();
+
+        $result = WhatsappTrack::with('whatsapp_log')->where('caseid', $id)->where('event', $event)
             ->where('media', '!=', null)
             ->where('contact', $mobile)->orderBy('id', 'ASC')->limit(1)->first();
 
-        if (isset($result)) {
+        // $result = null;
+        // if (isset($data)) {
 
-            $result = DB::table('whatsapp_log')->where('request_id', $result->request_uuid)->get();
-        }
+        //     $result = DB::table('whatsapp_log')->where('request_id', $data->request_uuid)->get();
+        // }
         return $result;
     }
+
+    
 }
