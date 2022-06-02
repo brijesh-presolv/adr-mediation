@@ -3235,10 +3235,15 @@ class CaseController extends Controller
             $caseinfo['invwdd'] = "";
             $caseinfo['invwrs'] = "";
             $caseinfo['invwrd'] = "";
-            dd(count($data['whatsapptrck']['whatsapp_log']));
+            dd(count($data['whatsapptrck']->created_at));
             if (isset($data['whatsapptrck'])) {
 
-                // if(count($data['whatsapptrck']['whatsapp_log']))
+                if(count($data['whatsapptrck']['whatsapp_log']) == 0) {
+                    $time = new DateTime($data['whatsapptrck']->created_at, new DateTimeZone('UTC'));
+                    $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                    $caseinfo['invwds'] = "transmitted";
+                    $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
+                }
                 foreach ($data['whatsapptrck']['whatsapp_log'] as $wtrck) {
                     if ($wtrck->status  == "delivered") {
                         $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
