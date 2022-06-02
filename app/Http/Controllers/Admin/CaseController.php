@@ -3235,7 +3235,7 @@ class CaseController extends Controller
             $caseinfo['invwdd'] = "";
             $caseinfo['invwrs'] = "";
             $caseinfo['invwrd'] = "";
-            dd(count($data['whatsapptrck']->created_at));
+            dd(($data['whatsapptrck']->created_at));
             if (isset($data['whatsapptrck'])) {
 
                 if(count($data['whatsapptrck']['whatsapp_log']) == 0) {
