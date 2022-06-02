@@ -50,6 +50,9 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::match(['get'], 'closed', [App\Http\Controllers\User\MediationController::class, 'closed'])->name('user.closed');
     Route::match(['get'], 'rejected', [App\Http\Controllers\User\MediationController::class, 'rejected'])->name('user.rejected');
 
+    Route::post('case/json/{confirm_status?}', [App\Http\Controllers\User\MediationController::class, 'json'])->defaults('confirm_status', 0)->name('user.case.json');
+
+
     Route::match(['post', 'get'], 'sessions', [App\Http\Controllers\User\MediationController::class, 'sessions'])->name('user.sessions');
     Route::match(['post', 'get'], 'join', [App\Http\Controllers\User\MediationController::class, 'join'])->name('user.join');
 

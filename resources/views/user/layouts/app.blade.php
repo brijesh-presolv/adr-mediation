@@ -190,7 +190,13 @@
     <script src="{{url('assets/')}}/js/dropify.min.js"></script>
 
     <!-- Dynamic pages js comes and other files-->
-
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
     @yield('footer')
 
     <script type="text/javascript">

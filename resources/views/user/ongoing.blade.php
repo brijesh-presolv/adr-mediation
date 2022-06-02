@@ -21,15 +21,15 @@ use App\Models\InvoledUser;
                 <form id="joincode">
                     <div class="form-group">
 
-                                                <div class="input-group mt-3">
-                                                    @csrf
-                                                    <input type="text" id="joincode" name="joincode" class="form-control" placeholder="@lang('site.Enter the joincode')" required>
-                                                    <span class="input-group-append">
-                                                            <button type="submit" class="btn waves-effect waves-light btn-primary">@lang('site.GO')</button>
-                                                        </span>
-                                                </div>
+                        <div class="input-group mt-3">
+                            @csrf
+                            <input type="text" id="joincode" name="joincode" class="form-control" placeholder="@lang('site.Enter the joincode')" required>
+                            <span class="input-group-append">
+                                    <button type="submit" class="btn waves-effect waves-light btn-primary">@lang('site.GO')</button>
+                                </span>
+                        </div>
 
-                                            </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -37,7 +37,7 @@ use App\Models\InvoledUser;
     <div class="col-sm-12">
         <div class="card-box table-responsive">
             <h4 class="header-title"><b>@lang('site.Ongoing') </b></h4>
-            <table  id="datatable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <table id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
                         <th>@lang('case.Sr. No')</th>
@@ -53,119 +53,7 @@ use App\Models\InvoledUser;
                         <th>@lang('case.status_logs')</th>
                     </tr>
                 </thead>
-                <tbody>
-
-                    <?php 
-                    $i=1;
-                    $id='';
-
-                    foreach ($ongoing as $key => $value) {?>
-                    <?php 
-
-                    if($value->caseid==$id){
-                        continue;
-                    }
-
-                    $id=$value->caseid;
-
-                    ?>
-                     <tr>
-
-                        
-                        <td>{{$i++}}</td>
-                        <td><input type="checkbox" class="blkchk" data-caseid="{{$value->caseid}}"></td>
-                        <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
-                        <td><?= date('d-m-Y',strtotime($value->date))?></td>
-                        <td><a class="btn   btn-sm btn-primary label label-success" target="_blank" href="{{route('user.casedetails',$value->caseid)}}">@lang('case.btn_case_details')</a></td>
-
-                        <td><?php
-
-                        if(!isset($value->party)){ ?>
-
-                            <a href="invoke?id=<?= $value->id ?>" class="btn btn-sm btn-danger">@lang('site.Pending')</a>
-
-                        <?php } 
-
-
-                        if(isset($value->party)){
-
-                        foreach ($value->party as $key => $v) {
-                            // dd($v->userId);
-                            if($v->userId != Auth::user()->id) {
-                                if($v->name != "") {
-                                    echo '<span class="text-success party_name d-none" data-inid="'.$v->id.'">'.$v->name.'</span>';
-                                } 
-                            }
-
-                            if($v->isOnboarded==1){
-                                if($v->name != "") {
-                                    if($v->organization != null && $v->isClaimant == 0) {
-                                        echo '<span class="text-success">'.$v->organization.'</span></br>';
-                                     } else {
-                                        echo '<span class="text-success">'.$v->name.'</span></br>';
-                                     }
-                                }
-                            } 
-                            else{
-                                if($v->name != "") {
-                                echo '<span class="text-danger">'.$v->name.'</span></br>';
-                                }
-                            }
-                            
-                        }
-                    }
-
-
-
-                        ?></td>
-                        <td><button class="btn btn-info btn-sm"><?=  $value->mediator  ?></button>
-
-                            <?php if($value->mstatus==0){ ?>
-                                <br>
-                                <span class="badge badge-warning mediator_action" data-mediatoraction="{{$value->mstatus}}">@lang('case.status_pending')</span>
-                            <?php } else if($value->mstatus==1){ $date = date('d-m-Y', strtotime($value->create)); ?>
-                                <br>
-                                <span class="badge badge-success mediator_action" data-mediatoraction="{{$value->mstatus}}">@lang('case.status_accepted')</span>
-                                <br>
-                                <span class="badge badge-success">Date of Consent: {{$date}}</span>
-
-                            <?php } else {  ?>
-
-                                 <br>
-                                <span class="badge badge-danger mediator_action" data-mediatoraction="{{$value->mstatus}}">@lang('case.status_rejected')</span><br>
-                                {{-- <span class="badge badge-danger">Date of Rejection: {{$date}}</span> --}}
-
-                            <?php } if($value->consent>0){?>
-                            <br>
-                            <a href="{{route('user.disclosures',$value->caseid)}}" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a>
-                        <?php } ?>
-                        </td>
-                        <td><div class="position-relative"><button type="button" data-type="0", data-typename="Share" data-id="{{$value->caseid}}" data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Share</button>
-                            @if ($value->share_view_count != 0)    
-                            <span class="badge badge-danger share_unseen">{{$value->share_view_count}}</span>
-                            @endif
-                            <span class="badge-success badge share_total">{{$value->share_count}}</span>
-                        </div></td>
-
-                        <td><button value=""  data-id="<?= $value->caseid ?>"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button></td>
-                        <td><button value="{{$value->caseid}}"  data-id="{{$value->caseid}}" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">Upload Supporting</button></td>
-
-
-                        {{-- <td>
-                             <?php if($value->userid==Auth::user()->id){ ?>
-                        <button  class="btn btn-sm btn-inline btn-danger label label-success" data-toggle="modal" data-target="#withdrawModal" data-id="<?= $value->caseid?>">@lang('case.btn_withdraw')</button>
-                        <br>
-                    <?php } ?>
-                    </td> --}}
-
-
-                        <td>
-                            
-                            <span class="badge badge-success ">{{$value->casestatus->description}} | @lang('case.At'): {{$value->casestatus->created}}
-                        </td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
+                
             </table>
             <div class="row">
                 <div class="col-md-2">
@@ -365,6 +253,7 @@ use App\Models\InvoledUser;
   
     <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     
 @endsection
 
@@ -380,6 +269,172 @@ use App\Models\InvoledUser;
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script type="text/javascript">
+        function pad(str, max) {
+            str = str.toString();
+            return str.length < max ? pad("0" + str, max) : str;
+        }
+        var userTable = $('#users').DataTable({
+            "serverMethod": "POST",
+            "sAjaxSource": '{{ route('user.case.json', $confirm_status) }}',
+            "processing": true,
+            "serverSide": true,
+            "order": [
+                [0, "desc"]
+            ],
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, 500, 1000],
+                [10, 25, 50, 100, 250, 500, 1000],
+            ],
+            "iDisplayLength": 10,
+            "responsive": true,
+            serverData: function(sSource, aoData, fnCallback, oSettings) {
+                // aoData.append('token',token)
+                
+                oSettings = $.ajax({
+                    dataType: "json",
+                    type: "post",
+                    // async: false,
+                    crossDomain: true,
+                    url: sSource,
+                    data: aoData,
+                    success: fnCallback
+
+                });
+
+            },
+            "columns": [{
+                    "data": "key",    
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        var button = "";
+                        button = button + `<input type="checkbox" class="blkchk" data-caseid="` + data.caseid +
+                            `">`;
+                        return button;
+                    }
+                },
+                {
+                    "data": "case.caseid",
+                    render: function(data) {
+                        var button = "M" + pad(data, 6);
+                        return button;
+                    }
+                },
+                {
+                    "data": "date"
+                },
+                {
+                    "data": "case.caseid",
+                    render: function(data) {
+                        var button = ` <a href="{{ url('user/casedetails/') }}/` + data +
+                            `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                        return button;
+                    }
+                },
+                {
+                    "data": "party",
+                    render: function(data, type, row) {
+                        var d = "";
+                        for (i in data) {
+                            if (data[i].isOnboarded == 1) {
+                                if (data[i].name != null) {
+                                    if (data[i].organization != null && data[i].isClaimant == 0) {
+                                        d = d + `<span class="text-success party_name" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + data[i]
+                                            .organization + `</span><br>`;
+                                    } else {
+                                        d = d + `<span class="text-success party_name" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + data[i]
+                                            .name + `</span><br>`;
+                                    }
+                                }
+                            } else {
+                                if (data[i].name != null) {
+                                    d = d + `<span class="text-danger party_name" data-inid="` + data[i]
+                                        .id + `" data-id="` + data[i].userId + `">` + data[i].name +
+                                        `</span><br>`;
+                                }
+                            }
+                        }
+                        return d;
+                    }
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        var button = "";
+                        // return  date.toLocaleDateString('en-GB');
+                        button = button + `<button  class="btn btn-info btn-sm">` +
+                            data.mediator + ` </button>`;
+                        if (data.mstatus == 0) {
+                            button = button +
+                                `<br><span class="badge badge-warning mediator_action" data-mediatoraction="` +
+                                data.mstatus + `">@lang('case.status_pending')</span>`;
+                        } else if (data.mstatus == 1) {
+                            button = button +
+                                `<br><span class="badge badge-success mediator_action" data-mediatoraction="` +
+                                data.mstatus + `">@lang('case.status_accepted')</span>`;
+                            button = button +
+                                `<br><a href="{{ url('user/consent-and-disclosures/') }}/` + data.caseid +
+                                `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
+                            button = button + `<br><span class="badge badge-success">Date of Consent: ` +
+                                row.mediator_create_action_date + `</span>`;
+                        } else {
+                            button = button +
+                                `<br><span class="badge badge-danger mediator_action" data-mediatoraction="` +
+                                data.mstatus + `">@lang('case.status_rejected')</span>`;
+                            // button = button + `<br><span class="badge badge-danger">Date of Rejection: `+row.mediator_action_date+`</span>`;
+                        }
+
+                        return button;
+                    }
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        var button = "";
+                        button = button +
+                            `<div class="position-relative"> <button type="button" data-type="0" data-typename="Share" data-id="` + data.caseid +
+                            `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_share')</button>`;
+                        if (row.share_view_count !== 0) {
+                            button += ` <span class="badge  badge-danger share_unseen">` + row
+                                .share_view_count + ` </span>`;
+                        }
+                        button += ` <span class="badge badge-success share_total">` + row.share_count +
+                            `</span></div>`;
+                        return button;
+                    }
+                },
+                {
+                    "data": "case.caseid",
+                    render: function(data, type, row) {
+                        var button = "";
+                        button = button + ` <button id="Sessview` + data + `" value="` + data +
+                            `"  data-id="` + data +
+                            `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal" title="@lang('case.btn_session_view')" ><span class="mdi mdi-file-eye-outline"></span></button>`;
+                        return button;
+                    }
+                },
+                {
+                    "data": "case.caseid",
+                    render: function(data, type, row) {
+                        var button = "";
+                        button = button + ` <button value="` + data + `"  data-id="` + data +
+                            `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">Upload Supporting</button>`;
+                        return button;
+                    }
+                },
+                {
+                    "data": "casestatus",
+                    render: function(data, type, row) {
+                        var button = "";
+                        button = `<span class="badge badge-success">` + data.description + `| @lang('case.At'): `+data.created+`</span>`;
+                        return button;
+                    }
+                }
+            ],
+        });
 
 
         $(document).ready(function(){
