@@ -71,7 +71,7 @@ use App\Models\InvoledUser;
 
             </div>
         </div>
-            <table  id="datatable" id="" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <table  id="users" id="" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
                         <th>@lang('case.Sr. No')</th>
@@ -83,91 +83,6 @@ use App\Models\InvoledUser;
                         <th>@lang('Supporting Document')</th>
                     </tr>
                 </thead>
-                <tbody>
-
-                    <?php
-                    $i=1;
-                    $id='';
-
-                    foreach ($pending as $key => $value) {
-
-
-                     ?>
-                     <tr>
-
-                        <?php
-
-                        if($value->id==$id){
-                            continue;
-                        }
-
-                        $id=$value->id;
-
-                        ?>
-                        <td>{{$i++}}</td>
-                        <td><?= 'M'.sprintf('%06d',$value->id) ?></td>
-                        <td><?= date('d-m-Y',strtotime($value->created_at))?></td>
-
-                        <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" target="_blank" href="{{route('user.casedetails',$value->id)}}" >View</a></td>
-
-                        <td>
-
-                            <?php
-
-                        if(isset($value->party) and count($value->party)>0){
-
-                        foreach ($value->party as $key => $v) {
-
-                            if($v->isOnboarded==1){
-                            	 if($v->name != null) {
-                                    if($v->organization != null && $v->isClaimant == 0) {
-                                        echo '<span class="text-success">'.$v->organization.'</span></br>';
-                                     } else {
-                                        echo '<span class="text-success">'.$v->name.'</span></br>';
-                                     }
-                            	}
-                            } 
-                            else{
-                            	 if($v->name != null) {
-                                echo '<span class="text-danger">'.$v->name.'</span></br>';
-                            	}
-                            }
-
-                        }
-                    } else { ?>
-
-
-                        <a href="invoke?id=<?= $value->id ?>" class="btn btn-danger btn-sm">@lang('site.Pending')</a>
-
-                    <?php } ?>
-
-
-
-                        </td>
-                        <td><span class="badge badge-danger">@lang('site.Pending')</span></td>
-                        <td><div class="form-group">
-
-                                <?php
-
-                                if ($value->documentPath !== 'NULL' && $value->documentPath !== "" && $value->documentPath != NULL) {
-                                    ?>
-                                    <p  class="btn btn-success btn-sm">{{$value->documentPath}}</p>
-                                    <?php
-                                } else {?>
-                                    <form action="{{route('user.documentUpload', $value->id)}}"  method="post" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    <input class="form-control" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
-                                    <p>*Only Pdf zip and rar file allowed</p>
-                                    <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
-                                    </form>
-                                <?php }
-
-                            ?>
-                        </div></td>
-                    </tr>
-                    <?php } ?>
-                </tbody>
             </table>
         </div>
     </div>
@@ -195,7 +110,120 @@ use App\Models\InvoledUser;
 
     <script type="text/javascript">
 
+        function pad(str, max) {
+            str = str.toString();
+            return str.length < max ? pad("0" + str, max) : str;
+        }
+        var userTable = $('#users').DataTable({
+            "serverMethod": "POST",
+            "sAjaxSource": '{{ route('user.case.jsonnew') }}',
+            "processing": true,
+            "serverSide": true,
+            "order": [
+                [0, "desc"]
+            ],
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, 500, 1000],
+                [10, 25, 50, 100, 250, 500, 1000],
+            ],
+            "iDisplayLength": 10,
+            "responsive": true,
+            serverData: function(sSource, aoData, fnCallback, oSettings) {
+                // aoData.append('token',token)
+                
+                oSettings = $.ajax({
+                    dataType: "json",
+                    type: "post",
+                    // async: false,
+                    crossDomain: true,
+                    url: sSource,
+                    data: aoData,
+                    success: fnCallback
 
+                });
+
+            },
+            "columns": [{
+                    "data": "key",    
+                },
+                {
+                    "data": "case.userPlanId",
+                    render: function(data) {
+                        var button = "M" + pad(data, 6);
+                        return button;
+                    }
+                },
+                {
+                    "data": "date"
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        if(row.party.length>0) {
+                            var button = ` <a href="{{ url('user/casedetails/') }}/` + data.userPlanId +
+                            `" target="_blank" class="btn btn-sm btn-primary label label-success" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                        } else {
+                            var button = `<a class="btn btn-sm btn-primary label label-success disabled"><i class="mdi mdi-file-eye-outline"></i></a>`;
+                        }
+                        
+                        return button;
+                    }
+                },
+                {
+                    "data": "party",
+                    render: function(data, type, row) {
+                        var d = "";
+                        for (i in data) {
+                            if (data[i].isOnboarded == 1) {
+                                if (data[i].name != null) {
+                                    if (data[i].organization != null && data[i].isClaimant == 0) {
+                                        d = d + `<span class="text-success party_name" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + data[i]
+                                            .organization + `</span><br>`;
+                                    } else {
+                                        d = d + `<span class="text-success party_name" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + data[i]
+                                            .name + `</span><br>`;
+                                    }
+                                }
+                            } else {
+                                if (data[i].name != null) {
+                                    d = d + `<span class="text-danger party_name" data-inid="` + data[i]
+                                        .id + `" data-id="` + data[i].userId + `">` + data[i].name +
+                                        `</span><br>`;
+                                }
+                            }
+                        }
+                        return d;
+                    }
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        var button = `<span class="badge badge-danger">@lang('site.Pending')</span>`;
+                        return button;
+                    }
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        var button = "";
+                        if (data.documentPath !== 'NULL' && data.documentPath !== "") {
+                            button = button + `<p class="btn btn-success btn-sm">`+data.documentPath+`</p>`;
+                        } else {
+                            button = button + `<form action="{{ url('user/uploaddocument/') }}/` + data.userPlanId + `"  method="post" enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+                                <input class="form-control" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
+                                <p>*Only Pdf zip and rar file allowed</p>
+                                <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
+                                </form>`;
+                        }
+                        return button;
+                    }
+                },
+            ],
+        });
 
      $(document).ready(function(){
         $('.dropify').dropify();

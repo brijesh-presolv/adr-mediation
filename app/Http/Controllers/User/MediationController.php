@@ -618,21 +618,22 @@ class MediationController extends Controller
         // $new=InvoledUser::select('user_involved_in_agreement.*','mediation_case.id as caseid')->where(['user_involved_in_agreement.userid'=>Auth::user()->id])->leftJoin('mediation_case', 'user_involved_in_agreement.userPlanId', '=', 'mediation_case.id')->get();
 
 
-        $new = MedCase::Where(['userid' => Auth::user()->id, 'confirm_status' => 0])->orderby('id', 'DESC')->get();
+        // $new = MedCase::Where(['userid' => Auth::user()->id, 'confirm_status' => 0])->orderby('id', 'DESC')->get();
 
-        $pending = [];
+        // $pending = [];
 
-        foreach ($new as $key => $value) {
-            // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->id])->get();
-            $in = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->id])->get();
+        // foreach ($new as $key => $value) {
+        //     // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->id])->get();
+        //     $in = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->id])->get();
 
-            $value->party = $in;
+        //     $value->party = $in;
 
-            $pending[] = $value;
-        }
+        //     $pending[] = $value;
+        // }
 
 
-        return view('user.newrequest', ['pending' => $pending, 'response' => Session::get('response')]);
+        return view('user.newrequest', ['response' => Session::get('response')]);
+
     }
 
     public function ongoing()
@@ -674,48 +675,49 @@ class MediationController extends Controller
     public function closed()
     {
 
-        $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'mediation_case.withdraw', 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', 'consent_disclosures.created_at as create')
-            ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
-            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-            ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
-            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-            ->orderby('mediation_case.id', 'DESC')
-            ->get();
+        // $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'mediation_case.withdraw', 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', 'consent_disclosures.created_at as create')
+        //     ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 2])
+        //     ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+        //     ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
+        //     ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        //     ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+        //     ->orderby('mediation_case.id', 'DESC')
+        //     ->get();
 
-        $closed = [];
+        // $closed = [];
 
-        foreach ($new as $key => $value) {
-            // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
-            $in = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get();
+        // foreach ($new as $key => $value) {
+        //     // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+        //     $in = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get();
 
-            $value->party = $in;
+        //     $value->party = $in;
 
-            $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
-            $value->share_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->count();
-            $value->share_view_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->where("view_user", 0)->count();
+        //     $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
+        //     $value->share_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->count();
+        //     $value->share_view_count = Mediation_case_comment::where("type", 0)->where("mediation_case_id", $value->caseid)->where("view_user", 0)->count();
 
-            if (isset($value->casestatus)) {
-                $value->casestatus->css = '';
+        //     if (isset($value->casestatus)) {
+        //         $value->casestatus->css = '';
 
-                if ($value->casestatus->status == 2) {
+        //         if ($value->casestatus->status == 2) {
 
-                    $value->casestatus->css = 'danger';
-                } else if ($value->casestatus->status == 5) {
+        //             $value->casestatus->css = 'danger';
+        //         } else if ($value->casestatus->status == 5) {
 
-                    $value->casestatus->css = 'danger';
-                } else if ($value->casestatus->status == 6) {
+        //             $value->casestatus->css = 'danger';
+        //         } else if ($value->casestatus->status == 6) {
 
-                    $value->casestatus->css = 'success';
-                } else if ($value->casestatus->status == 7) {
+        //             $value->casestatus->css = 'success';
+        //         } else if ($value->casestatus->status == 7) {
 
-                    $value->casestatus->css = 'danger';
-                }
-            }
-            $closed[] = $value;
-        }
+        //             $value->casestatus->css = 'danger';
+        //         }
+        //     }
+        //     $closed[] = $value;
+        // }
+        $confirm_status = 2;
 
-        return view('user.closed', ['closed' => $closed]);
+        return view('user.closed', ['confirm_status' => $confirm_status]);
     }
 
     public function rejected()
@@ -1308,6 +1310,7 @@ class MediationController extends Controller
 
     public function json($role = 0)
     {
+
         $draw = $_POST['sEcho'];
         $row = $_POST['iDisplayStart'];
         $rowperpage = $_POST['iDisplayLength']; // Rows display per page
@@ -1333,9 +1336,60 @@ class MediationController extends Controller
                 "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->where('view', 0)->count(),
                 "mediator_create_action_date" =>  date('d-m-Y', strtotime($value->create)),
             ];
-
         }
+
+
+        // foreach ($new as $key => $value) {
+        //     // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
+           
+           
+        //     if (isset($value->casestatus)) {
+        //         $value->casestatus->css = '';
+
+        //         if ($value->casestatus->status == 2) {
+
+        //             $value->casestatus->css = 'danger';
+        //         } else if ($value->casestatus->status == 5) {
+
+        //             $value->casestatus->css = 'danger';
+        //         } else if ($value->casestatus->status == 6) {
+
+        //             $value->casestatus->css = 'success';
+        //         } else if ($value->casestatus->status == 7) {
+
+        //             $value->casestatus->css = 'danger';
+        //         }
+        //     }
+        //     $closed[] = $value;
+        // }
+
         return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
 
+    }
+
+    public function NewReq()
+    {
+        $draw = $_POST['sEcho'];
+        $row = $_POST['iDisplayStart'];
+        $rowperpage = $_POST['iDisplayLength']; // Rows display per page
+        $indexColumn = $_POST['iSortCol_0'];
+        $columnName = $_POST['mDataProp_' . $indexColumn]; // Column name
+        $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
+        $searchValue = $_POST['sSearch'];
+
+        $casescount = MedCase::getCaseCountNewReqUser($searchValue);
+        $cases = MedCase::getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage);
+    
+        $arraydata = array();
+        foreach ($cases as $key => $value) {
+
+            $arraydata[] = [
+                "key" => $key + 1,
+                "case" => $value,
+                "date" => date('d-m-Y', strtotime($value->created_at)),
+                "party" => InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->userPlanId])->get(),
+            ];
+        }
+        return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
     }
 }
