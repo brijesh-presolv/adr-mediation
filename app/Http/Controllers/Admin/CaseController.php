@@ -207,6 +207,7 @@ class CaseController extends Controller
 
     public function confirmStatus(Request $request)
     {
+
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->id)
             // ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -3644,7 +3645,7 @@ class CaseController extends Controller
                 }
                 $logdata->save();
             }
-            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $request->logId, "msg" => "midater Added"]);
+            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $request->logId, "msg" => "midater Added", "caseid" => $request->id]);
 
             // return response()->json(["msg" => "midater Added", 'status' => 'success']);
 
@@ -3660,7 +3661,7 @@ class CaseController extends Controller
                 }
                 $logdata->save();
             }
-            return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $request->logId]);
+            return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $request->logId, "caseid" => $request->id]);
         }
 
 
@@ -3744,6 +3745,67 @@ class CaseController extends Controller
                 $notidata->save();
             }
             return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $request->logId, 'data' => $caseforapprove, 'notiId' => $notidata->id]);
+        }
+    }
+
+    public function confirmStatusWithMidaterAdd(Request $request)
+    {
+        // dd($request->all());
+        if ($request->logId == null) {
+            // foreach ($caseforapprove as $value) {
+            //     array_push($allcids, $value->id);
+            // }
+            // $allcids = implode(',', $request->allcids);
+            // dd(count($request->allcids));
+            $log = BulkLog::create([
+                "selected_ids" => $request->allcids,
+                "uploaded_by" => Auth::user()->id,
+                "total_row" => $request->total_row,
+                "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                "updated_at" => date('Y-m-d H:i:s'),
+                "inserted_row" => $request->insertRow,
+                "failed_row" => $request->faildRow,
+            ]);
+            $log_id = $log->id;
+            if ($request->notiId == null) {
+                $noti = [
+                    'uploaded_by' => Auth::user()->id,
+                    'case_id' => $request->insertRow,
+                    'event' => "ACPTARB_ADM",
+                    'mediator_id' => $request->mediator,
+                    'user_id' => null,
+                ];
+                $notidata = Notification::create($noti);
+                // Common_function::MedNotification($request->id, "ACPTARB_ADM", Auth::user()->id, $request->mediator, null);
+            } else {
+                $notidata = Notification::find($request->notiId);
+                $notidata->case_id = $request->insertRow;
+                $notidata->save();
+            }
+            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'notiId' => $notidata->id]);
+        } else {
+            $data = BulkLog::find($request->logId);
+
+            $data->inserted_row =  $request->insertRow;
+            $data->failed_row =  $request->faildRow;
+
+            $data->save();
+            if ($request->notiId == null) {
+                $noti = [
+                    'uploaded_by' => Auth::user()->id,
+                    'case_id' => $request->insertRow,
+                    'event' => "ACPTARB_ADM",
+                    'mediator_id' => $request->mediator,
+                    'user_id' => null,
+                ];
+                $notidata = Notification::create($noti);
+                // Common_function::MedNotification($request->id, "ACPTARB_ADM", Auth::user()->id, $request->mediator, null);
+            } else {
+                $notidata = Notification::find($request->notiId);
+                $notidata->case_id = $request->insertRow;
+                $notidata->save();
+            }
+            return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $request->logId, 'notiId' => $notidata->id]);
         }
     }
 }
