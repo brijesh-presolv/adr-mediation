@@ -3217,7 +3217,7 @@ class CaseController extends Controller
             $caseinfo['invers'] = "";
             $caseinfo['inverd'] = "";
             if (isset($data['emailtrck'])) {
-                $time = new DateTime($data['emailtrck']->created_at, new DateTimeZone('UTC'));
+                $time = new DateTime($data['emailtrck']->created_at);
                 $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                 $caseinfo['invets'] = "transmitted";
                 $caseinfo['invetd'] = $time->format('d-m-Y H:i:s');
@@ -3246,7 +3246,7 @@ class CaseController extends Controller
             $caseinfo['invwrs'] = "";
             $caseinfo['invwrd'] = "";
             if (isset($data['whatsapptrck'])) {
-                $time = new DateTime($data['whatsapptrck']->created_at, new DateTimeZone('UTC'));
+                $time = new DateTime($data['whatsapptrck']->created_at);
                 $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                 $caseinfo['invwts'] = "transmitted";
                 $caseinfo['invwtd'] = $time->format('d-m-Y H:i:s');
@@ -3297,7 +3297,7 @@ class CaseController extends Controller
                         $data['eemailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $v->userEmail);
                         $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $v->userPhone);
                         if (isset($data['eemailtrck'])) {
-                            $time = new DateTime($data['eemailtrck']->created_at, new DateTimeZone('UTC'));
+                            $time = new DateTime($data['eemailtrck']->created_at);
                             $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                             $caseinfo['einvets' . $k] = "transmitted";
                             $caseinfo['einvetd' . $k] = $time->format('d-m-Y H:i:s');
@@ -3320,7 +3320,7 @@ class CaseController extends Controller
                             }
                         }
                         if (isset($data['ewhatsapptrck'])) {
-                            $time = new DateTime($data['ewhatsapptrck']->created_at, new DateTimeZone('UTC'));
+                            $time = new DateTime($data['ewhatsapptrck']->created_at);
                             $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                             $caseinfo['einvwts' . $k] = "transmitted";
                             $caseinfo['einvwtd' . $k] = $time->format('d-m-Y H:i:s');
