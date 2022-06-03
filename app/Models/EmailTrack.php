@@ -22,6 +22,11 @@ class EmailTrack extends Model
         'status',
     ];
 
+    public function track_data()
+    {
+        return $this->hasMany(EtrackData::class, 'etrackId', 'id');
+    }
+
     public static function getByCaseId($id){
 
         // $q="select email_tracking.*, ed.event as edevent, ed.url as url, ed.created_at as eddate,ed.timestamp as timestamp,ed.email as edemail  from email_tracking 
@@ -48,12 +53,13 @@ class EmailTrack extends Model
     public static function getByCaseIdAndEvent($id, $event, $email){
 
 
-        $result = EmailTrack::where('event', $event)->where('email', $email)->where('case_id', $id)->orderBy('id', 'ASC')->limit(1)->first();
+        $result = EmailTrack::with('track_data')->where('event', $event)->where('email', $email)->where('case_id', $id)->orderBy('id', 'ASC')->limit(1)->first();
+        // dd($id, $event, $email);
+        // $result = EmailTrack::where('event', $event)->where('email', $email)->where('case_id', $id)->orderBy('id', 'ASC')->limit(1)->first();
 
-        if(isset($result)) {
-            $result = DB::table('etrack_data')->where('etrackId', $result->id)->get();
-        }
-        
+        // if(isset($result)) {
+        //     $result = DB::table('etrack_data')->where('etrackId', $result->id)->get();
+        // }
         return $result;
 
         

@@ -3141,11 +3141,11 @@ class CaseController extends Controller
         $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" . "Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
             "Initiating Registered Office" . "\t" . "Initiating Full Name" . "\t" . "Initiating Email ID" . "\t" . "Initiating WhatsApp / Mobile Number" . "\t" . "Full name of Primary Respondent" . "\t" .
             "Full Address of Primary Respondent" . "\t" . "Email ID of Primary Respondent" . "\t" . "WhatsApp / Mobile Number of Primary Respondent (10 digit)" . "\t" . "Dispute Category" . "\t" . "Nature of agreement" . "\t" . "Agreement date" . "\t" .  "Disputed amount" . "\t" . "Date of Invitation" . "\t" . "Name of Mediator" . "\t" .
-            "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" . "\t";
+            "Invitation Primary Respondent email transmitted status" . "\t" . "Invitation Primary Respondent email transmitted date" . "\t" . "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . "\t" . "Invitation Primary Respondent whatsapp transmitted status" . "\t" . "Invitation Primary Respondent whatsapp transmitted date" . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" . "\t";
 
         for ($i = 1; $i < $forloopcnt; $i++) {
             $columnHeader = $columnHeader . "Email ID of Additional Respondent " . $i . "\t" . "WhatsApp / Mobile Number of additional Respondent " . $i . "\t" .
-                "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
+            "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
         }
 
         $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t\n";
@@ -3210,20 +3210,28 @@ class CaseController extends Controller
 
             $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $caseinfo['respemail']);
             $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $caseinfo['respmob']);
+            $caseinfo['invets'] = "";
+            $caseinfo['invetd'] = "";
             $caseinfo['inveds'] = "";
             $caseinfo['invedd'] = "";
             $caseinfo['invers'] = "";
             $caseinfo['inverd'] = "";
             if (isset($data['emailtrck'])) {
-                foreach ($data['emailtrck'] as $etrck) {
-                    if ($etrck->event  == "delivered") {
-                        $edate1 = new DateTime($etrck->created_at);
-                        $caseinfo['inveds'] = "delivered";
-                        $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
-                    } else if ($etrck->event  == "open") {
-                        $edate1 = new DateTime($etrck->created_at);
-                        $caseinfo['invers'] = "read";
-                        $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                $time = new DateTime($data['emailtrck']->created_at, new DateTimeZone('UTC'));
+                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                $caseinfo['invets'] = "transmitted";
+                $caseinfo['invetd'] = $time->format('d-m-Y H:i:s');
+                if (isset($data['emailtrck']['track_data'])) {
+                    foreach ($data['emailtrck']['track_data'] as $etrck) {
+                        if ($etrck->event  == "delivered") {
+                            $edate1 = new DateTime($etrck->created_at);
+                            $caseinfo['inveds'] = "delivered";
+                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                        } else if ($etrck->event  == "open") {
+                            $edate1 = new DateTime($etrck->created_at);
+                            $caseinfo['invers'] = "read";
+                            $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                        }
                     }
                 }
                 if ($caseinfo['invers'] != "" && $caseinfo['inveds'] == "") {
@@ -3231,31 +3239,29 @@ class CaseController extends Controller
                     $caseinfo['invedd'] = $caseinfo['inverd'];
                 }
             }
+            $caseinfo['invwts'] = "";
+            $caseinfo['invwtd'] = "";
             $caseinfo['invwds'] = "";
             $caseinfo['invwdd'] = "";
             $caseinfo['invwrs'] = "";
             $caseinfo['invwrd'] = "";
             if (isset($data['whatsapptrck'])) {
-
+                $time = new DateTime($data['whatsapptrck']->created_at, new DateTimeZone('UTC'));
+                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                $caseinfo['invwts'] = "transmitted";
+                $caseinfo['invwtd'] = $time->format('d-m-Y H:i:s');
                 if (isset($data['whatsapptrck']['whatsapp_log'])) {
-                    if (count($data['whatsapptrck']['whatsapp_log']) == 0) {
-                        $time = new DateTime($data['whatsapptrck']->created_at, new DateTimeZone('UTC'));
-                        $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                        $caseinfo['invwds'] = "transmitted";
-                        $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
-                    } else {
-                        foreach ($data['whatsapptrck']['whatsapp_log'] as $wtrck) {
-                            if ($wtrck->status  == "delivered") {
-                                $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-                                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                                $caseinfo['invwds'] = "delivered";
-                                $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
-                            } else if ($wtrck->status  == "read") {
-                                $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-                                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                                $caseinfo['invwrs'] = "read";
-                                $caseinfo['invwrd'] = $time->format('d-m-Y H:i:s');
-                            }
+                    foreach ($data['whatsapptrck']['whatsapp_log'] as $wtrck) {
+                        if ($wtrck->status  == "delivered") {
+                            $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            $caseinfo['invwds'] = "delivered";
+                            $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
+                        } else if ($wtrck->status  == "read") {
+                            $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            $caseinfo['invwrs'] = "read";
+                            $caseinfo['invwrd'] = $time->format('d-m-Y H:i:s');
                         }
                     }
                 }
@@ -3269,10 +3275,14 @@ class CaseController extends Controller
             for ($i = 1; $i < $forloopcnt; $i++) {
                 $caseinfo['erespemail' . $i] = "";
                 $caseinfo['erespmob' . $i] = "";
+                $caseinfo['einvets' . $i] = "";
+                $caseinfo['einvetd' . $i] = "";
                 $caseinfo['einveds' . $i] = "";
                 $caseinfo['einvedd' . $i] = "";
                 $caseinfo['einvers' . $i] = "";
                 $caseinfo['einverd' . $i] = "";
+                $caseinfo['einvwts' . $i] = "";
+                $caseinfo['einvwtd' . $i] = "";
                 $caseinfo['einvwds' . $i] = "";
                 $caseinfo['einvwdd' . $i] = "";
                 $caseinfo['einvwrs' . $i] = "";
@@ -3287,15 +3297,21 @@ class CaseController extends Controller
                         $data['eemailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $v->userEmail);
                         $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $v->userPhone);
                         if (isset($data['eemailtrck'])) {
-                            foreach ($data['eemailtrck'] as $etrck) {
-                                if ($etrck->event  == "delivered") {
-                                    $edate1 = new DateTime($etrck->created_at);
-                                    $caseinfo['einveds' . $k] = "delivered";
-                                    $caseinfo['einvedd' . $k] = $edate1->format('d-m-Y H:i:s');
-                                } else if ($etrck->event  == "open") {
-                                    $edate1 = new DateTime($etrck->created_at);
-                                    $caseinfo['einvers' . $k] = "read";
-                                    $caseinfo['einverd' . $k] = $edate1->format('d-m-Y H:i:s');
+                            $time = new DateTime($data['eemailtrck']->created_at, new DateTimeZone('UTC'));
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            $caseinfo['einvets' . $k] = "transmitted";
+                            $caseinfo['einvetd' . $k] = $time->format('d-m-Y H:i:s');
+                            if (isset($data['eemailtrck']['track_data'])) {
+                                foreach ($data['eemailtrck']['track_data'] as $etrck) {
+                                    if ($etrck->event  == "delivered") {
+                                        $edate1 = new DateTime($etrck->created_at);
+                                        $caseinfo['einveds' . $k] = "delivered";
+                                        $caseinfo['einvedd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                    } else if ($etrck->event  == "open") {
+                                        $edate1 = new DateTime($etrck->created_at);
+                                        $caseinfo['einvers' . $k] = "read";
+                                        $caseinfo['einverd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                    }
                                 }
                             }
                             if ($caseinfo['einvers' . $k] != "" && $caseinfo['einveds' . $k] == "") {
@@ -3304,25 +3320,23 @@ class CaseController extends Controller
                             }
                         }
                         if (isset($data['ewhatsapptrck'])) {
+                            $time = new DateTime($data['ewhatsapptrck']->created_at, new DateTimeZone('UTC'));
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            $caseinfo['einvwts' . $k] = "transmitted";
+                            $caseinfo['einvwtd' . $k] = $time->format('d-m-Y H:i:s');
                             if (isset($data['ewhatsapptrck']['whatsapp_log'])) {
-                                if (count($data['ewhatsapptrck']['whatsapp_log']) == 0) {
-                                    $time = new DateTime($data['ewhatsapptrck']->created_at, new DateTimeZone('UTC'));
-                                    $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                                    $caseinfo['einvwds' . $k] = "transmitted";
-                                    $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
-                                } else {
-                                    foreach ($data['ewhatsapptrck']['whatsapp_log'] as $wtrck) {
-                                        if ($wtrck->status  == "delivered") {
-                                            $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-                                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                                            $caseinfo['einvwds' . $k] = "delivered";
-                                            $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
-                                        } else if ($wtrck->status  == "read") {
-                                            $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-                                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                                            $caseinfo['einvwrs' . $k] = "read";
-                                            $caseinfo['einvwrd' . $k] = $time->format('d-m-Y H:i:s');
-                                        }
+
+                                foreach ($data['ewhatsapptrck']['whatsapp_log'] as $wtrck) {
+                                    if ($wtrck->status  == "delivered") {
+                                        $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                        $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                        $caseinfo['einvwds' . $k] = "delivered";
+                                        $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
+                                    } else if ($wtrck->status  == "read") {
+                                        $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                        $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                        $caseinfo['einvwrs' . $k] = "read";
+                                        $caseinfo['einvwrd' . $k] = $time->format('d-m-Y H:i:s');
                                     }
                                 }
                             }
