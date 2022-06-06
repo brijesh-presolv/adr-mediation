@@ -21,6 +21,26 @@ class MedCase extends Model
         return $this->hasMany(InvoledUser::class, 'userPlanId', 'id');
     }
 
+    public function invitation_file()
+    {
+        return $this->hasMany(InvitationFiles::class, 'case_id', 'id');
+    }
+
+    public function consent_disclosures()
+    {
+        return $this->hasMany(ConsentDisclosures::class, 'mediation_case_id', 'id');
+    }
+
+    public function supporting_docs()
+    {
+        return $this->hasMany(SupportingDocument::class, 'case_id', 'id');
+    }
+
+    public function document_settlements()
+    {
+        return $this->hasMany(DocumentSettlement::class, 'mediation_case_id', 'id');
+    }
+
     static function getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id = "")
     {
         if ($batch_id != "") {

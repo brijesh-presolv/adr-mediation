@@ -689,7 +689,7 @@
                 [10, 25, 50, 100, 250, 500, 1000],
                 [10, 25, 50, 100, 250, 500, 1000],
             ],
-            "iDisplayLength": 10,
+            "iDisplayLength": 25,
             "responsive": true,
             serverData: function(sSource, aoData, fnCallback, oSettings) {
                 // aoData.append('token',token)
