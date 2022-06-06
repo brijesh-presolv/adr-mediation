@@ -3038,7 +3038,7 @@ class CaseController extends Controller
 
         $zip->close();
         foreach ($caseid as $value) {
-            $invitation = InvitationFiles::where(['case_id' => $value])->orderByDesc('id')->limit(1)->first();
+            // $invitation = InvitationFiles::where(['case_id' => $value])->orderByDesc('id')->limit(1)->first();
             $exist_file_local_find = storage_path() . '/app/public/mediation/temp/' . $value;
             if (File::exists($exist_file_local_find)) {
                 // unlink($exist_file_local_find);
