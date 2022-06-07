@@ -89,6 +89,7 @@ class MigrateFileS3Controller extends Controller
 
                     // --------------- move supporting document ---------------
                     if ($supporting->file_name != null) {
+
                         $path = 'storage/app/' . $supporting->file_name;
                         if (File::exists($path)) {
                             $filedata = [
@@ -101,7 +102,7 @@ class MigrateFileS3Controller extends Controller
                 }
             }
             if (count($value['document_settlements']) != 0) {
-                foreach ($value['document_settlements'] as $settlement) {
+                foreach ($value['document_settlements'] as $settlement) {   
 
                     // --------------- move supporting document ---------------
                     if ($settlement->file_path != null) {
@@ -113,6 +114,7 @@ class MigrateFileS3Controller extends Controller
                             ];
                             $this->migrateDocOnAws($filedata, 'settelmentDocument', $path);
                         }
+                        
                     }
                 }
             }

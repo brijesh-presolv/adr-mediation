@@ -60,15 +60,17 @@ trait UploadTrait {
     function migrateDocOnAws($fileData, $parentFolder = "", $localfullpath) {
         // dd($localfullpath, $fileData);
         $filenametostore = '';
-
         if(isset($fileData['filename'])) {
+            $pathinfo = pathinfo($fileData['filename'])['basename'];
+
+            // dd($pathinfo);
             if ($parentFolder != '') {
-                $filenametostore .= 'mediation_documents/mediation/' . $fileData['case_id'] . '/' . $parentFolder . '/' . $fileData['filename'];
+                $filenametostore .= 'mediation_documents/mediation/' . $fileData['case_id'] . '/' . $parentFolder . '/' . $pathinfo;
 
                 // Directory path with user Id
                 $directoryName = 'mediation_documents/mediation/' . $fileData['case_id'] . '/' . $parentFolder;
             } else {
-                $filenametostore .= 'mediation_documents/mediation/' . $fileData['case_id'] . '/' . $fileData['filename'];
+                $filenametostore .= 'mediation_documents/mediation/' . $fileData['case_id'] . '/' . $pathinfo;
 
                 // Directory path with user Id
                 $directoryName = 'mediation_documents/mediation/' . $fileData['case_id'];
