@@ -14,7 +14,7 @@ class MigrateFileS3Controller extends Controller
 
     public function MigrateFile()
     {
-        $data = MedCase::with('invitation_file', 'consent_disclosures', 'supporting_docs', 'document_settlements')->orderBy('id', 'DESC')->take(2)->get();
+        $data = MedCase::with('invitation_file', 'consent_disclosures', 'supporting_docs', 'document_settlements')->orderBy('id', 'DESC')->where('id', 137)->get();
         foreach ($data as $value) {
             // dd($value['invitation_file']);
             // --------------- move user supporting document ---------------
