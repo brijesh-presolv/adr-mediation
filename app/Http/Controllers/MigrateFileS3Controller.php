@@ -15,7 +15,7 @@ class MigrateFileS3Controller extends Controller
     public function MigrateFile()
     {
         $data = MedCase::with('invitation_file', 'consent_disclosures', 'supporting_docs', 'document_settlements')->orderBy('id', 'DESC')->where('id', 137)->get();
-        dd($data);
+        // dd($data);
         foreach ($data as $value) {
             // dd($value['invitation_file']);
             // --------------- move user supporting document ---------------
@@ -89,7 +89,7 @@ class MigrateFileS3Controller extends Controller
 
                     // --------------- move supporting document ---------------
                     if ($supporting->file_name != null) {
-                        $path = 'storage/app/supporting/' . $value->id . '/' . $supporting->file_name;
+                        $path = 'storage/app/' . $supporting->file_name;
                         if (File::exists($path)) {
                             $filedata = [
                                 'filename' => $supporting->file_name,
@@ -105,7 +105,7 @@ class MigrateFileS3Controller extends Controller
 
                     // --------------- move supporting document ---------------
                     if ($settlement->file_path != null) {
-                        $path = 'storage/app/supporting/' . $value->id . '/' . $settlement->file_path;
+                        $path = 'storage/app/' . $settlement->file_path;
                         if (File::exists($path)) {
                             $filedata = [
                                 'filename' => $settlement->file_path,
