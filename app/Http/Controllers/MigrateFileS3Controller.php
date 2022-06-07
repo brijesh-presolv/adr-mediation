@@ -14,12 +14,12 @@ class MigrateFileS3Controller extends Controller
 
     public function MigrateFile()
     {
-        $data = MedCase::with('invitation_file', 'consent_disclosures', 'supporting_docs', 'document_settlements')->where('id', 3)->get();
-        dd($data);
+        $data = MedCase::with('invitation_file', 'consent_disclosures', 'supporting_docs', 'document_settlements')->get();
+        // dd($data);
         foreach ($data as $value) {
             // dd($value['invitation_file']);
             // --------------- move user supporting document ---------------
-            if ($value->documentPath != "NULL") {
+            if ($value->documentPath != "NULL" && $value->documentPath != "" && $value->documentPath != null) {
                 $path = 'storage/app/public/mediation/' . $value->id . '/' . $value->documentPath;
                 if (File::exists($path)) {
                     $filedata = [
@@ -31,7 +31,7 @@ class MigrateFileS3Controller extends Controller
             }
 
             // // --------------- move request letter ---------------
-            if ($value->request_letter != null) {
+            if ($value->request_letter != null && $value->request_letter != "") {
                 $path = 'storage/app/public/mediation/' . $value->id . '/' . $value->request_letter;
                 if (File::exists($path)) {
                     $filedata = [
@@ -44,7 +44,7 @@ class MigrateFileS3Controller extends Controller
             if (count($value['invitation_file']) != 0) {
                 foreach ($value['invitation_file'] as $files) {
                     // --------------- move Invitation mediate ---------------
-                    if ($files->file_name != null) {
+                    if ($files->file_name != null && $files->file_name != "") {
                         $path = 'storage/app/public/mediation/' . $value->id . '/' . $files->file_name;
                         if (File::exists($path)) {
                             $filedata = [
@@ -56,7 +56,7 @@ class MigrateFileS3Controller extends Controller
                     }
 
                     // --------------- move mediator appoinment letter ---------------
-                    if ($files->file_name_mediator_appointment != null) {
+                    if ($files->file_name_mediator_appointment != null && $files->file_name_mediator_appointment != "") {
                         $path = 'storage/app/public/mediation/' . $value->id . '/' . $files->file_name_mediator_appointment;
                         if (File::exists($path)) {
                             $filedata = [
@@ -72,7 +72,7 @@ class MigrateFileS3Controller extends Controller
                 foreach ($value['consent_disclosures'] as $disclosures) {
 
                     // --------------- move consent disclosures ---------------
-                    if ($disclosures->file_name != null) {
+                    if ($disclosures->file_name != null && $disclosures->file_name != "") {
                         $path = 'storage/app/public/mediation/' . $value->id . '/' . $disclosures->file_name;
                         if (File::exists($path)) {
                             $filedata = [
@@ -88,7 +88,7 @@ class MigrateFileS3Controller extends Controller
                 foreach ($value['supporting_docs'] as $supporting) {
 
                     // --------------- move supporting document ---------------
-                    if ($supporting->file_name != null) {
+                    if ($supporting->file_name != null && $supporting->file_name != "") {
 
                         $path = 'storage/app/' . $supporting->file_name;
                         if (File::exists($path)) {
@@ -105,7 +105,7 @@ class MigrateFileS3Controller extends Controller
                 foreach ($value['document_settlements'] as $settlement) {   
 
                     // --------------- move supporting document ---------------
-                    if ($settlement->file_path != null) {
+                    if ($settlement->file_path != null && $settlement->file_path != "") {
                         $path = 'storage/app/' . $settlement->file_path;
                         if (File::exists($path)) {
                             $filedata = [
