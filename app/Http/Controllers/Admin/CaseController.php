@@ -2560,19 +2560,19 @@ class CaseController extends Controller
 
             exit();
         }
-        if (1 == 1) {
+        // if (1 == 1) {
 
-            //save file
-            $file = $request->file('csv');
-            $destinationPath = 'public/uploaded';
+        //     //save file
+        //     $file = $request->file('csv');
+        //     $destinationPath = 'public/uploaded';
 
-            $extension = $file->getClientOriginalExtension();
-            $fileName = time() . '.' . $extension;
+        //     $extension = $file->getClientOriginalExtension();
+        //     $fileName = time() . '.' . $extension;
 
-            if ($file->storeAs($destinationPath, $fileName)) {
-                $uploaded_excel .= $fileName;
-            }
-        }
+        //     if ($file->storeAs($destinationPath, $fileName)) {
+        //         $uploaded_excel .= $fileName;
+        //     }
+        // }
         //store in database
         if ($request->batch != null) {
             $batchdata = [

@@ -1113,19 +1113,19 @@ class MediationController extends Controller
 
             exit();
         }
-        if (1 == 1) {
+        // if (1 == 1) {
 
-            //save file
-            $file = $request->file('csv');
-            $destinationPath = 'storage/uploaded';
+        //     //save file
+        //     $file = $request->file('csv');
+        //     $destinationPath = 'storage/uploaded';
 
-            $extension = $file->getClientOriginalExtension();
-            $fileName = time() . '.' . $extension;
+        //     $extension = $file->getClientOriginalExtension();
+        //     $fileName = time() . '.' . $extension;
 
-            if ($file->move($destinationPath, $fileName)) {
-                $uploaded_excel .= $fileName;
-            }
-        }
+        //     if ($file->move($destinationPath, $fileName)) {
+        //         $uploaded_excel .= $fileName;
+        //     }
+        // }
         // dd($csv);
         //store in 
         $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
