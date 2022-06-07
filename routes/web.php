@@ -217,11 +217,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     //cases bulk upload
     Route::post('cases/bulkupload', [App\Http\Controllers\Admin\CaseController::class, 'bulkUpload'])->name('admin.bulkUpload');
     Route::put('uploaddocument/{id}', [App\Http\Controllers\Admin\CaseController::class, 'documentUpload'])->name('admin.documentUpload');
+
+    Route::get('uploadlocaltos3', [App\Http\Controllers\MigrateFileS3Controller::class, 'MigrateFile']);
 });
 
 //notification
 Route::get('notification/email/send', [App\Http\Controllers\Notification\EmailController::class, 'send']);
 
 Route::get('notification/whatsapp/send', [App\Http\Controllers\Notification\WhatsappController::class, 'send']);
-
-Route::get('uploadlocaltos3', [App\Http\Controllers\MigrateFileS3Controller::class, 'MigrateFile']);
