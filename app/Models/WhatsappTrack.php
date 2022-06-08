@@ -72,6 +72,13 @@ class WhatsappTrack extends Model
             ->where('media', '!=', null)
             ->where('contact', $mobile)->orderBy('id', 'ASC')->limit(1)->first();
 
+        if(isset($result)) {
+            if(count($result['whatsapp_log']) == 0) {
+                $result = WhatsappTrack::with('whatsapp_log')->where('caseid', $id)->where('event', $event)
+                ->where('media', '!=', null)
+                ->where('contact', $mobile)->orderBy('id', 'DESC')->limit(1)->first();
+            }
+        } 
         // $result = null;
         // if (isset($data)) {
 

@@ -54,6 +54,13 @@ class EmailTrack extends Model
 
 
         $result = EmailTrack::with('track_data')->where('event', $event)->where('email', $email)->where('case_id', $id)->orderBy('id', 'ASC')->limit(1)->first();
+        
+        // dd($result);
+        if(isset($result)) {
+            if(count($result['track_data']) == 0) {
+                $result = EmailTrack::with('track_data')->where('event', $event)->where('email', $email)->where('case_id', $id)->orderBy('id', 'DESC')->limit(1)->first();
+            }
+        }
         // dd($id, $event, $email);
         // $result = EmailTrack::where('event', $event)->where('email', $email)->where('case_id', $id)->orderBy('id', 'ASC')->limit(1)->first();
 
