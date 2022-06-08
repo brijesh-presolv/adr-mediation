@@ -49,7 +49,7 @@ class MedCase extends Model
             $sql = MedCase::with('user_involed');
         }
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -57,18 +57,19 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
                         
                         ->orWhereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
@@ -122,7 +123,7 @@ class MedCase extends Model
             $sql = MedCase::with('user_involed');
         }
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -130,18 +131,19 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
                         
                         ->orWhereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
@@ -176,7 +178,7 @@ class MedCase extends Model
         // }
 
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -184,16 +186,17 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->whereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
@@ -226,7 +229,7 @@ class MedCase extends Model
         // }
 
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -234,16 +237,17 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->whereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
@@ -267,14 +271,14 @@ class MedCase extends Model
 
         $sql = DB::table('mediators_mediation_cases_status');
         if ($searchValue != '') {
-            // $uidSearch = ltrim($searchValue, "M0");
+            $uidSearch = ltrim($searchValue, "M0");
             if(empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
             }
-            $sql->where(function ($query) use ($searchValue) {
+            $sql->where(function ($query) use ($searchValue, $uidSearch) {
                 // $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
-                $query->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%")
+                $query->orWhere('mediation_case.id', 'LIKE', "%{$uidSearch}%")
                     ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
             });
         }
@@ -300,14 +304,14 @@ class MedCase extends Model
 
         $sql = DB::table('mediators_mediation_cases_status');
         if ($searchValue != '') {
-            // $uidSearch = ltrim($searchValue, "M0");
+            $uidSearch = ltrim($searchValue, "M0");
             if(empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
             }
-            $sql->where(function ($query) use ($searchValue) {
+            $sql->where(function ($query) use ($searchValue, $uidSearch) {
                 // $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
-                $query->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%")
+                $query->orWhere('mediation_case.id', 'LIKE', "%{$uidSearch}%")
                     ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
             });
         }
@@ -347,7 +351,7 @@ class MedCase extends Model
         // }
 
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -355,16 +359,17 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->whereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
@@ -393,7 +398,7 @@ class MedCase extends Model
         $sql = MedCase::with('user_involed');
 
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -401,16 +406,17 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->whereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
@@ -428,7 +434,7 @@ class MedCase extends Model
         $sql = MedCase::with('user_involed');
         
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -436,18 +442,19 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
                         
                         ->orWhereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
@@ -494,7 +501,7 @@ class MedCase extends Model
         $sql = MedCase::with('user_involed');
         
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -502,18 +509,19 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
                         
                         ->orWhereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
@@ -534,7 +542,7 @@ class MedCase extends Model
         $sql = MedCase::with('user_involed');
         
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -542,18 +550,19 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
                         
                         ->orWhereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
@@ -591,7 +600,7 @@ class MedCase extends Model
         $sql = MedCase::with('user_involed');
         
         if ($searchValue != '') {
-            // $searchValue = ltrim($searchValue, "M0");
+            $searchValue = ltrim($searchValue, "M0");
             if (empty(date_parse($searchValue)['errors'])) {
                 $searchValue = new DateTime($searchValue);
                 $searchValue = $searchValue->format('Y-m-d');
@@ -599,18 +608,19 @@ class MedCase extends Model
                     $query
                         ->orWhere('mediation_case.created_at', 'LIKE', "%{$searchValue}%");
                 });
-            // } else if (is_numeric($searchValue)) {
-            //     $sql->where(function ($query) use ($searchValue) {
-            //         $query
-            //             ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
-            //     });
+            } else if (is_numeric($searchValue)) {
+                $sql->where(function ($query) use ($searchValue) {
+                    $query
+                        ->orWhere('mediation_case.id', 'LIKE', "%{$searchValue}%");
+                });
             } else {
                 $sql->where(function ($query) use ($searchValue) {
                     $query->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$searchValue}%")
                         
                         ->orWhereHas('user_involed', function ($t) use ($searchValue) {
                             $t->where('name', 'LIKE', "%{$searchValue}%");
-                        })->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
+                        });
+                        // ->orWhere(DB::raw("(concat('M', LPAD(mediation_case.id, 6, 0)))"), 'LIKE', "%{$searchValue}%");
                 });
             }
         }
