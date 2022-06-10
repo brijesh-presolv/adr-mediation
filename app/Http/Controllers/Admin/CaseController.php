@@ -267,7 +267,7 @@ class CaseController extends Controller
         // $invmodel->save();
         //send invitation
         $invmodel->save();
-        if ($this->sned_invitation($request->id, $invitation)) {
+        if ($this->sned_invitation($request->id, $invitation, $medCas->bulk_flag)) {
             if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                 $success_log = BulkLog::find($_POST['log_id']);
                 // dd($success_log);
@@ -1789,7 +1789,7 @@ class CaseController extends Controller
         }
     }
 
-    public function sned_invitation($id, $invitation)
+    public function sned_invitation($id, $invitation, $bulk_flag = 0)
     {
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
 
@@ -1835,6 +1835,7 @@ class CaseController extends Controller
                 if ($inv->userEmail != "") {
                     SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
                 }
+                break;
                 // SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
 
 
@@ -1849,7 +1850,7 @@ class CaseController extends Controller
             // continue;
 
         }
-
+        // dd($responding_phone);
         foreach ($responding_phone as $phone) {
             if ($phone != "") {
                 $var = ['-cid-', '-ip-'];
@@ -1880,38 +1881,39 @@ class CaseController extends Controller
         }
 
 
-        if ($responding_party != "") {
+        if ($bulk_flag == 0) {
+            if ($responding_party != "") {
 
-            SendGrid::send($d1, $initiating_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
+                SendGrid::send($d1, $initiating_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
 
 
-            $var = ['-cid-', '-rp-'];
-            $var1 = ["M" . sprintf("%06d", $id), $responding_party];
-            $content1 = WaTemplate::getcontent('l4_mediation_initiating');
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $ini_userPlanId,
-                'contact' =>  $initiating_phone,
-                'content' => ['text' => $content],
-                // 'casetype' => 2,
-                'event' => 'ACPTARB_ADM_INI'
-            ];
+                $var = ['-cid-', '-rp-'];
+                $var1 = ["M" . sprintf("%06d", $id), $responding_party];
+                $content1 = WaTemplate::getcontent('l4_mediation_initiating');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $ini_userPlanId,
+                    'contact' =>  $initiating_phone,
+                    'content' => ['text' => $content],
+                    // 'casetype' => 2,
+                    'event' => 'ACPTARB_ADM_INI'
+                ];
 
-            $access = Whatsapp::sendWamessage($dwa1);
+                $access = Whatsapp::sendWamessage($dwa1);
 
-            $var_file = ['-caseid-'];
-            $var1_file = ["M" . sprintf("%06d", $id)];
-            $content1_file = WaTemplate::getcontent('mediation_consent_doc');
-            $content_file = str_replace($var_file, $var1_file, $content1_file);
-            $dwa2 = [
-                'caseid' => $ini_userPlanId,
-                'contact' =>  $initiating_phone,
-                'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                'event' => 'ACPTARB_ADM_INI'
-            ];
-            $access = Whatsapp::sendWamessage($dwa2);
+                $var_file = ['-caseid-'];
+                $var1_file = ["M" . sprintf("%06d", $id)];
+                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                $dwa2 = [
+                    'caseid' => $ini_userPlanId,
+                    'contact' =>  $initiating_phone,
+                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                    'event' => 'ACPTARB_ADM_INI'
+                ];
+                $access = Whatsapp::sendWamessage($dwa2);
+            }
         }
-
 
         // exit;
         return true;
@@ -3146,7 +3148,7 @@ class CaseController extends Controller
 
         for ($i = 1; $i < $forloopcnt; $i++) {
             $columnHeader = $columnHeader . "Email ID of Additional Respondent " . $i . "\t" . "WhatsApp / Mobile Number of additional Respondent " . $i . "\t" .
-            "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
+                "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
         }
 
         $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t\n";
