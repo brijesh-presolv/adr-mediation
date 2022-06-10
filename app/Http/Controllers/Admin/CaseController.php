@@ -3633,7 +3633,7 @@ class CaseController extends Controller
             $invmodel->case_id = $request->id;
             $invmodel->file_name = $invitation;
             $invmodel->save();
-            $this->sned_invitation($request->id, $invitation);
+            $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag);
 
 
 
