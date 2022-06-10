@@ -90,7 +90,7 @@ class WhatsappStatus extends Controller
 
             // dd($initiating_party);
             $d = [
-                'event' => 'ACPTARB_ADM_RES',
+                'event' => 'REM_ACPTARB_ADM_RES',
                 'case_id' => $value->userPlanId,
             ];
             if ($value->userEmail != null) {
@@ -105,7 +105,7 @@ class WhatsappStatus extends Controller
                     'caseid' => $value->userPlanId,
                     'contact' => "+91" . $value->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'ACPTARB_ADM_RES'
+                    'event' => 'REM_ACPTARB_ADM_RES'
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
@@ -118,7 +118,7 @@ class WhatsappStatus extends Controller
                     'caseid' =>  $value->userPlanId,
                     'contact' => "+91" . $value->userPhone,
                     'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name), 'caption' => $content_file]],
-                    'event' => 'ACPTARB_ADM_RES'
+                    'event' => 'REM_ACPTARB_ADM_RES'
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }
