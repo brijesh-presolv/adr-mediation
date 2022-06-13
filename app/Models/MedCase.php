@@ -41,7 +41,7 @@ class MedCase extends Model
         return $this->hasMany(DocumentSettlement::class, 'mediation_case_id', 'id');
     }
 
-    static function getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id = "")
+    static function getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id = "", $bulk)
     {
         if ($batch_id != "") {
             $sql = MedCase::with('user_involed')->where("mediation_case.batch_id", $batch_id);
@@ -85,7 +85,8 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             // ->leftJoin("user_involved_in_agreement", "user_involved_in_agreement.userPlanid", "=", "mediation_case.id")
-            ->where("mediation_case.confirm_status", "=", $role);
+            ->where("mediation_case.confirm_status", "=", $role)
+            ->where("mediation_case.bulk_flag", "=", $bulk);
 
 
         if ($columnName == "case.id" && $columnSortOrder == 'asc') {
@@ -115,7 +116,7 @@ class MedCase extends Model
         return $cases;
     }
 
-    static function getCaseCount($searchValue, $role, $batch_id = "")
+    static function getCaseCount($searchValue, $role, $batch_id = "", $bulk)
     {
         if ($batch_id != "") {
             $sql = MedCase::with('user_involed')->where("mediation_case.batch_id", $batch_id);
@@ -155,6 +156,7 @@ class MedCase extends Model
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
 
             ->where("mediation_case.confirm_status", "=", $role)
+            ->where("mediation_case.bulk_flag", "=", $bulk)
             ->orderBy('mediation_case.id', 'DESC')
             ->count();
         return $cases;
