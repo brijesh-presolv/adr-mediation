@@ -10,9 +10,32 @@
 @section('page_title', 'Ongoing Request')
 
 @section('content')
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card-box table-responsive">
+    <section class="tabs-section">
+
+        <div class="tabs-section-nav">
+
+            <div class="tbl">
+
+                <ul class="nav" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#tabs-2-tab-3" role="tab" data-toggle="tab" id="tab1">
+                            <span class="nav-link-in">
+                                Bulk Cases
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="#tabs-2-tab-1" role="tab" data-toggle="tab" id="tab2">
+                            <span class="nav-link-in">
+                                Individual Cases
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active show" id="tabs-2-tab-3">
                 <div class="row">
                     <div class="col-md-4">
                         <select name="batch" id="batchSelect" class="form-control">
@@ -26,6 +49,67 @@
                         <br>
                     </div>
                 </div>
+                <table id="usersbulk" class="table table-striped table-bordered dt-responsive nowrap"
+                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>@lang('case.serial_number')</th>
+                            <th>Select</th>
+                            <th>@lang('case.case_id') </th>
+                            <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
+                                    data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
+                                    data-original-title="Click here to view the 'Request for Mediation'."><i
+                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            <th>@lang('case.party_details')</th>
+                            <th>@lang('case.mediator') <a href="#" data-toggle="tooltip" title=""
+                                    data-original-title="Click on 'Mediator Name' to withdraw current Mediator and/or appoint new Mediator."><i
+                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
+                                    data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties.
+                                                                                                                                                                                                                     "><i
+                                        class="fa fa-info-circle" aria-hidden="true"></i></a>
+                            </th>
+                            <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
+                                    data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
+                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            <th>@lang('case.action') </th>
+                            <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
+                                    data-original-title="Current status of the Mediation appears here."><i
+                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="row">
+                    <div class="col-md-2">
+
+                        <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
+                                type="checkbox" id="selectalldirBulkcases"> Select All Cases</label>
+
+                    </div>
+                    <div class="col-md-10">
+                        <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal"
+                            data-target="#withdrawModalForBulk" id="bulkCloseBtnBulkcases"
+                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Close</button>
+                        <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
+                            data-target="#uploadSupportingDocsModalForBulk" id="bulkUploadBulkcases"
+                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
+                            Documents</button>
+                        <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal"
+                            data-target="#addSessionModelForBulk" id="bulkSessionBulkcases"
+                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>"><span
+                                class="mdi mdi-pencil-plus"></span></button>
+                        <button class="blkbtn btn btn-primary btn-sm" id="bulkdownloadBulkcases"
+                            style="margin-top:10px; display:none;">Bulk Download</button>
+                        <button class="blkbtn btn btn-primary btn-sm" id="downloadExcelBulkcases"
+                            style="margin-top:10px; display:none;">Download Invitation Delivery Sheet</button>
+
+                    </div>
+
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade " id="tabs-2-tab-1">
                 <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead>
@@ -45,7 +129,7 @@
                                         class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                             <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
                                     data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties.
-                                                                                                                                                                                                     "><i
+                                                                                                                                                                                                                     "><i
                                         class="fa fa-info-circle" aria-hidden="true"></i></a>
                             </th>
                             <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
@@ -86,9 +170,10 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    
+    </section>
+
+
 
     <div class="modal fade" id="uploadSupportingDocsModal" tabindex="-1" role="dialog" aria-hidden="true"
         style="display: none;">
@@ -191,8 +276,7 @@
                         <input type="hidden" name="type" class="form-control">
 
                         <div class="form-group">
-                            <label for="message-text"
-                                class="col-form-label">@lang('case.share_privet_comment_textarea'):</label>
+                            <label for="message-text" class="col-form-label">@lang('case.share_privet_comment_textarea'):</label>
                             <textarea class="form-control" name="comment" required></textarea>
                         </div>
                         <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
@@ -232,14 +316,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="message-text"
-                                class="col-form-label">@lang('case.share_privet_comment_textarea'):</label>
+                            <label for="message-text" class="col-form-label">@lang('case.share_privet_comment_textarea'):</label>
                             <textarea class="form-control" name="withdraw_comment"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal">@lang('case.btn_close')</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
                         <button type="submit" class="btn btn-primary">@lang('case.btn_close_request')</button>
                     </div>
                 </form>
@@ -272,14 +354,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="message-text"
-                                class="col-form-label">@lang('case.share_privet_comment_textarea'):</label>
+                            <label for="message-text" class="col-form-label">@lang('case.share_privet_comment_textarea'):</label>
                             <textarea class="form-control" name="withdraw_comment"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal">@lang('case.btn_close')</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
                         <button type="submit" class="btn btn-primary">@lang('case.btn_close_request')</button>
                     </div>
                 </form>
@@ -313,8 +393,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal">@lang('case.btn_close')</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
                         <button type="submit" class="btn btn-primary">@lang('case.btn_accept')</button>
                     </div>
                 </form>
@@ -379,14 +458,12 @@
                         <div class="form-group">
                             <label>@lang('case.session_date') :</label>
                             <input type="text" autocomplete="off" id="sessionDate" class="form-control"
-                                name="sessionDate" placeholder="@lang('case.session_date_placeholder')"
-                                data-validation="required">
+                                name="sessionDate" placeholder="@lang('case.session_date_placeholder')" data-validation="required">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_time'):</label>
                             <input type="time" id="sessionTime" autocomplete="off" class="form-control"
-                                name="sessionTime" placeholder="@lang('case.session_time_placeholder')"
-                                data-validation="required">
+                                name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_zoom_id') :</label>
@@ -395,8 +472,7 @@
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
-                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"
-                                data-validation="required"></textarea>
+                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')" data-validation="required"></textarea>
                         </div>
                         <span>@lang('case.session_party'):</span>
                         <div class="form-group" id="sessionParty">
@@ -429,13 +505,13 @@
                         <div class="form-group">
                             <label>@lang('case.session_date') :</label>
                             <input type="text" autocomplete="off" id="sessionDateForBulk"
-                                class="form-control sessionDateForBulk" name="sessionDate"
-                                placeholder="@lang('case.session_date_placeholder')" data-validation="required">
+                                class="form-control sessionDateForBulk" name="sessionDate" placeholder="@lang('case.session_date_placeholder')"
+                                data-validation="required">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_time'):</label>
-                            <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime"
-                                placeholder="@lang('case.session_time_placeholder')" data-validation="required">
+                            <input type="time" id="sessionTime" autocomplete="off" class="form-control"
+                                name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_zoom_id') :</label>
@@ -444,8 +520,7 @@
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
-                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"
-                                data-validation="required"></textarea>
+                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')" data-validation="required"></textarea>
                         </div>
                         {{-- <span>@lang('case.session_party'):</span>
                     <div class="form-group" id="sessionParty">
@@ -479,14 +554,12 @@
                         <div class="form-group">
                             <label>@lang('case.session_date') :</label>
                             <input type="text" autocomplete="off" id="editsessionDate" class="form-control"
-                                name="sessionDate" placeholder="@lang('case.session_date_placeholder')"
-                                data-validation="required">
+                                name="sessionDate" placeholder="@lang('case.session_date_placeholder')" data-validation="required">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_time'):</label>
                             <input type="time" id="editsessionTime" value="16:04" autocomplete="off" class="form-control"
-                                name="sessionTime" placeholder="@lang('case.session_time_placeholder')"
-                                data-validation="required">
+                                name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_zoom_id') :</label>
@@ -495,8 +568,7 @@
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
-                            <textarea class="form-control" id="editnote" name="note"
-                                placeholder="@lang('case.session_note_placeholder')"></textarea>
+                            <textarea class="form-control" id="editnote" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
                         </div>
                         <span>@lang('case.session_party'):</span>
                         <div class="form-group" id="editsessionParty">
@@ -504,8 +576,7 @@
                         <div class="text-right">
                             <button type="button" class="btn-sm btn mt-3  btn-secondary"
                                 data-dismiss="modal">Close</button>
-                            <input type="submit" name="@lang('case.session_add_title')"
-                                class="btn-sm btn btn-primary mt-3">
+                            <input type="submit" name="@lang('case.session_add_title')" class="btn-sm btn btn-primary mt-3">
                         </div>
                     </div>
                 </form>
@@ -625,7 +696,7 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <script type="text/javascript">
-        $( document ).ready(function() {
+        $(document).ready(function() {
             // $("#sessionDateForBulk").datepicker({
             //     minDate: 0,
             //     dateFormat: 'dd/mm/yy'
@@ -636,7 +707,7 @@
             });
         });
         $(function() {
-            
+
             $('.dropify').dropify();
 
         });
@@ -676,12 +747,15 @@
         $("#batchSelect").change(function() {
             batch_id = $("#batchSelect :selected").val();
             userTable.ajax.reload(null, false);
+            userTablebulk.ajax.reload(null, false);
+
         })
-        var userTable = $('#users').DataTable({
+        var userTablebulk = $('#usersbulk').DataTable({
             "serverMethod": "POST",
-            "sAjaxSource": '{{ route('admin.case.json', $confirm_status) }}',
+            "sAjaxSource": '{{ route('admin.case.json', [$confirm_status, 1]) }}',
             "processing": true,
             "serverSide": true,
+            "bDestroy": true,
             "order": [
                 [0, "desc"]
             ],
@@ -719,7 +793,8 @@
                     "data": "case",
                     render: function(data, type, row) {
                         var button = "";
-                        button = button + `<input type="checkbox" class="blkchk" data-caseid="` + data.id +
+                        button = button + `<input type="checkbox" class="blkchkbulkcases" data-caseid="` +
+                            data.id +
                             `">`;
                         return button;
                     }
@@ -889,6 +964,277 @@
                     }
                 },
             ],
+        });
+
+
+        $("a.nav-link").click(function() {
+
+            if ($(this).attr("id") == "tab1") {
+                userTablebulk.ajax.reload(null, false);
+                $("#selectalldir, #selectalldirBulkcases, .blkchk, .blkchkbulkcases").prop("checked", false);
+                $("#downloadExcel, #downloadExcelBulkcases, #bulkSession, #bulkSessionBulkcases, #bulkdownload, #bulkdownloadBulkcases, #bulkUpload, #bulkUploadBulkcases, #bulkCloseBtn, #bulkCloseBtnBulkcases")
+                    .hide();
+
+            }
+            if ($(this).attr("id") == "tab2") {
+                $("#selectalldirBulkcases, #selectalldir, .blkchk, .blkchkbulkcases").prop("checked", false);
+                
+                $("#downloadExcel, #downloadExcelBulkcases, #bulkSession, #bulkSessionBulkcases, #bulkdownload, #bulkdownloadBulkcases, #bulkUpload, #bulkUploadBulkcases, #bulkCloseBtn, #bulkCloseBtnBulkcases")
+                    .hide();
+
+                var userTable = $('#users').DataTable({
+                    "serverMethod": "POST",
+                    "sAjaxSource": '{{ route('admin.case.json', [$confirm_status, 0]) }}',
+                    "processing": true,
+                    "serverSide": true,
+                    "bDestroy": true,
+                    "order": [
+                        [2, "desc"]
+                    ],
+                    "lengthMenu": [
+                        [10, 25, 50, 100, 250, 500, 1000],
+                        [10, 25, 50, 100, 250, 500, 1000],
+                    ],
+                    "iDisplayLength": 25,
+                    "responsive": true,
+                    serverData: function(sSource, aoData, fnCallback, oSettings) {
+                        // aoData.append('token',token)
+                        aoData.push({
+                            name: "batch_id",
+                            value: batch_id
+                        });
+                        oSettings = $.ajax({
+                            dataType: "json",
+                            type: "post",
+                            // async: false,
+                            crossDomain: true,
+                            url: sSource,
+                            data: aoData,
+                            success: fnCallback
+
+                        });
+
+                    },
+                    "columns": [{
+                            "data": "case.id",
+                            render: function(data, type, row, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            }
+                        },
+                        {
+                            "data": "case",
+                            render: function(data, type, row) {
+                                var button = "";
+                                button = button +
+                                    `<input type="checkbox" class="blkchk" data-caseid="` + data
+                                    .id +
+                                    `">`;
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "case.id",
+                            render: function(data) {
+                                var button = "M" + pad(data, 6);
+                                button = button + `<br><a href="{{ url('admin/track/') }}/` +
+                                    data +
+                                    `" target="_blank" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "date"
+                        },
+                        {
+                            "data": "case.id",
+                            render: function(data) {
+                                var button = ` <a href="{{ url('admin/casedetails/') }}/` +
+                                    data +
+                                    `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                                button = button + ` <a href="{{ url('admin/updatecase/') }}/` +
+                                    data +
+                                    `" target="_blank" class="btn btn-info waves-effect waves-light btn-sm" title="@lang('case.btn_case_details_edit')"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "party",
+                            render: function(data, type, row) {
+                                var d = "";
+                                for (i in data) {
+                                    if (data[i].isOnboarded == 1) {
+                                        if (data[i].name != null) {
+                                            if (data[i].organization != null && data[i]
+                                                .isClaimant == 0) {
+                                                d = d +
+                                                    `<span class="text-success party_name" data-inid="` +
+                                                    data[
+                                                        i].id + `" data-id="` + data[i].userId +
+                                                    `">` + data[i]
+                                                    .organization + `</span><br>`;
+                                            } else {
+                                                d = d +
+                                                    `<span class="text-success party_name" data-inid="` +
+                                                    data[
+                                                        i].id + `" data-id="` + data[i].userId +
+                                                    `">` + data[i]
+                                                    .name + `</span><br>`;
+                                            }
+                                        }
+                                    } else {
+                                        if (data[i].name != null) {
+                                            d = d +
+                                                `<span class="text-danger party_name" data-inid="` +
+                                                data[i]
+                                                .id + `" data-id="` + data[i].userId + `">` + data[
+                                                    i].name +
+                                                `</span><br>`;
+                                        }
+                                    }
+                                }
+                                return d;
+                            }
+                        },
+                        {
+                            "data": "case.mediator_username",
+                            render: function(data, type, row) {
+                                var button = "";
+                                // return  date.toLocaleDateString('en-GB');
+                                button = button + `<button value="` + row.case.id + `"  data-id="` +
+                                    row.case.id +
+                                    `" data-mediator="` + row.case.mediator_id +
+                                    `" data-toggle="modal" data-target="#midaterAdd" class="btn btn-info btn-sm">` +
+                                    data + ` </button>`;
+                                if (row.case.mediator_status == 0) {
+                                    button = button +
+                                        `<br><span class="badge badge-warning mediator_action" data-mediatoraction="` +
+                                        row.case.mediator_status + `">@lang('case.status_pending')</span>`;
+                                } else if (row.case.mediator_status == 1) {
+                                    button = button +
+                                        `<br><span class="badge badge-success mediator_action" data-mediatoraction="` +
+                                        row.case.mediator_status + `">@lang('case.status_accepted')</span>`;
+                                    button = button +
+                                        `<br><a href="{{ url('admin/consent-and-disclosures/') }}/` +
+                                        row.case
+                                        .id +
+                                        `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
+                                    button = button +
+                                        `<br><span class="badge badge-success">Date of Consent: ` +
+                                        row.mediator_create_action_date + `</span>`;
+                                } else {
+                                    button = button +
+                                        `<br><span class="badge badge-danger mediator_action" data-mediatoraction="` +
+                                        row.case.mediator_status + `">@lang('case.status_rejected')</span>`;
+                                    // button = button + `<br><span class="badge badge-danger">Date of Rejection: `+row.mediator_action_date+`</span>`;
+                                }
+
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "case.id",
+                            render: function(data, type, row) {
+                                var button = "";
+                                button = button +
+                                    `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` +
+                                    data +
+                                    `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
+                                button += ` <span class="badge-success badge private_total">` + row
+                                    .private_count +
+                                    `</span>`;
+                                if (row.private_view_count != 0) {
+                                    button += ` <span class="badge badge-danger private_unseen">` +
+                                        row
+                                        .private_view_count + `</span>`;
+                                }
+                                button = button +
+                                    ` <button type="button" data-type="0" data-typename="Share" data-id="` +
+                                    data +
+                                    `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">@lang('case.btn_share')</button>`;
+                                if (row.share_view_count !== 0) {
+                                    button += ` <span class="badge  badge-danger share_unseen">` +
+                                        row
+                                        .share_view_count + ` </span>`;
+                                }
+                                button += ` <span class="badge badge-success share_total">` + row
+                                    .share_count +
+                                    `</span></div>`;
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "case.id",
+                            render: function(data, type, row) {
+                                var button = "";
+                                button = button + ` <button id="Sessview` + data + `" value="` +
+                                    data +
+                                    `"  data-id="` + data +
+                                    `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal" title="@lang('case.btn_session_view')" ><span class="mdi mdi-file-eye-outline"></span></button>`;
+                                button = button + ` <button value="` + data + `"  data-id="` +
+                                    data +
+                                    `"   class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target="#addSession-modal" title="@lang('case.btn_session_add')"><span class="mdi mdi-pencil-plus"></span></button>`;
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "case.id",
+                            render: function(data, type, row) {
+                                var button = "";
+                                button = button + ` <button value="` + data + `"  data-id="` +
+                                    data +
+                                    `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">Upload Supporting</button><br>`;
+                                button = button + `<button value="` + data + `"  data-id="` + data +
+                                    `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-teal waves-light waves-effect btn-sm">@lang('case.btn_close')</button>`;
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "status_log",
+                            render: function(data, type, row) {
+                                var button = "";
+                                for (i in data) {
+                                    if (data[i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_ADMIN }}' ||
+                                        data[
+                                            i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}'
+                                    ) {
+                                        button = button + `<span class="badge badge-success">` +
+                                            data[i]
+                                            .description + ` | At : ` + data[i].created +
+                                            `</span><br>`;
+                                    }
+                                    if (data[i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}'
+                                    ) {
+                                        button = button + `<span class="badge badge-info ">` + data[
+                                                i].description +
+                                            ` | At : ` + data[i].created + `</span><br>`;
+                                    }
+                                    if (data[i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' ||
+                                        data[
+                                            i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}' ||
+                                        data[i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' ||
+                                        data[i]
+                                        .status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}'
+                                    ) {
+                                        button = button + `<span class="badge badge-danger">` +
+                                            data[i]
+                                            .description + ` | At : ` + data[i].created +
+                                            `</span><br>`;
+                                    }
+
+                                }
+                                return button;
+                            }
+                        },
+                    ],
+                });
+            }
         });
 
         // function start for send one bye one ajax request 
@@ -1062,7 +1408,7 @@
                     if (result.response == "success") {
                         if (insId == null) {
                             insId = result.caseid;
-                         
+
                         } else {
                             insId = insId + "," + result.caseid;
                         }
@@ -1166,7 +1512,7 @@
                     if (result.response == "success") {
                         if (insId == null) {
                             insId = result.caseid;
-                         
+
                         } else {
                             insId = insId + "," + result.caseid;
                         }
@@ -1247,72 +1593,6 @@
             }
         });
 
-        $(document).on("click", ".secureDownload", function () {
-                var id = $(this).data("id");
-                var filename = $(this).data("url");
-                var userid = $(this).data("userid");
-                var parentFolder = $(this).data("folder");
-                var csrf = document.querySelector('meta[name="csrf-token"]').content;
-
-                $.ajax({
-                url: '{{route("downloadSecure")}}',
-                method: "POST",
-                data: {
-                    id: id,
-                    urlpath: filename,
-                    parentFolder: parentFolder,
-                    user_id: userid,
-                    _token: csrf
-                },
-                xhrFields: {
-                    responseType: "blob", // to avoid binary data being mangled on charset conversion
-                },
-                success: function (blob, status, xhr) {
-                    // check for a filename
-                    var filename = "";
-                    var disposition = xhr.getResponseHeader("Content-Disposition");
-                    if (disposition && disposition.indexOf("attachment") !== -1) {
-                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                    var matches = filenameRegex.exec(disposition);
-                    if (matches != null && matches[1])
-                        filename = matches[1].replace(/['"]/g, "");
-                    }
-
-                    if (typeof window.navigator.msSaveBlob !== "undefined") {
-                    // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
-                    window.navigator.msSaveBlob(blob, filename);
-                    } else {
-                    var URL = window.URL || window.webkitURL;
-                    var downloadUrl = URL.createObjectURL(blob);
-
-                    if (filename) {
-                        // use HTML5 a[download] attribute to specify filename
-                        var a = document.createElement("a");
-                        // safari doesn't support this yet
-                        if (typeof a.download === "undefined") {
-                        window.location.href = downloadUrl;
-                        } else {
-                        a.href = downloadUrl;
-                        a.download = filename;
-                        document.body.appendChild(a);
-                        a.click();
-                        }
-                    } else {
-                        window.location.href = downloadUrl;
-                    }
-
-                    setTimeout(function () {
-                        URL.revokeObjectURL(downloadUrl);
-                    }, 100); // cleanup
-                    }
-                },
-
-                error: function (err) {
-                    console.log(err);
-                },
-                });
-            });
-
         $(document).on("change", ".blkchk", function() {
             var case_count = 0;
             $(".blkchk").each(function() {
@@ -1357,9 +1637,143 @@
             });
         })
 
-        $("#downloadExcel").on('click', function() {
+        $("#selectalldirBulkcases").change(function() {
+            if (this.checked) {
+                $("#bulkCloseBtnBulkcases").show();
+                $("#bulkUploadBulkcases").show();
+                $("#bulkSessionBulkcases").show();
+                $('#bulkdownloadBulkcases').show();
+                $("#downloadExcelBulkcases").show();
+
+                $(".blkchkbulkcases").each(function() {
+                    $(this).prop("checked", true);
+                });
+            } else {
+                $(".blkchkbulkcases").each(function() {
+                    $(this).prop("checked", false);
+                });
+                $("#bulkCloseBtnBulkcases").hide();
+                $("#bulkUploadBulkcases").hide();
+                $("#bulkSessionBulkcases").hide();
+                $('#bulkdownloadBulkcases').hide();
+                $("#downloadExcelBulkcases").hide();
+
+            }
+        });
+
+        $(document).on("change", ".blkchkbulkcases", function() {
+            var case_count = 0;
+            $(".blkchkbulkcases").each(function() {
+                if (this.checked) {
+                    case_count++;
+                }
+                if (this.checked) {
+                    $("#bulkCloseBtnBulkcases").show();
+                    $("#bulkUploadBulkcases").show();
+                    $("#bulkSessionBulkcases").show();
+                    $('#bulkdownloadBulkcases').show();
+                    $("#downloadExcelBulkcases").show();
+
+                } else {
+                    if (case_count == 0) {
+
+                        $("#bulkCloseBtnBulkcases").hide();
+                        $("#bulkUploadBulkcases").hide();
+                        $("#bulkSessionBulkcases").hide();
+                        $('#bulkdownloadBulkcases').hide();
+                        $("#downloadExcelBulkcases").hide();
+
+                    }
+                }
+                if ($('#selectalldirBulkcases').is(':checked')) {
+                    $("#bulkCloseBtnBulkcases").show();
+                    $("#bulkUploadBulkcases").show();
+                    $("#bulkSessionBulkcases").show();
+                    $('#bulkdownloadBulkcases').show();
+                    $("#downloadExcelBulkcases").show();
+
+                }
+                if (case_count == 0) {
+                    $("#bulkCloseBtnBulkcases").hide();
+                    $("#bulkUploadBulkcases").hide();
+                    $("#bulkSessionBulkcases").hide();
+                    $('#bulkdownloadBulkcases').hide();
+                    $("#downloadExcelBulkcases").hide();
+
+                    $("#selectalldirBulkcases").prop("checked", false);
+                }
+            });
+        })
+
+        $(document).on("click", ".secureDownload", function() {
+            var id = $(this).data("id");
+            var filename = $(this).data("url");
+            var userid = $(this).data("userid");
+            var parentFolder = $(this).data("folder");
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+            $.ajax({
+                url: '{{ route('downloadSecure') }}',
+                method: "POST",
+                data: {
+                    id: id,
+                    urlpath: filename,
+                    parentFolder: parentFolder,
+                    user_id: userid,
+                    _token: csrf
+                },
+                xhrFields: {
+                    responseType: "blob", // to avoid binary data being mangled on charset conversion
+                },
+                success: function(blob, status, xhr) {
+                    // check for a filename
+                    var filename = "";
+                    var disposition = xhr.getResponseHeader("Content-Disposition");
+                    if (disposition && disposition.indexOf("attachment") !== -1) {
+                        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        var matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1])
+                            filename = matches[1].replace(/['"]/g, "");
+                    }
+
+                    if (typeof window.navigator.msSaveBlob !== "undefined") {
+                        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
+                    } else {
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(blob);
+
+                        if (filename) {
+                            // use HTML5 a[download] attribute to specify filename
+                            var a = document.createElement("a");
+                            // safari doesn't support this yet
+                            if (typeof a.download === "undefined") {
+                                window.location.href = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
+                        } else {
+                            window.location.href = downloadUrl;
+                        }
+
+                        setTimeout(function() {
+                            URL.revokeObjectURL(downloadUrl);
+                        }, 100); // cleanup
+                    }
+                },
+
+                error: function(err) {
+                    console.log(err);
+                },
+            });
+        });
+
+        $("#downloadExcel, #downloadExcelBulkcases").on('click', function() {
             var cids = "";
-            $(".blkchk").each(function() {
+            $(".blkchk, .blkchkbulkcases").each(function() {
                 if (this.checked) {
                     if (cids == "") {
                         cids = $(this).data("caseid");
@@ -1448,7 +1862,7 @@
             e.preventDefault();
             var withdrawcount = [];
             var count = 0;
-            $(".blkchk").each(function() {
+            $(".blkchk, .blkchkbulkcases").each(function() {
                 if (this.checked) {
                     count++;
                 }
@@ -1470,7 +1884,7 @@
                     var ctcnt = 0;
                     var result = {};
 
-                    $(".blkchk").each(function() {
+                    $(".blkchk, .blkchkbulkcases").each(function() {
                         if (this.checked) {
                             ctcnt++;
                             if (cids == null) {
@@ -1481,14 +1895,14 @@
                         }
                     });
 
-                    $(".blkchk").each(function() {
+                    $(".blkchk, .blkchkbulkcases").each(function() {
                         if (this.checked) {
 
                             $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
                             var id = $(this).data("caseid");
 
                             var csrf = document.querySelector('meta[name="csrf-token"]').content;
-        
+
                             $.each($('#addSessionFormForBulk').serializeArray(), function() {
                                 result[this.name] = this.value;
                             });
@@ -1519,7 +1933,7 @@
                             $,
                             $.map(idarr, function(item, i) {
                                 looper = looper.then(function() {
-                                  
+
                                     return ajax_request_addSession(item, burl);
 
                                 });
@@ -1579,7 +1993,7 @@
             e.preventDefault();
             var withdrawcount = [];
             var count = 0;
-            $(".blkchk").each(function() {
+            $(".blkchk, .blkchkbulkcases").each(function() {
                 if (this.checked) {
                     count++;
                 }
@@ -1603,7 +2017,7 @@
                     var result = {};
 
 
-                    $(".blkchk").each(function() {
+                    $(".blkchk, .blkchkbulkcases").each(function() {
                         if (this.checked) {
                             ctcnt++;
                             if (cids == null) {
@@ -1613,14 +2027,14 @@
                             }
                         }
                     });
-                    $(".blkchk").each(function() {
+                    $(".blkchk, .blkchkbulkcases").each(function() {
 
                         if (this.checked) {
-                         
+
                             $('#withdrawModalForBulk').find('input[name="caseId"]').val(id);
                             var id = $(this).data("caseid");
                             var csrf = document.querySelector('meta[name="csrf-token"]').content;
-                         
+
                             $.each($('#withdrawFormForBulk').serializeArray(), function() {
                                 result[this.name] = this.value;
                             });
@@ -1904,7 +2318,7 @@
             e.preventDefault();
             var withdrawcount = [];
             var count = 0;
-            $(".blkchk").each(function() {
+            $(".blkchk, .blkchkbulkcases").each(function() {
                 if (this.checked) {
                     count++;
                 }
@@ -1929,7 +2343,7 @@
                 dangerMode: true,
             }).then(function(willDelete) {
                 if (willDelete) {
-                    
+
                     formData.delete('caseId');
                     var id = $(this).data("caseid");
                     // $('#withdrawModalForBulk').find('.modal-body input[name="case_id"]').val(id);
@@ -1940,7 +2354,7 @@
                     var ctcnt = 0;
 
 
-                    $(".blkchk").each(function() {
+                    $(".blkchk, .blkchkbulkcases").each(function() {
                         if (this.checked) {
                             ctcnt++;
                             if (cids == null) {
@@ -1952,7 +2366,7 @@
                     });
 
 
-                    $(".blkchk").each(function() {
+                    $(".blkchk, .blkchkbulkcases").each(function() {
                         if (this.checked) {
                             $('#uploadFormModalForBulk').find('.modal-body input[name="case_id"]')
                                 .val(id);
@@ -1976,7 +2390,7 @@
                             });
                         }
                     });
-                    
+
                     // $.ajax({
                     //     type: 'POST',
                     //     url: '{{ route('admin.case.storeMultiFile') }}',
@@ -2011,9 +2425,9 @@
                     //         console.log(data);
                     //     }
                     // });
-                        
 
-                    
+
+
                     var burl = "{{ route('admin.case.storeMultiFile') }}";
                     swal.close();
                     $(".ccdd").click();
@@ -2050,12 +2464,12 @@
 
         });
 
-        $('#bulkdownload').on('click', function(e) {
+        $('#bulkdownload, #bulkdownloadBulkcases').on('click', function(e) {
             e.preventDefault();
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
             var withdrawcount = [];
             var count = 0;
-            $(".blkchk").each(function() {
+            $(".blkchk, .blkchkbulkcases").each(function() {
                 if (this.checked) {
                     count++;
                 }
@@ -2073,7 +2487,7 @@
             }).then(function(willDelete) {
                 if (willDelete) {
                     var cid = "";
-                    $(".blkchk").each(function() {
+                    $(".blkchk, .blkchkbulkcases").each(function() {
                         if (this.checked) {
                             if (cid == "") {
                                 cid = $(this).data("caseid");

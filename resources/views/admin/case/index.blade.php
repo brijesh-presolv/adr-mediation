@@ -13,59 +13,104 @@
 @section('content')
 
     <section class="tabs-section">
+        <div>
+            <button class="btn btn-primary btn-sm" data-target="#myModalbupldAdmin" data-toggle="modal"> Bulk
+                Upload</button>
+            <br>
+            <br>
+        </div>
+        <div id="myModalbupldAdmin" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
 
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {{-- {{dd($allUsers)}} --}}
+                        <div class="blkfrmdiv">
+                            <h3>Upload .csv file</h3>
+                            <form enctype="multipart/form-data" method="post" action="{{ route('admin.bulkUpload') }}">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="token" id="token_input">
+                                <div class="form-group">
+                                    <select class="form-control" name="claimant" required>
+                                        <option value="">@lang('Select Claimant')</option>
+                                        @if (isset($allUsers))
+                                            @foreach ($allUsers as $value)
+                                                @if ($value->isActive)
+                                                    <option value="{{ $value->id }}">{{ $value->first_name }}
+                                                        {{ $value->last_name }} - {{ $value->organization }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    {{-- <input type="hidden" name="claimant" value="{{auth()->user()->id}}"> --}}
+                                </div>
+                                {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
+
+                                <div class="form-group">
+                                    <input type="file" name="csv" id="fileInput" onchange="" class="col-md-12 dropify"
+                                        data-allowed-file-extensions="csv" required="" data-max-file-size="20M" />
+                                </div>
+                                <div class="form-group">
+                                    {{-- <label for="batch" class="col-md-5">Batch Name: </label> --}}
+                                    <input type="text" name="batch" id="batch" placeholder="Batch Name"
+                                        class="col-md-12 form-control" />
+                                </div>
+                                <input type="Submit" value="Submit" class="btn btn-primary blkupdbtnsb">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
+                                    <span>@lang('case.btn_close')</span>
+                                </button>
+                            </form>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
         <div class="tabs-section-nav">
 
             <div class="tbl">
 
                 <ul class="nav" role="tablist">
-
                     <li class="nav-item">
-
                         <a class="nav-link active" href="#tabs-2-tab-3" role="tab" data-toggle="tab" id="tab1">
-
                             <span class="nav-link-in">
-
                                 Bulk Cases
-
-                                <!--<span class="label label-pill label-info">4</span>-->
-
                             </span>
-
                         </a>
-
                     </li>
-
-
-
                     <li class="nav-item">
-
                         <a class="nav-link " href="#tabs-2-tab-1" role="tab" data-toggle="tab" id="tab2">
-
                             <span class="nav-link-in">
-
                                 Individual Cases
-                                <!-- <label style="cursor:pointer;display: inline-block;" class="fa fa-info-circle" data-toggle="tooltip" title="" data-original-title=""></label>
-                       -->
-                                <!--<span class="label label-pill label-danger">4</span>-->
-
                             </span>
-
                         </a>
-
                     </li>
-
                 </ul>
-
             </div>
-
         </div>
         <!--.tabs-section-nav-->
 
-
-
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane fade in active show" id="tabs-2-tab-3">
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <select name="batch" id="batchSelect" class="form-control">
+                            <option value="" selected>Select Batch...</option>
+                            @foreach ($batchName as $value)
+                                <option value={{ $value->id }}>{{ $value->batch_name }}</option>
+                            @endforeach
+
+                        </select>
+                        <br>
+                        <br>
+                    </div>
+                </div>
                 <table id="usersBulk" class="table table-striped table-bordered dt-responsive nowrap"
                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead>
@@ -96,9 +141,9 @@
                     </div>
                     <div class="col-md-4">
                         <button class="btn btn-success btn-sm blkbtn" data-toggle="modal" data-target="#midaterAddForBulk"
-                            id="bulkAcceptBtn" style="margin-top:10px; display:none;"
+                            id="bulkAcceptBtnBulk" style="margin-top:10px; display:none;"
                             data-arb="<?= Auth::user()->id ?>">Bulk Approve</button>
-                        <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn"
+                        <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtnBulk"
                             style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Reject</button>
                     </div>
 
@@ -160,7 +205,7 @@
 
                 </div>
                 <br><br>
-                
+
             </div>
 
 
@@ -298,7 +343,7 @@
                         <p>Please Wait. Do Not Close Until Close Button Appear.</p>
 
                         <div style="height: 200px;
-                        overflow-y: scroll;" id="mess">
+                                    overflow-y: scroll;" id="mess">
 
                         </div>
                         <!-- <a>Close</a> -->
@@ -312,7 +357,8 @@
 
     <div class="row">
         <div class="col-md-12">
-            <button style="display:none;" class="btn btn-sucess ccdd" data-target="#myModalcc" data-toggle="modal"></button>
+            <button style="display:none;" class="btn btn-sucess ccdd" data-target="#myModalcc"
+                data-toggle="modal"></button>
 
 
             <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
@@ -378,6 +424,7 @@
             "sAjaxSource": '{{ route('admin.case.json', [$confirm_status, 1]) }}',
             "processing": true,
             "serverSide": true,
+            "bDestroy": true,
             "order": [
                 [2, "desc"]
             ],
@@ -385,7 +432,7 @@
                 [10, 25, 50, 100, 250, 500, 1000],
                 [10, 25, 50, 100, 250, 500, 1000],
             ],
-            "iDisplayLength": 10,
+            "iDisplayLength": 25,
             "responsive": true,
             serverData: function(sSource, aoData, fnCallback, oSettings) {
                 // aoData.append('token',token)
@@ -414,8 +461,20 @@
                     "data": "case",
                     render: function(data, type, row) {
                         var button = "";
-                        button = button + `<input type="checkbox" class="blkchk" id="blkchkbulk" data-caseid="` + data.id +
-                            `">`;
+                        if (row.party.length == 0) {
+                            button = button +
+                                `<input type="checkbox" disabled class="blkchkbulk" id="blkchkbulk" data-caseid="` +
+                                data
+                                .id +
+                                `">`;
+                        } else {
+                            button = button +
+                                `<input type="checkbox" class="blkchkbulk" id="blkchkbulk" data-caseid="` +
+                                data
+                                .id +
+                                `">`;
+                        }
+
                         return button;
                     }
                 },
@@ -533,14 +592,16 @@
 
             if ($(this).attr("id") == "tab1") {
                 userTableBulk.ajax.reload(null, false);
-                $("#selectalldir").prop("checked", false);
-                $("#bulkAcceptBtn").hide();
-                $("#bulkRejectBtn").hide();
+                $("#selectalldir, #selectalldirbulk").prop("checked", false);
+                $("#bulkAcceptBtnBulk, #bulkAcceptBtn").hide();
+                $("#bulkRejectBtnBulk, #bulkRejectBtn").hide();
+                $(".blkchk, .blkchkbulk").prop("checked", false);
             }
             if ($(this).attr("id") == "tab2") {
-                $("#selectalldir").prop("checked", false);
-                $("#bulkAcceptBtn").hide();
-                $("#bulkRejectBtn").hide();
+                $("#selectalldirbulk, #selectalldir").prop("checked", false);
+                $("#bulkAcceptBtnBulk, #bulkAcceptBtn").hide();
+                $("#bulkRejectBtnBulk, #bulkRejectBtn").hide();
+                $(".blkchk, .blkchkbulk").prop("checked", false);
                 var userTable = $('#users').DataTable({
                     "serverMethod": "POST",
                     "sAjaxSource": '{{ route('admin.case.json', [$confirm_status, 0]) }}',
@@ -554,7 +615,7 @@
                         [10, 25, 50, 100, 250, 500, 1000],
                         [10, 25, 50, 100, 250, 500, 1000],
                     ],
-                    "iDisplayLength": 10,
+                    "iDisplayLength": 25,
                     "responsive": true,
                     serverData: function(sSource, aoData, fnCallback, oSettings) {
                         // aoData.append('token',token)
@@ -583,10 +644,19 @@
                             "data": "case",
                             render: function(data, type, row) {
                                 var button = "";
-                                button = button +
-                                    `<input type="checkbox" class="blkchk" id="blkchk" data-caseid="` + data
-                                    .id +
-                                    `">`;
+                                if (row.party.length == 0) {
+                                    button = button +
+                                        `<input type="checkbox" disabled class="blkchk" id="blkchk" data-caseid="` +
+                                        data
+                                        .id +
+                                        `">`;
+                                } else {
+                                    button = button +
+                                        `<input type="checkbox" class="blkchk" id="blkchk" data-caseid="` +
+                                        data
+                                        .id +
+                                        `">`;
+                                }
                                 return button;
                             }
                         },
@@ -1402,7 +1472,9 @@
                 $("#bulkAcceptBtn").show();
                 $("#bulkRejectBtn").show();
                 $(".blkchk").each(function() {
-                    $(this).prop("checked", true);
+                    if(! this.disabled){
+                        $(this).prop("checked", true);
+                    } 
                 });
             } else {
                 $(".blkchk").each(function() {
@@ -1443,7 +1515,56 @@
             }
         });
 
-        $("#bulkRejectBtn").click(function() {
+        $("#selectalldirbulk").change(function() {
+            if (this.checked) {
+                $("#bulkAcceptBtnBulk").show();
+                $("#bulkRejectBtnBulk").show();
+                $(".blkchkbulk").each(function() {
+                    // $(this).prop("checked", true);
+                    if(! this.disabled){
+                        $(this).prop("checked", true);
+                    }
+                });
+            } else {
+                $(".blkchkbulk").each(function() {
+                    $(this).prop("checked", false);
+                });
+                $("#bulkAcceptBtnBulk").hide();
+                $("#bulkRejectBtnBulk").hide();
+
+            }
+        });
+
+
+
+        $(document).on("change", ".blkchkbulk", function() {
+            var case_count = 0;
+            $(".blkchkbulk").each(function() {
+                if (this.checked) {
+                    case_count++;
+                }
+            });
+            if (this.checked) {
+                $("#bulkAcceptBtnBulk").show();
+                $("#bulkRejectBtnBulk").show();
+            } else {
+                if (case_count == 0) {
+                    $("#bulkAcceptBtnBulk").hide();
+                    $("#bulkRejectBtnBulk").hide();
+                }
+            }
+            if ($('#selectalldirbulk').is(':checked')) {
+                $("#bulkAcceptBtnBulk").show();
+                $("#bulkRejectBtnBulk").show();
+            }
+            if (case_count == 0) {
+                $("#bulkAcceptBtnBulk").hide();
+                $("#bulkRejectBtnBulk").hide();
+                $("#selectalldirbulk").prop("checked", false);
+            }
+        });
+
+        $("#bulkRejectBtn, #bulkRejectBtnBulk").click(function() {
             var ctcnt = 0;
 
             var blkclon = false;
@@ -1451,7 +1572,7 @@
             var mediatorid = $(this).data("arb");
 
 
-            $(".blkchk").each(function() {
+            $(".blkchk, .blkchkbulk").each(function() {
                 if (this.checked) {
                     blkclon = true;
                     ctcnt++;
@@ -1478,7 +1599,7 @@
                         var cids = null;
                         var idarr = [];
                         var ctcnt = 0;
-                        $(".blkchk").each(function() {
+                        $(".blkchk, .blkchkbulk").each(function() {
                             if (this.checked) {
                                 ctcnt++;
                                 if (cids == null) {
@@ -1488,7 +1609,7 @@
                                 }
                             }
                         });
-                        $(".blkchk").each(function() {
+                        $(".blkchk, .blkchkbulk").each(function() {
 
                             if (this.checked) {
                                 var csrf = document.querySelector('meta[name="csrf-token"]')
@@ -1936,7 +2057,7 @@
 
             var midater = $(this).find("select[name='midater']").val();
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
-            $(".blkchk").each(function() {
+            $(".blkchk, .blkchkbulk").each(function() {
                 if (this.checked) {
                     blkclon = true;
                     count++;
@@ -1969,7 +2090,7 @@
                         var ctcnt = 0;
                         var cidsarray = [];
 
-                        $(".blkchk").each(function() {
+                        $(".blkchk, .blkchkbulk").each(function() {
                             if (this.checked) {
                                 cidsarray.push($(this).data("caseid"));
                                 ctcnt++;
@@ -2078,6 +2199,7 @@
                         },
                     }).done(function(data) {
                         userTableBulk.ajax.reload();
+                        userTable.ajax.reload(null, false);
                         swal("@lang('case.reject_successfully')", {
                             icon: "success",
                         }).then(function() {
@@ -2130,6 +2252,7 @@
                             },
                         }).done(function(data) {
                             userTableBulk.ajax.reload()
+                            userTable.ajax.reload(null, false);
                             swal("@lang('case.confirm_successfully')", {
                                 icon: "success",
                             }).then(function() {

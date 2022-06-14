@@ -47,7 +47,7 @@ trait UploadTrait {
         }
     }
 
-    function getPreSignedUrl($filename, $exp_time)
+    static function getPreSignedUrl($filename, $exp_time)
     {
         $filenameForPresignedUrl = ltrim($filename, '/');
         // $temporarySignedUrl = Storage::disk('s3')->temporaryUrl($filename,  Carbon::now()->addMinutes($exp_time));
