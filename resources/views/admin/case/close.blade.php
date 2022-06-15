@@ -11,67 +11,140 @@
 
 
 @section('content')
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card-box table-responsive">
-                <div class="row">
-                    <div class="col-md-4">
-                        <select name="batch" id="batchSelect" class="form-control">
-                            <option value="" selected>Select Batch...</option>
-                            @foreach ($batchName as $value)
-                                <option value={{ $value->id }}>{{ $value->batch_name }}</option>
-                            @endforeach
+    <section class="tabs-section">
 
-                        </select>
-                        <br>
-                        <br>
+        <div class="tabs-section-nav">
+
+            <div class="tbl">
+
+                <ul class="nav" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#tabs-2-tab-3" role="tab" data-toggle="tab" id="tab1">
+                            <span class="nav-link-in">
+                                Bulk Cases
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="#tabs-2-tab-1" role="tab" data-toggle="tab" id="tab2">
+                            <span class="nav-link-in">
+                                Individual Cases
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active show" id="tabs-2-tab-3">
+                <div class="card-box table-responsive">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <select name="batch" id="batchSelect" class="form-control">
+                                <option value="" selected>Select Batch...</option>
+                                @foreach ($batchName as $value)
+                                    <option value={{ $value->id }}>{{ $value->batch_name }}</option>
+                                @endforeach
+
+                            </select>
+                            <br>
+                            <br>
+                        </div>
+                    </div>
+                    <table id="usersBulk" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>@lang('case.serial_number')</th>
+                                <th>Select</th>
+                                <th>@lang('case.case_id')</th>
+                                <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a> </th>
+                                <th>@lang('case.party_details')</th>
+                                <th>@lang('case.mediator')</th>
+                                <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.settlement_agreement')</th>
+                                <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Current status of the Mediation appears here."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-2">
+
+                            <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
+                                    type="checkbox" id="selectalldirBulkcases"> Select All Cases</label>
+
+                        </div>
+                        <div class="col-md-4">
+                            <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
+                                data-target="#uploadSupportingDocsModalForBulk" id="bulkUploadBulkcases"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
+                                Documents</button>
+                        </div>
+
                     </div>
                 </div>
-                <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
-                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>@lang('case.serial_number')</th>
-                            <th>Select</th>
-                            <th>@lang('case.case_id')</th>
-                            <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Date and time of raising the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Click here to view the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a> </th>
-                            <th>@lang('case.party_details')</th>
-                            <th>@lang('case.mediator')</th>
-                            <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title="" data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties.
-     "><i class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.settlement_agreement')</th>
-                            <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Current status of the Mediation appears here."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                        </tr>
-                    </thead>
-                </table>
-                <div class="row">
-                    <div class="col-md-2">
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="tabs-2-tab-1">
+                <div class="card-box table-responsive">
+                    <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>@lang('case.serial_number')</th>
+                                <th>Select</th>
+                                <th>@lang('case.case_id')</th>
+                                <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a> </th>
+                                <th>@lang('case.party_details')</th>
+                                <th>@lang('case.mediator')</th>
+                                <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.settlement_agreement')</th>
+                                <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Current status of the Mediation appears here."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-2">
 
-                        <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
-                                type="checkbox" id="selectalldir"> Select All Cases</label>
+                            <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
+                                    type="checkbox" id="selectalldir"> Select All Cases</label>
+
+                        </div>
+                        <div class="col-md-4">
+                            <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
+                                data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
+                                Documents</button>
+                        </div>
 
                     </div>
-                    <div class="col-md-4">
-                        <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload"
-                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
-                            Documents</button>
-                    </div>
-
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <div class="modal fade" id="uploadSupportingDocsModalForBulk" tabindex="-1" role="dialog" aria-hidden="true"
         style="display: none;">
@@ -99,7 +172,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal" aria-label="Close"
+                        id="modelclose">
                         <span>Close</span>
                     </button>
                 </div>
@@ -121,14 +195,12 @@
                 <form id="withdrawForm" method="post">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="message-text"
-                                class="col-form-label">@lang('case.textarea_title_status_change')</label>
+                            <label for="message-text" class="col-form-label">@lang('case.textarea_title_status_change')</label>
                             <textarea class="form-control" name="withdraw_comment" readonly></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal">@lang('case.status_change_btn_close')</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.status_change_btn_close')</button>
                     </div>
                 </form>
             </div>
@@ -149,8 +221,7 @@
                         <input type="hidden" name="type" class="form-control">
 
                         <div class="form-group">
-                            <label for="message-text"
-                                class="col-form-label">@lang('case.share_privet_comment_textarea')</label>
+                            <label for="message-text" class="col-form-label">@lang('case.share_privet_comment_textarea')</label>
                             <textarea class="form-control" name="comment" required></textarea>
                         </div>
                         <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
@@ -234,8 +305,7 @@
                             placeholder="@lang('case.session_zoom_id_placeholder')">
 
                         <span>@lang('case.session_note')</span>
-                        <textarea class="form-control" id="note" name="note"
-                            placeholder="@lang('case.session_note_placeholder')"></textarea>
+                        <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
 
                         <div class="text-center">
                             <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
@@ -285,7 +355,8 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal" aria-label="Close"
+                        id="modelclose">
                         <span>@lang('case.supporting_close')</span>
                     </button>
                 </div>
@@ -418,16 +489,15 @@
         }
         var batch_id;
 
-        $("#batchSelect").change(function() {
-            batch_id = $("#batchSelect :selected").val();
-            userTable.ajax.reload(null, false);
-        })
-        var userTable = $('#users').DataTable({
+        var userTableBulk = $('#usersBulk').DataTable({
             "serverMethod": "POST",
-            "sAjaxSource": '{{ route('admin.case.json', $confirm_status) }}',
+            "sAjaxSource": '{{ route('admin.case.json', [$confirm_status, 1]) }}',
             "processing": true,
             "serverSide": true,
-            "order": [[2, "desc"]],
+            "bDestroy": true,
+            "order": [
+                [2, "desc"]
+            ],
 
             "lengthMenu": [
                 [10, 25, 50, 100, 250, 500, 1000],
@@ -464,7 +534,8 @@
                     "data": "case",
                     render: function(data, type, row) {
                         var button = "";
-                        button = button + `<input type="checkbox" class="blkchk" data-caseid="` + data.id +
+                        button = button + `<input type="checkbox" class="blkchkBulkcases" data-caseid="` +
+                            data.id +
                             `">`;
                         return button;
                     }
@@ -617,7 +688,7 @@
                             if (data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_ADMIN }}' || data[
                                     i].status == '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}'
-                                ) {
+                            ) {
                                 button = button + `<span class="badge badge-success">` + data[i]
                                     .description + ` | At : ` + data[i].created + `</span><br>`;
                             }
@@ -641,6 +712,305 @@
                     }
                 },
             ],
+        });
+
+        var userTable;
+
+        $("a.nav-link").click(function() {
+            // $("#filesForBulk").val('');
+            $("#uploadFormModalForBulk").trigger("reset");
+            $(".dropify-clear").click();
+            if ($(this).attr("id") == "tab1") {
+                userTableBulk.ajax.reload(null, false);
+                $("#selectalldir, #selectalldirBulkcases, .blkchk, .blkchkBulkcases").prop("checked", false);
+                $("#bulkUpload, #bulkUploadBulkcases")
+                    .hide();
+
+            }
+            if ($(this).attr("id") == "tab2") {
+                $("#uploadFormModalForBulk").trigger("reset");
+                $(".dropify-clear").click();
+                $("#selectalldirBulkcases, #selectalldir, .blkchk, .blkchkBulkcases").prop("checked", false);
+
+                $("#bulkUpload, #bulkUploadBulkcases")
+                    .hide();
+
+                userTable = $('#users').DataTable({
+                    "serverMethod": "POST",
+                    "sAjaxSource": '{{ route('admin.case.json', [$confirm_status, 0]) }}',
+                    "processing": true,
+                    "serverSide": true,
+                    "bDestroy": true,
+                    "order": [
+                        [2, "desc"]
+                    ],
+
+                    "lengthMenu": [
+                        [10, 25, 50, 100, 250, 500, 1000],
+                        [10, 25, 50, 100, 250, 500, 1000],
+                    ],
+                    "iDisplayLength": 10,
+                    "responsive": true,
+                    serverData: function(sSource, aoData, fnCallback, oSettings) {
+                        // aoData.append('token',token)
+                        aoData.push({
+                            name: "batch_id",
+                            value: batch_id
+                        });
+                        oSettings = $.ajax({
+                            dataType: "json",
+                            type: "post",
+                            // async: false,
+                            crossDomain: true,
+                            url: sSource,
+                            data: aoData,
+                            success: fnCallback
+
+                        });
+
+                    },
+
+                    "columns": [{
+                            "data": "case.id",
+                            render: function(data, type, row, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            }
+                        },
+                        {
+                            "data": "case",
+                            render: function(data, type, row) {
+                                var button = "";
+                                button = button +
+                                    `<input type="checkbox" class="blkchk" data-caseid="` + data
+                                    .id +
+                                    `">`;
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "case.id",
+                            render: function(data) {
+                                var button = "M" + pad(data, 6);
+                                button = button + `<br><a href="{{ url('admin/track/') }}/` +
+                                    data +
+                                    `" target="_blank" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "date"
+                        },
+                        {
+                            "data": "case.id",
+                            render: function(data) {
+                                var button = ` <a href="{{ url('admin/casedetails/') }}/` +
+                                    data +
+                                    `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "party",
+                            render: function(data, type, row) {
+                                var d = "";
+                                for (i in data) {
+                                    if (data[i].isOnboarded == 1) {
+                                        if (data[i].name != null) {
+                                            if (data[i].organization != null && data[i]
+                                                .isClaimant == 0) {
+                                                d = d +
+                                                    `<span class="text-success party_name" data-inid="` +
+                                                    data[
+                                                        i].id + `" data-id="` + data[i].userId +
+                                                    `">` + data[i]
+                                                    .organization + `</span><br>`;
+                                            } else {
+                                                d = d +
+                                                    `<span class="text-success party_name" data-inid="` +
+                                                    data[
+                                                        i].id + `" data-id="` + data[i].userId +
+                                                    `">` + data[i]
+                                                    .name + `</span><br>`;
+                                            }
+                                        }
+                                    } else {
+                                        if (data[i].name != null) {
+                                            d = d +
+                                                `<span class="text-danger party_name" data-inid="` +
+                                                data[i]
+                                                .id + `" data-id="` + data[i].userId + `">` + data[
+                                                    i].name +
+                                                `</span><br>`;
+                                        }
+                                    }
+                                }
+                                return d;
+                            }
+                        },
+                        {
+                            "data": "case.mediator_username",
+                            render: function(data, type, row) {
+                                var button = "";
+                                button = button + `<button value="` + row.case.id + `"  data-id="` +
+                                    row.case.id +
+                                    `" class="btn btn-info btn-sm disabled" disabled>` + data +
+                                    ` </button>`;
+                                if (row.case.mediator_status == 0) {
+                                    button = button +
+                                        `<br><span class="badge badge-warning mediator_action" data-mediatoraction="` +
+                                        row.case.mediator_status + `">pending</span> <br> `;
+                                } else if (row.case.mediator_status == 1) {
+                                    // var date = new Date(row.mediator_status.updated_at);
+                                    //button = button + `<br><span class="badge badge-success">Accepted</span> <br> `;
+                                    button = button +
+                                        ` <br><a href="{{ url('admin/consent-and-disclosures/') }}/` +
+                                        row.case
+                                        .id +
+                                        `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
+                                    button = button +
+                                        `<br><span class="badge badge-success mediator_action" data-mediatoraction="` +
+                                        row.case.mediator_status + `">Date of Consent: ` + row
+                                        .mediator_create_action_date + `</span>`;
+
+
+                                }
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "case.id",
+                            render: function(data, type, row) {
+                                var button = "";
+                                button = button +
+                                    `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` +
+                                    data +
+                                    `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
+                                button += ` <span class="badge-success badge private_total">` + row
+                                    .private_count +
+                                    `</span>`;
+                                if (row.private_view_count != 0) {
+                                    button += ` <span class="badge badge-danger private_unseen">` +
+                                        row
+                                        .private_view_count + `</span>`;
+                                }
+                                button = button +
+                                    ` <button type="button" data-type="0" data-typename="Share" data-id="` +
+                                    data +
+                                    `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">@lang('case.btn_share')</button>`;
+                                if (row.share_view_count !== 0) {
+                                    button += ` <span class="badge  badge-danger share_unseen">` +
+                                        row
+                                        .share_view_count + ` </span>`;
+                                }
+                                button += ` <span class="badge badge-success share_total">` + row
+                                    .share_count +
+                                    `</span></div>`;
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "case.id",
+                            render: function(data, type, row) {
+                                var button = "";
+                                button = button + ` <button value="` + data + `"  data-id="` +
+                                    data +
+                                    `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal"  ><span class="mdi mdi-file-eye-outline"></span></button>`;
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "case.withdraw",
+                            render: function(data, type, row) {
+                                var button = "";
+                                //console.log(data);
+                                if (row.status_log.length != 0 && row.status_log[0].status ==
+                                    '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}') {
+                                    button = button + ` <button value="` + row.case.id +
+                                        `"  data-id="` + row.case
+                                        .id +
+                                        `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
+                                    button = button + ` <button value="` + data +
+                                        `"  data-withdraw="` + data +
+                                        `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">@lang('case.btn_withdrawn')</button>`;
+                                } else if (row.status_log.length != 0 && row.status_log[0].status ==
+                                    '{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}') {
+                                    button = button + ` <button value="` + row.case.id +
+                                        `"  data-id="` + row.case
+                                        .id +
+                                        `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
+                                    button = button + ` <button value="` + data +
+                                        `"  data-withdraw="` + data +
+                                        `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-danger waves-effect btn-sm">@lang('case.btn_unresolved')</button>`;
+                                } else {
+                                    button = button + ` <button value="` + row.case.id +
+                                        `"  data-id="` + row.case
+                                        .id +
+                                        `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
+                                    button = button + ` <button value="` + row.case.id +
+                                        `"  data-id="` + row.case
+                                        .id +
+                                        `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">@lang('case.btn_view_settelment')</button>`;
+                                }
+                                return button;
+                            }
+                        },
+                        {
+                            "data": "status_log",
+                            render: function(data, type, row) {
+                                var button = "";
+                                for (i in data) {
+                                    if (data[i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_ADMIN }}' ||
+                                        data[
+                                            i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}'
+                                    ) {
+                                        button = button + `<span class="badge badge-success">` +
+                                            data[i]
+                                            .description + ` | At : ` + data[i].created +
+                                            `</span><br>`;
+                                    }
+                                    if (data[i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}'
+                                    ) {
+                                        button = button + `<span class="badge badge-info ">` + data[
+                                                i].description +
+                                            ` | At : ` + data[i].created + `</span><br>`;
+                                    }
+                                    if (data[i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' ||
+                                        data[
+                                            i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_MEDIATOR }}' ||
+                                        data[i].status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' ||
+                                        data[i]
+                                        .status ==
+                                        '{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}'
+                                    ) {
+                                        button = button + `<span class="badge badge-danger">` +
+                                            data[i]
+                                            .description + ` | At : ` + data[i].created +
+                                            `</span><br>`;
+                                    }
+                                }
+                                return button;
+                            }
+                        },
+                    ],
+                });
+            }
+        });
+
+
+        $("#batchSelect").change(function() {
+            batch_id = $("#batchSelect :selected").val();
+            userTableBulk.ajax.reload(null, false);
+        });
+
+        $("#modelclose").click(function() {
+            $("#uploadFormModalForBulk", "#multi-file-upload-ajax").trigger("reset");
+            $(".dropify-clear").click();
         });
 
         var insertRow = false;
@@ -800,6 +1170,43 @@
             });
         })
 
+        $("#selectalldirBulkcases").change(function() {
+            if (this.checked) {
+                $("#bulkUploadBulkcases").show();
+                $(".blkchkBulkcases").each(function() {
+                    $(this).prop("checked", true);
+                });
+            } else {
+                $(".blkchkBulkcases").each(function() {
+                    $(this).prop("checked", false);
+                });
+                $("#bulkUploadBulkcases").hide();
+            }
+        });
+
+        $(document).on("change", ".blkchkBulkcases", function() {
+            var case_count = 0;
+            $(".blkchkBulkcases").each(function() {
+                if (this.checked) {
+                    case_count++;
+                }
+                if (this.checked) {
+                    $("#bulkUploadBulkcases").show();
+                } else {
+                    if (case_count == 0) {
+                        $("#bulkUploadBulkcases").hide();
+                    }
+                }
+                if ($('#selectalldirBulkcases').is(':checked')) {
+                    $("#bulkUploadBulkcases").show();
+                }
+                if (case_count == 0) {
+                    $("#bulkUploadBulkcases").hide();
+                    $("#selectalldirBulkcases").prop("checked", false);
+                }
+            });
+        })
+
         $('#settelmentModal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var recipient = button.data('id');
@@ -822,7 +1229,7 @@
             e.preventDefault();
             var withdrawcount = [];
             var count = 0;
-            $(".blkchk").each(function() {
+            $(".blkchk, .blkchkBulkcases").each(function() {
                 if (this.checked) {
                     count++;
                 }
@@ -858,7 +1265,7 @@
                     var idarr = [];
                     var ctcnt = 0;
 
-                    $(".blkchk").each(function() {
+                    $(".blkchk, .blkchkBulkcases").each(function() {
                         if (this.checked) {
                             ctcnt++;
                             if (cids == null) {
@@ -869,7 +1276,7 @@
                         }
                     });
 
-                    $(".blkchk").each(function() {
+                    $(".blkchk, .blkchkBulkcases").each(function() {
                         if (this.checked) {
                             $('#uploadFormModalForBulk').find('.modal-body input[name="case_id"]')
                                 .val(id);
@@ -1024,15 +1431,15 @@
             $('#caseIdF1').val(recipient);
         });
 
-        $(document).on("click", ".secureDownload", function () {
-                var id = $(this).data("id");
-                var filename = $(this).data("url");
-                var userid = $(this).data("userid");
-                var parentFolder = $(this).data("folder");
-                var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        $(document).on("click", ".secureDownload", function() {
+            var id = $(this).data("id");
+            var filename = $(this).data("url");
+            var userid = $(this).data("userid");
+            var parentFolder = $(this).data("folder");
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
-                $.ajax({
-                url: '{{route("downloadSecure")}}',
+            $.ajax({
+                url: '{{ route('downloadSecure') }}',
                 method: "POST",
                 data: {
                     id: id,
@@ -1044,51 +1451,51 @@
                 xhrFields: {
                     responseType: "blob", // to avoid binary data being mangled on charset conversion
                 },
-                success: function (blob, status, xhr) {
+                success: function(blob, status, xhr) {
                     // check for a filename
                     var filename = "";
                     var disposition = xhr.getResponseHeader("Content-Disposition");
                     if (disposition && disposition.indexOf("attachment") !== -1) {
-                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                    var matches = filenameRegex.exec(disposition);
-                    if (matches != null && matches[1])
-                        filename = matches[1].replace(/['"]/g, "");
+                        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        var matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1])
+                            filename = matches[1].replace(/['"]/g, "");
                     }
 
                     if (typeof window.navigator.msSaveBlob !== "undefined") {
-                    // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
-                    window.navigator.msSaveBlob(blob, filename);
+                        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
                     } else {
-                    var URL = window.URL || window.webkitURL;
-                    var downloadUrl = URL.createObjectURL(blob);
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(blob);
 
-                    if (filename) {
-                        // use HTML5 a[download] attribute to specify filename
-                        var a = document.createElement("a");
-                        // safari doesn't support this yet
-                        if (typeof a.download === "undefined") {
-                        window.location.href = downloadUrl;
+                        if (filename) {
+                            // use HTML5 a[download] attribute to specify filename
+                            var a = document.createElement("a");
+                            // safari doesn't support this yet
+                            if (typeof a.download === "undefined") {
+                                window.location.href = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
                         } else {
-                        a.href = downloadUrl;
-                        a.download = filename;
-                        document.body.appendChild(a);
-                        a.click();
+                            window.location.href = downloadUrl;
                         }
-                    } else {
-                        window.location.href = downloadUrl;
-                    }
 
-                    setTimeout(function () {
-                        URL.revokeObjectURL(downloadUrl);
-                    }, 100); // cleanup
+                        setTimeout(function() {
+                            URL.revokeObjectURL(downloadUrl);
+                        }, 100); // cleanup
                     }
                 },
 
-                error: function (err) {
+                error: function(err) {
                     console.log(err);
                 },
-                });
             });
+        });
 
         $('#multi-file-upload-ajax').submit(function(e) {
             e.preventDefault();
@@ -1166,7 +1573,11 @@
                         location.reload();
                     });
                     $("#settelmentModal").modal("hide");
-                    userTable.ajax.reload(null, false);
+                    if (typeof userTable !== "undefined") {
+                        userTable.ajax.reload(null, false);
+                    } else {
+                        userTableBulk.ajax.reload(null, false);
+                    }
                 }
             });
         });
@@ -1216,7 +1627,7 @@
                     if (data[i] != null) {
                         $('#commentForm .modal-footer').append("<a href=" + urlpdf +
                             "><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>"
-                            );
+                        );
                     }
                 }
             });
@@ -1227,7 +1638,11 @@
         });
 
         $('#commentModal-close').on('click', function() {
-            userTable.ajax.reload(null, false);
+            if (typeof userTable !== "undefined") {
+                userTable.ajax.reload(null, false);
+            } else {
+                userTableBulk.ajax.reload(null, false);
+            }
         });
 
         $('#commentForm').on('submit', function(e) {
@@ -1255,7 +1670,11 @@
                 } else {
                     swal("@lang('case.comment_not_added')");
                 }
-                userTable.ajax.reload(null, false);
+                if (typeof userTable !== "undefined") {
+                    userTable.ajax.reload(null, false);
+                } else {
+                    userTableBulk.ajax.reload(null, false);
+                }
 
             });
             return false;
@@ -1282,7 +1701,11 @@
                         data: $('#withdrawForm').serialize(),
                         success: function() {
                             // alert('form was submitted');
-                            userTable.ajax.reload(null, false);
+                            if (typeof userTable !== "undefined") {
+                                userTable.ajax.reload(null, false);
+                            } else {
+                                userTableBulk.ajax.reload(null, false);
+                            }
                             swal("@lang('case.status_change_successfully')", {
                                 icon: "success",
                             }).then(function() {

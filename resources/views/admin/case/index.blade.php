@@ -97,115 +97,124 @@
 
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane fade in active show" id="tabs-2-tab-3">
-                <div class="row">
+                <div class="card-box table-responsive">
 
-                    <div class="col-md-6">
-                        <select name="batch" id="batchSelect" class="form-control">
-                            <option value="" selected>Select Batch...</option>
-                            @foreach ($batchName as $value)
-                                <option value={{ $value->id }}>{{ $value->batch_name }}</option>
-                            @endforeach
+                    <div class="row">
 
-                        </select>
-                        <br>
-                        <br>
+                        <div class="col-md-6">
+                            <select name="batch" id="batchSelect" class="form-control">
+                                <option value="" selected>Select Batch...</option>
+                                @foreach ($batchName as $value)
+                                    <option value={{ $value->id }}>{{ $value->batch_name }}</option>
+                                @endforeach
+
+                            </select>
+                            <br>
+                            <br>
+                        </div>
                     </div>
-                </div>
-                <table id="usersBulk" class="table table-striped table-bordered dt-responsive nowrap"
-                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>@lang('case.serial_number')</th>
-                            <th>Select</th>
-                            <th>@lang('case.case_id')</th>
-                            <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Date and time of raising the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Click here to view the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.party_details')</th>
-                            <th>@lang('Supporting Document')</th>
-                            <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                        </tr>
-                    </thead>
-                </table>
-                <div class="row">
-                    <div class="col-md-2">
+                    <table id="usersBulk" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>@lang('case.serial_number')</th>
+                                <th>Select</th>
+                                <th>@lang('case.case_id')</th>
+                                <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.party_details')</th>
+                                <th>@lang('Supporting Document')</th>
+                                <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-2">
 
-                        <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
-                                type="checkbox" id="selectalldirbulk"> Select All Cases</label>
+                            <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
+                                    type="checkbox" id="selectalldirbulk"> Select All Cases</label>
+
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success btn-sm blkbtn" data-toggle="modal"
+                                data-target="#midaterAddForBulk" id="bulkAcceptBtnBulk"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
+                                Approve</button>
+                            <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtnBulk"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
+                                Reject</button>
+                        </div>
+
 
                     </div>
-                    <div class="col-md-4">
-                        <button class="btn btn-success btn-sm blkbtn" data-toggle="modal" data-target="#midaterAddForBulk"
-                            id="bulkAcceptBtnBulk" style="margin-top:10px; display:none;"
-                            data-arb="<?= Auth::user()->id ?>">Bulk Approve</button>
-                        <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtnBulk"
-                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Reject</button>
-                    </div>
-
-
-                </div>
-                <br><br>
-                <div class="row">
-                    <div class="col-md-4">
-                        <select name="batch" id="batchSelectForApprove" class="form-control">
-                            <option value="" selected>Select Batch...</option>
-                            @foreach ($batchName as $value)
-                                <option value={{ $value->id }}>{{ $value->batch_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#batchWiseMidaterAddForBulk"
-                            id="batchWiseApproveBtn" data-arb="<?= Auth::user()->id ?>">Batch Wise Approve</button>
+                    <br><br>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <select name="batch" id="batchSelectForApprove" class="form-control">
+                                <option value="" selected>Select Batch...</option>
+                                @foreach ($batchName as $value)
+                                    <option value={{ $value->id }}>{{ $value->batch_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary btn-sm" data-toggle="modal"
+                                data-target="#batchWiseMidaterAddForBulk" id="batchWiseApproveBtn"
+                                data-arb="<?= Auth::user()->id ?>">Batch Wise Approve</button>
+                        </div>
                     </div>
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane fade " id="tabs-2-tab-1">
-                <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
-                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>@lang('case.serial_number')</th>
-                            <th>Select</th>
-                            <th>@lang('case.case_id')</th>
-                            <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Date and time of raising the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Click here to view the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.party_details')</th>
-                            <th>@lang('Supporting Document')</th>
-                            <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                        </tr>
-                    </thead>
-                </table>
-                <div class="row">
-                    <div class="col-md-2">
+                <div class="card-box table-responsive">
 
-                        <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
-                                type="checkbox" id="selectalldir"> Select All Cases</label>
+                    <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>@lang('case.serial_number')</th>
+                                <th>Select</th>
+                                <th>@lang('case.case_id')</th>
+                                <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.party_details')</th>
+                                <th>@lang('Supporting Document')</th>
+                                <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-2">
+
+                            <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
+                                    type="checkbox" id="selectalldir"> Select All Cases</label>
+
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success btn-sm blkbtn" data-toggle="modal"
+                                data-target="#midaterAddForBulk" id="bulkAcceptBtn" style="margin-top:10px; display:none;"
+                                data-arb="<?= Auth::user()->id ?>">Bulk Approve</button>
+                            <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
+                                Reject</button>
+                        </div>
+
 
                     </div>
-                    <div class="col-md-4">
-                        <button class="btn btn-success btn-sm blkbtn" data-toggle="modal" data-target="#midaterAddForBulk"
-                            id="bulkAcceptBtn" style="margin-top:10px; display:none;"
-                            data-arb="<?= Auth::user()->id ?>">Bulk Approve</button>
-                        <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn"
-                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Reject</button>
-                    </div>
-
-
+                    <br><br>
                 </div>
-                <br><br>
-
             </div>
 
 
@@ -343,7 +352,7 @@
                         <p>Please Wait. Do Not Close Until Close Button Appear.</p>
 
                         <div style="height: 200px;
-                                    overflow-y: scroll;" id="mess">
+                                            overflow-y: scroll;" id="mess">
 
                         </div>
                         <!-- <a>Close</a> -->
@@ -418,6 +427,7 @@
         $(document).ready(function() {
             $('.dropify').dropify();
         });
+        var batch_id;
 
         var userTableBulk = $('#usersBulk').DataTable({
             "serverMethod": "POST",
@@ -588,6 +598,8 @@
             ],
         });
 
+        var userTable;
+
         $("a.nav-link").click(function() {
 
             if ($(this).attr("id") == "tab1") {
@@ -602,7 +614,7 @@
                 $("#bulkAcceptBtnBulk, #bulkAcceptBtn").hide();
                 $("#bulkRejectBtnBulk, #bulkRejectBtn").hide();
                 $(".blkchk, .blkchkbulk").prop("checked", false);
-                var userTable = $('#users').DataTable({
+                userTable = $('#users').DataTable({
                     "serverMethod": "POST",
                     "sAjaxSource": '{{ route('admin.case.json', [$confirm_status, 0]) }}',
                     "processing": true,
@@ -796,13 +808,12 @@
             str = str.toString();
             return str.length < max ? pad("0" + str, max) : str;
         }
-        var batch_id;
+
 
         $("#batchSelect").change(function() {
             batch_id = $("#batchSelect :selected").val();
             userTableBulk.ajax.reload(null, false);
-            userTable.ajax.reload(null, false);
-        })
+        });
 
 
         var insertRow = false;
@@ -1472,9 +1483,9 @@
                 $("#bulkAcceptBtn").show();
                 $("#bulkRejectBtn").show();
                 $(".blkchk").each(function() {
-                    if(! this.disabled){
+                    if (!this.disabled) {
                         $(this).prop("checked", true);
-                    } 
+                    }
                 });
             } else {
                 $(".blkchk").each(function() {
@@ -1521,7 +1532,7 @@
                 $("#bulkRejectBtnBulk").show();
                 $(".blkchkbulk").each(function() {
                     // $(this).prop("checked", true);
-                    if(! this.disabled){
+                    if (!this.disabled) {
                         $(this).prop("checked", true);
                     }
                 });
@@ -2198,8 +2209,11 @@
                             });
                         },
                     }).done(function(data) {
-                        userTableBulk.ajax.reload();
-                        userTable.ajax.reload(null, false);
+                        if (typeof userTable !== "undefined") {
+                            userTable.ajax.reload(null, false);
+                        } else {
+                            userTableBulk.ajax.reload(null, false);
+                        }
                         swal("@lang('case.reject_successfully')", {
                             icon: "success",
                         }).then(function() {
@@ -2251,8 +2265,11 @@
                                 });
                             },
                         }).done(function(data) {
-                            userTableBulk.ajax.reload()
-                            userTable.ajax.reload(null, false);
+                            if (typeof userTable !== "undefined") {
+                                userTable.ajax.reload(null, false);
+                            } else {
+                                userTableBulk.ajax.reload(null, false);
+                            }
                             swal("@lang('case.confirm_successfully')", {
                                 icon: "success",
                             }).then(function() {

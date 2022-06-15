@@ -36,137 +36,144 @@
         </div>
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane fade in active show" id="tabs-2-tab-3">
-                <div class="row">
-                    <div class="col-md-4">
-                        <select name="batch" id="batchSelect" class="form-control">
-                            <option value="" selected>Select Batch...</option>
-                            @foreach ($batchName as $value)
-                                <option value={{ $value->id }}>{{ $value->batch_name }}</option>
-                            @endforeach
+                <div class="card-box table-responsive">
 
-                        </select>
-                        <br>
-                        <br>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <select name="batch" id="batchSelect" class="form-control">
+                                <option value="" selected>Select Batch...</option>
+                                @foreach ($batchName as $value)
+                                    <option value={{ $value->id }}>{{ $value->batch_name }}</option>
+                                @endforeach
+
+                            </select>
+                            <br>
+                            <br>
+                        </div>
                     </div>
-                </div>
-                <table id="usersbulk" class="table table-striped table-bordered dt-responsive nowrap"
-                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>@lang('case.serial_number')</th>
-                            <th>Select</th>
-                            <th>@lang('case.case_id') </th>
-                            <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Date and time of raising the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Click here to view the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.party_details')</th>
-                            <th>@lang('case.mediator') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Click on 'Mediator Name' to withdraw current Mediator and/or appoint new Mediator."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties.
-                                                                                                                                                                                                                     "><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a>
-                            </th>
-                            <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.action') </th>
-                            <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Current status of the Mediation appears here."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                        </tr>
-                    </thead>
-                </table>
-                <div class="row">
-                    <div class="col-md-2">
+                    <table id="usersbulk" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>@lang('case.serial_number')</th>
+                                <th>Select</th>
+                                <th>@lang('case.case_id') </th>
+                                <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.party_details')</th>
+                                <th>@lang('case.mediator') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click on 'Mediator Name' to withdraw current Mediator and/or appoint new Mediator."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties.
+                                                                                                                                                                                                                                         "><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a>
+                                </th>
+                                <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.action') </th>
+                                <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Current status of the Mediation appears here."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-2">
 
-                        <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
-                                type="checkbox" id="selectalldirBulkcases"> Select All Cases</label>
+                            <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
+                                    type="checkbox" id="selectalldirBulkcases"> Select All Cases</label>
 
+                        </div>
+                        <div class="col-md-10">
+                            <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal"
+                                data-target="#withdrawModalForBulk" id="bulkCloseBtnBulkcases"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
+                                Close</button>
+                            <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
+                                data-target="#uploadSupportingDocsModalForBulk" id="bulkUploadBulkcases"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
+                                Documents</button>
+                            <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal"
+                                data-target="#addSessionModelForBulk" id="bulkSessionBulkcases"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>"><span
+                                    class="mdi mdi-pencil-plus"></span></button>
+                            <button class="blkbtn btn btn-primary btn-sm" id="bulkdownloadBulkcases"
+                                style="margin-top:10px; display:none;">Bulk Download</button>
+                            <button class="blkbtn btn btn-primary btn-sm" id="downloadExcelBulkcases"
+                                style="margin-top:10px; display:none;">Download Invitation Delivery Sheet</button>
+
+                        </div>
                     </div>
-                    <div class="col-md-10">
-                        <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal"
-                            data-target="#withdrawModalForBulk" id="bulkCloseBtnBulkcases"
-                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk Close</button>
-                        <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#uploadSupportingDocsModalForBulk" id="bulkUploadBulkcases"
-                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
-                            Documents</button>
-                        <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal"
-                            data-target="#addSessionModelForBulk" id="bulkSessionBulkcases"
-                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>"><span
-                                class="mdi mdi-pencil-plus"></span></button>
-                        <button class="blkbtn btn btn-primary btn-sm" id="bulkdownloadBulkcases"
-                            style="margin-top:10px; display:none;">Bulk Download</button>
-                        <button class="blkbtn btn btn-primary btn-sm" id="downloadExcelBulkcases"
-                            style="margin-top:10px; display:none;">Download Invitation Delivery Sheet</button>
-
-                    </div>
-
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane fade " id="tabs-2-tab-1">
-                <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
-                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>@lang('case.serial_number')</th>
-                            <th>Select</th>
-                            <th>@lang('case.case_id') </th>
-                            <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Date and time of raising the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Click here to view the 'Request for Mediation'."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.party_details')</th>
-                            <th>@lang('case.mediator') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Click on 'Mediator Name' to withdraw current Mediator and/or appoint new Mediator."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties.
-                                                                                                                                                                                                                     "><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a>
-                            </th>
-                            <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                            <th>@lang('case.action') </th>
-                            <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
-                                    data-original-title="Current status of the Mediation appears here."><i
-                                        class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                        </tr>
-                    </thead>
-                </table>
-                <div class="row">
-                    <div class="col-md-2">
+                <div class="card-box table-responsive">
 
-                        <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
-                                type="checkbox" id="selectalldir"> Select All Cases</label>
+                    <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>@lang('case.serial_number')</th>
+                                <th>Select</th>
+                                <th>@lang('case.case_id') </th>
+                                <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.party_details')</th>
+                                <th>@lang('case.mediator') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click on 'Mediator Name' to withdraw current Mediator and/or appoint new Mediator."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties.
+                                                                                                                                                                                                                                         "><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a>
+                                </th>
+                                <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                <th>@lang('case.action') </th>
+                                <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Current status of the Mediation appears here."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-2">
+
+                            <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
+                                    type="checkbox" id="selectalldir"> Select All Cases</label>
+
+                        </div>
+                        <div class="col-md-10">
+                            <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal"
+                                data-target="#withdrawModalForBulk" id="bulkCloseBtn" style="margin-top:10px; display:none;"
+                                data-arb="<?= Auth::user()->id ?>">Bulk Close</button>
+                            <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
+                                data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
+                                Documents</button>
+                            <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal"
+                                data-target="#addSessionModelForBulk" id="bulkSession"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>"><span
+                                    class="mdi mdi-pencil-plus"></span></button>
+                            <button class="blkbtn btn btn-primary btn-sm" id="bulkdownload"
+                                style="margin-top:10px; display:none;">Bulk Download</button>
+                            <button class="blkbtn btn btn-primary btn-sm" id="downloadExcel"
+                                style="margin-top:10px; display:none;">Download Invitation Delivery Sheet</button>
+
+                        </div>
 
                     </div>
-                    <div class="col-md-10">
-                        <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal"
-                            data-target="#withdrawModalForBulk" id="bulkCloseBtn" style="margin-top:10px; display:none;"
-                            data-arb="<?= Auth::user()->id ?>">Bulk Close</button>
-                        <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload"
-                            style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
-                            Documents</button>
-                        <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal"
-                            data-target="#addSessionModelForBulk" id="bulkSession" style="margin-top:10px; display:none;"
-                            data-arb="<?= Auth::user()->id ?>"><span class="mdi mdi-pencil-plus"></span></button>
-                        <button class="blkbtn btn btn-primary btn-sm" id="bulkdownload"
-                            style="margin-top:10px; display:none;">Bulk Download</button>
-                        <button class="blkbtn btn btn-primary btn-sm" id="downloadExcel"
-                            style="margin-top:10px; display:none;">Download Invitation Delivery Sheet</button>
-
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -744,12 +751,6 @@
         }
         var batch_id;
 
-        $("#batchSelect").change(function() {
-            batch_id = $("#batchSelect :selected").val();
-            userTable.ajax.reload(null, false);
-            userTablebulk.ajax.reload(null, false);
-
-        })
         var userTablebulk = $('#usersbulk').DataTable({
             "serverMethod": "POST",
             "sAjaxSource": '{{ route('admin.case.json', [$confirm_status, 1]) }}',
@@ -966,6 +967,7 @@
             ],
         });
 
+        var userTable;
 
         $("a.nav-link").click(function() {
 
@@ -978,11 +980,11 @@
             }
             if ($(this).attr("id") == "tab2") {
                 $("#selectalldirBulkcases, #selectalldir, .blkchk, .blkchkbulkcases").prop("checked", false);
-                
+
                 $("#downloadExcel, #downloadExcelBulkcases, #bulkSession, #bulkSessionBulkcases, #bulkdownload, #bulkdownloadBulkcases, #bulkUpload, #bulkUploadBulkcases, #bulkCloseBtn, #bulkCloseBtnBulkcases")
                     .hide();
 
-                var userTable = $('#users').DataTable({
+                userTable = $('#users').DataTable({
                     "serverMethod": "POST",
                     "sAjaxSource": '{{ route('admin.case.json', [$confirm_status, 0]) }}',
                     "processing": true,
@@ -1235,6 +1237,12 @@
                     ],
                 });
             }
+        });
+
+
+        $("#batchSelect").change(function() {
+            batch_id = $("#batchSelect :selected").val();
+            userTablebulk.ajax.reload(null, false);
         });
 
         // function start for send one bye one ajax request 
@@ -2139,7 +2147,11 @@
                         swal("@lang('case.mediator_assigned_successfully')", {
                             icon: "success",
                         });
-                        userTable.ajax.reload(null, false);
+                        if (typeof userTable !== "undefined") {
+                            userTable.ajax.reload(null, false);
+                        } else {
+                            userTablebulk.ajax.reload(null, false);
+                        }
                         $('#midaterAdd').modal("hide");
                     });
                 } else {
@@ -2211,7 +2223,11 @@
         });
 
         $('#commentModal-close').on('click', function() {
-            userTable.ajax.reload(null, false);
+            if (typeof userTable !== "undefined") {
+                userTable.ajax.reload(null, false);
+            } else {
+                userTablebulk.ajax.reload(null, false);
+            }
         });
 
         $('#uploadSupportingDocsModal').on('show.bs.modal', function(event) {
@@ -2589,7 +2605,11 @@
                 } else {
                     swal("@lang('case.comment_not_added')");
                 }
-                userTable.ajax.reload(null, false);
+                if (typeof userTable !== "undefined") {
+                    userTable.ajax.reload(null, false);
+                } else {
+                    userTablebulk.ajax.reload(null, false);
+                }
 
             });
             return false;
@@ -2617,13 +2637,18 @@
                         },
                         success: function() {
                             // alert('form was submitted');
-                            userTable.ajax.reload(null, false);
+
                             swal("@lang('case.status_change_successfully')", {
                                 icon: "success",
                             }).then(function() {
                                 location.reload();
                             });
                             $('#withdrawModal').modal("hide");
+                            if (typeof userTable !== "undefined") {
+                                userTable.ajax.reload(null, false);
+                            } else {
+                                userTablebulk.ajax.reload(null, false);
+                            }
                         }
                     });
                 } else {
