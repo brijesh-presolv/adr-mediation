@@ -20,6 +20,7 @@ use App\Http\Helpers\Whatsapp;
 use App\Http\Traits\UploadTrait;
 use App\Models\Batch;
 use App\Models\BulkLog;
+use App\Models\CourierCsv;
 use App\Models\EmailTrack;
 use App\Models\ManageSession;
 use App\Models\Notification;
@@ -3808,6 +3809,60 @@ class CaseController extends Controller
                 $notidata->save();
             }
             return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $request->logId, 'notiId' => $notidata->id]);
+        }
+    }
+
+    public function CourierCSVUpload(Request $request)
+    {
+        // dd($request->all());
+        $selectCsv = $request->file('csv');
+        $tmpName = $selectCsv->getPathname();
+        $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
+        $errormsg = '';
+        // dd($ext);
+
+        if ($ext != 'csv') {
+            $errormsg .= 'Please upload csv file';
+        }
+
+        if ($errormsg != '') {
+            return response()->json(["type"=>"error", "code" => 200, "message" => $errormsg]);
+        } else {
+            $csv = $this->csvToArray($tmpName);
+            // dd($csv);
+            foreach ($csv as $key => $v) {
+                $insertarray['case_id'] = $v[0];
+                $insertarray['awb_no'] = $v[1];
+                $insertarray['status'] = $v[2];
+                $insertarray['status_as_on_date'] = $v[3];
+                $insertarray['status_at'] = $v[4];
+                $insertarray['last_activity'] = $v[5];
+                $insertarray['reason'] = $v[6];
+                $insertarray['final_status'] = $v[7];
+
+                // $insertarray_res = Couriercsv::insertGetId($insertarray);
+                CourierCsv::create($insertarray);
+            }
+            return response()->json(["type"=>"success", "code" => 200]);
+        }
+        return response()->json(["type"=>"error", "code" => 200, "message" => "Try Again"]);
+
+    }
+
+    public function CourierZIPUpload(Request $request)
+    {
+        $selectCsv = $request->file('zip');
+        $tmpName = $selectCsv->getPathname();
+        $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
+        $errormsg = '';
+        if ($ext != 'zip') {
+            $errormsg .= 'Please upload zip file';
+        }
+
+        if ($errormsg != '') {
+            return response()->json(["type"=>"error", "code" => 200, "message" => $errormsg]);
+        } else { 
+            return response()->json(["type"=>"success", "code" => 200]);
         }
     }
 }

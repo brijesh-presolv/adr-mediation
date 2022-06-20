@@ -12,6 +12,88 @@
 @section('content')
     <section class="tabs-section">
 
+        <div>
+            <button class="btn btn-sm btn-primary mr-3" data-target="#myModalbupldCourierAdmin" data-toggle="modal"> Bulk
+                Courier .csv</button>
+            <button class="btn btn-sm btn-primary " data-target="#myModalbupldCourierzipAdmin" data-toggle="modal"> Bulk
+                Courier .zip</button>
+            <br>
+            <br>
+        </div>
+        <div id="myModalbupldCourierAdmin" class="mdladcm modal fade " role="dialog" data-keyboard="false"
+            data-backdrop="static">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {{-- {{dd($allUsers)}} --}}
+                        <div class="blkfrmdiv" style="width: 100%;">
+                            <h3>Upload Courier .csv file</h3>
+                            <form enctype="multipart/form-data" id="myModalbupldCourierAdminForm" method="post">
+                                {{ csrf_field() }}
+
+                                {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
+
+                                <div class="form-group">
+                                    <input type="file" name="csv" id="fileInput" onchange=""
+                                        data-allowed-file-extensions="csv" class="col-md-12 dropify" required=""
+                                        data-max-file-size="20M" />
+                                </div>
+
+                                <input type="Submit" value="Submit" class="btn btn-sm btn-primary blkupdbtnsb">
+                                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"
+                                    aria-label="Close">
+                                    <span>@lang('case.btn_close')</span>
+                                </button>
+                            </form>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="myModalbupldCourierzipAdmin" class="mdladcm modal fade " role="dialog" data-keyboard="false"
+            data-backdrop="static">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {{-- {{dd($allUsers)}} --}}
+                        <div class="blkfrmdiv" style="width: 100%;">
+                            <h3>Upload Courier .zip file</h3>
+                            <form enctype="multipart/form-data" id="myModalbupldCourierzipAdminForm" method="post">
+                                {{ csrf_field() }}
+
+                                {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
+
+                                <div class="form-group">
+                                    <input type="file" name="zip" id="fileInput" onchange=""
+                                        data-allowed-file-extensions="zip" class="col-md-12 dropify" required=""
+                                        data-max-file-size="20M" />
+                                </div>
+
+                                <input type="Submit" value="Submit" class="btn btn-sm btn-primary blkupdbtnsb">
+                                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"
+                                    aria-label="Close">
+                                    <span>@lang('case.btn_close')</span>
+                                </button>
+                            </form>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <div class="tabs-section-nav">
 
             <div class="tbl">
@@ -97,7 +179,8 @@
                                 Close</button>
                             <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
                                 data-target="#uploadSupportingDocsModalForBulk" id="bulkUploadBulkcases"
-                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload
+                                Supporting
                                 Documents</button>
                             <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal"
                                 data-target="#addSessionModelForBulk" id="bulkSessionBulkcases"
@@ -156,11 +239,13 @@
                         </div>
                         <div class="col-md-10">
                             <button class="blkbtn btn btn-teal waves-light waves-effect btn-sm" data-toggle="modal"
-                                data-target="#withdrawModalForBulk" id="bulkCloseBtn" style="margin-top:10px; display:none;"
-                                data-arb="<?= Auth::user()->id ?>">Bulk Close</button>
+                                data-target="#withdrawModalForBulk" id="bulkCloseBtn"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
+                                Close</button>
                             <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
                                 data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload"
-                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload
+                                Supporting
                                 Documents</button>
                             <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal"
                                 data-target="#addSessionModelForBulk" id="bulkSession"
@@ -205,7 +290,8 @@
                         <span>Share With @lang('case.session_party'):</span>
                         <div class="form-group" id="PartyDocs">
                         </div>
-                        <input type="submit" id="submit" name="addSupportingDocs" class="btn btn-sm btn-primary mt-3">
+                        <input type="submit" id="submit" name="addSupportingDocs"
+                            class="btn btn-sm btn-primary mt-3">
                         <br>
                         <br>
                     </form>
@@ -251,7 +337,8 @@
                         <input type="file" name="files[]" id="filesForBulk" class="dropify" data-height="150"
                             multiple />
                         <br>
-                        <input type="submit" id="submit" name="addSupportingDocs" class="btn btn-sm btn-primary mt-3">
+                        <input type="submit" id="submit" name="addSupportingDocs"
+                            class="btn btn-sm btn-primary mt-3">
                         <br>
                         <br>
                     </form>
@@ -479,7 +566,8 @@
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
-                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')" data-validation="required"></textarea>
+                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"
+                                data-validation="required"></textarea>
                         </div>
                         <span>@lang('case.session_party'):</span>
                         <div class="form-group" id="sessionParty">
@@ -512,8 +600,8 @@
                         <div class="form-group">
                             <label>@lang('case.session_date') :</label>
                             <input type="text" autocomplete="off" id="sessionDateForBulk"
-                                class="form-control sessionDateForBulk" name="sessionDate" placeholder="@lang('case.session_date_placeholder')"
-                                data-validation="required">
+                                class="form-control sessionDateForBulk" name="sessionDate"
+                                placeholder="@lang('case.session_date_placeholder')" data-validation="required">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_time'):</label>
@@ -527,7 +615,8 @@
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
-                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')" data-validation="required"></textarea>
+                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"
+                                data-validation="required"></textarea>
                         </div>
                         {{-- <span>@lang('case.session_party'):</span>
                     <div class="form-group" id="sessionParty">
@@ -565,8 +654,9 @@
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_time'):</label>
-                            <input type="time" id="editsessionTime" value="16:04" autocomplete="off" class="form-control"
-                                name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
+                            <input type="time" id="editsessionTime" value="16:04" autocomplete="off"
+                                class="form-control" name="sessionTime" placeholder="@lang('case.session_time_placeholder')"
+                                data-validation="required">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_zoom_id') :</label>
@@ -647,7 +737,8 @@
                 data-toggle="modal"></button>
 
 
-            <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+            <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false"
+                data-backdrop="static">
                 <div class="modal-dialog">
                     <!-- Modal content-->
                     <div class="modal-content">
@@ -666,7 +757,8 @@
                                 <!-- <div><a href="ongoing" class="btn btn-danger btn-lg directionCloseSwal" style="display: none;">Close</a></div> -->
                             </div>
                             <div id="totalPer"></div>
-                            <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;' id="messcc">
+                            <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;'
+                                id="messcc">
                             </div>
                             <input type="hidden" id="last_uploaded_id" value="">
                             <div id="messccclose" style="margin-top: 2em;"></div>
@@ -2900,6 +2992,94 @@
                     });
                 }
             });
+        });
+
+        $(document).on('submit', '#myModalbupldCourierAdminForm', function(e) {
+            e.preventDefault();
+            // console.log("hello");
+            var formdata = new FormData(this);
+
+            swal({
+                title: "Are you sure?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('admin.case.CourierCSVUpload') }}",
+                        data: formdata,
+                        dataType: "JSON",
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.type === "success") {
+                                swal({
+                                    title: "Upload Successfully!",
+                                    // text: "Delete this Session!",
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            } else {
+                                swal({
+                                    title: response.message,
+                                    // text: "Delete this Session!",
+                                    icon: "error",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+
+        });
+
+        $(document).on('submit', '#myModalbupldCourierzipAdminForm', function(e) {
+            e.preventDefault();
+            // console.log("hello");
+            var formdata = new FormData(this);
+
+            swal({
+                title: "Are you sure?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('admin.case.CourierZIPUpload') }}",
+                        data: formdata,
+                        dataType: "JSON",
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.type === "success") {
+                                swal({
+                                    title: "Upload Successfully!",
+                                    // text: "Delete this Session!",
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            } else {
+                                swal({
+                                    title: response.message,
+                                    // text: "Delete this Session!",
+                                    icon: "error",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+
         });
     </script>
 @endsection

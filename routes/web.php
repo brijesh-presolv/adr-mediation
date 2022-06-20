@@ -218,6 +218,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('cases/bulkupload', [App\Http\Controllers\Admin\CaseController::class, 'bulkUpload'])->name('admin.bulkUpload');
     Route::put('uploaddocument/{id}', [App\Http\Controllers\Admin\CaseController::class, 'documentUpload'])->name('admin.documentUpload');
 
+    // Courier CSV Upload
+    Route::post('cases/courier_csv_upload', [App\Http\Controllers\Admin\CaseController::class, 'CourierCSVUpload'])->name('admin.case.CourierCSVUpload');
+    Route::post('cases/courier_zip_upload', [App\Http\Controllers\Admin\CaseController::class, 'CourierZIPUpload'])->name('admin.case.CourierZIPUpload');
+
+
     Route::get('uploadlocaltos3', [App\Http\Controllers\MigrateFileS3Controller::class, 'MigrateFile']);
 });
 
