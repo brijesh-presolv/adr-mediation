@@ -185,7 +185,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('case/ongoing-request', [App\Http\Controllers\Admin\CaseController::class, 'ongoingRequest'])->name('admin.case.ongoingrequest');
     Route::get('case/closed-request', [App\Http\Controllers\Admin\CaseController::class, 'closedRequest'])->name('admin.case.closedrequest');
     Route::get('case/rjected-request', [App\Http\Controllers\Admin\CaseController::class, 'rjectedRequest'])->name('admin.case.rjectedrequest');
-    Route::post('case/json/{confirm_status?}', [App\Http\Controllers\Admin\CaseController::class, 'json'])->defaults('confirm_status', 0)->name('admin.case.json');
+    Route::post('case/json/{confirm_status?}/{bulk_flag?}', [App\Http\Controllers\Admin\CaseController::class, 'json'])->defaults('confirm_status', 0)->name('admin.case.json');
     Route::post('case/confirm-status', [App\Http\Controllers\Admin\CaseController::class, 'confirmStatus'])->name('admin.case.confirm_status');
     Route::post('case/reject-status', [App\Http\Controllers\Admin\CaseController::class, 'rejectStatus'])->name('admin.case.reject_status');
     Route::post('case/withdraw-status', [App\Http\Controllers\Admin\CaseController::class, 'withdrawStatus'])->name('admin.case.withdraw');

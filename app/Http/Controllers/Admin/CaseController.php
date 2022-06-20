@@ -1300,7 +1300,7 @@ class CaseController extends Controller
         // return $sessionData;
     }
 
-    public function json($role = 0)
+    public function json($role = 0, $bulk)
     {
         $draw = $_POST['sEcho'];
         $row = $_POST['iDisplayStart'];
@@ -1314,8 +1314,8 @@ class CaseController extends Controller
         }
         $searchValue = $_POST['sSearch'];
 
-        $casescount = MedCase::getCaseCount($searchValue, $role, $batch_id);
-        $cases = MedCase::getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id);
+        $casescount = MedCase::getCaseCount($searchValue, $role, $batch_id, $bulk);
+        $cases = MedCase::getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id, $bulk);
 
 
         $arraydata = array();
