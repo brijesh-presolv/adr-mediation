@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Helpers;
 //use App\Http\Helpers\Curl;
 use Illuminate\Support\Facades\Config;
@@ -23,7 +24,7 @@ class Common_function
     //         'case_type' => $d['type'],
     //         'case_id' => $d['case_id'],
     //     ];
-       
+
     //    $IDFUSER=Config::get('constants.IDFUSER');
     //     if (self::pushData($IDFUSER, $data, 'POST', 'admin')) {
     //         return true;
@@ -163,9 +164,19 @@ class Common_function
     //     return $ipaddress;
     // }
 
+    public static function getBetween($content, $start, $end)
+    {
+        $r = explode($start, $content);
+        if (isset($r[1])) {
+            $r = explode($end, $r[1]);
+            return $r[0];
+        }
+        return '';
+    }
+
     public static function MedNotification($caseid, $event, $uploaded_by, $medId = null, $userId = null)
     {
-        if($event == "COMM_ADM_PRIVATE" || $event == "COMM_MED_PRIVATE") {
+        if ($event == "COMM_ADM_PRIVATE" || $event == "COMM_MED_PRIVATE") {
             $data = [
                 'uploaded_by' => $uploaded_by,
                 'case_id' => $caseid,
@@ -183,14 +194,14 @@ class Common_function
                 'user_id' => $userId,
             ];
         }
-        
+
 
         Notification::create($data);
 
         return true;
     }
 
-       public static function getsixdigitid($type, $id)
+    public static function getsixdigitid($type, $id)
     {
 
 
@@ -205,98 +216,94 @@ class Common_function
             return 'PD-' . sprintf('%06d', $id);
         }
     }
-    
-
- public static function mres($value)
-{
-    return preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $value);
-}
-
-//  public static function isArbaccess($id, $uid)
-//     {
-
-//         $res = Arbcase::getAccessIds($id);
-
-//         if (!$res) {
-//             return false;
-//         }
-
-//         $ids = [];
-
-//         $ids[] = 1;
-
-//         foreach ($res as $key => $value) {
-//             $ids[] = $value->arbid;
-//             $ids[] = $value->userid;
-//         }
-
-//         $accessids = array_unique($ids);
 
 
-//         if (in_array($uid, $accessids)) {
+    public static function mres($value)
+    {
+        return preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $value);
+    }
 
-//             return true;
-//         } else {
-//             return false;
-//         }
-//     }
+    //  public static function isArbaccess($id, $uid)
+    //     {
+
+    //         $res = Arbcase::getAccessIds($id);
+
+    //         if (!$res) {
+    //             return false;
+    //         }
+
+    //         $ids = [];
+
+    //         $ids[] = 1;
+
+    //         foreach ($res as $key => $value) {
+    //             $ids[] = $value->arbid;
+    //             $ids[] = $value->userid;
+    //         }
+
+    //         $accessids = array_unique($ids);
 
 
-// public static function genDisclosure($c, $p, $t, $fname,$uploaded_by)
-//     {
+    //         if (in_array($uid, $accessids)) {
 
-//         //include_once 'pdf/Template/Consent.php';
+    //             return true;
+    //         } else {
+    //             return false;
+    //         }
+    //     }
 
-//         $data = Arbcase::getcasebyId($c);
-//         $data=$data[0];
-//         $onarb = Arbcase::runArbarbtr($c, $data->user1email, $data->user2email, $data->arbid,$uploaded_by);
 
-//         $ad = User::getuserdatabyid($data->arbid);
-//         $ad = $ad[0];
+    // public static function genDisclosure($c, $p, $t, $fname,$uploaded_by)
+    //     {
 
-//         $arbadd = '';
+    //         //include_once 'pdf/Template/Consent.php';
 
-//         if ($ad->address1 == '') {
+    //         $data = Arbcase::getcasebyId($c);
+    //         $data=$data[0];
+    //         $onarb = Arbcase::runArbarbtr($c, $data->user1email, $data->user2email, $data->arbid,$uploaded_by);
 
-//             $arbadd = '-';
-//         } else {
+    //         $ad = User::getuserdatabyid($data->arbid);
+    //         $ad = $ad[0];
 
-//             $arbadd = $ad->address1 . ' ' . $ad->address2 . ' ' . $ad->city . ' ' .
-//                 $ad->pincode . '<br>';
+    //         $arbadd = '';
 
-//             $arbadd .= $ad->state . ' ' . $ad->country;
-//         }
-        
-//         $dataa['c']=$data;
-//         $dataa['on']=$onarb;
-//         $dataa['add']=$arbadd;
-//         $dataa['p']=$p;
-//         $dataa['t']=$t;
-//         $dataa['pdf']=$fname;
+    //         if ($ad->address1 == '') {
 
-//         $pdf = PDF::loadView('pdf.consent', $dataa);
-//         //return $pdffile = pdf($data, $onarb, $arbadd, $p, $t, $fname);
-//         //$pdf->save($pdf);
-//         $pf = "consent".time()."-".$c.".pdf";
+    //             $arbadd = '-';
+    //         } else {
 
-//         $pdf->save($pf);
-        
-//     }
+    //             $arbadd = $ad->address1 . ' ' . $ad->address2 . ' ' . $ad->city . ' ' .
+    //                 $ad->pincode . '<br>';
 
-public static function procorderpdf($c)
+    //             $arbadd .= $ad->state . ' ' . $ad->country;
+    //         }
+
+    //         $dataa['c']=$data;
+    //         $dataa['on']=$onarb;
+    //         $dataa['add']=$arbadd;
+    //         $dataa['p']=$p;
+    //         $dataa['t']=$t;
+    //         $dataa['pdf']=$fname;
+
+    //         $pdf = PDF::loadView('pdf.consent', $dataa);
+    //         //return $pdffile = pdf($data, $onarb, $arbadd, $p, $t, $fname);
+    //         //$pdf->save($pdf);
+    //         $pf = "consent".time()."-".$c.".pdf";
+
+    //         $pdf->save($pf);
+
+    //     }
+
+    public static function procorderpdf($c)
     {
 
-       $dataa['c']=$c;
+        $dataa['c'] = $c;
 
         $pdf = PDF::loadView('pdf.procorder', $dataa);
         //return $pdffile = pdf($data, $onarb, $arbadd, $p, $t, $fname);
         //$pdf->save($pdf);
-        $pf = "procorder".time()."-pdf";
+        $pf = "procorder" . time() . "-pdf";
 
         $pdf->save($pf);
     }
-
-
-
-
 }

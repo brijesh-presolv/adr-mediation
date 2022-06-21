@@ -46,6 +46,8 @@
                                     aria-label="Close">
                                     <span>@lang('case.btn_close')</span>
                                 </button>
+                                <a href="/storage/app/public/courier_csv_sample/courier_sample.csv">Download Sample File.</a>
+
                             </form>
 
                         </div>
@@ -67,6 +69,7 @@
                         {{-- {{dd($allUsers)}} --}}
                         <div class="blkfrmdiv" style="width: 100%;">
                             <h3>Upload Courier .zip file</h3>
+                            <p class="text-center">Upload a zip folder containing the PDF named as anyname_caseid.pdf (eg: courier1_M003214.pdf, courier21_M001234.pdf)</p>
                             <form enctype="multipart/form-data" id="myModalbupldCourierzipAdminForm" method="post">
                                 {{ csrf_field() }}
 
@@ -3035,7 +3038,6 @@
                     });
                 }
             });
-
         });
 
         $(document).on('submit', '#myModalbupldCourierzipAdminForm', function(e) {
@@ -3075,7 +3077,7 @@
                                     location.reload();
                                 });
                             }
-                        }
+                        },
                     });
                 }
             });

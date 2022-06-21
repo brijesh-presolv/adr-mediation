@@ -21,6 +21,7 @@ use App\Http\Traits\UploadTrait;
 use App\Models\Batch;
 use App\Models\BulkLog;
 use App\Models\CourierCsv;
+use App\Models\CourierPdf;
 use App\Models\EmailTrack;
 use App\Models\ManageSession;
 use App\Models\Notification;
@@ -3826,12 +3827,14 @@ class CaseController extends Controller
         }
 
         if ($errormsg != '') {
-            return response()->json(["type"=>"error", "code" => 200, "message" => $errormsg]);
+            return response()->json(["type" => "error", "code" => 200, "message" => $errormsg]);
         } else {
             $csv = $this->csvToArray($tmpName);
             // dd($csv);
             foreach ($csv as $key => $v) {
-                $insertarray['case_id'] = $v[0];
+                $courierCaseId = str_replace("M", "", $v[0]);
+                $courierCaseId = sprintf("%0d", $courierCaseId);
+                $insertarray['case_id'] = $courierCaseId;
                 $insertarray['awb_no'] = $v[1];
                 $insertarray['status'] = $v[2];
                 $insertarray['status_as_on_date'] = $v[3];
@@ -3843,26 +3846,73 @@ class CaseController extends Controller
                 // $insertarray_res = Couriercsv::insertGetId($insertarray);
                 CourierCsv::create($insertarray);
             }
-            return response()->json(["type"=>"success", "code" => 200]);
+            return response()->json(["type" => "success", "code" => 200]);
         }
-        return response()->json(["type"=>"error", "code" => 200, "message" => "Try Again"]);
-
+        return response()->json(["type" => "error", "code" => 200, "message" => "Try Again"]);
     }
 
     public function CourierZIPUpload(Request $request)
     {
-        $selectCsv = $request->file('zip');
-        $tmpName = $selectCsv->getPathname();
-        $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
+        $selectZip = $request->file('zip');
+        $tmpName = $selectZip->getPathname();
+        $ext = pathinfo($selectZip->getClientOriginalName(), PATHINFO_EXTENSION);
+        $fullname = $selectZip->getClientOriginalName();
         $errormsg = '';
-        if ($ext != 'zip') {
-            $errormsg .= 'Please upload zip file';
-        }
+        if ($selectZip) {
+            if ($ext != 'zip') {
+                $errormsg .= 'Please upload zip file';
+            }
 
-        if ($errormsg != '') {
-            return response()->json(["type"=>"error", "code" => 200, "message" => $errormsg]);
-        } else { 
-            return response()->json(["type"=>"success", "code" => 200]);
+            if ($errormsg != '') {
+                return response()->json(["type" => "error", "code" => 200, "message" => $errormsg]);
+            } else {
+                $fileNameArr = explode(".", $_FILES['zip']['name']);
+
+                $zipName = $fileNameArr[0];
+
+                // dd($zipName);
+                $zip = new \ZipArchive();
+                if ($zip->open($tmpName) === TRUE) {
+                    $rand = rand(111111, 9999999999);
+                    $target_dir = storage_path() . '/app/public/zipCourier/';
+
+                    $zip->extractTo($target_dir . $rand . '/' . $zipName);
+                    $zip->close();
+
+                    $files = scandir($target_dir . $rand . '/' . $zipName);
+                    $msg = '';
+                    foreach ($files as $list) {
+                        if (pathinfo($list, PATHINFO_EXTENSION) == 'pdf' || strlen($list) > 4) {
+                            $courierCaseId = Common_function::getBetween($list, '_', '.');
+                            // dd($courierCaseId);
+                            $courierCaseId = str_replace("M", "", $courierCaseId);
+                            $courierCaseId = sprintf("%0d", $courierCaseId);
+                            // dd($courierCaseId);
+                            $casedetails = MedCase::find($courierCaseId);
+
+                            if($casedetails) {
+                                // dd("if");
+                                $s3target_dir = 'mediation_documents/mediation/' . $courierCaseId . '/courier_pdf';
+                                $s3target_file = $s3target_dir . '/' . $list;
+                                $uploadS33 = Storage::disk('s3')->put($s3target_file, file_get_contents($target_dir . $rand . '/' . $zipName . '/' . $list));
+                                if ($uploadS33) {
+                                    $array1['case_id'] = $courierCaseId;
+                                    $array1['file_name'] = $list;
+
+                                    $result22 = CourierPdf::create($array1);
+                                }
+
+                            }
+                            unlink($target_dir . $rand . '/' . $zipName . '/' . $list);
+                        }
+
+                    }
+                    rmdir($target_dir . $rand . '/' . $zipName);
+                    rmdir($target_dir . $rand);
+                }
+
+                return response()->json(["type" => "success", "code" => 200]);
+            }
         }
     }
 }
