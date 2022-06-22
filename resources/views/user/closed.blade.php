@@ -5,188 +5,193 @@ use App\Models\InvoledUser;
 @section('title', 'Closed')
 
 @section('breadcrumb')
-      <!-- start page title -->
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Closed </a></li>
+    <!-- start page title -->
+    <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+    <li class="breadcrumb-item"><a href="javascript: void(0);">Closed </a></li>
     <!-- end page title -->
 @endsection
 @section('page_title', 'Closed')
 
 @section('content')
-<div class="row">
-    <div class="col-sm-12">
-        <div class="card-box table-responsive">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-box table-responsive">
 
-            <table  id="users" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                <thead>
-                    <tr>
-                        <th>Sr. No</th>
-                        <th>Case Id</th>
-                        <th>Date</th>
-                        <th>Case Details</th>
-                        <th>Party Details</th>
-                        <th>Mediator</th>
-                        <th>Comment</th>
+                <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
+                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>Case Id</th>
+                            <th>Date</th>
+                            <th>Case Details</th>
+                            <th>Party Details</th>
+                            <th>Mediator</th>
+                            <th>Comment</th>
 
-                        <th>Session</th>
-                        <th>Settelment Agreement</th>
+                            <th>Session</th>
+                            <th>Settelment Agreement</th>
 
-                        <th>Status</th>
-                    </tr>
-                </thead>
-            </table>
-            
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                </table>
+
+            </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">Share</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Share</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="commentForm" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" name="case_id" class="form-control">
+                        <input type="hidden" name="type" class="form-control">
+
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">Comment:</label>
+                            <textarea class="form-control" name="comment" required></textarea>
+                        </div>
+                        <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="commentModal-close"
+                            data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">save comment</button>
+                    </div>
+                </form>
             </div>
-            <form id="commentForm" method="post">
-                @csrf
-                <div class="modal-body">
-                    <input type="hidden" name="case_id" class="form-control" >
-                    <input type="hidden" name="type" class="form-control" >
+        </div>
+    </div>
 
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Comment:</label>
-                        <textarea class="form-control" name="comment"  required></textarea>
-                    </div>
-                    <div class="row" id="commentView" style="height: 200px;overflow-x: auto">
-                    </div>
+    <div class="modal fade h-75" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true"
+        style="display: none;">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-dark">
+                    <h4 class="modal-title text-white">Session Records</h4>
+                    <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" id="sessRecId">
+                        <thead>
+                            <th scope="col">S.No. </th>
+                            <th scope="col">Scheduling done on:</th>
+                            <th scope="col">Session scheduled for:</th>
+                            <th scope="col">Zoom Id :</th>
+                            <th scope="col">Note :</th>
+                            <th scope="col">Party</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="commentModal-close" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">save comment</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade h-75" id="viewSession-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Session Records</h4>
-                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <table class="table" id="sessRecId">
-                    <thead>
-                    <th scope="col">S.No. </th>
-                    <th scope="col">Scheduling done on:</th>
-                    <th scope="col">Session scheduled for:</th>
-                    <th scope="col">Zoom Id :</th>
-                    <th scope="col">Note :</th>
-                    <th scope="col">Party</th>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                
-            </div>
-            <div class="modal-footer">
                     <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
                         <span>Close</span>
-                    </button>  
-                <div id="sessionShowBtn" class="text-center"></div>
+                    </button>
+                    <div id="sessionShowBtn" class="text-center"></div>
+                </div>
             </div>
+            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-content -->
+        <!-- /.modal-dialog -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
 
 
-<div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">Reason</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+    <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="withdrawModalLabel">Reason</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
-                   <p id="withdrawreason"></p>
+                    <p id="withdrawreason"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="settelmentModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-dark">
-                <h4 class="modal-title text-white">Settelment Agreemnet</h4>
-                <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <table class="table table-bordered"> 
-                    <thead>
-                        <tr>
-                            <th>Sr. No</th>
-                            <th>file</th>
-                            <th>Upload By</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
-                    <span>Close</span>
-                </button> 
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
-</div>
+
+    <div class="modal fade" id="settelmentModal" tabindex="-1" role="dialog" aria-hidden="true"
+        style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark">
+                    <h4 class="modal-title text-white">Settelment Agreemnet</h4>
+                    <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Sr. No</th>
+                                <th>file</th>
+                                <th>Upload By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-sm btn-primary" data-dismiss="modal" aria-label="Close">
+                        <span>Close</span>
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
 
 
 @endsection
 
- <!-- Table datatable css -->
+<!-- Table datatable css -->
 @section('head')
-  
-    <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    
+
+    <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+
 @endsection
 
 
 @section('footer')
- <!-- Datatable plugin js -->
+    <!-- Datatable plugin js -->
     <script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
     <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
 
- <!-- Datatables init -->
+    <!-- Datatables init -->
     <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script type="text/javascript">
-
         function pad(str, max) {
             str = str.toString();
             return str.length < max ? pad("0" + str, max) : str;
@@ -207,7 +212,7 @@ use App\Models\InvoledUser;
             "responsive": true,
             serverData: function(sSource, aoData, fnCallback, oSettings) {
                 // aoData.append('token',token)
-                
+
                 oSettings = $.ajax({
                     dataType: "json",
                     type: "post",
@@ -221,7 +226,7 @@ use App\Models\InvoledUser;
 
             },
             "columns": [{
-                    "data": "key",    
+                    "data": "key",
                 },
                 {
                     "data": "case.caseid",
@@ -304,7 +309,8 @@ use App\Models\InvoledUser;
                     render: function(data, type, row) {
                         var button = "";
                         button = button +
-                            `<div class="position-relative"> <button type="button" data-type="0" data-typename="Share" data-id="` + data.caseid +
+                            `<div class="position-relative"> <button type="button" data-type="0" data-typename="Share" data-id="` +
+                            data.caseid +
                             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_share')</button>`;
                         if (row.share_view_count !== 0) {
                             button += ` <span class="badge  badge-danger share_unseen">` + row
@@ -329,12 +335,18 @@ use App\Models\InvoledUser;
                     "data": "casestatus",
                     render: function(data, type, row) {
                         var button = "";
-                        if(data.status === 6) {
-                            button = button + `<button value="`+row.case.caseid+`"  data-id="`+row.case.caseid+`" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View</button>`;
-                        } else if(data.status === 5) {
-                            button = button + `<button value="Comment" data-withdraw="`+row.case.withdraw+`" data-toggle="modal" data-target="#withdrawModal" class="btn btn-success waves-effect btn-sm">Withdrawn</button>`;
-                        } else if(data.status === 7) {
-                            button = button + `<button value="Comment" data-withdraw="`+row.case.withdraw+`" data-toggle="modal" data-target="#withdrawModal" class="btn btn-danger waves-effect btn-sm">Unresolved</button>`;
+                        if (data.status === 6) {
+                            button = button + `<button value="` + row.case.caseid + `"  data-id="` + row
+                                .case.caseid +
+                                `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View</button>`;
+                        } else if (data.status === 5) {
+                            button = button + `<button value="Comment" data-withdraw="` + row.case
+                                .withdraw +
+                                `" data-toggle="modal" data-target="#withdrawModal" class="btn btn-success waves-effect btn-sm">Withdrawn</button>`;
+                        } else if (data.status === 7) {
+                            button = button + `<button value="Comment" data-withdraw="` + row.case
+                                .withdraw +
+                                `" data-toggle="modal" data-target="#withdrawModal" class="btn btn-danger waves-effect btn-sm">Unresolved</button>`;
                         }
                         return button;
                     }
@@ -343,10 +355,12 @@ use App\Models\InvoledUser;
                     "data": "casestatus",
                     render: function(data, type, row) {
                         var button = "";
-                        if(data.status === 6) {
-                            button = button + `<span class="badge badge-success">` + data.description + `| @lang('case.At'): `+data.created+`</span>`;
+                        if (data.status === 6) {
+                            button = button + `<span class="badge badge-success">` + data.description +
+                                `| @lang('case.At'): ` + data.created + `</span>`;
                         } else {
-                            button = button + `<span class="badge badge-danger">` + data.description + `| @lang('case.At'): `+data.created+`</span>`;
+                            button = button + `<span class="badge badge-danger">` + data.description +
+                                `| @lang('case.At'): ` + data.created + `</span>`;
                         }
                         return button;
                     }
@@ -354,181 +368,196 @@ use App\Models\InvoledUser;
             ],
         });
 
-        $(document).ready(function(){
+        $(document).ready(function() {
 
 
 
 
-            $('#viewSession-modal').on('show.bs.modal', function (event) {
-
-        
-
-         var button = $(event.relatedTarget);
-
-         
-            var caseid = button.data('id');
-
-
-    var csrf = document.querySelector('meta[name="csrf-token"]').content;
-
-
-    $.ajax({
-    type: 'post',
-            url: '{{ route("user.sessions") }}',
-            data: {caseid:caseid, '_token': csrf},
-            success: function (data) {
-                var pdfButton = "";
-                if(data != "") {
-                    // console.log(caseid);
-                    var link = '{{route("user.case.sessionPdf", '')}}'+'/'+caseid;
-                    // console.log(link);
-                    pdfButton = "<a target='_blank' href='"+link+"' class='btn btn-success'><span>Download PDF</span></button>"
-                    $('#sessRecId tbody').html(data);
-                    $('#sessionShowBtn').html(pdfButton);
-                } else {
-                    $('#sessRecId tbody').html("No Session");
-                    $('#sessionShowBtn').html(pdfButton);
-
-                }
-            }
-
-    });
-
-    });
+            $('#viewSession-modal').on('show.bs.modal', function(event) {
 
 
 
-            $('#withdrawModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var withdraw = button.data('withdraw');
-        var modal = $(this)
-        modal.find('#withdrawreason').text(withdraw);
-    });
-
-            $('#settelmentModal').on('show.bs.modal', function (event) {
-
-        var button = $(event.relatedTarget);
-        var recipient = button.data('id');
-
-        var csrf = document.querySelector('meta[name="csrf-token"]').content;
-
-        
-
-        $.ajax({
-            type: 'post',
-            url: '{{ route("user.viewSettelment") }}',
-            data: {id: recipient,'_token': csrf},
-            success: function (data) {
+                var button = $(event.relatedTarget);
 
 
-                $("#settelmentModal tbody").html('');
-                $("#settelmentModal tbody").append(data);
-                //$("#supportingDocumnet").datatable();
-            }
-        });
-        $('#caseIdF2').val(recipient);
-    });
+                var caseid = button.data('id');
 
 
-           
-
-
-
-        });
-
-        $('#commentModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var typename = button.data('typename');
-        var type = button.data('type');
-        var modal = $(this);
-        var csrf = document.querySelector('meta[name="csrf-token"]').content;
-        var urlpdf = '{{route("user.case.commentPDF",'','')}}'+'/'+id+'/'+type;
-
-        $("#commentView").html("");
-        $('#commentForm .modal-footer #DownLoadPdf').remove();
-
-        $.ajax({
-            type: 'post',
-            url: '{{ route("user.case.comment_view") }}',
-            data: {type: type, case_id: id, _token: csrf},
-            success: function (data) {
-                for (i in data) {
-                    //console.log(data[0]);
-                    if (data[i].username == '{{Auth::user()->username}}') {
-                        var msg = `<div class="col-md-12 text-right border-top">
-                                <div class="row">
-                                                <div class="col-md-4 text-left"><small class="text-muted">` + data[i].created + `</small></div>
-                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                    </div>           
-                                    <p>` + data[i].comment + `</p>
-                            </div>`;
-                        $("#commentView").append(msg);
-                    } else {
-                        var msg = `<div class="col-md-12 border-top">
-                                <div class="row">
-                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
-                                                <div class="col-md-4 text-right"><small class="text-muted">` + data[i].created + `</small></div>
-                                    </div>           
-                                    <p>` + data[i].comment + `</p>
-                            </div>`;
-                        $("#commentView").append(msg);
-                    }
-                }
-                if(data[i] != null){
-                        $('#commentForm .modal-footer').append("<a href="+urlpdf+"><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>");
-                }
-            }
-        });
-
-        modal.find('#commentModalLabel').text(typename);
-        modal.find('.modal-body input[name="type"]').val(type);
-        modal.find('.modal-body input[name="case_id"]').val(id);
-    });
-    
-    $('#commentModal-close').on('click', function() {
-        location.reload();
-    });
-
-    $('#commentForm').on('submit', function (e) {
-        e.preventDefault();
-        swal({
-            title: "Are you sure?",
-            text: "add this comment!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then((willDelete) => {
-            if (willDelete) {
-                $.ajax({
-                    type: 'post',
-                    url: '{{ route("user.case.comment") }}',
-                    data: $('#commentForm').serialize(),
-                    success: function () {
-                        swal("comment save successfully!", {
-                            icon: "success",
-                        }).then(function() {
-                            location.reload();
-                        });
-                        $('#commentForm')[0].reset();
-                        $('#commentModal').modal("hide");
-                    }
-                });
-            } else {
-                swal("comment not added!");
-            }
-        });
-        return false;
-    });
-    $(document).on("click", ".secureDownload", function () {
-                var id = $(this).data("id");
-                var filename = $(this).data("url");
-                var userid = $(this).data("userid");
-                var parentFolder = $(this).data("folder");
                 var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
+
                 $.ajax({
-                url: '{{route("downloadSecure")}}',
+                    type: 'post',
+                    url: '{{ route('user.sessions') }}',
+                    data: {
+                        caseid: caseid,
+                        '_token': csrf
+                    },
+                    success: function(data) {
+                        var pdfButton = "";
+                        if (data != "") {
+                            // console.log(caseid);
+                            var link = '{{ route('user.case.sessionPdf', '') }}' + '/' + caseid;
+                            // console.log(link);
+                            pdfButton = "<a target='_blank' href='" + link +
+                                "' class='btn btn-success'><span>Download PDF</span></button>"
+                            $('#sessRecId tbody').html(data);
+                            $('#sessionShowBtn').html(pdfButton);
+                        } else {
+                            $('#sessRecId tbody').html("No Session");
+                            $('#sessionShowBtn').html(pdfButton);
+
+                        }
+                    }
+
+                });
+
+            });
+
+
+
+            $('#withdrawModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var withdraw = button.data('withdraw');
+                var modal = $(this)
+                modal.find('#withdrawreason').text(withdraw);
+            });
+
+            $('#settelmentModal').on('show.bs.modal', function(event) {
+
+                var button = $(event.relatedTarget);
+                var recipient = button.data('id');
+
+                var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{ route('user.viewSettelment') }}',
+                    data: {
+                        id: recipient,
+                        '_token': csrf
+                    },
+                    success: function(data) {
+
+
+                        $("#settelmentModal tbody").html('');
+                        $("#settelmentModal tbody").append(data);
+                        //$("#supportingDocumnet").datatable();
+                    }
+                });
+                $('#caseIdF2').val(recipient);
+            });
+
+
+
+
+
+
+        });
+
+        $('#commentModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var typename = button.data('typename');
+            var type = button.data('type');
+            var modal = $(this);
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            var urlpdf = '{{ route('user.case.commentPDF', '', '') }}' + '/' + id + '/' + type;
+
+            $("#commentView").html("");
+            $('#commentForm .modal-footer #DownLoadPdf').remove();
+
+            $.ajax({
+                type: 'post',
+                url: '{{ route('user.case.comment_view') }}',
+                data: {
+                    type: type,
+                    case_id: id,
+                    _token: csrf
+                },
+                success: function(data) {
+                    for (i in data) {
+                        //console.log(data[0]);
+                        if (data[i].username == '{{ Auth::user()->username }}') {
+                            var msg = `<div class="col-md-12 text-right border-top">
+                                <div class="row">
+                                                <div class="col-md-4 text-left"><small class="text-muted">` + data[i]
+                                .created + `</small></div>
+                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                    </div>           
+                                    <p>` + data[i].comment + `</p>
+                            </div>`;
+                            $("#commentView").append(msg);
+                        } else {
+                            var msg = `<div class="col-md-12 border-top">
+                                <div class="row">
+                                                <div class="col-md-8"><small class="text-muted">` + data[i].username + `</small></div>
+                                                <div class="col-md-4 text-right"><small class="text-muted">` + data[i]
+                                .created + `</small></div>
+                                    </div>           
+                                    <p>` + data[i].comment + `</p>
+                            </div>`;
+                            $("#commentView").append(msg);
+                        }
+                    }
+                    if (data[i] != null) {
+                        $('#commentForm .modal-footer').append("<a href=" + urlpdf +
+                            "><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>"
+                            );
+                    }
+                }
+            });
+
+            modal.find('#commentModalLabel').text(typename);
+            modal.find('.modal-body input[name="type"]').val(type);
+            modal.find('.modal-body input[name="case_id"]').val(id);
+        });
+
+        $('#commentModal-close').on('click', function() {
+            location.reload();
+        });
+
+        $('#commentForm').on('submit', function(e) {
+            e.preventDefault();
+            swal({
+                title: "Are you sure?",
+                text: "add this comment!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: 'post',
+                        url: '{{ route('user.case.comment') }}',
+                        data: $('#commentForm').serialize(),
+                        success: function() {
+                            swal("comment save successfully!", {
+                                icon: "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                            $('#commentForm')[0].reset();
+                            $('#commentModal').modal("hide");
+                        }
+                    });
+                } else {
+                    swal("comment not added!");
+                }
+            });
+            return false;
+        });
+        $(document).on("click", ".secureDownload", function() {
+            var id = $(this).data("id");
+            var filename = $(this).data("url");
+            var userid = $(this).data("userid");
+            var parentFolder = $(this).data("folder");
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+            $.ajax({
+                url: '{{ route('downloadSecure') }}',
                 method: "POST",
                 data: {
                     id: id,
@@ -540,74 +569,58 @@ use App\Models\InvoledUser;
                 xhrFields: {
                     responseType: "blob", // to avoid binary data being mangled on charset conversion
                 },
-                success: function (blob, status, xhr) {
+                success: function(blob, status, xhr) {
                     // check for a filename
                     var filename = "";
                     var disposition = xhr.getResponseHeader("Content-Disposition");
                     if (disposition && disposition.indexOf("attachment") !== -1) {
-                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                    var matches = filenameRegex.exec(disposition);
-                    if (matches != null && matches[1])
-                        filename = matches[1].replace(/['"]/g, "");
+                        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        var matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1])
+                            filename = matches[1].replace(/['"]/g, "");
                     }
 
                     if (typeof window.navigator.msSaveBlob !== "undefined") {
-                    // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
-                    window.navigator.msSaveBlob(blob, filename);
+                        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
                     } else {
-                    var URL = window.URL || window.webkitURL;
-                    var downloadUrl = URL.createObjectURL(blob);
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(blob);
 
-                    if (filename) {
-                        // use HTML5 a[download] attribute to specify filename
-                        var a = document.createElement("a");
-                        // safari doesn't support this yet
-                        if (typeof a.download === "undefined") {
-                        window.location.href = downloadUrl;
+                        if (filename) {
+                            // use HTML5 a[download] attribute to specify filename
+                            var a = document.createElement("a");
+                            // safari doesn't support this yet
+                            if (typeof a.download === "undefined") {
+                                window.location.href = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
                         } else {
-                        a.href = downloadUrl;
-                        a.download = filename;
-                        document.body.appendChild(a);
-                        a.click();
+                            window.location.href = downloadUrl;
                         }
-                    } else {
-                        window.location.href = downloadUrl;
-                    }
 
-                    setTimeout(function () {
-                        URL.revokeObjectURL(downloadUrl);
-                    }, 100); // cleanup
+                        setTimeout(function() {
+                            URL.revokeObjectURL(downloadUrl);
+                            swal({
+                                text: "Downloaded successfully!",
+                                title: "Thanks!",
+                                icon: "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }, 100); // cleanup
                     }
                 },
 
-                error: function (err) {
+                error: function(err) {
                     console.log(err);
                 },
-                });
             });
+        });
     </script>
 
 @endsection
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

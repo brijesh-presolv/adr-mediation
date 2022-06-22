@@ -2787,6 +2787,7 @@ class CaseController extends Controller
         // $casedetails = MedCase::getcasebyId($id);
         $email = EmailTrack::getByCaseId($id);
         // dd($email);
+        $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
 
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
@@ -2806,7 +2807,7 @@ class CaseController extends Controller
             $ivr = $ivr['data'];
         }
         // dd($ivr);
-        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr"));
+        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv"));
     }
 
     public function mediatorAccessChange(Request $request)
@@ -3835,6 +3836,7 @@ class CaseController extends Controller
                 $courierCaseId = str_replace("M", "", $v[0]);
                 $courierCaseId = sprintf("%0d", $courierCaseId);
                 $insertarray['case_id'] = $courierCaseId;
+                $insertarray['noticeId'] = $v[0];
                 $insertarray['awb_no'] = $v[1];
                 $insertarray['status'] = $v[2];
                 $insertarray['status_as_on_date'] = $v[3];
@@ -3842,6 +3844,7 @@ class CaseController extends Controller
                 $insertarray['last_activity'] = $v[5];
                 $insertarray['reason'] = $v[6];
                 $insertarray['final_status'] = $v[7];
+                $insertarray['type'] = $request->type;
 
                 // $insertarray_res = Couriercsv::insertGetId($insertarray);
                 CourierCsv::create($insertarray);
@@ -3883,9 +3886,8 @@ class CaseController extends Controller
                     $msg = '';
                     foreach ($files as $list) {
                         if (pathinfo($list, PATHINFO_EXTENSION) == 'pdf' || strlen($list) > 4) {
-                            $courierCaseId = Common_function::getBetween($list, '_', '.');
-                            // dd($courierCaseId);
-                            $courierCaseId = str_replace("M", "", $courierCaseId);
+                            $explodeArray = Common_function::getBetween($list, '_', '.');
+                            $courierCaseId = str_replace("M", "", $explodeArray[2]);
                             $courierCaseId = sprintf("%0d", $courierCaseId);
                             // dd($courierCaseId);
                             $casedetails = MedCase::find($courierCaseId);
@@ -3896,9 +3898,13 @@ class CaseController extends Controller
                                 $s3target_file = $s3target_dir . '/' . $list;
                                 $uploadS33 = Storage::disk('s3')->put($s3target_file, file_get_contents($target_dir . $rand . '/' . $zipName . '/' . $list));
                                 if ($uploadS33) {
+                                    if((int)$explodeArray[1] == 1) {
+                                        $array1['noticeId'] = $explodeArray[2];
+                                    } else {
+                                        $array1['noticeId'] = $explodeArray[2] . "-" . ((int)$explodeArray[1] - 1);
+                                    }
                                     $array1['case_id'] = $courierCaseId;
                                     $array1['file_name'] = $list;
-
                                     $result22 = CourierPdf::create($array1);
                                 }
 

@@ -34,7 +34,10 @@
                                 {{ csrf_field() }}
 
                                 {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
-
+                                <div class="form-group">
+                                    <input type="text" name="type" id="type" placeholder="Type"  
+                                         class="col-md-12 form-control" required="" />
+                                </div>
                                 <div class="form-group">
                                     <input type="file" name="csv" id="fileInput" onchange=""
                                         data-allowed-file-extensions="csv" class="col-md-12 dropify" required=""
@@ -46,7 +49,8 @@
                                     aria-label="Close">
                                     <span>@lang('case.btn_close')</span>
                                 </button>
-                                <a href="/storage/app/public/courier_csv_sample/courier_sample.csv">Download Sample File.</a>
+                                <a href="/storage/app/public/courier_csv_sample/courier_sample.csv">Download Sample
+                                    File.</a>
 
                             </form>
 
@@ -69,7 +73,8 @@
                         {{-- {{dd($allUsers)}} --}}
                         <div class="blkfrmdiv" style="width: 100%;">
                             <h3>Upload Courier .zip file</h3>
-                            <p class="text-center">Upload a zip folder containing the PDF named as anyname_caseid.pdf (eg: courier1_M003214.pdf, courier21_M001234.pdf)</p>
+                            <p class="text-center">Upload a zip folder containing the PDF named as anyname_caseid.pdf (eg:
+                                courier1_M003214.pdf, courier21_M001234.pdf)</p>
                             <form enctype="multipart/form-data" id="myModalbupldCourierzipAdminForm" method="post">
                                 {{ csrf_field() }}
 
@@ -1864,6 +1869,13 @@
 
                         setTimeout(function() {
                             URL.revokeObjectURL(downloadUrl);
+                            swal({
+                                text: "Downloaded successfully!",
+                                title: "Thanks!",
+                                icon: "success",
+                            }).then(function() {
+                                location.reload();
+                            });
                         }, 100); // cleanup
                     }
                 },

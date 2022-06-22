@@ -276,12 +276,12 @@
                     <div class="custom-modal-text ">
 
                         <span>Session Date :</span>
-                        <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate"
-                            placeholder="Select session date" data-validation="required">
+                        <input type="text" autocomplete="off" id="sessionDate" class="form-control"
+                            name="sessionDate" placeholder="Select session date" data-validation="required">
 
                         <span>Session Time :</span>
-                        <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime"
-                            placeholder="Select session Time" data-validation="required">
+                        <input type="time" id="sessionTime" autocomplete="off" class="form-control"
+                            name="sessionTime" placeholder="Select session Time" data-validation="required">
 
                         <span>Zoom Id :</span>
                         <input type="text" id="zoomId" class="form-control" name="zoomId"
@@ -393,13 +393,12 @@
                         <div class="form-group">
                             <label>@lang('case.session_date') :</label>
                             <input type="text" autocomplete="off" id="editsessionDate" class="form-control"
-                                name="sessionDate" placeholder="@lang('case.session_date_placeholder')"
-                                data-validation="required">
+                                name="sessionDate" placeholder="@lang('case.session_date_placeholder')" data-validation="required">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_time'):</label>
-                            <input type="time" id="editsessionTime" value="16:04" autocomplete="off" class="form-control"
-                                name="sessionTime" placeholder="@lang('case.session_time_placeholder')"
+                            <input type="time" id="editsessionTime" value="16:04" autocomplete="off"
+                                class="form-control" name="sessionTime" placeholder="@lang('case.session_time_placeholder')"
                                 data-validation="required">
                         </div>
                         <div class="form-group">
@@ -409,8 +408,7 @@
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
-                            <textarea class="form-control" id="editnote" name="note"
-                                placeholder="@lang('case.session_note_placeholder')"></textarea>
+                            <textarea class="form-control" id="editnote" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
                         </div>
                         <span>@lang('case.session_party'):</span>
                         <div class="form-group" id="editsessionParty">
@@ -418,8 +416,7 @@
                         <div class="text-right">
                             <button type="button" class="btn-sm btn mt-3  btn-secondary"
                                 data-dismiss="modal">Close</button>
-                            <input type="submit" name="@lang('case.session_add_title')"
-                                class="btn-sm btn btn-primary mt-3">
+                            <input type="submit" name="@lang('case.session_add_title')" class="btn-sm btn btn-primary mt-3">
                         </div>
                     </div>
                 </form>
@@ -484,7 +481,8 @@
                 data-toggle="modal"></button>
 
 
-            <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+            <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false"
+                data-backdrop="static">
                 <div class="modal-dialog">
                     <!-- Modal content-->
                     <div class="modal-content">
@@ -503,7 +501,8 @@
                                 <!-- <div><a href="ongoing" class="btn btn-danger btn-lg directionCloseSwal" style="display: none;">Close</a></div> -->
                             </div>
                             <div id="totalPer"></div>
-                            <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;' id="messcc">
+                            <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;'
+                                id="messcc">
                             </div>
                             <input type="hidden" id="last_uploaded_id" value="">
                             <div id="messccclose" style="margin-top: 2em;"></div>
@@ -1975,15 +1974,15 @@
                 }
             });
         });
-        $(document).on("click", ".secureDownload", function () {
-                var id = $(this).data("id");
-                var filename = $(this).data("url");
-                var userid = $(this).data("userid");
-                var parentFolder = $(this).data("folder");
-                var csrf = document.querySelector('meta[name="csrf-token"]').content;
+        $(document).on("click", ".secureDownload", function() {
+            var id = $(this).data("id");
+            var filename = $(this).data("url");
+            var userid = $(this).data("userid");
+            var parentFolder = $(this).data("folder");
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
 
-                $.ajax({
-                url: '{{route("downloadSecure")}}',
+            $.ajax({
+                url: '{{ route('downloadSecure') }}',
                 method: "POST",
                 data: {
                     id: id,
@@ -1995,50 +1994,57 @@
                 xhrFields: {
                     responseType: "blob", // to avoid binary data being mangled on charset conversion
                 },
-                success: function (blob, status, xhr) {
+                success: function(blob, status, xhr) {
                     // check for a filename
                     var filename = "";
                     var disposition = xhr.getResponseHeader("Content-Disposition");
                     if (disposition && disposition.indexOf("attachment") !== -1) {
-                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                    var matches = filenameRegex.exec(disposition);
-                    if (matches != null && matches[1])
-                        filename = matches[1].replace(/['"]/g, "");
+                        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        var matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1])
+                            filename = matches[1].replace(/['"]/g, "");
                     }
 
                     if (typeof window.navigator.msSaveBlob !== "undefined") {
-                    // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
-                    window.navigator.msSaveBlob(blob, filename);
+                        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
                     } else {
-                    var URL = window.URL || window.webkitURL;
-                    var downloadUrl = URL.createObjectURL(blob);
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(blob);
 
-                    if (filename) {
-                        // use HTML5 a[download] attribute to specify filename
-                        var a = document.createElement("a");
-                        // safari doesn't support this yet
-                        if (typeof a.download === "undefined") {
-                        window.location.href = downloadUrl;
+                        if (filename) {
+                            // use HTML5 a[download] attribute to specify filename
+                            var a = document.createElement("a");
+                            // safari doesn't support this yet
+                            if (typeof a.download === "undefined") {
+                                window.location.href = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
                         } else {
-                        a.href = downloadUrl;
-                        a.download = filename;
-                        document.body.appendChild(a);
-                        a.click();
+                            window.location.href = downloadUrl;
                         }
-                    } else {
-                        window.location.href = downloadUrl;
-                    }
 
-                    setTimeout(function () {
-                        URL.revokeObjectURL(downloadUrl);
-                    }, 100); // cleanup
+                        setTimeout(function() {
+                            URL.revokeObjectURL(downloadUrl);
+                            swal({
+                                text: "Downloaded successfully!",
+                                title: "Thanks!",
+                                icon: "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }, 100); // cleanup
                     }
                 },
 
-                error: function (err) {
+                error: function(err) {
                     console.log(err);
                 },
-                });
             });
+        });
     </script>
 @endsection

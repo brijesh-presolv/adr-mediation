@@ -136,7 +136,8 @@
                         <div class="col-md-4">
                             <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
                                 data-target="#uploadSupportingDocsModalForBulk" id="bulkUpload"
-                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload
+                                Supporting
                                 Documents</button>
                         </div>
 
@@ -165,7 +166,8 @@
                         <input type="file" name="files[]" id="filesForBulk" class="dropify" data-height="150"
                             multiple />
                         <br>
-                        <input type="submit" id="submit" name="addSupportingDocs" class="btn btn-sm btn-primary mt-3">
+                        <input type="submit" id="submit" name="addSupportingDocs"
+                            class="btn btn-sm btn-primary mt-3">
                         <br>
                         <br>
                     </form>
@@ -293,12 +295,12 @@
                     <div class="custom-modal-text ">
 
                         <span>@lang('case.session_date')</span>
-                        <input type="text" autocomplete="off" id="sessionDate" class="form-control" name="sessionDate"
-                            placeholder="@lang('case.session_date_placeholder')">
+                        <input type="text" autocomplete="off" id="sessionDate" class="form-control"
+                            name="sessionDate" placeholder="@lang('case.session_date_placeholder')">
 
                         <span>@lang('case.session_time')</span>
-                        <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime"
-                            placeholder="@lang('case.session_time_placeholder')">
+                        <input type="time" id="sessionTime" autocomplete="off" class="form-control"
+                            name="sessionTime" placeholder="@lang('case.session_time_placeholder')">
 
                         <span>@lang('case.session_zoom_id')</span>
                         <input type="text" id="zoomId" class="form-control" name="zoomId"
@@ -338,7 +340,8 @@
                         <span>Share With @lang('case.session_party'):</span>
                         <div class="form-group" id="PartyDocs">
                         </div>
-                        <input type="submit" id="submit" name="addSupportingDocs" class="btn btn-sm btn-primary mt-3">
+                        <input type="submit" id="submit" name="addSupportingDocs"
+                            class="btn btn-sm btn-primary mt-3">
                         <br>
                         <br>
                     </form>
@@ -365,7 +368,8 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    <div class="modal fade" id="settelmentModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal fade" id="settelmentModal" tabindex="-1" role="dialog" aria-hidden="true"
+        style="display: none;">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-dark">
@@ -418,7 +422,8 @@
                 data-toggle="modal"></button>
 
 
-            <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+            <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false"
+                data-backdrop="static">
                 <div class="modal-dialog">
                     <!-- Modal content-->
                     <div class="modal-content">
@@ -437,7 +442,8 @@
                                 <!-- <div><a href="ongoing" class="btn btn-danger btn-lg directionCloseSwal" style="display: none;">Close</a></div> -->
                             </div>
                             <div id="totalPer"></div>
-                            <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;' id="messcc">
+                            <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;'
+                                id="messcc">
                             </div>
                             <input type="hidden" id="last_uploaded_id" value="">
                             <div id="messccclose" style="margin-top: 2em;"></div>
@@ -1487,6 +1493,13 @@
 
                         setTimeout(function() {
                             URL.revokeObjectURL(downloadUrl);
+                            swal({
+                                text: "Downloaded successfully!",
+                                title: "Thanks!",
+                                icon: "success",
+                            }).then(function() {
+                                location.reload();
+                            });
                         }, 100); // cleanup
                     }
                 },
