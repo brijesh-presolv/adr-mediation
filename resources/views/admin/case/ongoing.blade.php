@@ -79,7 +79,10 @@
                                 {{ csrf_field() }}
 
                                 {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
-
+                                <div class="form-group">
+                                    <input type="text" name="type" id="type" placeholder="Type"  
+                                         class="col-md-12 form-control" required="" />
+                                </div>
                                 <div class="form-group">
                                     <input type="file" name="zip" id="fileInput" onchange=""
                                         data-allowed-file-extensions="zip" class="col-md-12 dropify" required=""

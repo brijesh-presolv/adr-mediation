@@ -167,9 +167,9 @@ class Common_function
     public static function getBetween($content, $start, $end)
     {
         $r = explode($start, $content);
-        if (isset($r[2])) {
-            $sub = explode($end, $r[2]);
-            $r[2] = $sub[0];
+        if (isset($r[1])) {
+            $sub = explode($end, $r[1]);
+            $r[1] = $sub[0];
             return $r;
         }
         return '';

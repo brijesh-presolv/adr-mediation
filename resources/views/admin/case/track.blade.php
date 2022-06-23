@@ -227,6 +227,7 @@
                                 <th>Last Activity</th>
                                 <th>Reason</th>
                                 <th>Final Status</th>
+                                <th>Type</th>
                                 <th>Courier PDF</th>
                             </tr>
                         </thead>
@@ -240,13 +241,17 @@
                                     <td>{{ $value->last_activity }}</td>
                                     <td>{{ $value->reason }}</td>
                                     <td>{{ $value->final_status }}</td>
-                                    @if (isset($value->pdf->file_name))
-                                      <td><a href="javascript:void(0);" data-folder="courier_pdf"
-                                        data-url="{{ $value->pdf->file_name }}" data-id="{{ $value->case_id }}"
+                                    <td>{{ $value->type }}</td>
+                                    <td>
+                                    @if ($value->file_name != null)
+                                      <a href="javascript:void(0);" data-folder="courier_pdf"
+                                        data-url="{{ $value->file_name }}" data-id="{{ $value->case_id }}"
                                         class="secureDownload"
-                                        data-userid="{{ Auth::user()->id }}"><b>{{ $value->pdf->file_name }}</b></a></td>
+                                        data-userid="{{ Auth::user()->id }}"><b>Download</b></a>
+                                    @else
+                                        -
                                     @endif
-                                    
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

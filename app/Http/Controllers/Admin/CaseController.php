@@ -2787,7 +2787,12 @@ class CaseController extends Controller
         // $casedetails = MedCase::getcasebyId($id);
         $email = EmailTrack::getByCaseId($id);
         // dd($email);
-        $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
+        // $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
+        $courierCsv = CourierCsv::select('couriercsv.*', 'courierpdf.file_name')->leftJoin('courierpdf', function($join) {
+            $join->on('courierpdf.noticeId', '=', 'couriercsv.noticeId')->on('courierpdf.type', '=', 'couriercsv.type');
+        })->where('couriercsv.case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
+
+        // dd($courierCsv);
 
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
@@ -3886,25 +3891,29 @@ class CaseController extends Controller
                     $msg = '';
                     foreach ($files as $list) {
                         if (pathinfo($list, PATHINFO_EXTENSION) == 'pdf' || strlen($list) > 4) {
+                            $basefilename = pathinfo($list, PATHINFO_FILENAME);
+                            $extension = pathinfo($list, PATHINFO_EXTENSION);
+                            // dd($basefilename);
                             $explodeArray = Common_function::getBetween($list, '_', '.');
-                            $courierCaseId = str_replace("M", "", $explodeArray[2]);
+                            $courierCaseId = str_replace("M", "", $explodeArray[1]);
                             $courierCaseId = sprintf("%0d", $courierCaseId);
                             // dd($courierCaseId);
                             $casedetails = MedCase::find($courierCaseId);
-
                             if($casedetails) {
-                                // dd("if");
+                                $savefilename = $basefilename . '_' . time() . '.' . $extension;
                                 $s3target_dir = 'mediation_documents/mediation/' . $courierCaseId . '/courier_pdf';
-                                $s3target_file = $s3target_dir . '/' . $list;
+                                $s3target_file = $s3target_dir . '/' . $savefilename;
                                 $uploadS33 = Storage::disk('s3')->put($s3target_file, file_get_contents($target_dir . $rand . '/' . $zipName . '/' . $list));
                                 if ($uploadS33) {
-                                    if((int)$explodeArray[1] == 1) {
-                                        $array1['noticeId'] = $explodeArray[2];
+                                    $fileparty = substr($explodeArray[0], -1);
+                                    if((int)$fileparty == 1) {
+                                        $array1['noticeId'] = $explodeArray[1];
                                     } else {
-                                        $array1['noticeId'] = $explodeArray[2] . "-" . ((int)$explodeArray[1] - 1);
+                                        $array1['noticeId'] = $explodeArray[1] . "-" . ((int)$fileparty - 1);
                                     }
                                     $array1['case_id'] = $courierCaseId;
-                                    $array1['file_name'] = $list;
+                                    $array1['file_name'] = $savefilename;
+                                    $array1['type'] = $request->type;
                                     $result22 = CourierPdf::create($array1);
                                 }
 
