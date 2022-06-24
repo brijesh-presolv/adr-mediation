@@ -9,5 +9,5 @@ class CourierPdf extends Model
 {
     use HasFactory;
     protected $table = "courierpdf";
-    protected $fillable = ["case_id", "noticeId", "file_name", "type", "status"];
+    protected $fillable = ["case_id", "csv_id", "noticeId", "file_name", "type", "status"];
 }
