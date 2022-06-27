@@ -73,8 +73,7 @@
                         {{-- {{dd($allUsers)}} --}}
                         <div class="blkfrmdiv" style="width: 100%;">
                             <h3>Upload Courier .zip file</h3>
-                            <p class="text-center">Upload a zip folder containing the PDF named as anyname_caseid.pdf (eg:
-                                courier1_M003214.pdf, courier21_M001234.pdf)</p>
+                            <p class="text-center">Upload a zip folder containing the PDF named as courier_caseid.pdf (eg: courier_M003214.pdf, courier_M001234.pdf) and the PDF named as (eg: courier_M003214.pdf, courier1_M003214.pdf ... courier20_M003214.pdf) for multiple address</p>
                             <form enctype="multipart/form-data" id="myModalbupldCourierzipAdminForm" method="post">
                                 {{ csrf_field() }}
 
