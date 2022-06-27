@@ -3896,7 +3896,8 @@ class CaseController extends Controller
                             $courierCaseId = sprintf("%0d", $courierCaseId);
                             // dd($courierCaseId);
 
-                            $fileparty = substr($explodeArray[0], -1);
+                            // $fileparty = substr($explodeArray[0], -1);
+                            $fileparty = preg_replace("/[a-zA-Z]/", "", $explodeArray[0]);
 
                             if (is_numeric($fileparty)) {
                                 $array1['noticeId'] = $explodeArray[1] . "-" . $fileparty;
