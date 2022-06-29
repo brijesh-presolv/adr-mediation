@@ -2788,7 +2788,7 @@ class CaseController extends Controller
         $email = EmailTrack::getByCaseId($id);
         // $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
         $courierCsv = CourierCsv::select('couriercsv.*', 'courierpdf.file_name')->leftJoin('courierpdf', 'courierpdf.csv_id', '=', 'couriercsv.id')
-        ->where('couriercsv.case_id', $id)->orderBy('couriercsv.status_as_on_date', 'DESC')->get();
+        ->where('couriercsv.case_id', $id)->orderBy('couriercsv.created_at', 'DESC')->get();
 
 
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -3894,13 +3894,13 @@ class CaseController extends Controller
                             $explodeArray = Common_function::getBetween($list, '_', '.');
                             $courierCaseId = str_replace("M", "", $explodeArray[1]);
                             $courierCaseId = sprintf("%0d", $courierCaseId);
-                            // dd($courierCaseId);
+
 
                             // $fileparty = substr($explodeArray[0], -1);
-                            $fileparty = preg_replace("/[a-zA-Z]/", "", $explodeArray[0]);
+                            // $fileparty = preg_replace("/[a-zA-Z]/", "", $explodeArray[0]);
 
-                            if (is_numeric($fileparty)) {
-                                $array1['noticeId'] = $explodeArray[1] . "-" . $fileparty;
+                            if (isset($explodeArray[2])) {
+                                $array1['noticeId'] = $explodeArray[1] . "_" . $explodeArray[2];
                             } else {
                                 $array1['noticeId'] = $explodeArray[1];
                             }
