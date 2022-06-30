@@ -753,10 +753,7 @@
                     "responsive": true,
                     serverData: function(sSource, aoData, fnCallback, oSettings) {
                         // aoData.append('token',token)
-                        aoData.push({
-                            name: "batch_id",
-                            value: batch_id
-                        });
+                        
                         oSettings = $.ajax({
                             dataType: "json",
                             type: "post",
