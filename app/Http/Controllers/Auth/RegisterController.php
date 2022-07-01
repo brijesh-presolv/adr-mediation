@@ -204,7 +204,6 @@ class RegisterController extends Controller
         }
 
         curl_close($ch);
-
         if ($user->role == '0') {
             Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id);
 

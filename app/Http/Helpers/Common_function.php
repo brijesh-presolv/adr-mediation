@@ -163,7 +163,7 @@ class Common_function
     //     return $ipaddress;
     // }
 
-    public static function MedNotification($caseid, $event, $uploaded_by, $medId = null, $userId = null)
+    public static function MedNotification($caseid, $event, $uploaded_by, $medId = null, $userId = null, $reg_id = null)
     {
         if($event == "COMM_ADM_PRIVATE" || $event == "COMM_MED_PRIVATE") {
             $data = [
@@ -181,6 +181,7 @@ class Common_function
                 'event' => $event,
                 'mediator_id' => $medId,
                 'user_id' => $userId,
+                'reg_id' => $reg_id,
             ];
         }
         
