@@ -1103,10 +1103,7 @@
                     "responsive": true,
                     serverData: function(sSource, aoData, fnCallback, oSettings) {
                         // aoData.append('token',token)
-                        aoData.push({
-                            name: "batch_id",
-                            value: batch_id
-                        });
+                        
                         oSettings = $.ajax({
                             dataType: "json",
                             type: "post",
@@ -1446,9 +1443,10 @@
                         "<center style='color: red;'>Case ID : M" +
                         item.cid.toString().padStart(6, "0") + " Failed.</center>"
                     );
-                    $("#mess").append(
-                        "<center>Case Id A00" + error.caseid + " Failed.</center>"
-                    );
+                    // $("#mess").append(
+                    //     "<center>Case ID : M" +
+                    //     item.cid.toString().padStart(6, "0") + " Failed.</center>"
+                    // );
                     var objDiv = document.getElementById("messcc");
                     objDiv.scrollTop = objDiv.scrollHeight;
                     deferred.reject(error);
@@ -1559,9 +1557,10 @@
                         "<center style='color: red;'>Case ID : M" +
                         item.cid.toString().padStart(6, "0") + " Failed.</center>"
                     );
-                    $("#mess").append(
-                        "<center>Case Id A00" + error.caseid + " Failed.</center>"
-                    );
+                    // $("#mess").append(
+                    //     "<center>Case ID : M" +
+                    //     item.cid.toString().padStart(6, "0") + " Failed.</center>"
+                    // );
                     var objDiv = document.getElementById("messcc");
                     objDiv.scrollTop = objDiv.scrollHeight;
                     deferred.reject(error);
@@ -1663,9 +1662,10 @@
                         "<center style='color: red;'>Case ID : M" +
                         item.cid.toString().padStart(6, "0") + " Failed.</center>"
                     );
-                    $("#mess").append(
-                        "<center>Case Id A00" + error.caseid + " Failed.</center>"
-                    );
+                    // $("#mess").append(
+                    //     "<center>Case ID : M" +
+                    //     item.cid.toString().padStart(6, "0") + " Failed.</center>"
+                    // );
                     var objDiv = document.getElementById("messcc");
                     objDiv.scrollTop = objDiv.scrollHeight;
                     deferred.reject(error);
