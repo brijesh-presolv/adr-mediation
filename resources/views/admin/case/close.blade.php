@@ -12,7 +12,99 @@
 
 @section('content')
     <section class="tabs-section">
+        <div>
+            <button class="btn btn-sm btn-primary mr-3" data-target="#myModalbupldCourierAdmin" data-toggle="modal"> Bulk
+                Courier .csv</button>
+            <button class="btn btn-sm btn-primary " data-target="#myModalbupldCourierzipAdmin" data-toggle="modal"> Bulk
+                Courier .zip</button>
+            <br>
+            <br>
+        </div>
+        <div id="myModalbupldCourierAdmin" class="mdladcm modal fade " role="dialog" data-keyboard="false"
+            data-backdrop="static">
+            <div class="modal-dialog">
 
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {{-- {{dd($allUsers)}} --}}
+                        <div class="blkfrmdiv" style="width: 100%;">
+                            <h3>Upload Courier .csv file</h3>
+                            <form enctype="multipart/form-data" id="myModalbupldCourierAdminForm" method="post">
+                                {{ csrf_field() }}
+
+                                {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
+                                <div class="form-group">
+                                    <input type="text" name="type" id="type" placeholder="Type"
+                                        class="col-md-12 form-control" required="" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="file" name="csv" id="fileInput" onchange=""
+                                        data-allowed-file-extensions="csv" class="col-md-12 dropify" required=""
+                                        data-max-file-size="20M" />
+                                </div>
+
+                                <input type="Submit" value="Submit" class="btn btn-sm btn-primary blkupdbtnsb">
+                                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"
+                                    aria-label="Close">
+                                    <span>@lang('case.btn_close')</span>
+                                </button>
+                                <a href="/storage/app/public/courier_csv_sample/courier_sample.csv">Download Sample
+                                    File.</a>
+
+                            </form>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="myModalbupldCourierzipAdmin" class="mdladcm modal fade " role="dialog" data-keyboard="false"
+            data-backdrop="static">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {{-- {{dd($allUsers)}} --}}
+                        <div class="blkfrmdiv" style="width: 100%;">
+                            <h3>Upload Courier .zip file</h3>
+                            <p class="text-center">Upload a zip folder containing the PDF named as courier_caseid.pdf (eg:
+                                courier_M003214.pdf, courier_M001234.pdf) and the PDF named as (eg: courier_M003214.pdf,
+                                courier_M003214_1.pdf ... courier_M003214_20.pdf) for multiple address</p>
+                            <form enctype="multipart/form-data" id="myModalbupldCourierzipAdminForm" method="post">
+                                {{ csrf_field() }}
+
+                                {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
+                                <div class="form-group">
+                                    <input type="text" name="type" id="type" placeholder="Type"
+                                        class="col-md-12 form-control" required="" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="file" name="zip" id="fileInput" onchange=""
+                                        data-allowed-file-extensions="zip" class="col-md-12 dropify" required=""
+                                        data-max-file-size="20M" />
+                                </div>
+
+                                <input type="Submit" value="Submit" class="btn btn-sm btn-primary blkupdbtnsb">
+                                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"
+                                    aria-label="Close">
+                                    <span>@lang('case.btn_close')</span>
+                                </button>
+                            </form>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
         <div class="tabs-section-nav">
 
             <div class="tbl">
@@ -89,7 +181,8 @@
                         <div class="col-md-4">
                             <button class="blkbtn btn btn-primary btn-sm" data-toggle="modal"
                                 data-target="#uploadSupportingDocsModalForBulk" id="bulkUploadBulkcases"
-                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload Supporting
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Upload
+                                Supporting
                                 Documents</button>
                         </div>
 
@@ -759,7 +852,7 @@
                     "responsive": true,
                     serverData: function(sSource, aoData, fnCallback, oSettings) {
                         // aoData.append('token',token)
-                        
+
                         oSettings = $.ajax({
                             dataType: "json",
                             type: "post",
@@ -1795,6 +1888,92 @@
                 }
 
             });
+        });
+        $(document).on('submit', '#myModalbupldCourierAdminForm', function(e) {
+            e.preventDefault();
+            // console.log("hello");
+            var formdata = new FormData(this);
+
+            swal({
+                title: "Are you sure?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('admin.case.CourierCSVUpload') }}",
+                        data: formdata,
+                        dataType: "JSON",
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.type === "success") {
+                                swal({
+                                    title: "Upload Successfully!",
+                                    // text: "Delete this Session!",
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            } else {
+                                swal({
+                                    title: response.message,
+                                    // text: "Delete this Session!",
+                                    icon: "error",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $(document).on('submit', '#myModalbupldCourierzipAdminForm', function(e) {
+            e.preventDefault();
+            // console.log("hello");
+            var formdata = new FormData(this);
+
+            swal({
+                title: "Are you sure?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('admin.case.CourierZIPUpload') }}",
+                        data: formdata,
+                        dataType: "JSON",
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.type === "success") {
+                                swal({
+                                    title: "Upload Successfully!",
+                                    // text: "Delete this Session!",
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            } else {
+                                swal({
+                                    title: response.message,
+                                    // text: "Delete this Session!",
+                                    icon: "error",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            }
+                        },
+                    });
+                }
+            });
+
         });
     </script>
 @endsection
