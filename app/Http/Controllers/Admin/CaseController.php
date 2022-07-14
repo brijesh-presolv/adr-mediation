@@ -2788,7 +2788,7 @@ class CaseController extends Controller
         $email = EmailTrack::getByCaseId($id);
         // $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
         $courierCsv = CourierCsv::select('couriercsv.*', 'courierpdf.file_name')->leftJoin('courierpdf', 'courierpdf.csv_id', '=', 'couriercsv.id')
-        ->where('couriercsv.case_id', $id)->orderBy('couriercsv.created_at', 'DESC')->get();
+        ->where('couriercsv.case_id', $id)->orderBy('couriercsv.created_at', 'ASC')->get();
 
 
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
