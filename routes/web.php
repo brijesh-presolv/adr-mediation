@@ -37,6 +37,9 @@ Route::get('/sendInvitation', [App\Http\Controllers\WhatsappStatus::class, 'Send
 
 Route::get('/ivr/acceptcase', [App\Http\Controllers\IvrController::class, 'acceptcase']);
 
+Route::get('/ivr/reminde/acceptcase', [App\Http\Controllers\IvrController::class, 'remindeAcceptcase']);
+
+
 Route::post('download-document', [App\Http\Controllers\DownloadDocument::class, 'downloadSecure'])->name('downloadSecure');
 
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
