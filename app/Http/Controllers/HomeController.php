@@ -44,7 +44,7 @@ class HomeController extends Controller
                         $usr->smsotp = null;
                         $d = [
                             'event' => 'VARIFY_EMAIL',
-                            'case_id' => Auth::user()->id,
+                            'userid' => Auth::user()->id,
                         ];
 
                         if ($usr->save()) {
@@ -156,7 +156,7 @@ class HomeController extends Controller
                 $usr->save();
                 $d = [
                     'event' => 'FORGOT_PASSWORD',
-                    'case_id' => $usr->id,
+                    'userid' => $usr->id,
                 ];
 
                 Email::send($d, $usr->email, env('EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
@@ -193,7 +193,7 @@ class HomeController extends Controller
 
                 $d = [
                     'event' => 'FORGOT_USERNAME',
-                    'case_id' => $usr->id,
+                    'userid' => $usr->id,
                 ];
 
                 $email = Email::send($d, $usr->email, env('EMAIL3_OF_FORGOTUSERNAME', ''), ['-type-' => $type, '-name-' => $usr->username], $usr->first_name . ' ' . $usr->last_name);
@@ -224,7 +224,7 @@ class HomeController extends Controller
             $usr = User::where(['username' => $u['id']])->first();
             $d = [
                 'event' => 'RESEND_OTP',
-                'case_id' => $usr->id,
+                'userid' => $usr->id,
             ];
             if ($usr) {
                 $mobileNumber = "+91" . $usr->mobile_number;

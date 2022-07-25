@@ -53,7 +53,11 @@ class SendGrid
 
             //$arr_e['attachment']=((is_array($a))?json_encode($a):$a);
             $arr_e['event'] = $d['event'];
-            $arr_e['case_id'] = $d['case_id'];
+            if(isset($d['case_id'])) {
+                $arr_e['case_id'] = $d['case_id'];
+            } else {
+                $arr_e['user_id'] = $d['userid'];
+            }
             $arr_e['case_type'] = 2;
 
             EmailQue::insert($arr_e);

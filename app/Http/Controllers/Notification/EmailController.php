@@ -47,11 +47,12 @@ class EmailController
     	//$emails=Email_que::where(['is_sent'=>0,'is_processing'=>1])->orderBy('updated_at','DESC')->limit($limit)->get();
 
     	foreach ($emails as $key => $value) {
+           
     		
     		$d = [
     				'id'=>$value->id,
                     'event' => $value->event,
-                    'case_id' => $value->case_id,
+                    ($value->case_id != null) ? 'case_id' : 'user_id' => ($value->case_id != null) ? $value->case_id : $value->user_id,
                     'type' => $value->case_type,
                 ];
 
@@ -227,7 +228,7 @@ class EmailController
     public static function Etrack($response, $d, $to, $ns = false)
     {
         if ($ns == true) {
-            $datarr = ['sg_message_id' => 'false', 'event' => 'Not sent', 'case_id' => $d['case_id'], 'casetype' => $d['type'], 'email' => $to, 'status' => '400', 'created_at' => date('Y-m-d H:i:s')];
+            $datarr = ['sg_message_id' => 'false', 'event' => 'Not sent', (isset($d['case_id'])) ? 'case_id' : 'userid' => (isset($d['case_id'])) ? $d['case_id'] : $d['user_id'], 'casetype' => $d['type'], 'email' => $to, 'status' => '400', 'created_at' => date('Y-m-d H:i:s')];
 
             EmailTrack::insert($datarr);
             return true;
@@ -244,7 +245,7 @@ class EmailController
 
             if (isset($idr[1]) and count($d) > 0) {
 
-                $datarr = ['sg_message_id' => trim($idr[1]), 'event' => $d['event'], 'case_id' => $d['case_id'], 'casetype' => $d['type'], 'email' => $to, 'status' => trim($status), 'created_at' => date('Y-m-d H:i:s')];
+                $datarr = ['sg_message_id' => trim($idr[1]), 'event' => $d['event'],  (isset($d['case_id'])) ? 'case_id' : 'userid' => (isset($d['case_id'])) ? $d['case_id'] : $d['user_id'], 'casetype' => $d['type'], 'email' => $to, 'status' => trim($status), 'created_at' => date('Y-m-d H:i:s')];
 
                 $in=EmailTrack::insert($datarr);
 
