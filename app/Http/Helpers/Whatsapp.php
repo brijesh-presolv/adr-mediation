@@ -33,21 +33,20 @@ class Whatsapp
                 $value = $value;
             }
 
-
-
-            //que table
             $arr_e = array();
             $arr_e['caseid'] = $d['caseid'];
             $arr_e['contact'] = trim($value);
             $arr_e['content'] = json_encode($d['content']);
             $arr_e['casetype'] = 2;
             $arr_e['event'] = $d['event'];
+            $arr_e['variable'] = json_encode($d['varjson']);
 
             if (array_key_exists('media', $d['content'])) {
                 $arr_e['media'] = 1;
             }
 
-            WhatsAppQue::insert($arr_e);
+            
+            WhatsAppQue::create($arr_e);
         }
 
         return true;

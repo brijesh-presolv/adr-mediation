@@ -140,6 +140,7 @@ class MediationController extends Controller
                 // additional_doc
 
                 if ($inv->userPhone != "") {
+                    $varjson = ['caseid' => $mid];
                     $var = ['-cid-'];
                     $var1 = [$mid];
                     $content1 = WaTemplate::getcontent('additional_doc');
@@ -148,13 +149,14 @@ class MediationController extends Controller
                         'caseid' => $id,
                         'contact' =>   $inv->userPhone,
                         'content' => ['text' => $content],
-                        'event' => 'SEND_ADDI_DOC'
+                        'event' => 'SEND_ADDI_DOC',
+                        'varjson' => $varjson,
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
 
                     foreach ($filesE as $file) {
                         $whatsappSend = Storage::disk('s3')->url($file);
-
+                        $varjson_file = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
                         $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -163,7 +165,8 @@ class MediationController extends Controller
                             'caseid' => $id,
                             'contact' =>  $inv->userPhone,
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                            'event' => 'SEND_ADDI_DOC'
+                            'event' => 'SEND_ADDI_DOC',
+                            'varjson' => $varjson_file,
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     }
@@ -179,7 +182,7 @@ class MediationController extends Controller
                     'case_id' => $id,
                 ];
                 SendGrid::send($d2, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
-
+                $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
                 $content1 = WaTemplate::getcontent('additional_doc_med');
@@ -188,13 +191,14 @@ class MediationController extends Controller
                     'caseid' => $id,
                     'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
-                    'event' => 'SEND_ADDI_DOC_MED'
+                    'event' => 'SEND_ADDI_DOC_MED',
+                    'varjson' => $varjson,
                 ];
                 $accessW = Whatsapp::sendWamessage($dwa1);
 
                 foreach ($filesE as $file) {
                     $whatsappSend = Storage::disk('s3')->url($file);
-
+                    $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
                     $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -203,7 +207,8 @@ class MediationController extends Controller
                         'caseid' => $id,
                         'contact' =>  $mediator->mobile_number,
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                        'event' => 'SEND_ADDI_DOC_MED'
+                        'event' => 'SEND_ADDI_DOC_MED',
+                        'varjson' => $varjson_file,
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
                 }
@@ -584,7 +589,7 @@ class MediationController extends Controller
 
                 // $e = Email::send($InvoledUserP1->userEmail, '8c86c224-75e5-4cfd-8bc2-f3305df4d3f3', ['-caseid-' => $mid, '-partyname-' => $party_name], $InvoledUserP1->name);
                 $e = Email::send($d, $InvoledUserP1->userEmail, env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''), ['-caseid-' => $mid, '-name-' => $party_name], $InvoledUserP1->name);
-
+                $varjson = ['caseid' => $mid, 'responding' => $party_name];
                 $var = ['-rp-', '-cid-'];
                 $var1 = [$party_name, $mid];
                 $content1 = WaTemplate::getcontent('l7_mediation_onboarded');
@@ -593,7 +598,8 @@ class MediationController extends Controller
                     'caseid' => $InvoledUser->userPlanId,
                     'contact' =>  $InvoledUserP1->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'ONBOAR_USER'
+                    'event' => 'ONBOAR_USER',
+                    'varjson' => $varjson,
                 ];
 
                 // print_r($dwa1);
@@ -866,6 +872,7 @@ class MediationController extends Controller
             }
 
             if ($value->userPhone != "") {
+                $varjson = ['caseid' => $cid, 'initiating' => $InvoledUserP1->name];
                 $var = ['-cid-', '-cl-'];
                 $var1 = [$cid, $InvoledUserP1->name];
                 $content1 = WaTemplate::getcontent('withdrawal_responding');
@@ -874,13 +881,15 @@ class MediationController extends Controller
                     'caseid' => $request->case_id,
                     'contact' =>  $value->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'WDRN_OTHER_PARTY'
+                    'event' => 'WDRN_OTHER_PARTY',
+                    'varjson' => $varjson,
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
             }
         }
 
+        $varjson = ['caseid' => $cid, 'responding' => $responding_party];
         $var = ['-cid-', '-rp-'];
         $var1 = [$cid, $responding_party];
         $content1 = WaTemplate::getcontent('withdrawal_initiating');
@@ -890,13 +899,15 @@ class MediationController extends Controller
             'contact' =>  $InvoledUserP1->userPhone,
             'content' => ['text' => $content],
             // 'casetype' => 2,
-            'event' => 'WDRN_PARTY'
+            'event' => 'WDRN_PARTY',
+            'varjson' => $varjson,
+
         ];
         $access = Whatsapp::sendWamessage($dwa1);
 
         if ($mediator) {
             Email::send($d3, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $cid, "-responding-" => $InvoledUserP1->name, "-type-" => "Mediator"], $mediator->username);
-
+            $varjson = ['caseid' => $cid];
             $var = ['-cid-'];
             $var1 = [$cid];
             $content1 = WaTemplate::getcontent('withdrawal_mediator');
@@ -906,7 +917,9 @@ class MediationController extends Controller
                 'contact' =>  $mediator->mobile_number,
                 'content' => ['text' => $content],
                 // 'casetype' => 2,
-                'event' => 'WDRN_MED'
+                'event' => 'WDRN_MED',
+                'varjson' => $varjson,
+
             ];
 
             $access = Whatsapp::sendWamessage($dwa1);

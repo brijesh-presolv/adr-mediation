@@ -9,4 +9,5 @@ use Illuminate\Support\Facades\DB;
 class WhatsAppQue extends Model {
     protected $table = 'whatsapp_que';
     
+    protected $fillable = ['caseid', 'contact', 'content', 'variable', 'media', 'casetype', 'event', 'is_sent', 'is_processing']; 
 }

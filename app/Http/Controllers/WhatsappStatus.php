@@ -97,6 +97,7 @@ class WhatsappStatus extends Controller
                 $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
             }
             if ($value->userPhone != null) {
+                $varjson = ['caseid' => "M" . sprintf("%06d", $value->userPlanId), 'initiating' => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name];
                 $var = ['-cid-', '-ip-'];
                 $var1 = ["M" . sprintf("%06d", $value->userPlanId), ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name];
                 $content1 = WaTemplate::getcontent('l4_mediation_party2');
@@ -105,11 +106,13 @@ class WhatsappStatus extends Controller
                     'caseid' => $value->userPlanId,
                     'contact' => "+91" . $value->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'REM_ACPTARB_ADM_RES'
+                    'event' => 'REM_ACPTARB_ADM_RES',
+                    'varjson' => $varjson,
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
 
+                $varjson_file = ['caseid' => "M" . sprintf("%06d", $value->userPlanId)];
                 $var_file = ['-caseid-'];
                 $var1_file = ["M" . sprintf("%06d", $value->userPlanId)];
                 $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -118,7 +121,8 @@ class WhatsappStatus extends Controller
                     'caseid' =>  $value->userPlanId,
                     'contact' => "+91" . $value->userPhone,
                     'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name), 'caption' => $content_file]],
-                    'event' => 'REM_ACPTARB_ADM_RES'
+                    'event' => 'REM_ACPTARB_ADM_RES',
+                    'varjson' => $varjson_file,
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }

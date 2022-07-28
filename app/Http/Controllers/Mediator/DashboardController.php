@@ -350,7 +350,8 @@ class DashboardController extends Controller
             if ($mediator) {
                 $id = "M" . sprintf("%06d", $request->caseId);
                 SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
-
+                
+                $varjson = ['sessionDteaTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
                 $var = ['-dt-', '-cid-', '-link-'];
                 $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
                 $content1 = WaTemplate::getcontent('l10_session_schedule');
@@ -359,7 +360,8 @@ class DashboardController extends Controller
                     'caseid' => $request->caseId,
                     'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
-                    'event' => 'SESS_SCHE'
+                    'event' => 'SESS_SCHE',
+                    'varjson' => $varjson,
                 ];
 
                 // print_r($dwa1);
@@ -408,6 +410,7 @@ class DashboardController extends Controller
                 $id = "M" . sprintf("%06d", $request->caseId);
                 SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
 
+                $varjson = ['sessionDteaTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
                 $var = ['-dt-', '-cid-', '-link-'];
                 $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
                 $content1 = WaTemplate::getcontent('l10_session_schedule');
@@ -416,7 +419,9 @@ class DashboardController extends Controller
                     'caseid' => $request->caseId,
                     'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
-                    'event' => 'SESS_SCHE'
+                    'event' => 'SESS_SCHE',
+                    'varjson' => $varjson,
+
                 ];
 
                 // print_r($dwa1);
@@ -1032,6 +1037,7 @@ class DashboardController extends Controller
         }
 
         if ($userPhone != "") {
+            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$date, $mid, $url];
             $content1 = WaTemplate::getcontent('l10_session_schedule');
@@ -1040,7 +1046,8 @@ class DashboardController extends Controller
                 'caseid' => $id,
                 'contact' =>  $userPhone,
                 'content' => ['text' => $content],
-                'event' => 'SESS_SCHE'
+                'event' => 'SESS_SCHE',
+                'varjson' => $varjson,
             ];
 
             $access = Whatsapp::sendWamessage($dwa1);
@@ -1087,6 +1094,7 @@ class DashboardController extends Controller
                 SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
             }
             if ($inv->userPhone != "") {
+                $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
                 $content1 = WaTemplate::getcontent('mediator_appointment');
@@ -1095,10 +1103,11 @@ class DashboardController extends Controller
                     'caseid' => $id,
                     'contact' =>   $inv->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'SEND_APPO_MED'
+                    'event' => 'SEND_APPO_MED',
+                    'varjson' => $varjson,
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
-
+                $varjson_file = ['caseid' => $mid];
                 $var_file = ['-caseid-'];
                 $var1_file = [$mid];
                 $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -1107,7 +1116,9 @@ class DashboardController extends Controller
                     'caseid' => $id,
                     'contact' =>  $inv->userPhone,
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                    'event' => 'SEND_APPO_MED'
+                    'event' => 'SEND_APPO_MED',
+                    'varjson' => $varjson_file,
+
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }
@@ -1148,6 +1159,7 @@ class DashboardController extends Controller
                 }
                 // additional_doc
                 if ($inv->userPhone != "") {
+                    $varjson = ['caseid' => $mid];
                     $var = ['-cid-'];
                     $var1 = [$mid];
                     $content1 = WaTemplate::getcontent('additional_doc');
@@ -1156,13 +1168,14 @@ class DashboardController extends Controller
                         'caseid' => $id,
                         'contact' =>   $inv->userPhone,
                         'content' => ['text' => $content],
-                        'event' => 'SEND_ADDI_DOC'
+                        'event' => 'SEND_ADDI_DOC',
+                        'varjson' => $varjson,
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
 
                     foreach ($filesE as $file) {
                         $whatsappSend = Storage::disk('s3')->url($file);
-
+                        $varjson_file = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
                         $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -1171,7 +1184,8 @@ class DashboardController extends Controller
                             'caseid' => $id,
                             'contact' =>  $inv->userPhone,
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                            'event' => 'SEND_ADDI_DOC'
+                            'event' => 'SEND_ADDI_DOC',
+                            'varjson' => $varjson_file,
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     }
@@ -1196,7 +1210,7 @@ class DashboardController extends Controller
                     'case_id' => $id,
                 ];
                 SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
-
+                $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
                 $content1 = WaTemplate::getcontent('additional_doc_med');
@@ -1205,13 +1219,14 @@ class DashboardController extends Controller
                     'caseid' => $id,
                     'contact' =>  $mediator->mobile_number,
                     'content' => ['text' => $content],
-                    'event' => 'SEND_ADDI_DOC_MED'
+                    'event' => 'SEND_ADDI_DOC_MED',
+                    'varjson' => $varjson,
                 ];
                 $accessW = Whatsapp::sendWamessage($dwa1);
 
                 foreach ($filesE as $file) {
                     $whatsappSend = Storage::disk('s3')->url($file);
-
+                    $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
                     $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -1220,7 +1235,9 @@ class DashboardController extends Controller
                         'caseid' => $id,
                         'contact' =>  $mediator->mobile_number,
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                        'event' => 'SEND_ADDI_DOC_MED'
+                        'event' => 'SEND_ADDI_DOC_MED',
+                        'varjson' => $varjson_file,
+
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
                 }
@@ -1262,6 +1279,7 @@ class DashboardController extends Controller
             }
             // settlement agreement
             if ($inv->userPhone != "") {
+                $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
                 $content1 = WaTemplate::getcontent('settlement_agreement');
@@ -1270,12 +1288,13 @@ class DashboardController extends Controller
                     'caseid' => $id,
                     'contact' =>  $inv->userPhone,
                     'content' => ['text' => $content],
-                    'event' => 'SEND_SETT_AGRE'
+                    'event' => 'SEND_SETT_AGRE',
+                    'varjson' => $varjson,
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
                 foreach ($filesE as $file) {
                     $whatsappSend = Storage::disk('s3')->url($file);
-
+                    $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
                     $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -1284,7 +1303,8 @@ class DashboardController extends Controller
                         'caseid' => $id,
                         'contact' =>  $inv->userPhone,
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                        'event' => 'SEND_SETT_AGRE'
+                        'event' => 'SEND_SETT_AGRE',
+                        'varjson' => $varjson_file,
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
                 }
@@ -1305,6 +1325,7 @@ class DashboardController extends Controller
             ];
             SendGrid::send($d1, $mediator->email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
 
+            $varjson = ['caseid' => $mid];
             $var = ['-cid-'];
             $var1 = [$mid];
             $content1 = WaTemplate::getcontent('settlement_agreement_med');
@@ -1313,12 +1334,14 @@ class DashboardController extends Controller
                 'caseid' => $id,
                 'contact' =>  $mediator->mobile_number,
                 'content' => ['text' => $content],
-                'event' => 'SEND_SETT_AGRE_MED'
+                'event' => 'SEND_SETT_AGRE_MED',
+                'varjson' => $varjson,
             ];
             $access = Whatsapp::sendWamessage($dwa1);
             foreach ($filesE as $file) {
                 $whatsappSend = Storage::disk('s3')->url($file);
 
+                $varjson_file = ['caseid' => $mid];
                 $var_file = ['-caseid-'];
                 $var1_file = [$mid];
                 $content1_file = WaTemplate::getcontent('mediation_consent_doc');
@@ -1327,7 +1350,8 @@ class DashboardController extends Controller
                     'caseid' => $id,
                     'contact' =>  $mediator->mobile_number,
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                    'event' => 'SEND_SETT_AGRE_MED'
+                    'event' => 'SEND_SETT_AGRE_MED',
+                    'varjson' => $varjson_file,
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }
