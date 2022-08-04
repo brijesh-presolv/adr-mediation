@@ -948,50 +948,55 @@ class CaseController extends Controller
 
     public function midaterAdd(Request $request)
     {
-        $medcase = MedCase::find($request->id);
 
-        $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $request->id)
-            ->where(function ($q) {
-                $q->where("status", "=", 0)
-                    ->orWhere("status", "=", 1);
-            })
-            ->count();
-        if ($data == 0) {
-            Mediators_mediation_cases_status::create([
-                'mediator_id' => $request->midater,
-                'mediation_case_id' => $request->id,
-                'status' => 0,
-                'user_type' => 1,
-            ]);
+        if ($request->midater != null) {
+            $medcase = MedCase::find($request->id);
+
+            $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $request->id)
+                ->where(function ($q) {
+                    $q->where("status", "=", 0)
+                        ->orWhere("status", "=", 1);
+                })
+                ->count();
+            if ($data == 0) {
+                Mediators_mediation_cases_status::create([
+                    'mediator_id' => $request->midater,
+                    'mediation_case_id' => $request->id,
+                    'status' => 0,
+                    'user_type' => 1,
+                ]);
+            } else {
+                $MedCaseStatus = Mediators_mediation_cases_status::where(function ($q) {
+                    $q->where("status", "=", 0)
+                        ->orWhere("status", "=", 1);
+                })
+                    ->where("mediation_case_id", "=", $request->id)
+                    ->first();
+                $MedCaseStatus->mediator_id = $request->midater;
+                $MedCaseStatus->status = 0;
+                $MedCaseStatus->save();
+            }
+
+            //generate pdf
+            $invitation = $this->mediator_appointment($request->id, $request->midater);
+
+            $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+
+            if (!isset($invmodel)) {
+                $invmodel = new InvitationFiles();
+            }
+            $invmodel->case_id = $request->id;
+            $invmodel->file_name_mediator_appointment = $invitation;
+            $invmodel->save();
+            // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
+
+            if ($medcase->bulk_flag == 0) {
+                $this->send_mediatorAdd($request->id, $request->midater);
+            }
+            return response()->json(["code" => 200, "response" => "success", "msg" => "midater Added"]);
         } else {
-            $MedCaseStatus = Mediators_mediation_cases_status::where(function ($q) {
-                $q->where("status", "=", 0)
-                    ->orWhere("status", "=", 1);
-            })
-                ->where("mediation_case_id", "=", $request->id)
-                ->first();
-            $MedCaseStatus->mediator_id = $request->midater;
-            $MedCaseStatus->status = 0;
-            $MedCaseStatus->save();
+            return response()->json(["code" => 200, "response" => "error", "msg" => "Try Again"]);
         }
-
-        //generate pdf
-        $invitation = $this->mediator_appointment($request->id, $request->midater);
-
-        $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
-
-        if (!isset($invmodel)) {
-            $invmodel = new InvitationFiles();
-        }
-        $invmodel->case_id = $request->id;
-        $invmodel->file_name_mediator_appointment = $invitation;
-        $invmodel->save();
-        // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
-
-        if ($medcase->bulk_flag == 0) {
-            $this->send_mediatorAdd($request->id, $request->midater);
-        }
-        return response()->json(["msg" => "midater Added"]);
     }
 
     public function mediator_appointment($id, $medid)
@@ -2353,7 +2358,7 @@ class CaseController extends Controller
                     'case_id' => $id,
                 ];
                 SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
-                
+
                 $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
@@ -2365,7 +2370,7 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SEND_ADDI_DOC_MED',
                     'varjson' => $varjson,
-                    
+
                 ];
                 $accessW = Whatsapp::sendWamessage($dwa1);
                 foreach ($filesE as $file) {
@@ -2540,7 +2545,6 @@ class CaseController extends Controller
 
         $uploaded_excel = '';
         $claimantid = $request->claimant;
-        // dd($claimantid);
         $cldetails = User::find($claimantid);
 
         $selectCsv = $request->file('csv');
@@ -2549,6 +2553,10 @@ class CaseController extends Controller
         $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
         $errormsg = '';
         // dd($ext);
+
+        if ($claimantid == null) {
+            $errormsg .= 'Please Select Claimant';
+        }
 
         if ($ext != 'csv') {
             $errormsg .= 'Please upload csv file';
@@ -2990,7 +2998,7 @@ class CaseController extends Controller
                         'varjson' => $varjson,
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
-                    
+
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
@@ -3181,7 +3189,7 @@ class CaseController extends Controller
             if ($mediator) {
                 $id = "M" . sprintf("%06d", $result->case_id);
                 SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
-                
+
                 $varjson = ['sessionDteaTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
                 $var = ['-dt-', '-cid-', '-link-'];
                 $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
