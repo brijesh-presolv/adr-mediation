@@ -28,9 +28,14 @@
                         {{-- {{dd($allUsers)}} --}}
                         <div class="blkfrmdiv">
                             <h3>Upload .csv file</h3>
-                            <form enctype="multipart/form-data" method="post" action="{{ route('admin.bulkUpload') }}">
+                            <form enctype="multipart/form-data" method="post" id="bulkUploadForm">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="token" id="token_input">
+                                <div class="form-group">
+                                    {{-- <label for="batch" class="col-md-5">Batch Name: </label> --}}
+                                    <input type="text" name="batch" id="batch" placeholder="Batch Name (Optional)"
+                                        class="col-md-12 form-control" />
+                                </div>
                                 <div class="form-group">
                                     <select class="form-control" name="claimant" required>
                                         <option value="">@lang('Select Claimant')</option>
@@ -49,15 +54,13 @@
                                 {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
 
                                 <div class="form-group">
-                                    <input type="file" name="csv" id="fileInput" onchange="" class="col-md-12 dropify"
-                                        data-allowed-file-extensions="csv" required="" data-max-file-size="20M" />
+                                    <input type="file" name="csv" id="fileInput" onchange=""
+                                        class="col-md-12 dropify" data-allowed-file-extensions="csv" required=""
+                                        data-max-file-size="20M" />
                                 </div>
-                                <div class="form-group">
-                                    {{-- <label for="batch" class="col-md-5">Batch Name: </label> --}}
-                                    <input type="text" name="batch" id="batch" placeholder="Batch Name"
-                                        class="col-md-12 form-control" />
-                                </div>
-                                <input type="Submit" value="Submit" class="btn btn-primary blkupdbtnsb">
+
+                                <input type="Submit" value="Submit" class="btn btn-primary blkupdbtnsb"
+                                    id="bulkUploadForm">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
                                     <span>@lang('case.btn_close')</span>
                                 </button>
@@ -71,6 +74,42 @@
 
             </div>
         </div>
+
+        <div id="documentUpload" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {{-- {{dd($allUsers)}} --}}
+                        <div class="blkfrmdiv" style="width: 100%">
+                            <h3>Upload Document</h3>
+                            <form enctype="multipart/form-data" method="post" id="UploadDocumentForm">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="userid" class="form-control" id="recipientUserid">
+
+                                <div class="form-group">
+                                    <input type="file" name="fileupload" id="fileInput" onchange=""
+                                        class="col-md-12 dropify" data-allowed-file-extensions="pdf zip rar"
+                                        required="" />
+                                </div>
+
+                                <input type="Submit" value="Submit" class="btn btn-primary blkupdbtnsb"
+                                    id="UploadDocumentForm">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
+                                    <span>@lang('case.btn_close')</span>
+                                </button>
+                            </form>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <div class="tabs-section-nav">
 
             <div class="tbl">
@@ -204,8 +243,9 @@
                         </div>
                         <div class="col-md-4">
                             <button class="btn btn-success btn-sm blkbtn" data-toggle="modal"
-                                data-target="#midaterAddForBulk" id="bulkAcceptBtn" style="margin-top:10px; display:none;"
-                                data-arb="<?= Auth::user()->id ?>">Bulk Approve</button>
+                                data-target="#midaterAddForBulk" id="bulkAcceptBtn"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
+                                Approve</button>
                             <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn"
                                 style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
                                 Reject</button>
@@ -259,7 +299,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="midaterAddForBulk" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="midaterAddForBulk" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -352,7 +393,8 @@
                         <p>Please Wait. Do Not Close Until Close Button Appear.</p>
 
                         <div style="height: 200px;
-                                            overflow-y: scroll;" id="mess">
+                                            overflow-y: scroll;"
+                            id="mess">
 
                         </div>
                         <!-- <a>Close</a> -->
@@ -370,7 +412,8 @@
                 data-toggle="modal"></button>
 
 
-            <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+            <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false"
+                data-backdrop="static">
                 <div class="modal-dialog">
                     <!-- Modal content-->
                     <div class="modal-content">
@@ -389,7 +432,8 @@
                                 <!-- <div><a href="ongoing" class="btn btn-danger btn-lg directionCloseSwal" style="display: none;">Close</a></div> -->
                             </div>
                             <div id="totalPer"></div>
-                            <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;' id="messcc">
+                            <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;'
+                                id="messcc">
                             </div>
                             <input type="hidden" id="last_uploaded_id" value="">
                             <div id="messccclose" style="margin-top: 2em;"></div>
@@ -559,15 +603,23 @@
 
                         if (data.documentPath != 'NULL' && data.documentPath != '' && data.documentPath !=
                             null) {
-                            d = d + `<p  class="btn btn-success btn-sm">` + data.documentPath + `</p>`;
+                            // d = d + `<p  class="btn btn-success btn-sm">` + data.documentPath + `</p>`;
+                            d = d + `<a href='javascript:void(0);'  data-folder='user/supportingDocument'
+                                data-url='` + data.documentPath + `'
+                                data-id='` + data.id + `'
+                                class='btn btn-success btn-sm secureDownload' 
+                                >View</a>`;
                         } else {
-                            d = d + `<form action="{{ url('admin/uploaddocument/') }}/` + data.id + `"  method="post" enctype="multipart/form-data">
-                                            @csrf
-                                            @method('PUT')
-                                            <input  class="form-control dropify" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
-                                            <p>*Only Pdf zip and rar file allowed</p>
-                                            <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
-                                            </form>`;
+                            d = d +
+                                `<button class="btn btn-primary btn-sm" data-id="` + data.id +
+                                `" data-target="#documentUpload" id="fordocumentupload" data-toggle="modal">Upload</button>`;
+                            // d = d + `<form action="{{ url('admin/uploaddocument/') }}/` + data.id + `"  method="post" enctype="multipart/form-data">
+                        //                 @csrf
+                        //                 @method('PUT')
+                        //                 <input  class="form-control dropify" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
+                        //                 <p>*Only Pdf zip and rar file allowed</p>
+                        //                 <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
+                        //                 </form>`;
                         }
                         // }
 
@@ -631,7 +683,7 @@
                     "responsive": true,
                     serverData: function(sSource, aoData, fnCallback, oSettings) {
                         // aoData.append('token',token)
-                        
+
                         oSettings = $.ajax({
                             dataType: "json",
                             type: "post",
@@ -2222,6 +2274,221 @@
                 }
             });
         });
+
+
+        $(document).on('submit', '#bulkUploadForm', function(e) {
+            e.preventDefault();
+
+            swal({
+                title: "@lang('case.are_you_sure')",
+                text: "@lang('case.confirm_this_request')",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url: '{{ route('admin.bulkUpload') }}',
+                        method: "post",
+                        data: new FormData(this),
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+
+                            });
+                        },
+                        success: function(data) {
+                            var result = $.parseJSON(data);
+
+                            if (result.response == "success") {
+                                swal("Successfully upload file", {
+                                    icon: "success",
+                                });
+                                if (typeof userTable !== "undefined") {
+                                    userTable.ajax.reload(null, false);
+                                } else {
+                                    userTableBulk.ajax.reload(null, false);
+                                }
+                                $('#bulkUploadForm')[0].reset();
+                                $(".dropify-clear").trigger("click");
+                                $("#myModalbupldAdmin").modal("hide");
+                            } else {
+                                swal(result.msg, {
+                                    icon: "error",
+                                });
+                            }
+                        }
+                    })
+                }
+            });
+        });
+
+        $(document).on("click", ".secureDownload", function() {
+            var id = $(this).data("id");
+            var filename = $(this).data("url");
+            var userid = $(this).data("userid");
+            var parentFolder = $(this).data("folder");
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+            $.ajax({
+                url: '{{ route('downloadSecure') }}',
+                method: "POST",
+                data: {
+                    id: id,
+                    urlpath: filename,
+                    parentFolder: parentFolder,
+                    user_id: userid,
+                    _token: csrf
+                },
+                xhrFields: {
+                    responseType: "blob", // to avoid binary data being mangled on charset conversion
+                },
+                success: function(blob, status, xhr) {
+                    // check for a filename
+                    var filename = "";
+                    var disposition = xhr.getResponseHeader("Content-Disposition");
+                    if (disposition && disposition.indexOf("attachment") !== -1) {
+                        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        var matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1])
+                            filename = matches[1].replace(/['"]/g, "");
+                    }
+
+                    if (typeof window.navigator.msSaveBlob !== "undefined") {
+                        // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                        window.navigator.msSaveBlob(blob, filename);
+                    } else {
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(blob);
+
+                        if (filename) {
+                            // use HTML5 a[download] attribute to specify filename
+                            var a = document.createElement("a");
+                            // safari doesn't support this yet
+                            if (typeof a.download === "undefined") {
+                                window.location.href = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
+                        } else {
+                            window.location.href = downloadUrl;
+                        }
+
+                        setTimeout(function() {
+                            URL.revokeObjectURL(downloadUrl);
+                            swal({
+                                text: "Downloaded successfully!",
+                                title: "Thanks!",
+                                icon: "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }, 100); // cleanup
+                    }
+                },
+
+                error: function(err) {
+                    console.log(err);
+                },
+            });
+        });
+
+        // $(document).on('click', '#fordocumentupload', function() {
+        //     // console.log("hello");
+        //     let userid = $(this).data('id');
+        //     $("#UploadDocumentForm :input[name='userid']").val(userid);
+        // });
+
+        $('#documentUpload').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('id') // Extract info from data-* attributes
+            var modal = $(this);
+            modal.find('#recipientUserid').val(recipient);
+
+        });
+
+        $('#UploadDocumentForm').on('submit', function(e) {
+            e.preventDefault();
+
+            swal({
+                title: "@lang('case.are_you_sure')",
+                text: "@lang('case.confirm_this_request')",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url: '{{ route('admin.documentUpload') }}',
+                        method: "put",
+                        data:  new FormData(this),
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function() {
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+
+                            });
+                        },
+                        success: function(data) {
+
+                        }
+                    });
+                        // if (data.response == "success") {
+
+                        //     swal("@lang('case.mediator_assigned_successfully')", {
+                        //         icon: "success",
+                        //     });
+                        //     $.ajax({
+                        //         url: '{{ route('admin.case.confirm_status') }}',
+                        //         method: "post",
+                        //         data: {
+                        //             id: id,
+                        //             '_token': csrf
+                        //         },
+                        //         beforeSend: function() {
+                        //             swal({
+                        //                 title: 'Loading...',
+                        //                 showConfirmButton: false,
+                        //                 buttons: false,
+
+                        //             });
+                        //         },
+                        //     }).done(function(data) {
+                        //         if (typeof userTable !== "undefined") {
+                        //             userTable.ajax.reload(null, false);
+                        //         } else {
+                        //             userTableBulk.ajax.reload(null, false);
+                        //         }
+                        //         swal("@lang('case.confirm_successfully')", {
+                        //             icon: "success",
+                        //         }).then(function() {
+                        //             location.reload();
+                        //         });
+                        //     });
+                        //     //userTableBulk.ajax.reload();
+                        //     $('#midaterAdd').modal("hide");
+                        // } else {
+                        //     swal("Please Select Mediator", {
+                        //         icon: "error",
+                        //     });
+                        // }
+                
+                } else {
+                    swal("@lang('case.cansel_confirm_request')");
+                }
+            });
+        })
+
         $(document).on('submit', "#MidaterForm", function() {
             var id = $(this).find("input[name='id']").val();
             var midater = $(this).find("select[name='midater']").val();
@@ -2243,38 +2510,45 @@
                             '_token': csrf
                         },
                     }).done(function(data) {
-                        swal("@lang('case.mediator_assigned_successfully')", {
-                            icon: "success",
-                        });
-                        $.ajax({
-                            url: '{{ route('admin.case.confirm_status') }}',
-                            method: "post",
-                            data: {
-                                id: id,
-                                '_token': csrf
-                            },
-                            beforeSend: function() {
-                                swal({
-                                    title: 'Loading...',
-                                    showConfirmButton: false,
-                                    buttons: false,
+                        if (data.response == "success") {
 
-                                });
-                            },
-                        }).done(function(data) {
-                            if (typeof userTable !== "undefined") {
-                                userTable.ajax.reload(null, false);
-                            } else {
-                                userTableBulk.ajax.reload(null, false);
-                            }
-                            swal("@lang('case.confirm_successfully')", {
+                            swal("@lang('case.mediator_assigned_successfully')", {
                                 icon: "success",
-                            }).then(function() {
-                                location.reload();
                             });
-                        });
-                        //userTableBulk.ajax.reload();
-                        $('#midaterAdd').modal("hide");
+                            $.ajax({
+                                url: '{{ route('admin.case.confirm_status') }}',
+                                method: "post",
+                                data: {
+                                    id: id,
+                                    '_token': csrf
+                                },
+                                beforeSend: function() {
+                                    swal({
+                                        title: 'Loading...',
+                                        showConfirmButton: false,
+                                        buttons: false,
+
+                                    });
+                                },
+                            }).done(function(data) {
+                                if (typeof userTable !== "undefined") {
+                                    userTable.ajax.reload(null, false);
+                                } else {
+                                    userTableBulk.ajax.reload(null, false);
+                                }
+                                swal("@lang('case.confirm_successfully')", {
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            });
+                            //userTableBulk.ajax.reload();
+                            $('#midaterAdd').modal("hide");
+                        } else {
+                            swal("Please Select Mediator", {
+                                icon: "error",
+                            });
+                        }
                     });
 
 

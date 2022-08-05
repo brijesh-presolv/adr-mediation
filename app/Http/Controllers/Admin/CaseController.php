@@ -351,171 +351,177 @@ class CaseController extends Controller
     {
 
         $status = ($request->status != null) ? $request->status : $request->fsData['status'];
-        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
-            ->where("mediators_mediation_cases_status.status", "=", 1)
-            ->first();
-        $inv_id = "";
-        $inv = InvoledUser::select('id')->where('userPlanId', $request->case_id)->get();
-        foreach ($inv as $v) {
-            if ($inv_id == "") {
-                $inv_id = $v->id;
-            } else {
-                $inv_id = $inv_id . "," . $v->id;
+        $withdraw_comment = ($request->withdraw_comment != null) ? $request->withdraw_comment : $request->fsData['withdraw_comment'];
+
+        if ($status != null && $withdraw_comment != null) {
+            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $request->case_id)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
             }
-        }
-        if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
-            if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
-                $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
-                $log = BulkLog::create([
-                    "selected_ids" => $params['allcids'],
-                    "uploaded_by" => Auth::user()->id,
-                    "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
-                    "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
-                    "updated_at" => date('Y-m-d H:i:s'),
-                ]);
-                $log_id = $log->id;
+            if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
+                if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
+                    $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
+                    $log = BulkLog::create([
+                        "selected_ids" => $params['allcids'],
+                        "uploaded_by" => Auth::user()->id,
+                        "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                        "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                        "updated_at" => date('Y-m-d H:i:s'),
+                    ]);
+                    $log_id = $log->id;
+                    if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
+                        if (Auth::user()->role == 1) {
+                            Common_function::MedNotification($_POST['allcids'], "WDRN_BY_MED", Auth::user()->id, null, null);
+                        } else {
+                            Common_function::MedNotification($_POST['allcids'], "WDRN_BY_ADMIN", Auth::user()->id, null, null);
+                        }
+                    } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
+                        if (Auth::user()->role == 1) {
+                            Common_function::MedNotification($_POST['allcids'], "RES_BY_MED", Auth::user()->id, null, null);
+                        } else {
+                            Common_function::MedNotification($_POST['allcids'], "RES_BY_ADMIN", Auth::user()->id, null, null);
+                        }
+                    } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
+                        if (Auth::user()->role == 1) {
+                            Common_function::MedNotification($_POST['allcids'], "UNRES_BY_MED", Auth::user()->id, null, null);
+                        } else {
+                            Common_function::MedNotification($_POST['allcids'], "UNRES_BY_ADMIN", Auth::user()->id, null, null);
+                        }
+                    }
+                }
+            } else {
                 if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
                     if (Auth::user()->role == 1) {
-                        Common_function::MedNotification($_POST['allcids'], "WDRN_BY_MED", Auth::user()->id, null, null);
+                        Common_function::MedNotification($request->case_id, "WDRN_BY_MED", Auth::user()->id, Auth::user()->id, null);
                     } else {
-                        Common_function::MedNotification($_POST['allcids'], "WDRN_BY_ADMIN", Auth::user()->id, null, null);
+                        Common_function::MedNotification($request->case_id, "WDRN_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, null);
                     }
                 } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
                     if (Auth::user()->role == 1) {
-                        Common_function::MedNotification($_POST['allcids'], "RES_BY_MED", Auth::user()->id, null, null);
+                        Common_function::MedNotification($request->case_id, "RES_BY_MED", Auth::user()->id, Auth::user()->id, null);
                     } else {
-                        Common_function::MedNotification($_POST['allcids'], "RES_BY_ADMIN", Auth::user()->id, null, null);
+                        Common_function::MedNotification($request->case_id, "RES_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, null);
                     }
                 } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
                     if (Auth::user()->role == 1) {
-                        Common_function::MedNotification($_POST['allcids'], "UNRES_BY_MED", Auth::user()->id, null, null);
+                        Common_function::MedNotification($request->case_id, "UNRES_BY_MED", Auth::user()->id, Auth::user()->id, null);
                     } else {
-                        Common_function::MedNotification($_POST['allcids'], "UNRES_BY_ADMIN", Auth::user()->id, null, null);
+                        Common_function::MedNotification($request->case_id, "UNRES_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, null);
                     }
+                }
+            }
+
+            $user = MedCase::find($request->case_id);
+            $user->confirm_status = 2;
+            $user->case_status = $status;
+            $user->withdraw = ($request->withdraw_comment != null) ? $request->withdraw_comment : $request->fsData['withdraw_comment'];
+
+            // $user->withdraw = $request->withdraw_comment;
+            if ($user->save()) {
+
+                $mediation_status_log = new Mediation_status_log;
+                $mediation_status_log->user_id = Auth::user()->id;
+                $mediation_status_log->mediation_case_id = $request->case_id;
+                $mediation_status_log->status = ($request->status != null) ? $request->status : $request->fsData['status'];
+
+
+                if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
+                    $mediation_status_log->description = "Request Withdrawn";
+                    $this->sned_withdrawal($request->case_id);
+                } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
+                    $mediation_status_log->description = "Request Resolved";
+                    $this->sned_resolved($request->case_id);
+                } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
+                    $mediation_status_log->description = "Request Unresolved";
+                    $this->sned_unresolved($request->case_id);
+                }
+                $mediation_status_log->save();
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                    $success_log = BulkLog::find($_POST['log_id']);
+                    // dd($success_log);
+
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->case_id;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+
+                            $insert_row = $_POST['insertRow'] . "," . $request->case_id;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->case_id]);
+                } else if (isset($log_id)) {
+                    $success_log = BulkLog::find($log_id);
+                    // dd($success_log);
+
+                    if ($success_log->inserted_row == null) {
+                        $success_log->inserted_row = $request->case_id;
+                        $success_log->save();
+                    } else {
+                        if (isset($_POST['insertRow'])) {
+
+                            $insert_row = $_POST['insertRow'] . "," . $request->case_id;
+                            // dd(json_encode(explode(',', $insert_row)));
+                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                            $success_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->case_id]);
+                } else {
+                    return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->case_id]);
+                }
+            } else {
+
+                // code for failed row 
+                if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                    $faild_log = BulkLog::find($_POST['log_id']);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->case_id;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+
+                            $faild_row = $_POST['faildRow'] . "," . $request->case_id;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->case_id]);
+                } else if (isset($log_id)) {
+                    $faild_log = BulkLog::find($log_id);
+                    if ($faild_log->failed_row == null) {
+                        $faild_log->failed_row = $request->case_id;
+                        $faild_log->save();
+                    } else {
+                        if (isset($_POST['faildRow'])) {
+
+                            $faild_row = $_POST['faildRow'] . "," . $request->case_id;
+                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
+                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                            $faild_log->save();
+                        }
+                    }
+                    return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->case_id]);
+                } else {
+                    return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->case_id]);
                 }
             }
         } else {
-            if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
-                if (Auth::user()->role == 1) {
-                    Common_function::MedNotification($request->case_id, "WDRN_BY_MED", Auth::user()->id, Auth::user()->id, null);
-                } else {
-                    Common_function::MedNotification($request->case_id, "WDRN_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, null);
-                }
-            } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
-                if (Auth::user()->role == 1) {
-                    Common_function::MedNotification($request->case_id, "RES_BY_MED", Auth::user()->id, Auth::user()->id, null);
-                } else {
-                    Common_function::MedNotification($request->case_id, "RES_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, null);
-                }
-            } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
-                if (Auth::user()->role == 1) {
-                    Common_function::MedNotification($request->case_id, "UNRES_BY_MED", Auth::user()->id, Auth::user()->id, null);
-                } else {
-                    Common_function::MedNotification($request->case_id, "UNRES_BY_ADMIN", Auth::user()->id, isset($mediator) ? $mediator->id : null, null);
-                }
-            }
-        }
-
-        $user = MedCase::find($request->case_id);
-        $user->confirm_status = 2;
-        $user->case_status = $status;
-        $user->withdraw = ($request->withdraw_comment != null) ? $request->withdraw_comment : $request->fsData['withdraw_comment'];
-
-        // $user->withdraw = $request->withdraw_comment;
-        if ($user->save()) {
-
-            $mediation_status_log = new Mediation_status_log;
-            $mediation_status_log->user_id = Auth::user()->id;
-            $mediation_status_log->mediation_case_id = $request->case_id;
-            $mediation_status_log->status = ($request->status != null) ? $request->status : $request->fsData['status'];
-
-
-            if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
-                $mediation_status_log->description = "Request Withdrawn";
-                $this->sned_withdrawal($request->case_id);
-            } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
-                $mediation_status_log->description = "Request Resolved";
-                $this->sned_resolved($request->case_id);
-            } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
-                $mediation_status_log->description = "Request Unresolved";
-                $this->sned_unresolved($request->case_id);
-            }
-            $mediation_status_log->save();
-            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
-                $success_log = BulkLog::find($_POST['log_id']);
-                // dd($success_log);
-
-                if ($success_log->inserted_row == null) {
-                    $success_log->inserted_row = $request->case_id;
-                    $success_log->save();
-                } else {
-                    if (isset($_POST['insertRow'])) {
-
-                        $insert_row = $_POST['insertRow'] . "," . $request->case_id;
-                        // dd(json_encode(explode(',', $insert_row)));
-                        $success_log->inserted_row = json_encode(explode(',', $insert_row));
-                        $success_log->save();
-                    }
-                }
-
-                return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->case_id]);
-            } else if (isset($log_id)) {
-                $success_log = BulkLog::find($log_id);
-                // dd($success_log);
-
-                if ($success_log->inserted_row == null) {
-                    $success_log->inserted_row = $request->case_id;
-                    $success_log->save();
-                } else {
-                    if (isset($_POST['insertRow'])) {
-
-                        $insert_row = $_POST['insertRow'] . "," . $request->case_id;
-                        // dd(json_encode(explode(',', $insert_row)));
-                        $success_log->inserted_row = json_encode(explode(',', $insert_row));
-                        $success_log->save();
-                    }
-                }
-                return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->case_id]);
-            } else {
-                return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->case_id]);
-            }
-        } else {
-
-            // code for failed row 
-            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
-                $faild_log = BulkLog::find($_POST['log_id']);
-                if ($faild_log->failed_row == null) {
-                    $faild_log->failed_row = $request->case_id;
-                    $faild_log->save();
-                } else {
-                    if (isset($_POST['faildRow'])) {
-
-                        $faild_row = $_POST['faildRow'] . "," . $request->case_id;
-                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
-                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
-                        $faild_log->save();
-                    }
-                }
-                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->case_id]);
-            } else if (isset($log_id)) {
-                $faild_log = BulkLog::find($log_id);
-                if ($faild_log->failed_row == null) {
-                    $faild_log->failed_row = $request->case_id;
-                    $faild_log->save();
-                } else {
-                    if (isset($_POST['faildRow'])) {
-
-                        $faild_row = $_POST['faildRow'] . "," . $request->case_id;
-                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
-                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
-                        $faild_log->save();
-                    }
-                }
-                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->case_id]);
-            } else {
-                return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->case_id]);
-            }
+            return json_encode(['code' => 422, 'response' => 'error', 'msg' => "Please Fill the Required Field"]);
         }
 
         // return response()->json(["msg" => "withdraw Case"]);
@@ -538,6 +544,12 @@ class CaseController extends Controller
 
     public function commentAction(Request $request)
     {
+        $validatedData = $request->validate([
+            'comment' => 'required',
+            // 'docs_party_ids' => 'required',
+        ]);
+        // if ($request->comment != null) {
+
         $mediation_case_comment = new Mediation_case_comment;
         $mediation_case_comment->user_id = Auth::user()->id;
         $mediation_case_comment->mediation_case_id = $request->case_id;
@@ -581,7 +593,8 @@ class CaseController extends Controller
         } else {
             Common_function::MedNotification($request->case_id, $event, Auth::user()->id, isset($mediator) ? $mediator->id : null, $inv_id);
         }
-        return response()->json(["msg" => "Closed Case"]);
+        return response()->json(["code" => 200, "response" => "success", "msg" => "Comment Added"]);
+        // }
     }
 
     public function commentView(Request $request)
@@ -760,7 +773,7 @@ class CaseController extends Controller
 
 
         $validatedData = $request->validate([
-            'files0' => 'required',
+            'files' => 'required',
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
             // 'docs_party_ids' => 'required',
         ]);
@@ -2541,249 +2554,267 @@ class CaseController extends Controller
 
     public function bulkUpload(Request $request)
     {
+        // dd($request->all());
         $_SESSION['last_uploaded_id'] = '';
 
         $uploaded_excel = '';
         $claimantid = $request->claimant;
         $cldetails = User::find($claimantid);
+        $errormsg = '';
 
         $selectCsv = $request->file('csv');
-        $tmpName = $selectCsv->getPathname();
+        if ($selectCsv == null) {
+            $errormsg .= 'Please Select File';
+            // return redirect('/admin/case/new-request')->with(['error' => $errormsg]);
+            return json_encode(['code' => 200, 'response' => 'error', 'msg' => $errormsg]);
+            exit;
+        } else {
 
-        $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
-        $errormsg = '';
-        // dd($ext);
+            $tmpName = $selectCsv->getPathname();
 
-        if ($claimantid == null) {
-            $errormsg .= 'Please Select Claimant';
-        }
+            $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
+            // dd($ext);
 
-        if ($ext != 'csv') {
-            $errormsg .= 'Please upload csv file';
-        }
-        if ($errormsg == '') {
-            $csv = $this->csvToArray($tmpName);
-            if (count($csv[0]) != 15) {
-                $errormsg .= "Invalid csv file";
+
+
+            if ($claimantid == null) {
+                $errormsg .= 'Please Select Claimant';
             }
 
-            $errormsg .= '';
-            foreach ($csv as $key => $v) {
-                $i = $key + 1;
+            if ($ext != 'csv') {
+                $errormsg .= 'Please upload csv file';
+            }
+            if ($errormsg == '') {
+                $csv = $this->csvToArray($tmpName);
+                if (count($csv[0]) != 15) {
+                    $errormsg .= "Invalid csv file";
+                }
+                if ($errormsg != '') {
 
-                for ($n = 0; $n < 15; $n++) {
-                    if ($v[$n] == '') {
+                    // return redirect('/admin/case/new-request')->with(['error' => $errormsg]);
+                    return json_encode(['code' => 200, 'response' => 'error', 'msg' => $errormsg]);
 
-                        if ($n != 10 and $n != 11 and $n != 12 and $n != 7 and $n != 3 and $n != 4) {
-                            $errormsg .= "Please fill all the required details to proceed at line no $i";
+                    exit();
+                }
+                $errormsg .= '';
+                foreach ($csv as $key => $v) {
+                    $i = $key + 1;
+
+                    for ($n = 0; $n < 15; $n++) {
+                        if ($v[$n] == '') {
+
+                            if ($n != 10 and $n != 11 and $n != 12 and $n != 7 and $n != 3 and $n != 4) {
+                                $errormsg .= "Please fill all the required details to proceed at line no $i";
+                            }
                         }
                     }
-                }
-                if ($v[4] != "") {
-                    if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
-                        $errormsg .= "Invalid mobile number at line no $i ";
+                    if ($v[4] != "") {
+                        if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
+                            $errormsg .= "Invalid mobile number at line no $i ";
+                        }
+
+                        if (strlen($v[4]) != 10) {
+                            $errormsg .= "Invalid mobile number at line no $i ";
+                        }
                     }
 
-                    if (strlen($v[4]) != 10) {
-                        $errormsg .= "Invalid mobile number at line no $i ";
-                    }
-                }
+                    // validate pincode
+                    // if (!filter_var($v[8], FILTER_SANITIZE_NUMBER_INT)) {
+                    //     $errormsg .= "Invalid pincode at line no $i ";
+                    // }
 
-                // validate pincode
-                // if (!filter_var($v[8], FILTER_SANITIZE_NUMBER_INT)) {
-                //     $errormsg .= "Invalid pincode at line no $i ";
-                // }
+                    // if (strlen($v[8]) != 6) {
+                    //     $errormsg .= "Invalid pincode at line no $i ";
+                    // }
 
-                // if (strlen($v[8]) != 6) {
-                //     $errormsg .= "Invalid pincode at line no $i ";
-                // }
+                    //validate date
+                    if ($v[7] != "") {
 
-                //validate date
-                if ($v[7] != "") {
-
-                    if (strpos($v[7], '-')) {
-                        $dt = str_replace('-', '/', $v[7]);
-                        $v[7] = $dt;
-                    } else {
-                        $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
-                    }
-                    if (strpos($v[7], '-') or strpos($v[7], '/')) {
-                        $dt = explode('/', $v[7]);
-
-                        if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
-
+                        if (strpos($v[7], '-')) {
+                            $dt = str_replace('-', '/', $v[7]);
+                            $v[7] = $dt;
+                        } else {
                             $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
                         }
+                        if (strpos($v[7], '-') or strpos($v[7], '/')) {
+                            $dt = explode('/', $v[7]);
+
+                            if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
+
+                                $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
+                            }
+                        }
+                    }
+
+                    if ($v[13] != 'Yes') {
+                        $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
+                    }
+
+                    if ($v[14] != 'Yes') {
+
+                        $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
+                    }
+                }
+            }
+            if ($errormsg != '') {
+
+                // return redirect('/admin/case/new-request')->with(['error' => $errormsg]);
+                return json_encode(['code' => 200, 'response' => 'error', 'msg' => $errormsg]);
+                exit();
+            }
+            // if (1 == 1) {
+
+            //     //save file
+            //     $file = $request->file('csv');
+            //     $destinationPath = 'public/uploaded';
+
+            //     $extension = $file->getClientOriginalExtension();
+            //     $fileName = time() . '.' . $extension;
+
+            //     if ($file->storeAs($destinationPath, $fileName)) {
+            //         $uploaded_excel .= $fileName;
+            //     }
+            // }
+            //store in database
+            if ($request->batch != null) {
+                $batchdata = [
+                    'batch_name' => $request->batch,
+                ];
+                $batch = Batch::where('batch_name', $batchdata['batch_name'])->first();
+                if (!$batch) {
+                    $batch = Batch::create($batchdata);
+                }
+            }
+            $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
+            foreach ($csv as $k => $value) {
+                // dd( count(explode(',', $value[15])) + 1);
+                // exit;
+
+                $data['userid'] = $claimantid;
+                $data['disputeCategory'] = $value['0'];
+                $data['natureOfAgreement'] = $value['6'];
+                $data['agreementDate'] = $value['7'];
+                $data['noOfParties'] = count(explode(',', $value[10])) + 1;
+                $data['amount'] = $value['1'];
+                $data['issue'] = $value['8'];
+                $data['confirm_status'] = 0;
+                $data['otherRespondentDetails'] = $value[12];
+                $data['proposedSolution'] = $value[9];
+                $data['batch_id'] = isset($batch->id) ? $batch->id : null;
+                $data['bulk_flag'] = 1;
+
+                $med = MedCase::create($data);
+
+                $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();
+
+                if (!$iniParty) {
+                    // add initiating party
+                    $iniParty = new InvoledUser();
+
+                    $iniParty->userId = $cldetails->id;
+                    $iniParty->userPlanId = $med->id;
+                    $iniParty->userEmail = $cldetails->email;
+                    $iniParty->userPhone = $cldetails->mobile_number;
+                    $iniParty->name = $cldetails->first_name . ' ' . $cldetails->last_name;
+                    if (isset($cldetails->address)) {
+                        $iniParty->address1 = $cldetails->address;
+                    } else {
+                        $iniParty->address1 = '';
+                    }
+                    if (isset($cldetails->address1)) {
+                        $iniParty->address2 = $cldetails->address1;
+                    } else {
+                        $iniParty->address2 = '';
+                    }
+                    if (isset($cldetails->city)) {
+                        $iniParty->city = $cldetails->city;
+                    } else {
+                        $iniParty->city = '';
+                    }
+                    if (isset($cldetails->pincode)) {
+                        $iniParty->pincode = $cldetails->pincode;
+                    } else {
+                        $iniParty->pincode = '';
+                    }
+                    if (isset($cldetails->state)) {
+                        $iniParty->state = $cldetails->state;
+                    } else {
+                        $iniParty->state = '';
+                    }
+                    if (isset($cldetails->country)) {
+                        $iniParty->country = $cldetails->country;
+                    } else {
+                        $iniParty->country = '';
+                    }
+                    $iniParty->isOnboarded = 1;
+                    // $iniParty->address2 = $cldetails->address1;
+                    // $iniParty->city = $cldetails->city;
+                    // $iniParty->pincode = $cldetails->pincode;
+                    // $iniParty->state = $cldetails->state;
+                    // $iniParty->country = $cldetails->country;
+                    $iniParty->created_at = date('Y-m-d H:s:i');
+                    $iniParty->updated_at = date('Y-m-d H:s:i');
+                    $iniParty->save();
+                }
+                //add responding party
+                $resParty = new InvoledUser();
+                $resParty->userPlanId = $med->id;
+                $resParty->userEmail = $value['3'];
+                $resParty->userPhone = $value['4'];
+                $resParty->name = $value['2'];
+                $resParty->joinCode = $this->joinCode();
+                $resParty->fulladdress = $value['5'];
+                // $resParty->address2 = $value['6'];
+                // $resParty->city = $value['7'];
+                // $resParty->pincode = $value['8'];
+                // $resParty->state = $value['9'];
+                // $resParty->country = $value['10'];
+                $resParty->isClaimant = 1;
+                $resParty->created_at = date('Y-m-d H:s:i');
+                $resParty->updated_at = date('Y-m-d H:s:i');
+                $resParty->save();
+
+                if (strpos($value[10], '/')) {
+                    $otherResEmail = explode('/', $value[10]);
+                } else {
+                    $otherResEmail = explode(',', $value[10]);
+                }
+                if (strpos($value[11], '/')) {
+                    $otherResMobile = explode('/', $value[11]);
+                } else {
+                    $otherResMobile = explode(',', $value[11]);
+                }
+                // $otherResEmail = explode(',', $value[10]);
+                // $otherResMobile = explode(',', $value[11]);
+
+                $forloopcnt = max(count($otherResEmail), count($otherResMobile));
+
+                if ($otherResEmail[0] != "" or $otherResMobile[0] != "") {
+
+                    for ($i = 0; $i < $forloopcnt; $i++) {
+                        // for($j = 0; $j < count($otherResMobile); $j++) {
+
+
+                        $otherDetails = new InvoledUser();
+                        $otherDetails->userPlanId = $med->id;
+                        $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i])  : "";
+                        $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
+                        $otherDetails->joinCode = $this->joinCode();
+                        $otherDetails->isClaimant = $i + 1;
+                        $otherDetails->created_at = date('Y-m-d H:s:i');
+                        $otherDetails->updated_at = date('Y-m-d H:s:i');
+                        $otherDetails->save();
                     }
                 }
 
-                if ($v[13] != 'Yes') {
-                    $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
-                }
-
-                if ($v[14] != 'Yes') {
-
-                    $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
-                }
+                $letter = $this->requestLetter($med->id);
+                $med->request_letter = $letter;
+                $med->save();
             }
+
+            // return redirect('/admin/case/new-request')->with(['success' => 'Success']);
+            return json_encode(['code' => 200, 'response' => 'success']);
         }
-        if ($errormsg != '') {
-
-            return redirect('/admin/case/new-request')->with(['error' => $errormsg]);
-
-            exit();
-        }
-        // if (1 == 1) {
-
-        //     //save file
-        //     $file = $request->file('csv');
-        //     $destinationPath = 'public/uploaded';
-
-        //     $extension = $file->getClientOriginalExtension();
-        //     $fileName = time() . '.' . $extension;
-
-        //     if ($file->storeAs($destinationPath, $fileName)) {
-        //         $uploaded_excel .= $fileName;
-        //     }
-        // }
-        //store in database
-        if ($request->batch != null) {
-            $batchdata = [
-                'batch_name' => $request->batch,
-            ];
-            $batch = Batch::where('batch_name', $batchdata['batch_name'])->first();
-            if (!$batch) {
-                $batch = Batch::create($batchdata);
-            }
-        }
-        $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
-        foreach ($csv as $k => $value) {
-            // dd( count(explode(',', $value[15])) + 1);
-            // exit;
-
-            $data['userid'] = $claimantid;
-            $data['disputeCategory'] = $value['0'];
-            $data['natureOfAgreement'] = $value['6'];
-            $data['agreementDate'] = $value['7'];
-            $data['noOfParties'] = count(explode(',', $value[10])) + 1;
-            $data['amount'] = $value['1'];
-            $data['issue'] = $value['8'];
-            $data['confirm_status'] = 0;
-            $data['otherRespondentDetails'] = $value[12];
-            $data['proposedSolution'] = $value[9];
-            $data['batch_id'] = isset($batch->id) ? $batch->id : null;
-            $data['bulk_flag'] = 1;
-
-            $med = MedCase::create($data);
-
-            $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();
-
-            if (!$iniParty) {
-                // add initiating party
-                $iniParty = new InvoledUser();
-
-                $iniParty->userId = $cldetails->id;
-                $iniParty->userPlanId = $med->id;
-                $iniParty->userEmail = $cldetails->email;
-                $iniParty->userPhone = $cldetails->mobile_number;
-                $iniParty->name = $cldetails->first_name . ' ' . $cldetails->last_name;
-                if (isset($cldetails->address)) {
-                    $iniParty->address1 = $cldetails->address;
-                } else {
-                    $iniParty->address1 = '';
-                }
-                if (isset($cldetails->address1)) {
-                    $iniParty->address2 = $cldetails->address1;
-                } else {
-                    $iniParty->address2 = '';
-                }
-                if (isset($cldetails->city)) {
-                    $iniParty->city = $cldetails->city;
-                } else {
-                    $iniParty->city = '';
-                }
-                if (isset($cldetails->pincode)) {
-                    $iniParty->pincode = $cldetails->pincode;
-                } else {
-                    $iniParty->pincode = '';
-                }
-                if (isset($cldetails->state)) {
-                    $iniParty->state = $cldetails->state;
-                } else {
-                    $iniParty->state = '';
-                }
-                if (isset($cldetails->country)) {
-                    $iniParty->country = $cldetails->country;
-                } else {
-                    $iniParty->country = '';
-                }
-                $iniParty->isOnboarded = 1;
-                // $iniParty->address2 = $cldetails->address1;
-                // $iniParty->city = $cldetails->city;
-                // $iniParty->pincode = $cldetails->pincode;
-                // $iniParty->state = $cldetails->state;
-                // $iniParty->country = $cldetails->country;
-                $iniParty->created_at = date('Y-m-d H:s:i');
-                $iniParty->updated_at = date('Y-m-d H:s:i');
-                $iniParty->save();
-            }
-            //add responding party
-            $resParty = new InvoledUser();
-            $resParty->userPlanId = $med->id;
-            $resParty->userEmail = $value['3'];
-            $resParty->userPhone = $value['4'];
-            $resParty->name = $value['2'];
-            $resParty->joinCode = $this->joinCode();
-            $resParty->fulladdress = $value['5'];
-            // $resParty->address2 = $value['6'];
-            // $resParty->city = $value['7'];
-            // $resParty->pincode = $value['8'];
-            // $resParty->state = $value['9'];
-            // $resParty->country = $value['10'];
-            $resParty->isClaimant = 1;
-            $resParty->created_at = date('Y-m-d H:s:i');
-            $resParty->updated_at = date('Y-m-d H:s:i');
-            $resParty->save();
-
-            if (strpos($value[10], '/')) {
-                $otherResEmail = explode('/', $value[10]);
-            } else {
-                $otherResEmail = explode(',', $value[10]);
-            }
-            if (strpos($value[11], '/')) {
-                $otherResMobile = explode('/', $value[11]);
-            } else {
-                $otherResMobile = explode(',', $value[11]);
-            }
-            // $otherResEmail = explode(',', $value[10]);
-            // $otherResMobile = explode(',', $value[11]);
-
-            $forloopcnt = max(count($otherResEmail), count($otherResMobile));
-
-            if ($otherResEmail[0] != "" or $otherResMobile[0] != "") {
-
-                for ($i = 0; $i < $forloopcnt; $i++) {
-                    // for($j = 0; $j < count($otherResMobile); $j++) {
-
-
-                    $otherDetails = new InvoledUser();
-                    $otherDetails->userPlanId = $med->id;
-                    $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i])  : "";
-                    $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
-                    $otherDetails->joinCode = $this->joinCode();
-                    $otherDetails->isClaimant = $i + 1;
-                    $otherDetails->created_at = date('Y-m-d H:s:i');
-                    $otherDetails->updated_at = date('Y-m-d H:s:i');
-                    $otherDetails->save();
-                }
-            }
-
-            $letter = $this->requestLetter($med->id);
-            $med->request_letter = $letter;
-            $med->save();
-        }
-
-        return redirect('/admin/case/new-request')->with(['success' => 'Success']);
     }
 
     public function requestLetter($id)
@@ -2804,9 +2835,10 @@ class CaseController extends Controller
         return $name;
     }
 
-    public function documentUpload(Request $request, $id)
+    public function documentUpload(Request $request)
     {
 
+        dd("hello");
         $selectDocument = $request->file('document');
 
         $errormsg = '';

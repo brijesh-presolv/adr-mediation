@@ -735,7 +735,10 @@ use App\Models\InvoledUser;
                 },
                 error: function(data) {
                     //alert(data.responseJSON.errors.files[0]);
-                    console.log(data);
+                    // console.log(data.responseJSON.errors.files[0]);
+                    swal(data.responseJSON.errors.files[0], {
+                        icon: "error",
+                    });
                 }
             });
         });
@@ -834,7 +837,7 @@ use App\Models\InvoledUser;
                                 var disposition = xhr.getResponseHeader('Content-Disposition');
                                 if (disposition && disposition.indexOf('attachment') !== -1) {
                                     var filenameRegex =
-                                    /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                                        /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
                                     var matches = filenameRegex.exec(disposition);
                                     if (matches != null && matches[1]) filename = matches[1]
                                         .replace(/['"]/g, '');
@@ -979,7 +982,7 @@ use App\Models\InvoledUser;
                     if (data[i] != null) {
                         $('#commentForm .modal-footer').append("<a href=" + urlpdf +
                             "><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>"
-                            );
+                        );
                     }
                 }
             });
@@ -1015,7 +1018,12 @@ use App\Models\InvoledUser;
                             });
                             $('#commentForm')[0].reset();
                             $('#commentModal').modal("hide");
-                        }
+                        },
+                        error: function(data) {
+                            swal(data.responseJSON.errors.comment[0], {
+                                icon: "error",
+                            });
+                        } 
                     });
                 } else {
                     swal("comment not added!");

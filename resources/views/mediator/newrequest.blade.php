@@ -235,9 +235,7 @@
                                         <td>Experience</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" cols="150" name="particulars1"
-                                                    id="particulars1"
-                                                    rows="3">{{ isset($mediationDetails->experience) ? $mediationDetails->experience : '' }}</textarea>
+                                                <textarea class="form-control" cols="150" name="particulars1" id="particulars1" rows="3">{{ isset($mediationDetails->experience) ? $mediationDetails->experience : '' }}</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -248,8 +246,7 @@
                                             impair your independence or impartiality (list out)</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars2" id="particulars2"
-                                                    rows="3">NA</textarea>
+                                                <textarea class="form-control" name="particulars2" id="particulars2" rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -258,8 +255,7 @@
                                             time to the mediation and in particular your </td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars3" id="particulars3"
-                                                    rows="3">NA</textarea>
+                                                <textarea class="form-control" name="particulars3" id="particulars3" rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -268,8 +264,7 @@
                                             under the Rules</td>
                                         <td>
                                             <div class="form-group">
-                                                <textarea class="form-control" name="particulars4" id="particulars4"
-                                                    rows="3">NA</textarea>
+                                                <textarea class="form-control" name="particulars4" id="particulars4" rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
@@ -286,7 +281,8 @@
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="accept" checked>
+                                <input class="form-check-input" type="checkbox" value="" id="accept"
+                                    checked>
                                 <label class="form-check-label" for="accept">
                                     By checking this box, I accept and agree to conduct the mediation in accordance with
                                     the Rules and confirm that I shall abide by the Code, Terms & Conditions and Privacy
@@ -335,41 +331,44 @@
     </div>
 </div>
 
-{{-- modal for bulk cases send  --}}
+{{-- modal for bulk cases send --}}
 <div class="row">
     <div class="col-md-12">
-            <button style="display:none;" class="btn btn-sucess ccdd" data-target="#myModalcc" data-toggle="modal"></button>
+        <button style="display:none;" class="btn btn-sucess ccdd" data-target="#myModalcc"
+            data-toggle="modal"></button>
 
 
-<div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header d-flex flex-column align-items-center">
-         <button type="button" class="close" data-dismiss="modal">&times;</button> 
-        <br>
-                <div class="loading_form text-center" style="display: none;">
-                    {{-- <center> --}}
-                        <p>Please Wait. Do Not Close Until Close Button Appear.</p>
-                    <span id="loading_image"> 
-                        <img src="{{url('assets/')}}/images/loading_form.gif" >
-                    </span>
-                    {{-- </center> --}}
-                
-                    
-                    <!-- <div><a href="ongoing" class="btn btn-danger btn-lg directionCloseSwal" style="display: none;">Close</a></div> -->
+        <div id="myModalcc" class="mdladcm modal fade " role="dialog" data-keyboard="false"
+            data-backdrop="static">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header d-flex flex-column align-items-center">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <br>
+                        <div class="loading_form text-center" style="display: none;">
+                            {{-- <center> --}}
+                            <p>Please Wait. Do Not Close Until Close Button Appear.</p>
+                            <span id="loading_image">
+                                <img src="{{ url('assets/') }}/images/loading_form.gif">
+                            </span>
+                            {{-- </center> --}}
+
+
+                            <!-- <div><a href="ongoing" class="btn btn-danger btn-lg directionCloseSwal" style="display: none;">Close</a></div> -->
+                        </div>
+                        <div id="totalPer"></div>
+                        <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;'
+                            id="messcc">
+                        </div>
+                        <input type="hidden" id="last_uploaded_id" value="">
+                        <div id="messccclose" style="margin-top: 2em;"></div>
+                    </div>
                 </div>
-                <div id="totalPer"></div>
-                <div style='margin: auto; max-height: 100px; position:sticky; overflow-y:scroll;' id="messcc">
-                </div>
-                <input type="hidden" id="last_uploaded_id" value="">
-                <div id="messccclose" style="margin-top: 2em;"></div>
-      </div>
-    </div>
-    </div>
-</div>
+            </div>
+        </div>
 
-</div>
+    </div>
 </div>
 
 @endsection
@@ -535,226 +534,226 @@
 
 
     // function start for send one bye one ajax request 
-var insertRow = false;
-var logId = null;
-var insId = null;
-var failId = null;
+    var insertRow = false;
+    var logId = null;
+    var insId = null;
+    var failId = null;
 
-var ite = [];
-var comp = 0;
-var prc = 0;
+    var ite = [];
+    var comp = 0;
+    var prc = 0;
 
-var ajax_request = function (item, url) {
-    var deferred = $.Deferred();
+    var ajax_request = function(item, url) {
+        var deferred = $.Deferred();
 
-    $.ajax({
-        url: url,
-        dataType: "json",
-        type: "POST",
-        data: {
-            mediation_case_id : item.id,
-            _token: item.token,
-            allcids: item.allcids,
-            total_row: item.total_row,
-            log_id: logId,
-            insertRow: insId,
-            faildRow: failId,
-            status: item.status, 
-            log_type: item.log_type,
-        },
-        success: function (result) {
+        $.ajax({
+            url: url,
+            dataType: "json",
+            type: "POST",
+            data: {
+                mediation_case_id: item.id,
+                _token: item.token,
+                allcids: item.allcids,
+                total_row: item.total_row,
+                log_id: logId,
+                insertRow: insId,
+                faildRow: failId,
+                status: item.status,
+                log_type: item.log_type,
+            },
+            success: function(result) {
 
-            ite.push(result);
-            comp = comp + 1;
-            prc = Math.round(((comp * 100) / item.total_row));
-            $('#tto').html(prc);
+                ite.push(result);
+                comp = comp + 1;
+                prc = Math.round(((comp * 100) / item.total_row));
+                $('#tto').html(prc);
 
-            if (logId == null) {
-                $("#loading_image").hide();
-                $("#totalPer").append(
-                "<h5 class='text-center mt-0'>Total " +
-                    item.total_row +
-                " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
-                );
-            }
-            
-
-            // if (logId == null) {
-            //     //$(".loading_image").hide();
-            //     $("#blkform1_image").html(
-            //         "<center><h5>Total " +
-            //         item.total_row +
-            //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
-            //     );
-            // }
-
-            logId = result.log_id;
-
-            
-
-            if (result.response == "success") {
-                if (insId == null) {
-                    insId = result.caseid;
-                } else {
-                    insId = insId + "," + result.caseid;
+                if (logId == null) {
+                    $("#loading_image").hide();
+                    $("#totalPer").append(
+                        "<h5 class='text-center mt-0'>Total " +
+                        item.total_row +
+                        " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                    );
                 }
-                $("#messcc").append(
-                "<p style='color: green;' class='text-center'>Case ID : M" +
-                result.caseid.toString().padStart(6, "0") + " Success.</p>"
-                );
-                // $("#mess").append(
-                //     "<center>Case Id A00" + result.caseid + " Success.</center>"
-                // );
-            } else {
+
+
+                // if (logId == null) {
+                //     //$(".loading_image").hide();
+                //     $("#blkform1_image").html(
+                //         "<center><h5>Total " +
+                //         item.total_row +
+                //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
+                //     );
+                // }
+
+                logId = result.log_id;
+
+
+
+                if (result.response == "success") {
+                    if (insId == null) {
+                        insId = result.caseid;
+                    } else {
+                        insId = insId + "," + result.caseid;
+                    }
+                    $("#messcc").append(
+                        "<p style='color: green;' class='text-center'>Case ID : M" +
+                        result.caseid.toString().padStart(6, "0") + " Success.</p>"
+                    );
+                    // $("#mess").append(
+                    //     "<center>Case Id A00" + result.caseid + " Success.</center>"
+                    // );
+                } else {
+                    if (failId == null) {
+                        failId = result.caseid;
+                    } else {
+                        failId = failId + "," + result.caseid;
+                    }
+                    $("#messcc").append(
+                        "<p style='color: red;' class='text-center'>Case ID : M" +
+                        result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                    );
+                    // $("#mess").append(
+                    //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
+                    // );
+                }
+                var objDiv = document.getElementById("messcc");
+                objDiv.scrollTop = objDiv.scrollHeight;
+                // var objDiv = document.getElementById("mess");
+                // objDiv.scrollTop = objDiv.scrollHeight;
+                deferred.resolve(result);
+            },
+            error: function(error) {
                 if (failId == null) {
-                    failId = result.caseid;
+                    failId = item.id;
                 } else {
-                    failId = failId + "," + result.caseid;
+                    failId = failId + "," + item.id;
                 }
                 $("#messcc").append(
-                "<p style='color: red;' class='text-center'>Case ID : M" +
-                result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                    "<center style='color: red;'>Case ID : M" +
+                    item.cid.toString().padStart(6, "0") + " Failed.</center>"
                 );
-                // $("#mess").append(
-                //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
-                // );
-            }
-            var objDiv = document.getElementById("messcc");
-            objDiv.scrollTop = objDiv.scrollHeight;
-            // var objDiv = document.getElementById("mess");
-            // objDiv.scrollTop = objDiv.scrollHeight;
-            deferred.resolve(result);
-        },
-        error: function (error) {
-            if (failId == null) {
-                failId = item.id;
-            } else {
-                failId = failId + "," + item.id;
-            }
-            $("#messcc").append(
-                "<center style='color: red;'>Case ID : M" +
-                item.cid.toString().padStart(6, "0") + " Failed.</center>"
-            );
-            $("#mess").append(
-                "<center>Case Id A00" + error.caseid + " Failed.</center>"
-            );
-            var objDiv = document.getElementById("messcc");
-            objDiv.scrollTop = objDiv.scrollHeight;
-            deferred.reject(error);
-        },
-        complete: function () {
-            swal.close();
-        },
-    });
-    return deferred.promise();
-};
-
-var ajax_request_Accept = function (item, url) {
-    var deferred = $.Deferred();
-        
-    $.ajax({
-        url: url,
-        dataType: "json",
-        type: "POST",
-        data: {
-            mediation_case_id : item.id,
-            _token: item.token,
-            allcids: item.allcids,
-            total_row: item.total_row,
-            log_id: logId,
-            insertRow: insId,
-            faildRow: failId,
-            fsData: item.fsData, 
-            log_type: item.log_type,
-        },
-        success: function (result) {
-
-            ite.push(result);
-            comp = comp + 1;
-            prc = Math.round(((comp * 100) / item.total_row));
-            $('#tto').html(prc);
-
-            if (logId == null) {
-                $("#loading_image").hide();
-                $("#totalPer").append(
-                "<h5 class='text-center mt-0'>Total " +
-                    item.total_row +
-                " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                $("#mess").append(
+                    "<center>Case Id A00" + error.caseid + " Failed.</center>"
                 );
-            }
-            
+                var objDiv = document.getElementById("messcc");
+                objDiv.scrollTop = objDiv.scrollHeight;
+                deferred.reject(error);
+            },
+            complete: function() {
+                swal.close();
+            },
+        });
+        return deferred.promise();
+    };
 
-            // if (logId == null) {
-            //     //$(".loading_image").hide();
-            //     $("#blkform1_image").html(
-            //         "<center><h5>Total " +
-            //         item.total_row +
-            //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
-            //     );
-            // }
+    var ajax_request_Accept = function(item, url) {
+        var deferred = $.Deferred();
 
-            logId = result.log_id;
+        $.ajax({
+            url: url,
+            dataType: "json",
+            type: "POST",
+            data: {
+                mediation_case_id: item.id,
+                _token: item.token,
+                allcids: item.allcids,
+                total_row: item.total_row,
+                log_id: logId,
+                insertRow: insId,
+                faildRow: failId,
+                fsData: item.fsData,
+                log_type: item.log_type,
+            },
+            success: function(result) {
 
-            if (result.response == "success") {
-                if (insId == null) {
-                    insId = result.caseid;
-                    //console.log('insId '+insId);
-                } else {
-                    insId = insId + "," + result.caseid;
-                    // console.log('insId d '+insId);
+                ite.push(result);
+                comp = comp + 1;
+                prc = Math.round(((comp * 100) / item.total_row));
+                $('#tto').html(prc);
+
+                if (logId == null) {
+                    $("#loading_image").hide();
+                    $("#totalPer").append(
+                        "<h5 class='text-center mt-0'>Total " +
+                        item.total_row +
+                        " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
+                    );
                 }
-                $("#messcc").append(
-                "<p style='color: green;' class='text-center'>Case ID : M" +
-                result.caseid.toString().padStart(6, "0") + " Success.</p>"
-                );
-                // $("#mess").append(
-                //     "<center>Case Id A00" + result.caseid + " Success.</center>"
-                // );
-            } else {
+
+
+                // if (logId == null) {
+                //     //$(".loading_image").hide();
+                //     $("#blkform1_image").html(
+                //         "<center><h5>Total " +
+                //         item.total_row +
+                //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
+                //     );
+                // }
+
+                logId = result.log_id;
+
+                if (result.response == "success") {
+                    if (insId == null) {
+                        insId = result.caseid;
+                        //console.log('insId '+insId);
+                    } else {
+                        insId = insId + "," + result.caseid;
+                        // console.log('insId d '+insId);
+                    }
+                    $("#messcc").append(
+                        "<p style='color: green;' class='text-center'>Case ID : M" +
+                        result.caseid.toString().padStart(6, "0") + " Success.</p>"
+                    );
+                    // $("#mess").append(
+                    //     "<center>Case Id A00" + result.caseid + " Success.</center>"
+                    // );
+                } else {
+                    if (failId == null) {
+                        failId = result.caseid;
+                    } else {
+                        failId = failId + "," + result.caseid;
+                    }
+                    $("#messcc").append(
+                        "<p style='color: red;' class='text-center'>Case ID : M" +
+                        result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                    );
+                    // $("#mess").append(
+                    //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
+                    // );
+                }
+                var objDiv = document.getElementById("messcc");
+                objDiv.scrollTop = objDiv.scrollHeight;
+                // var objDiv = document.getElementById("mess");
+                // objDiv.scrollTop = objDiv.scrollHeight;
+                deferred.resolve(result);
+            },
+            error: function(error) {
                 if (failId == null) {
-                    failId = result.caseid;
+                    failId = item.id;
                 } else {
-                    failId = failId + "," + result.caseid;
+                    failId = failId + "," + item.id;
                 }
                 $("#messcc").append(
-                "<p style='color: red;' class='text-center'>Case ID : M" +
-                result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                    "<center style='color: red;'>Case ID : M" +
+                    item.cid.toString().padStart(6, "0") + " Failed.</center>"
                 );
-                // $("#mess").append(
-                //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
-                // );
-            }
-            var objDiv = document.getElementById("messcc");
-            objDiv.scrollTop = objDiv.scrollHeight;
-            // var objDiv = document.getElementById("mess");
-            // objDiv.scrollTop = objDiv.scrollHeight;
-            deferred.resolve(result);
-        },
-        error: function (error) {
-            if (failId == null) {
-                failId = item.id;
-            } else {
-                failId = failId + "," + item.id;
-            }
-            $("#messcc").append(
-                "<center style='color: red;'>Case ID : M" +
-                item.cid.toString().padStart(6, "0") + " Failed.</center>"
-            );
-            $("#mess").append(
-                "<center>Case Id A00" + error.caseid + " Failed.</center>"
-            );
-            var objDiv = document.getElementById("messcc");
-            objDiv.scrollTop = objDiv.scrollHeight;
-            deferred.reject(error);
-        },
-        complete: function () {
-            swal.close();
-        },
-    });
-    return deferred.promise();
-};
+                $("#mess").append(
+                    "<center>Case Id A00" + error.caseid + " Failed.</center>"
+                );
+                var objDiv = document.getElementById("messcc");
+                objDiv.scrollTop = objDiv.scrollHeight;
+                deferred.reject(error);
+            },
+            complete: function() {
+                swal.close();
+            },
+        });
+        return deferred.promise();
+    };
 
-   var looper = $.Deferred().resolve();
+    var looper = $.Deferred().resolve();
     // function end 
 
     $('#commentModal').on('show.bs.modal', function(event) {
@@ -839,6 +838,11 @@ var ajax_request_Accept = function (item, url) {
                         });
                         $('#commentForm')[0].reset();
                         $('#commentModal').modal("hide");
+                    },
+                    error: function(data) {
+                        swal(data.responseJSON.errors.comment[0], {
+                            icon: "error",
+                        });
                     }
                 });
             } else {
@@ -1087,9 +1091,9 @@ var ajax_request_Accept = function (item, url) {
                     var ctcnt = 0;
                     var result = {};
 
-                    $(".blkchk").each(function () {
+                    $(".blkchk").each(function() {
                         if (this.checked) {
-                        ctcnt++;
+                            ctcnt++;
                             if (cids == null) {
                                 cids = $(this).data("caseid");
                             } else {
@@ -1097,17 +1101,18 @@ var ajax_request_Accept = function (item, url) {
                             }
                         }
                     });
-                    $(".blkchk").each(function () {
-                    
+                    $(".blkchk").each(function() {
+
                         if (this.checked) {
-                
+
                             var caseid = $(this).data("caseid");
-                            var csrf = document.querySelector('meta[name="csrf-token"]').content;
-                            
+                            var csrf = document.querySelector('meta[name="csrf-token"]')
+                            .content;
+
                             $.each($('#acceptForm').serializeArray(), function() {
                                 result[this.name] = this.value;
                             });
-        
+
                             // at this stage the result object will look as expected so you could use it
                             // alert('name1 = ' + result.name1 + ', name2 = ' + result.name2);
                             idarr.push({
@@ -1120,7 +1125,7 @@ var ajax_request_Accept = function (item, url) {
                         }
                     });
 
-                    var burl = '{{ route("mediator.activeDeactive") }}';
+                    var burl = '{{ route('mediator.activeDeactive') }}';
                     swal.close();
                     $(".ccdd").click();
                     $(".msgDiv").hide();
@@ -1129,22 +1134,22 @@ var ajax_request_Accept = function (item, url) {
                     $(".close").hide();
                     $.when
                         .apply(
-                        $,
-                        $.map(idarr, function (item, i) {
-                            looper = looper.then(function () {
-                               
-                                return ajax_request_Accept(item, burl);
-                                
-                            });
-                            return looper;
+                            $,
+                            $.map(idarr, function(item, i) {
+                                looper = looper.then(function() {
 
-                        })
+                                    return ajax_request_Accept(item, burl);
+
+                                });
+                                return looper;
+
+                            })
                         )
-                        .then(function () {
+                        .then(function() {
                             swal.close();
                             // $("#myModalcc").hide();
                             $("#messccclose").append(
-                                '<br><center><a href="{{route("mediator.newrequest")}}" class="btn btn-danger btn-lg">Close</a></center>'
+                                '<br><center><a href="{{ route('mediator.newrequest') }}" class="btn btn-danger btn-lg">Close</a></center>'
                             );
                             var objDiv = document.getElementById("messcc");
                             objDiv.scrollTop = objDiv.scrollHeight;
@@ -1293,14 +1298,14 @@ var ajax_request_Accept = function (item, url) {
             }).then((willDelete) => {
                 if (willDelete) {
                     var cids = null;
-                    var Status =  $('#status_id').val();
+                    var Status = $('#status_id').val();
                     var idarr = [];
                     var ctcnt = 0;
-                
 
-                    $(".blkchk").each(function () {
+
+                    $(".blkchk").each(function() {
                         if (this.checked) {
-                        ctcnt++;
+                            ctcnt++;
                             if (cids == null) {
                                 cids = $(this).data("caseid");
                             } else {
@@ -1308,24 +1313,25 @@ var ajax_request_Accept = function (item, url) {
                             }
                         }
                     });
-                    $(".blkchk").each(function () {
+                    $(".blkchk").each(function() {
                         if (this.checked) {
                             var caseid = $(this).data("caseid");
-                            var Status =  $('#status_id').val();
-                            var csrf = document.querySelector('meta[name="csrf-token"]').content;
-        
+                            var Status = $('#status_id').val();
+                            var csrf = document.querySelector('meta[name="csrf-token"]')
+                            .content;
+
                             idarr.push({
-                                id:  caseid,
+                                id: caseid,
                                 token: csrf,
                                 allcids: cids,
                                 total_row: ctcnt,
-                                mediator_id: mediatorid, 
-                                status: status, 
+                                mediator_id: mediatorid,
+                                status: status,
                                 log_type: "Bulk reject ",
                             });
                         }
                     });
-                    var burl = '{{ route("mediator.activeDeactive") }}';
+                    var burl = '{{ route('mediator.activeDeactive') }}';
                     swal.close();
                     $(".ccdd").click();
                     $(".msgDiv").hide();
@@ -1334,20 +1340,20 @@ var ajax_request_Accept = function (item, url) {
                     $(".close").hide();
                     $.when
                         .apply(
-                        $,
-                        $.map(idarr, function (item, i) {
-                            looper = looper.then(function () {
-                                return ajax_request(item, burl); 
-                            });
-                            return looper;
+                            $,
+                            $.map(idarr, function(item, i) {
+                                looper = looper.then(function() {
+                                    return ajax_request(item, burl);
+                                });
+                                return looper;
 
-                        })
+                            })
                         )
-                        .then(function () {
+                        .then(function() {
                             swal.close();
-                          
+
                             $("#messccclose").append(
-                                '<br><center><a href="{{route("mediator.newrequest")}}" class="btn btn-danger btn-lg">Close</a></center>'
+                                '<br><center><a href="{{ route('mediator.newrequest') }}" class="btn btn-danger btn-lg">Close</a></center>'
                             );
                             var objDiv = document.getElementById("messcc");
                             objDiv.scrollTop = objDiv.scrollHeight;

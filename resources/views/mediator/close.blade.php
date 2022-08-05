@@ -468,6 +468,11 @@
                     });
                     $("#settelmentModal").modal("hide");
                     userTable.ajax.reload();
+                },
+                error: function(data) {
+                    swal(data.responseJSON.message, {
+                        icon: "error",
+                    });
                 }
             });
         });
@@ -587,6 +592,11 @@
                             });
                             $('#commentForm')[0].reset();
                             $('#commentModal').modal("hide");
+                        },
+                        error: function(data) {
+                            swal(data.responseJSON.errors.comment[0], {
+                                icon: "error",
+                            });
                         }
                     });
                 } else {

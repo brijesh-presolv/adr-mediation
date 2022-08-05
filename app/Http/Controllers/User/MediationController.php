@@ -639,7 +639,6 @@ class MediationController extends Controller
 
 
         return view('user.newrequest', ['response' => Session::get('response')]);
-
     }
 
     public function ongoing()
@@ -1045,241 +1044,246 @@ class MediationController extends Controller
         $cldetails = User::find($claimantid);
 
         $selectCsv = $request->file('csv');
-        $tmpName = $selectCsv->getPathname();
+        if ($selectCsv != null) {
 
-        $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
-        $errormsg = '';
+            $tmpName = $selectCsv->getPathname();
 
-        if ($ext != 'csv') {
-            $errormsg .= 'Please upload csv file';
-        }
-        // dd($errormsg);
-        if ($errormsg == '') {
-            $csv = $this->csvToArray($tmpName);
-            // dd(count($csv[0]));
-            if (count($csv[0]) != 15) {
-                $errormsg .= "Invalid csv file";
+            $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
+            $errormsg = '';
+
+            if ($ext != 'csv') {
+                $errormsg .= 'Please upload csv file';
             }
-            $errormsg .= '';
-            foreach ($csv as $key => $v) {
-                $i = $key + 1;
+            // dd($errormsg);
+            if ($errormsg == '') {
+                $csv = $this->csvToArray($tmpName);
+                // dd(count($csv[0]));
+                if (count($csv[0]) != 15) {
+                    $errormsg .= "Invalid csv file";
+                }
+                $errormsg .= '';
+                foreach ($csv as $key => $v) {
+                    $i = $key + 1;
 
-                for ($n = 0; $n < 15; $n++) {
-                    if ($v[$n] == '') {
+                    for ($n = 0; $n < 15; $n++) {
+                        if ($v[$n] == '') {
 
-                        if ($n != 10 and $n != 11 and $n != 12 and $n != 7 and $n != 3 and $n != 4) {
-                            $errormsg .= "Please fill all the required details to proceed at line no $i";
+                            if ($n != 10 and $n != 11 and $n != 12 and $n != 7 and $n != 3 and $n != 4) {
+                                $errormsg .= "Please fill all the required details to proceed at line no $i";
+                            }
                         }
                     }
-                }
-                if ($v[4] != "") {
-                    if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
-                        $errormsg .= "Invalid mobile number at line no $i ";
+                    if ($v[4] != "") {
+                        if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
+                            $errormsg .= "Invalid mobile number at line no $i ";
+                        }
+
+                        if (strlen($v[4]) != 10) {
+                            $errormsg .= "Invalid mobile number at line no $i ";
+                        }
                     }
+                    // validate pincode
+                    // if (!filter_var($v[8], FILTER_SANITIZE_NUMBER_INT)) {
+                    //     $errormsg .= "Invalid pincode at line no $i ";
+                    // }
 
-                    if (strlen($v[4]) != 10) {
-                        $errormsg .= "Invalid mobile number at line no $i ";
-                    }
-                }
-                // validate pincode
-                // if (!filter_var($v[8], FILTER_SANITIZE_NUMBER_INT)) {
-                //     $errormsg .= "Invalid pincode at line no $i ";
-                // }
+                    // if (strlen($v[8]) != 6) {
+                    //     $errormsg .= "Invalid pincode at line no $i ";
+                    // }
 
-                // if (strlen($v[8]) != 6) {
-                //     $errormsg .= "Invalid pincode at line no $i ";
-                // }
+                    //validate date
+                    if ($v[7] != "") {
 
-                //validate date
-                if ($v[7] != "") {
-
-                    if (strpos($v[7], '-')) {
-                        $dt = str_replace('-', '/', $v[7]);
-                        $v[7] = $dt;
-                    } else {
-                        $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
-                    }
-                    if (strpos($v[7], '-') or strpos($v[7], '/')) {
-
-                        $dt = explode('/', $v[7]);
-
-                        if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
-
+                        if (strpos($v[7], '-')) {
+                            $dt = str_replace('-', '/', $v[7]);
+                            $v[7] = $dt;
+                        } else {
                             $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
                         }
+                        if (strpos($v[7], '-') or strpos($v[7], '/')) {
+
+                            $dt = explode('/', $v[7]);
+
+                            if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
+
+                                $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
+                            }
+                        }
+                    }
+
+                    if ($v[13] != 'Yes') {
+                        $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
+                    }
+
+                    if ($v[14] != 'Yes') {
+
+                        $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
+                    }
+                }
+            }
+            if ($errormsg != '') {
+
+                return redirect('/user/newrequest')->with(['error' => $errormsg]);
+
+                exit();
+            }
+            // if (1 == 1) {
+
+            //     //save file
+            //     $file = $request->file('csv');
+            //     $destinationPath = 'storage/uploaded';
+
+            //     $extension = $file->getClientOriginalExtension();
+            //     $fileName = time() . '.' . $extension;
+
+            //     if ($file->move($destinationPath, $fileName)) {
+            //         $uploaded_excel .= $fileName;
+            //     }
+            // }
+            // dd($csv);
+            //store in 
+            $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
+
+            foreach ($csv as $k => $value) {
+                // dd();
+                $data['userid'] = $uploaded_by;
+                $data['disputeCategory'] = $value['0'];
+                $data['natureOfAgreement'] = $value['6'];
+                $data['agreementDate'] = $value['7'];
+                $data['noOfParties'] = count(explode(',', $value[10])) + 1;
+                $data['amount'] = $value['1'];
+                $data['issue'] = $value['8'];
+                $data['confirm_status'] = 0;
+                $data['otherRespondentDetails'] = $value[12];
+                $data['proposedSolution'] = $value[9];
+                $data['bulk_flag'] = 1;
+
+                $med = MedCase::create($data);
+
+                $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $uploaded_by])->first();
+
+                if (!$iniParty) {
+                    // add initiating party
+                    $iniParty = new InvoledUser();
+
+                    $iniParty->userId = $cldetails->id;
+                    $iniParty->userPlanId = $med->id;
+                    $iniParty->userEmail = $cldetails->email;
+                    $iniParty->userPhone = $cldetails->mobile_number;
+                    $iniParty->name = $cldetails->first_name . ' ' . $cldetails->last_name;
+                    $iniParty->address1 = $cldetails->address;
+                    $iniParty->address2 = $cldetails->address1;
+                    $iniParty->city = $cldetails->city;
+                    $iniParty->pincode = $cldetails->pincode;
+                    $iniParty->state = $cldetails->state;
+                    $iniParty->country = $cldetails->country;
+                    $iniParty->isOnboarded = 1;
+
+                    $iniParty->created_at = date('Y-m-d H:s:i');
+                    $iniParty->updated_at = date('Y-m-d H:s:i');
+                    $iniParty->save();
+                }
+                //add responding party
+                $resParty = new InvoledUser();
+                $resParty->userPlanId = $med->id;
+                $resParty->userEmail = $value['3'];
+                $resParty->userPhone = $value['4'];
+                $resParty->name = $value['2'];
+                $resParty->joinCode = $this->joinCode();
+                $resParty->fulladdress = $value['5'];
+                // $resParty->address2 = $value['6'];
+                // $resParty->city = $value['7'];
+                // $resParty->pincode = $value['8'];
+                // $resParty->state = $value['9'];
+                // $resParty->country = $value['10'];
+                $resParty->isClaimant = 1;
+                $resParty->created_at = date('Y-m-d H:s:i');
+                $resParty->updated_at = date('Y-m-d H:s:i');
+                $resParty->save();
+
+
+                // $otherDetails = array_merge(["email" => explode(',', $value[21]), 'mobile' => explode(',', $value[22])]);
+                if (strpos($value[10], '/')) {
+                    $otherResEmail = explode('/', $value[10]);
+                } else {
+                    $otherResEmail = explode(',', $value[10]);
+                }
+                if (strpos($value[11], '/')) {
+                    $otherResMobile = explode('/', $value[11]);
+                } else {
+                    $otherResMobile = explode(',', $value[11]);
+                }
+                // $otherResEmail = explode(',', $value[10]);
+                // $otherResMobile = explode(',', $value[11]);
+
+                $forloopcnt = max(count($otherResEmail), count($otherResMobile));
+
+                if ($otherResEmail[0] != "" or $otherResMobile[0] != "") {
+
+                    for ($i = 0; $i < $forloopcnt; $i++) {
+                        // for($j = 0; $j < count($otherResMobile); $j++) {
+
+
+                        $otherDetails = new InvoledUser();
+                        $otherDetails->userPlanId = $med->id;
+                        $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i]) : "";
+                        $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
+                        $otherDetails->joinCode = $this->joinCode();
+                        $otherDetails->isClaimant = $i + 1;
+                        $otherDetails->created_at = date('Y-m-d H:s:i');
+                        $otherDetails->updated_at = date('Y-m-d H:s:i');
+                        $otherDetails->save();
                     }
                 }
 
-                if ($v[13] != 'Yes') {
-                    $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
+                $letter = $this->requestLetter($med->id);
+                $med->request_letter = $letter;
+                $med->save();
+                $inv_id = "";
+                $inv = InvoledUser::select('id')->where('userPlanId', $med->id)->get();
+                foreach ($inv as $v) {
+                    if ($inv_id == "") {
+                        $inv_id = $v->id;
+                    } else {
+                        $inv_id = $inv_id . "," . $v->id;
+                    }
                 }
+                Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id, null, $inv_id);
 
-                if ($v[14] != 'Yes') {
+                // foreach($otherDetails as $values) {
+                //     foreach($values)
+                // }
+                // $otherResEmail = explode(',', $value[21]);
+                // $otherResMobile = explode(',', $value[22]);
 
-                    $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
-                }
+
+
             }
+
+
+            // $var = ['--caseid--'];
+            // $var1 = [Common_function::getsixdigitid('sc', $med->id)];
+            // $content1 = WaTemplate::getcontent('P23');
+            // $content = str_replace($var, $var1, $content1);
+            // $dwa1 = [
+            //     'caseid' => $med->id,
+            //     'contact' => $cldetails->mobile_number,
+            //     'content' => ['text' => $content],
+            //     'casetype' => 1,
+            //     'event' => 'DRCN_ARBTR'
+            // ];
+
+            // $access = Whatsapp::sendWamessage($dwa1);
+
+
+            // print_r($dwa1);
+            // exit;
+
+
+            return redirect('/user/newrequest')->with(['success' => 'Success']);
+        } else {
+            return redirect('/user/newrequest')->with(['error' => 'Please Select File']);
         }
-        if ($errormsg != '') {
-
-            return redirect('/user/newrequest')->with(['error' => $errormsg]);
-
-            exit();
-        }
-        // if (1 == 1) {
-
-        //     //save file
-        //     $file = $request->file('csv');
-        //     $destinationPath = 'storage/uploaded';
-
-        //     $extension = $file->getClientOriginalExtension();
-        //     $fileName = time() . '.' . $extension;
-
-        //     if ($file->move($destinationPath, $fileName)) {
-        //         $uploaded_excel .= $fileName;
-        //     }
-        // }
-        // dd($csv);
-        //store in 
-        $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
-
-        foreach ($csv as $k => $value) {
-            // dd();
-            $data['userid'] = $uploaded_by;
-            $data['disputeCategory'] = $value['0'];
-            $data['natureOfAgreement'] = $value['6'];
-            $data['agreementDate'] = $value['7'];
-            $data['noOfParties'] = count(explode(',', $value[10])) + 1;
-            $data['amount'] = $value['1'];
-            $data['issue'] = $value['8'];
-            $data['confirm_status'] = 0;
-            $data['otherRespondentDetails'] = $value[12];
-            $data['proposedSolution'] = $value[9];
-            $data['bulk_flag'] = 1;
-
-            $med = MedCase::create($data);
-
-            $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $uploaded_by])->first();
-
-            if (!$iniParty) {
-                // add initiating party
-                $iniParty = new InvoledUser();
-
-                $iniParty->userId = $cldetails->id;
-                $iniParty->userPlanId = $med->id;
-                $iniParty->userEmail = $cldetails->email;
-                $iniParty->userPhone = $cldetails->mobile_number;
-                $iniParty->name = $cldetails->first_name . ' ' . $cldetails->last_name;
-                $iniParty->address1 = $cldetails->address;
-                $iniParty->address2 = $cldetails->address1;
-                $iniParty->city = $cldetails->city;
-                $iniParty->pincode = $cldetails->pincode;
-                $iniParty->state = $cldetails->state;
-                $iniParty->country = $cldetails->country;
-                $iniParty->isOnboarded = 1;
-
-                $iniParty->created_at = date('Y-m-d H:s:i');
-                $iniParty->updated_at = date('Y-m-d H:s:i');
-                $iniParty->save();
-            }
-            //add responding party
-            $resParty = new InvoledUser();
-            $resParty->userPlanId = $med->id;
-            $resParty->userEmail = $value['3'];
-            $resParty->userPhone = $value['4'];
-            $resParty->name = $value['2'];
-            $resParty->joinCode = $this->joinCode();
-            $resParty->fulladdress = $value['5'];
-            // $resParty->address2 = $value['6'];
-            // $resParty->city = $value['7'];
-            // $resParty->pincode = $value['8'];
-            // $resParty->state = $value['9'];
-            // $resParty->country = $value['10'];
-            $resParty->isClaimant = 1;
-            $resParty->created_at = date('Y-m-d H:s:i');
-            $resParty->updated_at = date('Y-m-d H:s:i');
-            $resParty->save();
-
-
-            // $otherDetails = array_merge(["email" => explode(',', $value[21]), 'mobile' => explode(',', $value[22])]);
-            if (strpos($value[10], '/')) {
-                $otherResEmail = explode('/', $value[10]);
-            } else {
-                $otherResEmail = explode(',', $value[10]);
-            }
-            if (strpos($value[11], '/')) {
-                $otherResMobile = explode('/', $value[11]);
-            } else {
-                $otherResMobile = explode(',', $value[11]);
-            }
-            // $otherResEmail = explode(',', $value[10]);
-            // $otherResMobile = explode(',', $value[11]);
-
-            $forloopcnt = max(count($otherResEmail), count($otherResMobile));
-
-            if ($otherResEmail[0] != "" or $otherResMobile[0] != "") {
-
-                for ($i = 0; $i < $forloopcnt; $i++) {
-                    // for($j = 0; $j < count($otherResMobile); $j++) {
-
-
-                    $otherDetails = new InvoledUser();
-                    $otherDetails->userPlanId = $med->id;
-                    $otherDetails->userEmail = isset($otherResEmail[$i]) ? trim($otherResEmail[$i]) : "";
-                    $otherDetails->userPhone = isset($otherResMobile[$i]) ? trim($otherResMobile[$i]) : "";
-                    $otherDetails->joinCode = $this->joinCode();
-                    $otherDetails->isClaimant = $i + 1;
-                    $otherDetails->created_at = date('Y-m-d H:s:i');
-                    $otherDetails->updated_at = date('Y-m-d H:s:i');
-                    $otherDetails->save();
-                }
-            }
-
-            $letter = $this->requestLetter($med->id);
-            $med->request_letter = $letter;
-            $med->save();
-            $inv_id = "";
-            $inv = InvoledUser::select('id')->where('userPlanId', $med->id)->get();
-            foreach ($inv as $v) {
-                if ($inv_id == "") {
-                    $inv_id = $v->id;
-                } else {
-                    $inv_id = $inv_id . "," . $v->id;
-                }
-            }
-            Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id, null, $inv_id);
-
-            // foreach($otherDetails as $values) {
-            //     foreach($values)
-            // }
-            // $otherResEmail = explode(',', $value[21]);
-            // $otherResMobile = explode(',', $value[22]);
-
-
-
-        }
-
-
-        // $var = ['--caseid--'];
-        // $var1 = [Common_function::getsixdigitid('sc', $med->id)];
-        // $content1 = WaTemplate::getcontent('P23');
-        // $content = str_replace($var, $var1, $content1);
-        // $dwa1 = [
-        //     'caseid' => $med->id,
-        //     'contact' => $cldetails->mobile_number,
-        //     'content' => ['text' => $content],
-        //     'casetype' => 1,
-        //     'event' => 'DRCN_ARBTR'
-        // ];
-
-        // $access = Whatsapp::sendWamessage($dwa1);
-
-
-        // print_r($dwa1);
-        // exit;
-
-
-        return redirect('/user/newrequest')->with(['success' => 'Success']);
     }
 
     public function documentUpload(Request $request, $id)
@@ -1293,22 +1297,26 @@ class MediationController extends Controller
 
         if ($selectDocument !== null) {
 
+            $ext = pathinfo($selectDocument->getClientOriginalName(), PATHINFO_EXTENSION);
+            if ($ext == "pdf" || $ext == "zip" || $ext == "rar") {
+                $filename = 'supporting_document' . $med->id . time() . '.' . $selectDocument->getClientOriginalExtension();
+                // dd($filename);
+
+                // $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
+                $savePath = 'mediation_documents/mediation/' . $med->id . '/user/supportingDocument';
+                $finalFilePath = $savePath . '/' . $filename;
+                // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($selectDocument));
+
+                $med->documentPath = $filename;
+                $med->save();
+                return redirect('/user/newrequest')->with(['success' => 'Success']);
+            } else {
+                $errormsg .= "Only Pdf, zip and rar file allowed";
+            }
             // $errormsg .= $request->validate([
             //     'document' => 'mimes:pdf,zip,rar|max:20048',
             // ]);
-
-            $filename = 'supporting_document' . $med->id . time() . '.' . $selectDocument->getClientOriginalExtension();
-            // dd($filename);
-
-            // $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
-            $savePath = 'mediation_documents/mediation/' . $med->id . '/user/supportingDocument';
-            $finalFilePath = $savePath . '/' . $filename;
-            // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
-            Storage::disk('s3')->put($finalFilePath, file_get_contents($selectDocument));
-
-            $med->documentPath = $filename;
-            $med->save();
-            return redirect('/user/newrequest')->with(['success' => 'Success']);
         } else {
             $errormsg .= "Please Select Document";
         }
@@ -1334,7 +1342,7 @@ class MediationController extends Controller
 
         $casescount = MedCase::getCaseCountOngoingUser($searchValue, $role);
         $cases = MedCase::getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role);
-    
+
         $arraydata = array();
 
         foreach ($cases as $key => $value) {
@@ -1354,8 +1362,8 @@ class MediationController extends Controller
 
         // foreach ($new as $key => $value) {
         //     // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
-           
-           
+
+
         //     if (isset($value->casestatus)) {
         //         $value->casestatus->css = '';
 
@@ -1377,7 +1385,6 @@ class MediationController extends Controller
         // }
 
         return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
-
     }
 
     public function NewReq()
@@ -1392,7 +1399,7 @@ class MediationController extends Controller
 
         $casescount = MedCase::getCaseCountNewReqUser($searchValue);
         $cases = MedCase::getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage);
-    
+
         $arraydata = array();
         foreach ($cases as $key => $value) {
 

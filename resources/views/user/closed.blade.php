@@ -505,7 +505,7 @@ use App\Models\InvoledUser;
                     if (data[i] != null) {
                         $('#commentForm .modal-footer').append("<a href=" + urlpdf +
                             "><button type='button' class='btn btn-success' id='DownLoadPdf'>Download Comment</button></a>"
-                            );
+                        );
                     }
                 }
             });
@@ -541,6 +541,11 @@ use App\Models\InvoledUser;
                             });
                             $('#commentForm')[0].reset();
                             $('#commentModal').modal("hide");
+                        },
+                        error: function(data) {
+                            swal(data.responseJSON.errors.comment[0], {
+                                icon: "error",
+                            });
                         }
                     });
                 } else {

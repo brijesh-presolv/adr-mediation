@@ -1768,6 +1768,11 @@
                             }).then(function() {});
                             $('#commentForm')[0].reset();
                             $('#commentModal').modal("hide");
+                        },
+                        error: function(data) {
+                            swal(data.responseJSON.errors.comment[0], {
+                                icon: "error",
+                            });
                         }
                     });
                 } else {

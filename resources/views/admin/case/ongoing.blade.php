@@ -35,8 +35,8 @@
 
                                 {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
                                 <div class="form-group">
-                                    <input type="text" name="type" id="type" placeholder="Type"  
-                                         class="col-md-12 form-control" required="" />
+                                    <input type="text" name="type" id="type" placeholder="Type"
+                                        class="col-md-12 form-control" required="" />
                                 </div>
                                 <div class="form-group">
                                     <input type="file" name="csv" id="fileInput" onchange=""
@@ -73,14 +73,16 @@
                         {{-- {{dd($allUsers)}} --}}
                         <div class="blkfrmdiv" style="width: 100%;">
                             <h3>Upload Courier .zip file</h3>
-                            <p class="text-center">Upload a zip folder containing the PDF named as courier_caseid.pdf (eg: courier_M003214.pdf, courier_M001234.pdf) and the PDF named as (eg: courier_M003214.pdf, courier_M003214_1.pdf ... courier_M003214_20.pdf) for multiple address</p>
+                            <p class="text-center">Upload a zip folder containing the PDF named as courier_caseid.pdf (eg:
+                                courier_M003214.pdf, courier_M001234.pdf) and the PDF named as (eg: courier_M003214.pdf,
+                                courier_M003214_1.pdf ... courier_M003214_20.pdf) for multiple address</p>
                             <form enctype="multipart/form-data" id="myModalbupldCourierzipAdminForm" method="post">
                                 {{ csrf_field() }}
 
                                 {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
                                 <div class="form-group">
-                                    <input type="text" name="type" id="type" placeholder="Type"  
-                                         class="col-md-12 form-control" required="" />
+                                    <input type="text" name="type" id="type" placeholder="Type"
+                                        class="col-md-12 form-control" required="" />
                                 </div>
                                 <div class="form-group">
                                     <input type="file" name="zip" id="fileInput" onchange=""
@@ -1103,7 +1105,7 @@
                     "responsive": true,
                     serverData: function(sSource, aoData, fnCallback, oSettings) {
                         // aoData.append('token',token)
-                        
+
                         oSettings = $.ajax({
                             dataType: "json",
                             type: "post",
@@ -2253,15 +2255,24 @@
                             '_token': csrf
                         },
                     }).done(function(data) {
-                        swal("@lang('case.mediator_assigned_successfully')", {
-                            icon: "success",
-                        });
-                        if (typeof userTable !== "undefined") {
-                            userTable.ajax.reload(null, false);
+                        if (data.response == "success") {
+
+                            swal("@lang('case.mediator_assigned_successfully')", {
+                                icon: "success",
+                            });
+                            if (typeof userTable !== "undefined") {
+                                userTable.ajax.reload(null, false);
+                            } else {
+                                userTablebulk.ajax.reload(null, false);
+                            }
+                            $('#midaterAdd').modal("hide");
                         } else {
-                            userTablebulk.ajax.reload(null, false);
+                            swal("Please Select Mediator", {
+                                icon: "error",
+                            }).then(function() {
+                                location.reload();
+                            });
                         }
-                        $('#midaterAdd').modal("hide");
                     });
                 } else {
                     swal("@lang('case.cansel_confirm_request')");
@@ -2709,6 +2720,11 @@
                                 //    location.reload();
                             });
                             $('#commentModal').modal("hide");
+                        },
+                        error : function(data) {
+                            swal(data.responseJSON.errors.comment[0], {
+                                icon: "error",
+                            });
                         }
                     });
                 } else {

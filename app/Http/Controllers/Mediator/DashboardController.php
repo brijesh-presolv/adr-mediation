@@ -763,6 +763,9 @@ class DashboardController extends Controller
             'files0' => 'required',
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
             // 'docs_party_ids' => 'required',
+        ],
+        [
+            'files0.required' => 'You have to choose the file!',
         ]);
         $inv_id = "";
         if ($request->has('docs_party_ids')) {

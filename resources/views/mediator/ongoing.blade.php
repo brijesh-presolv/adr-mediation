@@ -743,66 +743,80 @@
                 },
                 success: function(result) {
 
-                    ite.push(result);
-                    comp = comp + 1;
-                    prc = Math.round(((comp * 100) / item.total_row));
-                    $('#tto').html(prc);
+                    console.log(result);
 
-                    if (logId == null) {
-                        $("#loading_image").hide();
-                        $("#totalPer").append(
-                            "<h5 class='text-center mt-0'>Total " +
-                            item.total_row +
-                            " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5>"
-                        );
-                    }
+                    if (result.code == 200) {
+                        ite.push(result);
+                        comp = comp + 1;
+                        prc = Math.round(((comp * 100) / item.total_row));
+                        $('#tto').html(prc);
 
-
-                    // if (logId == null) {
-                    //     //$(".loading_image").hide();
-                    //     $("#blkform1_image").html(
-                    //         "<center><h5>Total " +
-                    //         item.total_row +
-                    //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
-                    //     );
-                    // }
-
-                    logId = result.log_id;
-
-
-
-                    if (result.response == "success") {
-                        if (insId == null) {
-                            insId = result.caseid;
-                        } else {
-                            insId = insId + "," + result.caseid;
+                        if (logId == null) {
+                            $("#loading_image").hide();
+                            $("#totalPer").append(
+                                "<h5 class='text-center mt-0'>Total " +
+                                item.total_row +
+                                " Case Selected, <span id='tto'><b>" + prc +
+                                "</span> %</b> Completed.</h5>"
+                            );
                         }
-                        $("#messcc").append(
-                            "<p style='color: green;' class='text-center'>Case ID : M" +
-                            result.caseid.toString().padStart(6, "0") + " Success.</p>"
-                        );
-                        // $("#mess").append(
-                        //     "<center>Case Id A00" + result.caseid + " Success.</center>"
-                        // );
+
+
+                        // if (logId == null) {
+                        //     //$(".loading_image").hide();
+                        //     $("#blkform1_image").html(
+                        //         "<center><h5>Total " +
+                        //         item.total_row +
+                        //         " Case Selected, <span id='tto'><b>" + prc + "</span> %</b> Completed.</h5></center>"
+                        //     );
+                        // }
+
+                        logId = result.log_id;
+
+
+
+                        if (result.response == "success") {
+                            if (insId == null) {
+                                insId = result.caseid;
+                            } else {
+                                insId = insId + "," + result.caseid;
+                            }
+                            $("#messcc").append(
+                                "<p style='color: green;' class='text-center'>Case ID : M" +
+                                result.caseid.toString().padStart(6, "0") + " Success.</p>"
+                            );
+                            // $("#mess").append(
+                            //     "<center>Case Id A00" + result.caseid + " Success.</center>"
+                            // );
+                        } else {
+                            if (failId == null) {
+                                failId = result.caseid;
+                            } else {
+                                failId = failId + "," + result.caseid;
+                            }
+                            $("#messcc").append(
+                                "<p style='color: red;' class='text-center'>Case ID : M" +
+                                result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                            );
+                            // $("#mess").append(
+                            //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
+                            // );
+                        }
+                        var objDiv = document.getElementById("messcc");
+                        // objDiv.scrollTop = objDiv.scrollHeight;
+                        // var objDiv = document.getElementById("mess");
+                        // objDiv.scrollTop = objDiv.scrollHeight;
                     } else {
-                        if (failId == null) {
-                            failId = result.caseid;
-                        } else {
-                            failId = failId + "," + result.caseid;
-                        }
-                        $("#messcc").append(
-                            "<p style='color: red;' class='text-center'>Case ID : M" +
-                            result.caseid.toString().padStart(6, "0") + " Failed.</p>"
+                        $("#loading_image").hide();
+                        $("#messcc").html(
+                            "<p style='color: red;' class='text-center'>" + result.msg + "</p>"
                         );
-                        // $("#mess").append(
-                        //     "<center>Case Id A00" + result.caseid + " Failed.</center>"
-                        // );
+                        // swal(, {
+                        //     icon: "error",
+                        // });
                     }
-                    var objDiv = document.getElementById("messcc");
-                    // objDiv.scrollTop = objDiv.scrollHeight;
-                    // var objDiv = document.getElementById("mess");
-                    // objDiv.scrollTop = objDiv.scrollHeight;
                     deferred.resolve(result);
+
                 },
                 error: function(error) {
                     if (failId == null) {
@@ -958,7 +972,6 @@
                 cache: false,
 
                 success: function(result) {
-
                     ite.push(result);
                     comp = comp + 1;
                     prc = Math.round(((comp * 100) / item.total_row));
@@ -1019,20 +1032,37 @@
                     deferred.resolve(result);
                 },
                 error: function(error) {
-                    if (failId == null) {
-                        failId = item.id;
+                    console.log(error);
+                    if (error.status == 422) {
+                        $("#loading_image").hide();
+
+                        $("#messcc").append(
+                            "<center style='color: red;'>" + error.responseJSON.errors.files0[0] +
+                            "</center>"
+                        );
+
+                        $("#messccclose").html("")
+                        $("#messccclose").html(
+                            '<br><center><a href="{{ route('mediator.ongoing') }}" class="btn btn-danger btn-lg">Close</a></center>'
+                        );
+
                     } else {
-                        failId = failId + "," + item.id;
+                        if (failId == null) {
+                            failId = item.id;
+                        } else {
+                            failId = failId + "," + item.id;
+                        }
+                        $("#messcc").append(
+                            "<center style='color: red;'>Case ID : M" +
+                            item.cid.toString().padStart(6, "0") + " Failed.</center>"
+                        );
+                        $("#mess").append(
+                            "<center>Case Id A00" + error.caseid + " Failed.</center>"
+                        );
+                        var objDiv = document.getElementById("messcc");
+                        objDiv.scrollTop = objDiv.scrollHeight;
                     }
-                    $("#messcc").append(
-                        "<center style='color: red;'>Case ID : M" +
-                        item.cid.toString().padStart(6, "0") + " Failed.</center>"
-                    );
-                    $("#mess").append(
-                        "<center>Case Id A00" + error.caseid + " Failed.</center>"
-                    );
-                    var objDiv = document.getElementById("messcc");
-                    objDiv.scrollTop = objDiv.scrollHeight;
+
                     deferred.reject(error);
                 },
                 complete: function() {
@@ -1580,7 +1610,9 @@
                 },
                 error: function(data) {
                     //alert(data.responseJSON.errors.files[0]);
-                    console.log(data);
+                    swal(data.responseJSON.errors.files0[0], {
+                        icon: "error",
+                    });
                 }
             });
         });
@@ -1672,6 +1704,11 @@
                                 // location.reload();
                             });
                             $('#commentModal').modal("hide");
+                        },
+                        error: function(data) {
+                            swal(data.responseJSON.errors.comment[0], {
+                                icon: "error",
+                            });
                         }
                     });
                 } else {
@@ -1704,15 +1741,23 @@
 
                             });
                         },
-                        success: function() {
+                        success: function(data) {
                             // alert('form was submitted');
-                            userTable.ajax.reload();
-                            swal("status change successfully!", {
-                                icon: "success",
-                            }).then(function() {
-                                location.reload();
-                            });
-                            $('#withdrawModal').modal("hide");
+                            var result = $.parseJSON(data);
+                            if (result.code == 200) {
+                                userTable.ajax.reload();
+                                swal("status change successfully!", {
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                                $('#withdrawModal').modal("hide");
+                            } else {
+                                swal(result.msg, {
+                                    icon: "error",
+                                });
+                            }
+
                         }
                     });
                 } else {
