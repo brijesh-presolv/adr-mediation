@@ -216,7 +216,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     //cases bulk upload
     Route::post('cases/bulkupload', [App\Http\Controllers\Admin\CaseController::class, 'bulkUpload'])->name('admin.bulkUpload');
-    Route::put('uploaddocument', [App\Http\Controllers\Admin\CaseController::class, 'documentUpload'])->name('admin.documentUpload');
+    Route::post('uploaddocument', [App\Http\Controllers\Admin\CaseController::class, 'documentUpload'])->name('admin.documentUpload');
 
     // Courier CSV Upload
     Route::post('cases/courier_csv_upload', [App\Http\Controllers\Admin\CaseController::class, 'CourierCSVUpload'])->name('admin.case.CourierCSVUpload');

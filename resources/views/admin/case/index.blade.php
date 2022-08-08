@@ -86,7 +86,7 @@
                             <h3>Upload Document</h3>
                             <form enctype="multipart/form-data" method="post" id="UploadDocumentForm">
                                 {{ csrf_field() }}
-                                <input type="hidden" name="userid" class="form-control" id="recipientUserid">
+                                <input type="hidden" name="caseid" class="form-control" id="recipientCaseid">
 
                                 <div class="form-group">
                                     <input type="file" name="fileupload" id="fileInput" onchange=""
@@ -157,7 +157,7 @@
                         <thead>
                             <tr>
                                 <th>@lang('case.serial_number')</th>
-                                <th>Select</th>
+                                {{-- <th>Select</th> --}}
                                 <th>@lang('case.case_id')</th>
                                 <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
@@ -218,7 +218,7 @@
                         <thead>
                             <tr>
                                 <th>@lang('case.serial_number')</th>
-                                <th>Select</th>
+                                {{-- <th>Select</th> --}}
                                 <th>@lang('case.case_id')</th>
                                 <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
@@ -509,22 +509,19 @@
             "columns": [
 
                 {
-                    "data": "key"
-                },
-                {
-                    "data": "case",
+                    "data": "key",
                     render: function(data, type, row) {
-                        var button = "";
+                        var button = `<span style="margin-right: 1em;">` + data + `</span>`;
                         if (row.party.length == 0) {
                             button = button +
                                 `<input type="checkbox" disabled class="blkchkbulk" id="blkchkbulk" data-caseid="` +
-                                data
+                                row.case
                                 .id +
                                 `">`;
                         } else {
                             button = button +
                                 `<input type="checkbox" class="blkchkbulk" id="blkchkbulk" data-caseid="` +
-                                data
+                                row.case
                                 .id +
                                 `">`;
                         }
@@ -532,6 +529,27 @@
                         return button;
                     }
                 },
+                // {
+                //     "data": "case",
+                //     render: function(data, type, row) {
+                //         var button = "";
+                //         if (row.party.length == 0) {
+                //             button = button +
+                //                 `<input type="checkbox" disabled class="blkchkbulk" id="blkchkbulk" data-caseid="` +
+                //                 data
+                //                 .id +
+                //                 `">`;
+                //         } else {
+                //             button = button +
+                //                 `<input type="checkbox" class="blkchkbulk" id="blkchkbulk" data-caseid="` +
+                //                 data
+                //                 .id +
+                //                 `">`;
+                //         }
+
+                //         return button;
+                //     }
+                // },
                 {
                     "data": "case.id",
                     render: function(data) {
@@ -699,28 +717,47 @@
                     "columns": [
 
                         {
-                            "data": "key"
-                        },
-                        {
-                            "data": "case",
+                            "data": "key",
                             render: function(data, type, row) {
-                                var button = "";
+                                var button = `<span style="margin-right: 1em;">` + data + `</span>`;
                                 if (row.party.length == 0) {
                                     button = button +
                                         `<input type="checkbox" disabled class="blkchk" id="blkchk" data-caseid="` +
-                                        data
+                                        row.case
                                         .id +
                                         `">`;
                                 } else {
                                     button = button +
                                         `<input type="checkbox" class="blkchk" id="blkchk" data-caseid="` +
-                                        data
+                                        row.case
                                         .id +
                                         `">`;
                                 }
+
                                 return button;
                             }
                         },
+
+                        // {
+                        //     "data": "case",
+                        //     render: function(data, type, row) {
+                        //         var button = "";
+                        //         if (row.party.length == 0) {
+                        //             button = button +
+                        //                 `<input type="checkbox" disabled class="blkchk" id="blkchk" data-caseid="` +
+                        //                 data
+                        //                 .id +
+                        //                 `">`;
+                        //         } else {
+                        //             button = button +
+                        //                 `<input type="checkbox" class="blkchk" id="blkchk" data-caseid="` +
+                        //                 data
+                        //                 .id +
+                        //                 `">`;
+                        //         }
+                        //         return button;
+                        //     }
+                        // },
                         {
                             "data": "case.id",
                             render: function(data) {
@@ -805,17 +842,24 @@
                                 if (data.documentPath != 'NULL' && data.documentPath != '' && data
                                     .documentPath !=
                                     null) {
-                                    d = d + `<p  class="btn btn-success btn-sm">` + data
-                                        .documentPath + `</p>`;
+                                    d = d + `<a href='javascript:void(0);'  data-folder='user/supportingDocument'
+                                        data-url='` + data.documentPath + `'
+                                        data-id='` + data.id + `'
+                                        class='btn btn-success btn-sm secureDownload' 
+                                        >View</a>`;
                                 } else {
-                                    d = d + `<form action="{{ url('admin/uploaddocument/') }}/` +
-                                        data.id + `"  method="post" enctype="multipart/form-data">
-                                            @csrf
-                                            @method('PUT')
-                                            <input  class="form-control dropify" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
-                                            <p>*Only Pdf zip and rar file allowed</p>
-                                            <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
-                                            </form>`;
+                                    d = d +
+                                        `<button class="btn btn-primary btn-sm" data-id="` + data
+                                        .id +
+                                        `" data-target="#documentUpload" id="fordocumentupload" data-toggle="modal">Upload</button>`;
+                                    // d = d + `<form action="{{ url('admin/uploaddocument/') }}/` +
+                                    //     data.id + `"  method="post" enctype="multipart/form-data">
+                                //         @csrf
+                                //         @method('PUT')
+                                //         <input  class="form-control dropify" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
+                                //         <p>*Only Pdf zip and rar file allowed</p>
+                                //         <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
+                                //         </form>`;
                                 }
                                 // }
 
@@ -2410,7 +2454,7 @@
             var button = $(event.relatedTarget) // Button that triggered the modal
             var recipient = button.data('id') // Extract info from data-* attributes
             var modal = $(this);
-            modal.find('#recipientUserid').val(recipient);
+            modal.find('#recipientCaseid').val(recipient);
 
         });
 
@@ -2427,8 +2471,8 @@
                 if (willDelete) {
                     $.ajax({
                         url: '{{ route('admin.documentUpload') }}',
-                        method: "put",
-                        data:  new FormData(this),
+                        method: "post",
+                        data: new FormData(this),
                         contentType: false,
                         processData: false,
                         beforeSend: function() {
@@ -2440,49 +2484,68 @@
                             });
                         },
                         success: function(data) {
+                            // console.log(data);
+                            var result = $.parseJSON(data);
 
+                            if (result.response == "success") {
+                                swal("Successfully upload file", {
+                                    icon: "success",
+                                });
+                                if (typeof userTable !== "undefined") {
+                                    userTable.ajax.reload(null, false);
+                                } else {
+                                    userTableBulk.ajax.reload(null, false);
+                                }
+                                $('#UploadDocumentForm')[0].reset();
+                                $(".dropify-clear").trigger("click");
+                                $("#documentUpload").modal("hide");
+                            } else {
+                                swal(result.msg, {
+                                    icon: "error",
+                                });
+                            }
                         }
                     });
-                        // if (data.response == "success") {
+                    // if (data.response == "success") {
 
-                        //     swal("@lang('case.mediator_assigned_successfully')", {
-                        //         icon: "success",
-                        //     });
-                        //     $.ajax({
-                        //         url: '{{ route('admin.case.confirm_status') }}',
-                        //         method: "post",
-                        //         data: {
-                        //             id: id,
-                        //             '_token': csrf
-                        //         },
-                        //         beforeSend: function() {
-                        //             swal({
-                        //                 title: 'Loading...',
-                        //                 showConfirmButton: false,
-                        //                 buttons: false,
+                    //     swal("@lang('case.mediator_assigned_successfully')", {
+                    //         icon: "success",
+                    //     });
+                    //     $.ajax({
+                    //         url: '{{ route('admin.case.confirm_status') }}',
+                    //         method: "post",
+                    //         data: {
+                    //             id: id,
+                    //             '_token': csrf
+                    //         },
+                    //         beforeSend: function() {
+                    //             swal({
+                    //                 title: 'Loading...',
+                    //                 showConfirmButton: false,
+                    //                 buttons: false,
 
-                        //             });
-                        //         },
-                        //     }).done(function(data) {
-                        //         if (typeof userTable !== "undefined") {
-                        //             userTable.ajax.reload(null, false);
-                        //         } else {
-                        //             userTableBulk.ajax.reload(null, false);
-                        //         }
-                        //         swal("@lang('case.confirm_successfully')", {
-                        //             icon: "success",
-                        //         }).then(function() {
-                        //             location.reload();
-                        //         });
-                        //     });
-                        //     //userTableBulk.ajax.reload();
-                        //     $('#midaterAdd').modal("hide");
-                        // } else {
-                        //     swal("Please Select Mediator", {
-                        //         icon: "error",
-                        //     });
-                        // }
-                
+                    //             });
+                    //         },
+                    //     }).done(function(data) {
+                    //         if (typeof userTable !== "undefined") {
+                    //             userTable.ajax.reload(null, false);
+                    //         } else {
+                    //             userTableBulk.ajax.reload(null, false);
+                    //         }
+                    //         swal("@lang('case.confirm_successfully')", {
+                    //             icon: "success",
+                    //         }).then(function() {
+                    //             location.reload();
+                    //         });
+                    //     });
+                    //     //userTableBulk.ajax.reload();
+                    //     $('#midaterAdd').modal("hide");
+                    // } else {
+                    //     swal("Please Select Mediator", {
+                    //         icon: "error",
+                    //     });
+                    // }
+
                 } else {
                     swal("@lang('case.cansel_confirm_request')");
                 }

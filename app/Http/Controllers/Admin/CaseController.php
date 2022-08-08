@@ -2838,12 +2838,11 @@ class CaseController extends Controller
     public function documentUpload(Request $request)
     {
 
-        dd("hello");
-        $selectDocument = $request->file('document');
+        $selectDocument = $request->file('fileupload');
 
         $errormsg = '';
 
-        $med = MedCase::find($id);
+        $med = MedCase::find($request->caseid);
 
         if ($selectDocument !== null) {
 
@@ -2853,6 +2852,8 @@ class CaseController extends Controller
 
             if ($ext != 'pdf' && $ext != 'zip' && $ext != 'rar') {
                 $errormsg .= 'Please upload pdf, rar and zip file';
+                return json_encode(['code' => 200, 'response' => 'error', 'msg' => $errormsg]);
+                exit;
             } else {
                 $filename = 'supporting_document' . $med->id . time() . '.' . $selectDocument->getClientOriginalExtension();
                 // dd($filename);
@@ -2863,7 +2864,8 @@ class CaseController extends Controller
                 // $path = $request->file('document')->storeAs('public/mediation/' . $med->id . '/', $filename);
                 $med->documentPath = $filename;
                 $med->save();
-                return redirect('/admin/case/new-request')->with(['success' => 'Success']);
+                // return redirect('/admin/case/new-request')->with(['success' => 'Success']);
+                return json_encode(['code' => 200, 'response' => 'success']);
             }
             // $errormsg .= $request->validate([
             //     'document' => 'mimes:pdf,zip,rar|max:20048',
@@ -2872,14 +2874,16 @@ class CaseController extends Controller
 
         } else {
             $errormsg .= "Please Select Document";
+            return json_encode(['code' => 200, 'response' => 'error', 'msg' => $errormsg]);
+            exit;
         }
 
-        if ($errormsg != '') {
+        // if ($errormsg != '') {
 
-            return redirect('/admin/case/new-request')->with(['error' => $errormsg]);
+        //     return redirect('/admin/case/new-request')->with(['error' => $errormsg]);
 
-            exit();
-        }
+        //     exit();
+        // }
     }
 
     public function track($id)
