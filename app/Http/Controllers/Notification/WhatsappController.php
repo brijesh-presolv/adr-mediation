@@ -69,9 +69,72 @@ class WhatsappController extends Controller
     public function send()
     {
 
+        // $limit = 500;
+
+        // $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0])->orderBy('created_at', 'DESC')->limit($limit)->get();
+
+        // if (count($whapps) < 1) {
+        //     exit();
+        // }
+
+
+        // $whappspr = [];
+
+        // foreach ($whapps as $key => $value) {
+
+        //     $whappspr[] = $value->id;
+        // }
+
+
+
+        // $setprocess = WhatsAppQue::whereIn('id', $whappspr)->limit($limit)->update(['is_processing' => 1]);
+
+
+        // foreach ($whapps as $key => $value) {
+
+        //     $content = json_decode($value->content, true);
+
+        //     $oldcontent = '';
+
+
+        //     if ($value->media == 1) {
+
+        //         $oldcontent = $content;
+
+
+
+        //         $contenturl = parse_url($content['media']['url'])["path"];
+
+        //         $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 1);
+
+        //         if (!file_get_contents($content['media']['url'])) {
+        //             continue;
+        //         }
+        //     }
+
+
+
+
+        //     $d = [
+        //         'id' => $value->id,
+        //         'event' => $value->event,
+        //         'caseid' => $value->caseid,
+        //         'type' => $value->casetype,
+        //         'content' => $content,
+        //         'oldcontent' => $oldcontent,
+        //     ];
+
+
+
+        //     $r = self::sendwhapp($d, $value->contact);
+        // }
+
         $limit = 500;
 
         $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0])->orderBy('created_at', 'DESC')->limit($limit)->get();
+
+
+        // dd($whapps);
 
         if (count($whapps) < 1) {
             exit();
@@ -96,6 +159,29 @@ class WhatsappController extends Controller
 
             $oldcontent = '';
 
+            // $trimdata = preg_replace("/\r|\n/", "", $content['text']);
+
+            // dd($trimdata);
+
+            $findname = WaTemplate::get();
+            $tempname = "";
+            if (isset($content['text'])) {
+                foreach ($findname as $data) {
+                    // $trimdatatable = preg_replace("/\r|\n/", "", $value->content);
+                    // dd($trimdatatable);
+                    similar_text($content['text'], $data->content, $percent);
+                    // dd($percent);
+                    if ($percent > 90) {
+                        $tempname = $data->name;
+                    }
+                }
+            }
+
+            $vararray = [];
+            $convertarray = json_decode($value->variable, true);
+            foreach($convertarray as $var) {
+                $vararray[] = $var;
+            }
 
             if ($value->media == 1) {
 
@@ -112,21 +198,18 @@ class WhatsappController extends Controller
                 }
             }
 
-
-
-
             $d = [
                 'id' => $value->id,
                 'event' => $value->event,
-                'caseid' => $value->caseid,
-                'type' => $value->casetype,
+                'tempname' => $tempname,
+                'varbody' => $vararray,
                 'content' => $content,
                 'oldcontent' => $oldcontent,
+                'type' => $value->casetype,
+                'caseid' => $value->caseid,
             ];
-
-
-
-            $r = self::sendwhapp($d, $value->contact);
+            
+            self::NewWhatsappMessage($d, $value->contact);
         }
     }
 
