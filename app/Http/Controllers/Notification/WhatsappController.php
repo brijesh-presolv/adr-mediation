@@ -9,106 +9,128 @@ use App\Http\Helpers\Curl;
 use App\Models\WhatsappTrack;
 use App\Http\Traits\UploadTrait;
 use App\Models\System;
+use App\Models\WaTemplate;
 use App\Models\WhatsAppQue;
 
 class WhatsappController extends Controller
-{ 
+{
 
     use UploadTrait;
 
 
 
-      public function __construct()
+    public function __construct()
     {
-
-
-        
     }
 
+    public function que_changes()
+    {
+        $temp = WaTemplate::get();
+        foreach ($temp as $data) {
+            $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => null])->limit(1000)->get();
+            // $per = [];
+            foreach ($que as $value) {
+                if ($value->media != 1) {
+                    $check = json_decode($value->content, true);
+                    similar_text($check['text'], $data->content, $percent);
+                    if ($percent > 90) {
+                        // dd("if");
+                        if ($data->haptik_tmp != "") {
+                            $value->haptik_tmp = $data->haptik_tmp;
+                            $value->save();
+                        }
+                    }
+                } else {
+                    $value->haptik_tmp = "mediation_consent_doc";
+                    $value->save();
+                }
+            }
+            // dd($per);
+        }
+        echo "success";
+    }
 
-    public function send(){
+    public function send()
+    {
 
-        $limit=500;
+        $limit = 500;
 
-        $whapps=WhatsAppQue::where(['is_sent'=>0,'is_processing'=>0])->orderBy('created_at','DESC')->limit($limit)->get();
+        $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0])->orderBy('created_at', 'DESC')->limit($limit)->get();
 
-        if(count($whapps)<1){
+        if (count($whapps) < 1) {
             exit();
         }
 
 
-        $whappspr=[];
+        $whappspr = [];
 
         foreach ($whapps as $key => $value) {
-            
-            $whappspr[]=$value->id;
 
+            $whappspr[] = $value->id;
         }
 
 
 
-     $setprocess=WhatsAppQue::whereIn('id', $whappspr)->limit($limit)->update(['is_processing' => 1]);
+        $setprocess = WhatsAppQue::whereIn('id', $whappspr)->limit($limit)->update(['is_processing' => 1]);
 
 
-      foreach ($whapps as $key => $value) {
+        foreach ($whapps as $key => $value) {
 
-        $content=json_decode($value->content,true);
+            $content = json_decode($value->content, true);
 
-        $oldcontent='';
+            $oldcontent = '';
 
 
-            if($value->media==1){
+            if ($value->media == 1) {
 
-                $oldcontent=$content;
+                $oldcontent = $content;
 
-                  
 
-                  $contenturl=parse_url($content['media']['url'])["path"];
 
-                  $content['media']['url']=$this->getPreSignedUrl(urldecode($contenturl),1);
+                $contenturl = parse_url($content['media']['url'])["path"];
 
-                  if(!file_get_contents($content['media']['url'])){
+                $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 1);
+
+                if (!file_get_contents($content['media']['url'])) {
                     continue;
-                  }
-
-
+                }
             }
 
 
-            
-            
+
+
             $d = [
-                        'id'=>$value->id,
-                    'event' => $value->event,
-                    'caseid' => $value->caseid,
-                    'type' => $value->casetype,
-                    'content'=>$content,
-                    'oldcontent'=>$oldcontent,
-                ];
+                'id' => $value->id,
+                'event' => $value->event,
+                'caseid' => $value->caseid,
+                'type' => $value->casetype,
+                'content' => $content,
+                'oldcontent' => $oldcontent,
+            ];
 
-                
 
-                $r=self::sendwhapp($d,$value->contact);
 
-      }
+            $r = self::sendwhapp($d, $value->contact);
+        }
     }
 
 
-    public function sendwhapp($d,$c){
+    public function sendwhapp($d, $c)
+    {
 
 
 
-        $url = System::select('value')->where(['name'=>'WHATSAPP_URL'])->first()->value;
+        $url = System::select('value')->where(['name' => 'WHATSAPP_URL'])->first()->value;
 
         //sandbox testing
-        $auth=base64_encode(System::select('value')->where(['name'=>'WHATSAPP_KEY'])->first()->value);
+        $auth = base64_encode(System::select('value')->where(['name' => 'WHATSAPP_KEY'])->first()->value);
 
         //for live number
         //$auth = base64_encode(WAUTH);
 
-        $whsource=System::select('value')->where(['name'=>'WHATSAPP_SOURCE'])->first()->value;
+        $whsource = System::select('value')->where(['name' => 'WHATSAPP_SOURCE'])->first()->value;
 
-        $wheventurl=System::select('value')->where(['name'=>'WHATSAPP_EVENT_URL'])->first()->value;
+        $wheventurl = System::select('value')->where(['name' => 'WHATSAPP_EVENT_URL'])->first()->value;
 
 
         $data = [
@@ -124,15 +146,15 @@ class WhatsappController extends Controller
 
         $data = json_encode($data);
 
-       
+
 
         $type = "POST";
 
-      
+
         $res = Curl::request($url, $data, $type, $auth);
 
 
-    
+
         $res1 = json_decode($res, true);
 
 
@@ -178,17 +200,14 @@ class WhatsappController extends Controller
                 WhatsappTrack::insert($data2);
             }
 
-            $que=WhatsAppQue::where(['is_sent'=>0,'is_processing'=>1,'id'=>$d['id']])->update(['is_processing' => 0,'is_sent'=>1]);;
+            $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);;
 
-        
+
 
             return true;
         } else {
-            
+
             return false;
         }
-
-
-
     }
 }
