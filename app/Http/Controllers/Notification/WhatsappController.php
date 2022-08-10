@@ -27,7 +27,7 @@ class WhatsappController extends Controller
     {
         $temp = WaTemplate::get();
         foreach ($temp as $data) {
-            $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => null])->limit(1000)->get();
+            $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => null])->get();
             // $per = [];
             foreach ($que as $value) {
                 if ($value->media != 1) {
