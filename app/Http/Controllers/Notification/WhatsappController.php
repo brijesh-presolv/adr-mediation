@@ -37,7 +37,7 @@ class WhatsappController extends Controller
                         // dd("if");
                         // if ($data->haptik_tmp != "") {
                             $value->haptik_tmp = $data->haptik_tmp;
-                            dd($value->save(), $value->id);
+                            $value->save();
                         // }
                     }
                 } else {
