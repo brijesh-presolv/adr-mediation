@@ -97,7 +97,7 @@ class WhatsappStatus extends Controller
                 $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
             }
             if ($value->userPhone != null) {
-                $varjson = ['caseid' => "M" . sprintf("%06d", $value->userPlanId), 'initiating' => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name];
+                $varjson = ['initiating' => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name, 'caseid' => "M" . sprintf("%06d", $value->userPlanId)];
                 $var = ['-cid-', '-ip-'];
                 $var1 = ["M" . sprintf("%06d", $value->userPlanId), ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name];
                 $content1 = WaTemplate::getcontent('l4_mediation_party2');

@@ -26,7 +26,8 @@ class WhatsappController extends Controller
     public function que_changes()
     {
 
-        $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => ""])->get();
+        $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => "", 'event' => "ACPTARB_ADM_RES"])->get();
+        // dd($que);
         // $que = WhatsAppQue::where('id', 1)->get();
         foreach($que as $value) {
             $var = json_decode($value->variable, true); 
