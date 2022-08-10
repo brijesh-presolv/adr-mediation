@@ -1879,7 +1879,7 @@ class CaseController extends Controller
         // dd($responding_phone);
         foreach ($responding_phone as $phone) {
             if ($phone != "") {
-                $varjson = ['caseid' => "M" . sprintf("%06d", $id), "initiating" => $initiating_party];
+                $varjson = ["initiating" => $initiating_party,'caseid' => "M" . sprintf("%06d", $id)];
                 $var = ['-cid-', '-ip-'];
                 $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
                 $content1 = WaTemplate::getcontent('l4_mediation_party2');

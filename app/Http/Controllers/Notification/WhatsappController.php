@@ -114,6 +114,92 @@ class WhatsappController extends Controller
         }
     }
 
+    public function NewWhatsappMessage($d, $c)
+    {
+        $url = "https://api.interakt.ai/v1/public/message/";
+       
+        if (isset($d['varheader'])) {
+            dd("if");
+        } else {
+            $data = [
+                "countryCode" => "+91",
+                "phoneNumber" => $c,
+                "type" => "Template",
+                "template" => [
+                    "name" => $d['tempname'],
+                    "languageCode" => "en",
+                    "bodyValues" => $d['varbody']
+                ]
+            ];
+        }
+
+        // $data = '{
+        //     "countryCode": "+91",
+        //     "phoneNumber": "' . $phone . '",
+        //     "type": "Template",
+        //     "template": {
+        //         "name": "' . $temname . '",
+        //         "languageCode": "en",
+        //         "bodyValues": ' . $varbody . '
+        //     }
+        // }';
+        $type = "POST";
+        $auth = env('INTERAKT_KEY');
+
+        $res = Curl::NewWhatsappRequest($url, json_encode($data), $type, $auth);
+        $resjson = json_decode($res);
+
+        if ($resjson) {
+
+            if (array_key_exists('text', $d['content'])) {
+
+
+                $data1 = [
+
+                    'caseid' => $d['caseid'],
+                    'contact' => $c,
+                    'content' => implode(" ", str_replace(['‘', '’'], ['::', ';;'], $d['content'])),
+                    'casetype' => $d['type'],
+                    'event' => $d['event'],
+                    'request_uuid' => isset($resjson->id) ? $resjson->id : "",
+                    'credits_charged' => '0',
+                    'full_resp' => $res,
+                    'created_at' => date('Y-m-d H:i:s')
+
+
+                ];
+
+                WhatsappTrack::insert($data1);
+            } else {
+
+                $data2 = [
+
+                    'caseid' => $d['caseid'],
+                    'contact' => $c,
+                    'content' => "",
+                    'media' => $d['oldcontent']['media']['url'],
+                    'casetype' => $d['type'],
+                    'event' => $d['event'],
+                    'request_uuid' => isset($resjson->id) ? $resjson->id : "",
+                    'credits_charged' => '0',
+                    'full_resp' => $res,
+                    'created_at' => date('Y-m-d H:i:s')
+                ];
+
+                WhatsappTrack::insert($data2);
+            }
+
+            $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);;
+
+
+
+            return true;
+        } else {
+
+            return false;
+        }
+    }
+
 
     public function sendwhapp($d, $c)
     {
