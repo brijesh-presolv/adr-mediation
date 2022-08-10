@@ -25,28 +25,43 @@ class WhatsappController extends Controller
 
     public function que_changes()
     {
-        $temp = WaTemplate::get();
-        foreach ($temp as $data) {
-            $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => null])->get();
-            // $per = [];
-            foreach ($que as $value) {
-                if ($value->media != 1) {
-                    $check = json_decode($value->content, true);
-                    similar_text($check['text'], $data->content, $percent);
-                    if ($percent > 90) {
-                        // dd("if");
-                        // if ($data->haptik_tmp != "") {
-                            $value->haptik_tmp = $data->haptik_tmp;
-                            $value->save();
-                        // }
-                    }
-                } else {
-                    $value->haptik_tmp = "mediation_consent_doc";
-                    $value->save();
-                }
-            }
-            // dd($per);
+
+        $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => ""])->get();
+        // $que = WhatsAppQue::where('id', 1)->get();
+        foreach($que as $value) {
+            $var = json_decode($value->variable, true); 
+
+
+            $update = array_reverse($var, true);
+
+            $value->variable = json_encode($update); 
+
+            $value->haptik_tmp = "L4_mediation_party2";
+
+            $value->save();
         }
+        // $temp = WaTemplate::get();
+        // foreach ($temp as $data) {
+        //     $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => null])->get();
+        //     // $per = [];
+        //     foreach ($que as $value) {
+        //         if ($value->media != 1) {
+        //             $check = json_decode($value->content, true);
+        //             similar_text($check['text'], $data->content, $percent);
+        //             if ($percent > 90) {
+        //                 // dd("if");
+        //                 // if ($data->haptik_tmp != "") {
+        //                     $value->haptik_tmp = $data->haptik_tmp;
+        //                     $value->save();
+        //                 // }
+        //             }
+        //         } else {
+        //             $value->haptik_tmp = "mediation_consent_doc";
+        //             $value->save();
+        //         }
+        //     }
+        //     // dd($per);
+        // }
         echo "success";
     }
 
