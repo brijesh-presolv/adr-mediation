@@ -35,10 +35,10 @@ class WhatsappController extends Controller
                     similar_text($check['text'], $data->content, $percent);
                     if ($percent > 90) {
                         // dd("if");
-                        if ($data->haptik_tmp != "") {
+                        // if ($data->haptik_tmp != "") {
                             $value->haptik_tmp = $data->haptik_tmp;
                             $value->save();
-                        }
+                        // }
                     }
                 } else {
                     $value->haptik_tmp = "mediation_consent_doc";
