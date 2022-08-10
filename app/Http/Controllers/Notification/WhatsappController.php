@@ -209,7 +209,7 @@ class WhatsappController extends Controller
                 'caseid' => $value->caseid,
             ];
             
-            self::NewWhatsappMessage($d, $value->contact);
+            self::NewWhatsappMessage($d, str_replace('+91', '',$value->contact));
         }
     }
 
@@ -219,6 +219,7 @@ class WhatsappController extends Controller
        
         if (isset($d['varheader'])) {
             dd("if");
+
         } else {
             $data = [
                 "countryCode" => "+91",
