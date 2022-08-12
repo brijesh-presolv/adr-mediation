@@ -210,14 +210,14 @@ class DashboardController extends Controller
                 $consentDisclosures->consent5 = ($request->consent5 != null) ? $request->consent5 : $request->fsData['consent5'];
                 $consentDisclosures->particulars1 = ($request->particulars1 != null) ? $request->particulars1 : $request->fsData['particulars1'];
                 $consentDisclosures->particulars2 = ($request->particulars2 != null) ? $request->particulars2 : $request->fsData['particulars2'];
-                $consentDisclosures->particulars3 = ($request->particulars3 != null) ? $request->particulars3 : $request->fsData['particulars3'] ;
+                $consentDisclosures->particulars3 = ($request->particulars3 != null) ? $request->particulars3 : $request->fsData['particulars3'];
                 $consentDisclosures->particulars4 = ($request->particulars4 != null) ? $request->particulars4 : $request->fsData['particulars4'];
             } else {
                 $consentDisclosures->mediation_case_id = $caseid;
                 $consentDisclosures->mediator_id = Auth::user()->id;
                 $consentDisclosures->consent1 = ($request->consent1 != null) ? $request->consent1 : $request->fsData['consent1'];
                 $consentDisclosures->consent2 = ($request->consent2 != null) ? $request->consent2 : $request->fsData['consent2'];
-                $consentDisclosures->consent3 =($request->consent3 != null) ? $request->consent3 : $request->fsData['consent3'];
+                $consentDisclosures->consent3 = ($request->consent3 != null) ? $request->consent3 : $request->fsData['consent3'];
                 $consentDisclosures->consent4 = ($request->consent4 != null) ? $request->consent4 : $request->fsData['consent4'];
                 $consentDisclosures->consent5 = ($request->consent5 != null) ? $request->consent5 : $request->fsData['consent5'];
                 $consentDisclosures->particulars1 = ($request->particulars1 != null) ? $request->particulars1 : $request->fsData['particulars1'];
@@ -238,7 +238,7 @@ class DashboardController extends Controller
             if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                 $success_log = BulkLog::find($_POST['log_id']);
 
-                
+
                 if ($success_log->inserted_row == null) {
                     $success_log->inserted_row = $request->mediation_case_id;
                     $success_log->save();
@@ -350,7 +350,7 @@ class DashboardController extends Controller
             if ($mediator) {
                 $id = "M" . sprintf("%06d", $request->caseId);
                 SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
-                
+
                 $varjson = ['sessionDteaTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
                 $var = ['-dt-', '-cid-', '-link-'];
                 $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
@@ -362,6 +362,8 @@ class DashboardController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SESS_SCHE',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l10_session_schedule',
+
                 ];
 
                 // print_r($dwa1);
@@ -383,9 +385,9 @@ class DashboardController extends Controller
                     ]);
                     $log_id = $log->id;
                     Common_function::MedNotification($_POST['allcids'], "SESS_SCHE_MED", Auth::user()->id, Auth::user()->id, null);
-                } 
+                }
             }
-            
+
             $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
             $party_ids = array();
             foreach ($allParty as $party) {
@@ -421,6 +423,8 @@ class DashboardController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SESS_SCHE',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l10_session_schedule',
+
 
                 ];
 
@@ -428,35 +432,35 @@ class DashboardController extends Controller
                 // exit;
                 $access = Whatsapp::sendWamessage($dwa1);
             }
-            if($manage_session){
+            if ($manage_session) {
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                     $success_log = BulkLog::find($_POST['log_id']);
                     // dd($success_log);
-    
+
                     if ($success_log->inserted_row == null) {
                         $success_log->inserted_row = $request->caseId;
                         $success_log->save();
                     } else {
                         if (isset($_POST['insertRow'])) {
-    
+
                             $insert_row = $_POST['insertRow'] . "," . $request->caseId;
                             // dd(json_encode(explode(',', $insert_row)));
                             $success_log->inserted_row = json_encode(explode(',', $insert_row));
                             $success_log->save();
                         }
                     }
-    
+
                     return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
                 } else if (isset($log_id)) {
                     $success_log = BulkLog::find($log_id);
                     // dd($success_log);
-    
+
                     if ($success_log->inserted_row == null) {
                         $success_log->inserted_row = $request->caseId;
                         $success_log->save();
                     } else {
                         if (isset($_POST['insertRow'])) {
-    
+
                             $insert_row = $_POST['insertRow'] . "," . $request->caseId;
                             // dd(json_encode(explode(',', $insert_row)));
                             $success_log->inserted_row = json_encode(explode(',', $insert_row));
@@ -467,8 +471,7 @@ class DashboardController extends Controller
                 } else {
                     return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
                 }
-    
-            }else{
+            } else {
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                     $faild_log = BulkLog::find($_POST['log_id']);
                     if ($faild_log->failed_row == null) {
@@ -476,7 +479,7 @@ class DashboardController extends Controller
                         $faild_log->save();
                     } else {
                         if (isset($_POST['faildRow'])) {
-    
+
                             $faild_row = $_POST['faildRow'] . "," . $request->id;
                             // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
                             $faild_log->failed_row = json_encode(explode(',', $faild_row));
@@ -491,7 +494,7 @@ class DashboardController extends Controller
                         $faild_log->save();
                     } else {
                         if (isset($_POST['faildRow'])) {
-    
+
                             $faild_row = $_POST['faildRow'] . "," . $request->caseId;
                             // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
                             $faild_log->failed_row = json_encode(explode(',', $faild_row));
@@ -502,11 +505,9 @@ class DashboardController extends Controller
                 } else {
                     return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
                 }
-    
             }
-            
         }
-        
+
 
         return true;
     }
@@ -584,16 +585,16 @@ class DashboardController extends Controller
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
             // echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</td>";
-            if(file_exists("storage/app/" . $value->file_name)) {
+            if (file_exists("storage/app/" . $value->file_name)) {
                 // dd("hello");
                 echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_name) . "' target='_blank'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</a></td>";
             } else {
                 // dd("else");
                 echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='supportingDocument'
-                data-url='".$value->file_name."'
-                data-id='".$request->id."'
-                class='secureDownload' 
-                data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_name, PATHINFO_FILENAME) ."</a></td>";
+                data-url='" . $value->file_name . "'
+                data-id='" . $request->id . "'
+                class='secureDownload'
+                data-userid='" . Auth::user()->id . "'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</a></td>";
             }
             echo "<td>" . $value->username . "</td>";
             echo "</tr>";
@@ -621,16 +622,16 @@ class DashboardController extends Controller
             echo "<tr>";
             echo "<td>" . $sn . "</td>";
             // echo "<td><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</td>";
-            if(file_exists("storage/app/" . $value->file_path)) {
+            if (file_exists("storage/app/" . $value->file_path)) {
                 // dd("hello");
                 echo "<td style='word-break: break-word;'><a href='" . url("storage/app/" . $value->file_path) . "' target='_blank'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</a></td>";
             } else {
                 // dd("else");
                 echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='settelmentDocument'
-                data-url='".$value->file_path."'
-                data-id='".$request->id."'
-                class='secureDownload' 
-                data-userid='" . Auth::user()->id . "'>". pathinfo($value->file_path, PATHINFO_FILENAME) ."</a></td>";
+                data-url='" . $value->file_path . "'
+                data-id='" . $request->id . "'
+                class='secureDownload'
+                data-userid='" . Auth::user()->id . "'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</a></td>";
             }
             echo "<td>" . $value->username . "</td>";
             echo "</tr>";
@@ -820,40 +821,40 @@ class DashboardController extends Controller
             // die();
             // File::insert($insert);
             $insert_manage = DB::table('manage_files')->insert($insert, $insert);
-            if($insert_manage){    
+            if ($insert_manage) {
                 $this->send_upload_file_party($request->caseId, $insert);
 
-                // dd($request->log_id);   
+                // dd($request->log_id);
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
 
 
                     $success_log = BulkLog::find($request->log_id);
-                    
-                 
+
+
                     if ($success_log->inserted_row == null) {
                         $success_log->inserted_row = $request->caseId;
                         $success_log->save();
                     } else {
                         if (isset($_POST['insertRow'])) {
-    
+
                             $insert_row = $_POST['insertRow'] . "," . $request->caseId;
                             // dd(json_encode(explode(',', $insert_row)));
                             $success_log->inserted_row = json_encode(explode(',', $insert_row));
                             $success_log->save();
                         }
                     }
-    
+
                     return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
                 } else if (isset($log_id)) {
                     $success_log = BulkLog::find($log_id);
                     // dd($success_log);
-    
+
                     if ($success_log->inserted_row == null) {
                         $success_log->inserted_row = $request->caseId;
                         $success_log->save();
                     } else {
                         if (isset($_POST['insertRow'])) {
-    
+
                             $insert_row = $_POST['insertRow'] . "," . $request->caseId;
                             // dd(json_encode(explode(',', $insert_row)));
                             $success_log->inserted_row = json_encode(explode(',', $insert_row));
@@ -864,8 +865,7 @@ class DashboardController extends Controller
                 } else {
                     return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
                 }
-
-            }else{
+            } else {
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
                     $faild_log = BulkLog::find($_POST['log_id']);
                     if ($faild_log->failed_row == null) {
@@ -873,7 +873,7 @@ class DashboardController extends Controller
                         $faild_log->save();
                     } else {
                         if (isset($_POST['faildRow'])) {
-    
+
                             $faild_row = $_POST['faildRow'] . "," . $request->caseId;
                             // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
                             $faild_log->failed_row = json_encode(explode(',', $faild_row));
@@ -888,7 +888,7 @@ class DashboardController extends Controller
                         $faild_log->save();
                     } else {
                         if (isset($_POST['faildRow'])) {
-    
+
                             $faild_row = $_POST['faildRow'] . "," . $request->caseId;
                             // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
                             $faild_log->failed_row = json_encode(explode(',', $faild_row));
@@ -899,7 +899,6 @@ class DashboardController extends Controller
                 } else {
                     return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
                 }
-                
             }
         } else {
             if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
@@ -1048,6 +1047,8 @@ class DashboardController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'SESS_SCHE',
                 'varjson' => $varjson,
+                'haptik_tmp' => 'l10_session_schedule',
+
             ];
 
             $access = Whatsapp::sendWamessage($dwa1);
@@ -1071,7 +1072,7 @@ class DashboardController extends Controller
         }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
         $file_name = "M" . sprintf("%06d", $id) . "_party.pdf";
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $file_name, $pdf->output());    
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $file_name, $pdf->output());
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $file_name;
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
