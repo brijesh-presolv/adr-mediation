@@ -1106,6 +1106,7 @@ class DashboardController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SEND_APPO_MED',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l18_mediator_appointment'
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
                 $varjson_file = ['caseid' => $mid];
@@ -1119,6 +1120,7 @@ class DashboardController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_APPO_MED',
                     'varjson' => $varjson_file,
+                    'haptik_tmp' => 'mediation_consent_doc'
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);

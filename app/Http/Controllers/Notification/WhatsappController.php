@@ -11,6 +11,7 @@ use App\Http\Traits\UploadTrait;
 use App\Models\System;
 use App\Models\WaTemplate;
 use App\Models\WhatsAppQue;
+use Illuminate\Support\Facades\Storage;
 
 class WhatsappController extends Controller
 {
@@ -131,21 +132,30 @@ class WhatsappController extends Controller
         //     $r = self::sendwhapp($d, $value->contact);
         // }
 
+
+
+        // $contenturl = 'mediation_documents/mediation/23414/Invitation_mediate_M0234141660298541.pdf';
+        // $file_name = basename();
+
+        // $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 15);
+
+        // exit;
+
         $limit = 500;
 
         $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0])->whereDate('created_at', '>', '2022-07-31')->orderBy('created_at', 'DESC')->limit($limit)->get();
 
-        // $whapps = WhatsAppQue::where('id', 2792)->get();
+        // $whapps = WhatsAppQue::whereIN('id', [13048])->get();
 
         // dd($whapps);
 
 
-        echo '<pre>';
-        print_r($whapps);
+        // echo '<pre>';
+        // print_r($whapps);
         if (count($whapps) < 1) {
             exit();
         }
-        exit;
+        // exit;
 
 
         $whappspr = [];
@@ -200,14 +210,20 @@ class WhatsappController extends Controller
                 $contenturl = parse_url($content['media']['url'])["path"];
                 $file_name = basename($content['media']['url']);
 
-                $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 1);
+                $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 15);
 
-                $vararrayheader[] = $this->getPreSignedUrl(urldecode($contenturl), 1);
+                // $vararrayheader[] = $this->getPreSignedUrl(urldecode($contenturl), 15);
 
                 if (!file_get_contents($content['media']['url'])) {
                     continue;
+                } else {
+                    $path = 'public/tmp/' . $file_name;
+                    Storage::disk('local')->put($path, file_get_contents($content['media']['url']));
+                    $vararrayheader[] = url("storage/app/" . $path);
+                    // echo url("storage/app/" . $path);
                 }
             }
+            // exit;
 
             $d = [
                 'id' => $value->id,

@@ -88,14 +88,17 @@ class WhatsappStatus extends Controller
             //    $initiating_party = InvoledUser::where('userPlanId', $value->userPlanId)->where('isClaimant', 0)->first();
             $initiating_party = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $value->userPlanId)->where('isClaimant', 0)->first();
 
+            $finalFilePath = 'mediation_documents/mediation/' . $value->userPlanId . '/' . $value->file_name;
+            $whatsappSend = Storage::disk('s3')->url($finalFilePath);
             // dd($initiating_party);
             $d = [
                 'event' => 'REM_ACPTARB_ADM_RES',
                 'case_id' => $value->userPlanId,
             ];
             if ($value->userEmail != null) {
-                $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name], $value->name, url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name));
+                $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name], $value->name, $finalFilePath);
             }
+
             if ($value->userPhone != null) {
                 $varjson = ['initiating' => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name, 'caseid' => "M" . sprintf("%06d", $value->userPlanId)];
                 $var = ['-cid-', '-ip-'];
@@ -108,6 +111,8 @@ class WhatsappStatus extends Controller
                     'content' => ['text' => $content],
                     'event' => 'REM_ACPTARB_ADM_RES',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'L4_mediation_party2',
+
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
@@ -120,9 +125,11 @@ class WhatsappStatus extends Controller
                 $dwa2 = [
                     'caseid' =>  $value->userPlanId,
                     'contact' => "+91" . $value->userPhone,
-                    'content' => ['media' => ['url' => url("/storage/app/public/mediation/" . $value->userPlanId . "/" . $value->file_name), 'caption' => $content_file]],
+                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'REM_ACPTARB_ADM_RES',
                     'varjson' => $varjson_file,
+                    'haptik_tmp' => 'mediation_consent_doc',
+
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }
