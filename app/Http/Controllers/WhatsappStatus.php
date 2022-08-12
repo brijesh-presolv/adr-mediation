@@ -111,7 +111,7 @@ class WhatsappStatus extends Controller
                     'content' => ['text' => $content],
                     'event' => 'REM_ACPTARB_ADM_RES',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'L4_mediation_party2',
+                    'haptik_tmp' => 'l4_mediation_party2',
 
                 ];
 
