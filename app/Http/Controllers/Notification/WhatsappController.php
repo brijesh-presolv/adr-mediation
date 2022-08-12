@@ -26,23 +26,23 @@ class WhatsappController extends Controller
     public function que_changes()
     {
 
-        $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => ""])->get();
-        // dd($que);
-        // $que = WhatsAppQue::where('id', 1)->get();
-        foreach($que as $value) {
-            if($value->variable != null) {
-            $var = json_decode($value->variable, true); 
+        // $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => ""])->get();
+        // // dd($que);
+        // // $que = WhatsAppQue::where('id', 1)->get();
+        // foreach ($que as $value) {
+        //     if ($value->variable != null) {
+        //         $var = json_decode($value->variable, true);
 
 
-            $update = array_reverse($var, true);
+        //         $update = array_reverse($var, true);
 
-            $value->variable = json_encode($update); 
+        //         $value->variable = json_encode($update);
 
-            $value->haptik_tmp = "L4_mediation_party2";
+        //         $value->haptik_tmp = "L4_mediation_party2";
 
-            $value->save();
-            }
-        }
+        //         $value->save();
+        //     }
+        // }
         // $temp = WaTemplate::get();
         // foreach ($temp as $data) {
         //     $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => null])->get();
@@ -133,15 +133,19 @@ class WhatsappController extends Controller
 
         $limit = 500;
 
-        $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0])->orderBy('created_at', 'DESC')->limit($limit)->get();
+        $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0])->whereDate('created_at', '>', '2022-07-31')->orderBy('created_at', 'DESC')->limit($limit)->get();
 
         // $whapps = WhatsAppQue::where('id', 2792)->get();
 
         // dd($whapps);
 
+
+        echo '<pre>';
+        print_r($whapps);
         if (count($whapps) < 1) {
             exit();
         }
+        exit;
 
 
         $whappspr = [];
@@ -181,9 +185,9 @@ class WhatsappController extends Controller
             // }
 
             $vararray = [];
-            $vararrayheader =[];
+            $vararrayheader = [];
             $convertarray = json_decode($value->variable, true);
-            foreach($convertarray as $var) {
+            foreach ($convertarray as $var) {
                 $vararray[] = $var;
             }
 
@@ -218,17 +222,17 @@ class WhatsappController extends Controller
                 'caseid' => $value->caseid,
             ];
 
-        // dd($d);
+            // dd($d);
 
-            
-            self::NewWhatsappMessage($d, str_replace('+91', '',$value->contact));
+
+            self::NewWhatsappMessage($d, str_replace('+91', '', $value->contact));
         }
     }
 
     public function NewWhatsappMessage($d, $c)
     {
         $url = "https://api.interakt.ai/v1/public/message/";
-       
+
 
         if ($d['varheader'] != "") {
             // dd("if");
@@ -240,12 +244,11 @@ class WhatsappController extends Controller
                 "template" => [
                     "name" => $d['tempname'],
                     "languageCode" => "en",
-                    "headerValues"=> $d['varheader'],
-                    "fileName"=>$d['file_name'],
+                    "headerValues" => $d['varheader'],
+                    "fileName" => $d['file_name'],
                     "bodyValues" => $d['varbody'],
                 ]
             ];
-
         } else {
 
             $data = [
