@@ -133,6 +133,7 @@ class WhatsappController extends Controller
 
         $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0])->orderBy('created_at', 'DESC')->limit($limit)->get();
 
+        // $whapps = WhatsAppQue::where('id', 2792)->get();
 
         // dd($whapps);
 
@@ -163,21 +164,22 @@ class WhatsappController extends Controller
 
             // dd($trimdata);
 
-            $findname = WaTemplate::get();
-            $tempname = "";
-            if (isset($content['text'])) {
-                foreach ($findname as $data) {
-                    // $trimdatatable = preg_replace("/\r|\n/", "", $value->content);
-                    // dd($trimdatatable);
-                    similar_text($content['text'], $data->content, $percent);
-                    // dd($percent);
-                    if ($percent > 90) {
-                        $tempname = $data->name;
-                    }
-                }
-            }
+            // $findname = WaTemplate::get();
+            // $tempname = "";
+            // if (isset($content['text'])) {
+            //     foreach ($findname as $data) {
+            //         // $trimdatatable = preg_replace("/\r|\n/", "", $value->content);
+            //         // dd($trimdatatable);
+            //         similar_text($content['text'], $data->content, $percent);
+            //         // dd($percent);
+            //         if ($percent > 90) {
+            //             $tempname = $data->name;
+            //         }
+            //     }
+            // }
 
             $vararray = [];
+            $vararrayheader =[];
             $convertarray = json_decode($value->variable, true);
             foreach($convertarray as $var) {
                 $vararray[] = $var;
@@ -190,8 +192,11 @@ class WhatsappController extends Controller
 
 
                 $contenturl = parse_url($content['media']['url'])["path"];
+                $file_name = basename($content['media']['url']);
 
                 $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 1);
+
+                $vararrayheader[] = $this->getPreSignedUrl(urldecode($contenturl), 1);
 
                 if (!file_get_contents($content['media']['url'])) {
                     continue;
@@ -201,13 +206,18 @@ class WhatsappController extends Controller
             $d = [
                 'id' => $value->id,
                 'event' => $value->event,
-                'tempname' => $tempname,
+                'tempname' => $value->haptik_tmp,
                 'varbody' => $vararray,
+                'varheader' => count($vararrayheader) > 0 ? $vararrayheader : "",
+                'file_name' => isset($file_name) ? $file_name : "",
                 'content' => $content,
                 'oldcontent' => $oldcontent,
                 'type' => $value->casetype,
                 'caseid' => $value->caseid,
             ];
+
+        // dd($d);
+
             
             self::NewWhatsappMessage($d, str_replace('+91', '',$value->contact));
         }
@@ -217,10 +227,25 @@ class WhatsappController extends Controller
     {
         $url = "https://api.interakt.ai/v1/public/message/";
        
-        if (isset($d['varheader'])) {
-            dd("if");
+
+        if ($d['varheader'] != "") {
+            // dd("if");
+
+            $data = [
+                "countryCode" => "+91",
+                "phoneNumber" => $c,
+                "type" => "Template",
+                "template" => [
+                    "name" => $d['tempname'],
+                    "languageCode" => "en",
+                    "headerValues"=> $d['varheader'],
+                    "fileName"=>$d['file_name'],
+                    "bodyValues" => $d['varbody'],
+                ]
+            ];
 
         } else {
+
             $data = [
                 "countryCode" => "+91",
                 "phoneNumber" => $c,
@@ -232,7 +257,7 @@ class WhatsappController extends Controller
                 ]
             ];
         }
-
+        // dd($data);
         // $data = '{
         //     "countryCode": "+91",
         //     "phoneNumber": "' . $phone . '",
@@ -247,6 +272,8 @@ class WhatsappController extends Controller
         $auth = env('INTERAKT_KEY');
 
         $res = Curl::NewWhatsappRequest($url, json_encode($data), $type, $auth);
+        // dd($res);
+
         $resjson = json_decode($res);
 
         if ($resjson) {
@@ -293,10 +320,10 @@ class WhatsappController extends Controller
 
 
 
-            return true;
+            return "success";
         } else {
 
-            return false;
+            return "Fail";
         }
     }
 
