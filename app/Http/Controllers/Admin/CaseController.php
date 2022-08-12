@@ -1663,7 +1663,7 @@ class CaseController extends Controller
                             'content' => ['text' => $content],
                             'event' => 'ACPTARB_ADM_RES',
                             'varjson' => $varjson,
-                            'haptik_tmp' => 'l4_mediation_party2',
+                            'haptik_tmp' => 'L4_mediation_party2',
 
                         ];
 
@@ -1908,7 +1908,7 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'ACPTARB_ADM_RES',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'l4_mediation_party2',
+                    'haptik_tmp' => 'L4_mediation_party2',
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
