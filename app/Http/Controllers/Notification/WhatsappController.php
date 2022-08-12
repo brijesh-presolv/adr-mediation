@@ -26,10 +26,11 @@ class WhatsappController extends Controller
     public function que_changes()
     {
 
-        $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => "", 'event' => "ACPTARB_ADM_RES"])->get();
+        $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => ""])->get();
         // dd($que);
         // $que = WhatsAppQue::where('id', 1)->get();
         foreach($que as $value) {
+            if($value->variable != null) {
             $var = json_decode($value->variable, true); 
 
 
@@ -40,6 +41,7 @@ class WhatsappController extends Controller
             $value->haptik_tmp = "L4_mediation_party2";
 
             $value->save();
+            }
         }
         // $temp = WaTemplate::get();
         // foreach ($temp as $data) {
