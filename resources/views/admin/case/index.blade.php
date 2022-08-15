@@ -26,7 +26,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         {{-- {{dd($allUsers)}} --}}
-                        <div class="blkfrmdiv">
+                        <div class="blkfrmdiv" style="width: 100%">
                             <h3>Upload .csv file</h3>
                             <form enctype="multipart/form-data" method="post" id="bulkUploadForm">
                                 {{ csrf_field() }}
@@ -37,7 +37,7 @@
                                         class="col-md-12 form-control" />
                                 </div>
                                 <div class="form-group">
-                                    <select class="form-control" name="claimant" required>
+                                    <select class="form-control" name="claimant" id="claimant" required>
                                         <option value="">@lang('Select Claimant')</option>
                                         @if (isset($allUsers))
                                             @foreach ($allUsers as $value)
@@ -138,7 +138,7 @@
             <div role="tabpanel" class="tab-pane fade in active show" id="tabs-2-tab-3">
                 <div class="card-box table-responsive">
 
-                    <div class="row">
+                    {{-- <div class="row">
 
                         <div class="col-md-6">
                             <select name="batch" id="batchSelect" class="form-control">
@@ -151,7 +151,43 @@
                             <br>
                             <br>
                         </div>
+                    </div> --}}
+                    <div class="row">
+                        <div class="col-md-2">
+
+                            <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
+                                    type="checkbox" id="selectalldirbulk"> Select All Cases</label>
+
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success btn-sm blkbtn" data-toggle="modal"
+                                data-target="#midaterAddForBulk" id="bulkAcceptBtnBulk"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
+                                Approve</button>
+                            <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtnBulk"
+                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
+                                Reject</button>
+                        </div>
+
+
                     </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <select name="batch" id="batchSelectForApprove" class="form-control">
+                                <option value="" selected>Select Batch...</option>
+                                @foreach ($batchName as $value)
+                                    <option value={{ $value->id }}>{{ $value->batch_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary btn-sm" data-toggle="modal"
+                                data-target="#batchWiseMidaterAddForBulk" id="batchWiseApproveBtn"
+                                data-arb="<?= Auth::user()->id ?>">Batch Wise Approve</button>
+                        </div>
+                    </div>
+                    <br><br>
                     <table id="usersBulk" class="table table-striped table-bordered dt-responsive nowrap"
                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
@@ -173,19 +209,24 @@
                             </tr>
                         </thead>
                     </table>
+                    
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade " id="tabs-2-tab-1">
+                <div class="card-box table-responsive">
                     <div class="row">
                         <div class="col-md-2">
 
                             <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
-                                    type="checkbox" id="selectalldirbulk"> Select All Cases</label>
+                                    type="checkbox" id="selectalldir"> Select All Cases</label>
 
                         </div>
                         <div class="col-md-4">
                             <button class="btn btn-success btn-sm blkbtn" data-toggle="modal"
-                                data-target="#midaterAddForBulk" id="bulkAcceptBtnBulk"
+                                data-target="#midaterAddForBulk" id="bulkAcceptBtn"
                                 style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
                                 Approve</button>
-                            <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtnBulk"
+                            <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn"
                                 style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
                                 Reject</button>
                         </div>
@@ -193,26 +234,6 @@
 
                     </div>
                     <br><br>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <select name="batch" id="batchSelectForApprove" class="form-control">
-                                <option value="" selected>Select Batch...</option>
-                                @foreach ($batchName as $value)
-                                    <option value={{ $value->id }}>{{ $value->batch_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-primary btn-sm" data-toggle="modal"
-                                data-target="#batchWiseMidaterAddForBulk" id="batchWiseApproveBtn"
-                                data-arb="<?= Auth::user()->id ?>">Batch Wise Approve</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div role="tabpanel" class="tab-pane fade " id="tabs-2-tab-1">
-                <div class="card-box table-responsive">
-
                     <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
@@ -234,26 +255,7 @@
                             </tr>
                         </thead>
                     </table>
-                    <div class="row">
-                        <div class="col-md-2">
-
-                            <label class="checkbox-inline" style="float: left;margin-right: 10px;margin-top:10px;"><input
-                                    type="checkbox" id="selectalldir"> Select All Cases</label>
-
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-success btn-sm blkbtn" data-toggle="modal"
-                                data-target="#midaterAddForBulk" id="bulkAcceptBtn"
-                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
-                                Approve</button>
-                            <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn"
-                                style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
-                                Reject</button>
-                        </div>
-
-
-                    </div>
-                    <br><br>
+                    
                 </div>
             </div>
 
@@ -450,13 +452,20 @@
 <!-- Table datatable css -->
 @section('head')
 
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+    </style>
+
     <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
         type="text/css" />
     <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
         type="text/css" />
+    <link href="{{ url('assets/') }}/libs/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('assets/') }}/libs/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
 
 @endsection
-
 
 @section('footer')
     <!-- Datatable plugin js -->
@@ -464,12 +473,17 @@
     <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Datatables init -->
+    
     <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script src="{{ url('assets/') }}/libs/select2/select2.min.js"></script>
+    <script src="{{ url('assets/') }}/libs/bootstrap-select/bootstrap-select.min.js"></script>
 
     <script>
         $(document).ready(function() {
             $('.dropify').dropify();
+            $('#claimant').select2();
         });
         var batch_id;
 
@@ -893,8 +907,22 @@
                 });
             }
         });
+        
+        // var batchdata = "{{$batchName}}";
+        var batchdata = {!! json_encode($batchName->toArray()) !!};
 
+        // console.log(batchdata);
 
+        var selectBatchOption = '<div class="ml-3" style="display: inline-flex; width: 50%;">' +
+            '<select name="batch" id="batchSelect" class="form-control">' +
+            '<option value="" selected>Select Batch...</option>';
+            batchdata.map(e => {
+                // console.log(e);
+                selectBatchOption += '<option value='+e.id+'>'+e.batch_name+'</option>';
+            });
+            selectBatchOption  += '</select></div>';
+
+        $(selectBatchOption).appendTo("#usersBulk_wrapper .dataTables_filter");
 
 
         function pad(str, max) {
