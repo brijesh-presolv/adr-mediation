@@ -10,7 +10,7 @@ class Whatsapp
 {
     public static function sendWamessage($d)
     {
-       
+
         $ocarr = [];
 
         $ocarr[] = $d['contact'];
@@ -40,12 +40,13 @@ class Whatsapp
             $arr_e['casetype'] = 2;
             $arr_e['event'] = $d['event'];
             $arr_e['variable'] = json_encode($d['varjson']);
+            $arr_e['haptik_tmp'] = $d['haptik_tmp'];
 
             if (array_key_exists('media', $d['content'])) {
                 $arr_e['media'] = 1;
             }
 
-            
+
             WhatsAppQue::create($arr_e);
         }
 

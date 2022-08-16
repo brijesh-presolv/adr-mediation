@@ -97,7 +97,7 @@ class CaseController extends Controller
                 echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='supportingDocument'
                 data-url='" . $value->file_name . "'
                 data-id='" . $request->id . "'
-                class='secureDownload' 
+                class='secureDownload'
                 data-userid='" . Auth::user()->id . "'>" . pathinfo($value->file_name, PATHINFO_FILENAME) . "</a></td>";
             }
             echo "<td>" . $value->username . "</td>";
@@ -310,7 +310,7 @@ class CaseController extends Controller
             }
         } else {
 
-            // code for failed row 
+            // code for failed row
             if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                 $faild_log = BulkLog::find($_POST['log_id']);
                 if ($faild_log->failed_row == null) {
@@ -484,6 +484,21 @@ class CaseController extends Controller
                     return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->case_id]);
                 }
             } else {
+<<<<<<< HEAD
+=======
+                return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->case_id]);
+            }
+        } else {
+
+            // code for failed row
+            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                $faild_log = BulkLog::find($_POST['log_id']);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->case_id;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+>>>>>>> 972a7d0ae79466259f122ad17375405cef7ab694
 
                 // code for failed row 
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
@@ -846,7 +861,7 @@ class CaseController extends Controller
             if ($insert_manage) {
                 $this->send_upload_file_party($request->caseId, $insert);
 
-                // dd($request->log_id);   
+                // dd($request->log_id);
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
 
 
@@ -1082,6 +1097,8 @@ class CaseController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SESS_SCHE',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'l10_session_schedule',
+
                     ];
 
                     // print_r($dwa1);
@@ -1158,6 +1175,8 @@ class CaseController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SESS_SCHE',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'l10_session_schedule',
+
                     ];
 
                     // print_r($dwa1);
@@ -1408,6 +1427,8 @@ class CaseController extends Controller
                                 'content' => ['text' => $content],
                                 'event' => 'SESS_CEN',
                                 'varjson' => $varjson,
+                                'haptik_tmp' => 'mediation_cancle_session',
+
                             ];
 
                             $access = Whatsapp::sendWamessage($dwa1);
@@ -1431,6 +1452,8 @@ class CaseController extends Controller
                                     'content' => ['text' => $content],
                                     'event' => 'SESS_CEN',
                                     'varjson' => $varjson,
+                                    'haptik_tmp' => 'mediation_cancle_session',
+
                                 ];
 
                                 $access = Whatsapp::sendWamessage($dwa1);
@@ -1460,6 +1483,8 @@ class CaseController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SESS_CEN',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'mediation_cancle_session',
+
                     ];
 
                     $access = Whatsapp::sendWamessage($dwa1);
@@ -1666,6 +1691,8 @@ class CaseController extends Controller
                             'content' => ['text' => $content],
                             'event' => 'ACPTARB_ADM_RES',
                             'varjson' => $varjson,
+                            'haptik_tmp' => 'l4_mediation_party2',
+
                         ];
 
                         $access = Whatsapp::sendWamessage($dwa1);
@@ -1681,6 +1708,8 @@ class CaseController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'ACPTARB_ADM_RES',
                             'varjson' => $varjson_file,
+                            'haptik_tmp' => 'mediation_consent_doc',
+
                         ];
                         $access = Whatsapp::sendWamessage($dwa2);
                     }
@@ -1707,6 +1736,8 @@ class CaseController extends Controller
                         // 'casetype' => 2,
                         'event' => 'ACPTARB_ADM_INI',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'l4_mediation_initiating',
+
                     ];
 
                     $access = Whatsapp::sendWamessage($dwa1);
@@ -1722,6 +1753,8 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'ACPTARB_ADM_INI',
                         'varjson' => $varjson_file,
+                        'haptik_tmp' => 'mediation_consent_doc',
+
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
                 }
@@ -1769,7 +1802,7 @@ class CaseController extends Controller
                 echo "<td style='word-break: break-word;'><a href='javascript:void(0);'  data-folder='settelmentDocument'
                 data-url='" . $value->file_path . "'
                 data-id='" . $request->id . "'
-                class='secureDownload' 
+                class='secureDownload'
                 data-userid='" . Auth::user()->id . "'>" . pathinfo($value->file_path, PATHINFO_FILENAME) . "</a></td>";
             }
             echo "<td>" . $value->username . "</td>";
@@ -1892,7 +1925,7 @@ class CaseController extends Controller
         // dd($responding_phone);
         foreach ($responding_phone as $phone) {
             if ($phone != "") {
-                $varjson = ['caseid' => "M" . sprintf("%06d", $id), "initiating" => $initiating_party];
+                $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
                 $var = ['-cid-', '-ip-'];
                 $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
                 $content1 = WaTemplate::getcontent('l4_mediation_party2');
@@ -1903,6 +1936,7 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'ACPTARB_ADM_RES',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l4_mediation_party2',
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
@@ -1918,6 +1952,7 @@ class CaseController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'ACPTARB_ADM_RES',
                     'varjson' => $varjson_file,
+                    'haptik_tmp' => 'mediation_consent_doc',
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }
@@ -1941,6 +1976,7 @@ class CaseController extends Controller
                     // 'casetype' => 2,
                     'event' => 'ACPTARB_ADM_INI',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l4_mediation_initiating',
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
@@ -1956,6 +1992,8 @@ class CaseController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'ACPTARB_ADM_INI',
                     'varjson' => $varjson_file,
+                    'haptik_tmp' => 'mediation_consent_doc',
+
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }
@@ -2005,6 +2043,8 @@ class CaseController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'SESS_SCHE',
                 'varjson' => $varjson,
+                'haptik_tmp' => 'l10_session_schedule',
+
             ];
 
             // print_r($dwa1);
@@ -2085,6 +2125,7 @@ class CaseController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'WDRN_OTHER_PARTY',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'l14_withdrawal_responding',
                     ];
 
                     // print_r($dwa1);
@@ -2107,7 +2148,7 @@ class CaseController extends Controller
                 // 'casetype' => 2,
                 'event' => 'WDRN_PARTY',
                 'varjson' => $varjson,
-
+                'haptik_tmp' => 'l13_session_schedule',
             ];
 
             // print_r($dwa1);
@@ -2130,6 +2171,8 @@ class CaseController extends Controller
                 // 'casetype' => 2,
                 'event' => 'WDRN_MED',
                 'varjson' => $varjson,
+                'haptik_tmp' => 'l23_withdrawal_mediator',
+
             ];
 
             // print_r($dwa1);
@@ -2177,6 +2220,8 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'RESO_ADM',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'med_resolved_clamant',
+
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
@@ -2195,6 +2240,8 @@ class CaseController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'RESO_ADM',
                 'varjson' => $varjson,
+                'haptik_tmp' => 'med_resolved_clamant',
+
             ];
 
             $access = Whatsapp::sendWamessage($dwa1);
@@ -2239,6 +2286,8 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'UNRESO_ADM',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'med_unresolved_clamant',
+
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
@@ -2257,6 +2306,8 @@ class CaseController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'UNRESO_ADM',
                 'varjson' => $varjson,
+                'haptik_tmp' => 'med_unresolved_clamant',
+
             ];
 
             $access = Whatsapp::sendWamessage($dwa1);
@@ -2284,6 +2335,7 @@ class CaseController extends Controller
             'content' => ['text' => $content],
             'event' => 'MEDI_ADD_ADM',
             'varjson' => $varjson,
+            'haptik_tmp' => 'l17_consent_mediator',
         ];
 
         $access = Whatsapp::sendWamessage($dwa1);
@@ -2333,6 +2385,7 @@ class CaseController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'l19_additional_doc',
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
                     foreach ($filesE as $file) {
@@ -2348,6 +2401,7 @@ class CaseController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson_file,
+                            'haptik_tmp' => 'mediation_consent_doc',
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     }
@@ -2383,6 +2437,7 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SEND_ADDI_DOC_MED',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l20_additional_doc_med',
 
                 ];
                 $accessW = Whatsapp::sendWamessage($dwa1);
@@ -2400,7 +2455,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson,
-
+                        'haptik_tmp' => 'mediation_consent_doc',
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
                 }
@@ -2452,6 +2507,8 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SEND_SETT_AGRE',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l21_settlement_agreement',
+
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
                 foreach ($filesE as $file) {
@@ -2467,6 +2524,8 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_SETT_AGRE',
                         'varjson' => $varjson_file,
+                        'haptik_tmp' => 'mediation_consent_doc',
+
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
                 }
@@ -2498,6 +2557,7 @@ class CaseController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'SEND_SETT_AGRE_MED',
                 'varjson' => $varjson,
+                'haptik_tmp' => 'l22_settlement_agreement_med',
             ];
             $access = Whatsapp::sendWamessage($dwa1);
 
@@ -2515,6 +2575,8 @@ class CaseController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_SETT_AGRE_MED',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'mediation_consent_doc',
+
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }
@@ -2950,6 +3012,8 @@ class CaseController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'l20_additional_doc_med',
+
                     ];
 
 
@@ -2966,6 +3030,8 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $filesE, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson_file,
+                        'haptik_tmp' => 'mediation_consent_doc',
+
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
                 }
@@ -3032,6 +3098,8 @@ class CaseController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'l19_additional_doc',
+
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
 
@@ -3046,6 +3114,8 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $filesE, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC',
                         'varjson' => $varjson_file,
+                        'haptik_tmp' => 'mediation_consent_doc',
+
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
                 }
@@ -3237,6 +3307,8 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SESS_SCHE',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l10_session_schedule',
+
                 ];
 
                 // print_r($dwa1);
@@ -3787,7 +3859,7 @@ class CaseController extends Controller
         }
 
 
-        // }            
+        // }
 
         // dd("if");
         // } else {

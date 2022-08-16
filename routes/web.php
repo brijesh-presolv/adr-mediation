@@ -230,3 +230,5 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 Route::get('notification/email/send', [App\Http\Controllers\Notification\EmailController::class, 'send']);
 
 Route::get('notification/whatsapp/send', [App\Http\Controllers\Notification\WhatsappController::class, 'send']);
+
+Route::get('temp/que_changes', [App\Http\Controllers\Notification\WhatsappController::class, 'que_changes']);
