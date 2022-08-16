@@ -13,12 +13,27 @@
 @section('content')
 
     <section class="tabs-section">
-        <div>
-            <button class="btn btn-primary btn-sm" data-target="#myModalbupldAdmin" data-toggle="modal"> Bulk
-                Upload</button>
-            <br>
-            <br>
+
+        <div class="row">
+            <div class="col-md-6">
+                <button class="btn btn-primary btn-sm" data-target="#myModalbupldAdmin" data-toggle="modal"> Bulk
+                    Upload</button>
+                <br>
+                <br>
+            </div>
+            <div class="col-md-6 text-right">
+                <select name="batch" id="batchSelectForApprove" class="form-control w-50 d-inline mr-2">
+                    <option value="" selected>Select Batch...</option>
+                    @foreach ($batchName as $value)
+                        <option value={{ $value->id }}>{{ $value->batch_name }}</option>
+                    @endforeach
+                </select>
+                <button class="btn btn-primary btn-sm text-center" data-toggle="modal"
+                    data-target="#batchWiseMidaterAddForBulk" id="batchWiseApproveBtn"
+                    data-arb="<?= Auth::user()->id ?>">Batch Wise Approve</button>
+            </div>
         </div>
+        <br><br>
         <div id="myModalbupldAdmin" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog">
 
@@ -116,7 +131,8 @@
 
                 <ul class="nav" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#tabs-2-tab-3" role="tab" data-toggle="tab" id="tab1">
+                        <a class="nav-link active" href="#tabs-2-tab-3" role="tab" data-toggle="tab"
+                            id="tab1">
                             <span class="nav-link-in">
                                 Bulk Cases
                             </span>
@@ -172,22 +188,7 @@
 
                     </div>
                     <br>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <select name="batch" id="batchSelectForApprove" class="form-control">
-                                <option value="" selected>Select Batch...</option>
-                                @foreach ($batchName as $value)
-                                    <option value={{ $value->id }}>{{ $value->batch_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-primary btn-sm" data-toggle="modal"
-                                data-target="#batchWiseMidaterAddForBulk" id="batchWiseApproveBtn"
-                                data-arb="<?= Auth::user()->id ?>">Batch Wise Approve</button>
-                        </div>
-                    </div>
-                    <br><br>
+
                     <table id="usersBulk" class="table table-striped table-bordered dt-responsive nowrap"
                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
@@ -209,7 +210,7 @@
                             </tr>
                         </thead>
                     </table>
-                    
+
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane fade " id="tabs-2-tab-1">
@@ -255,7 +256,7 @@
                             </tr>
                         </thead>
                     </table>
-                    
+
                 </div>
             </div>
 
@@ -473,7 +474,7 @@
     <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Datatables init -->
-    
+
     <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
@@ -907,8 +908,8 @@
                 });
             }
         });
-        
-        // var batchdata = "{{$batchName}}";
+
+        // var batchdata = "{{ $batchName }}";
         var batchdata = {!! json_encode($batchName->toArray()) !!};
 
         // console.log(batchdata);
@@ -916,11 +917,11 @@
         var selectBatchOption = '<div class="ml-3" style="display: inline-flex; width: 50%;">' +
             '<select name="batch" id="batchSelect" class="form-control">' +
             '<option value="" selected>Select Batch...</option>';
-            batchdata.map(e => {
-                // console.log(e);
-                selectBatchOption += '<option value='+e.id+'>'+e.batch_name+'</option>';
-            });
-            selectBatchOption  += '</select></div>';
+        batchdata.map(e => {
+            // console.log(e);
+            selectBatchOption += '<option value=' + e.id + '>' + e.batch_name + '</option>';
+        });
+        selectBatchOption += '</select></div>';
 
         $(selectBatchOption).appendTo("#usersBulk_wrapper .dataTables_filter");
 
@@ -1714,7 +1715,7 @@
 
             if (blkclon == false) {
                 swal({
-                    title: "Select arbitration to accept",
+                    title: "Select Cases to accept",
                     text: "",
                     type: "error",
                 });
@@ -2200,104 +2201,112 @@
             });
             var withdrawcountTotal = Math.max.apply(Math, withdrawcount);
 
-            if (blkclon == false) {
-                swal({
-                    title: "Select arbitration to accept",
-                    text: "",
-                    type: "error",
-                });
+            // console.log(midater);
+            if (midater != "") {
+                if (blkclon == false) {
+                    swal({
+                        title: "Select Cases to accept",
+                        text: "",
+                        type: "error",
+                    });
+                } else {
+                    swal({
+                        title: "@lang('case.are_you_sure')",
+                        text: withdrawcountTotal.toString() + " Cases selected",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            // var ids = null;
+
+                            var cids = null;
+                            var idarr = [];
+                            var ctcnt = 0;
+                            var cidsarray = [];
+
+                            $(".blkchk, .blkchkbulk").each(function() {
+                                if (this.checked) {
+                                    cidsarray.push($(this).data("caseid"));
+                                    ctcnt++;
+                                    if (cids == null) {
+                                        cids = $(this).data("caseid");
+                                    } else {
+                                        cids = cids + "," + $(this).data("caseid");
+                                    }
+                                }
+                            });
+
+                            // var work = 
+                            // const items = cidsarray.slice(10, 20)
+                            // console.log(cidsarray);
+                            var actionwork = (cidsarray.length) / {{ env('NO_OF_REQUEST_SEND', 10) }};
+                            if (actionwork !== parseInt(actionwork)) {
+                                actionwork = parseInt(actionwork) + 1;
+                            }
+                            // console.log(actionwork);
+                            var first = 0;
+                            var last = parseInt({{ env('NO_OF_REQUEST_SEND', 10) }});
+                            for (var i = 0; i < actionwork; i++) {
+
+                                idarr.push({
+                                    id: cidsarray.slice(first, last),
+                                    token: csrf,
+                                    allcids: cids,
+                                    midater: midater,
+                                    total_row: ctcnt,
+                                    log_type: "Bulk Approve",
+                                });
+                                first += {{ env('NO_OF_REQUEST_SEND', 10) }};
+                                last += {{ env('NO_OF_REQUEST_SEND', 10) }};
+                            }
+                            // console.log(idarr);
+
+                            // var add_mediater = '{{ route('admin.case.midater_add') }}';
+                            var confirm = '{{ route('admin.case.confirm_status_with_midater_add') }}';
+                            swal.close();
+                            $(".ccdd").click();
+                            $(".msgDiv").hide();
+                            $(".loading_form").show();
+                            $("#loading_image").show();
+                            $(".close").hide();
+                            $.when
+                                .apply(
+                                    $,
+                                    $.map(idarr, function(item, i) {
+                                        looper = looper.then(function() {
+
+                                            return ajax_request_approve_with_midater_add(item,
+                                                confirm);
+
+                                        });
+                                        return looper;
+
+                                    })
+                                )
+                                .then(function() {
+                                    swal.close();
+                                    // $("#myModalcc").hide();
+                                    $("#messccclose").append(
+                                        '<br><center><a href="{{ route('admin.case.newrequest') }}" class="btn btn-danger btn-lg">Close</a></center>'
+                                    );
+                                    var objDiv = document.getElementById("messcc");
+                                    objDiv.scrollTop = objDiv.scrollHeight;
+                                });
+
+                        } else {
+                            swal("@lang('case.cansel_confirm_request')");
+                        }
+                    });
+                }
+
             } else {
                 swal({
-                    title: "@lang('case.are_you_sure')",
-                    text: withdrawcountTotal.toString() + " Cases selected",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                }).then((willDelete) => {
-                    if (willDelete) {
-                        // var ids = null;
-
-                        var cids = null;
-                        var idarr = [];
-                        var ctcnt = 0;
-                        var cidsarray = [];
-
-                        $(".blkchk, .blkchkbulk").each(function() {
-                            if (this.checked) {
-                                cidsarray.push($(this).data("caseid"));
-                                ctcnt++;
-                                if (cids == null) {
-                                    cids = $(this).data("caseid");
-                                } else {
-                                    cids = cids + "," + $(this).data("caseid");
-                                }
-                            }
-                        });
-
-                        // var work = 
-                        // const items = cidsarray.slice(10, 20)
-                        // console.log(cidsarray);
-                        var actionwork = (cidsarray.length) / {{ env('NO_OF_REQUEST_SEND', 10) }};
-                        if (actionwork !== parseInt(actionwork)) {
-                            actionwork = parseInt(actionwork) + 1;
-                        }
-                        // console.log(actionwork);
-                        var first = 0;
-                        var last = parseInt({{ env('NO_OF_REQUEST_SEND', 10) }});
-                        for (var i = 0; i < actionwork; i++) {
-
-                            idarr.push({
-                                id: cidsarray.slice(first, last),
-                                token: csrf,
-                                allcids: cids,
-                                midater: midater,
-                                total_row: ctcnt,
-                                log_type: "Bulk Approve",
-                            });
-                            first += {{ env('NO_OF_REQUEST_SEND', 10) }};
-                            last += {{ env('NO_OF_REQUEST_SEND', 10) }};
-                        }
-                        // console.log(idarr);
-
-                        // var add_mediater = '{{ route('admin.case.midater_add') }}';
-                        var confirm = '{{ route('admin.case.confirm_status_with_midater_add') }}';
-                        swal.close();
-                        $(".ccdd").click();
-                        $(".msgDiv").hide();
-                        $(".loading_form").show();
-                        $("#loading_image").show();
-                        $(".close").hide();
-                        $.when
-                            .apply(
-                                $,
-                                $.map(idarr, function(item, i) {
-                                    looper = looper.then(function() {
-
-                                        return ajax_request_approve_with_midater_add(item,
-                                            confirm);
-
-                                    });
-                                    return looper;
-
-                                })
-                            )
-                            .then(function() {
-                                swal.close();
-                                // $("#myModalcc").hide();
-                                $("#messccclose").append(
-                                    '<br><center><a href="{{ route('admin.case.newrequest') }}" class="btn btn-danger btn-lg">Close</a></center>'
-                                );
-                                var objDiv = document.getElementById("messcc");
-                                objDiv.scrollTop = objDiv.scrollHeight;
-                            });
-
-                    } else {
-                        swal("@lang('case.cansel_confirm_request')");
-                    }
+                    title: "Select Mediator",
+                    text: "",
+                    icon: "error",
                 });
             }
-
-
 
             return false;
         });

@@ -1562,7 +1562,7 @@
                         $('#midaterAdd').modal("hide");
                     });
                 } else {
-                    swal("Cansel Confirm Request!");
+                    swal("Cancel Confirm Request!");
                 }
             });
             return false;
