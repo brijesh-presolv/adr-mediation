@@ -305,6 +305,7 @@ class WhatsappController extends Controller
                 $data1 = [
 
                     'caseid' => $d['caseid'],
+                    'que_id' => $d['id'],
                     'contact' => $c,
                     'content' => implode(" ", str_replace(['‘', '’'], ['::', ';;'], $d['content'])),
                     'casetype' => $d['type'],
@@ -323,6 +324,7 @@ class WhatsappController extends Controller
                 $data2 = [
 
                     'caseid' => $d['caseid'],
+                    'que_id' => $d['id'],
                     'contact' => $c,
                     'content' => "",
                     'media' => $d['oldcontent']['media']['url'],

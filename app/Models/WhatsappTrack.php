@@ -15,6 +15,7 @@ class WhatsappTrack extends Model
 
     protected $fillable = [
         'caseid',
+        'que_id',
         'casetype',
         'event',
         'contact',
