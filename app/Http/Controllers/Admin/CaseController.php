@@ -352,8 +352,8 @@ class CaseController extends Controller
 
         $status = ($request->status != null) ? $request->status : $request->fsData['status'];
         $withdraw_comment = ($request->withdraw_comment != null) ? $request->withdraw_comment : $request->fsData['withdraw_comment'];
-
         if ($status != null && $withdraw_comment != null) {
+
             $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->case_id)
                 ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -484,23 +484,8 @@ class CaseController extends Controller
                     return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->case_id]);
                 }
             } else {
-<<<<<<< HEAD
-=======
-                return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->case_id]);
-            }
-        } else {
 
-            // code for failed row
-            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
-                $faild_log = BulkLog::find($_POST['log_id']);
-                if ($faild_log->failed_row == null) {
-                    $faild_log->failed_row = $request->case_id;
-                    $faild_log->save();
-                } else {
-                    if (isset($_POST['faildRow'])) {
->>>>>>> 972a7d0ae79466259f122ad17375405cef7ab694
-
-                // code for failed row 
+                // code for failed row
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                     $faild_log = BulkLog::find($_POST['log_id']);
                     if ($faild_log->failed_row == null) {
@@ -538,8 +523,6 @@ class CaseController extends Controller
         } else {
             return json_encode(['code' => 422, 'response' => 'error', 'msg' => "Please Fill the Required Field"]);
         }
-
-        // return response()->json(["msg" => "withdraw Case"]);
     }
 
     public function closeStatus(Request $request)
