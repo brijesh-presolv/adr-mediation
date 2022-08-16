@@ -151,6 +151,8 @@ class MediationController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'l19_additional_doc'
+
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
 
@@ -167,6 +169,8 @@ class MediationController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson_file,
+                            'haptik_tmp' => 'mediation_consent_doc'
+
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     }
@@ -193,6 +197,8 @@ class MediationController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SEND_ADDI_DOC_MED',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l20_additional_doc_med'
+
                 ];
                 $accessW = Whatsapp::sendWamessage($dwa1);
 
@@ -209,6 +215,8 @@ class MediationController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson_file,
+                        'haptik_tmp' => 'mediation_consent_doc'
+
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
                 }
@@ -589,7 +597,7 @@ class MediationController extends Controller
 
                 // $e = Email::send($InvoledUserP1->userEmail, '8c86c224-75e5-4cfd-8bc2-f3305df4d3f3', ['-caseid-' => $mid, '-partyname-' => $party_name], $InvoledUserP1->name);
                 $e = Email::send($d, $InvoledUserP1->userEmail, env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''), ['-caseid-' => $mid, '-name-' => $party_name], $InvoledUserP1->name);
-                $varjson = ['responding' => $party_name,'caseid' => $mid];
+                $varjson = ['responding' => $party_name, 'caseid' => $mid];
                 $var = ['-rp-', '-cid-'];
                 $var1 = [$party_name, $mid];
                 $content1 = WaTemplate::getcontent('l7_mediation_onboarded');
@@ -600,6 +608,8 @@ class MediationController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'ONBOAR_USER',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l7_mediation_onboarded'
+
                 ];
 
                 // print_r($dwa1);
@@ -882,6 +892,8 @@ class MediationController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'WDRN_OTHER_PARTY',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l14_withdrawal_responding'
+
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
@@ -900,6 +912,8 @@ class MediationController extends Controller
             // 'casetype' => 2,
             'event' => 'WDRN_PARTY',
             'varjson' => $varjson,
+            'haptik_tmp' => 'l13_session_schedule'
+
 
         ];
         $access = Whatsapp::sendWamessage($dwa1);
@@ -918,6 +932,8 @@ class MediationController extends Controller
                 // 'casetype' => 2,
                 'event' => 'WDRN_MED',
                 'varjson' => $varjson,
+                'haptik_tmp' => 'l23_withdrawal_mediator'
+
 
             ];
 

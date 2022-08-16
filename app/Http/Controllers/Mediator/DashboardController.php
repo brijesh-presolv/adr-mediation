@@ -1176,6 +1176,8 @@ class DashboardController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC',
                         'varjson' => $varjson,
+                        'haptik_tmp' => 'l19_additional_doc'
+
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
 
@@ -1192,6 +1194,8 @@ class DashboardController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson_file,
+                        'haptik_tmp' => 'mediation_consent_doc'
+
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     }
@@ -1227,6 +1231,8 @@ class DashboardController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SEND_ADDI_DOC_MED',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l20_additional_doc_med'
+
                 ];
                 $accessW = Whatsapp::sendWamessage($dwa1);
 
@@ -1243,6 +1249,8 @@ class DashboardController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson_file,
+                    'haptik_tmp' => 'mediation_consent_doc'
+
 
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
@@ -1296,6 +1304,8 @@ class DashboardController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'SEND_SETT_AGRE',
                     'varjson' => $varjson,
+                    'haptik_tmp' => 'l21_settlement_agreement'
+
                 ];
                 $access = Whatsapp::sendWamessage($dwa1);
                 foreach ($filesE as $file) {
@@ -1311,6 +1321,8 @@ class DashboardController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_SETT_AGRE',
                         'varjson' => $varjson_file,
+                    'haptik_tmp' => 'mediation_consent_doc'
+
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
                 }
@@ -1342,6 +1354,8 @@ class DashboardController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'SEND_SETT_AGRE_MED',
                 'varjson' => $varjson,
+                'haptik_tmp' => 'l22_settlement_agreement_med'
+
             ];
             $access = Whatsapp::sendWamessage($dwa1);
             foreach ($filesE as $file) {
@@ -1358,6 +1372,8 @@ class DashboardController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_SETT_AGRE_MED',
                     'varjson' => $varjson_file,
+                'haptik_tmp' => 'mediation_consent_doc'
+
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
             }
