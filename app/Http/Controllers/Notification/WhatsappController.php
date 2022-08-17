@@ -27,6 +27,12 @@ class WhatsappController extends Controller
     public function que_changes()
     {
 
+        // $que = WhatsAppQue::select('whatsapp_que.*', 'whatsapp_tracking.id as Wtid', 'whatsapp_tracking.request_uuid')->leftJoin('whatsapp_tracking', function($q) {
+        //     $q->on('whatsapp_tracking.caseid', '=', 'whatsapp_que.caseid')->on('whatsapp_tracking.event', '=', 'whatsapp_que.event');
+        // })->limit(10)->get();
+
+        // dd($que);
+
         // $que = WhatsAppQue::where(['is_sent' => 0, 'haptik_tmp' => ""])->get();
         // // dd($que);
         // // $que = WhatsAppQue::where('id', 1)->get();
