@@ -149,7 +149,7 @@ class WhatsappController extends Controller
 
         $limit = 500;
 
-        $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0])->whereDate('created_at', '>', '2022-07-31')->orderBy('created_at', 'DESC')->limit($limit)->get();
+        $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0, 'is_success' => null])->whereDate('created_at', '>', '2022-07-31')->orderBy('created_at', 'DESC')->limit($limit)->get();
 
 
         // dd($whapps);
@@ -297,15 +297,21 @@ class WhatsappController extends Controller
         $type = "POST";
         $auth = env('INTERAKT_KEY');
 
+        $findtrack = WhatsappTrack::where(['que_id' => $d['id']])->orderBy('created_at', 'DESC')->limit(1)->first();
+
+        if ($findtrack->request_uuid != "") {
+            return true;
+        }
+
         $res = Curl::NewWhatsappRequest($url, json_encode($data), $type, $auth);
         // dd($res);
 
         $resjson = json_decode($res);
 
+
         if ($resjson) {
 
             if (array_key_exists('text', $d['content'])) {
-
 
                 $data1 = [
 
@@ -345,9 +351,9 @@ class WhatsappController extends Controller
             }
 
             $res_decode = json_decode($res, true);
-            if($res_decode['result'] == true) {
+            if ($res_decode['result'] == true && isset($res_decode['id'])) {
                 $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_success' => 1]);
-            } 
+            }
             $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);
 
             return "success";
