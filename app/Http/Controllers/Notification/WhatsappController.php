@@ -346,10 +346,9 @@ class WhatsappController extends Controller
 
             $res_decode = json_decode($res, true);
             if($res_decode['result'] == true) {
-                $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);
-            } else {
-                $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0]);
-            }
+                $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_success' => 1]);
+            } 
+            $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);
 
             return "success";
         } else {
