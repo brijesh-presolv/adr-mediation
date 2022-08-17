@@ -299,10 +299,11 @@ class WhatsappController extends Controller
 
         $findtrack = WhatsappTrack::where(['que_id' => $d['id']])->orderBy('created_at', 'DESC')->limit(1)->first();
 
-        if ($findtrack->request_uuid != "") {
-            return true;
+        if (isset($findtrack)) {
+            if ($findtrack->request_uuid != "") {
+                return true;
+            }
         }
-
         $res = Curl::NewWhatsappRequest($url, json_encode($data), $type, $auth);
         // dd($res);
 
