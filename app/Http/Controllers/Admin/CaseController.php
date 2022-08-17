@@ -428,6 +428,7 @@ class CaseController extends Controller
             // $user->withdraw = $request->withdraw_comment;
             if ($user->save()) {
 
+                // dd($user->bulk_flag);
                 $mediation_status_log = new Mediation_status_log;
                 $mediation_status_log->user_id = Auth::user()->id;
                 $mediation_status_log->mediation_case_id = $request->case_id;
@@ -436,13 +437,19 @@ class CaseController extends Controller
 
                 if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
                     $mediation_status_log->description = "Request Withdrawn";
-                    // $this->sned_withdrawal($request->case_id);
+                    if($user->bulk_flag != 1) {
+                        $this->sned_withdrawal($request->case_id);
+                    }
                 } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
                     $mediation_status_log->description = "Request Resolved";
-                    // $this->sned_resolved($request->case_id);
+                    if($user->bulk_flag != 1) {
+                        $this->sned_resolved($request->case_id);
+                    }
                 } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
                     $mediation_status_log->description = "Request Unresolved";
-                    // $this->sned_unresolved($request->case_id);
+                    if($user->bulk_flag != 1) {
+                        $this->sned_unresolved($request->case_id);
+                    }
                 }
                 $mediation_status_log->save();
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
