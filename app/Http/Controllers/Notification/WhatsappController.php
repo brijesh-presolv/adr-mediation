@@ -145,7 +145,6 @@ class WhatsappController extends Controller
 
         $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0])->whereDate('created_at', '>', '2022-07-31')->orderBy('created_at', 'DESC')->limit($limit)->get();
 
-        // $whapps = WhatsAppQue::whereIN('id', [13048])->get();
 
         // dd($whapps);
 
@@ -339,9 +338,12 @@ class WhatsappController extends Controller
                 WhatsappTrack::insert($data2);
             }
 
-            $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);;
-
-
+            $res_decode = json_decode($res, true);
+            if($res_decode['result'] == true) {
+                $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);
+            } else {
+                $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0]);
+            }
 
             return "success";
         } else {
