@@ -63,12 +63,11 @@ $meddate = $meddate->format('d-m-Y');
              
         </div>
     </center>
-    <p class="text-center">Enlisted by the Department of Justice, Government of India and recognized as a Mediation Institution</p>
-    <p class="text-center"><a href="https://www.presolv360.com/">https://www.presolv360.com/</a> | <a href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
+    <p class="text-center">Included in the list of institutions <a href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution (ODR) by the Ministry of Law & Justice and recognized as a Mediation Institution</p>
+    <p class="text-center"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
     <p class="text-center">Case ID: M{{sprintf('%06d', $case->id)}}  |  Date: {{$meddate}}</p> <br>
     <h2 class="text-center">Appointment Letter</h2>
-
-    <p class="text-center">(See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules)</p><br>
+    {{-- <p class="text-center">(See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules)</p><br> --}}
     <p>Dear {{$mediator->first_name}} {{$mediator->last_name}},</p>
     <h4>Sub: Appointment to act as Mediator </h4>
     <?php 
@@ -77,10 +76,10 @@ $meddate = $meddate->format('d-m-Y');
     <table class="table_" cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <th width="50%" >
-                Initiating Party:
+                Applicant(s) / Initiating Party:
             </th>
             <th>
-                Responding Party:
+                Opposite / Responding Party:
             </th>
         </tr>
         <tr>
@@ -136,13 +135,13 @@ $meddate = $meddate->format('d-m-Y');
             </td>
         </tr>
 
-    </table><br>
+    </table>
 
-    <p style="text-indent: 4em;">Desirous of arriving at an amicable resolution, the <b>{{isset($inparty->organization) ? $inparty->organization : $party[0]->name}}</b> has approached Presolv360 to facilitate a mutually acceptable resolution via electronic mediation.</p>
-    <p style="text-indent: 4em;">Presolv360, an independent Online Dispute Resolution (“ODR”) platform enlisted by the Department of Justice, Government of India and recognized as a Mediation Institution, has been requested to do the needful and administer electronic mediation on the platform available at <a href="https://www.presolv360.com/">https://www.presolv360.com/</a> in accordance with its Dispute Resolution Rules ("Rules"). Presolv360 is a neutral institution that provides complete administrative and technical support to the parties to conduct the proceedings online, has no interest in the outcome of the dispute and has no conflict of interest.</p>
-    <p style="text-indent: 4em;">We have been requested to appoint an independent, qualified and competent Mediator from the Panel of Mediators on behalf of all the parties and administer the proceedings in accordance with the Rules. Further, as per Rule 6 of Section 3 of the Rules, the mediation proceedings shall be carried out by a sole mediator and Presolv360 shall be empowered to appoint the Mediator from the Panel of Mediators.</p>
-    <p style="text-indent: 4em;">Accordingly, you have been appointed to act as the Mediator and we request you to intimate your acceptance and consent, alongwith the necessary disclosures, or refusal, to act as a mediator, as per the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”) within the prescribed time limit.</p>
-    <p style="text-indent: 4em;">Kindly note that your appointment shall be governed by the Code and the proceedings shall be carried out in accordance with the Rules. </p>
+    <p style="text-indent: 4em;">Desirous of arriving at an amicable resolution, <b>{{isset($inparty->organization) ? $inparty->organization : $party[0]->name}}</b> has approached Presolv360 to facilitate a mutually acceptable resolution through online mediation.</p>
+    <p style="text-indent: 4em;">Presolv360 is included in the list of institutions offering Alternative Dispute Resolution ("ADR") services including through Online Dispute Resolution ("ODR") by the Ministry of Law & Justice and is also empaneled as a Mediation Institution by various Courts in India. Presolv360 administers mediation proceedings on its platform, and empanels independent, qualified mediators with the required competence, knowledge and expertise on its panel of mediators. The mediation / conciliation shall be governed by and conducted in accordance with Presolv360’s Dispute Resolution Rules, a copy of which can be found here. Presolv360 provides administrative support to all the parties concerned and the mediator for conducting the mediation proceedings and has no interest in the outcome of the dispute and there exists no conflict of.</p>
+    <p style="text-indent: 4em;">We have been requested to provide administrative assistance in respect of the dispute between the aforesaid parties. The mediation proceedings shall be carried out by an independent, qualified and competent mediator from the panel of mediators on behalf of all the parties.</p>
+    <p style="text-indent: 4em;">Accordingly, you have been appointed as the Mediator and we request you to intimate your acceptance and consent, alongwith the requisite disclosures, or refusal to act as an mediator as per the Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules within the prescribed time limit.</p>
+    {{-- <p style="text-indent: 4em;">Kindly note that your appointment shall be governed by the Code and the proceedings shall be carried out in accordance with the Rules. </p> --}}
     <br><br>
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
