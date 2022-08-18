@@ -67,7 +67,7 @@
                             </thead>
                             <tbody>
 
-                                {{-- {{dd($whatsapp)}} --}}
+                                {{dd($whatsapp)}}
                                 @foreach ($whatsapp as $key => $subvalue)
                                     @foreach ($subvalue as $key => $value)
                                         <tr>
