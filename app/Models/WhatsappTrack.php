@@ -44,7 +44,7 @@ class WhatsappTrack extends Model
         //             ->rightJoin('whatsapp_log as wl', DB::raw('wl.request_id'), '=', DB::raw('whatsapp_tracking.request_uuid'))
         //             ->where('caseid', $id)->orderBy('whatsapp_tracking.created_at', 'ASC')->get();
 
-        $result = WhatsappTrack::select('whatsapp_tracking.*', 'ec.title', 'ec.whdescription', 'wl.status as wlstatus', 'wl.created_at as wldate', 'wl.updated_time', 'wl.request_id')
+        $result = WhatsappTrack::select('whatsapp_tracking.*', 'ec.title', 'ec.whdescription', 'wl.status as wlstatus', 'wl.created_at as wldate', 'wl.updated_time', 'wl.sent_time', 'wl.delivered_time', 'wl.request_id')
             ->rightJoin('whatsapp_log as wl', DB::raw('wl.request_id'), '=', DB::raw('whatsapp_tracking.request_uuid'))
             ->rightJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('whatsapp_tracking.event'))
             ->where('caseid', $id)->orderBy('whatsapp_tracking.created_at', 'ASC')->get();
