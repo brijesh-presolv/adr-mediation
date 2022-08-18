@@ -111,8 +111,13 @@
                                             <td>{{ ucfirst($value->wlstatus) }}</td>
                                             <td><?php
                                             // date_default_timezone_set('Asia/Kolkata');
-                                            $time = new DateTime($value->updated_time, new DateTimeZone('UTC'));
-                                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                            if ($value->updated_time != null) {
+                                                $time = new DateTime($value->updated_time, new DateTimeZone('UTC'));
+                                                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                            } else {
+                                                $time = new DateTime($value->sent_time, new DateTimeZone('UTC'));
+                                                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                            }
                                             ?> {{ $time->format('d-m-Y H:i:s') }}</td>
                                         </tr>
                                     @endforeach
@@ -209,7 +214,7 @@
         <div class="card-body">
             <div class="d-flex">
                 <h5>Courier Track</h5>
-                
+
             </div>
 
             <div class="row">
@@ -234,7 +239,7 @@
                         <tbody>
                             @foreach ($courierCsv as $key => $value)
                                 <tr>
-                                    <td>{{$value->noticeId}}</td>
+                                    <td>{{ $value->noticeId }}</td>
                                     <td>{{ $value->status }}</td>
                                     <td>{{ $value->status_as_on_date }}</td>
                                     <td>{{ $value->status_at }}</td>
@@ -243,14 +248,14 @@
                                     <td>{{ $value->final_status }}</td>
                                     <td>{{ $value->type }}</td>
                                     <td>
-                                    @if ($value->file_name != null)
-                                      <a href="javascript:void(0);" data-folder="courier_pdf"
-                                        data-url="{{ $value->file_name }}" data-id="{{ $value->case_id }}"
-                                        class="secureDownload"
-                                        data-userid="{{ Auth::user()->id }}"><b>Download</b></a>
-                                    @else
-                                        -
-                                    @endif
+                                        @if ($value->file_name != null)
+                                            <a href="javascript:void(0);" data-folder="courier_pdf"
+                                                data-url="{{ $value->file_name }}" data-id="{{ $value->case_id }}"
+                                                class="secureDownload"
+                                                data-userid="{{ Auth::user()->id }}"><b>Download</b></a>
+                                        @else
+                                            -
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -263,7 +268,7 @@
         </div>
     </div>
 
-    
+
 
     <div class="card">
         <div class="card-body">
