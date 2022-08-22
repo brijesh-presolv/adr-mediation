@@ -117,7 +117,7 @@ class IvrController extends Controller
         return response()->json(["code" => 2000, "status" => "success", "data" => $arraydata]);
     }
 
-    public function remindeAcceptcase()
+    public function reminedAcceptcase()
     {
         $date = \Carbon\Carbon::today()->subDays(2);
 
@@ -183,7 +183,8 @@ class IvrController extends Controller
                 $data['contact'] = $contact;
 
 
-                $data['template'] = 'Hello ' . $respondent . ' a legal case of arbitration has been registered on Presolv three sixty platform against you by ' . $claimant;
+                $data['template'] = $respondent . ', aapke khilaaf legal case darj kiya gaya hai. Yeh case ' . $claimant . 'ne Presolv three sixty
+                dwara kiya hai. Iski notice aapke registered details pe bheji gayi hai.';
 
                 $data['auth'] = "MED360AUTH";
 
@@ -191,7 +192,7 @@ class IvrController extends Controller
 
                 $data['app'] = "P360MED";
 
-                $data['pivrid'] = "61f7db108353a316";
+                $data['pivrid'] = "6299fe7601f5d759";
 
                 $data['caseid'] = $case->id;
 
