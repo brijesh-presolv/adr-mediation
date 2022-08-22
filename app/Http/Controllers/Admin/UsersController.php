@@ -112,18 +112,18 @@ class UsersController extends Controller
         if ($request->hasFile('signature')) {
             if ($user->role == 0) {
                 if ($user->signature_photo != null) {
-                    Storage::delete('public/user/' . $request->id . '/signature/' . $user->signature_photo);
+                    Storage::disk('local')->delete('public/user/' . $request->id . '/signature/' . $user->signature_photo);
                 }
                 $extension = $request->file('signature')->getClientOriginalExtension();
                 $name = 'User_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
-                Storage::put('public/user/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+                Storage::disk('local')->put('public/user/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
             } else {
                 if ($user->signature_photo != null) {
-                    Storage::delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
+                    Storage::disk('local')->delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
                 }
                 $extension = $request->file('signature')->getClientOriginalExtension();
                 $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
-                Storage::put('public/mediator/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+                Storage::disk('local')->put('public/mediator/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
             }
             // if($user->signature_photo != null) {
             //     Storage::delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
@@ -134,11 +134,11 @@ class UsersController extends Controller
         }
         if ($request->hasFile('profilePic')) {
             if ($user->profile_pic != null) {
-                Storage::delete('public/mediator/' . $request->id . '/profile/' . $user->profile_pic);
+                Storage::disk('local')->delete('public/mediator/' . $request->id . '/profile/' . $user->profile_pic);
             }
             $extension = $request->file('profilePic')->getClientOriginalExtension();
             $profilename = 'Mediator_Profile_Pic' . sprintf('%06d', $request->id) . time() . '.' . $extension;
-            $s = Storage::put('public/mediator/' . $request->id . '/profile/' . $profilename, file_get_contents($request->profilePic));
+            $s = Storage::disk('local')->put('public/mediator/' . $request->id . '/profile/' . $profilename, file_get_contents($request->profilePic));
         }
         if (isset($name)) {
             $user->signature_photo = $name;
