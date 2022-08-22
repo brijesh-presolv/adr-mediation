@@ -14,123 +14,196 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Helpers\Curl;
 
 
-class IvrController extends Controller {
+class IvrController extends Controller
+{
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct() {
-        
+    public function __construct()
+    {
     }
 
-   
+
     public function acceptcase()
     {
         $date = \Carbon\Carbon::today()->subDays(1);
 
         $date = $date->format('Y-m-d');
-       
-        $cases = MedCase::select('mediation_case.*','mediation_status_logs.created_at as cr')
-            
-            ->leftJoin("mediation_status_logs",function($join){
 
-            $join->on("mediation_status_logs.mediation_case_id","=","mediation_case.id");
+        $cases = MedCase::select('mediation_case.*', 'mediation_status_logs.created_at as cr')
+
+            ->leftJoin("mediation_status_logs", function ($join) {
+
+                $join->on("mediation_status_logs.mediation_case_id", "=", "mediation_case.id");
                 //->on("mediation_status_logs.status","=",1);
-        })
+            })
             ->whereDate('mediation_status_logs.created_at', $date)
             ->where('mediation_status_logs.status', '1')
 
             ->get();
 
-      
+
         $arraydata = array();
         foreach ($cases as $key => $case) {
-           
-                
-                $party=InvoledUser::where(['userPlanid' => $case->id])->get();
-
-                $claimant='';
-
-                $respondent='';
-
-                $contact="";
-
-                $i=0;
-
-                foreach ($party as $k => $v) {
-                    
-                    if($v->isClaimant=='0' and $i==0){
 
 
-                        $claimant=User::where(['id'=>$v->userId])->first();
+            $party = InvoledUser::where(['userPlanid' => $case->id])->get();
 
-                        if($claimant->organization==''){
+            $claimant = '';
 
-                            $claimant=$claimant->first_name.' '.$claimant->last_name;
-                        } else{
+            $respondent = '';
 
-                            $claimant=$claimant->organization;
-                        }
-                               
+            $contact = "";
 
-                    } else if($i==1 and $v->isClaimant=='1'){
+            $i = 0;
 
-                        $respondent=$v->name;
+            foreach ($party as $k => $v) {
 
-                        $contact=$v->userPhone;
+                if ($v->isClaimant == '0' and $i == 0) {
 
+
+                    $claimant = User::where(['id' => $v->userId])->first();
+
+                    if ($claimant->organization == '') {
+
+                        $claimant = $claimant->first_name . ' ' . $claimant->last_name;
+                    } else {
+
+                        $claimant = $claimant->organization;
                     }
+                } else if ($i == 1 and $v->isClaimant == '1') {
 
-                    $i++;
+                    $respondent = $v->name;
 
+                    $contact = $v->userPhone;
                 }
 
-
-                if($contact!=''){
-
-                    $data['contact']=$contact;
+                $i++;
+            }
 
 
-                    $data['template']='Hello '.$respondent.' a legal case of arbitration has been registered on Presolv three sixty platform against you by '.$claimant;
+            if ($contact != '') {
 
-        $data['auth']="MED360AUTH";
-
-        $data['event']="ACPTMED_ADM";
-
-        $data['app']="P360MED";
-
-        $data['pivrid']="61f7db108353a316";
-
-        $data['caseid']=$case->id;
-
-        $url="https://presolv360.com/functions/myopout.php";
+                $data['contact'] = $contact;
 
 
-        $res = Curl::getdata($url, $data, 'POST', 'MED360AUTH');
+                $data['template'] = 'Hello ' . $respondent . ' a legal case of arbitration has been registered on Presolv three sixty platform against you by ' . $claimant;
+
+                $data['auth'] = "MED360AUTH";
+
+                $data['event'] = "ACPTMED_ADM";
+
+                $data['app'] = "P360MED";
+
+                $data['pivrid'] = "61f7db108353a316";
+
+                $data['caseid'] = $case->id;
+
+                $url = "https://presolv360.com/functions/myopout.php";
 
 
-
-
-
-
-
-                }
-
-
-
-        
-               
-            
+                $res = Curl::getdata($url, $data, 'POST', 'MED360AUTH');
+            }
         }
 
-        
-exit();
+
+        exit();
 
 
 
         return response()->json(["code" => 2000, "status" => "success", "data" => $arraydata]);
     }
 
+    public function reminedAcceptcase()
+    {
+        $date = \Carbon\Carbon::today()->subDays(2);
+
+        $date = $date->format('Y-m-d');
+
+        $cases = MedCase::select('mediation_case.*', 'mediation_status_logs.created_at as cr')
+
+            ->leftJoin("mediation_status_logs", function ($join) {
+
+                $join->on("mediation_status_logs.mediation_case_id", "=", "mediation_case.id");
+                //->on("mediation_status_logs.status","=",1);
+            })
+            ->whereDate('mediation_status_logs.created_at', $date)
+            ->where('mediation_status_logs.status', '1')
+
+            ->get();
+
+
+        $arraydata = array();
+        foreach ($cases as $key => $case) {
+
+
+            $party = InvoledUser::where(['userPlanid' => $case->id])->get();
+
+            $claimant = '';
+
+            $respondent = '';
+
+            $contact = "";
+
+            $i = 0;
+
+            foreach ($party as $k => $v) {
+
+                if ($v->isClaimant == '0' and $i == 0) {
+
+
+                    $claimant = User::where(['id' => $v->userId])->first();
+
+                    if ($claimant->organization == '') {
+
+                        $claimant = $claimant->first_name . ' ' . $claimant->last_name;
+                    } else {
+
+                        $claimant = $claimant->organization;
+                    }
+                } else if ($i == 1 and $v->isClaimant == '1') {
+
+                    $respondent = $v->name;
+
+                    $contact = $v->userPhone;
+                }
+
+                $i++;
+     
+            }
+
+            if ($contact != '') {
+
+                $data['contact'] = $contact;
+
+
+                $data['template'] = 'hello ' . $respondent . ' aapke khilaaf legal case darj kiya gaya hai. Yeh case ' . $claimant . ' ne Presolv three sixty dwara kiya hai. Iski notice aapke registered details pe bheji gayi hai.';
+
+                $data['auth'] = "MED360AUTH";
+
+                $data['event'] = "ACPTMED_ADM";
+
+                $data['app'] = "P360MED";
+
+                $data['pivrid'] = "6299fe7601f5d759";
+
+                $data['caseid'] = $case->id;
+
+                $url = "https://presolv360.com/functions/myopout.php";
+
+                $res = Curl::getdata($url, $data, 'POST', 'MED360AUTH');
+            }
+        }
+
+
+
+
+
+        return response()->json(["code" => 200, "status" => "success", "data" => $arraydata]);
+        exit();
+    
+    }
 }
