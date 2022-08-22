@@ -69,15 +69,15 @@ $meddate = $meddate->format('d-m-Y');
     <br><a href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
 
     <p>Dear Sir,</p>
-    <h4>Sub: Request to administer electronic mediation</h4>
+    <h4>Sub: Request letter</h4>
 
 
-    <p style="text-indent: 4em;">Desirous of arriving at an amicable resolution of our dispute with <b>{{$res->name}}</b>, and with a view to provide each party full opportunity to participate in the resolution of the dispute, fairly and conveniently, we request Presolv360, an independent Online Dispute Resolution (“ODR”) platform enlisted by the Department of Justice, Government of India and recognized as a Mediation Institution, to do the needful and administer electronic mediation on the platform available at <a href="https://www.presolv360.com/">https://www.presolv360.com/</a> in accordance with its Dispute Resolution Rules ("Rules").</p>
-    <p style="text-indent: 4em;">We acknowledge that Presolv360 is a neutral institution that provides complete administrative and technical support to the parties to conduct the proceedings online, has no interest in the outcome of the dispute and therefore, there exists no conflict of interest. We request you to appoint an independent, qualified and competent mediator from the panel of mediators on behalf of all the parties and administer the proceedings in accordance with the Rules.</p>
+    <p style="text-indent: 4em;">Desirous of arriving at an amicable resolution of our dispute with <b>{{$res->name}}</b>, and with a view to provide each party full opportunity to participate in the resolution of the dispute, fairly and conveniently, we request Presolv360 to provide administrative assistance in respect of the dispute between the parties.</p>
+    <p style="text-indent: 4em;">We acknowledge that Presolv360 is a neutral institution whose role is limited to providing administrative support in respect of the arbitration proceedings, has no interest in the outcome of the dispute and there is no conflict of interest. We understand that the said proceedings will be carried out by an independent, qualified and competent arbitrator from the panel of arbitrators on behalf of all the parties.</p>
     <br>
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
-            <td ><p>Sincerely,</p> <p>Sd/-</p> <p>{{$ini->name}}</p> <p>Authorized Representative</p></td>
+            <td><p>Sincerely,</p> <p>Sd/-</p> <p>{{$ini->name}}</p> <p>Authorized Representative</p></td>
         </tr>
     </table>
 
