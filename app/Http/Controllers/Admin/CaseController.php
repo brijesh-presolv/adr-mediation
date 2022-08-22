@@ -2873,7 +2873,7 @@ class CaseController extends Controller
     {
         // $data["mediator"] = User::find($medid);
         $data["case"] = MedCase::where("id", "=", $id)->first();
-        $data["ini"] = InvoledUser::select('user_involved_in_agreement.*', 'usr.organization')
+        $data["ini"] = InvoledUser::select('user_involved_in_agreement.*', 'usr.organization', 'usr.signature_photo')
             ->leftJoin('users as usr', DB::raw('usr.id'), '=', DB::raw('user_involved_in_agreement.userId'))
             ->where("userPlanId", "=", $id)->where('isClaimant', 0)->first();
         $data["res"] = InvoledUser::where("userPlanId", "=", $id)->where('isClaimant', '<>', 0)->first();
