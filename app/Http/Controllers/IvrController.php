@@ -175,16 +175,12 @@ class IvrController extends Controller
      
             }
 
-            print_r("success");
-            exit;
-
             if ($contact != '') {
 
                 $data['contact'] = $contact;
 
 
-                $data['template'] = $respondent . ', aapke khilaaf legal case darj kiya gaya hai. Yeh case ' . $claimant . 'ne Presolv three sixty
-                dwara kiya hai. Iski notice aapke registered details pe bheji gayi hai.';
+                $data['template'] = 'hello ' . $respondent . ' aapke khilaaf legal case darj kiya gaya hai. Yeh case ' . $claimant . ' ne Presolv three sixty dwara kiya hai. Iski notice aapke registered details pe bheji gayi hai.';
 
                 $data['auth'] = "MED360AUTH";
 
@@ -198,16 +194,16 @@ class IvrController extends Controller
 
                 $url = "https://presolv360.com/functions/myopout.php";
 
-
                 $res = Curl::getdata($url, $data, 'POST', 'MED360AUTH');
             }
         }
 
 
+
+
+
+        return response()->json(["code" => 200, "status" => "success", "data" => $arraydata]);
         exit();
-
-
-
-        return response()->json(["code" => 2000, "status" => "success", "data" => $arraydata]);
+    
     }
 }
