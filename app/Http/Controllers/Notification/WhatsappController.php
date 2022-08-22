@@ -147,7 +147,7 @@ class WhatsappController extends Controller
 
         // exit;
 
-        $limit = 500;
+        $limit = 20;
 
         $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0, 'is_success' => null])->whereDate('created_at', '>', '2022-07-31')->orderBy('created_at', 'DESC')->limit($limit)->get();
 
