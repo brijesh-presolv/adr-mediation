@@ -104,11 +104,11 @@ class ProfileController extends Controller
         if($request->hasFile('signature')) {
 
             if($dataToUpdate->signature_photo != null) {
-                Storage::delete('public/user/' . $request->id . '/signature/' . $dataToUpdate->signature_photo);
+                Storage::disk('local')->delete('public/user/' . $request->id . '/signature/' . $dataToUpdate->signature_photo);
             }
             $extension = $request->file('signature')->getClientOriginalExtension();
             $name = 'User_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
-            Storage::put('public/user/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+            Storage::disk('local')->put('public/user/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
             $dataToUpdate->signature_photo = $name;
         }
 
