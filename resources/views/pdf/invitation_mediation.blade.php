@@ -72,9 +72,8 @@ $ldate = $lastdate->format('d-m-Y');
 
     <h4 class="text-center">Included in the list of institutions <a href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution (ODR) by the Ministry of Law & Justice and empaneled as a Mediation Institution by various Courts in India</h4>
     
-    <p class="text-center">
-        <a href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing</a>
-    </p>
+    <p class="text-center"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
+    
     <br>
     <?php 
     use App\Models\User;
@@ -82,7 +81,7 @@ $ldate = $lastdate->format('d-m-Y');
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%"><p>Case ID: M{{sprintf('%06d',$case->id)}}</p></td>
-            <td ><p class="text-center">Date : {{date('d-m-Y')}}</p></td>
+            <td class="text-right"><p>Date : {{date('d-m-Y')}}</p></td>
         </tr>
     </table>
     <br>
