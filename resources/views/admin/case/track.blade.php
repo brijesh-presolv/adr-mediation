@@ -98,14 +98,15 @@
                                             <td>
                                                 @if ($key == 0)
                                                     @if ($value->media != '')
-                                                        {{-- {{$value->media}} --}}
-                                                        {{-- <a class="btn btn-primary"
-                                                            href="{{ $value->media }}">View</a><br><br> --}}
-                                                        <a href="javascript:void(0);"
-                                                            data-fullurl="{{ $value->media }}"
-                                                            data-id="{{ $value->caseid }}"
-                                                            class="btn btn-success secureDownload"
-                                                            data-userid="{{ Auth::user()->id }}">View</a>
+                                                        @if (file_exists($value->media))
+                                                            {{-- {{$value->media}} --}}
+                                                            <a class="btn btn-primary" href="{{ $value->media }}">View</a>
+                                                        @else
+                                                            <a href="javascript:void(0);" data-fullurl="{{ $value->media }}"
+                                                                data-id="{{ $value->caseid }}"
+                                                                class="btn btn-success secureDownload"
+                                                                data-userid="{{ Auth::user()->id }}">View</a>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             </td>
