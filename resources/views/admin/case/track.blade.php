@@ -98,7 +98,7 @@
                                             <td>
                                                 @if ($key == 0)
                                                     @if ($value->media != '')
-                                                        @if (file_exists($value->media))
+                                                        @if (!file_exists($value->media))
                                                             {{-- {{$value->media}} --}}
                                                             <a class="btn btn-primary" href="{{ $value->media }}">View</a>
                                                         @else
