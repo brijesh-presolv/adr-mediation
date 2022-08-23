@@ -98,13 +98,12 @@
                                             <td>
                                                 @if ($key == 0)
                                                     @if ($value->media != '')
-                                                        @if (!file_exists($value->media))
-                                                            {{-- {{$value->media}} --}}
+                                                        @if (stripos(get_headers($value->media)[0], '200 OK'))
                                                             <a class="btn btn-primary" href="{{ $value->media }}">View</a>
                                                         @else
                                                             <a href="javascript:void(0);" data-fullurl="{{ $value->media }}"
                                                                 data-id="{{ $value->caseid }}"
-                                                                class="btn btn-success secureDownload"
+                                                                class="btn btn-primary secureDownload"
                                                                 data-userid="{{ Auth::user()->id }}">View</a>
                                                         @endif
                                                     @endif
