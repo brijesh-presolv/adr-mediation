@@ -213,8 +213,8 @@ $meddate = $meddate->format('d-m-Y');
     <p>&#10004; I confirm that the details provided above are true, accurate, current and complete and acknowledge that
         a copy of the consent and disclosures will be provided to the parties.</p>
     <p>&#10004; By checking this box, I accept and agree to conduct the mediation in accordance with the Rules and
-        confirm that I shall abide by the <a href="#">Code</a>, <a href="#">Terms & Conditions</a> and <a
-            href="#">Privacy Policy</a>.</p>
+        confirm that I shall abide by the <a href="#">Code</a>, <a href="https://presolv360.com/terms_conditions">Terms & Conditions</a> and <a
+            href="https://presolv360.com/privacy_policy">Privacy Policy</a>.</p>
     <br />
     <p>Date: {{ $meddate }}</p><br /> <br /><br />
     <h4 class="text-right">
