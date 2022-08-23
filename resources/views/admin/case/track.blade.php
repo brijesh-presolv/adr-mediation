@@ -99,8 +99,13 @@
                                                 @if ($key == 0)
                                                     @if ($value->media != '')
                                                         {{-- {{$value->media}} --}}
-                                                        <a class="btn btn-primary"
-                                                            href="{{ $value->media }}">View</a><br><br>
+                                                        {{-- <a class="btn btn-primary"
+                                                            href="{{ $value->media }}">View</a><br><br> --}}
+                                                        <a href="javascript:void(0);"
+                                                            data-fullurl="{{ $value->media }}"
+                                                            data-id="{{ $value->caseid }}"
+                                                            class="btn btn-success secureDownload"
+                                                            data-userid="{{ Auth::user()->id }}">View</a>
                                                     @endif
                                                 @endif
                                             </td>
@@ -376,6 +381,12 @@ $('#myModal230 .modal-body span').append( $(this).data('msg'));
                 var userid = $(this).data("userid");
                 var parentFolder = $(this).data("folder");
                 var csrf = document.querySelector('meta[name="csrf-token"]').content;
+                var fullurl = $(this).data("fullurl");
+
+                console.log("filename", filename);
+                console.log("parentFolder", parentFolder);
+                console.log("fullurl", fullurl);
+
 
                 $.ajax({
                     url: '{{ route('downloadSecure') }}',
@@ -385,6 +396,7 @@ $('#myModal230 .modal-body span').append( $(this).data('msg'));
                         urlpath: filename,
                         parentFolder: parentFolder,
                         user_id: userid,
+                        fullurl: fullurl,
                         _token: csrf
                     },
                     xhrFields: {
