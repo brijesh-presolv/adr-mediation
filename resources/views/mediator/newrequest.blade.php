@@ -307,7 +307,7 @@
                                     checked>
                                 <label class="form-check-label" for="accept">
                                     By checking this box, I accept and agree to conduct the mediation in accordance with
-                                    the Rules and confirm that I shall abide by the <a href="#">Code</a>, <a href="https://presolv360.com/terms_conditions">Terms & Conditions</a> and <a
+                                    the Rules and confirm that I shall abide by the <a href="https://drive.google.com/file/d/1M6dHbOuIQv4OZlhgyRFiDu75CsSKeZUI/view">Code</a>, <a href="https://presolv360.com/terms_conditions">Terms & Conditions</a> and <a
                                     href="https://presolv360.com/privacy_policy">Privacy Policy</a>.
                                 </label>
                             </div>
