@@ -340,8 +340,7 @@ class MediationController extends Controller
 
             $r = $request->post();
 
-            // dd($r);
-
+            // dd(count($r['email']));
             //udpate mediation case
 
             $med->issue = $r['issue'];
@@ -407,38 +406,43 @@ class MediationController extends Controller
             //add responding party
 
 
-
+            $respond = 0;
 
             for ($i = 0; $i < count($r['email']); $i++) {
 
+                if ($r['selected_party'][$i] == 0) {
 
-                $inv = new InvoledUser();
-                //$inv->userId=;
-                $inv->userPlanId = $med->id;
-                $inv->userEmail = $r['email'][$i];
-                $inv->userPhone = $r['phone'][$i];
-                $inv->name = $r['name'][$i];
-                $inv->joinCode = $this->joinCode();
-                $inv->fulladdress = $r['fulladdress'][$i];
-                // $inv->address1 = $r['add1'][$i];
+                    $findUser = User::where(['email'=> $r['email'][$i], 'role' => 0])->first();
 
-                // if ($r['add2'][$i] == '') {
-                //     $r['add2'][$i] = '';
-                // }
-                // $inv->address2 = $r['add2'][$i];
-                // $inv->city = $r['city'][$i];
-                // $inv->pincode = $r['pincode'][$i];
-                // $inv->state = $r['state'][$i];
-                // $inv->country = $r['country'][$i];
-                $inv->isClaimant = $i + 1;
+                    $inv = new InvoledUser();
+                    $inv->userId=isset($findUser->id) ? $findUser->id : 0;
+                    $inv->userPlanId = $med->id;
+                    $inv->userEmail = $r['email'][$i];
+                    $inv->userPhone = $r['phone'][$i];
+                    $inv->name = $r['name'][$i];
+                   
+                    $inv->fulladdress = $r['fulladdress'][$i];
+                    $inv->isClaimant = '0';
+                    $inv->isOnboarded = '1';
+                    $inv->created_at = date('Y-m-d H:s:i');
+                    $inv->updated_at = date('Y-m-d H:s:i');
+                    $inv->save();
+                } else {
+                    $inv = new InvoledUser();
+                    $inv->userPlanId = $med->id;
+                    $inv->userEmail = $r['email'][$i];
+                    $inv->userPhone = $r['phone'][$i];
+                    $inv->name = $r['name'][$i];
+                    $inv->joinCode = $this->joinCode();
+                    $inv->fulladdress = $r['fulladdress'][$i];
+                    $inv->isClaimant = $respond + 1;
 
+                    $inv->created_at = date('Y-m-d H:s:i');
+                    $inv->updated_at = date('Y-m-d H:s:i');
 
-
-                $inv->created_at = date('Y-m-d H:s:i');
-                $inv->updated_at = date('Y-m-d H:s:i');
-
-
-                $inv->save();
+                    $inv->save();
+                    $respond++;
+                }
             }
             $letter = $this->requestLetter($_GET['id']);
             $med->request_letter = $letter;
@@ -460,10 +464,7 @@ class MediationController extends Controller
             }
             Common_function::MedNotification($med->id, "SUBMIT_FORM", Auth::user()->id, null, $inv_id);
 
-
             $e = Email::send($d, $usr->email, env('EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
-
-
 
             return redirect()->route('user.newrequest')->with(['response' => 'success']);
 
