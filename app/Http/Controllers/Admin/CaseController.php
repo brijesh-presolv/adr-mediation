@@ -3437,12 +3437,12 @@ class CaseController extends Controller
                 $caseinfo['invwtd'] = $time->format('d-m-Y H:i:s');
                 if (isset($data['whatsapptrck']['whatsapp_log'])) {
                     foreach ($data['whatsapptrck']['whatsapp_log'] as $wtrck) {
-                        if ($wtrck->status  == "delivered") {
+                        if (strtolower($wtrck->status)  == "delivered") {
                             $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
                             $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                             $caseinfo['invwds'] = "delivered";
                             $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
-                        } else if ($wtrck->status  == "read") {
+                        } else if (strtolower($wtrck->status)  == "read") {
                             $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
                             $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                             $caseinfo['invwrs'] = "read";
@@ -3512,12 +3512,12 @@ class CaseController extends Controller
                             if (isset($data['ewhatsapptrck']['whatsapp_log'])) {
 
                                 foreach ($data['ewhatsapptrck']['whatsapp_log'] as $wtrck) {
-                                    if ($wtrck->status  == "delivered") {
+                                    if (strtolower($wtrck->status)  == "delivered") {
                                         $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
                                         $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                                         $caseinfo['einvwds' . $k] = "delivered";
                                         $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
-                                    } else if ($wtrck->status  == "read") {
+                                    } else if (strtolower($wtrck->status)  == "read") {
                                         $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
                                         $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                                         $caseinfo['einvwrs' . $k] = "read";
