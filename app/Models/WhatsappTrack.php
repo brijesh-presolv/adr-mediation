@@ -60,9 +60,11 @@ class WhatsappTrack extends Model
         //  right join whatsapp_log wl on whatsapp_tracking.request_uuid=wl.request_id
 
         //  where caseid='$id' order by whatsapp_tracking.created_at asc";
-        if(strlen($mobile) == 10) {
-            $mobile = '+91'.$mobile;
+        if(strlen($mobile) == 13) {
+            // $mobile = '+91'.$mobile;
+            $mobile = str_replace('+91', '', $mobile);
         }
+
         // $result = WhatsappTrack::select('whatsapp_tracking.*', 'wl.status as wlstatus','wl.updated_time as wldate','wl.request_id')
         //     ->leftJoin('whatsapp_log as wl', DB::raw('wl.request_id'), '=', DB::raw('whatsapp_tracking.request_uuid'))
         //     ->where('caseid', $id)->where('event', $event)
@@ -71,13 +73,15 @@ class WhatsappTrack extends Model
 
         $result = WhatsappTrack::with('whatsapp_log')->where('caseid', $id)->where('event', $event)
             ->where('media', '!=', null)
-            ->where('contact', $mobile)->orderBy('id', 'ASC')->limit(1)->first();
+            ->where('contact', 'LIKE', "%{$mobile}%")
+            ->orderBy('id', 'ASC')->limit(1)->first();
 
         if(isset($result)) {
             if(count($result['whatsapp_log']) == 0) {
                 $result = WhatsappTrack::with('whatsapp_log')->where('caseid', $id)->where('event', $event)
                 ->where('media', '!=', null)
-                ->where('contact', $mobile)->orderBy('id', 'DESC')->limit(1)->first();
+                ->where('contact', 'LIKE', "%{$mobile}%")
+                ->orderBy('id', 'DESC')->limit(1)->first();
             }
         } 
         // $result = null;
