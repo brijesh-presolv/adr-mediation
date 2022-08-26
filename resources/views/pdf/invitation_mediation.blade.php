@@ -99,8 +99,13 @@ $ldate = $lastdate->format('d-m-Y');
         <tr>
             <td >
                 <p>{{isset($inparty->organization) ? $inparty->organization . " through its authorized representative " . $party[0]->name : $party[0]->name}}</p>
+                @if($party[0]->address1 != null)
                 <p>{{$party[0]->address1}} {{$party[0]->address2}}, {{$party[0]->city}}, {{$party[0]->pincode}}</p>
                 <p>{{$party[0]->state}} {{$party[0]->country}}</p>
+                @else
+                <p>{{$party[0]->useraddress}} {{$party[0]->useraddress1}}, {{$party[0]->usercity}}, {{$party[0]->userpincode}}</p>
+                <p>{{$party[0]->userstate}} {{$party[0]->usercountry}}</p>
+                @endif
                 {{-- <p>{{$party[0]->userEmail}}</p>
                 <p>{{$party[0]->userPhone}}</p> --}}
             </td>

@@ -191,7 +191,9 @@ class CaseController extends Controller
             ->first();
 
 
-        $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
+        $case->party = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where(['userPlanid' => $case->id])->get();
 
         // $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
         $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->get();
@@ -1492,7 +1494,10 @@ class CaseController extends Controller
     public function invitation_mediate($id)
     {
         $data["case"] = MedCase::where("id", "=", $id)->first();
-        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where("userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
