@@ -3781,17 +3781,22 @@ class CaseController extends Controller
             $MedCaseStatus->save();
         }
 
-        $invitation = $this->mediator_appointment($request->id, $request->mediator);
+        // start for re-approve ------------
 
-        $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+        // $invitation = $this->mediator_appointment($request->id, $request->mediator);
 
-        if (!isset($invmodel)) {
-            $invmodel = new InvitationFiles();
-        }
-        $invmodel->case_id = $request->id;
-        $invmodel->file_name_mediator_appointment = $invitation;
-        $invmodel->save();
-        // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
+        // $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+
+        // if (!isset($invmodel)) {
+        //     $invmodel = new InvitationFiles();
+        // }
+        // $invmodel->case_id = $request->id;
+        // $invmodel->file_name_mediator_appointment = $invitation;
+        // $invmodel->save();
+        //// Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
+
+        // end for re-approve ------------
+
 
         $medCas = MedCase::find($request->id);
         $medCas->confirm_status = 1;
@@ -3819,7 +3824,11 @@ class CaseController extends Controller
             $invmodel->case_id = $request->id;
             $invmodel->file_name = $invitation;
             $invmodel->save();
-            $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag);
+
+            // start for re-approve ------------
+
+            // $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag);
+            // end for re-approve ------------
 
 
 
