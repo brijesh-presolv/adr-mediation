@@ -191,7 +191,9 @@ class CaseController extends Controller
             ->first();
 
 
-        $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
+        $case->party = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where(['user_involved_in_agreement.userPlanid' => $case->id])->get();
 
         // $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
         $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->get();
@@ -1492,7 +1494,10 @@ class CaseController extends Controller
     public function invitation_mediate($id)
     {
         $data["case"] = MedCase::where("id", "=", $id)->first();
-        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
@@ -1897,7 +1902,7 @@ class CaseController extends Controller
                 if ($inv->userEmail != "") {
                     SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
                 }
-                break;
+                // break;
                 // SendGrid::send($inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $code, "-initiating-" => $initiating_party], $inv->name, url("/storage/app/public/mediation/" . $id . "/" . $invitation));
 
 
@@ -1912,7 +1917,6 @@ class CaseController extends Controller
             // continue;
 
         }
-        // dd($responding_phone);
         foreach ($responding_phone as $phone) {
             if ($phone != "") {
                 $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
@@ -3437,12 +3441,12 @@ class CaseController extends Controller
                 $caseinfo['invwtd'] = $time->format('d-m-Y H:i:s');
                 if (isset($data['whatsapptrck']['whatsapp_log'])) {
                     foreach ($data['whatsapptrck']['whatsapp_log'] as $wtrck) {
-                        if ($wtrck->status  == "delivered") {
+                        if (strtolower($wtrck->status)  == "delivered") {
                             $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
                             $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                             $caseinfo['invwds'] = "delivered";
                             $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
-                        } else if ($wtrck->status  == "read") {
+                        } else if (strtolower($wtrck->status)  == "read") {
                             $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
                             $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                             $caseinfo['invwrs'] = "read";
@@ -3512,12 +3516,12 @@ class CaseController extends Controller
                             if (isset($data['ewhatsapptrck']['whatsapp_log'])) {
 
                                 foreach ($data['ewhatsapptrck']['whatsapp_log'] as $wtrck) {
-                                    if ($wtrck->status  == "delivered") {
+                                    if (strtolower($wtrck->status)  == "delivered") {
                                         $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
                                         $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                                         $caseinfo['einvwds' . $k] = "delivered";
                                         $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
-                                    } else if ($wtrck->status  == "read") {
+                                    } else if (strtolower($wtrck->status)  == "read") {
                                         $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
                                         $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                                         $caseinfo['einvwrs' . $k] = "read";
@@ -3777,17 +3781,22 @@ class CaseController extends Controller
             $MedCaseStatus->save();
         }
 
-        $invitation = $this->mediator_appointment($request->id, $request->mediator);
+        // start for re-approve ------------
 
-        $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+        // $invitation = $this->mediator_appointment($request->id, $request->mediator);
 
-        if (!isset($invmodel)) {
-            $invmodel = new InvitationFiles();
-        }
-        $invmodel->case_id = $request->id;
-        $invmodel->file_name_mediator_appointment = $invitation;
-        $invmodel->save();
-        // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
+        // $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+
+        // if (!isset($invmodel)) {
+        //     $invmodel = new InvitationFiles();
+        // }
+        // $invmodel->case_id = $request->id;
+        // $invmodel->file_name_mediator_appointment = $invitation;
+        // $invmodel->save();
+        //// Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
+
+        // end for re-approve ------------
+
 
         $medCas = MedCase::find($request->id);
         $medCas->confirm_status = 1;
@@ -3815,7 +3824,11 @@ class CaseController extends Controller
             $invmodel->case_id = $request->id;
             $invmodel->file_name = $invitation;
             $invmodel->save();
-            $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag);
+
+            // start for re-approve ------------
+
+            // $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag);
+            // end for re-approve ------------
 
 
 

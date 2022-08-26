@@ -25,7 +25,10 @@
                                     @lang('case.emai'): {{ $case->party[0]->userEmail }}<br>
                                     @lang('case.phone'): {{ $case->party[0]->userPhone }}<br>
                                     @lang('case.address'):
-                                    <?= $case->party[0]->address1 . ' ' . $case->party[0]->address2 . ' ' . $case->party[0]->city . ', ' . $case->party[0]->pincode . ', ' . $case->party[0]->state . ' ' . $case->party[0]->country ?><br>
+                                    @if($case->party[0]->address1 != null) <?= $case->party[0]->address1 . ' ' . $case->party[0]->address2 . ' ' . $case->party[0]->city . ', ' . $case->party[0]->pincode . ', ' . $case->party[0]->state . ' ' . $case->party[0]->country ?> @else
+                                    <?= $case->party[0]->useraddress . ' ' . $case->party[0]->useraddress1 . ' ' . $case->party[0]->usercity . ', ' . $case->party[0]->userpincode . ', ' . $case->party[0]->userstate . ' ' . $case->party[0]->usercountry ?>
+                                    @endif
+                                    <br>
                                 </td>
                             </tr>
                             <tr>

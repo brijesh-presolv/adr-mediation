@@ -9,7 +9,13 @@ use Illuminate\Http\Request;
 class DownloadDocument extends Controller {
     public function downloadSecure(Request $request)
     {
-        if (isset($request->parentFolder)) {
+        
+        if(isset($request->fullurl)) {
+            $path = parse_url($request->fullurl);
+            $filenametostore = ltrim($path['path'], '/');
+            $request->urlpath = basename($request->fullurl);
+        }
+        else if (isset($request->parentFolder)) {
             $filenametostore = 'mediation_documents/mediation/' . $request->id . '/' . $request->parentFolder . '/' . $request->urlpath;
         } else {
             $filenametostore = 'mediation_documents/mediation/' . $request->id . '/' . $request->urlpath;

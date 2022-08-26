@@ -62,18 +62,41 @@
                 </button>
             </div>
             <form id="acceptForm">
+                {{-- {{dd($mediationDetails)}} --}}
                 <input type="hidden" name="mediation_case_id">
                 <input type="hidden" name="status" value="1">
                 @csrf
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-12 text-center">
-                            <h5>Mediator’s Consent and Disclosures</h5>
-                            <p>See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the
-                                Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)</p>
+
+                            <h5>Mediator’s Consent and Disclosures by {{ $mediationDetails->first_name }}
+                                {{ $mediationDetails->last_name }}</h5><br>
+                            {{-- <p>See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the
+                                Arbitrators’ and Mediators’ Code of Conduct and Disclosure Rules (“Code”)</p> --}}
                         </div>
                         <div class="col-lg-12">
-                            <p><u>Details of the Dispute</u></p>
+                            <table class="table table-hover table-bordered table-striped">
+                                <tr>
+                                    <th colspan='2' class="text-center">Details of the Mediator</th>
+                                </tr>
+                                <tr>
+                                    <td width='50%'>
+                                        <p>Email</p>
+                                    </td>
+                                    <td width='50%'><a href="mailto:admin@presolv360.com">admin@presolv360.com</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width='50%'>
+                                        <p>Experience</p>
+                                    </td>
+                                    <td width='50%'>
+                                        <textarea class="form-control" cols="150" name="particulars1" id="particulars1" rows="3">{{ isset($mediationDetails->experience) ? $mediationDetails->experience : '' }}</textarea>
+                                    </td>
+                                </tr>
+                            </table>
+                            {{-- <p><u>Details of the Dispute</u></p>
 
                             <table id="partyDetails" class="table table-hover table-bordered table-striped ">
                                 <thead>
@@ -87,7 +110,7 @@
                             </table>
 
                             <p>Details of Dispute as per Initiating Party: </p>
-                            <p id="issueModal"></p>
+                            <p id="issueModal"></p> --}}
 
                         </div>
                         <div class="col-lg-12">
@@ -124,7 +147,7 @@
                                     <tr>
                                         <td>I am qualified, possess the required competence, knowledge and expertise,
                                             and have sufficient time to be able to conduct the mediation proceedings
-                                            within the time limits prescribed in the Rules</td>
+                                            within the time limits prescribed</td>
                                         <td>
                                             <div class="form-inline">
                                                 <div class="form-check">
@@ -231,14 +254,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    {{-- <tr>
                                         <td>Experience</td>
                                         <td>
                                             <div class="form-group">
                                                 <textarea class="form-control" cols="150" name="particulars1" id="particulars1" rows="3">{{ isset($mediationDetails->experience) ? $mediationDetails->experience : '' }}</textarea>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                         <td>Circumstances disclosing any past or present relationship with, or interest
                                             in, any of the parties or in relation to the subject-matter in dispute,
@@ -252,16 +275,15 @@
                                     </tr>
                                     <tr>
                                         <td>Circumstances which are likely to affect your ability to devote sufficient
-                                            time to the mediation and in particular your </td>
+                                            time to the mediation and in particular your ability to complete the entire mediation within the time limits prescribed</td>
                                         <td>
                                             <div class="form-group">
                                                 <textarea class="form-control" name="particulars3" id="particulars3" rows="3">NA</textarea>
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>ability to complete the entire mediation within the time limits prescribed
-                                            under the Rules</td>
+                                    <tr hidden>
+                                        {{-- <td>ability to complete the entire mediation within the time limits prescribed</td> --}}
                                         <td>
                                             <div class="form-group">
                                                 <textarea class="form-control" name="particulars4" id="particulars4" rows="3">NA</textarea>
@@ -285,8 +307,8 @@
                                     checked>
                                 <label class="form-check-label" for="accept">
                                     By checking this box, I accept and agree to conduct the mediation in accordance with
-                                    the Rules and confirm that I shall abide by the Code, Terms & Conditions and Privacy
-                                    Policy.
+                                    the Rules and confirm that I shall abide by the <a href="https://drive.google.com/file/d/1M6dHbOuIQv4OZlhgyRFiDu75CsSKeZUI/view">Code</a>, <a href="https://presolv360.com/terms_conditions">Terms & Conditions</a> and <a
+                                    href="https://presolv360.com/privacy_policy">Privacy Policy</a>.
                                 </label>
                             </div>
                         </div>
@@ -1107,7 +1129,7 @@
 
                             var caseid = $(this).data("caseid");
                             var csrf = document.querySelector('meta[name="csrf-token"]')
-                            .content;
+                                .content;
 
                             $.each($('#acceptForm').serializeArray(), function() {
                                 result[this.name] = this.value;
@@ -1318,7 +1340,7 @@
                             var caseid = $(this).data("caseid");
                             var Status = $('#status_id').val();
                             var csrf = document.querySelector('meta[name="csrf-token"]')
-                            .content;
+                                .content;
 
                             idarr.push({
                                 id: caseid,

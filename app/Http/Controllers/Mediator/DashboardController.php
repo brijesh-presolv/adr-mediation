@@ -71,7 +71,7 @@ class DashboardController extends Controller
 
     public function newrequest()
     {
-        $mediationDetails = Mediation_Details::where("user_id", "=", Auth::user()->id)->first();
+        $mediationDetails = Mediation_Details::select('mediation_details.*', 'users.first_name', 'users.last_name')->leftJoin('users', 'users.id', '=', 'mediation_details.user_id')->where("mediation_details.user_id", "=", Auth::user()->id)->first();
         return view('mediator.newrequest', compact('mediationDetails'));
     }
 
