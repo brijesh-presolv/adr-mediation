@@ -207,7 +207,16 @@ class RegisterController extends Controller
 
         if ($user->role == '0') {
 
-            // $findInvCase = InvoledUser::where('email')
+            $findInvCase = InvoledUser::where(['userEmail' => $user->email, 'joinCode' => null, 'isClaimant' => 0])->get();
+
+            if(isset($findInvCase)) {
+                foreach($findInvCase as $value) {
+                    if($value->userId == null) {
+                         $value->userId = $user->id;
+                         $value->save();
+                    }
+                }
+            }
 
             Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id);
 
