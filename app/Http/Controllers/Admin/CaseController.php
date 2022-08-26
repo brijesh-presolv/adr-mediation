@@ -3783,16 +3783,16 @@ class CaseController extends Controller
 
         // start for re-approve ------------
 
-        // $invitation = $this->mediator_appointment($request->id, $request->mediator);
+        $invitation = $this->mediator_appointment($request->id, $request->mediator);
 
-        // $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+        $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
 
-        // if (!isset($invmodel)) {
-        //     $invmodel = new InvitationFiles();
-        // }
-        // $invmodel->case_id = $request->id;
-        // $invmodel->file_name_mediator_appointment = $invitation;
-        // $invmodel->save();
+        if (!isset($invmodel)) {
+            $invmodel = new InvitationFiles();
+        }
+        $invmodel->case_id = $request->id;
+        $invmodel->file_name_mediator_appointment = $invitation;
+        $invmodel->save();
         //// Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
 
         // end for re-approve ------------
@@ -3827,7 +3827,7 @@ class CaseController extends Controller
 
             // start for re-approve ------------
 
-            // $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag);
+            $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag);
             // end for re-approve ------------
 
 
