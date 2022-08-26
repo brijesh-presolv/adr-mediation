@@ -1497,7 +1497,7 @@ class CaseController extends Controller
         // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
-            ->where("userPlanId", "=", $id)->get();
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
