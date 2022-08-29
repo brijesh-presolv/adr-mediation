@@ -111,7 +111,9 @@ $meddate = $meddate->format('d-m-Y');
                         @elseif($p->fulladdress != null)
                             <p>{{ $p->fulladdress }}</p>
                         @else
-                            <p></p>
+                            <p>{{ $p->useraddress }} {{ $p->useraddress1 }}, {{ $p->usercity }},
+                                {{ $p->userpincode }}</p>
+                            <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
                         @endif
                         <p>{{ $p->userEmail }}</p>
                         <p>{{ $p->userPhone }}</p>

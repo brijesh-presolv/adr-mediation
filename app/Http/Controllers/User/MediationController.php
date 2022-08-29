@@ -816,7 +816,10 @@ class MediationController extends Controller
             ->first();
 
 
-        $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
+        // $case->party = InvoledUser::where(['userPlanid' => $case->id])->get();
+        $case->party = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where(['user_involved_in_agreement.userPlanid' => $case->id])->get();
 
         // $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->limit(1)->first();
         $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->get();

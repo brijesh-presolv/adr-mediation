@@ -65,9 +65,10 @@ class CaseController extends Controller
         $data["caseId"] = $id;
         $data["type"] = $type;
         $data["case"] = MedCase::find($id);
-        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
-
-
+        // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.commentspdf', $data);
 
         return $pdf->download(($type == 1) ? 'Private_Comments_M' . sprintf('%06d', $id) . '.pdf' : 'Share_Comments_M' . sprintf('%06d', $id) . '.pdf');
@@ -439,17 +440,17 @@ class CaseController extends Controller
 
                 if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
                     $mediation_status_log->description = "Request Withdrawn";
-                    if($user->bulk_flag != 1) {
+                    if ($user->bulk_flag != 1) {
                         $this->sned_withdrawal($request->case_id);
                     }
                 } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
                     $mediation_status_log->description = "Request Resolved";
-                    if($user->bulk_flag != 1) {
+                    if ($user->bulk_flag != 1) {
                         $this->sned_resolved($request->case_id);
                     }
                 } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
                     $mediation_status_log->description = "Request Unresolved";
-                    if($user->bulk_flag != 1) {
+                    if ($user->bulk_flag != 1) {
                         $this->sned_unresolved($request->case_id);
                     }
                 }
@@ -1023,7 +1024,10 @@ class CaseController extends Controller
     {
         $data["mediator"] = User::find($medid);
         $data["case"] = MedCase::where("id", "=", $id)->first();
-        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.mediator_appointment_letter', $data);
         $name = 'mediator_appoinment_letter_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
