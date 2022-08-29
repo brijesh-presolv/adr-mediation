@@ -1248,19 +1248,31 @@
                             },
                             success: function(edata) {
                                 success++;
-                                $("#messcc").append(
-                                    "<p style='color: green;' class='text-center'>Case ID : M" +
-                                    e.id.toString().padStart(6, "0") +
-                                    " Success.</p>"
-                                );
-                                var objDiv = document.getElementById("messcc");
-                                objDiv.scrollTop = objDiv.scrollHeight;
+                                if (edata.response == "success") {
+                                    $("#messcc").append(
+                                        "<p style='color: green;' class='text-center'>Case ID : M" +
+                                        e.id.toString().padStart(6, "0") +
+                                        " Success.</p>"
+                                    );
+                                    var objDiv = document.getElementById("messcc");
+                                    objDiv.scrollTop = objDiv.scrollHeight;
 
-                                if (success === result.data.length) {
-                                    comp = comp + result.data.length;
-                                    prc = Math.round(((comp * 100) / countingcases));
-                                    $('#tto').html(prc);
-                                    deferred.resolve(result);
+                                    if (success === result.data.length) {
+                                        comp = comp + result.data.length;
+                                        prc = Math.round(((comp * 100) /
+                                        countingcases));
+                                        $('#tto').html(prc);
+                                        deferred.resolve(result);
+                                    }
+                                } else {
+                                    $("#messcc").append(
+                                        "<p style='color: red;' class='text-center'>Case ID : M" +
+                                        e.id.toString().padStart(6, "0") +
+                                        " Fail.<br>"+edata.msg+"</p>"
+                                    );
+                                    if (success === result.data.length) {
+                                        deferred.resolve(result);
+                                    }
                                 }
                             },
                             error: function(err) {
@@ -1322,7 +1334,8 @@
                             }
                             $("#messcc").append(
                                 "<p style='color: red;' class='text-center'>Case ID : M" +
-                                result.caseid.toString().padStart(6, "0") + " Fail.</p>"
+                                result.caseid.toString().padStart(6, "0") + " Fail.<br>" +
+                                result.msg + "</p>"
                             );
                         }
                         if (complete === item.id.length) {
@@ -2645,7 +2658,7 @@
                             //userTableBulk.ajax.reload();
                             $('#midaterAdd').modal("hide");
                         } else {
-                            swal("Please Select Mediator", {
+                            swal(data.msg, {
                                 icon: "error",
                             });
                         }
