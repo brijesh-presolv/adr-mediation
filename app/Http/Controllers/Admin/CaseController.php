@@ -1531,7 +1531,7 @@ class CaseController extends Controller
         $response = '';
 
         //fetch all involved users
-        $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
+        $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get()->toArray();
         if ($request->method() == 'POST') {
             $r = $request->post();
             //udpate mediation case
@@ -1569,6 +1569,7 @@ class CaseController extends Controller
             //update responding party
 
 
+            $respond = 0;
 
 
             for ($i = 0; $i < count($r['email']); $i++) {
@@ -1585,9 +1586,26 @@ class CaseController extends Controller
 
 
                 //$inv->userId=;
-                if ($inv->userEmail != $r['email'][$i] || $inv->userPhone != $r['phone'][$i]) {
+                // if ($inv->userEmail != $r['email'][$i] || $inv->userPhone != $r['phone'][$i]) {
 
-                    $inv->joinCode = $this->joinCode();
+                //     $inv->joinCode = $this->joinCode();
+                // }
+                if($r['selected_party'][$i] == 0) {
+                    $inv->isClaimant = 0;
+                    $inv->joinCode = null;
+                    
+                } else {
+                    if ($inv->userEmail != $r['email'][$i] || $inv->userPhone != $r['phone'][$i]) {
+
+                        $inv->joinCode = $this->joinCode();
+                    }
+                    if($inv->userId == 0) {
+                        $inv->joinCode = $this->joinCode();
+                    } else {
+                        $inv->joinCode = null;
+                    }
+                    $inv->isClaimant = $respond+1;
+                    $respond++;
                 }
 
                 $inv->userPlanId = $med->id;
@@ -1627,9 +1645,7 @@ class CaseController extends Controller
                 } elseif (isset($r['fulladdress'][$i])) {
                     $inv->fulladdress = $r['fulladdress'][$i];
                 }
-                $inv->isClaimant = $i + 1;
-
-
+                
 
                 $inv->created_at = date('Y-m-d H:s:i');
                 $inv->updated_at = date('Y-m-d H:s:i');
@@ -1759,7 +1775,7 @@ class CaseController extends Controller
                 }
             }
 
-            $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
+            $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get();
 
             $response = 'success';
         }
