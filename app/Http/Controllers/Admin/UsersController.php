@@ -55,8 +55,16 @@ class UsersController extends Controller
         } else if ($request->status == 1) {
             SendGrid::send($d, $user->email, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''));
         }
-        $user->save();
-        return response()->json(["msg" => "Category Name Update"]);
+
+        if($user->signature_photo != ''){
+            $user->save();
+            $signature_status = 1;
+        } else {
+            $signature_status = 0;
+        }
+
+        
+        return response()->json(["msg" => "Category Name Update", "signature_status" => $signature_status]);
     }
 
     /**
