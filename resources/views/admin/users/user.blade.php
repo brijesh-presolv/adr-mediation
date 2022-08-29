@@ -450,18 +450,15 @@
                         '_token': csrf
                     },
                 }).done(function(data) {
-                     console.log(data);
                     // return false;
                     if(data.signature_status == 0){
                         swal({
                         title: "Please ensure that signature is uploaded",
                         icon: "warning",
                         });
-                    } else {
-                        userTable.ajax.reload(null, false)
-                    }
-                    
-                    
+                        
+                    } 
+                    userTable.ajax.reload(null, false);
                 });
             });
 
