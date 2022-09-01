@@ -206,6 +206,18 @@ class RegisterController extends Controller
         curl_close($ch);
 
         if ($user->role == '0') {
+
+            $findInvCase = InvoledUser::where(['userEmail' => $user->email, 'joinCode' => null, 'isClaimant' => 0])->get();
+
+            if(isset($findInvCase)) {
+                foreach($findInvCase as $value) {
+                    if($value->userId == null) {
+                         $value->userId = $user->id;
+                         $value->save();
+                    }
+                }
+            }
+
             Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id);
 
             $email = SendGrid::send($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);

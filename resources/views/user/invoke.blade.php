@@ -115,7 +115,7 @@ function isreadonlys($rows) {
             <section>
                 <div class="row">
                     <div class="col-md-12 ">
-                        <h6>Responding Party</h6>
+                        <h6>Parties</h6>
                     </div>
                 </div>
             </section>
@@ -139,22 +139,31 @@ function isreadonlys($rows) {
                         <div class="col-md-12">
                             <h6>#<?= $i + 1 ?></h6>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Name</label>
                                 <input type="text" name="name[]" class="form-control" value="<?= isset($InvoledUser[$i]['name']) ? $InvoledUser[$i]['name'] : ''; ?>" <?= isreadonly($rows) ?>  >
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Email </label>
                                 <input type="email" name="email[]" class="form-control" value="<?= isset($InvoledUser[$i]['userEmail']) ? $InvoledUser[$i]['userEmail'] : ''; ?>" <?= isreadonly($rows) ?>  >
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Phone </label>
                                 <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>    data-smk-pattern="[a-zA-Z0-9\s-+]{8,15}" minlength="8" maxlength="15" data-smk-msg="Enter vaild phone number" >
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Type of Party</label>
+                                <select id="selected_paty" name="selected_party[]" class="form-control">
+                                    <option value="0">Initiating Party</option>
+                                    <option value="1" selected>Responding Party</option>
+                                </select>
                             </div>
                         </div>
                     </div>

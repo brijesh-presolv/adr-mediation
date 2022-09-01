@@ -21,14 +21,22 @@
                             <tr>
                                 <td>@lang('case.initiating_party')</td>
                                 <td>
-                                    @lang('case.name'): {{ $case->party[0]->name }}<br>
-                                    @lang('case.emai'): {{ $case->party[0]->userEmail }}<br>
-                                    @lang('case.phone'): {{ $case->party[0]->userPhone }}<br>
-                                    @lang('case.address'):
-                                    @if($case->party[0]->address1 != null) <?= $case->party[0]->address1 . ' ' . $case->party[0]->address2 . ' ' . $case->party[0]->city . ', ' . $case->party[0]->pincode . ', ' . $case->party[0]->state . ' ' . $case->party[0]->country ?> @else
-                                    <?= $case->party[0]->useraddress . ' ' . $case->party[0]->useraddress1 . ' ' . $case->party[0]->usercity . ', ' . $case->party[0]->userpincode . ', ' . $case->party[0]->userstate . ' ' . $case->party[0]->usercountry ?>
-                                    @endif
-                                    <br>
+                                    @foreach ($case->party as $key => $data)
+                                        @if ($data->isClaimant == 0)
+                                            @lang('case.name'): {{ $data->name }}<br>
+                                            @lang('case.emai'): {{ $data->userEmail }}<br>
+                                            @lang('case.phone'): {{ $data->userPhone }}<br>
+                                            @lang('case.address'):
+                                            @if ($data->address1 != null)
+                                                <?= $data->address1 . ' ' . $data->address2 . ' ' . $data->city . ', ' . $data->pincode . ', ' . $data->state . ' ' . $data->country ?>
+                                            @elseif($data->fulladdress)
+                                                <?= $data->fulladdress ?>
+                                            @else
+                                                <?= $data->useraddress . ' ' . $data->useraddress1 . ' ' . $data->usercity . ', ' . $data->userpincode . ', ' . $data->userstate . ' ' . $data->usercountry ?>
+                                            @endif
+                                            <br> <br>
+                                        @endif
+                                    @endforeach
                                 </td>
                             </tr>
                             <tr>
@@ -37,7 +45,7 @@
 
                                     <?php
                                 foreach ($case->party as $key => $value) {
-                                    if ($key > 0) {
+                                    if ($value->isClaimant != 0) {
                                         ?>
                                     @if ($value->name != '')
                                         @if ($value->name != '')
@@ -72,7 +80,7 @@
                                     @endif
                                     <?php
                                 foreach ($case->party as $key => $value) {
-                                    if ($key > 0) {
+                                    if ($value->isClaimant != 0) {
                                         ?>
                                     @if ($value->name == '')
 
