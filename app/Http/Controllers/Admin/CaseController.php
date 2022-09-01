@@ -1376,11 +1376,13 @@ class CaseController extends Controller
         foreach ($cases as $key => $d) {
             $actionDate = date('d-m-Y', strtotime($d->update));
             $createDate = date('d-m-Y', strtotime($d->create));
+            $admin_approve = date('d-m-Y', strtotime($d->admin_approve));
             $arraydata[] = [
                 "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
                 "mediator_action_date" => $actionDate,
                 "mediator_create_action_date" => $createDate,
+                "admin_approve" => $admin_approve,
                 "case" => $d,
                 "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $d->id])->get(),
                 "status_log" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $d->id])->orderByDesc('id')->limit(1)->get(),

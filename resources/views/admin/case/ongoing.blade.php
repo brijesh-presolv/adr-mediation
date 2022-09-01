@@ -914,7 +914,12 @@
                     }
                 },
                 {
-                    "data": "date"
+                    "data": "date",
+                    render: function(data, type, row) {
+                        var button = `<p>Date of Create<br>` + data + `</p><p>Date of Approval<br>` + row
+                            .admin_approve + `</p>`;
+                        return button;
+                    }
                 },
                 {
                     "data": "case.id",
@@ -1146,7 +1151,12 @@
                             }
                         },
                         {
-                            "data": "date"
+                            "data": "date",
+                            render: function(data, type, row) {
+                                var button = `<p>Date of Create<br>` + data +
+                                    `</p><p>Date of Approval<br>` + row.admin_approve + `</p>`;
+                                return button;
+                            }
                         },
                         {
                             "data": "case.id",
@@ -2721,7 +2731,7 @@
                             });
                             $('#commentModal').modal("hide");
                         },
-                        error : function(data) {
+                        error: function(data) {
                             swal(data.responseJSON.errors.comment[0], {
                                 icon: "error",
                             });
