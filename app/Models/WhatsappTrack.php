@@ -87,7 +87,8 @@ class WhatsappTrack extends Model
                     if(count($result['whatsapp_log']) == 0) {
                         $result = WhatsappTrack::with('whatsapp_log')->where('caseid', $id)->where('event', $event)
                         ->where('contact', 'LIKE', "%{$mobile}%")
-                        ->orderBy('id', 'DESC')->limit(1)->first();
+                        //  ->orderBy('id', 'DESC')->limit(1)
+                         ->first();
                     }
                 }
             }
