@@ -9,7 +9,19 @@ Route::get('/clear-cache', function () {
     Artisan::call('view:clear');
     return "Cache is cleared";
 });
-Route::get('/admin/login', function () {
+
+
+
+// Session Scheduler
+Route::get('/admin/dashboard/scheduler', function() {
+    //Artisan::call('schedule:run');
+    Artisan::call('session:daily');
+});
+
+
+
+
+Route::get('/admin/login', function() {
     Auth::logout();
     return view('admin.login');
 });
