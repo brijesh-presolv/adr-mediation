@@ -43,22 +43,31 @@ class DailySession extends Command
     public function handle()
     {
         
-        $date = \Carbon\Carbon::today();
-        $two_days = $date->subDays(2);
-        $date = $date->format('d/m/Y');
-        $two_days = $two_days->format('d/m/Y');
+        // $date = \Carbon\Carbon::today();
+        // $date = $date->format('d/m/Y');
+        // $two_days = \Carbon\Carbon::today()->subDays(2);
+        // $two_days = $two_days->format('d/m/Y');
        
-       
-      // $date = '19/09/2022';
-       //$two_days = '21/09/2022';
+        //echo "date-><pre>";print_R($date); 
+       //$date = '06/03/2022';
+       //$two_days = '04/03/2022';
         
+        // $getSessionArray = DB::table('manage_session')->select()
+        // ->where('session_date', 'LIKE', '%'.$date.'%')
+        // ->orWhere('session_date', 'LIKE', '%'.$two_days.'%')
+        // ->get();
+
         $getSessionArray = DB::table('manage_session')->select()
-        ->where('session_date', 'LIKE', '%'.$date.'%')
-        ->orWhere('session_date', 'LIKE', '%'.$two_days.'%')
+        ->where('case_id', '=', '32936')
+        ->orWhere('case_id', '=', '29721')
         ->get();
        
-        
-        //echo "<pre>";print_R($getSessionArray); exit;
+        //echo "<pre>";print_R($getSessionArray);
+       
+       if($getSessionArray->isEmpty()) {
+            echo "No scheduled session found.";
+
+       } else {
         foreach($getSessionArray as $getSessionData) {
             //echo "<pre>";print_R($getSessionData);
 
@@ -72,9 +81,16 @@ class DailySession extends Command
             foreach ($allParty as $party) {
                 //echo "<prE>";print_R($party);
             // $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
-                $this->sned_session(($getSessionData->zoom_id != null) ? $getSessionData->zoom_id  : $getSessionData->fsData['zoomId'], $getSessionData->case_id, $party->userEmail, $party->name, ($getSessionData->session_date != null) ? $getSessionData->session_date : $getSessionData->fsData['sessionDate'] . "/" . $time, $party->userPhone);
+                $is_sent = $this->sned_session(($getSessionData->zoom_id != null) ? $getSessionData->zoom_id  : $getSessionData->fsData['zoomId'], $getSessionData->case_id, $party->userEmail, $party->name, ($getSessionData->session_date != null) ? $getSessionData->session_date : $getSessionData->fsData['sessionDate'] . "/" . $time, $party->userPhone);
+                
+                if($is_sent) {
+                    echo "<br/>Reminder sent successfully for caseID - ".$getSessionData->case_id;
+                } else {
+                    echo "<br/>Some error in caseID - ".$getSessionData->case_id;
+                }
             }
         }
+        } 
 
         
 
