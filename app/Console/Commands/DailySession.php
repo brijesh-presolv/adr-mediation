@@ -43,14 +43,14 @@ class DailySession extends Command
     public function handle()
     {
         
-        //$date = \Carbon\Carbon::today();
-        //$two_days = $date->subDays(2);
-        //$date = $date->format('d/m/Y');
-       // $two_days = $two_days->format('d/m/Y');
+        $date = \Carbon\Carbon::today();
+        $two_days = $date->subDays(2);
+        $date = $date->format('d/m/Y');
+        $two_days = $two_days->format('d/m/Y');
        
        
-       $date = '19/09/2022';
-       $two_days = '21/09/2022';
+      // $date = '19/09/2022';
+       //$two_days = '21/09/2022';
         
         $getSessionArray = DB::table('manage_session')->select()
         ->where('session_date', 'LIKE', '%'.$date.'%')
