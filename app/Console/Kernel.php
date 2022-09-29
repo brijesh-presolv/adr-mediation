@@ -27,7 +27,8 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('session:daily')
-        ->everyMinute();
+        //->everyMinute();
+        ->everyTenMinutes();
         //->dailyAt('8:00');
     }
 
