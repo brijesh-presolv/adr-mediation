@@ -60,6 +60,7 @@ class DailySession extends Command
         $getSessionArray = DB::table('manage_session')->select()
         ->where('case_id', '=', '32936')
         ->orWhere('case_id', '=', '29721')
+        ->orWhere('case_id', '=', '11278')
         ->get();
        
         //echo "<pre>";print_R($getSessionArray);
