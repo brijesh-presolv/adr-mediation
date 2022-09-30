@@ -42,55 +42,91 @@ class DailySession extends Command
      */
     public function handle()
     {
-        
-        // $date = \Carbon\Carbon::today();
-        // $date = $date->format('d/m/Y');
-        // $two_days = \Carbon\Carbon::today()->subDays(2);
-        // $two_days = $two_days->format('d/m/Y');
+
+        \Log::info("Cron is working fine!");
+        $date = \Carbon\Carbon::today();
+        $date = $date->format('d/m/Y');
+        $two_days = \Carbon\Carbon::today()->subDays(2);
+        $two_days = $two_days->format('d/m/Y');
        
-        //echo "date-><pre>";print_R($date); 
-       //$date = '06/03/2022';
-       //$two_days = '04/03/2022';
+       // echo "date->".$date; 
+        //echo "Two date->".$two_days; 
+    //    $date = '02/10/2022';
+    //    $two_days = '30/09/2022';
         
         // $getSessionArray = DB::table('manage_session')->select()
         // ->where('session_date', 'LIKE', '%'.$date.'%')
         // ->orWhere('session_date', 'LIKE', '%'.$two_days.'%')
+        // ->limit(5)
         // ->get();
 
-        $getSessionArray = DB::table('manage_session')->select()
-        ->where('case_id', '=', '32936')
-        ->orWhere('case_id', '=', '29721')
-        ->orWhere('case_id', '=', '11278')
-        ->get();
-       
-        //echo "<pre>";print_R($getSessionArray);
-       
-       if($getSessionArray->isEmpty()) {
-            echo "No scheduled session found.";
+        $query1 = "SELECT *
+            FROM manage_session
 
+            WHERE is_reminder_sent = 0 AND
+            
+            (session_date LIKE '%$date%' OR session_date LIKE '%$two_days%')
+            
+            LIMIT 50";
+
+        $getSessionArray = DB::select($query1);
+        
+        // /echo "here==><pre>";print_R($getSessionArray);exit;   
+        // $getSessionArray = DB::table('manage_session')->select()
+        // ->where('is_reminder_sent', '=', 0)
+        // ->where('session_date', 'LIKE', '%'.$date.'%')
+        // ->orWhere('session_date', 'LIKE', '%'.$two_days.'%')
+        // // /->limit(10)
+        // ->get();
+
+        // $getSessionArray = DB::table('manage_session')->select()
+        // ->where('case_id', '=', '32936')
+        // ->orWhere('case_id', '=', '29721')
+        // ->get();
+       
+       
+       if(empty($getSessionArray)) {
+            echo "No scheduled session found.";
        } else {
         foreach($getSessionArray as $getSessionData) {
-            //echo "<pre>";print_R($getSessionData);
-
-            $allParty = InvoledUser::where("userPlanId", $getSessionData->case_id)->get();
-            //echo "<pre>allParty==>";print_R($allParty);
+           
 
             $get_time = explode("/",$getSessionData->session_date);
             // /$time = date("g:i A", strtotime($request->sessionTime));
-            $time = $get_time[3];
+            $time = isset($get_time[3]) ? $get_time[3] : '';
 
-            foreach ($allParty as $party) {
-                //echo "<prE>";print_R($party);
-            // $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
-                $is_sent = $this->sned_session(($getSessionData->zoom_id != null) ? $getSessionData->zoom_id  : $getSessionData->fsData['zoomId'], $getSessionData->case_id, $party->userEmail, $party->name, ($getSessionData->session_date != null) ? $getSessionData->session_date : $getSessionData->fsData['sessionDate'] . "/" . $time, $party->userPhone);
+            // $allParty['party']['all'] = InvoledUser::where("userPlanId", $getSessionData->case_id)->get();
+            $allParty = InvoledUser::where("userPlanId", $getSessionData->case_id)->get();
+             $allParty['zoom'] = $getSessionData->zoom_id;
+             $allParty['case'] = $getSessionData->case_id;
+             $allParty['time'] = $time;
+             $allParty['sdate'] = $getSessionData->session_date;
+           
+        }
+        
+        foreach ($allParty as $party) {
+            if(isset($party->userEmail) || isset($party->userPhone)) {
+                $is_sent = $this->sned_session(($allParty['zoom'] != null) ? $allParty['zoom']  : $getSessionData->fsData['zoomId'], $allParty['case'], $party->userEmail, $party->name, ($allParty['sdate'] != null) ? $allParty['sdate'] : $getSessionData->fsData['sessionDate'] . "/" . $allParty['time'], $party->userPhone);
                 
                 if($is_sent) {
-                    echo "<br/>Reminder sent successfully for caseID - ".$getSessionData->case_id;
+
+                    $getSessionArray = DB::table('manage_session')
+                     ->where('case_id', $allParty['case'])
+                     ->update(array('is_reminder_sent' => 1));
+                    // ->limit(5)
+                    // ->get();
+
+
+
+
+                    echo "<br/>Reminder sent successfully for caseID - ".$allParty['case'];
                 } else {
-                    echo "<br/>Some error in caseID - ".$getSessionData->case_id;
+                    echo "<br/>Some error in caseID - ".$allParty['case'];
                 }
             }
         }
+        
+   
         } 
 
         
