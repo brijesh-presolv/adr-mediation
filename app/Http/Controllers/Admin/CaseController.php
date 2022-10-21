@@ -790,7 +790,7 @@ class CaseController extends Controller
 
     public function storeMultiFile(Request $request)
     {
-
+        
 
         $validatedData = $request->validate([
             'files' => 'required',
