@@ -791,7 +791,7 @@ class CaseController extends Controller
 
 
         $validatedData = $request->validate([
-            'files' => 'required',
+            'files.*' => 'required',
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
             // 'docs_party_ids' => 'required',
         ]);
