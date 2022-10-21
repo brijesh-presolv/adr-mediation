@@ -1204,7 +1204,7 @@ class CaseController extends Controller
                 'case_id' => $request->caseId,
                 'session_date' => ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time,
                 'note' => ($request->note != null) ? $request->note : $request->fsData['note'],
-                'zoom_id' => ($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'],
+                'zoom_id' => ($create_zoom_meeting['id'] != null) ? $create_zoom_meeting['id']  : $request->fsData['zoomId'],
                 'session_party_ids' => json_encode($party_ids),
                 'scheduled_by' => Auth::user()->id,
             ];

@@ -623,7 +623,7 @@
                         <div class="form-group">
                             <label>@lang('case.session_zoom_id') :</label>
                             <input type="text" id="zoomId" class="form-control" name="zoomId"
-                                placeholder="@lang('case.session_zoom_id_placeholder')" data-validation="required">
+                                placeholder="@lang('case.session_zoom_id_placeholder')" readonly style="background:#dedede;">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
