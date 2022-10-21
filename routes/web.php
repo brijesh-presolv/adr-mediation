@@ -9,7 +9,19 @@ Route::get('/clear-cache', function () {
     Artisan::call('view:clear');
     return "Cache is cleared";
 });
-Route::get('/admin/login', function () {
+
+
+
+// Session Scheduler
+// Route::get('/admin/dashboard/scheduler', function() {
+//     //Artisan::call('schedule:run');
+//     Artisan::call('session:daily');
+// });
+
+
+
+
+Route::get('/admin/login', function() {
     Auth::logout();
     return view('admin.login');
 });
@@ -235,3 +247,8 @@ Route::get('notification/email/send', [App\Http\Controllers\Notification\EmailCo
 Route::get('notification/whatsapp/send', [App\Http\Controllers\Notification\WhatsappController::class, 'send']);
 
 Route::get('temp/que_changes', [App\Http\Controllers\Notification\WhatsappController::class, 'que_changes']);
+
+
+
+// Session Reminder
+Route::get('reminder/session_reminder', [App\Http\Controllers\Admin\ReminderController::class, 'index'])->name('sessionReminder');
