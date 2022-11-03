@@ -380,7 +380,7 @@
     
    </style>
 
-<!--    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback" async defer></script>
+   <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback" async defer></script>
 
         <script type="text/javascript">
             var onloadCallback = function() {
@@ -390,7 +390,7 @@
 function setResponse(response) { 
     document.getElementById('captcha-response').value = response; 
 }
-        </script> -->
+        </script>
         
 @endsection('content')
 
