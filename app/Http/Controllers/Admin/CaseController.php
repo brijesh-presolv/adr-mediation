@@ -2713,17 +2713,17 @@ class CaseController extends Controller
                         if ($v[$n] == '') {
 
                             if ($n != 10 and $n != 11 and $n != 12 and $n != 7 and $n != 3 and $n != 4) {
-                                $errormsg .= "Please fill all the required details to proceed at line no $i";
+                                //$errormsg .= "Please fill all the required details to proceed at line no $i";
                             }
                         }
                     }
                     if ($v[4] != "") {
                         if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
-                            $errormsg .= "Invalid mobile number at line no $i ";
+                            //$errormsg .= "Invalid mobile number at line no $i ";
                         }
 
                         if (strlen($v[4]) != 10) {
-                            $errormsg .= "Invalid mobile number at line no $i ";
+                            //$errormsg .= "Invalid mobile number at line no $i ";
                         }
                     }
 
@@ -2743,25 +2743,25 @@ class CaseController extends Controller
                             $dt = str_replace('-', '/', $v[7]);
                             $v[7] = $dt;
                         } else {
-                            $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
+                            //$errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
                         }
                         if (strpos($v[7], '-') or strpos($v[7], '/')) {
                             $dt = explode('/', $v[7]);
 
                             if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
 
-                                $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
+                                //$errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
                             }
                         }
                     }
 
                     if ($v[13] != 'Yes') {
-                        $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
+                        //$errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
                     }
 
                     if ($v[14] != 'Yes') {
 
-                        $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
+                        //$errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
                     }
                 }
             }
