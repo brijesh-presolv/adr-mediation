@@ -53,8 +53,8 @@
       <div class="row">
 
           <div class="col-12 tsection">
-              <img loading="lazy" src="/assets/images/logo-21.png">
-              <p>Recognised by the Ministry of Law and Justice, Government of India</p>
+              <!-- <img loading="lazy" src="/assets/images/logo-21.png">
+              <p>Recognised by the Ministry of Law and Justice, Government of India</p> -->
           </div>
       </div>
   </div>
@@ -327,12 +327,12 @@
                   <div class="col">
                       <div class="brands_slider_container">
                           <div class="owl-carousel owl-theme brands_slider">
-                              <div class="owl-item">
+                              <!-- <div class="owl-item">
 
                                   <a href="http://doj.gov.in/page/online-dispute-resolution-through-mediation-arbitration-conciliation-etc" target="_blank">
                                       <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/awrdz3.png" alt=""></div>
                                   </a>
-                              </div>
+                              </div> -->
                               <div class="owl-item">
                                   <a href="https://www.thelegalforecast.com/blog/interview-bhaven-shah-presolv360" target="_blank">
                                       <div class="brands_item d-flex flex-column justify-content-center"><img loading="lazy" src="/assert/img/legaal.png" alt=""></div>

@@ -341,7 +341,8 @@ function resolvsubmit(){
       <div class="row pb-5">
       <div class="col-md-7">
          <h5 class="mb-3">Disclaimer</h5>
-         <p>Presolv360 is owned by Edgecraft Solutions Private Limited, an Indian Company incorporated under the provisions of the Companies Act, 2013. It is not a law firm and does not provide legal advice. The use of any materials or services is not a substitute for legal advice. Only a legal practitioner can provide legal advice. A legal practitioner should be consulted for any legal advice or matter. No Attorney-Client relationship is created by use of these materials or services.</p>
+         <!-- <p>Presolv360 is owned by Edgecraft Solutions Private Limited, an Indian Company incorporated under the provisions of the Companies Act, 2013. It is not a law firm and does not provide legal advice. The use of any materials or services is not a substitute for legal advice. Only a legal practitioner can provide legal advice. A legal practitioner should be consulted for any legal advice or matter. No Attorney-Client relationship is created by use of these materials or services.</p> -->
+         <p>Presolv360 is not a law firm and does not provide legal advice. The use of any materials or services is not a substitute for legal advice. Only a legal practitioner can provide legal advice. A legal practitioner should be consulted for any legal advice or matter. No Attorney-Client relationship is created by use of these materials or services.</p>
       </div>
       <div class="col-md-2">
          <h5 class="mb-3">Important Links</h5>
