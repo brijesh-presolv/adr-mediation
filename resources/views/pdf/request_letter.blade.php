@@ -103,9 +103,9 @@ $meddate = $meddate->format('d-m-Y');
         resolution of the dispute, fairly and conveniently, we request Presolv360 to provide administrative assistance
         in respect of the dispute between the parties.</p>
     <p style="text-indent: 4em;">We acknowledge that Presolv360 is a neutral institution whose role is limited to
-        providing administrative support in respect of the arbitration proceedings, has no interest in the outcome of
+        providing administrative support in respect of the said proceedings, has no interest in the outcome of
         the dispute and there is no conflict of interest. We understand that the said proceedings will be carried out by
-        an independent, qualified and competent arbitrator from the panel of arbitrators on behalf of all the parties.
+        an independent, qualified and competent mediator from the panel of mediators on behalf of all the parties.
     </p>
     <br>
     <table cellspacing="0" cellpadding="10" width="100%">

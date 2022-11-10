@@ -77,7 +77,7 @@ $meddate = $meddate->format('d-m-Y');
     <p class="text-center">Included in the list of institutions <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
             here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution
-        (ODR) by the Ministry of Law & Justice and recognized as a Mediation Institution</p>
+        (ODR) and empaneled as a Mediation Institution by various Courts in India</p>
     <p class="text-center"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
             href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
     <p class="text-center">Case ID: M{{ sprintf('%06d', $case->id) }} | Date: {{ $meddate }}</p> <br>
@@ -179,8 +179,7 @@ $meddate = $meddate->format('d-m-Y');
         to facilitate a mutually acceptable resolution through online mediation.
     </p>
     <p style="text-indent: 4em;">Presolv360 is included in the list of institutions offering Alternative Dispute
-        Resolution ("ADR") services including through Online Dispute Resolution ("ODR") by the Ministry of Law & Justice
-        and is also empaneled as a Mediation Institution by various Courts in India. Presolv360 administers mediation
+        Resolution ("ADR") services including through Online Dispute Resolution ("ODR") and is also empaneled as a Mediation Institution by various Courts in India. Presolv360 administers mediation
         proceedings on its platform, and empanels independent, qualified mediators with the required competence,
         knowledge and expertise on its panel of mediators. The mediation / conciliation shall be governed by and
         conducted in accordance with Presolv360’s Dispute Resolution Rules, a copy of which can be found <a
