@@ -1059,38 +1059,34 @@ class CaseController extends Controller
         return $name;
     }
 
+
+
+    /******************* Add Session Code : START  ****************************************/
     public function addSession(Request $request)
     {
-        // echo $request->zoomId;
-        //   dd($request->all());
-        //  exit;
-
-        // Zoom API : START //
-        
-        $time_zoom = date("H:i:s", strtotime($request->sessionTime));
-        $end_time = date("H:i:s", strtotime($request->sessionTime) + 60*60);
-        $date1 = str_replace('/', '-', $request->sessionDate);  
+        /*************************Zoom API : START *******************************/
+       // $time_zoom = date("H:i:s", strtotime($request->sessionTime)); // old code
+        $time_zoom = ($sess_time = strtotime($request->fsData['sessionTime'])) ? date("H:i:s", $sess_time) : date("H:i:s", strtotime($request->sessionTime));
+        //$end_time = date("H:i:s", strtotime($request->sessionTime) + 60*60); // old code
+        $end_time = ($sess_time = strtotime($request->fsData['sessionTime'])) ? date("H:i:s", $sess_time + 60*60) : date("H:i:s", strtotime($request->sessionTime) + 60*60);
+        //$date1 = str_replace('/', '-', $request->sessionDate);   // old code
+        $date1 = ($request->fsData['sessionDate']) ? str_replace('/', '-', $request->fsData['sessionDate']) : str_replace('/', '-', $request->sessionDate);  
         $date = date('Y-m-d', strtotime($date1));
         $total = $date.' '.$time_zoom;
         $end_total = $date.' '.$end_time;
-        //$date_format_api =  date("Y-m-d\TH:i:s\Z", strtotime($total));
+        //$date_format_api =  date("Y-m-d\TH:i:s\Z", strtotime($total)); // old code
         $date_format_api =  date("Y-m-d\TH:i:s", strtotime($total));
         $end_date_format_api =  date("Y-m-d\TH:i:s", strtotime($end_total));
-        //echo "time==>?".$end_date_format_api;exit;
-        $create_zoom_meeting_response = Zoom::createZoomMeeting($request->caseId, $request->note, $date_format_api, $end_date_format_api);
+
+        $note = ($request->fsData['note']) ? $request->fsData['note'] : $request->note;
+        
+        $create_zoom_meeting_response = Zoom::createZoomMeeting($request->caseId, $note, $date_format_api, $end_date_format_api);
         $create_zoom_meeting = json_decode($create_zoom_meeting_response, true);
-        // /echo "<prE>Response===>";print_R($create_zoom_meeting);exit;
-
-
         // Get zoom api invitation : START //
          $zoom_invitation_response = Zoom::zoomInvitation($create_zoom_meeting['id']);
          $zoom_invitation = json_decode($zoom_invitation_response, true);
 
-        // Zoom API : END //
-
-
-
-
+        /****************************************Zoom API : END **************************/
 
 
         $time = date("g:i A", strtotime($request->sessionTime));
@@ -1153,8 +1149,6 @@ class CaseController extends Controller
 
                     ];
 
-                    // print_r($dwa1);
-                    // exit;
                     $access = Whatsapp::sendWamessage($dwa1);
                 }
                 // }
@@ -1199,7 +1193,7 @@ class CaseController extends Controller
             foreach ($allParty as $party) {
                 $party_ids[] = $party->id;
             }
-            // dd($party_ids);
+            
             $dataToInsert = [
                 'case_id' => $request->caseId,
                 'session_date' => ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time,
@@ -1233,8 +1227,6 @@ class CaseController extends Controller
 
                     ];
 
-                    // print_r($dwa1);
-                    // exit;
                     $access = Whatsapp::sendWamessage($dwa1);
                 }
                 foreach ($allParty as $party) {
@@ -1322,6 +1314,7 @@ class CaseController extends Controller
         }
         return true;
     }
+    /******************* Add Session Code : END  ****************************************/
 
     public function sessionPdf($id)
     {
@@ -1446,6 +1439,7 @@ class CaseController extends Controller
         // return response()->json(["data" => $arraydata]);
     }
 
+    /********** Delete Session : START  *****************************************************/
     public function deleteSession(Request $request)
     {
         $id = $request->SessId;
@@ -1458,7 +1452,7 @@ class CaseController extends Controller
         $delete_zoom_meeting_response = Zoom::deleteZoomMeeting($deleted->zoom_id);
         $delete_zoom_meeting = json_decode($delete_zoom_meeting_response, true);
         /**** Zoom Delete *******/
-        // dd($deleted);
+       
         if ($deleted->save()) {
             $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediators_mediation_cases_status.mediation_case_id", "=", $deleted->case_id)
@@ -1565,6 +1559,7 @@ class CaseController extends Controller
             return json_encode(["message" => "error"]);
         };
     }
+    /********** Delete Session : END  *****************************************************/
 
     public function invitation_mediate($id)
     {
@@ -3362,10 +3357,9 @@ class CaseController extends Controller
         return json_encode($sessionEditData);
     }
 
+    /******************** Update Session : START  ************************************************/
     public function UpdateSession(Request $request)
     {
-
-
         $id =  $request->SessId;
 
         /********* Zoom Time Format ******************/
@@ -3374,25 +3368,21 @@ class CaseController extends Controller
         $date1 = str_replace('/', '-', $request->sessionDate);  
 
         $date = date('Y-m-d', strtotime($date1));
-       // echo "DATE1==>".$request->sessionDate;
         $total = $date.' '.$time_zoom;
         $end_total = $date.' '.$end_time;
         $date_format_api =  date("Y-m-d\TH:i:s", strtotime($total));
-       // echo "<br/>dateformat==>".$date_format_api;
         $end_date_format_api =  date("Y-m-d\TH:i:s", strtotime($end_total));
-        //exit;
 
         $update_zoom_meeting_response = Zoom::updateZoomMeeting($request->zoomId, $request->CaseId, $date_format_api, $end_date_format_api, $request->note);
         
         $update_zoom_meeting = json_decode($update_zoom_meeting_response, true);
 
-        $zoom_invitation_response = Zoom::zoomInvitation($update_zoom_meeting['id']);
-        $zoom_invitation = json_decode($zoom_invitation_response, true);
+        if($update_zoom_meeting == '') {
+            $zoom_invitation_response = Zoom::zoomInvitation($request->zoomId);
+            $zoom_invitation = json_decode($zoom_invitation_response, true);
+        }
         
        /********* Zoom Time Format ******************/
-
-
-
 
         $time = date("g:i A", strtotime($request->sessionTime));
         $result = ManageSession::find($id);
@@ -3408,7 +3398,7 @@ class CaseController extends Controller
 
                 $party = InvoledUser::where("userPlanId", $result->case_id)->where("id", $party_id)->first();
 
-                $this->sned_session($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
+                //$this->sned_session($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
                 $this->sned_session_invitation($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $zoom_invitation['invitation']);
             }
             $d = [
@@ -3437,15 +3427,13 @@ class CaseController extends Controller
                     'haptik_tmp' => 'l10_session_schedule',
 
                 ];
-
-                // print_r($dwa1);
-                // exit;
                 $access = Whatsapp::sendWamessage($dwa1);
             }
         }
         }
         return true;
     }
+    /******************** Update Session : END  ************************************************/
 
     public function downloadLogInviation(Request $request)
     {

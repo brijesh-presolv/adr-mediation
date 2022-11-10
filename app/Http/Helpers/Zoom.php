@@ -2,32 +2,17 @@
 namespace App\Http\Helpers;
 
 use App\Http\Helpers\Curl;
-//use App\Models\WhatsappTrack;
-//use App\Models\Whatsapp_que;
-
 use Illuminate\Http\Request;
 
 class Zoom
 {
-
-
-    /****** Token *************/
-    // public function create_meeting(Request $request)
-    // {
-    //    // dd($request->all());
-    //     echo 'hello==>';
-    //     $zoom_token =  $this->zoomRequest();
-    //     echo "<prE>";print_R($zoom_token);
-    // }
-
+    /****** Generate Token *************/
     public static function generateZoomToken()
     {
         ini_set('memory_limit', -1);
         $key = env('ZOOM_API_KEY');
         $secret = env('ZOOM_API_SECRET');
-        // echo $key;
-        // echo '<br>';
-        // echo $secret;exit;
+        
         $payload = [
             'iss' => $key,
             'exp' => strtotime('+1 minute'),
@@ -37,12 +22,12 @@ class Zoom
     }
 
 
+    /******************************** Create Zoom Meeting API : START *****************************************/
     public static function createZoomMeeting($case_id, $note, $date_format_api, $end_date_format_api){
 
-        $zoom_token =  self::generateZoomToken();
-
-        $curl = curl_init();
-
+        $zoom_token =  self::generateZoomToken(); // token
+        /*****************************/
+        $curl = curl_init(); 
         $c_url = env('ZOOM_API_URL').'users/info@presolv360.com/meetings';
         curl_setopt_array($curl, array(
             CURLOPT_URL => $c_url,
@@ -176,16 +161,20 @@ class Zoom
 
         $response = curl_exec($curl);
         curl_close($curl);
+        /*****************************/
         return $response;
     }
+    /******************************** Create Zoom Meeting API : END *****************************************/
 
-
+    
+    
+    
+    
+    /******************************** Zoom Invitation API : START *****************************************/
     public static function zoomInvitation($meeting_id){
-
-        $zoom_token =  self::generateZoomToken();
-
+        $zoom_token =  self::generateZoomToken(); // token
+        /*********************************/
         $curl = curl_init();
-
         $c_url = env('ZOOM_API_URL').'meetings/'.$meeting_id.'/invitation';
 
         curl_setopt_array($curl, array(
@@ -203,22 +192,20 @@ class Zoom
         ));
 
         $response = curl_exec($curl);
-
         curl_close($curl);
+        /*************************************/
         return $response;
     }
+    /******************************** Zoom Invitation API : END *****************************************/
 
 
 
+    /******************************** Update Zoom Meeting API : START *****************************************/
     public static function updateZoomMeeting($zoom_id, $case_id, $date_format_api, $end_date_format_api, $note){
-        $zoom_token =  self::generateZoomToken();
-
-        // echo "token==>".$zoom_token;
+        $zoom_token =  self::generateZoomToken(); // token
+        /*************************************/
         $curl = curl_init();
-
         $c_url = env('ZOOM_API_URL').'meetings/'.$zoom_id;
-    //   echo "<br/>curl==>".$c_url;
-    //   exit;
         curl_setopt_array($curl, array(
         CURLOPT_URL => $c_url,
         CURLOPT_RETURNTRANSFER => true,
@@ -360,14 +347,19 @@ class Zoom
         
         $response = curl_exec($curl);
         curl_close($curl);
+        /*************************************/
         return $response;
 
     }
+    /******************************** Update Zoom Meeting API : END *****************************************/
 
-
+    
+    
+    
+    /******************************** Delete Zoom Meeting API : START *****************************************/
     public static function deleteZoomMeeting($zoom_id){
-       
-        $zoom_token =  self::generateZoomToken();
+        $zoom_token =  self::generateZoomToken(); // token
+            /*******************************/
             $curl = curl_init();
 
             $c_url = env('ZOOM_API_URL').'meetings/'.$zoom_id;
@@ -387,10 +379,10 @@ class Zoom
             ));
 
             $response = curl_exec($curl);
-
             curl_close($curl);
+            /*******************************/
             return $response;
 
-
     }
+    /******************************** Delete Zoom Meeting API : END *****************************************/
 }
