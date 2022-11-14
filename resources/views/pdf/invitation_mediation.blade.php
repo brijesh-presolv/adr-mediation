@@ -189,6 +189,16 @@ $ldate = $lastdate->format('d-m-Y');
             </td>
         </tr>
 
+        @if ($case->discussion != '' && $case->discussion != null)
+        <tr>
+            <td>
+                <p>Contact of discussion</p>
+                <p>{{$case->discussion}}</p>
+            </td>
+        </tr>
+        @endif
+
+
     </table>
 
     <br />

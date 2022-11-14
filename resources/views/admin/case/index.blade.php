@@ -2606,14 +2606,32 @@
             var id = $(this).find("input[name='id']").val();
             var midater = $(this).find("select[name='midater']").val();
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            var input_type = "input";
+            var field_type = "text";
+                // setTimeout(function () {  
+              
+            $('#midaterAdd').modal('hide');
             swal({
                 title: "@lang('case.are_you_sure')",
-                text: "@lang('case.confirm_this_request')",
-                icon: "warning",
+                //text: "@lang('case.confirm_this_request')",
+                content: {
+                         element: input_type,
+                            attributes: {
+                                type: field_type,
+                                placeholder: "Contact for discussion"
+                            },
+                        },
+                icon: "",
                 buttons: true,
                 dangerMode: true,
             }).then((willDelete) => {
                 if (willDelete) {
+                    if(document.querySelector(".swal-content__input").value != ""){
+                        var discussion_text = document.querySelector(".swal-content__input").value;
+                    } else {
+                        var discussion_text = "";
+                    }
+                    
                     $.ajax({
                         url: '{{ route('admin.case.midater_add') }}',
                         method: "post",
@@ -2624,15 +2642,16 @@
                         },
                     }).done(function(data) {
                         if (data.response == "success") {
-
                             swal("@lang('case.mediator_assigned_successfully')", {
                                 icon: "success",
                             });
+                            
                             $.ajax({
                                 url: '{{ route('admin.case.confirm_status') }}',
                                 method: "post",
                                 data: {
                                     id: id,
+                                    discussion: discussion_text,
                                     '_token': csrf
                                 },
                                 beforeSend: function() {
@@ -2667,8 +2686,10 @@
 
                 } else {
                     swal("@lang('case.cansel_confirm_request')");
+                    // /$('#midaterAdd').modal('show');
                 }
             });
+        // }, 2500);
             return false;
         });
         $('#midaterAdd').on('show.bs.modal', function(event) {
