@@ -127,6 +127,13 @@
                                 </tr>
                             @endif
 
+                            @if ($case->discussion != null)
+                                <tr>
+                                    <td>Contact for Discussion</td>
+                                    <td>{{ $case->discussion }}</td>
+                                </tr>
+                            @endif
+
 
                             @if ($case->agreementDate != null)
                                 <tr>
