@@ -253,6 +253,9 @@ class CaseController extends Controller
             $medCas = MedCase::find($request->id);
             $medCas->confirm_status = 1;
             $medCas->case_status = 1;
+            /*** Discussion field : START ***/
+            $medCas->discussion = $request->discussion;
+            /*** Discussion field : END ***/
             $medCas->save();
 
             $mediation_status_log = new Mediation_status_log;
@@ -979,7 +982,7 @@ class CaseController extends Controller
 
     public function midaterAdd(Request $request)
     {
-
+       
         if ($request->midater != null) {
             $inv = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
                 ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
@@ -2695,7 +2698,7 @@ class CaseController extends Controller
             }
             if ($errormsg == '') {
                 $csv = $this->csvToArray($tmpName);
-                if (count($csv[0]) != 15) {
+                if (count($csv[0]) != 16) {
                     $errormsg .= "Invalid csv file";
                 }
                 if ($errormsg != '') {
@@ -2811,6 +2814,7 @@ class CaseController extends Controller
                 $data['proposedSolution'] = $value[9];
                 $data['batch_id'] = isset($batch->id) ? $batch->id : null;
                 $data['bulk_flag'] = 1;
+                $data['discussion'] = $value[15];
 
                 $med = MedCase::create($data);
 
@@ -3796,7 +3800,7 @@ class CaseController extends Controller
 
     public function BatchWiseApprove(Request $request)
     {
-        // dd($request->all());
+    //  /dd($request->all());
 
         // return ($request->all());
         // dd($request->mediator);
@@ -3860,6 +3864,12 @@ class CaseController extends Controller
             $medCas = MedCase::find($request->id);
             $medCas->confirm_status = 1;
             $medCas->case_status = 1;
+             /*** Discussion field : START ***/
+             if(isset($request->discussion) && $request->discussion != ""){
+                $medCas->discussion = $request->discussion;
+             }
+            
+             /*** Discussion field : END ***/
             if ($medCas->save()) {
                 $mediation_status_log = new Mediation_status_log;
                 $mediation_status_log->user_id = Auth::user()->id;
