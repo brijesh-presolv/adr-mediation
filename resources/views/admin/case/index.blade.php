@@ -177,7 +177,7 @@
                         </div>
                         <div class="col-md-4">
                             <button class="btn btn-success btn-sm blkbtn" data-toggle="modal"
-                                data-target="#midaterAddForBulk" id="bulkAcceptBtnBulk"
+                                data-target="#midaterAddForBulk" id="bulkAcceptBtnBulk" data-bulk="bulk"
                                 style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
                                 Approve</button>
                             <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtnBulk"
@@ -224,7 +224,7 @@
                         </div>
                         <div class="col-md-4">
                             <button class="btn btn-success btn-sm blkbtn" data-toggle="modal"
-                                data-target="#midaterAddForBulk" id="bulkAcceptBtn"
+                                data-target="#midaterAddForBulk" id="bulkAcceptBtn" data-bulk="ind"
                                 style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>">Bulk
                                 Approve</button>
                             <button class="btn btn-danger btn-sm blkbtn" id="bulkRejectBtn"
@@ -293,6 +293,13 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <!---- Contact for discussion ------>
+                        <div class="form-group discussion-section" style="display: none;">
+                            <label for="discussion-text" class="col-form-label">Contact for discussion :</label>
+                            <input type="text" name="contact_for_discussion" class="form-control" value="">
+                        </div>
+                        <!---- Contact for discussion ------>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
@@ -327,6 +334,13 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <!---- Contact for discussion ------>
+                        <div class="form-group discussion-section" style="display: none;">
+                            <label for="discussion-text" class="col-form-label">Contact for discussion :</label>
+                            <input type="text" name="contact_for_discussion" class="form-control" value="">
+                        </div>
+                        <!---- Contact for discussion ------>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
@@ -664,7 +678,8 @@
                 {
                     "data": "case.id",
                     render: function(data, type, row) {
-
+                    //  /console.log(row.case.discussion);
+                        // return false;
                         var d = '';
 
                         if (row.party.length == 0) {
@@ -673,7 +688,7 @@
 
                         var button = "";
                         button = button + `<button value="` + data + `"  data-id="` + data +
-                            `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info ` + d +
+                            `" data-toggle="modal" data-target="#midaterAdd" data-bulk="` + row.case.bulk_flag + `" class="btn btn-info ` + d +
                             `">Approve</button>`;
                         button = button + ` <button value="` + data + `" class="btn btn-danger reject ` +
                             d + `">@lang('case.btn_reject')</button>`;
@@ -895,7 +910,7 @@
 
                                 var button = "";
                                 button = button + `<button value="` + data + `"  data-id="` + data +
-                                    `" data-toggle="modal" data-target="#midaterAdd"  class="btn btn-info ` +
+                                    `" data-toggle="modal" data-target="#midaterAdd" data-bulk="` + row.case.bulk_flag + `" class="btn btn-info ` +
                                     d +
                                     `">Approve</button>`;
                                 button = button + ` <button value="` + data +
@@ -1300,17 +1315,36 @@
             // for(var i = 0; i<)
             var complete = 0;
             // var 
+
+            
+
             item.id.map((caseid) => {
+                //console.log(item);
+                if(typeof(item.discussion) != "undefined" && item.discussion !== null) {
+                    var date_input = {
+                            id: caseid,
+                            mediator: item.midater,
+                            discussion: item.discussion, 
+                            // logId: logId,
+                            _token: item.token
+                        }
+                    } else {
+                        var data_input = {
+                                id: caseid,
+                                mediator: item.midater,
+                                //discussion: item.discussion, 
+                                // logId: logId,
+                                _token: item.token
+                            }
+                    }
+                    //alert(data_input);
+
+
                 $.ajax({
                     url: "{{ route('admin.case.batchwiseapprove') }}",
                     dataType: "json",
                     type: "POST",
-                    data: {
-                        id: caseid,
-                        mediator: item.midater,
-                        // logId: logId,
-                        _token: item.token
-                    },
+                    data: data_input,
                     success: function(result) {
                         complete++;
                         if (result.response == "success") {
@@ -2202,6 +2236,9 @@
             var count = 0;
 
             var midater = $(this).find("select[name='midater']").val();
+            if($(this).find('.bulkTabDis')){
+                var discussion = $(this).find("input[name='contact_for_discussion']").val();
+            }
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
             $(".blkchk, .blkchkbulk").each(function() {
                 if (this.checked) {
@@ -2261,15 +2298,27 @@
                             var first = 0;
                             var last = parseInt({{ env('NO_OF_REQUEST_SEND', 10) }});
                             for (var i = 0; i < actionwork; i++) {
-
+                            if($(this).find('.bulkTabDis')){
                                 idarr.push({
                                     id: cidsarray.slice(first, last),
                                     token: csrf,
                                     allcids: cids,
                                     midater: midater,
+                                    //discussion: discussion, 
                                     total_row: ctcnt,
                                     log_type: "Bulk Approve",
                                 });
+                            } else {
+                                idarr.push({
+                                    id: cidsarray.slice(first, last),
+                                    token: csrf,
+                                    allcids: cids,
+                                    midater: midater,
+                                    discussion: discussion, 
+                                    total_row: ctcnt,
+                                    log_type: "Bulk Approve",
+                                });
+                            }
                                 first += {{ env('NO_OF_REQUEST_SEND', 10) }};
                                 last += {{ env('NO_OF_REQUEST_SEND', 10) }};
                             }
@@ -2605,33 +2654,21 @@
         $(document).on('submit', "#MidaterForm", function() {
             var id = $(this).find("input[name='id']").val();
             var midater = $(this).find("select[name='midater']").val();
+            var discussion_text = $(this).find("input[name='contact_for_discussion']").val();
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
             var input_type = "input";
             var field_type = "text";
                 // setTimeout(function () {  
               
-            $('#midaterAdd').modal('hide');
+            //$('#midaterAdd').modal('hide');
             swal({
                 title: "@lang('case.are_you_sure')",
-                //text: "@lang('case.confirm_this_request')",
-                content: {
-                         element: input_type,
-                            attributes: {
-                                type: field_type,
-                                placeholder: "Contact for discussion"
-                            },
-                        },
-                icon: "",
+                text: "@lang('case.confirm_this_request')",
+                icon: "warning",
                 buttons: true,
                 dangerMode: true,
             }).then((willDelete) => {
-                if (willDelete) {
-                    if(document.querySelector(".swal-content__input").value != ""){
-                        var discussion_text = document.querySelector(".swal-content__input").value;
-                    } else {
-                        var discussion_text = "";
-                    }
-                    
+                 if (willDelete) {
                     $.ajax({
                         url: '{{ route('admin.case.midater_add') }}',
                         method: "post",
@@ -2695,10 +2732,47 @@
         $('#midaterAdd').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
             var recipient = button.data('id') // Extract info from data-* attributes
+            // Added for 'Contact for discussion' : START //
+            var bulk_flag = button.data('bulk') // Extract info from data-* attributes
+            // Added for 'Contact for discussion' : END //
+
             // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
             // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)
             modal.find('.modal-body input[name="id"]').val(recipient)
+            // Added for 'Contact for discussion' : START //
+            if(bulk_flag == 0){
+                modal.find('.modal-body .discussion-section').show();
+            } else {
+                modal.find('.modal-body .discussion-section').hide();
+            }
+            //modal.find('.modal-body input[name="contact_for_discussion"]').val(discussion_text)
+            // Added for 'Contact for discussion' : END //
+        });
+
+
+        $('#midaterAddForBulk').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            
+            // Added for 'Contact for discussion' : START //
+            var bulk_flag = button.data('bulk') // Extract info from data-* attributes
+            // Added for 'Contact for discussion' : END //
+
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            
+            //alert(bulk_flag);
+            // Added for 'Contact for discussion' : START //
+            if(bulk_flag == 'ind'){
+                modal.find('.modal-body .discussion-section').show();
+                modal.find('form').removeClass('bulkTabDis');
+            } else {
+                modal.find('.modal-body .discussion-section').hide();
+                modal.find('form').addClass('bulkTabDis');
+            }
+            //modal.find('.modal-body input[name="contact_for_discussion"]').val(discussion_text)
+            // Added for 'Contact for discussion' : END //
         });
 
 
