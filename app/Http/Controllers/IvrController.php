@@ -90,7 +90,7 @@ class IvrController extends Controller
                 $data['contact'] = $contact;
 
 
-                $data['template'] = 'Hello ' . $respondent . ' a legal case of arbitration has been registered on Presolv three sixty platform against you by ' . $claimant;
+                $data['template'] = 'Hello ' . $respondent . ' you are invited for mediation by ' . $claimant.' for amicably resolving your dispute.';
 
                 $data['auth'] = "MED360AUTH";
 
@@ -180,7 +180,7 @@ class IvrController extends Controller
                 $data['contact'] = $contact;
 
 
-                $data['template'] = 'hello ' . $respondent . ' aapke khilaaf legal case darj kiya gaya hai. Yeh case ' . $claimant . ' ne Presolv three sixty dwara kiya hai. Iski notice aapke registered details pe bheji gayi hai.';
+                $data['template'] = 'hello ' . $respondent . ' ' . $claimant . ' ne madhyastha ke dwara aapka vivad suljhane ke liye aapko aamantrit kiya hai.';
 
                 $data['auth'] = "MED360AUTH";
 
