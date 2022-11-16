@@ -56,15 +56,22 @@ class UsersController extends Controller
             SendGrid::send($d, $user->email, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''));
         }
 
-        if($user->signature_photo != ''){
-            $user->save();
-            $signature_status = 1;
-        } else {
-            $signature_status = 0;
-        }
+        /********** Commented for no mendate signature field  ********/
+        // if($user->signature_photo != ''){
+        //     $user->save();
+        //     $signature_status = 1;
+        // } else {
+        //     $signature_status = 0;
+        // }
+        /********** Commented for no mendate signature field  ********/
 
+        $user->save();
         
-        return response()->json(["msg" => "Category Name Update", "signature_status" => $signature_status]);
+        /********** Commented for no mendate signature field  ********/
+        //return response()->json(["msg" => "Category Name Update", "signature_status" => $signature_status]);
+        /********** Commented for no mendate signature field  ********/
+
+        return response()->json(["msg" => "Category Name Update"]);
     }
 
     /**

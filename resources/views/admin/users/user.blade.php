@@ -451,13 +451,15 @@
                     },
                 }).done(function(data) {
                     // return false;
-                    if(data.signature_status == 0){
-                        swal({
-                        title: "Please ensure that signature is uploaded",
-                        icon: "warning",
-                        });
+                    /********** Commented for no mendate signature field  ********/
+                    // if(data.signature_status == 0){
+                    //     swal({
+                    //     title: "Please ensure that signature is uploaded",
+                    //     icon: "warning",
+                    //     });
                         
-                    } 
+                    // } 
+                    /********** Commented for no mendate signature field  ********/
                     userTable.ajax.reload(null, false);
                 });
             });
