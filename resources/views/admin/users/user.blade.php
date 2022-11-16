@@ -447,7 +447,7 @@
                     data: {
                         id: id,
                         status: status,
-                        '_token': csrf
+                        '_token': csrf,
                     },
                 }).done(function(data) {
                     // return false;
@@ -460,8 +460,28 @@
                         
                     // } 
                     /********** Commented for no mendate signature field  ********/
+                    
+                    
+                    /********** Added for display message : START  ********/
+                    if(status == 1) {
+                        var msg = "Approved Successfully.";
+                        var icon = "success";
+                    } else if(status == 0){
+                        var msg = "Unapproved Successfully.";
+                        var icon = "success";
+                    }
+                    swal({
+                        title: msg,
+                        icon: icon,
+                    });
                     userTable.ajax.reload(null, false);
+                }).fail(function(data){
+                    swal({
+                        title: "Some error",
+                        icon: "warning",
+                    });
                 });
+                /********** Added for display message : END  ********/
             });
 
         });
