@@ -5,6 +5,14 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+header('X-Frame-Options: DENY');
+// Uses a secure connection (HTTPS) if possible
+ini_set('session.cookie_secure', 1);
+ini_set('session.Set-Cookie', 'HttpOnly;Secure;SameSite=None');
+header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains;');
+header("strict-transport-security: max-age=600");
+header_remove('X-Powered-By');
+
 /*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance

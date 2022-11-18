@@ -34,7 +34,7 @@ return [
       | application. If disabled, a simple generic error page is shown.
       |
      */
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool) env('APP_DEBUG', true),
     /*
       |--------------------------------------------------------------------------
       | Application URL
@@ -57,7 +57,7 @@ return [
       | ahead and set this to a sensible default for you out of the box.
       |
      */
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Kolkata',
     /*
       |--------------------------------------------------------------------------
       | Application Locale Configuration

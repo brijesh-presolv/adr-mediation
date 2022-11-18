@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Models\User;
 
 class LoginController extends Controller {
     /*
@@ -37,10 +38,20 @@ use AuthenticatesUsers;
     protected function redirectTo(){
 
       if(Auth::user()->emailotp!=null){
+
+        Session::put('last_login', Auth::user()->last_login);
+        $USER = User::find(Auth::user()->id);
+        $USER->last_login = date("Y-m-d h:i:s");
+        $USER->save();
+          
           
           return route('verify');
         } else
        if (Auth::check() && (Auth::user()->role == 0)) {
+            Session::put('last_login', Auth::user()->last_login);
+            $USER = User::find(Auth::user()->id);
+            $USER->last_login = date("Y-m-d h:i:s");
+            $USER->save();
 
 
           if(Session::has('newcase')){
@@ -49,6 +60,10 @@ use AuthenticatesUsers;
 
            return route('user.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 1)) {
+            Session::put('last_login', Auth::user()->last_login);
+            $USER = User::find(Auth::user()->id);
+            $USER->last_login = date("Y-m-d h:i:s");
+            $USER->save();
 
             if(Auth::user()->emailotp!=null){
           
@@ -56,6 +71,10 @@ use AuthenticatesUsers;
       }
            return route('mediator.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 2)) {
+            Session::put('last_login', Auth::user()->last_login);
+            $USER = User::find(Auth::user()->id);
+            $USER->last_login = date("Y-m-d h:i:s");
+            $USER->save();
             return route('admin.dashboard');
         }
     }

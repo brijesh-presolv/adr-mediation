@@ -8,6 +8,12 @@
     <!-- end page title -->
     @endsection
 @section('content')
+<div class="row">
+    <div class="col-sm-4">
+      <span>Last Login: <?php session_start();  echo Session::get('last_login'); ?>  <br> </span>
+      <br>
+    </div>
+</div>
  
 <div class="row">
     <div class="col-12">
