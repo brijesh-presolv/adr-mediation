@@ -12,6 +12,7 @@ ini_set('session.Set-Cookie', 'HttpOnly;Secure;SameSite=None');
 header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains;');
 header("strict-transport-security: max-age=600");
 header_remove('X-Powered-By');
+header("X-Robots-Tag: noindex", true);
 
 /*
 |--------------------------------------------------------------------------
