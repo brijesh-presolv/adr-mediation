@@ -94,6 +94,7 @@ return [
     "session_time_placeholder" => "Select session Time",
     "session_zoom_id" => "Zoom Id",
     "session_zoom_id_placeholder" => "Paste meeting Id Or Zoom Id",
+    "session_zoom_link" => "Zoom Link",
     "session_note" => "Note",
     "session_note_placeholder" => "Add aditional notes",
     "session_meeting_user" => "Meeting User",
