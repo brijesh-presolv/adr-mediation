@@ -32,6 +32,7 @@ class User extends Authenticatable
         'isActive',
         'signature_photo',
         'is_deleted',
+        'is_agree'
     ];
 
     /**
