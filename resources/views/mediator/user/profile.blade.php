@@ -12,10 +12,13 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
+            @if(Session::has('key'))
+                    <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('key') }}</p>
+                @endif
             <div class="card-header">
                 <h3>Profile Update</h3>
             </div>
-            <form action="{{ route('mediator.profile_save') }}" method="post">
+            <form action="{{ route('mediator.profile_save') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="id" value="{{ Auth::user()->id }}">
                 <div class="card-body">
@@ -63,63 +66,18 @@
                         <div class="form-group col-md-4">
                             <label for="state">@lang('user.state')</label>
                             <input type="text" list="stateData" value="{{Auth::user()->state}}"  class="form-control" id="state" name="state">
-                            <datalist id="stateData">
-                                <option>
-                                    dolnośląskie
-                                </option>
-                                <option>
-                                    kujawsko-pomorskie
-                                </option>
-                                <option>
-                                    lubelskie
-                                </option>
-                                <option>
-                                    lubuskie
-                                </option>
-                                <option>
-                                    łódzkie
-                                </option>
-                                <option>
-                                    małopolskie
-                                </option>
-                                <option>
-                                    mazowieckie
-                                </option>
-                                <option>
-                                    opolskie
-                                </option>
-                                <option>
-                                    podkarpackie
-                                </option>
-                                <option>
-                                    podlaskie
-                                </option>
-                                <option>
-                                    pomorskie
-                                </option>
-                                <option>
-                                    śląskie
-                                </option>
-                                <option>
-                                    świętokrzyskie
-                                </option>
-                                <option>
-                                    warmińsko-mazurskie
-                                </option>
-                                <option>
-                                    wielkopolskie
-                                </option>
-                                <option>
-                                    zachodniopomorskie
-                                </option>
-                            </datalist>
+                            
                         </div>
                         <div class="form-group col-md-4">
                             <label for="country">country</label>
-                            <input list="countryData" class="form-control" id="country" name="country">
-                            <datalist id="countryData">
-                               <option>Polska</option>
-                            </datalist>
+                            <input list="countryData" class="form-control" value="{{Auth::user()->country}}" id="country" name="country">
+                            
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-3" class="control-label">Change Your Password : </label>
+                                <a href="{{ route('mediator.change.password',['id'=> Auth::user()->id]) }}" class="btn-sm btn-warning px-2" >Change Password </a>
+                            </div>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="area_of_specialization">@lang('user.area_of_specialization')</label>
@@ -143,11 +101,25 @@
                         </div>
                         <div class="form-group col-md-12">
                             <label for="linked_in_profile_link">@lang('user.linkedin_profile_link')</label>
-                            <input type="url" class="form-control" id="linked_in_profile_link" value="{{isset($medi->linked_in_profile_link)?$medi->no_of_arbitrations:"" }}" name="linked_in_profile_link">
+                            <input type="url" class="form-control" id="linked_in_profile_link" value="{{isset($medi->linked_in_profile_link)?$medi->linked_in_profile_link:"" }}" name="linked_in_profile_link">
                         </div>
                         <div class="form-group col-md-12">
                             <label for="experience">@lang('user.experience')</label>
                             <textarea class="form-control" id="experience" name="experience" required>{{ isset($medi->experience)?$medi->experience:"" }}</textarea>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="signature">Upload Signature</label>
+                            @if(Auth::user()->signature_photo != null) 
+                                <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{Auth::user()->id}}/signature/{{Auth::user()->signature_photo}}" /> 
+                            @endif
+                            <input type="file" class="form-control" id="signature"  name="signature">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="signature">Upload Profile Pic</label>
+                            @if(Auth::user()->profile_pic != null) 
+                                <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{Auth::user()->id}}/profile/{{Auth::user()->profile_pic}}" /> 
+                            @endif
+                            <input type="file" class="form-control" id="profilePic"  name="profilePic">
                         </div>
                         <div class="form-group col-md-4  d-none">
                             <label for="field1">@lang('user.field_1')</label>

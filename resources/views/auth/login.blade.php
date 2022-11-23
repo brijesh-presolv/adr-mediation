@@ -271,7 +271,7 @@
                                                 <button type="button" class="btn btn-primary btn-lg" id="load2" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">@lang('site.Reset Password')</button>
                                                 <br/>
 
-                                                <div>For any query contact <a href="mailto:info@pdm24.pl">info@pdm24.pl</a></div>
+                                                <div>For any query contact <a href="mailto:info@presolv360.com">info@presolv360.com</a></div>
                                             </div>
 
                                         </div>
@@ -299,7 +299,7 @@
                                                 <button type="button" class="btn btn-primary btn-lg" id="load3" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">@lang('site.Reset Username')</button>
                                                 <br/>
 
-                                                <div>For any query contact <a href="mailto:info@pdm24.pl">info@pdm24.pl</a></div>
+                                                <div>For any query contact <a href="mailto:info@presolv360.com">info@presolv360.com</a></div>
                                             </div>
 
                                         </div>
@@ -380,7 +380,7 @@
     
    </style>
 
-<!--    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback" async defer></script>
+   <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback" async defer></script>
 
         <script type="text/javascript">
             var onloadCallback = function() {
@@ -390,7 +390,7 @@
 function setResponse(response) { 
     document.getElementById('captcha-response').value = response; 
 }
-        </script> -->
+        </script>
         
 @endsection('content')
 

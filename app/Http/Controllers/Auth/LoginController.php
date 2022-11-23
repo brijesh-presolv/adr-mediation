@@ -53,6 +53,8 @@ use AuthenticatesUsers;
             if(Auth::user()->emailotp!=null){
           
           return route('verify');
+      } else if(Auth::user()->isDone!=1) {
+        return route('mediator.profile.firstupdate');
       }
            return route('mediator.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 2)) {

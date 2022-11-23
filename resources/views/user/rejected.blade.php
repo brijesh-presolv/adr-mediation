@@ -2,14 +2,15 @@
 use App\Models\InvoledUser;
 ?>
 @extends('user.layouts.app')
-@section('title', 'Closed')
+@section('title', 'Rejected')
 
 @section('breadcrumb')
       <!-- start page title -->
        <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-       <li class="breadcrumb-item"><a href="javascript: void(0);">Closed </a></li>
+       <li class="breadcrumb-item"><a href="javascript: void(0);">Rejected</a></li>
     <!-- end page title -->
 @endsection
+@section('page_title', 'Rejected')
 
 @section('content')
 <div class="row">
@@ -49,7 +50,7 @@ use App\Models\InvoledUser;
                         <td>{{$i++}}</td>
                         <td><?= 'M'.sprintf('%06d',$value->caseid) ?></td>
                         <td><?= date('d-m-Y',strtotime($value->date))?></td>
-                        <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" href="{{route('user.casedetails',$value->caseid)}}">View</a></td>
+                        <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" target="_blank" href="{{route('user.casedetails',$value->caseid)}}">View</a></td>
 
                         
                         <td><?php
@@ -59,9 +60,18 @@ use App\Models\InvoledUser;
                         foreach ($value->party as $key => $v) {
 
                             if($v->isOnboarded==1){
-                                echo '<span class="text-success">'.$v->name.'</span></br>';
-                            } else{
+                                if($v->name != "") {
+                                    if($v->organization != null && $v->isClaimant == 0) {
+                                        echo '<span class="text-success">'.$v->organization.'</span></br>';
+                                     } else {
+                                        echo '<span class="text-success">'.$v->name.'</span></br>';
+                                     }
+                                }
+                            } 
+                            else{
+                                if($v->name != "") {
                                 echo '<span class="text-danger">'.$v->name.'</span></br>';
+                                }
                             }
                             
                         }

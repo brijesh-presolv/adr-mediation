@@ -13,6 +13,8 @@
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
+        "league/flysystem-aws-s3-v3": "~1.0",
+        "rguedes/pdfmerger": "^1.0",
         "sendgrid/sendgrid": "^7.9"
     },
     "require-dev": {
@@ -55,7 +57,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php":"7.3"
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

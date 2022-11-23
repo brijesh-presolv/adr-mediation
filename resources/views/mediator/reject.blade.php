@@ -3,7 +3,7 @@ use App\Models\InvoledUser;
 ?>
 
 @extends('mediator.layouts.app')
-@section('title', 'Users')
+@section('title', 'Rejected')
 
 @section('breadcrumb')
       <!-- start page title -->
@@ -11,6 +11,7 @@ use App\Models\InvoledUser;
        <li class="breadcrumb-item"><a href="javascript: void(0);">Rejected-Case </a></li>
     <!-- end page title -->
 @endsection
+@section('pageTitleOnDashboard', 'Rejected')
 
 @section('content')
 <div class="row">
@@ -47,19 +48,24 @@ use App\Models\InvoledUser;
 
                     <tr>
                         <td>{{ $sno }}</td>
-                        <td>M0000<span id="caseId">{{ $data->mediation_case_id  }}</span></td>
+                        <td>{{"M" . sprintf("%06d", $data->mediation_case_id)}}</td>
                         <td>{{ date('d-m-Y', strtotime($data->created_at))}}</td>
                         
                         <td>
                             <?php 
-                            $invuser=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$data->userid])->get();
+                            $invuser=InvoledUser::select('name','isOnboarded')->where(['userPlanid'=>$data->mediation_case_id])->get();
 
                             foreach ($invuser as $key => $value) {
 
                             if($value->isOnboarded==1){
+                                if($value->name != null) {
                                 echo '<span class="text-success">'.$value->name.'</span></br>';
-                            } else{
+                                }
+                            } 
+                            else{
+                                if($value->name != null) {
                                 echo '<span class="text-danger">'.$value->name.'</span></br>';
+                                }
                             }   
                         }
                         ?>

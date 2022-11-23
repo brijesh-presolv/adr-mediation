@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\Common_function;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
@@ -38,26 +39,24 @@ class RegisterController extends Controller
      */
     //protected $redirectTo = RouteServiceProvider::HOME;
 
-     protected function redirectTo(){
+    protected function redirectTo()
+    {
 
-       if (Auth::check() && (Auth::user()->role == 0)) {
+        if (Auth::check() && (Auth::user()->role == 0)) {
 
-        if(Auth::user()->emailotp!=null){
-          
-          return route('verify');
-      } else{
-           return route('user.dashboard');
-      }
+            if (Auth::user()->emailotp != null) {
 
-      
+                return route('verify');
+            } else {
+                return route('user.dashboard');
+            }
         } else if (Auth::check() && (Auth::user()->role == 1)) {
 
-            if(Auth::user()->emailotp!=null){
-          
-          return route('verify');
-      }
-           return route('mediator.dashboard');
-           
+            if (Auth::user()->emailotp != null) {
+
+                return route('verify');
+            }
+            return route('mediator.dashboard');
         } else if (Auth::check() && (Auth::user()->role == 2)) {
             return route('admin.dashboard');
         }
@@ -84,12 +83,12 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255','unique:users'],
-            'mobile_number' => ['required', 'string', 'max:255','unique:users'],
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
+            'mobile_number' => ['required', 'string', 'max:255'],
             'organization' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'actype'=>['required'],
+            'actype' => ['required'],
 
         ]);
     }
@@ -105,11 +104,11 @@ class RegisterController extends Controller
 
         //check if user role
 
-        if($data['actype']==1){
+        if ($data['actype'] == 1) {
 
-            $role=0;
-        } else if($data['actype']==2){
-            $role=1;
+            $role = 0;
+        } else if ($data['actype'] == 2) {
+            $role = 1;
         }
 
 
@@ -117,46 +116,39 @@ class RegisterController extends Controller
         $InvoledUser = InvoledUser::where(['userEmail' => $data['email']])->first();
 
 
-        if($InvoledUser){
+        if ($InvoledUser) {
 
 
-             return User::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'username' => $data['username'],
-            'mobile_number' => $data['mobile_number'],
-            'organization' => $data['organization'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role'=>$role,
-            'emailotp'=>rand('100000','999999'),
-            'smsotp'=>rand('100000','999999'),
-            'isActive'=>1,
-            'status'=>1,
+            return User::create([
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'username' => $data['username'],
+                'mobile_number' => $data['mobile_number'],
+                'organization' => $data['organization'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'role' => $role,
+                'emailotp' => rand('100000', '999999'),
+                'smsotp' => rand('100000', '999999'),
+                'isActive' => 1,
+                'status' => 1,
 
-        ]);
+            ]);
+        } else {
 
-
-
-        } else{
-
-             return User::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'username' => $data['username'],
-            'mobile_number' => $data['mobile_number'],
-            'organization' => $data['organization'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role'=>$role,
-            'emailotp'=>rand('100000','999999'),
-            'smsotp'=>rand('100000','999999'),
-        ]);
-
-
-
+            return User::create([
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'username' => $data['username'],
+                'mobile_number' => $data['mobile_number'],
+                'organization' => $data['organization'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'role' => $role,
+                'emailotp' => rand('100000', '999999'),
+                'smsotp' => rand('100000', '999999'),
+            ]);
         }
-
     }
 
     /**
@@ -176,14 +168,63 @@ class RegisterController extends Controller
         if ($response = $this->registered($request, $user)) {
             return $response;
         }
+        $d = [
+            'event' => 'VARIFY_EMAIL',
+            'userid' => $user->id,
+        ];
+        $authKey = env('SMS_AUTH_KEY', '');
+        $flowId = env('SMS_FLOW_KEY', '');
+        $url = env('SMS_FLOW_API', '');
+        $senderId = "Prsolv";
+        $mobileNumber = "+91" . $user->mobile_number;
 
-        if($user->role=='0'){
-        $email=SendGrid::send($user->email, '5e3c0043-6349-4dc6-9886-23795ccb5f27', ['-otp-'=>strval($user->emailotp)]);
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => "{\n  \"flow_id\": \"$flowId\",\n  \"sender\": \"$senderId\",\n  \"mobiles\": \"$mobileNumber\",\n  \"otp\": \"$user->smsotp\"\n  }",
+            CURLOPT_HTTPHEADER => [
+                "authkey: {$authKey}",
+                "content-type: application/JSON"
+            ],
+        ]);
 
-        } else if($user->role=='1'){
+        $response = curl_exec($ch);
 
-            $email=SendGrid::send($user->email, '0980bfd2-1743-4106-a861-eb64204cae94', ['-otp-'=>strval($user->emailotp)],$user->name);
 
+        // dd($response);
+        //Print error if any
+        if (curl_errno($ch)) {
+            echo 'error:' . curl_error($ch);
+        }
+
+        curl_close($ch);
+
+        if ($user->role == '0') {
+
+            $findInvCase = InvoledUser::where(['userEmail' => $user->email, 'joinCode' => null, 'isClaimant' => 0])->get();
+
+            if(isset($findInvCase)) {
+                foreach($findInvCase as $value) {
+                    if($value->userId == null) {
+                         $value->userId = $user->id;
+                         $value->save();
+                    }
+                }
+            }
+
+            Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id);
+
+            $email = SendGrid::send($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
+        } else if ($user->role == '1') {
+            Common_function::MedNotification(null, "MED_REGI", null, null, null, $user->id);
+
+            $email = SendGrid::send($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
         }
 
         // if (!Auth::user()->isActive) {
@@ -192,10 +233,7 @@ class RegisterController extends Controller
         // }
 
         return $request->wantsJson()
-                    ? new JsonResponse([], 201)
-                    : redirect($this->redirectPath());
+            ? new JsonResponse([], 201)
+            : redirect($this->redirectPath());
     }
-
-
-   
 }
