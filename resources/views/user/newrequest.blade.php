@@ -10,13 +10,68 @@ use App\Models\InvoledUser;
        <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('site.Pending') </a></li>
     <!-- end page title -->
 @endsection
+@section('page_title', 'Pending')
 
 @section('content')
+
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box table-responsive">
             <!-- <h4 class="header-title"><b>New Request</b></h4> -->
-            <table  id="datatable" id="" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <div class="row">
+                <div class="col-md-12">
+                        <button class="btn btn-primary btn-sm" data-target="#myModalbupld" data-toggle="modal"> Bulk Upload</button>
+                  <br>
+                  <br>
+                </div>
+           </div>
+           <div id="myModalbupld" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-body">
+
+                        <div class="blkfrmdiv">
+                            <h3>Upload .csv file</h3>
+                           <form enctype="multipart/form-data" method="post" action="{{route('user.bulkUpload')}}">
+                            {{ csrf_field() }}
+                                    <input type="hidden" name="token" id="token_input">
+
+                                    <input type="hidden" name="claimant" value="{{auth()->user()->id}}">
+
+                                     <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" />
+
+                                <div class="form-group">
+                                    <input type="file" name="csv" id="fileInput" onchange="" class="col-md-12 dropify" data-allowed-file-extensions="csv" required="" data-max-file-size="20M" />
+                                </div>
+
+    <input type="Submit"  value="Submit" class="btn btn-primary blkupdbtnsb">
+    <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
+        <span>@lang('case.btn_close')</span>
+   </button>
+                            </form>
+
+                        </div>
+                          {{-- <div class="loading_form" style="display: none;">
+                        <center>
+
+                            </center>
+                        <center><p>Please Wait. Do Not Close Until Close Button Appear.</p></center>
+
+                        <div style="height: 200px;
+        overflow-y: scroll;" id="mess">
+
+                        </div>
+                        <!-- <a>Close</a> -->
+                    </div> --}}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+            <table  id="users" id="" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
                         <th>@lang('case.Sr. No')</th>
@@ -25,64 +80,9 @@ use App\Models\InvoledUser;
                         <th>@lang('case.case_details')</th>
                         <th>@lang('case.party_details')</th>
                         <th>@lang('case.status_logs')</th>
+                        <th>@lang('Supporting Document')</th>
                     </tr>
                 </thead>
-                <tbody>
-
-                    <?php 
-                    $i=1;
-                    $id='';
-
-                    foreach ($pending as $key => $value) {
-
-
-                     ?>
-                     <tr>
-
-                        <?php 
-
-                        if($value->id==$id){
-                            continue;
-                        }
-
-                        $id=$value->id;
-
-                        ?>
-                        <td>{{$i++}}</td>
-                        <td><?= 'M'.sprintf('%06d',$value->id) ?></td>
-                        <td><?= date('d-m-Y',strtotime($value->created_at))?></td>
-
-                        <td><a class="btn   btn-sm btn-primary label label-success {{(count($value->party)>0)?'':'disabled'}}" href="{{route('user.casedetails',$value->id)}}" >View</a></td>
-
-                        <td>
-  
-                            <?php
-
-                        if(isset($value->party) and count($value->party)>0){
-
-                        foreach ($value->party as $key => $v) {
-
-                            if($v->isOnboarded==1){
-                                echo '<span class="text-success">'.$v->name.'</span></br>';
-                            } else{
-                                echo '<span class="text-danger">'.$v->name.'</span></br>';
-                            }
-                            
-                        }
-                    } else { ?>
-
-
-                        <a href="invoke?id=<?= $value->id ?>" class="btn btn-danger btn-sm">@lang('site.Pending')</a>
-
-                    <?php } ?>
-
-
-
-                        </td>
-                        <td><span class="badge badge-danger">@lang('site.Pending')</span></td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
             </table>
         </div>
     </div>
@@ -91,10 +91,10 @@ use App\Models\InvoledUser;
 
  <!-- Table datatable css -->
 @section('head')
-  
+
     <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    
+
 @endsection
 
 
@@ -109,9 +109,144 @@ use App\Models\InvoledUser;
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script type="text/javascript">
-        
-     $(document).ready(function(){
 
+        function pad(str, max) {
+            str = str.toString();
+            return str.length < max ? pad("0" + str, max) : str;
+        }
+        var userTable = $('#users').DataTable({
+            "serverMethod": "POST",
+            "sAjaxSource": '{{ route('user.case.jsonnew') }}',
+            "processing": true,
+            "serverSide": true,
+            "order": [
+                [0, "desc"]
+            ],
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, 500, 1000],
+                [10, 25, 50, 100, 250, 500, 1000],
+            ],
+            "iDisplayLength": 10,
+            "responsive": true,
+            serverData: function(sSource, aoData, fnCallback, oSettings) {
+                // aoData.append('token',token)
+                
+                oSettings = $.ajax({
+                    dataType: "json",
+                    type: "post",
+                    // async: false,
+                    crossDomain: true,
+                    url: sSource,
+                    data: aoData,
+                    success: fnCallback
+
+                });
+
+            },
+            "columns": [{
+                    "data": "key",    
+                },
+                {
+                    "data": "case.userPlanId",
+                    render: function(data) {
+                        var button = "M" + pad(data, 6);
+                        return button;
+                    }
+                },
+                {
+                    "data": "date"
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        if(row.party.length>0) {
+                            var button = ` <a href="{{ url('user/casedetails/') }}/` + data.userPlanId +
+                            `" target="_blank" class="btn btn-sm btn-primary label label-success" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                        } else {
+                            var button = `<a class="btn btn-sm btn-primary label label-success disabled"><i class="mdi mdi-file-eye-outline"></i></a>`;
+                        }
+                        
+                        return button;
+                    }
+                },
+                {
+                    "data": "party",
+                    render: function(data, type, row) {
+                        var d = "";
+                        for (i in data) {
+                            if (data[i].isOnboarded == 1) {
+                                if (data[i].name != null) {
+                                    if (data[i].organization != null && data[i].isClaimant == 0) {
+                                        d = d + `<span class="text-success party_name" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + data[i]
+                                            .organization + `</span><br>`;
+                                    } else {
+                                        d = d + `<span class="text-success party_name" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + data[i]
+                                            .name + `</span><br>`;
+                                    }
+                                }
+                            } else {
+                                if (data[i].name != null) {
+                                    d = d + `<span class="text-danger party_name" data-inid="` + data[i]
+                                        .id + `" data-id="` + data[i].userId + `">` + data[i].name +
+                                        `</span><br>`;
+                                }
+                            }
+                        }
+                        return d;
+                    }
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        var button = `<span class="badge badge-danger">@lang('site.Pending')</span>`;
+                        return button;
+                    }
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        var button = "";
+                        if (data.documentPath !== 'NULL' && data.documentPath !== "") {
+                            button = button + `<p class="btn btn-success btn-sm">`+data.documentPath+`</p>`;
+                        } else {
+                            button = button + `<form action="{{ url('user/uploaddocument/') }}/` + data.userPlanId + `"  method="post" enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+                                <input class="form-control" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
+                                <p>*Only Pdf zip and rar file allowed</p>
+                                <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
+                                </form>`;
+                        }
+                        return button;
+                    }
+                },
+            ],
+        });
+
+     $(document).ready(function(){
+        $('.dropify').dropify();
+
+        <?php if(session()->has('success')) {?>
+        swal({
+            title: '{{session()->get("success")}}',
+            // text: "Withdraw case!",
+            icon: "success",
+            buttons: true,
+        }).then(function() {
+    window.location ="{{route('user.newrequest')}}"});
+
+    <?php } if(session()->has('error')) {?>
+        swal({
+            title: "Error",
+            text: '{{session()->get("error")}}',
+            icon: "error",
+            buttons: true,
+            dangerMode: true,
+        }).then(function() {
+    window.location ="{{route('user.newrequest')}}"});
+    <?php } ?>
 
         <?php if($response=='success'){ ?>
 
@@ -122,7 +257,7 @@ use App\Models\InvoledUser;
 
 <?php } ?>
 
-        
+
 
     //withdraw the case
 
@@ -178,30 +313,4 @@ use App\Models\InvoledUser;
 
 
 @endsection('footer')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

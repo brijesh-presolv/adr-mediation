@@ -3,21 +3,40 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>{{ config('app.name', 'Mediacje') }}| @yield('title')</title>
+    <title>{{ config('app.name', 'Mediacje') }} | @yield('title')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Responsive bootstrap 4 admin template" name="description" />
     <meta content="Coderthemes" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
      <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{url('')}}/assets/images/favicon.ico">
+    {{-- <link rel="shortcut icon" href="{{url('')}}/assets/images/favicon.ico"> --}}
+    <link rel="icon" type="image/x-icon" href="{{url('/assert/')}}/img/icon.png" />
+
     <!-- App css -->
     <link href="{{url('assets/')}}/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
     <link href="{{url('assets/')}}/css/icons.min.css" rel="stylesheet" type="text/css" />
     <link href="{{url('assets/')}}/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
     <link href="{{url('assets/')}}/css/custom.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css" integrity="sha512-EZSUkJWTjzDlspOoPSpUFR0o0Xy7jdzW//6qhUkoZ9c4StFkVsp9fbbd0O06p9ELS3H486m4wmrCELjza4JEog==" crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
+    <link href="{{url('assets/')}}/css/dropify.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
 
     <!-- Dynamic pages css comes -->
+
+
+    <style>
+        .share_total {
+                position: absolute;
+                top: -0.8em; 
+                left: 4em
+            }
+            .share_unseen {
+                position: absolute;
+                top: -0.8em; 
+                left: 2.5em
+            }
+    </style>
+
     @yield('head')
 </head>
 
@@ -65,7 +84,7 @@
                 <a href="{{ url('/') }}" class="logo text-center" style="background-color:#fdfdfd ">
                     <span class="logo-lg">
                         <!-- <img src="{{ url('/') }}/assets/images/logo-light.png" alt="" height="18"> -->
-                        <span class="logo-lg-text-light" style="color: #575a65 ">Mediacje</span>
+                        <span class="logo-lg-text-light" style="color: #575a65 ">Mediation</span>
                     </span>
                     <span class="logo-sm">
                         <!-- <span class="logo-sm-text-dark">Z</span> -->
@@ -73,6 +92,13 @@
                     </span>
                 </a>
             </div>
+            <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
+                <li>
+                    <button class="button-menu-mobile waves-effect">
+                        <i class="mdi mdi-menu"></i>
+                    </button>
+                </li>
+            </ul>
         </div>
         <!-- end Topbar --> 
         
@@ -84,7 +110,7 @@
         <!-- Start Page Content here -->
         <!-- ============================================================== -->
 
-        <div class="content-page" style="background-color: #e1e1e1;">
+        <div class="content-page" >
             <div class="content">
 
                 <!-- Start Content-->
@@ -98,7 +124,7 @@
                                      @yield('breadcrumb')
                                 </ol>
                             </div>
-                            <h4 class="page-title">@yield('title')</h4>
+                            <h4 class="page-title">@yield('page_title')</h4>
 
                         </div>
                     </div>
@@ -121,7 +147,7 @@
             
 
             <!-- Footer Start -->
-            <footer class="footer">
+            {{-- <footer class="footer">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
@@ -129,7 +155,7 @@
                         </div>
                     </div>
                 </div>
-            </footer>
+            </footer> --}}
             <!-- end Footer -->
 
         </div>
@@ -156,12 +182,21 @@
 
     <script src="{{url('assets/')}}/js/pages/dashboard.init.js"></script>
     <script src="{{url('assets/')}}/form-validator/jquery.form-validator.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
+
     <!-- App js -->
     <script src="{{url('assets/')}}/js/app.min.js"></script>
 
+    <script src="{{url('assets/')}}/js/dropify.min.js"></script>
 
     <!-- Dynamic pages js comes and other files-->
-
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
     @yield('footer')
 
     <script type="text/javascript">

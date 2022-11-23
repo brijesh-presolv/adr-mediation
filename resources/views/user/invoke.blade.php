@@ -99,34 +99,14 @@ function isreadonlys($rows) {
                         <div class="form-group">
                             <label>State <span style="color:red; ">*</span></label>
 
-                            <datalist id="state">
-                                <option>dolnośląskie</option>
-                                <option>kujawsko-pomorskie</option>
-                                <option>lubelskie</option>
-                                <option>lubuskie</option>
-                                <option>łódzkie</option>
-                                <option>małopolskie</option>
-                                <option>mazowieckie</option>
-                                <option>opolskie</option>
-                                <option>podkarpackie</option>
-                                <option>podlaskie</option>
-                                <option>pomorskie</option>
-                                <option>śląskie</option>
-                                <option>świętokrzyskie</option>
-                                <option>warmińsko-mazurskie</option>
-                                <option>wielkopolskie</option>
-                                <option>zachodniopomorskie</option>
-                            </datalist>
-                            <input type="text" name="userstate" id="userstate" list="state" class="form-control" value="<?= $user->state?>">
+                            <input type="text" name="userstate" id="userstate"  class="form-control" value="<?= $user->state?>">
                            
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Country <span style="color:red; ">*</span></label>
-                            <select class="form-control" id="usercountry" name="usercountry">
-                                <option>Polska</option>
-                            </select>
+                            <input type="text" class="form-control" id="usercountry" name="usercountry" value="<?= $user->country?>">
                         </div>
                     </div>
                 </div>
@@ -135,7 +115,7 @@ function isreadonlys($rows) {
             <section>
                 <div class="row">
                     <div class="col-md-12 ">
-                        <h6>Responding Party</h6>
+                        <h6>Parties</h6>
                     </div>
                 </div>
             </section>
@@ -159,68 +139,44 @@ function isreadonlys($rows) {
                         <div class="col-md-12">
                             <h6>#<?= $i + 1 ?></h6>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <label>Name<span style="color:red; ">*</span></label>
-                                <input type="text" name="name[]" class="form-control" value="<?= isset($InvoledUser[$i]['name']) ? $InvoledUser[$i]['name'] : ''; ?>" <?= isreadonly($rows) ?>  required>
+                                <label>Name</label>
+                                <input type="text" name="name[]" class="form-control" value="<?= isset($InvoledUser[$i]['name']) ? $InvoledUser[$i]['name'] : ''; ?>" <?= isreadonly($rows) ?>  >
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <label>Email <span style="color:red; ">*</span></label>
-                                <input type="email" name="email[]" class="form-control" value="<?= isset($InvoledUser[$i]['userEmail']) ? $InvoledUser[$i]['userEmail'] : ''; ?>" <?= isreadonly($rows) ?>  required>
+                                <label>Email </label>
+                                <input type="email" name="email[]" class="form-control" value="<?= isset($InvoledUser[$i]['userEmail']) ? $InvoledUser[$i]['userEmail'] : ''; ?>" <?= isreadonly($rows) ?>  >
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <label>Phone <span style="color:red; ">*</span></label>
-                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>  required  data-smk-pattern="[a-zA-Z0-9\s-+]{8,15}" minlength="8" maxlength="15" data-smk-msg="Enter vaild phone number" >
+                                <label>Phone </label>
+                                <input type="text" name="phone[]" class="form-control" value="<?= isset($InvoledUser[$i]['userPhone']) ? $InvoledUser[$i]['userPhone'] : ''; ?>" <?= isreadonly($rows) ?>    data-smk-pattern="[a-zA-Z0-9\s-+]{8,15}" minlength="8" maxlength="15" data-smk-msg="Enter vaild phone number" >
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <label>Address line 1 <span style="color:red; ">*</span></label>
-                                <input name="add1[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['address1']) ? $InvoledUser[$i]['address1'] : ''; ?>" <?= isreadonly($rows) ?>  required>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Address line 2</label>
-                                <input name="add2[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['address2']) ? $InvoledUser[$i]['address2'] : ''; ?>" <?= isreadonly($rows) ?>  >
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>City <span style="color:red; ">*</span></label>
-                                <input name="city[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['city']) ? $InvoledUser[$i]['city'] : ''; ?>" <?= isreadonly($rows) ?>  required  data-smk-msg="Enter valid city">
+                                <label>Type of Party</label>
+                                <select id="selected_paty" name="selected_party[]" class="form-control">
+                                    <option value="0">Initiating Party</option>
+                                    <option value="1" selected>Responding Party</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-12">
                             <div class="form-group">
-                                <label>Pincode <span style="color:red; ">*</span></label>
-                                <input name="pincode[]" type="text" class="form-control" value="<?= isset($InvoledUser[$i]['pincode']) ? $InvoledUser[$i]['pincode'] : ''; ?>" <?= isreadonly($rows) ?>   minlength="5" maxlength="10" data-smk-msg="Enter vaild pincode"  data-smk-pattern="[a-zA-Z0-9\s-]{5,10}">
+                                <label>Address </label>
+                                <textarea name="fulladdress[]" rows="4" type="text" class="form-control" ><?= isset($InvoledUser[$i]['fulladdress']) ? $InvoledUser[$i]['fulladdress'] : ''; ?></textarea>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>State <span style="color:red; ">*</span></label>
-                                 <input type="text" name="state[]" id="state" list="state" class="form-control" value="<?= isset($InvoledUser[$i]['state']) ? $InvoledUser[$i]['state'] : ''; ?>">
-                                
-                                   
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Country <span style="color:red; ">*</span></label>
-
-                                <input type="text" name="country[]" id="country" list="" class="form-control" value="<?= isset($InvoledUser[$i]['country']) ? $InvoledUser[$i]['country'] : 'Polska'; ?>">
-                            </div>
-                        </div>
+                        
                     </div>
+                    
                 <?php } ?>
             </section>
 
@@ -242,33 +198,55 @@ function isreadonlys($rows) {
                 <div class="row">
                     <div class="col-md-12">
                         <hr>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Dispute Category <span style="color:red; ">*</span></label>
+                            <input class="form-control" name="disputeCategory" required="" value="<?= $medcase->disputeCategory ?>" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Dispute Amount <span style="color:red; ">*</span></label>
+                            <input class="form-control" name="amount" required="" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr>
                         <div class="form-group">
                             <label>Dispute details <span style="color:red; ">*</span></label>
                             <textarea class="form-control" rows="4" name="issue" required=""><?= $medcase->issue ?></textarea>
                         </div>
                     </div>
                     <div class="col-md-12">
+                        <hr>
                         <div class="form-group">
-                            <label>Supporting document</label><br>
-                            <?php if ($rows == 0) { ?>
-                                <input class="form-control dropify" type="file" name="document" data-allowed-file-extensions="pdf zip png jpg jpeg"  data-max-file-size="20M"></input>
-                                <p>*Only Pdf zip png and jpg file allowed</p>
-                                <?php
-                            } else {
-                                if ($medcase->documentPath != '') {
-                                    ?>
-
-                                    <a href="<?= public_path('mediation') . '/' . $medcase->id . '/' . $medcase->documentPath ?>" class="btn btn-success btn-sm" >Supporting Document</a> 
-
-                                    <?php
-                                } else {
-                                    echo "Not avalable";
-                                }
-                            }
-                            ?>
-                            <!-- {{$errors->document}} -->
+                            <label>Proposed Solution <span style="color:red; ">*</span></label>
+                            <textarea class="form-control" rows="4" name="proposedSolution" required=""><?= $medcase->proposedSolution ?></textarea>
                         </div>
                     </div>
+
+                    
+
+                    <div class="col-md-12">
+                        <hr>
+                        <div class="form-group">
+                            <input type="checkbox" value="1" name="confirmsDetails" required="" />
+                            <label>The Initiating Party confirms that the details provided above are true, accurate, current and complete and requests that the dispute be referred to Presolv360 for resolution via Mediation360 <span style="color:red; ">*</span></label>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="checkbox" value="1" name="Terms" required="" />
+                            <label>The Initiating Party accepts and agrees to abide by Presolv360’s Dispute Resolution Rules (governing, inter alia, appointment of mediation, procedure, role of parties, settlement, termination, confidentiality) Terms & Conditions and Privacy Policy <span style="color:red; ">*</span></label>
+                        </div>
+                    </div>
+
                 </div>
             </section>
         </form>
@@ -286,7 +264,7 @@ function isreadonlys($rows) {
 
 @section('head')
 <link href="{{url('assets/')}}/css/smoke.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
-<link href="{{url('assets/')}}/css/dropify.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" />
+{{-- <link href="{{url('assets/')}}/css/dropify.min.css" rel="stylesheet" type="text/css" id="app-stylesheet" /> --}}
 
 @endsection('head')
 
@@ -296,7 +274,7 @@ function isreadonlys($rows) {
 
 
 <script src="{{url('assets/')}}/js/smoke.js"></script>
-<script src="{{url('assets/')}}/js/dropify.min.js"></script>
+{{-- <script src="{{url('assets/')}}/js/dropify.min.js"></script> --}}
 
 
 

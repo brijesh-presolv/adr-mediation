@@ -459,7 +459,7 @@ margin-bottom:15px;
     border-radius: 50%;
                 border: 2px solid;
                 padding: 12%; 
-                color: #fffff;
+                color: #ffffff;
 
 }
 
@@ -1394,7 +1394,7 @@ width: 195px;
 
    .bannersectiontext {
     
-    osition: absolute;
+    position: absolute;
     top: 13px;
     left: -3.2%;
     bottom: 7px;
@@ -1529,6 +1529,10 @@ width: 195px;
     height: 100%;
     width: auto;
     min-width: 100%;
+}
+
+.ifr {
+  cursor: pointer !important;
 }
 
 .owl-stage-outer * {

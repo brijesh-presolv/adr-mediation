@@ -1,0 +1,136 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\InvoledUser;
+use App\Http\Helpers\SendGrid;
+use App\Http\Helpers\Whatsapp;
+use App\Models\WaTemplate;
+
+
+use DB;
+
+class ReminderController extends Controller
+{
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+    }
+
+    /**
+     * Show the application users.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function index()
+    {
+        $date = \Carbon\Carbon::today();
+        $date = $date->format('d/m/Y');
+        $two_days = \Carbon\Carbon::today()->addDays(2);
+        $two_days = $two_days->format('d/m/Y');
+
+        $query1 = "SELECT *
+            FROM manage_session
+            WHERE 
+            (is_reminder_sent = 0 OR is_final_reminder = 0)
+            AND (session_date LIKE '%$date%' OR session_date LIKE '%$two_days%')            
+            LIMIT 50";
+
+        //echo $query1;exit;
+        $getSessionArray = DB::select($query1);
+
+        // echo "<pre>";print_R($getSessionArray);exit;
+
+        if (empty($getSessionArray)) {
+            echo "No scheduled session found.";
+        } else {
+            foreach ($getSessionArray as $key => $getSessionData) {
+
+                $get_time = explode("/", $getSessionData->session_date);
+                // /$time = date("g:i A", strtotime($request->sessionTime));
+                $time = isset($get_time[3]) ? $get_time[3] : '';
+                $dateToday = $get_time[0].'/'.$get_time[1].'/'.$get_time[2];
+                // $toDaydate = Carbon::$getSessionData->session_date->format('d/m/Y');
+                //echo $dateToday;exit;
+               // echo date('d/m/Y',strtotime($dateToday));exit;
+                //$toDaydate =  \Carbon\Carbon::CreateFromFormat('d/m/Y',$getSessionData->session_date);
+
+                // $allParty['party']['all'] = InvoledUser::where("userPlanId", $getSessionData->case_id)->get();
+                $allParty[$key] = InvoledUser::where("userPlanId", $getSessionData->case_id)->get();
+                $allParty[$key]['zoom'] = $getSessionData->zoom_id;
+                $allParty[$key]['case'] = $getSessionData->case_id;
+                $allParty[$key]['time'] = $time;
+                $allParty[$key]['sdate'] = $getSessionData->session_date;
+                $allParty[$key]['finaldate'] = $dateToday;
+            }
+            // echo "<pre>";print_R($allParty);exit;
+            foreach ($allParty as $partyData) {
+                foreach ($partyData as $party) {
+                    // echo "<pre>";
+                    // print_R($partyData['finaldate']);
+                    // exit;
+                    if (isset($party->userEmail) || isset($party->userPhone)) {
+                        $is_sent = $this->sned_session(($partyData['zoom'] != null) ? $partyData['zoom']  : $getSessionData->fsData['zoomId'], $partyData['case'], $party->userEmail, $party->name, ($partyData['sdate'] != null) ? $partyData['sdate'] : $getSessionData->fsData['sessionDate'] . "/" . $partyData['time'], $party->userPhone);
+
+                        if ($is_sent) {
+                            $updateReminderData_first = DB::table('manage_session')
+                                ->where('case_id', $partyData['case'])
+                                ->update(array('is_reminder_sent' => 1));
+
+                            if($partyData['finaldate'] == $date){
+                                $updateReminderData_final = DB::table('manage_session')
+                                ->where('case_id', $partyData['case'])
+                                ->update(array('is_final_reminder' => 1));
+                                echo "<br/>Final Reminder sent successfully for caseID - " . $partyData['case'];
+                            }
+
+                            echo "<br/>Reminder sent successfully for caseID - " . $partyData['case'];
+                        } else {
+                            echo "<br/>Some error in caseID - " . $partyData['case'];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone)
+    {
+        $mid = "M" . sprintf("%06d", $id);
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $id,
+        ];
+
+        if ($email_id != "") {
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+        }
+        if ($userPhone != "") {
+
+            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
+            $var = ['-dt-', '-cid-', '-link-'];
+            $var1 = [$date, $mid, $url];
+            $content1 = WaTemplate::getcontent('l10_session_schedule');
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $id,
+                'contact' =>  $userPhone,
+                'content' => ['text' => $content],
+                'event' => 'SESS_SCHE',
+                'varjson' => $varjson,
+                'haptik_tmp' => 'l10_session_schedule',
+
+            ];
+
+            $access = Whatsapp::sendWamessage($dwa1);
+        }
+        return true;
+    }
+}

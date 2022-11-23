@@ -8,15 +8,18 @@ use App\Models\User;
 use App\Models\Mediation_Details;
 use App\Models\AreaOfSpecialization;
 use App\Http\Helpers\SendGrid;
-class UsersController extends Controller {
+use Illuminate\Support\Facades\Storage;
+
+class UsersController extends Controller
+{
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct() {
-        
+    public function __construct()
+    {
     }
 
     /**
@@ -24,7 +27,8 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index($role = "user") {
+    public function index($role = "user")
+    {
         if ($role == "mediator") {
             $role = 1;
         } else {
@@ -38,16 +42,29 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function statusChangeApprove(Request $request) {
+    public function statusChangeApprove(Request $request)
+    {
         $user = User::find($request->id);
         $user->status = $request->status;
-        if ($user->role==0 && $request->status == 1) {
-            $err=SendGrid::send($user->email, env('L23_USER_ACCOUNT_ACTIVATION', ''));
+        $d = [
+            'event' => 'APPROVE',
+            'userid' => $request->id,
+        ];
+        if ($user->role == 0 && $request->status == 1) {
+            $err = SendGrid::send($d, $user->email, env('L23_USER_ACCOUNT_ACTIVATION', ''));
         } else if ($request->status == 1) {
-            SendGrid::send($user->email, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''));
+            SendGrid::send($d, $user->email, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''));
         }
-        $user->save();
-        return response()->json(["msg" => "Category Name Update"]);
+
+        if($user->signature_photo != ''){
+            $user->save();
+            $signature_status = 1;
+        } else {
+            $signature_status = 0;
+        }
+
+        
+        return response()->json(["msg" => "Category Name Update", "signature_status" => $signature_status]);
     }
 
     /**
@@ -55,7 +72,8 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function statusChange(Request $request) {
+    public function statusChange(Request $request)
+    {
         $user = User::find($request->id);
         $user->isActive = $request->status;
         $user->save();
@@ -67,10 +85,11 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function edit(Request $request) {
-        $user = User::findOrFail($request->id);
+    public function edit($id, Request $request)
+    {
+        $user = User::findOrFail($id);
         $areaOfSpecialization = AreaOfSpecialization::all();
-        $medi = Mediation_Details::where("user_id", "=", $request->id)->first();
+        $medi = Mediation_Details::where("user_id", "=", $id)->first();
         return view('admin.users.edit', compact("user", "medi", "areaOfSpecialization"));
     }
 
@@ -79,7 +98,8 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         $user = User::find($request->id);
         $user->first_name = ucfirst($request->first_name);
         $user->last_name = ucfirst($request->last_name);
@@ -95,9 +115,45 @@ class UsersController extends Controller {
         $user->state = $request->state;
         $user->country = $request->country;
         if (isset($request->status)) {
-            $user->status = $request->status;
+            $user->isDone = $request->status;
         }
-
+        if ($request->hasFile('signature')) {
+            if ($user->role == 0) {
+                if ($user->signature_photo != null) {
+                    Storage::disk('local')->delete('public/user/' . $request->id . '/signature/' . $user->signature_photo);
+                }
+                $extension = $request->file('signature')->getClientOriginalExtension();
+                $name = 'User_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+                Storage::disk('local')->put('public/user/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+            } else {
+                if ($user->signature_photo != null) {
+                    Storage::disk('local')->delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
+                }
+                $extension = $request->file('signature')->getClientOriginalExtension();
+                $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+                Storage::disk('local')->put('public/mediator/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+            }
+            // if($user->signature_photo != null) {
+            //     Storage::delete('public/mediator/' . $request->id . '/signature/' . $user->signature_photo);
+            // }
+            // $extension = $request->file('signature')->getClientOriginalExtension();
+            // $name = 'Mediator_Signature' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+            // Storage::put('public/mediator/' . $request->id . '/signature/' . $name, file_get_contents($request->signature));
+        }
+        if ($request->hasFile('profilePic')) {
+            if ($user->profile_pic != null) {
+                Storage::disk('local')->delete('public/mediator/' . $request->id . '/profile/' . $user->profile_pic);
+            }
+            $extension = $request->file('profilePic')->getClientOriginalExtension();
+            $profilename = 'Mediator_Profile_Pic' . sprintf('%06d', $request->id) . time() . '.' . $extension;
+            $s = Storage::disk('local')->put('public/mediator/' . $request->id . '/profile/' . $profilename, file_get_contents($request->profilePic));
+        }
+        if (isset($name)) {
+            $user->signature_photo = $name;
+        }
+        if (isset($profilename)) {
+            $user->profile_pic = $profilename;
+        }
 
 
 
@@ -130,9 +186,41 @@ class UsersController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function json($role = 0) {
-        $users = User::where("role", "=", $role)->get();
+    public function jsonApprove($role = 0)
+    {
+        $users = User::where("role", "=", $role)->where('status', 1)->where('is_deleted', 0)->get();
         return response()->json(["data" => $users]);
     }
 
+    public function jsonNewreq($role = 0)
+    {
+        $users = User::where("role", "=", $role)->where('status', 0)->where('is_deleted', 0)->get();
+        return response()->json(["data" => $users]);
+    }
+
+    public function jsonUnapprove($role = 0)
+    {
+        $users = User::where("role", "=", $role)->where('is_deleted', 1)->get();
+        return response()->json(["data" => $users]);
+    }
+
+    public function deleteUser(Request $request)
+    {
+        $user = User::find($request->user_id);
+        // dd($user);
+        $user->is_deleted = 1;
+        $user->save();
+        return true;
+    }
+
+    public function ChangeRole(Request $request)
+    {
+        $user = User::find($request->userId);
+        $user->role = $request->role;
+        if ($user->save()) {
+            return json_encode(["message" => "success"]);
+        } else {
+            return json_encode(["message" => "error"]);
+        };
+    }
 }

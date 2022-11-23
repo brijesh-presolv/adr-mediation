@@ -9,92 +9,103 @@ use Session;
 use App\Http\Helpers\SendGrid as Email;
 use Illuminate\Support\Facades\Hash;
 
-class HomeController extends Controller {
+class HomeController extends Controller
+{
 
     /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index() {
+    public function index()
+    {
 
         return view('welcome');
     }
 
-    public function verify(Request $request) {
+    public function verify(Request $request)
+    {
+
+
+        if (isset(Auth::user()->emailotp)) {
+
+            if (Auth::user()->emailotp != null) {
+
+
+                if ($request->method() == 'POST') {
+
+                    $r = $request->post();
+
+                    $usr = User::find(Auth::user()->id);
+
+                    if ($r['emailotp'] == $usr->emailotp || $r['emailotp'] == $usr->smsotp) {
+
+                        $usr->emailotp = null;
+                        $usr->smsotp = null;
+                        $d = [
+                            'event' => 'VARIFY_EMAIL',
+                            'userid' => Auth::user()->id,
+                        ];
+
+                        if ($usr->save()) {
 
 
 
-        if (Auth::user()->emailotp != null) {
 
 
-            if ($request->method() == 'POST') {
+                            if ($usr->role == '1') {
 
-                $r = $request->post();
+                                $type = 'Mediator';
 
-                $usr = User::find(Auth::user()->id);
-
-                if ($r['emailotp'] == $usr->emailotp) {
-
-                    $usr->emailotp = null;
-                    $usr->smsotp = null;
-
-
-                    if ($usr->save()) {
+                                Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
 
 
 
-
-
-                        if ($usr->role == '1') {
-
-                            $type = 'Mediator';
-
-                            Email::send($usr->email, '92f1d3c4-077b-4e6a-b9db-3f9a3fda2111', ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
-
-
-
-                            return redirect()->route('mediator.dashboard');
-                        }
-
-                        $type = 'User';
-
-                        Email::send($usr->email, '92f1d3c4-077b-4e6a-b9db-3f9a3fda2111', ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
-
-
-                        if ($request->session()->has('newcase')) {
-
-                            //return redirect()->route('user.newcase');
-
-                            if (!Auth::user()->isActive) {
-                                Auth::logout();
-                                return redirect('login')->with('warning', 'Account Under Review.');
+                                return redirect()->route('mediator.profile.firstupdate');
                             }
 
-                            return redirect()->route('user.dashboard');
+                            $type = 'User';
 
-                        } else {
+                            Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
 
-                            if (!Auth::user()->isActive) {
-                                Auth::logout();
-                                return redirect('login')->with('warning', 'Account Under Review.');
+
+                            if ($request->session()->has('newcase')) {
+
+                                //return redirect()->route('user.newcase');
+
+                                if (!Auth::user()->isActive) {
+                                    Auth::logout();
+                                    return redirect('login')->with('warning', 'Account Under Review.');
+                                }
+
+                                return redirect()->route('user.dashboard');
+                            } else {
+
+                                if (!Auth::user()->isActive) {
+                                    Auth::logout();
+                                    return redirect('login')->with('warning', 'Account Under Review.');
+                                }
+
+                                return redirect()->route('user.dashboard');
                             }
-
-                            return redirect()->route('user.dashboard');
                         }
                     }
                 }
+
+
+                return view('auth/verify');
+            } else {
+
+                return abort(404);
             }
-
-
-            return view('auth/verify');
         } else {
 
             return abort(404);
         }
     }
 
-    public function mediation(Request $request) {
+    public function mediation(Request $request)
+    {
 
 
 
@@ -114,7 +125,8 @@ class HomeController extends Controller {
         }
     }
 
-    public function forgotpassword(Request $request) {
+    public function forgotpassword(Request $request)
+    {
 
         if ($request->post()) {
 
@@ -142,9 +154,12 @@ class HomeController extends Controller {
                 $usr->password = Hash::make($pwd);
 
                 $usr->save();
+                $d = [
+                    'event' => 'FORGOT_PASSWORD',
+                    'userid' => $usr->id,
+                ];
 
-
-                Email::send($usr->email, '760f8edf-ada7-4b23-8c44-7d0770195cdb', ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
+                Email::send($d, $usr->email, env('EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
 
                 echo json_encode(['response' => 'success']);
 
@@ -155,7 +170,8 @@ class HomeController extends Controller {
         echo json_encode(['response' => 'error']);
     }
 
-    public function forgotusername(Request $request) {
+    public function forgotusername(Request $request)
+    {
 
 
         if ($request->post()) {
@@ -175,7 +191,13 @@ class HomeController extends Controller {
                     $type = 'Mediator';
                 }
 
-                Email::send($usr->email, 'aad4779e-f892-46ed-b6d8-7b75195f45b9', ['-type-' => $type, '-name-' => $usr->username], $usr->first_name . ' ' . $usr->last_name);
+                $d = [
+                    'event' => 'FORGOT_USERNAME',
+                    'userid' => $usr->id,
+                ];
+
+                $email = Email::send($d, $usr->email, env('EMAIL3_OF_FORGOTUSERNAME', ''), ['-type-' => $type, '-name-' => $usr->username], $usr->first_name . ' ' . $usr->last_name);
+                // dd($email);
 
                 echo json_encode(['response' => 'success']);
 
@@ -186,23 +208,59 @@ class HomeController extends Controller {
         echo json_encode(['response' => 'error']);
     }
 
-    public function resendotp(Request $request) {
+    public function resendotp(Request $request)
+    {
 
 
         if ($request->post()) {
 
             $u = $request->post();
 
+            $authKey = env('SMS_AUTH_KEY', '');
+            $flowId = env('SMS_FLOW_KEY', '');
+            $url = env('SMS_FLOW_API', '');
+            $senderId = "Prsolv";
 
             $usr = User::where(['username' => $u['id']])->first();
-
+            $d = [
+                'event' => 'RESEND_OTP',
+                'userid' => $usr->id,
+            ];
             if ($usr) {
+                $mobileNumber = "+91" . $usr->mobile_number;
+
+                $ch = curl_init();
+                curl_setopt_array($ch, [
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => "{\n  \"flow_id\": \"$flowId\",\n  \"sender\": \"$senderId\",\n  \"mobiles\": \"$mobileNumber\",\n  \"otp\": \"$usr->smsotp\"\n  }",
+                    CURLOPT_HTTPHEADER => [
+                        "authkey: {$authKey}",
+                        "content-type: application/JSON"
+                    ],
+                ]);
+
+                $response = curl_exec($ch);
+
+
+                // dd($response);
+                //Print error if any
+                if (curl_errno($ch)) {
+                    echo 'error:' . curl_error($ch);
+                }
+
+                curl_close($ch);
 
                 if ($usr->role == '0') {
-                    $email = Email::send($usr->email, '5e3c0043-6349-4dc6-9886-23795ccb5f27', ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
+                    $email = Email::send($d, $usr->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
                 } else if ($usr->role == '1') {
 
-                    $email = Email::send($usr->email, '0980bfd2-1743-4106-a861-eb64204cae94', ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
+                    $email = Email::send($d, $usr->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($usr->emailotp)], $usr->first_name . ' ' . $usr->last_name);
                 }
 
                 echo json_encode(['response' => 'success']);
