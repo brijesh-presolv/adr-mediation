@@ -10,6 +10,7 @@
 @section('page_title', 'Ongoing Request')
 
 @section('content')
+
     <section class="tabs-section">
 
         <div>
@@ -523,6 +524,7 @@
                             <th scope="col">@lang('case.scheduling_done_on')</th>
                             <th scope="col">@lang('case.session_scheduled_for')</th>
                             <th scope="col">@lang('case.session_zoom_id')</th>
+                            <th scope="col">@lang('case.session_zoom_link')</th>
                             <th scope="col">@lang('case.session_note')</th>
                             <th scope="col">@lang('case.session_meeting_user')</th>
                             <th scope="col">Action</th>
@@ -571,11 +573,25 @@
                             <input type="time" id="sessionTime" autocomplete="off" class="form-control"
                                 name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
                         </div>
+
+                        <!-- Added for 2 choices : START ---------->
                         <div class="form-group">
+                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" checked onclick="check_zoom_choice(this.value)">
+                            <label for="">Schedule Directly</label><br>
+
+                            <input type="radio" id="" name="zoom_choice" value="manually_zoom" onclick="check_zoom_choice(this.value)">
+                            <label for="">Manually Add Link</label>
+                        </div>
+                        <!-- Added for 2 choices : END ---------->
+
+
+
+                        <div class="form-group zoom-id-section" style="display: none;">
                             <label>@lang('case.session_zoom_id') :</label>
                             <input type="text" id="zoomId" class="form-control" name="zoomId"
                                 placeholder="@lang('case.session_zoom_id_placeholder')" data-validation="required">
                         </div>
+
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
                             <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"
@@ -620,10 +636,22 @@
                             <input type="time" id="sessionTime" autocomplete="off" class="form-control"
                                 name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
                         </div>
+
+                        
+                        <!-- Added for 2 choices : START ---------->
                         <div class="form-group">
+                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" checked onclick="check_zoom_choice(this.value)">
+                            <label for="">Schedule Directly</label><br>
+
+                            <input type="radio" id="" name="zoom_choice" value="manually_zoom" onclick="check_zoom_choice(this.value)">
+                            <label for="">Manually Add Link</label>
+                        </div>
+                        <!-- Added for 2 choices : END ---------->
+
+                        <div class="form-group zoom-id-section" style="display: none;">
                             <label>@lang('case.session_zoom_id') :</label>
                             <input type="text" id="zoomId" class="form-control" name="zoomId"
-                                placeholder="@lang('case.session_zoom_id_placeholder')" data-validation="required">
+                                placeholder="@lang('case.session_zoom_id_placeholder')">
                         </div>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
@@ -657,6 +685,7 @@
                     <input type="hidden" name="createdBy" id="editcreatedByF" value="{{ Auth::id() }}">
                     <input type="hidden" name="SessId" id="editSessId">
                     <input type="hidden" name="CaseId" id="CaseId">
+                    <input type="hidden" name="zoomChoice" id="zoomChoice">
 
                     <div class="custom-modal-text ">
                         <div class="form-group">
@@ -670,11 +699,34 @@
                                 class="form-control" name="sessionTime" placeholder="@lang('case.session_time_placeholder')"
                                 data-validation="required">
                         </div>
+
+                        
+                        <!-- Added for 2 choices : START ---------->
+                        <!-- <div class="form-group">
+                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" onclick="check_zoom_choice(this.value)">
+                            <label for="">Schedule Directly</label><br>
+
+                            <input type="radio" id="" name="zoom_choice" value="manually_zoom" onclick="check_zoom_choice(this.value)">
+                            <label for="">Manually Add Link</label>
+                        </div> -->
+                        <!-- Added for 2 choices : END ---------->
+
+
+
+
                         <div class="form-group">
                             <label>@lang('case.session_zoom_id') :</label>
                             <input type="text" id="editzoomId" class="form-control" name="zoomId"
                                 placeholder="@lang('case.session_zoom_id_placeholder')" data-validation="required">
                         </div>
+                        <!------- Zoom Link ------------>
+                        <div class="form-group zoom-id-section" style="display: none;">
+                            <label>@lang('case.session_zoom_link'):</label>
+                            <!-- <label name="get_zoom_link" id="editZoomLink"></label> -->
+                            <input type="text" id="editZoomLink" class="form-control" name="zoomLink"
+                                data-validation="required" readonly style="background-color: #dedede">
+                        </div>
+                        <!------- Zoom Link ------------>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
                             <textarea class="form-control" id="editnote" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
@@ -707,6 +759,7 @@
 
                     <input type="hidden" name="createdBy" id="deletecreatedByF" value="{{ Auth::id() }}">
                     <input type="hidden" name="deSessId" id="deleteSessId">
+                    <input type="hidden" name="delZoomChoice" id="delZoomChoice">
 
                     <div class="custom-modal-text ">
 
@@ -790,6 +843,15 @@
     <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
         type="text/css" />
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <style>
+        #ui-datepicker-div {
+            position: fixed !important;
+            top: 176px !important;
+            left: 445.5px !important;
+            z-index: 1051 !important;
+        }
+    </style>
 @endsection
 
 
@@ -807,16 +869,30 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            // $("#sessionDateForBulk").datepicker({
-            //     minDate: 0,
-            //     dateFormat: 'dd/mm/yy'
-            // });
-            $("#sessionDate, #sessionDateForBulk").datepicker({
+        $(function() {
+            
+            $("#sessionDate").datepicker({
                 minDate: 0,
                 dateFormat: 'dd/mm/yy'
             });
+            $("#sessionDateForBulk").datepicker({
+                minDate: 0,
+                dateFormat: 'dd/mm/yy'
+            });
+
         });
+
+        // Check for zoom choice //
+        function check_zoom_choice(zoom_choice){
+            if(zoom_choice == "manually_zoom") {
+                $('.zoom-id-section').show();
+            } else if(zoom_choice == "directly_zoom") {
+                $('.zoom-id-section').hide(); 
+            }
+        }
+        // Check for zoom choice //
+
+
         $(function() {
 
             $('.dropify').dropify();
@@ -2916,11 +2992,24 @@
 
                         $('#editSessId').attr('value', response.id);
                         $('#CaseId').attr('value', response.case_id);
+                        $('#zoomChoice').attr('value', response.zoom_link_choice);
                         $('#editsessionDate').attr('value', response.session_date.substring(0, 10));
                         var convertTime = convertTime12to24(response.session_date.substring(11));
                         $('#editsessionTime').attr('value', convertTime);
                         $('#editzoomId').attr('value', response.zoom_id);
+                        $('#editZoomLink').attr('value', response.zoom_link);
                         $('#editnote').val(response.note);
+
+
+                        if(response.zoom_link_choice == "manual"){
+                            $('#editzoomId').removeAttr('readonly');
+                            $('#editzoomId').css('background', '#ffffff');
+                            $('.zoom-id-section').hide();
+                        } else if(response.zoom_link_choice == "direct"){
+                            $('#editzoomId').attr('readonly', 'readonly');
+                            $('#editzoomId').css('background', '#dedede');
+                            $('.zoom-id-section').show();
+                        }
                         var session_party = response.session_party_ids;
 
                         data.each(function() {
@@ -2963,7 +3052,9 @@
         $('#Session-delete').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var delid = button.data('id');
+            var delZoomChoice = button.data('zoom-choice');
             $("#deleteSessId").val(delid);
+            $("#delZoomChoice").val(delZoomChoice);
         });
 
         $('#Session-delete-reason').on('show.bs.modal', function(event) {
@@ -3006,6 +3097,7 @@
         $(document).on('click', '#sessiondeleteform', function() {
             var Sessid = $("#deleteSessId").val();
             var reason = $("#reasondelete").val();
+            var delZoomChoice = $("#delZoomChoice").val();
             swal({
                 title: "Are you sure?",
                 text: "Delete this Session!",
@@ -3019,7 +3111,8 @@
                         url: "{{ route('admin.case.DeleteSession') }}",
                         data: {
                             SessId: Sessid,
-                            reason: reason
+                            reason: reason,
+                            delZoomChoice: delZoomChoice
                         },
                         dataType: "JSON",
                         success: function(response) {

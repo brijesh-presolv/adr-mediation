@@ -224,7 +224,12 @@ $ldate = $lastdate->format('d-m-Y');
                 <td style="width: 7%">{{$key + 1}}</td>
                 <td style="width: 15%">{{$value->created_at}}</td>
                 <td style="width: 15%">{{$value->session_date}}</td>
-                <td style="width: 15%">{{$value->zoom_id}}</td>
+                <td style="width: 25%">{{$value->zoom_id}}
+                @if($value->zoom_link != '')
+                <p><strong>Zoom Link -</strong></p>
+                <p>{{$value->zoom_link}}</p>
+                @endif
+                </td>
                 <td style="width: 24%">{{$value->note}}</td>
                 <td>@foreach($user as $name) {{$name}} <br> @endforeach</td>
             </tr>

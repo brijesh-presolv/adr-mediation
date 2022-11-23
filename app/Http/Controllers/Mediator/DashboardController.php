@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\File;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 
+use App\Http\Helpers\Zoom;
+
 class DashboardController extends Controller
 {
 
@@ -317,6 +319,50 @@ class DashboardController extends Controller
      */
     public function addSession(Request $request)
     {
+
+        /*************************Zoom API : START *******************************/
+        if($request->zoom_choice == "directly_zoom") {
+            // $time_zoom = date("H:i:s", strtotime($request->sessionTime)); // old code
+             $time_zoom = ($sess_time = strtotime($request->fsData['sessionTime'])) ? date("H:i:s", $sess_time) : date("H:i:s", strtotime($request->sessionTime));
+             //$end_time = date("H:i:s", strtotime($request->sessionTime) + 60*60); // old code
+             $end_time = ($sess_time = strtotime($request->fsData['sessionTime'])) ? date("H:i:s", $sess_time + 60*60) : date("H:i:s", strtotime($request->sessionTime) + 60*60);
+             //$date1 = str_replace('/', '-', $request->sessionDate);   // old code
+             $date1 = ($request->fsData['sessionDate']) ? str_replace('/', '-', $request->fsData['sessionDate']) : str_replace('/', '-', $request->sessionDate);  
+             $date = date('Y-m-d', strtotime($date1));
+             $total = $date.' '.$time_zoom;
+             $end_total = $date.' '.$end_time;
+             //$date_format_api =  date("Y-m-d\TH:i:s\Z", strtotime($total)); // old code
+             $date_format_api =  date("Y-m-d\TH:i:s", strtotime($total));
+             $end_date_format_api =  date("Y-m-d\TH:i:s", strtotime($end_total));
+     
+             $note = ($request->fsData['note']) ? $request->fsData['note'] : $request->note;
+             
+             $create_zoom_meeting_response = Zoom::createZoomMeeting($request->caseId, $note, $date_format_api, $end_date_format_api);
+             $create_zoom_meeting = json_decode($create_zoom_meeting_response, true);
+             // Get zoom api invitation : START //
+              $zoom_invitation_response = Zoom::zoomInvitation($create_zoom_meeting['id']);
+              $zoom_invitation = json_decode($zoom_invitation_response, true);
+             
+             /****************************************Zoom API : END **************************/
+     
+             /**** Get Zoom URL from invitation ********/
+             $zoom_string = $zoom_invitation['invitation'];
+             preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $zoom_string, $zoom_match);
+             /**** Get Zoom URL from invitation ********/
+             
+             $created_zoom_link = $zoom_match[0][0];
+     
+             $created_zoom_id = $create_zoom_meeting['id'];
+     
+             $inserted_zoom_choice = "direct";
+             } else {
+                 $created_zoom_link = ""; 
+                 $created_zoom_id = ($request->fsData['zoomId'] != null) ? $request->fsData['zoomId']  : $request->zoomId;
+                 $inserted_zoom_choice = "manual";
+             }
+             /*************************Zoom API : START *******************************/
+
+
         $time = date("g:i A", strtotime($request->sessionTime));
         $d = [
             'event' => 'SESS_SCHE',
@@ -328,7 +374,9 @@ class DashboardController extends Controller
                 'case_id' => $request->caseId,
                 'session_date' => $request->sessionDate . "/" . $time,
                 'note' => $request->note,
-                'zoom_id' => $request->zoomId,
+                'zoom_id' => $created_zoom_id,
+                'zoom_link' => $created_zoom_link,
+                'zoom_link_choice' => $inserted_zoom_choice,
                 'session_party_ids' => json_encode($request->session_party_ids),
                 'scheduled_by' => Auth::user()->id,
             ];
@@ -341,7 +389,19 @@ class DashboardController extends Controller
                 } else {
                     $inv_id = $inv_id . "," . $party->id;
                 }
-                $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
+
+                if($request->zoom_choice == "manually_zoom") {
+                    $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
+                } else if($request->zoom_choice == "directly_zoom") {
+                /**** Zoom Invitation ************/
+                    $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $zoom_invitation['invitation']);
+                /**** Zoom Invitation ************/
+                }
+
+
+
+
+                
             }
             $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
@@ -371,7 +431,9 @@ class DashboardController extends Controller
                 $access = Whatsapp::sendWamessage($dwa1);
             }
             Common_function::MedNotification($request->caseId, "SESS_SCHE_MED", Auth::user()->id, Auth::user()->id, $inv_id);
-            return json_encode(['code' => 200, 'response' => 'success']);
+            if($is_send){
+                return json_encode(['code' => 200, 'response' => 'success']);
+            }
         } else {
             if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
                 if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
@@ -399,7 +461,9 @@ class DashboardController extends Controller
                 'case_id' => $request->caseId,
                 'session_date' => ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time,
                 'note' => ($request->note != null) ? $request->note : $request->fsData['note'],
-                'zoom_id' => ($request->zoomId != null) ? $request->zoomId : $request->fsData['zoomId'],
+                'zoom_id' => $created_zoom_id,
+                'zoom_link' => $created_zoom_link,
+                'zoom_link_choice' => $inserted_zoom_choice,
                 'session_party_ids' => json_encode($party_ids),
                 'scheduled_by' => Auth::user()->id,
             ];
@@ -548,13 +612,14 @@ class DashboardController extends Controller
             echo "<td>" . $value->created_at . "</td>";
             echo "<td>" . $value->session_date . "</td>";
             echo "<td>" . $value->zoom_id . "</td>";
+            echo "<td>" . $value->zoom_link . "</td>";
             echo "<td>" . $value->note . "</td>";
             echo "<td>" . implode("<br>", $user) . "</td>";
             // if(Auth::user()->id == $value->scheduled_by){
 
             echo "<td>
                 <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
-                <button id='DeleteSession' data-id='" . $value->id . "' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
+                <button id='DeleteSession' data-id='" . $value->id . "' data-zoom-choice='".$value->zoom_link_choice."' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
                 </td>";
             // }else{
             //     echo "<td>--</td>";
@@ -1061,6 +1126,45 @@ class DashboardController extends Controller
         }
         return true;
     }
+
+    /******************** Custom Send Session Zoom  **********************/
+    public function sned_session_invitation($url, $id, $email_id, $email_name, $date, $userPhone, $invitation)
+    {
+        $mid = "M" . sprintf("%06d", $id);
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $id,
+        ];
+        if ($email_id != "") {
+            SendGrid::send($d, $email_id, $invitation, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+        }
+        if ($userPhone != "") {
+
+            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
+            $var = ['-dt-', '-cid-', '-link-'];
+            $var1 = [$date, $mid, $url];
+            $content1 = WaTemplate::getcontent('l10_session_schedule');
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $id,
+                'contact' =>  $userPhone,
+                'content' => ['text' => $invitation],
+                'event' => 'SESS_SCHE',
+                'varjson' => $varjson,
+                'haptik_tmp' => 'l10_session_schedule',
+
+            ];
+
+            // print_r($dwa1);
+            // exit;
+
+            $access = Whatsapp::sendWaSmessage($dwa1);
+        }
+        return true;
+    }
+    /******************** Custom Send Session Zoom  **********************/
+
+
 
     public function send_attechment_party($id)
     {
