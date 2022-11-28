@@ -2,19 +2,19 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
 
-        #php_flag session.cookie_httponly on
-       # php_value session.cookie_httponly 1
-       # php_value session.cookie_secure 1
+      php_flag session.cookie_httponly on
+        php_value session.cookie_httponly 1
+        php_value session.cookie_secure 1
 
     </IfModule>
 
     RewriteEngine On
 
-    #ServerSignature Off
-    #php_flag session.cookie_httponly on
-   # php_value session.cookie_httponly 1
-    #php_value session.cookie_secure 1
-     #Header set Set-Cookie HttpOnly;Secure;SameSite=None
+    ServerSignature Off
+    php_flag session.cookie_httponly on
+    php_value session.cookie_httponly 1
+    php_value session.cookie_secure 1
+     Header set Set-Cookie HttpOnly;Secure;SameSite=None
    # Header unset X-Powered-By
 
     # Handle Authorization Header
