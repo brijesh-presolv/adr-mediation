@@ -1603,7 +1603,8 @@ class CaseController extends Controller
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
             ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
-        $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
+        //$name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
+        $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
