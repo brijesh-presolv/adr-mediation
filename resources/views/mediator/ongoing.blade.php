@@ -71,22 +71,39 @@
                     <input type="hidden" name="caseId" value="">
 
                     <div class="custom-modal-text ">
-
-                        <span>Session Date :</span>
-                        <input type="text" autocomplete="off" id="sessionDateForBulk" class="form-control"
+                        <div class="form-group">
+                            <label>Session Date :</label>
+                            <input type="text" autocomplete="off" id="sessionDateForBulk" class="form-control"
                             name="sessionDate" placeholder="Select session date" data-validation="required">
-
-                        <span>Session Time :</span>
-                        <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime"
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Session Time :</label>
+                            <input type="time" id="sessionTime" autocomplete="off" class="form-control" name="sessionTime"
                             placeholder="Select session Time" data-validation="required">
+                        </div>
+                        <!-- Added for 2 choices : START ---------->
+                        <div class="form-group">
+                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" checked onclick="check_zoom_choice(this.value)">
+                            <label for="">Schedule Directly</label><br>
 
-                        <span>Zoom Id :</span>
+                            <input type="radio" id="" name="zoom_choice" value="manually_zoom" onclick="check_zoom_choice(this.value)">
+                            <label for="">Manually Add Link</label>
+                        </div>
+                        <!-- Added for 2 choices : END ---------->
+
+                        
+                        <div class="form-group zoom-id-section" style="display: none;">
+                        <label>Zoom Id :</label>
                         <input type="text" id="zoomId" class="form-control" name="zoomId"
                             placeholder="Paste meeting Id Or Zoom Id" data-validation="required">
+                        </div>
 
-                        <span>Note :</span>
-                        <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"
-                            data-validation="required"></textarea>
+                        <div class="form-group">
+                            <label>Note :</label>
+                            <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"
+                                data-validation="required"></textarea>
+                        </div>
                         {{-- <span>Party :</span>
                     <div id="sessionPartyForBulk">
 
@@ -274,28 +291,52 @@
                     <input type="hidden" name="caseId" id="caseIdF" value="">
 
                     <div class="custom-modal-text ">
+                        <div class="form-group">
+                            <label>Session Date :</label>
+                            <input type="text" autocomplete="off" id="sessionDate" class="form-control"
+                                name="sessionDate" placeholder="Select session date" data-validation="required">
+                        </div>
 
-                        <span>Session Date :</span>
-                        <input type="text" autocomplete="off" id="sessionDate" class="form-control"
-                            name="sessionDate" placeholder="Select session date" data-validation="required">
 
-                        <span>Session Time :</span>
-                        <input type="time" id="sessionTime" autocomplete="off" class="form-control"
-                            name="sessionTime" placeholder="Select session Time" data-validation="required">
+                        <div class="form-group">
+                            <label>Session Time :</label>
+                            <input type="time" id="sessionTime" autocomplete="off" class="form-control"
+                                name="sessionTime" placeholder="Select session Time" data-validation="required">
+                        </div>
+                        <!-- Added for 2 choices : START ---------->
+                        <div class="form-group">
+                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" checked onclick="check_zoom_choice(this.value)">
+                            <label for="">Schedule Directly</label><br>
 
+                            <input type="radio" id="" name="zoom_choice" value="manually_zoom" onclick="check_zoom_choice(this.value)">
+                            <label for="">Manually Add Link</label>
+                        </div>
+                        <!-- Added for 2 choices : END ---------->
+                        
+                        
+                        <div class="form-group zoom-id-section" style="display: none;">
                         <span>Zoom Id :</span>
                         <input type="text" id="zoomId" class="form-control" name="zoomId"
                             placeholder="Paste meeting Id Or Zoom Id" data-validation="required">
-
-                        <span>Note :</span>
-                        <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"
-                            data-validation="required"></textarea>
-                        <span>Party :</span>
-                        <div id="sessionParty">
-
                         </div>
-                        <div class="text-center">
-                            <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
+
+                        <div class="form-group">
+                            <label>Note :</label>
+                            <textarea class="form-control" id="note" name="note" placeholder="Add aditional notes"
+                                data-validation="required"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Party :</label>
+                            <div id="sessionParty">
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="text-center">
+                                <input type="submit" name="addSession" class="btn-sm btn-primary mt-3">
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -388,6 +429,7 @@
                     <input type="hidden" name="createdBy" id="editcreatedByF" value="{{ Auth::id() }}">
                     <input type="hidden" name="SessId" id="editSessId">
                     <input type="hidden" name="CaseId" id="CaseId">
+                    <input type="hidden" name="zoomChoice" id="zoomChoice">
 
                     <div class="custom-modal-text ">
                         <div class="form-group">
@@ -406,6 +448,14 @@
                             <input type="text" id="editzoomId" class="form-control" name="zoomId"
                                 placeholder="@lang('case.session_zoom_id_placeholder')" data-validation="required">
                         </div>
+                        <!------- Zoom Link ------------>
+                        <div class="form-group zoom-id-section" style="display: none;">
+                            <label>@lang('case.session_zoom_link'):</label>
+                            <!-- <label name="get_zoom_link" id="editZoomLink"></label> -->
+                            <input type="text" id="editZoomLink" class="form-control" name="zoomLink"
+                                data-validation="required" readonly style="background-color: #dedede">
+                        </div>
+                        <!------- Zoom Link ------------>
                         <div class="form-group">
                             <label>@lang('case.session_note'):</label>
                             <textarea class="form-control" id="editnote" name="note" placeholder="@lang('case.session_note_placeholder')"></textarea>
@@ -438,6 +488,7 @@
 
                     <input type="hidden" name="createdBy" id="deletecreatedByF" value="{{ Auth::id() }}">
                     <input type="hidden" name="deSessId" id="deleteSessId">
+                    <input type="hidden" name="delZoomChoice" id="delZoomChoice">
 
                     <div class="custom-modal-text ">
 
@@ -556,6 +607,16 @@
             $('.dropify').dropify();
 
         });
+
+        // Check for zoom choice //
+        function check_zoom_choice(zoom_choice){
+            if(zoom_choice == "manually_zoom") {
+                $('.zoom-id-section').show();
+            } else if(zoom_choice == "directly_zoom") {
+                $('.zoom-id-section').hide(); 
+            }
+        }
+        // Check for zoom choice //
     </script>
     <script>
         $.validate();
@@ -1907,11 +1968,23 @@
 
                         $('#editSessId').attr('value', response.id);
                         $('#CaseId').attr('value', response.case_id);
+                        $('#zoomChoice').attr('value', response.zoom_link_choice);
                         $('#editsessionDate').attr('value', response.session_date.substring(0, 10));
                         var convertTime = convertTime12to24(response.session_date.substring(11));
                         $('#editsessionTime').attr('value', convertTime);
                         $('#editzoomId').attr('value', response.zoom_id);
+                        $('#editZoomLink').attr('value', response.zoom_link);
                         $('#editnote').val(response.note);
+                        if(response.zoom_link_choice == "manual"){
+                            $('#editzoomId').removeAttr('readonly');
+                            $('#editzoomId').css('background', '#ffffff');
+                            $('.zoom-id-section').hide();
+                        } else if(response.zoom_link_choice == "direct"){
+                            $('#editzoomId').attr('readonly', 'readonly');
+                            $('#editzoomId').css('background', '#dedede');
+                            $('.zoom-id-section').show();
+                        }
+
                         var session_party = response.session_party_ids;
                         data.each(function() {
                             var party_id = $(this).data("inid")
@@ -1984,11 +2057,14 @@
         $('#Session-delete-meditor').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var delid = button.data('id');
+            var delZoomChoice = button.data('zoom-choice');
             $("#deleteSessId").val(delid);
+            $("#delZoomChoice").val(delZoomChoice);
         });
         $(document).on('click', '#sessiondeleteform', function() {
             var Sessid = $("#deleteSessId").val();
             var reason = $("#reasondelete").val();
+            var delZoomChoice = $("#delZoomChoice").val();
             swal({
                 title: "Are you sure?",
                 text: "Delete this Session!",
@@ -2002,7 +2078,8 @@
                         url: "{{ route('mediator.DeleteSession') }}",
                         data: {
                             SessId: Sessid,
-                            reason: reason
+                            reason: reason,
+                            delZoomChoice: delZoomChoice
                         },
                         dataType: "JSON",
                         success: function(response) {
