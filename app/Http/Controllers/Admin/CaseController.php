@@ -1145,7 +1145,7 @@ class CaseController extends Controller
                         $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
                     } else if($request->zoom_choice == "directly_zoom") {
                     /**** Zoom Invitation ************/
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $zoom_invitation['invitation']);
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link);
                     /**** Zoom Invitation ************/
                     }
                 }
@@ -1266,7 +1266,7 @@ class CaseController extends Controller
                     } else if($request->fsData['zoom_choice'] == "directly_zoom") {
                      /**** Zoom Invitation ************/
 
-                     $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $zoom_invitation['invitation']);
+                     $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link);
                      /**** Zoom Invitation ************/
                     }
                 }
@@ -3443,7 +3443,7 @@ class CaseController extends Controller
                 if($request->zoomChoice == "manual") {
                     $this->sned_session($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
                 } else {
-                    $this->sned_session_invitation($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $zoom_invitation['invitation']);
+                    $this->sned_session_invitation($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $request->zoom_link);
                 }
                 
                 
@@ -4326,7 +4326,7 @@ class CaseController extends Controller
         }
         if ($userPhone != "") {
 
-            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
+            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $invitation];
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$date, $mid, $url];
             $content1 = WaTemplate::getcontent('l10_session_schedule');
@@ -4334,7 +4334,7 @@ class CaseController extends Controller
             $dwa1 = [
                 'caseid' => $id,
                 'contact' =>  $userPhone,
-                'content' => ['text' => $invitation],
+                'content' => ['text' => $content],
                 'event' => 'SESS_SCHE',
                 'varjson' => $varjson,
                 'haptik_tmp' => 'l10_session_schedule',
