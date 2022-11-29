@@ -1070,7 +1070,7 @@ class CaseController extends Controller
         //dd($request->all());
         
         /*************************Zoom API : START *******************************/
-        if($request->zoom_choice == "directly_zoom") {
+        if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
        // $time_zoom = date("H:i:s", strtotime($request->sessionTime)); // old code
         $time_zoom = ($sess_time = strtotime($request->fsData['sessionTime'])) ? date("H:i:s", $sess_time) : date("H:i:s", strtotime($request->sessionTime));
         //$end_time = date("H:i:s", strtotime($request->sessionTime) + 60*60); // old code
@@ -1106,7 +1106,7 @@ class CaseController extends Controller
         $inserted_zoom_choice = "direct";
         } else {
             $created_zoom_link = ""; 
-            $created_zoom_id = ($request->fsData['zoomId'] != null) ? $request->fsData['zoomId']  : $request->zoomId;
+            $created_zoom_id = ($request->fsData['zoomId']) ? $request->fsData['zoomId']  : $request->zoomId;
             $inserted_zoom_choice = "manual";
         }
 
@@ -1141,9 +1141,9 @@ class CaseController extends Controller
                     }
 
 
-                    if($request->zoom_choice == "manually_zoom") {
+                    if($request->zoom_choice == "manually_zoom" || $request->fsData['zoom_choice'] == "manually_zoom") {
                         $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
-                    } else if($request->zoom_choice == "directly_zoom") {
+                    } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
                     /**** Zoom Invitation ************/
                         $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link);
                     /**** Zoom Invitation ************/
@@ -4328,7 +4328,7 @@ class CaseController extends Controller
 
             $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $invitation];
             $var = ['-dt-', '-cid-', '-link-'];
-            $var1 = [$date, $mid, $url];
+            $var1 = [$date, $mid, $invitation];
             $content1 = WaTemplate::getcontent('l10_session_schedule');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
@@ -4340,9 +4340,7 @@ class CaseController extends Controller
                 'haptik_tmp' => 'l10_session_schedule',
 
             ];
-
-            // print_r($dwa1);
-            // exit;
+            
 
             $access = Whatsapp::sendWaSmessage($dwa1);
         }
