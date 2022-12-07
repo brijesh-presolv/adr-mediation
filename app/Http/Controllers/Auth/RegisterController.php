@@ -111,6 +111,12 @@ class RegisterController extends Controller
             $role = 1;
         }
 
+        if($data['is_agree'] == 1) {
+            $is_agree = 1;
+        } else {
+            $is_agree = 0;
+        }
+
 
 
         $InvoledUser = InvoledUser::where(['userEmail' => $data['email']])->first();
@@ -132,6 +138,7 @@ class RegisterController extends Controller
                 'smsotp' => rand('100000', '999999'),
                 'isActive' => 1,
                 'status' => 1,
+                'is_agree' => $is_agree
 
             ]);
         } else {
@@ -147,6 +154,7 @@ class RegisterController extends Controller
                 'role' => $role,
                 'emailotp' => rand('100000', '999999'),
                 'smsotp' => rand('100000', '999999'),
+                'is_agree' => $is_agree
             ]);
         }
     }
