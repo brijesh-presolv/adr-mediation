@@ -2150,7 +2150,7 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         if ($email_id != "") {
-            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", 'zoomid' => $url], $email_name);
         }
         if ($userPhone != "") {
 
@@ -4322,7 +4322,8 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         if ($email_id != "") {
-            SendGrid::send($d, $email_id, $invitation, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom-" => $invitation], $email_name);
+            //SendGrid::send($d, $email_id, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom" => $invitation], $email_name);
         }
         if ($userPhone != "") {
 
