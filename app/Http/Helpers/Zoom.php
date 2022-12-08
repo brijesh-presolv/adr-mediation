@@ -144,7 +144,7 @@ class Zoom
                     "start_time": "'.$date_format_api.'",
                     "template_id": "Dv4YdINdTk+Z5RToadh5ug==",
                     "timezone": "Asia/Calcutta",
-                    "topic": "Medaition Session Creted for Case - '.$case_id.'",
+                    "topic": "Mediation Session Created for Case - '.$case_id.'",
                     "tracking_fields": [
                         {
                         "field": "field1",

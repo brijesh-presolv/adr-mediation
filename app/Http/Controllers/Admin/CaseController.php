@@ -255,6 +255,9 @@ class CaseController extends Controller
             $medCas = MedCase::find($request->id);
             $medCas->confirm_status = 1;
             $medCas->case_status = 1;
+            /*** Discussion field : START ***/
+            $medCas->discussion = $request->discussion;
+            /*** Discussion field : END ***/
             $medCas->save();
 
             $mediation_status_log = new Mediation_status_log;
@@ -793,7 +796,7 @@ class CaseController extends Controller
         
 
         $validatedData = $request->validate([
-            'files' => 'required',
+            'files.*' => 'required',
             'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
             // 'docs_party_ids' => 'required',
         ]);
@@ -981,7 +984,7 @@ class CaseController extends Controller
 
     public function midaterAdd(Request $request)
     {
-
+       
         if ($request->midater != null) {
             $inv = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
                 ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
@@ -1067,7 +1070,7 @@ class CaseController extends Controller
         //dd($request->all());
         
         /*************************Zoom API : START *******************************/
-        if($request->zoom_choice == "directly_zoom") {
+        if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
        // $time_zoom = date("H:i:s", strtotime($request->sessionTime)); // old code
         $time_zoom = ($sess_time = strtotime($request->fsData['sessionTime'])) ? date("H:i:s", $sess_time) : date("H:i:s", strtotime($request->sessionTime));
         //$end_time = date("H:i:s", strtotime($request->sessionTime) + 60*60); // old code
@@ -1103,7 +1106,7 @@ class CaseController extends Controller
         $inserted_zoom_choice = "direct";
         } else {
             $created_zoom_link = ""; 
-            $created_zoom_id = ($request->fsData['zoomId'] != null) ? $request->fsData['zoomId']  : $request->zoomId;
+            $created_zoom_id = ($request->fsData['zoomId']) ? $request->fsData['zoomId']  : $request->zoomId;
             $inserted_zoom_choice = "manual";
         }
 
@@ -1138,11 +1141,11 @@ class CaseController extends Controller
                     }
 
 
-                    if($request->zoom_choice == "manually_zoom") {
+                    if($request->zoom_choice == "manually_zoom" || $request->fsData['zoom_choice'] == "manually_zoom") {
                         $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
-                    } else if($request->zoom_choice == "directly_zoom") {
+                    } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
                     /**** Zoom Invitation ************/
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $zoom_invitation['invitation']);
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link);
                     /**** Zoom Invitation ************/
                     }
                 }
@@ -1263,7 +1266,7 @@ class CaseController extends Controller
                     } else if($request->fsData['zoom_choice'] == "directly_zoom") {
                      /**** Zoom Invitation ************/
 
-                     $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $zoom_invitation['invitation']);
+                     $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link);
                      /**** Zoom Invitation ************/
                     }
                 }
@@ -1600,7 +1603,8 @@ class CaseController extends Controller
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
             ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
-        $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
+        //$name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
+        $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
@@ -2146,7 +2150,7 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         if ($email_id != "") {
-            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", 'zoomid' => $url], $email_name);
         }
         if ($userPhone != "") {
 
@@ -2771,7 +2775,7 @@ class CaseController extends Controller
             }
             if ($errormsg == '') {
                 $csv = $this->csvToArray($tmpName);
-                if (count($csv[0]) != 15) {
+                if (count($csv[0]) != 16) {
                     $errormsg .= "Invalid csv file";
                 }
                 if ($errormsg != '') {
@@ -2789,17 +2793,17 @@ class CaseController extends Controller
                         if ($v[$n] == '') {
 
                             if ($n != 10 and $n != 11 and $n != 12 and $n != 7 and $n != 3 and $n != 4) {
-                                $errormsg .= "Please fill all the required details to proceed at line no $i";
+                                //$errormsg .= "Please fill all the required details to proceed at line no $i";
                             }
                         }
                     }
                     if ($v[4] != "") {
                         if (!filter_var($v[4], FILTER_SANITIZE_NUMBER_INT)) {
-                            $errormsg .= "Invalid mobile number at line no $i ";
+                            //$errormsg .= "Invalid mobile number at line no $i ";
                         }
 
                         if (strlen($v[4]) != 10) {
-                            $errormsg .= "Invalid mobile number at line no $i ";
+                            //$errormsg .= "Invalid mobile number at line no $i ";
                         }
                     }
 
@@ -2819,25 +2823,25 @@ class CaseController extends Controller
                             $dt = str_replace('-', '/', $v[7]);
                             $v[7] = $dt;
                         } else {
-                            $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
+                            //$errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
                         }
                         if (strpos($v[7], '-') or strpos($v[7], '/')) {
                             $dt = explode('/', $v[7]);
 
                             if (count($dt) != 3 and strlen($dt[0]) != 2 and strlen($dt[1]) != 2 and strlen($dt[0]) != 4) {
 
-                                $errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
+                                //$errormsg .= "Invalid date at line no $i. date format should be dd/mm/YYYY or dd-mm-YYYY";
                             }
                         }
                     }
 
                     if ($v[13] != 'Yes') {
-                        $errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
+                        //$errormsg .= "Please confirm that the details provided above are true, accurate, current and complete to proceed at line no $i ";
                     }
 
                     if ($v[14] != 'Yes') {
 
-                        $errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
+                        //$errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
                     }
                 }
             }
@@ -2887,6 +2891,7 @@ class CaseController extends Controller
                 $data['proposedSolution'] = $value[9];
                 $data['batch_id'] = isset($batch->id) ? $batch->id : null;
                 $data['bulk_flag'] = 1;
+                $data['discussion'] = $value[15];
 
                 $med = MedCase::create($data);
 
@@ -3438,7 +3443,7 @@ class CaseController extends Controller
                 if($request->zoomChoice == "manual") {
                     $this->sned_session($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
                 } else {
-                    $this->sned_session_invitation($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $zoom_invitation['invitation']);
+                    $this->sned_session_invitation($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $request->zoom_link);
                 }
                 
                 
@@ -3906,7 +3911,7 @@ class CaseController extends Controller
 
     public function BatchWiseApprove(Request $request)
     {
-        // dd($request->all());
+    //  /dd($request->all());
 
         // return ($request->all());
         // dd($request->mediator);
@@ -3970,6 +3975,12 @@ class CaseController extends Controller
             $medCas = MedCase::find($request->id);
             $medCas->confirm_status = 1;
             $medCas->case_status = 1;
+             /*** Discussion field : START ***/
+             if(isset($request->discussion) && $request->discussion != ""){
+                $medCas->discussion = $request->discussion;
+             }
+            
+             /*** Discussion field : END ***/
             if ($medCas->save()) {
                 $mediation_status_log = new Mediation_status_log;
                 $mediation_status_log->user_id = Auth::user()->id;
@@ -4311,27 +4322,26 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         if ($email_id != "") {
-            SendGrid::send($d, $email_id, $invitation, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom-" => $invitation], $email_name);
+            //SendGrid::send($d, $email_id, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom" => $invitation], $email_name);
         }
         if ($userPhone != "") {
 
-            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
+            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $invitation];
             $var = ['-dt-', '-cid-', '-link-'];
-            $var1 = [$date, $mid, $url];
+            $var1 = [$date, $mid, $invitation];
             $content1 = WaTemplate::getcontent('l10_session_schedule');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
                 'contact' =>  $userPhone,
-                'content' => ['text' => $invitation],
+                'content' => ['text' => $content],
                 'event' => 'SESS_SCHE',
                 'varjson' => $varjson,
                 'haptik_tmp' => 'l10_session_schedule',
 
             ];
-
-            // print_r($dwa1);
-            // exit;
+            
 
             $access = Whatsapp::sendWaSmessage($dwa1);
         }
