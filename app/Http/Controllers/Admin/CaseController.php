@@ -3396,7 +3396,7 @@ class CaseController extends Controller
     /******************** Update Session : START  ************************************************/
     public function UpdateSession(Request $request)
     {
-       // dd($request->all());
+     //dd($request->all());
         $id =  $request->SessId;
 
         /********* Zoom Time Format ******************/
@@ -3443,7 +3443,7 @@ class CaseController extends Controller
                 if($request->zoomChoice == "manual") {
                     $this->sned_session($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
                 } else {
-                    $this->sned_session_invitation($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $request->zoom_link);
+                    $this->sned_session_invitation($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $request->zoomLink);
                 }
                 
                 
