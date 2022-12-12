@@ -144,7 +144,7 @@ class Zoom
                     "start_time": "'.$date_format_api.'",
                     "template_id": "Dv4YdINdTk+Z5RToadh5ug==",
                     "timezone": "Asia/Calcutta",
-                    "topic": "Mediation Session Created for Case - '.$case_id.'",
+                    "topic": "Mediation Session Created for Case - M'.sprintf("%06d", $case_id).'",
                     "tracking_fields": [
                         {
                         "field": "field1",
@@ -330,7 +330,7 @@ class Zoom
         "start_time": "'.$date_format_api.'",
         "template_id": "5Cj3ceXoStO6TGOVvIOVPA==",
         "timezone": "Asia/Calcutta",
-        "topic": "Mediation Session Meeting Updated for Case - '.$case_id.'",
+        "topic": "Mediation Session Meeting Updated for Case - M'.sprintf("%06d", $case_id).'",
         "tracking_fields": [
             {
             "field": "field1",
