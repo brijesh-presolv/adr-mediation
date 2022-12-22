@@ -447,19 +447,41 @@
                     data: {
                         id: id,
                         status: status,
-                        '_token': csrf
+                        '_token': csrf,
                     },
                 }).done(function(data) {
                     // return false;
-                    if(data.signature_status == 0){
-                        swal({
-                        title: "Please ensure that signature is uploaded",
-                        icon: "warning",
-                        });
+                    /********** Commented for no mendate signature field  ********/
+                    // if(data.signature_status == 0){
+                    //     swal({
+                    //     title: "Please ensure that signature is uploaded",
+                    //     icon: "warning",
+                    //     });
                         
-                    } 
+                    // } 
+                    /********** Commented for no mendate signature field  ********/
+                    
+                    
+                    /********** Added for display message : START  ********/
+                    if(status == 1) {
+                        var msg = "Approved Successfully.";
+                        var icon = "success";
+                    } else if(status == 0){
+                        var msg = "Unapproved Successfully.";
+                        var icon = "success";
+                    }
+                    swal({
+                        title: msg,
+                        icon: icon,
+                    });
                     userTable.ajax.reload(null, false);
+                }).fail(function(data){
+                    swal({
+                        title: "Some error",
+                        icon: "warning",
+                    });
                 });
+                /********** Added for display message : END  ********/
             });
 
         });
