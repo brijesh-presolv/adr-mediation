@@ -55,6 +55,7 @@ class UsersController extends Controller
         } else if ($request->status == 1) {
             SendGrid::send($d, $user->email, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''));
         }
+        
 
         /********** Commented for no mendate signature field  ********/
         // if($user->signature_photo != ''){
