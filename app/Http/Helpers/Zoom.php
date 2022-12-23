@@ -73,7 +73,7 @@ class Zoom
                         "enable": true,
                         "method": "approve"
                         },
-                        "audio": "telephony",
+                        "audio": "both",
                         "authentication_domains": "",
                         "authentication_exception":  [
                         {
@@ -82,7 +82,7 @@ class Zoom
                         }
                         ],
                         "authentication_option": "",
-                        "auto_recording": "cloud",
+                        "auto_recording": "none",
                         "breakout_room": {
                         "enable": true,
                         "rooms": [
@@ -104,8 +104,7 @@ class Zoom
                         "global_dial_in_countries": [
                         "US"
                         ],
-                        "host_video": true,
-                        "jbh_time": 0,
+                        "host_video": false,
                         "join_before_host": false,
                         "language_interpretation": {
                         "enable": true,
@@ -138,7 +137,7 @@ class Zoom
                         "internal_user_auto_admit": 1
                         },
                         "watermark": false,
-                        "host_save_video_order": true,
+                        "host_save_video_order": false,
                         "alternative_host_update_polls": true
                     },
                     "start_time": "'.$date_format_api.'",
@@ -236,7 +235,7 @@ class Zoom
             "alternative_hosts": "",
             "alternative_hosts_email_notification": true,
             "alternative_host_update_polls": true,
-            "approval_type": 0,
+            "approval_type": 2,
             "approved_or_denied_countries_or_regions": {
             "approved_list": [
                 ""
@@ -247,7 +246,7 @@ class Zoom
             "enable": true,
             "method": "approve"
             },
-            "audio": "telephony",
+            "audio": "both",
             "authentication_domains": "",
             "authentication_exception": [
             {
@@ -291,9 +290,8 @@ class Zoom
                 
             }
             ],
-            "host_video": true,
-            "jbh_time": 0,
-            "join_before_host": true,
+            "host_video": false,
+            "join_before_host": false,
             "language_interpretation": {
             "enable": true,
             "interpreters": [
@@ -320,7 +318,7 @@ class Zoom
             "internal_user_auto_admit": 1
             },
             "watermark": false,
-            "host_save_video_order": true,
+            "host_save_video_order": false,
             "meeting_invitees": [
             {
                 "email": ""
