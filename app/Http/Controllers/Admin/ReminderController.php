@@ -70,15 +70,15 @@ class ReminderController extends Controller
                 $allParty[$key]['sdate'] = $getSessionData->session_date;
                 $allParty[$key]['finaldate'] = $dateToday;
             }
-            // echo "<pre>";print_R($allParty);exit;
+         echo "<pre>";print_R($allParty);exit;
             foreach ($allParty as $partyData) {
                 foreach ($partyData as $party) {
                     // echo "<pre>";
                     // print_R($partyData['finaldate']);
                     // exit;
                     if (isset($party->userEmail) || isset($party->userPhone)) {
-                        $is_sent = $this->sned_session(($partyData['zoom'] != null) ? $partyData['zoom']  : $getSessionData->fsData['zoomId'], $partyData['case'], $party->userEmail, $party->name, ($partyData['sdate'] != null) ? $partyData['sdate'] : $getSessionData->fsData['sessionDate'] . "/" . $partyData['time'], $party->userPhone);
-
+                        //$is_sent = $this->sned_session(($partyData['zoom'] != null) ? $partyData['zoom']  : $getSessionData->fsData['zoomId'], $partyData['case'], $party->userEmail, $party->name, ($partyData['sdate'] != null) ? $partyData['sdate'] : $getSessionData->fsData['sessionDate'] . "/" . $partyData['time'], $party->userPhone);
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link);
                         if ($is_sent) {
                             $updateReminderData_first = DB::table('manage_session')
                                 ->where('case_id', $partyData['case'])
@@ -101,22 +101,22 @@ class ReminderController extends Controller
         }
     }
 
-    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone)
+    public function sned_session_invitation($url, $id, $email_id, $email_name, $date, $userPhone, $invitation)
     {
         $mid = "M" . sprintf("%06d", $id);
         $d = [
             'event' => 'SESS_SCHE',
             'case_id' => $id,
         ];
-
         if ($email_id != "") {
-            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party"], $email_name);
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom_invitation_link-" => $invitation], $email_name);
+            //SendGrid::send($d, $email_id, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom" => $invitation], $email_name);
         }
         if ($userPhone != "") {
 
-            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
+            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $invitation];
             $var = ['-dt-', '-cid-', '-link-'];
-            $var1 = [$date, $mid, $url];
+            $var1 = [$date, $mid, $invitation];
             $content1 = WaTemplate::getcontent('l10_session_schedule');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
@@ -128,8 +128,9 @@ class ReminderController extends Controller
                 'haptik_tmp' => 'l10_session_schedule',
 
             ];
+            
 
-            $access = Whatsapp::sendWamessage($dwa1);
+            $access = Whatsapp::sendWaSmessage($dwa1);
         }
         return true;
     }
