@@ -129,13 +129,7 @@ class Zoom
                         "registration_type": 1,
                         "show_share_button": true,
                         "use_pmi": false,
-                        "waiting_room": false,
-                        "waiting_room_options": {
-                        "enable": true,
-                        "admit_type": 1,
-                        "auto_admit": 1,
-                        "internal_user_auto_admit": 1
-                        },
+                        "waiting_room": true,
                         "watermark": false,
                         "host_save_video_order": false,
                         "alternative_host_update_polls": true
@@ -310,13 +304,7 @@ class Zoom
             "registration_type": 1,
             "show_share_button": true,
             "use_pmi": false,
-            "waiting_room": false,
-            "waiting_room_options": {
-            "enable": true,
-            "admit_type": 1,
-            "auto_admit": 1,
-            "internal_user_auto_admit": 1
-            },
+            "waiting_room": true,
             "watermark": false,
             "host_save_video_order": false,
             "meeting_invitees": [
