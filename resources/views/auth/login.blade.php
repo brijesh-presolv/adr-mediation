@@ -216,6 +216,20 @@
                                 @enderror
                                             </div>
                                         </div>
+
+                                        <!---- Added for terms-condition checkbox : START ---->
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 ml25">
+                                                <label class="" style="margin-right: 10px; float: left">
+                                                    <input type="checkbox" name="is_agree" value="1" required="">
+                                                </label>
+                                                <label class="col-sm-11" style="padding: 0; font-size: 14px;">
+                                                By clicking this, you are confirming that you have read, understood and agree to <a href="https://presolv360.com/terms_conditions">Terms and conditions</a>, <a href="https://presolv360.com/privacy_policy">Privacy Policy</a> and <a href="https://presolv360.com/cookie_policy">Cookie Policy</a>.
+                                                </label>
+                                    
+                                            </div>
+                                        </div>
+                                        <!---- Added for terms-condition checkbox : END ------>
                                     
                                         <div class="row mobtns">
                                             <div class="col-md-12" style="display:inline-block; text-align: center;">
