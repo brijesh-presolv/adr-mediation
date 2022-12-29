@@ -81,9 +81,9 @@ class ReminderController extends Controller
                         //$is_sent = $this->sned_session(($partyData['zoom'] != null) ? $partyData['zoom']  : $getSessionData->fsData['zoomId'], $partyData['case'], $party->userEmail, $party->name, ($partyData['sdate'] != null) ? $partyData['sdate'] : $getSessionData->fsData['sessionDate'] . "/" . $partyData['time'], $party->userPhone);
                         
                         if($partyData['zoom_link'] != "") {
-                            $is_sent = $this->sned_session_invitation($partyData['zoom'], $partyData['case'], $party->userEmail, $party->name, $partyData['sdate']  . "/" . $partyData['time'], $party->userPhone, $partyData['zoom_link']);
+                            $is_sent = $this->sned_session_invitation($partyData['zoom'], $partyData['case'], $party->userEmail, $party->name, $partyData['sdate'], $party->userPhone, $partyData['zoom_link']);
                         } else {
-                            $is_sent = $this->sned_session(($partyData['zoom'] != null) ? $partyData['zoom']  : $getSessionData->fsData['zoomId'], $partyData['case'], $party->userEmail, $party->name, ($partyData['sdate'] != null) ? $partyData['sdate'] : $getSessionData->fsData['sessionDate'] . "/" . $partyData['time'], $party->userPhone);
+                            $is_sent = $this->sned_session(($partyData['zoom'] != null) ? $partyData['zoom']  : $getSessionData->fsData['zoomId'], $partyData['case'], $party->userEmail, $party->name, ($partyData['sdate'] != null) ? $partyData['sdate'] : $getSessionData->fsData['sessionDate'], $party->userPhone);
                         }
                         if ($is_sent) {
                             $updateReminderData_first = DB::table('manage_session')
