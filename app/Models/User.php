@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -54,4 +55,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'isActive' => 'boolean',
     ];
+
+    // Get User Data : START //
+    static function getUserdetails($userid) {
+        
+        $query = "SELECT id,role,email,last_name,organization,mobile_number,address,address1,city,pincode,state,country,isActive,created_at,updated_at,email_verified_at,smsotp,username,profile_pic from users where id = ".$userid;
+        $details = DB::select($query);
+        return $details[0];
+    }
+    // Get User Data : END //
 }
