@@ -10,6 +10,7 @@ use DB;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Session;
 
 class ProfileController extends Controller
 {
@@ -21,6 +22,21 @@ class ProfileController extends Controller
      */
     public function __construct()
     {
+        $this->middleware(function ($request, $next) {
+            
+            $userdata = User::getUserdetails(Auth::user()->id);
+            if ($userdata->address == '' or $userdata->address1 == '' or $userdata->city == '' or $userdata->pincode == '' or $userdata->state == '' or $userdata->country == '') {
+               // if ($_SERVER['REQUEST_URI'] != "/user/profile") {
+                    Session::put('force', 1);
+                   // header("Location: ../user/profile");
+                   // exit();
+                //}
+            
+            } else {
+            }
+            return $next($request);
+           
+        });
     }
 
 
@@ -113,8 +129,18 @@ class ProfileController extends Controller
         }
 
         // $user = User::where('id', $id)->update($dataToUpdate);
-        if ($dataToUpdate->save()) {
-            return redirect('user/profile')->with('key', "Profile Updated Succesfully");
+        if($dataToUpdate->address == '' or $dataToUpdate->address1 == '' or $dataToUpdate->city == '' or $dataToUpdate->state == '' or $dataToUpdate->pincode == '' or $dataToUpdate->country == '') {
+            $dataToUpdate->save();
+            
+            Session::put('force', 1);
+            return redirect('user/profile')->with('key', "Please update profile to continue.");
+        } else {
+            if ($dataToUpdate->save()) {
+                
+                    Session::put('force', 0);
+                    return redirect('user/profile')->with('key', "Profile Updated Succesfully");
+                
+            }
         }
     }
 

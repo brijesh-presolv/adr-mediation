@@ -35,6 +35,22 @@ class MediationController extends Controller
 {
 
     use UploadTrait;
+    public function __construct() {
+        $this->middleware(function ($request, $next) {
+                $userdata = User::getUserdetails(Auth::user()->id);
+        
+                if ($userdata->address == '' or $userdata->address1 == '' or $userdata->city == '' or $userdata->pincode == '' or $userdata->state == '' or $userdata->country == '') {
+                    if ($_SERVER['REQUEST_URI'] != "/user/profile") {
+                        Session::put('force', 1);
+                        
+                        header("Location: ../user/profile");
+                        exit();
+                    }
+                } else {
+                    return $next($request);
+                }
+        });
+    }
 
     public function Notification()
     {

@@ -10,6 +10,20 @@
 @section('page_title', 'Users')
 
 @section('content')
+
+@if(Session::get('force') == 1)
+<style>
+    ul#side-menu li {
+        display: none;
+    }
+    ul#side-menu li.mm-active {
+        display: block;
+    }
+</style>
+
+
+
+@endif
 <div class="row">
     <div class="col-sm-12">
         <div class="card-box">
@@ -17,6 +31,8 @@
                 <div class="member-card">
                     @if(Session::has('key'))
                     <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('key') }}</p>
+                    @elseif(Session::get('force') == 1)
+                    <p class="alert alert-info">Please update profile to continue.</p>
                     @endif
                     <div class="table-responsive">
                         <table class="table table-bordered m-0">
