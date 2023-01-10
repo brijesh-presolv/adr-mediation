@@ -1038,7 +1038,7 @@ width: 250px;" alt=""></div>
 
                                 <center>
                             
-                                 <label class="cntctus"><h6>Email us at <span style="color: #ffa600;">admin@gmail.com</span></h6></label>
+                                 <label class="cntctus"><h6>Email us at <span style="color: #ffa600;">admin@presolv360.com</span></h6></label>
                                <!--  <button type="button" class="btn btn-warning cntctus" id="cnn" >Contact Us</button> -->
 
                                 <button type="submit" id="send_submit" name="send_submit" class="btn btn-warning sbmtt" onclick="resolvsubmit()" >Mediation</button>
