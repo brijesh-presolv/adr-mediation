@@ -1018,7 +1018,7 @@ width: 250px;" alt=""></div>
                                         <option value="Rs. 10 lakhs to Rs. 50 lakhs">Rs. 10 lakhs to Rs. 50 lakhs</option>
                                         <option value="Rs. 50 lakhs to Rs. 1 crore">Rs. 50 lakhs to Rs. 1 crore</option>
                                         <option value="Rs. 1 crore to Rs. 5 crore">Rs. 1 crore to Rs. 5 crore</option>
-                                        <option value="Above Rs. 5 crore">Above Rs. 5 crore</option>
+                                        <option value="Above Rs. 50 crore">Above Rs. 50 crore</option>
                                   </optgroup>
                                 </select>
                                 

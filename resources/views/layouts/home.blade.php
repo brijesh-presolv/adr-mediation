@@ -597,15 +597,24 @@ $('#npd').change(function(){
 
 
  $('#npd,#Damount').change(function(){
-        if($('#npd').val() == 'more_than_10' || $('#Damount').val() == "Above Rs. 5 crore"){
+        if($('#npd').val() == 'more_than_10'){
 
                $('.cntctus').show();
                $('.sbmtt').hide();
 
                $('#arb_submit1').hide();
                document.getElementById("cnn").onclick = function () {
-        location.href = DOMAIN+"contact_us";
-    };
+                location.href = DOMAIN+"contact_us";
+                };
+        }else if($('#Damount').val() == "Above Rs. 50 crore"){
+
+          $('.cntctus').hide();
+          $('.sbmtt').show();
+
+          $('#arb_submit1').hide();
+          document.getElementById("cnn").onclick = function () {
+            location.href = DOMAIN+"contact_us";
+          };
         }else{
              $('.cntctus').hide();
              $('.sbmtt').show();
