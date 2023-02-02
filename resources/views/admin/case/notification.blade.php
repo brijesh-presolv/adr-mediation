@@ -58,7 +58,8 @@ $alertarr=[
                         $id = 'M'.sprintf('%06d',$allcase[0]);
                     } else {
                         sort($allcase);
-                        $id = '<select class="form-control-sm alert-'.$alertarr[$item->event].' mr-2">';
+                        $id = '<span class="badge-info badge total_res" style="position:absolute; top: -0.5em; left: -0.5em">'.count($allcase).'</span>';
+                        $id .= '<select class="form-control-sm alert-'.$alertarr[$item->event].' mr-2">';
                         foreach($allcase as $key => $singleid) {
                             if($key == 0) {
                                 $id .= '<option>M'.sprintf('%06d',$singleid).'</option>';
@@ -77,11 +78,9 @@ $alertarr=[
                 {{-- {{dd($data)}} --}}
                 <div class="col-md-12">
                     <div class="alert alert-{{$alertarr[$item->event]}}" role="alert">
-                        @if($item->case_id != null) <?=$id?> @else @if($item->role == 0) User Id - @else Mediator Id - @endif {{$item->reg_id}}  @endif : @if($item->idescription != null) {{$item->idescription}} @else New User Registarion @endif
-                        <span class="float-right">{{date('d-m-Y h:m:s A',strtotime($item->created_at))}}</span>
-            
-                    </div>
-                    
+                    @if($item->case_id != null) <?=$id?> @else @if($item->event == 'USER_REGI') User Id - @else Mediator Id - @endif {{$item->reg_id}}  @endif : @if($item->idescription != null) {{$item->idescription}} @else New @if($item->event == 'USER_REGI') User @else Mediator @endif Registration @endif
+                    <span class="float-right">{{date('d-m-Y h:m:s A',strtotime($item->created_at))}}</span>
+                </div>
                 </div>
                 <?php $sdate = date('d-m-Y',strtotime($item->created_at)); ?>
 
