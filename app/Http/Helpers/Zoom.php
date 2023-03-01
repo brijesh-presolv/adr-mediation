@@ -251,7 +251,7 @@ class Zoom
             ],
             "authentication_name": "",
             "authentication_option": "",
-            "auto_recording": "cloud",
+            "auto_recording": "none",
             "breakout_room": {
             "enable": true,
             "rooms": [
