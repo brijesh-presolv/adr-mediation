@@ -1111,6 +1111,7 @@ class CaseController extends Controller
         }
 
         $time = date("g:i A", strtotime($request->sessionTime));
+        $display_date_time = str_replace('/', '-', $request->sessionDate) . " " . $time;
         $d = [
             'event' => 'SESS_SCHE',
             'case_id' => $request->caseId,
@@ -1142,10 +1143,10 @@ class CaseController extends Controller
 
 
                     if($request->zoom_choice == "manually_zoom" || $request->fsData['zoom_choice'] == "manually_zoom") {
-                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
+                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
                     } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
                     /**** Zoom Invitation ************/
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link);
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
                     /**** Zoom Invitation ************/
                     }
                 }
@@ -1158,24 +1159,32 @@ class CaseController extends Controller
                 // if ($medcase->bulk_flag == 0) {
                 if ($mediatorNoti) {
                     $id = "M" . sprintf("%06d", $request->caseId);
-                    SendGrid::send($d, $mediatorNoti->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediatorNoti->username);
+                    // SendGrid::send($d, $mediatorNoti->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediatorNoti->username);
 
-                    $varjson = ['sessionDateTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
-                    $var = ['-dt-', '-cid-', '-link-'];
-                    $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
-                    $content1 = WaTemplate::getcontent('l10_session_schedule');
-                    $content = str_replace($var, $var1, $content1);
-                    $dwa1 = [
-                        'caseid' => $request->caseId,
-                        'contact' =>  $mediatorNoti->mobile_number,
-                        'content' => ['text' => $content],
-                        'event' => 'SESS_SCHE',
-                        'varjson' => $varjson,
-                        'haptik_tmp' => 'l10_session_schedule',
+                    // $varjson = ['sessionDateTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
+                    // $var = ['-dt-', '-cid-', '-link-'];
+                    // $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
+                    // $content1 = WaTemplate::getcontent('l10_session_schedule');
+                    // $content = str_replace($var, $var1, $content1);
+                    // $dwa1 = [
+                    //     'caseid' => $request->caseId,
+                    //     'contact' =>  $mediatorNoti->mobile_number,
+                    //     'content' => ['text' => $content],
+                    //     'event' => 'SESS_SCHE',
+                    //     'varjson' => $varjson,
+                    //     'haptik_tmp' => 'l10_session_schedule',
 
-                    ];
+                    // ];
 
-                    $access = Whatsapp::sendWamessage($dwa1);
+                    // $access = Whatsapp::sendWamessage($dwa1);
+
+                    if($request->zoom_choice == "manually_zoom" || $request->fsData['zoom_choice'] == "manually_zoom") {
+                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
+                    } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
+                    /**** Zoom Invitation ************/
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
+                    /**** Zoom Invitation ************/
+                    }
                 }
                 // }
                 if($is_send){
@@ -1262,11 +1271,11 @@ class CaseController extends Controller
                     
                     
                     if($request->fsData['zoom_choice'] == "manually_zoom") {
-                        $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time, $party->userPhone);
+                        $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
                     } else if($request->fsData['zoom_choice'] == "directly_zoom") {
                      /**** Zoom Invitation ************/
 
-                     $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link);
+                     $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
                      /**** Zoom Invitation ************/
                     }
                 }
@@ -2142,7 +2151,7 @@ class CaseController extends Controller
         }
     }
 
-    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone)
+    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone, $userType)
     {
         $mid = "M" . sprintf("%06d", $id);
         $d = [
@@ -2150,7 +2159,7 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         if ($email_id != "") {
-            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", '-zoom_invitation_link-' => $url], $email_name);
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
         }
         if ($userPhone != "") {
 
@@ -3427,6 +3436,7 @@ class CaseController extends Controller
        /********* Zoom Time Format ******************/
 
         $time = date("g:i A", strtotime($request->sessionTime));
+        $display_date_time = str_replace('/', '-', $request->sessionDate) . " " . $time;
         $result = ManageSession::find($id);
         $result->session_date = $request->sessionDate . "/" . $time;
         $result->note = $request->note;
@@ -3441,9 +3451,9 @@ class CaseController extends Controller
                 $party = InvoledUser::where("userPlanId", $result->case_id)->where("id", $party_id)->first();
 
                 if($request->zoomChoice == "manual") {
-                    $this->sned_session($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
+                    $this->sned_session($request->zoomId, $result->case_id, $party->userEmail, $party->name, $display_date_time, $party->userPhone, "Party");
                 } else {
-                    $this->sned_session_invitation($request->zoomId, $result->case_id, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $request->zoomLink);
+                    $this->sned_session_invitation($request->zoomId, $result->case_id, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $request->zoomLink, "Party");
                 }
                 
                 
@@ -3457,24 +3467,31 @@ class CaseController extends Controller
                 ->where("mediators_mediation_cases_status.status", "=", 1)
                 ->first();
             if ($mediator) {
-                $id = "M" . sprintf("%06d", $result->case_id);
-                SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+                // $id = "M" . sprintf("%06d", $result->case_id);
+                // SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
 
-                $varjson = ['sessionDteaTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
-                $var = ['-dt-', '-cid-', '-link-'];
-                $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
-                $content1 = WaTemplate::getcontent('l10_session_schedule');
-                $content = str_replace($var, $var1, $content1);
-                $dwa1 = [
-                    'caseid' => $result->case_id,
-                    'contact' =>  $mediator->mobile_number,
-                    'content' => ['text' => $content],
-                    'event' => 'SESS_SCHE',
-                    'varjson' => $varjson,
-                    'haptik_tmp' => 'l10_session_schedule',
+                // $varjson = ['sessionDteaTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
+                // $var = ['-dt-', '-cid-', '-link-'];
+                // $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
+                // $content1 = WaTemplate::getcontent('l10_session_schedule');
+                // $content = str_replace($var, $var1, $content1);
+                // $dwa1 = [
+                //     'caseid' => $result->case_id,
+                //     'contact' =>  $mediator->mobile_number,
+                //     'content' => ['text' => $content],
+                //     'event' => 'SESS_SCHE',
+                //     'varjson' => $varjson,
+                //     'haptik_tmp' => 'l10_session_schedule',
 
-                ];
-                $access = Whatsapp::sendWamessage($dwa1);
+                // ];
+                // $access = Whatsapp::sendWamessage($dwa1);
+                if($request->zoomChoice == "manual") {
+                    $is_send = $this->sned_session($request->zoomId, $request->CaseId, $mediator->email, $mediator->username, $display_date_time, $mediator->mobile_number, "Mediator");
+                } else if($request->zoomChoice == "direct") {
+                /**** Zoom Invitation ************/
+                    $is_send = $this->sned_session_invitation($request->zoomId, $request->CaseId, $mediator->email, $mediator->username, $display_date_time, $mediator->mobile_number, $request->zoomLink, "Mediator");
+                /**** Zoom Invitation ************/
+                }
             }
         }
        // }
@@ -4365,7 +4382,7 @@ class CaseController extends Controller
 
 
     /******************** Custom Send Session Zoom  **********************/
-    public function sned_session_invitation($url, $id, $email_id, $email_name, $date, $userPhone, $invitation)
+    public function sned_session_invitation($url, $id, $email_id, $email_name, $date, $userPhone, $invitation, $userType)
     {
         $mid = "M" . sprintf("%06d", $id);
         $d = [
@@ -4373,7 +4390,7 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         if ($email_id != "") {
-            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom_invitation_link-" => $invitation], $email_name);
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, "-zoom_invitation_link-" => $invitation], $email_name);
             //SendGrid::send($d, $email_id, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom" => $invitation], $email_name);
         }
         if ($userPhone != "") {

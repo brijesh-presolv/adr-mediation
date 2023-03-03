@@ -115,7 +115,7 @@ class Zoom
                             }
                         ]
                         },
-                        "meeting_authentication": true,
+                        "meeting_authentication": false,
                         "meeting_invitees": [
                         {
                             "email": ""
@@ -295,7 +295,7 @@ class Zoom
                 }
             ]
             },
-            "meeting_authentication": true,
+            "meeting_authentication": false,
             "mute_upon_entry": false,
             "participant_video": false,
             "private_meeting": false,
