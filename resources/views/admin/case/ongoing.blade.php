@@ -576,10 +576,12 @@
 
                         <!-- Added for 2 choices : START ---------->
                         <div class="form-group">
-                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" checked onclick="check_zoom_choice(this.value)">
+                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" checked
+                                onclick="check_zoom_choice(this.value)">
                             <label for="">Schedule Directly</label><br>
 
-                            <input type="radio" id="" name="zoom_choice" value="manually_zoom" onclick="check_zoom_choice(this.value)">
+                            <input type="radio" id="" name="zoom_choice" value="manually_zoom"
+                                onclick="check_zoom_choice(this.value)">
                             <label for="">Manually Add Link</label>
                         </div>
                         <!-- Added for 2 choices : END ---------->
@@ -637,13 +639,15 @@
                                 name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
                         </div>
 
-                        
+
                         <!-- Added for 2 choices : START ---------->
                         <div class="form-group">
-                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" checked onclick="check_zoom_choice(this.value)">
+                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" checked
+                                onclick="check_zoom_choice(this.value)">
                             <label for="">Schedule Directly</label><br>
 
-                            <input type="radio" id="" name="zoom_choice" value="manually_zoom" onclick="check_zoom_choice(this.value)">
+                            <input type="radio" id="" name="zoom_choice" value="manually_zoom"
+                                onclick="check_zoom_choice(this.value)">
                             <label for="">Manually Add Link</label>
                         </div>
                         <!-- Added for 2 choices : END ---------->
@@ -700,15 +704,15 @@
                                 data-validation="required">
                         </div>
 
-                        
+
                         <!-- Added for 2 choices : START ---------->
                         <!-- <div class="form-group">
-                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" onclick="check_zoom_choice(this.value)">
-                            <label for="">Schedule Directly</label><br>
+                                <input type="radio" id="" name="zoom_choice" value="directly_zoom" onclick="check_zoom_choice(this.value)">
+                                <label for="">Schedule Directly</label><br>
 
-                            <input type="radio" id="" name="zoom_choice" value="manually_zoom" onclick="check_zoom_choice(this.value)">
-                            <label for="">Manually Add Link</label>
-                        </div> -->
+                                <input type="radio" id="" name="zoom_choice" value="manually_zoom" onclick="check_zoom_choice(this.value)">
+                                <label for="">Manually Add Link</label>
+                            </div> -->
                         <!-- Added for 2 choices : END ---------->
 
 
@@ -870,7 +874,7 @@
 
     <script type="text/javascript">
         $(function() {
-            
+
             $("#sessionDate").datepicker({
                 minDate: 0,
                 dateFormat: 'dd/mm/yy'
@@ -883,11 +887,11 @@
         });
 
         // Check for zoom choice //
-        function check_zoom_choice(zoom_choice){
-            if(zoom_choice == "manually_zoom") {
+        function check_zoom_choice(zoom_choice) {
+            if (zoom_choice == "manually_zoom") {
                 $('.zoom-id-section').show();
-            } else if(zoom_choice == "directly_zoom") {
-                $('.zoom-id-section').hide(); 
+            } else if (zoom_choice == "directly_zoom") {
+                $('.zoom-id-section').hide();
             }
         }
         // Check for zoom choice //
@@ -1018,6 +1022,18 @@
                                         d = d + `<span class="text-success party_name" data-inid="` + data[
                                                 i].id + `" data-id="` + data[i].userId + `">` + data[i]
                                             .organization + `</span><br>`;
+
+
+                                        /************ Added for IP Name **********************/
+                                        var ip_name = data[i].name;
+                                        if (ip_name != "") {
+                                            d = d + `<span class="text-success" data-inid="` + data[
+                                                    i].id + `" data-id="` + data[i].userId + `">` +
+                                                ip_name + `</span><br>`;
+                                        }
+                                        /************ Added for IP Name **********************/
+
+
                                     } else {
                                         d = d + `<span class="text-success party_name" data-inid="` + data[
                                                 i].id + `" data-id="` + data[i].userId + `">` + data[i]
@@ -1026,9 +1042,19 @@
                                 }
                             } else {
                                 if (data[i].name != null) {
-                                    d = d + `<span class="text-danger party_name" data-inid="` + data[i]
-                                        .id + `" data-id="` + data[i].userId + `">` + data[i].name +
-                                        `</span><br>`;
+                                    // d = d + `<span class="text-danger party_name" data-inid="` + data[i]
+                                    //     .id + `" data-id="` + data[i].userId + `">` + data[i].name +
+                                    //     `</span><br>`;
+
+                                    if (data[i].isClaimant == 0) {
+                                        d = d + `<span class="text-success" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + data[i]
+                                            .name + `</span><br>`;
+                                    } else {
+                                        d = d + `<span class="text-danger party_name" data-inid="` + data[i]
+                                            .id + `" data-id="` + data[i].userId + `">` + data[i].name +
+                                            `</span><br>`;
+                                    }
                                 }
                             }
                         }
@@ -1261,9 +1287,20 @@
                                                         i].id + `" data-id="` + data[i].userId +
                                                     `">` + data[i]
                                                     .organization + `</span><br>`;
+
+                                                /************ Added for IP Name **********************/
+                                                var ip_name = data[i].name;
+                                                if (ip_name != "") {
+                                                    d = d +
+                                                        `<span class="text-success party_name" data-inid="` +
+                                                        data[
+                                                            i].id + `" data-id="` + data[i].userId +
+                                                        `">` + ip_name + `</span><br>`;
+                                                }
+                                                /************ Added for IP Name **********************/
                                             } else {
                                                 d = d +
-                                                    `<span class="text-success party_name" data-inid="` +
+                                                    `<span class="text-success party_name " data-inid="` +
                                                     data[
                                                         i].id + `" data-id="` + data[i].userId +
                                                     `">` + data[i]
@@ -1272,12 +1309,25 @@
                                         }
                                     } else {
                                         if (data[i].name != null) {
-                                            d = d +
-                                                `<span class="text-danger party_name" data-inid="` +
-                                                data[i]
-                                                .id + `" data-id="` + data[i].userId + `">` + data[
-                                                    i].name +
-                                                `</span><br>`;
+                                            // d = d +
+                                            //     `<span class="text-danger party_name" data-inid="` +
+                                            //     data[i]
+                                            //     .id + `" data-id="` + data[i].userId + `">` + data[
+                                            //         i].name +
+                                            //     `</span><br>`;
+                                            if (data[i].isClaimant == 0) {
+                                                d = d + `<span class="text-success party_name" data-inid="` +
+                                                    data[
+                                                        i].id + `" data-id="` + data[i].userId +
+                                                    `">` + data[i].name + `</span><br>`;
+                                            } else {
+                                                d = d +
+                                                    `<span class="text-danger party_name" data-inid="` +
+                                                    data[i]
+                                                    .id + `" data-id="` + data[i].userId + `">` +
+                                                    data[i].name +
+                                                    `</span><br>`;
+                                            }
                                         }
                                     }
                                 }
@@ -3001,11 +3051,11 @@
                         $('#editnote').val(response.note);
 
 
-                        if(response.zoom_link_choice == "manual"){
+                        if (response.zoom_link_choice == "manual") {
                             $('#editzoomId').removeAttr('readonly');
                             $('#editzoomId').css('background', '#ffffff');
                             $('.zoom-id-section').hide();
-                        } else if(response.zoom_link_choice == "direct"){
+                        } else if (response.zoom_link_choice == "direct") {
                             $('#editzoomId').attr('readonly', 'readonly');
                             $('#editzoomId').css('background', '#dedede');
                             $('.zoom-id-section').show();

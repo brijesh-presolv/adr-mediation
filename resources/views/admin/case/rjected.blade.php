@@ -199,6 +199,15 @@
                                         d = d + `<span class="text-success party_name" data-inid="` + data[
                                                 i].id + `" data-id="` + data[i].userId + `">` + data[i]
                                             .organization + `</span><br>`;
+
+                                        /************ Added for IP Name **********************/
+                                        var ip_name = data[i].name;
+                                        if (ip_name != "") {
+                                            d = d + `<span class="text-success" data-inid="` + data[
+                                                    i].id + `" data-id="` + data[i].userId + `">` +
+                                                ip_name + `</span><br>`;
+                                        }
+                                        /************ Added for IP Name **********************/
                                     } else {
                                         d = d + `<span class="text-success party_name" data-inid="` + data[
                                                 i].id + `" data-id="` + data[i].userId + `">` + data[i]
@@ -207,7 +216,16 @@
                                 }
                             } else {
                                 if (data[i].name != null) {
-                                    d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
+                                    // d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
+                                    if (data[i].isClaimant == 0) {
+                                        d = d + `<span class="text-success" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + data[i]
+                                            .name + `</span><br>`;
+                                    } else {
+                                        d = d + `<span class="text-danger party_name" data-inid="` + data[i]
+                                            .id + `" data-id="` + data[i].userId + `">` + data[i].name +
+                                            `</span><br>`;
+                                    }
                                 }
                             }
                         }
@@ -313,6 +331,17 @@
                                                         i].id + `" data-id="` + data[i].userId +
                                                     `">` + data[i]
                                                     .organization + `</span><br>`;
+
+                                                /************ Added for IP Name **********************/
+                                                var ip_name = data[i].name;
+                                                if (ip_name != "") {
+                                                    d = d +
+                                                        `<span class="text-success party_name" data-inid="` +
+                                                        data[
+                                                            i].id + `" data-id="` + data[i].userId +
+                                                        `">` + ip_name + `</span><br>`;
+                                                }
+                                                /************ Added for IP Name **********************/
                                             } else {
                                                 d = d +
                                                     `<span class="text-success party_name" data-inid="` +
@@ -324,8 +353,21 @@
                                         }
                                     } else {
                                         if (data[i].name != null) {
-                                            d = d + `<span class="text-danger">` + data[i].name +
-                                                `</span><br>`;
+                                            // d = d + `<span class="text-danger">` + data[i].name +
+                                            //     `</span><br>`;
+                                            if (data[i].isClaimant == 0) {
+                                                d = d + `<span class="text-success party_name" data-inid="` +
+                                                    data[
+                                                        i].id + `" data-id="` + data[i].userId +
+                                                    `">` + data[i].name + `</span><br>`;
+                                            } else {
+                                                d = d +
+                                                    `<span class="text-danger party_name" data-inid="` +
+                                                    data[i]
+                                                    .id + `" data-id="` + data[i].userId + `">` +
+                                                    data[i].name +
+                                                    `</span><br>`;
+                                            }
                                         }
                                     }
                                 }

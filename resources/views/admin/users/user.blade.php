@@ -147,7 +147,8 @@
                         </div>
 
                         <div class="text-right">
-                            <button type="button" class="btn-sm btn mt-3  btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn-sm btn mt-3  btn-secondary"
+                                data-dismiss="modal">Close</button>
                             <input type="button" id="changeroleform" name="changerolebtn"
                                 class="btn-sm btn btn-primary mt-3" value="Submit">
                         </div>
@@ -194,9 +195,11 @@
                 "retrieve": true,
                 // "paging": false,
                 // "searching": false,
-
                 "columns": [{
-                        "data": "id"
+                        "data": "id",
+                        render: function(data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
                     },
                     {
                         "data": "first_name",
@@ -289,9 +292,11 @@
                 "retrieve": true,
                 // "paging": false,
                 // "searching": false,
-
                 "columns": [{
-                        "data": "id"
+                        "data": "id",
+                        render: function(data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
                     },
                     {
                         "data": "first_name",
@@ -457,16 +462,16 @@
                     //     title: "Please ensure that signature is uploaded",
                     //     icon: "warning",
                     //     });
-                        
+
                     // } 
                     /********** Commented for no mendate signature field  ********/
-                    
-                    
+
+
                     /********** Added for display message : START  ********/
-                    if(status == 1) {
+                    if (status == 1) {
                         var msg = "Approved Successfully.";
                         var icon = "success";
-                    } else if(status == 0){
+                    } else if (status == 0) {
                         var msg = "Unapproved Successfully.";
                         var icon = "success";
                     }
@@ -475,7 +480,7 @@
                         icon: icon,
                     });
                     userTable.ajax.reload(null, false);
-                }).fail(function(data){
+                }).fail(function(data) {
                     swal({
                         title: "Some error",
                         icon: "warning",

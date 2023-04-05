@@ -275,7 +275,8 @@
                                     </tr>
                                     <tr>
                                         <td>Circumstances which are likely to affect your ability to devote sufficient
-                                            time to the mediation and in particular your ability to complete the entire mediation within the time limits prescribed</td>
+                                            time to the mediation and in particular your ability to complete the entire
+                                            mediation within the time limits prescribed</td>
                                         <td>
                                             <div class="form-group">
                                                 <textarea class="form-control" name="particulars3" id="particulars3" rows="3">NA</textarea>
@@ -307,8 +308,10 @@
                                     checked>
                                 <label class="form-check-label" for="accept">
                                     By checking this box, I accept and agree to conduct the mediation in accordance with
-                                    the Rules and confirm that I shall abide by the <a href="https://drive.google.com/file/d/1M6dHbOuIQv4OZlhgyRFiDu75CsSKeZUI/view">Code</a>, <a href="https://presolv360.com/terms_conditions">Terms & Conditions</a> and <a
-                                    href="https://presolv360.com/privacy_policy">Privacy Policy</a>.
+                                    the Rules and confirm that I shall abide by the <a
+                                        href="https://drive.google.com/file/d/1M6dHbOuIQv4OZlhgyRFiDu75CsSKeZUI/view">Code</a>,
+                                    <a href="https://presolv360.com/terms_conditions">Terms & Conditions</a> and <a
+                                        href="https://presolv360.com/privacy_policy">Privacy Policy</a>.
                                 </label>
                             </div>
                         </div>
@@ -465,10 +468,22 @@
                             if (data[i].name != null) {
                                 if (data[i].organization != null && data[i].isClaimant == 0) {
                                     d = d +
-                                        `<p class="text-success party_name get_party" data-phone="` +
+                                        `<p class="text-success party_name get_party mb-0" data-phone="` +
                                         data[i].userPhone + `" data-email="` + data[i].userEmail +
                                         `" data-address="` + data[i].address1 + " " + data[i].address2 +
                                         `">` + data[i].organization + `</p>`;
+
+                                    /************ Added for IP Name **********************/
+                                    var ip_name = data[i].name;
+                                    if (ip_name != "") {
+                                        d = d +
+                                            `<span class="text-success party_name get_party" data-phone="` +
+                                            data[i].userPhone + `" data-email="` + data[i].userEmail +
+                                            `" data-address="` + data[i].address1 + " " + data[i]
+                                            .address2 +
+                                            `">` + ip_name + `</span><br>`;
+                                    }
+                                    /************ Added for IP Name **********************/
                                 } else {
                                     d = d +
                                         `<p class="text-success party_name get_party" data-phone="` +
@@ -480,16 +495,38 @@
                             }
                         } else {
                             if (data[i].name != null) {
-                                if (data[i].address1 != null) {
-                                    d = d + `<p class="text-danger get_party " data-phone="` + data[i]
-                                        .userPhone + `" data-email="` + data[i].userEmail +
-                                        `" data-address="` + data[i].address1 + " " + data[i].address2 +
-                                        `">` + data[i].name + `</p>`;
+                                // if (data[i].address1 != null) {
+                                //     d = d + `<p class="text-danger get_party " data-phone="` + data[i]
+                                //         .userPhone + `" data-email="` + data[i].userEmail +
+                                //         `" data-address="` + data[i].address1 + " " + data[i].address2 +
+                                //         `">` + data[i].name + `</p>`;
+                                // } else {
+                                //     d = d + `<p class="text-danger get_party " data-phone="` + data[i]
+                                //         .userPhone + `" data-email="` + data[i].userEmail +
+                                //         `" data-address="` + data[i].fulladdress + `">` + data[i].name +
+                                //         `</p>`;
+                                // }
+
+                                if (data[i].isClaimant == 0) {
+                                    d = d + `<span class="text-success get_party mb-0" data-inid="` + data[
+                                            i].id + `" data-id="` + data[i].userId + `">` + data[i]
+                                        .name + `</span><br>`;
                                 } else {
-                                    d = d + `<p class="text-danger get_party " data-phone="` + data[i]
-                                        .userPhone + `" data-email="` + data[i].userEmail +
-                                        `" data-address="` + data[i].fulladdress + `">` + data[i].name +
-                                        `</p>`;
+                                    if (data[i].address1 != null) {
+                                        d = d + `<p class="text-danger get_party mb-0" data-phone="` + data[
+                                                i]
+                                            .userPhone + `" data-email="` + data[i].userEmail +
+                                            `" data-address="` + data[i].address1 + " " + data[i]
+                                            .address2 +
+                                            `">` + data[i].name + `</p>`;
+                                    } else {
+                                        d = d + `<p class="text-danger get_party mb-0" data-phone="` + data[
+                                                i]
+                                            .userPhone + `" data-email="` + data[i].userEmail +
+                                            `" data-address="` + data[i].fulladdress + `">` + data[i]
+                                            .name +
+                                            `</p>`;
+                                    }
                                 }
                             }
                         }

@@ -622,6 +622,14 @@
                                         d = d + `<span class="text-success party_name" data-inid="` + data[
                                                 i].id + `" data-id="` + data[i].userId + `">` + data[i]
                                             .organization + `</span><br>`;
+                                            
+                                        /************ Added for IP Name **********************/
+                                        var ip_name = data[i].name;
+                                        if(ip_name != ""){
+                                            d = d + `<span class="text-success party_name" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + ip_name + `</span><br>`;
+                                        }
+                                        /************ Added for IP Name **********************/
                                     } else {
                                         d = d + `<span class="text-success party_name" data-inid="` + data[
                                                 i].id + `" data-id="` + data[i].userId + `">` + data[i]
@@ -630,7 +638,15 @@
                                 }
                             } else {
                                 if (data[i].name != null) {
-                                    d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
+                                    // d = d + `<span class="text-danger">` + data[i].name + `</span><br>`;
+                                    if(data[i].isClaimant == 0){
+                                        d = d + `<span class="text-success party_name" data-inid="` + data[
+                                                i].id + `" data-id="` + data[i].userId + `">` + data[i].name + `</span><br>`;
+                                    } else {
+                                        d = d + `<span class="text-danger party_name" data-inid="` + data[i]
+                                        .id + `" data-id="` + data[i].userId + `">` + data[i].name +
+                                        `</span><br>`;
+                                    }
                                 }
                             }
                         }
@@ -678,7 +694,7 @@
                 {
                     "data": "case.id",
                     render: function(data, type, row) {
-                    //  /console.log(row.case.discussion);
+                        //  /console.log(row.case.discussion);
                         // return false;
                         var d = '';
 
@@ -688,7 +704,8 @@
 
                         var button = "";
                         button = button + `<button value="` + data + `"  data-id="` + data +
-                            `" data-toggle="modal" data-target="#midaterAdd" data-bulk="` + row.case.bulk_flag + `" class="btn btn-info ` + d +
+                            `" data-toggle="modal" data-target="#midaterAdd" data-bulk="` + row.case
+                            .bulk_flag + `" class="btn btn-info ` + d +
                             `">Approve</button>`;
                         button = button + ` <button value="` + data + `" class="btn btn-danger reject ` +
                             d + `">@lang('case.btn_reject')</button>`;
@@ -839,6 +856,17 @@
                                                         i].id + `" data-id="` + data[i].userId +
                                                     `">` + data[i]
                                                     .organization + `</span><br>`;
+
+                                                /************ Added for IP Name **********************/
+                                                var ip_name = data[i].name;
+                                                if (ip_name != "") {
+                                                    d = d +
+                                                        `<span class="text-success" data-inid="` +
+                                                        data[
+                                                            i].id + `" data-id="` + data[i].userId +
+                                                        `">` + ip_name + `</span><br>`;
+                                                }
+                                                /************ Added for IP Name **********************/
                                             } else {
                                                 d = d +
                                                     `<span class="text-success party_name" data-inid="` +
@@ -850,8 +878,21 @@
                                         }
                                     } else {
                                         if (data[i].name != null) {
-                                            d = d + `<span class="text-danger">` + data[i].name +
-                                                `</span><br>`;
+                                            // d = d + `<span class="text-danger">` + data[i].name +
+                                            //     `</span><br>`;
+                                            if (data[i].isClaimant == 0) {
+                                                d = d + `<span class="text-success" data-inid="` +
+                                                    data[
+                                                        i].id + `" data-id="` + data[i].userId +
+                                                    `">` + data[i].name + `</span><br>`;
+                                            } else {
+                                                d = d +
+                                                    `<span class="text-danger party_name" data-inid="` +
+                                                    data[i]
+                                                    .id + `" data-id="` + data[i].userId + `">` +
+                                                    data[i].name +
+                                                    `</span><br>`;
+                                            }
                                         }
                                     }
                                 }
@@ -910,7 +951,8 @@
 
                                 var button = "";
                                 button = button + `<button value="` + data + `"  data-id="` + data +
-                                    `" data-toggle="modal" data-target="#midaterAdd" data-bulk="` + row.case.bulk_flag + `" class="btn btn-info ` +
+                                    `" data-toggle="modal" data-target="#midaterAdd" data-bulk="` +
+                                    row.case.bulk_flag + `" class="btn btn-info ` +
                                     d +
                                     `">Approve</button>`;
                                 button = button + ` <button value="` + data +
@@ -1275,7 +1317,7 @@
                                     if (success === result.data.length) {
                                         comp = comp + result.data.length;
                                         prc = Math.round(((comp * 100) /
-                                        countingcases));
+                                            countingcases));
                                         $('#tto').html(prc);
                                         deferred.resolve(result);
                                     }
@@ -1283,7 +1325,7 @@
                                     $("#messcc").append(
                                         "<p style='color: red;' class='text-center'>Case ID : M" +
                                         e.id.toString().padStart(6, "0") +
-                                        " Fail.<br>"+edata.msg+"</p>"
+                                        " Fail.<br>" + edata.msg + "</p>"
                                     );
                                     if (success === result.data.length) {
                                         deferred.resolve(result);
@@ -1316,28 +1358,28 @@
             var complete = 0;
             // var 
 
-            
+
 
             item.id.map((caseid) => {
                 //console.log(item);
-                if(typeof(item.discussion) != "undefined" && item.discussion !== null) {
+                if (typeof(item.discussion) != "undefined" && item.discussion !== null) {
                     var date_input = {
-                            id: caseid,
-                            mediator: item.midater,
-                            discussion: item.discussion, 
-                            // logId: logId,
-                            _token: item.token
-                        }
-                    } else {
-                        var data_input = {
-                                id: caseid,
-                                mediator: item.midater,
-                                //discussion: item.discussion, 
-                                // logId: logId,
-                                _token: item.token
-                            }
+                        id: caseid,
+                        mediator: item.midater,
+                        discussion: item.discussion,
+                        // logId: logId,
+                        _token: item.token
                     }
-                    //alert(data_input);
+                } else {
+                    var data_input = {
+                        id: caseid,
+                        mediator: item.midater,
+                        //discussion: item.discussion, 
+                        // logId: logId,
+                        _token: item.token
+                    }
+                }
+                //alert(data_input);
 
 
                 $.ajax({
@@ -2236,7 +2278,7 @@
             var count = 0;
 
             var midater = $(this).find("select[name='midater']").val();
-            if($(this).find('.bulkTabDis')){
+            if ($(this).find('.bulkTabDis')) {
                 var discussion = $(this).find("input[name='contact_for_discussion']").val();
             }
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
@@ -2298,27 +2340,27 @@
                             var first = 0;
                             var last = parseInt({{ env('NO_OF_REQUEST_SEND', 10) }});
                             for (var i = 0; i < actionwork; i++) {
-                            if($(this).find('.bulkTabDis')){
-                                idarr.push({
-                                    id: cidsarray.slice(first, last),
-                                    token: csrf,
-                                    allcids: cids,
-                                    midater: midater,
-                                    //discussion: discussion, 
-                                    total_row: ctcnt,
-                                    log_type: "Bulk Approve",
-                                });
-                            } else {
-                                idarr.push({
-                                    id: cidsarray.slice(first, last),
-                                    token: csrf,
-                                    allcids: cids,
-                                    midater: midater,
-                                    discussion: discussion, 
-                                    total_row: ctcnt,
-                                    log_type: "Bulk Approve",
-                                });
-                            }
+                                if ($(this).find('.bulkTabDis')) {
+                                    idarr.push({
+                                        id: cidsarray.slice(first, last),
+                                        token: csrf,
+                                        allcids: cids,
+                                        midater: midater,
+                                        //discussion: discussion, 
+                                        total_row: ctcnt,
+                                        log_type: "Bulk Approve",
+                                    });
+                                } else {
+                                    idarr.push({
+                                        id: cidsarray.slice(first, last),
+                                        token: csrf,
+                                        allcids: cids,
+                                        midater: midater,
+                                        discussion: discussion,
+                                        total_row: ctcnt,
+                                        log_type: "Bulk Approve",
+                                    });
+                                }
                                 first += {{ env('NO_OF_REQUEST_SEND', 10) }};
                                 last += {{ env('NO_OF_REQUEST_SEND', 10) }};
                             }
@@ -2658,8 +2700,8 @@
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
             var input_type = "input";
             var field_type = "text";
-                // setTimeout(function () {  
-              
+            // setTimeout(function () {  
+
             //$('#midaterAdd').modal('hide');
             swal({
                 title: "@lang('case.are_you_sure')",
@@ -2668,7 +2710,7 @@
                 buttons: true,
                 dangerMode: true,
             }).then((willDelete) => {
-                 if (willDelete) {
+                if (willDelete) {
                     $.ajax({
                         url: '{{ route('admin.case.midater_add') }}',
                         method: "post",
@@ -2682,7 +2724,7 @@
                             swal("@lang('case.mediator_assigned_successfully')", {
                                 icon: "success",
                             });
-                            
+
                             $.ajax({
                                 url: '{{ route('admin.case.confirm_status') }}',
                                 method: "post",
@@ -2726,7 +2768,7 @@
                     // /$('#midaterAdd').modal('show');
                 }
             });
-        // }, 2500);
+            // }, 2500);
             return false;
         });
         $('#midaterAdd').on('show.bs.modal', function(event) {
@@ -2741,7 +2783,7 @@
             var modal = $(this)
             modal.find('.modal-body input[name="id"]').val(recipient)
             // Added for 'Contact for discussion' : START //
-            if(bulk_flag == 0){
+            if (bulk_flag == 0) {
                 modal.find('.modal-body .discussion-section').show();
             } else {
                 modal.find('.modal-body .discussion-section').hide();
@@ -2753,7 +2795,7 @@
 
         $('#midaterAddForBulk').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
-            
+
             // Added for 'Contact for discussion' : START //
             var bulk_flag = button.data('bulk') // Extract info from data-* attributes
             // Added for 'Contact for discussion' : END //
@@ -2761,10 +2803,10 @@
             // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
             // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)
-            
+
             //alert(bulk_flag);
             // Added for 'Contact for discussion' : START //
-            if(bulk_flag == 'ind'){
+            if (bulk_flag == 'ind') {
                 modal.find('.modal-body .discussion-section').show();
                 modal.find('form').removeClass('bulkTabDis');
             } else {
