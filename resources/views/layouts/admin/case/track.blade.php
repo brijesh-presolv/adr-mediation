@@ -43,7 +43,7 @@ return ['type'=>'Respondent','name'=>$d['user2name'],'id'=>2];
 }
 ?>
 <div class="card bg-info text-light">
-  <p class="m-2">The details pertaining to the delivery and service of all digital communications throughout the proceedings is tracked and obtained through Email and WhatsApp APIs (Application Programming Interface), provided by Twilio Inc. [https://sendgrid.com/] and Karix Mobile, LLC [https://www.karix.io/] respectively, integrated with Presolv360’s ODR platform.</p>
+  <p class="m-2">The details pertaining to the delivery and service of all digital communications throughout the proceedings is tracked and obtained through Email and WhatsApp APIs (Application Programming Interface) integrated with Presolv360’s ODR platform.</p>
 </div>
 <div class="card">
 
