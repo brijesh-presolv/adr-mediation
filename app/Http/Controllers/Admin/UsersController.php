@@ -196,19 +196,19 @@ class UsersController extends Controller
      */
     public function jsonApprove($role = 0)
     {
-        $users = User::where("role", "=", $role)->where('status', 1)->where('is_deleted', 0)->get();
+        $users = User::where("role", "=", $role)->where('status', 1)->where('is_deleted', 0)->orderBy('id', 'DESC')->get();
         return response()->json(["data" => $users]);
     }
 
     public function jsonNewreq($role = 0)
     {
-        $users = User::where("role", "=", $role)->where('status', 0)->where('is_deleted', 0)->get();
+        $users = User::where("role", "=", $role)->where('status', 0)->where('is_deleted', 0)->orderBy('id', 'DESC')->get();
         return response()->json(["data" => $users]);
     }
 
     public function jsonUnapprove($role = 0)
     {
-        $users = User::where("role", "=", $role)->where('is_deleted', 1)->get();
+        $users = User::where("role", "=", $role)->where('is_deleted', 1)->orderBy('id', 'DESC')->get();
         return response()->json(["data" => $users]);
     }
 
