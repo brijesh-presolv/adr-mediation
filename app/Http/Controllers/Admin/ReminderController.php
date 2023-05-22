@@ -40,7 +40,8 @@ class ReminderController extends Controller
             FROM manage_session
             WHERE 
             (is_reminder_sent = 0 OR is_final_reminder = 0)
-            AND (session_date LIKE '%$date%' OR session_date LIKE '%$two_days%')            
+            AND (session_date LIKE '%$date%' OR session_date LIKE '%$two_days%')   
+            AND is_deleted = 0
             LIMIT 50";
 
         //echo $query1;exit;
