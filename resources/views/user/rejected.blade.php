@@ -48,7 +48,6 @@ use App\Models\InvoledUser;
                     $id='';
 
                     foreach ($closed as $key => $value) {
-                        echo "<pre>";print_R($value);
                      ?>
                         <tr>
 
@@ -63,7 +62,15 @@ use App\Models\InvoledUser;
                             ?>
                             <td>{{ $i++ }}</td>
                             <td><?= 'M' . sprintf('%06d', $value->caseid) ?></td>
-                            <td><?php echo $value->ref_id; ?></td>
+                            <td>
+                                <?php
+                                    if($value->ref_id == null){
+                                        $ref_id = "--";
+                                    } else {
+                                        $ref_id = $value->ref_id; 
+                                    }   
+                                ?>
+                            <?php echo $ref_id; ?></td>
                             <td><?= date('d-m-Y', strtotime($value->date)) ?></td>
                             <td><a class="btn   btn-sm btn-primary label label-success {{ count($value->party) > 0 ? '' : 'disabled' }}"
                                     target="_blank" href="{{ route('user.casedetails', $value->caseid) }}">View</a></td>
