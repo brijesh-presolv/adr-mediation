@@ -208,9 +208,10 @@
                                             class="fa fa-info-circle" aria-hidden="true"></i></a> </th>
                                 <th>@lang('case.party_details')</th>
                                 <th>@lang('case.mediator')</th>
-                                <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
+                                <!-- <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                                 -->
                                 <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -803,20 +804,20 @@
                             button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case
                                 .id +
                                 `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
-                            button = button + ` <button value="` + data + `"  data-withdraw="` + data +
+                            button = button + ` <br><button value="` + data + `"  data-withdraw="` + data +
                                 `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">@lang('case.btn_withdrawn')</button>`;
                         } else if (row.status_log.length != 0 && row.status_log[0].status ==
                             '{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}') {
                             button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case
                                 .id +
                                 `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
-                            button = button + ` <button value="` + data + `"  data-withdraw="` + data +
+                            button = button + ` <br><button value="` + data + `"  data-withdraw="` + data +
                                 `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-danger waves-effect btn-sm">@lang('case.btn_unresolved')</button>`;
                         } else {
                             button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case
                                 .id +
                                 `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
-                            button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case
+                            button = button + ` <br><button value="` + row.case.id + `"  data-id="` + row.case
                                 .id +
                                 `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">@lang('case.btn_view_settelment')</button>`;
                         }
