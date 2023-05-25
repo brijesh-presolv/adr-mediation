@@ -86,6 +86,7 @@ class MedCase extends Model
             })
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
             // ->leftJoin("user_involved_in_agreement", "user_involved_in_agreement.userPlanid", "=", "mediation_case.id")
             ->where("mediation_case.confirm_status", "=", $role)
             ->where("mediation_case.bulk_flag", "=", $bulk);
