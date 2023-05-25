@@ -17,7 +17,7 @@
     table tbody button {
         margin-top: 7px;
     }
-    table tbody .blkchk {
+    table tbody input[type='checkbox'] {
         margin: 15px;
         height: 12px;
     }
@@ -1032,7 +1032,7 @@
                 {
                     "data": "date",
                     render: function(data, type, row) {
-                        var button = `<p>Date of Creation<br>` + data + `</p><p>Date of Approval<br>` + row
+                        var button = `<p><b>Date of Creation</b><br>` + data + `</p><p><b>Date of Approval</b><br>` + row
                             .admin_approve + `</p>`;
                         return button;
                     }
@@ -1115,11 +1115,11 @@
                             data + ` </button>`;
                         if (row.case.mediator_status == 0) {
                             button = button +
-                                `<br><span class="badge badge-warning mediator_action" data-mediatoraction="` +
+                                `<br><span class="mediator_action" data-mediatoraction="` +
                                 row.case.mediator_status + `">@lang('case.status_pending')</span>`;
                         } else if (row.case.mediator_status == 1) {
                             button = button +
-                                `<br><span class="badge badge-success mediator_action" data-mediatoraction="` +
+                                `<br><span class="mediator_action" data-mediatoraction="` +
                                 row.case.mediator_status + `">@lang('case.status_accepted')</span>`;
                             button = button +
                                 `<br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case
@@ -1129,7 +1129,7 @@
                                 row.mediator_create_action_date + `</span>`;
                         } else {
                             button = button +
-                                `<br><span class="badge badge-danger mediator_action" data-mediatoraction="` +
+                                `<br><span class="mediator_action" data-mediatoraction="` +
                                 row.case.mediator_status + `">@lang('case.status_rejected')</span>`;
                             // button = button + `<br><span class="badge badge-danger">Date of Rejection: `+row.mediator_action_date+`</span>`;
                         }
