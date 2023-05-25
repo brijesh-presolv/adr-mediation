@@ -22,13 +22,13 @@ use App\Models\InvoledUser;
                     <thead>
                         <tr>
                             <th>Sr. No</th>
-                            <th>Case Id</th>
+                            <th>Case ID</th>
+                            <th>Ref ID</th>
                             <th>Date</th>
                             <th>Case Details</th>
                             <th>Party Details</th>
                             <th>Mediator</th>
-                            <th>Comment</th>
-
+                            <!-- <th>Comment</th> -->
                             <th>Session</th>
                             <th>Settelment Agreement</th>
 
@@ -236,6 +236,21 @@ use App\Models\InvoledUser;
                     }
                 },
                 {
+                    "data": "case.ref_id",
+                    render: function(data, type, row, meta) {
+                        if (data == null) {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;"> -- </p>`;
+                            return button;
+                        } else {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                            return button;
+                        }
+
+                    }
+                },
+                {
                     "data": "date"
                 },
                 {
@@ -299,20 +314,20 @@ use App\Models\InvoledUser;
                             data.mediator + ` </button>`;
                         if (data.mstatus == 0) {
                             button = button +
-                                `<br><span class="badge badge-warning mediator_action" data-mediatoraction="` +
+                                `<br><span class="mediator_action" data-mediatoraction="` +
                                 data.mstatus + `">@lang('case.status_pending')</span>`;
                         } else if (data.mstatus == 1) {
                             button = button +
-                                `<br><span class="badge badge-success mediator_action" data-mediatoraction="` +
+                                `<br><span class="mediator_action" data-mediatoraction="` +
                                 data.mstatus + `">@lang('case.status_accepted')</span>`;
                             button = button +
                                 `<br><a href="{{ url('user/consent-and-disclosures/') }}/` + data.caseid +
                                 `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
-                            button = button + `<br><span class="badge badge-success">Date of Consent: ` +
+                            button = button + `<br><span class="">` +
                                 row.mediator_create_action_date + `</span>`;
                         } else {
                             button = button +
-                                `<br><span class="badge badge-danger mediator_action" data-mediatoraction="` +
+                                `<br><span class="mediator_action" data-mediatoraction="` +
                                 data.mstatus + `">@lang('case.status_rejected')</span>`;
                             // button = button + `<br><span class="badge badge-danger">Date of Rejection: `+row.mediator_action_date+`</span>`;
                         }
@@ -320,23 +335,23 @@ use App\Models\InvoledUser;
                         return button;
                     }
                 },
-                {
-                    "data": "case",
-                    render: function(data, type, row) {
-                        var button = "";
-                        button = button +
-                            `<div class="position-relative"> <button type="button" data-type="0" data-typename="Share" data-id="` +
-                            data.caseid +
-                            `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_share')</button>`;
-                        if (row.share_view_count !== 0) {
-                            button += ` <span class="badge  badge-danger share_unseen">` + row
-                                .share_view_count + ` </span>`;
-                        }
-                        button += ` <span class="badge badge-success share_total">` + row.share_count +
-                            `</span></div>`;
-                        return button;
-                    }
-                },
+                // {
+                //     "data": "case",
+                //     render: function(data, type, row) {
+                //         var button = "";
+                //         button = button +
+                //             `<div class="position-relative"> <button type="button" data-type="0" data-typename="Share" data-id="` +
+                //             data.caseid +
+                //             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_share')</button>`;
+                //         if (row.share_view_count !== 0) {
+                //             button += ` <span class="badge  badge-danger share_unseen">` + row
+                //                 .share_view_count + ` </span>`;
+                //         }
+                //         button += ` <span class="badge badge-success share_total">` + row.share_count +
+                //             `</span></div>`;
+                //         return button;
+                //     }
+                // },
                 {
                     "data": "case.caseid",
                     render: function(data, type, row) {
@@ -372,10 +387,10 @@ use App\Models\InvoledUser;
                     render: function(data, type, row) {
                         var button = "";
                         if (data.status === 6) {
-                            button = button + `<span class="badge badge-success">` + data.description +
+                            button = button + `<span class="">` + data.description +
                                 `| @lang('case.At'): ` + data.created + `</span>`;
                         } else {
-                            button = button + `<span class="badge badge-danger">` + data.description +
+                            button = button + `<span class="">` + data.description +
                                 `| @lang('case.At'): ` + data.created + `</span>`;
                         }
                         return button;

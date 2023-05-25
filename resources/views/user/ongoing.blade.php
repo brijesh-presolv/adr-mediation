@@ -46,6 +46,7 @@ use App\Models\InvoledUser;
                             <th>@lang('case.Sr. No')</th>
                             <!-- <th>Select</th> -->
                             <th>@lang('case.case_id')</th>
+                            <th>@lang('case.ref_id')</th>
                             <th>@lang('case.date')</th>
                             <th>@lang('case.case_details')</th>
                             <th>@lang('case.party_details')</th>

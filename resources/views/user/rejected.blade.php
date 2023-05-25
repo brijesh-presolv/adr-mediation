@@ -21,7 +21,8 @@ use App\Models\InvoledUser;
                     <thead>
                         <tr>
                             <th>Sr. No</th>
-                            <th>Case Id</th>
+                            <th>Case ID</th>
+                            <th>Ref ID</th>
                             <th>Date</th>
                             <th>Case Details</th>
                             <th>Party Details</th>
@@ -50,6 +51,7 @@ use App\Models\InvoledUser;
                             ?>
                             <td>{{ $i++ }}</td>
                             <td><?= 'M' . sprintf('%06d', $value->caseid) ?></td>
+                            <td><?= $value->ref_id; ?></td>
                             <td><?= date('d-m-Y', strtotime($value->date)) ?></td>
                             <td><a class="btn   btn-sm btn-primary label label-success {{ count($value->party) > 0 ? '' : 'disabled' }}"
                                     target="_blank" href="{{ route('user.casedetails', $value->caseid) }}">View</a></td>
@@ -87,7 +89,7 @@ use App\Models\InvoledUser;
 
                             <td>
 
-                                <span class="badge badge-danger ">Rejected | At: {{ $value->casestatus->created }}</ </td>
+                                <span class="">Rejected <br> At: {{ $value->casestatus->created }}</ </td>
                         </tr>
                         <?php } ?>
                     </tbody>
