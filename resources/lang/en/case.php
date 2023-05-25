@@ -32,8 +32,9 @@ return [
     "rejected_request"=>"Rejected Request",
     "invoke"=>"Invoke",
     //table title
-    "serial_number" => "Sr.No",
-    "case_id" => "Case Id",
+    "serial_number" => "Sr. No.",
+    "case_id" => "Case ID",
+    "ref_id" => "Ref ID",
     "date" => "Date",
     "case_details" => "Case Details",
     "party_details" => "Party Details",

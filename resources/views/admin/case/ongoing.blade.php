@@ -151,8 +151,9 @@
                         <thead>
                             <tr>
                                 <th>@lang('case.serial_number')</th>
-                                <th>Select</th>
+                                <!-- <th>Select</th> -->
                                 <th>@lang('case.case_id') </th>
+                                <th>@lang('case.ref_id')</th>
                                 <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -163,11 +164,11 @@
                                 <th>@lang('case.mediator') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Click on 'Mediator Name' to withdraw current Mediator and/or appoint new Mediator."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                                <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
+                                <!-- <th>@lang('case.comment') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Private comments are for internal reference only. Shared comments are visible to the appointed Mediator. Comments are not visible to the parties.
                                                                                                                                                                                                                                          "><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a>
-                                </th>
+                                </th> -->
                                 <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -971,19 +972,26 @@
             "columns": [{
                     "data": "case.id",
                     render: function(data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {
-                    "data": "case",
-                    render: function(data, type, row) {
+
                         var button = "";
                         button = button + `<input type="checkbox" class="blkchkbulkcases" data-caseid="` +
                             data.id +
                             `">`;
-                        return button;
+
+
+                        return meta.row + meta.settings._iDisplayStart + 1 + button;
                     }
                 },
+                // {
+                //     "data": "case",
+                //     render: function(data, type, row) {
+                //         var button = "";
+                //         button = button + `<input type="checkbox" class="blkchkbulkcases" data-caseid="` +
+                //             data.id +
+                //             `">`;
+                //         return button;
+                //     }
+                // },
                 {
                     "data": "case.id",
                     render: function(data) {
@@ -993,6 +1001,21 @@
                         return button;
                     }
                 },
+                {
+                        "data": "case.ref_id",
+                        render: function(data, type, row, meta) {
+                            if (data == null) {
+                                var button = "";
+                                button = button + `<p style="font-size: 16px;"> -- </p>`;
+                                return button;
+                            } else {
+                                var button = "";
+                                button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                                return button;
+                            }
+
+                        }
+                    },
                 {
                     "data": "date",
                     render: function(data, type, row) {
@@ -1008,7 +1031,14 @@
                             `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
                         button = button + ` <a href="{{ url('admin/updatecase/') }}/` + data +
                             `" target="_blank" class="btn btn-info waves-effect waves-light btn-sm" title="@lang('case.btn_case_details_edit')"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
-                        return button;
+                        
+                        // Batch Name //
+                        var batch =
+                        `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
+                        row.case.batch_name + `</p> </div>`;
+                        // Batch Name //
+                        
+                        return button + batch;
                     }
                 },
                 {
@@ -1082,7 +1112,7 @@
                                 `<br><a href="{{ url('admin/consent-and-disclosures/') }}/` + row.case
                                 .id +
                                 `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
-                            button = button + `<br><span class="badge badge-success">Date of Consent: ` +
+                            button = button + `<br><span class="">` +
                                 row.mediator_create_action_date + `</span>`;
                         } else {
                             button = button +
@@ -1094,32 +1124,32 @@
                         return button;
                     }
                 },
-                {
-                    "data": "case.id",
-                    render: function(data, type, row) {
-                        var button = "";
-                        button = button +
-                            `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` +
-                            data +
-                            `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
-                        button += ` <span class="badge-success badge private_total">` + row.private_count +
-                            `</span>`;
-                        if (row.private_view_count != 0) {
-                            button += ` <span class="badge badge-danger private_unseen">` + row
-                                .private_view_count + `</span>`;
-                        }
-                        button = button +
-                            ` <button type="button" data-type="0" data-typename="Share" data-id="` + data +
-                            `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">@lang('case.btn_share')</button>`;
-                        if (row.share_view_count !== 0) {
-                            button += ` <span class="badge  badge-danger share_unseen">` + row
-                                .share_view_count + ` </span>`;
-                        }
-                        button += ` <span class="badge badge-success share_total">` + row.share_count +
-                            `</span></div>`;
-                        return button;
-                    }
-                },
+                // {
+                //     "data": "case.id",
+                //     render: function(data, type, row) {
+                //         var button = "";
+                //         button = button +
+                //             `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` +
+                //             data +
+                //             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">@lang('case.btn_private')</button>`;
+                //         button += ` <span class="badge-success badge private_total">` + row.private_count +
+                //             `</span>`;
+                //         if (row.private_view_count != 0) {
+                //             button += ` <span class="badge badge-danger private_unseen">` + row
+                //                 .private_view_count + `</span>`;
+                //         }
+                //         button = button +
+                //             ` <button type="button" data-type="0" data-typename="Share" data-id="` + data +
+                //             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">@lang('case.btn_share')</button>`;
+                //         if (row.share_view_count !== 0) {
+                //             button += ` <span class="badge  badge-danger share_unseen">` + row
+                //                 .share_view_count + ` </span>`;
+                //         }
+                //         button += ` <span class="badge badge-success share_total">` + row.share_count +
+                //             `</span></div>`;
+                //         return button;
+                //     }
+                // },
                 {
                     "data": "case.id",
                     render: function(data, type, row) {
