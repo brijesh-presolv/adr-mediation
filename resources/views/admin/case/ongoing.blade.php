@@ -1183,13 +1183,13 @@
                                 '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_ADMIN }}' || data[
                                     i].status == '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}'
                             ) {
-                                button = button + `<span class="badge badge-success">` + data[i]
-                                    .description + ` | At : ` + data[i].created + `</span><br>`;
+                                button = button + `<span class="">` + data[i]
+                                    .description + ` <br/> At : ` + data[i].created + `</span><br>`;
                             }
                             if (data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}') {
-                                button = button + `<span class="badge badge-info ">` + data[i].description +
-                                    ` | At : ` + data[i].created + `</span><br>`;
+                                button = button + `<span class="">` + data[i].description +
+                                    ` <br/> At : ` + data[i].created + `</span><br>`;
                             }
                             if (data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[
@@ -1198,8 +1198,8 @@
                                 data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i]
                                 .status == '{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}') {
-                                button = button + `<span class="badge badge-danger">` + data[i]
-                                    .description + ` | At : ` + data[i].created + `</span><br>`;
+                                button = button + `<span class="">` + data[i]
+                                    .description + ` <br/> At : ` + data[i].created + `</span><br>`;
                             }
 
                         }
@@ -1294,6 +1294,21 @@
                                 var button = `<p>Date of Creation<br>` + data +
                                     `</p><p>Date of Approval<br>` + row.admin_approve + `</p>`;
                                 return button;
+                            }
+                        },
+                        {
+                            "data": "case.ref_id",
+                            render: function(data, type, row, meta) {
+                                if (data == null) {
+                                    var button = "";
+                                    button = button + `<P style="font-size: 16px;"> -- </p>`;
+                                    return button;
+                                } else {
+                                    var button = "";
+                                    button = button + `<P style="font-size: 16px;">` + data + `</p>`;
+                                    return button;
+                                }
+
                             }
                         },
                         {
