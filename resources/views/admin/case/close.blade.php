@@ -655,6 +655,21 @@
                     }
                 },
                 {
+                    "data": "case.ref_id",
+                    render: function(data, type, row, meta) {
+                        if (data == null) {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;"> -- </p>`;
+                            return button;
+                        } else {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                            return button;
+                        }
+
+                    }
+                },
+                {
                     "data": "date",
                     render: function(data, type, row) {
                         var button = `<p><b>Date of Creation</b><br>` + data +
@@ -928,6 +943,21 @@
                             }
                         },
                         {
+                            "data": "case.ref_id",
+                            render: function(data, type, row, meta) {
+                                if (data == null) {
+                                    var button = "";
+                                    button = button + `<p style="font-size: 16px;"> -- </p>`;
+                                    return button;
+                                } else {
+                                    var button = "";
+                                    button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                                    return button;
+                                }
+
+                            }
+                        },
+                        {
                             "data": "date",
                             render: function(data, type, row) {
                                 var button = `<p><b>Date of Creation</b><br>` + data +
@@ -1088,7 +1118,7 @@
                                         `"  data-id="` + row.case
                                         .id +
                                         `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
-                                    button = button + ` <button value="` + data +
+                                    button = button + ` <br><button value="` + data +
                                         `"  data-withdraw="` + data +
                                         `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-success waves-effect btn-sm">@lang('case.btn_withdrawn')</button>`;
                                 } else if (row.status_log.length != 0 && row.status_log[0].status ==
@@ -1097,7 +1127,7 @@
                                         `"  data-id="` + row.case
                                         .id +
                                         `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
-                                    button = button + ` <button value="` + data +
+                                    button = button + `<br><button value="` + data +
                                         `"  data-withdraw="` + data +
                                         `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-danger waves-effect btn-sm">@lang('case.btn_unresolved')</button>`;
                                 } else {
@@ -1105,7 +1135,7 @@
                                         `"  data-id="` + row.case
                                         .id +
                                         `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">@lang('case.btn_view_supporting')</button>`;
-                                    button = button + ` <button value="` + row.case.id +
+                                    button = button + ` <br><button value="` + row.case.id +
                                         `"  data-id="` + row.case
                                         .id +
                                         `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">@lang('case.btn_view_settelment')</button>`;
