@@ -1027,7 +1027,7 @@
                 },
                 {
                     "data": "case.id",
-                    render: function(data) {
+                    render: function(data, type, row) {
                         var button = ` <a href="{{ url('admin/casedetails/') }}/` + data +
                             `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
                         button = button + ` <a href="{{ url('admin/updatecase/') }}/` + data +
