@@ -48,7 +48,7 @@ use App\Models\InvoledUser;
                     $id='';
 
                     foreach ($closed as $key => $value) {
-
+                        echo "<pre>";print_R($value);
                      ?>
                         <tr>
 
