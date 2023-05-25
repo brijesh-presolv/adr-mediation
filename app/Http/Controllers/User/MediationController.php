@@ -770,6 +770,7 @@ class MediationController extends Controller
             $value->casestatus = Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first();
 
             $value->casestatus->css = 'danger';
+            $value->ref_id = $value->ref_id;
 
 
             $closed[] = $value;
