@@ -76,6 +76,7 @@ use App\Models\InvoledUser;
                     <tr>
                         <th>@lang('case.Sr. No')</th>
                         <th>@lang('case.case_id')</th>
+                        <th>@lang('case.ref_id')</th>
                         <th>@lang('case.date')</th>
                         <th>@lang('case.case_details')</th>
                         <th>@lang('case.party_details')</th>
@@ -154,6 +155,21 @@ use App\Models\InvoledUser;
                     }
                 },
                 {
+                    "data": "case.ref_id",
+                    render: function(data, type, row, meta) {
+                        if (data == null) {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;"> -- </p>`;
+                            return button;
+                        } else {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                            return button;
+                        }
+
+                    }
+                },
+                {
                     "data": "date"
                 },
                 {
@@ -216,7 +232,7 @@ use App\Models\InvoledUser;
                 {
                     "data": "case",
                     render: function(data, type, row) {
-                        var button = `<span class="badge badge-danger">@lang('site.Pending')</span>`;
+                        var button = `<span class="">@lang('site.Pending')</span>`;
                         return button;
                     }
                 },
