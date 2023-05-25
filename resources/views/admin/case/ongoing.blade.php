@@ -14,6 +14,13 @@
     table tbody .btn,  table tbody td{
         font-size: 14px;
     }
+    table tbody button {
+        margin-top: 7px;
+    }
+    table tbody .blkchk {
+        margin: 15px;
+        height: 12px;
+    }
 </style>
 
     <section class="tabs-section">
@@ -1163,7 +1170,7 @@
                         button = button + ` <button id="Sessview` + data + `" value="` + data +
                             `"  data-id="` + data +
                             `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal" title="@lang('case.btn_session_view')" ><span class="mdi mdi-file-eye-outline"></span></button>`;
-                        button = button + ` <button value="` + data + `"  data-id="` + data +
+                        button = button + ` <br><button value="` + data + `"  data-id="` + data +
                             `"   class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target="#addSession-modal" title="@lang('case.btn_session_add')"><span class="mdi mdi-pencil-plus"></span></button>`;
                         return button;
                     }
@@ -1466,7 +1473,7 @@
                                     data +
                                     `"  data-id="` + data +
                                     `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal" title="@lang('case.btn_session_view')" ><span class="mdi mdi-file-eye-outline"></span></button>`;
-                                button = button + ` <button value="` + data + `"  data-id="` +
+                                button = button + `<br><button value="` + data + `"  data-id="` +
                                     data +
                                     `"   class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal" data-target="#addSession-modal" title="@lang('case.btn_session_add')"><span class="mdi mdi-pencil-plus"></span></button>`;
                                 return button;
