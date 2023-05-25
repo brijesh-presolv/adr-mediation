@@ -18,12 +18,13 @@
                     <thead>
                         <tr>
                             <th>Sr. No</th>
-                            <th>Select</th>
-                            <th>Case Id</th>
+                            <!-- <th>Select</th> -->
+                            <th>Case ID</th>
+                            <th>Ref ID</th>
                             <th>Date</th>
                             <th>Case Details</th>
                             <th>Party Details</th>
-                            <th>Comment</th>
+                            <!-- <th>Comment</th> -->
                             <th>Session</th>
                             <th>Action</th>
                         </tr>
@@ -660,22 +661,40 @@
             "columns": [{
                     "data": "case.id",
                     render: function(data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {
-                    "data": "case",
-                    render: function(data, type, row) {
                         var button = "";
                         button = button + `<input type="checkbox" class="blkchk" data-caseid="` + data.id +
                             `">`;
-                        return button;
+                        return meta.row + meta.settings._iDisplayStart + 1 + button;
                     }
                 },
+                // {
+                //     "data": "case",
+                //     render: function(data, type, row) {
+                //         var button = "";
+                //         button = button + `<input type="checkbox" class="blkchk" data-caseid="` + data.id +
+                //             `">`;
+                //         return button;
+                //     }
+                // },
                 {
                     "data": "case.id",
                     render: function(data) {
                         return "M" + pad(data, 6);
+                    }
+                },
+                {
+                    "data": "case.ref_id",
+                    render: function(data, type, row, meta) {
+                        if (data == null) {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;"> -- </p>`;
+                            return button;
+                        } else {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                            return button;
+                        }
+
                     }
                 },
                 {
@@ -737,32 +756,32 @@
                         return d;
                     }
                 },
-                {
-                    "data": "case.id",
-                    render: function(data, type, row) {
-                        var button = "";
-                        button = button +
-                            `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` +
-                            data +
-                            `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
-                        button += ` <span class="badge-success badge private_total">` + row.private_count +
-                            `</span>`;
-                        if (row.private_view_count != 0) {
-                            button += ` <span class="badge badge-danger private_unseen">` + row
-                                .private_view_count + `</span>`;
-                        }
-                        button = button +
-                            ` <button type="button" data-type="0" data-typename="Share" data-id="` + data +
-                            `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
-                        if (row.share_view_count !== 0) {
-                            button += ` <span class="badge  badge-danger share_unseen">` + row
-                                .share_view_count + ` </span>`;
-                        }
-                        button += ` <span class="badge badge-success share_total">` + row.share_count +
-                            `</span></div>`;
-                        return button;
-                    }
-                },
+                // {
+                //     "data": "case.id",
+                //     render: function(data, type, row) {
+                //         var button = "";
+                //         button = button +
+                //             `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` +
+                //             data +
+                //             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                //         button += ` <span class="badge-success badge private_total">` + row.private_count +
+                //             `</span>`;
+                //         if (row.private_view_count != 0) {
+                //             button += ` <span class="private_unseen">` + row
+                //                 .private_view_count + `</span>`;
+                //         }
+                //         button = button +
+                //             ` <button type="button" data-type="0" data-typename="Share" data-id="` + data +
+                //             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                //         if (row.share_view_count !== 0) {
+                //             button += ` <span class="badge  badge-danger share_unseen">` + row
+                //                 .share_view_count + ` </span>`;
+                //         }
+                //         button += ` <span class="badge badge-success share_total">` + row.share_count +
+                //             `</span></div>`;
+                //         return button;
+                //     }
+                // },
                 {
                     "data": "case.id",
                     render: function(data, type, row) {
@@ -781,7 +800,7 @@
                         var button = "";
                         button = button + ` <button value="` + data + `"  data-id="` + data +
                             `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">Upload Supporting</button>`;
-                        button = button + ` <button value="` + data + `"  data-id="` + data +
+                        button = button + ` <br><button value="` + data + `"  data-id="` + data +
                             `" data-toggle="modal" data-target="#withdrawModal"    class="btn btn-teal waves-light waves-effect btn-sm">Close</button>`;
                         return button;
                     }

@@ -10,6 +10,18 @@
 @section('pageTitleOnDashboard', 'Close Request')
 
 @section('content')
+<style>
+    table tbody .btn,  table tbody td{
+        font-size: 14px;
+    }
+    table tbody button {
+        margin-top: 7px;
+    }
+    table tbody input[type='checkbox'] {
+        margin: 15px;
+        height: 12px;
+    }
+</style>
     <div class="row">
         <div class="col-sm-12">
             <div class="card-box table-responsive">
@@ -18,11 +30,12 @@
                     <thead>
                         <tr>
                             <th>Sr. No</th>
-                            <th>Case Id</th>
+                            <th>Case ID</th>
+                            <th>Ref ID</th>
                             <th>Date</th>
                             <th>Case Details</th>
                             <th>Party Details</th>
-                            <th>Comment</th>
+                            <!-- <th>Comment</th> -->
                             <th>Session</th>
                             <th>Settlement Agreement</th>
                             <th>Status</th>
@@ -369,32 +382,32 @@
                         return d;
                     }
                 },
-                {
-                    "data": "case.id",
-                    render: function(data, type, row) {
-                        var button = "";
-                        button = button +
-                            `<div class="position-relative">  <button type="button"  data-type="1" data-typename="Private" data-id="` +
-                            data +
-                            `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
-                        button += ` <span class="badge-success badge private_total">` + row.private_count +
-                            `</span>`;
-                        if (row.private_view_count != 0) {
-                            button += ` <span class="badge badge-danger private_unseen">` + row
-                                .private_view_count + `</span>`;
-                        }
-                        button = button +
-                            ` <button type="button" data-type="0" data-typename="Share" data-id="` + data +
-                            `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
-                        if (row.share_view_count !== 0) {
-                            button += ` <span class="badge  badge-danger share_unseen">` + row
-                                .share_view_count + ` </span>`;
-                        }
-                        button += ` <span class="badge badge-success share_total">` + row.share_count +
-                            `</span></div>`;
-                        return button;
-                    }
-                },
+                // {
+                //     "data": "case.id",
+                //     render: function(data, type, row) {
+                //         var button = "";
+                //         button = button +
+                //             `<div class="position-relative">  <button type="button"  data-type="1" data-typename="Private" data-id="` +
+                //             data +
+                //             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple waves-effect btn-sm">Private</button>`;
+                //         button += ` <span class="badge-success badge private_total">` + row.private_count +
+                //             `</span>`;
+                //         if (row.private_view_count != 0) {
+                //             button += ` <span class="badge badge-danger private_unseen">` + row
+                //                 .private_view_count + `</span>`;
+                //         }
+                //         button = button +
+                //             ` <button type="button" data-type="0" data-typename="Share" data-id="` + data +
+                //             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark waves-effect btn-sm">Share</button>`;
+                //         if (row.share_view_count !== 0) {
+                //             button += ` <span class="badge  badge-danger share_unseen">` + row
+                //                 .share_view_count + ` </span>`;
+                //         }
+                //         button += ` <span class="badge badge-success share_total">` + row.share_count +
+                //             `</span></div>`;
+                //         return button;
+                //     }
+                // },
                 {
                     "data": "case.id",
                     render: function(data, type, row) {
@@ -421,7 +434,7 @@
                             button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case
                                 .id +
                                 `" data-toggle="modal" data-target="#uploadSupportingDocsModal" class="btn btn-primary waves-effect btn-sm">View Supporting</button>`;
-                            button = button + ` <button value="` + row.case.id + `"  data-id="` + row.case
+                            button = button + ` <br><button value="` + row.case.id + `"  data-id="` + row.case
                                 .id +
                                 `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View Settelment</button>`;
                         }
@@ -437,13 +450,13 @@
                                 '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_ADMIN }}' || data[
                                     i].status == '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}'
                             ) {
-                                button = button + `<span class="badge badge-success">` + data[i]
-                                    .description + ` | At : ` + data[i].created + `</span><br>`;
+                                button = button + `<span class="">` + data[i]
+                                    .description + ` <br> At : ` + data[i].created + `</span><br>`;
                             }
                             if (data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}') {
-                                button = button + `<span class="badge badge-info ">` + data[i].description +
-                                    ` | At : ` + data[i].created + `</span><br>`;
+                                button = button + `<span class="">` + data[i].description +
+                                    ` <br> At : ` + data[i].created + `</span><br>`;
                             }
                             if (data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[
@@ -452,8 +465,8 @@
                                 data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i]
                                 .status == '{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}') {
-                                button = button + `<span class="badge badge-danger">` + data[i]
-                                    .description + ` | At : ` + data[i].created + `</span><br>`;
+                                button = button + `<span class="">` + data[i]
+                                    .description + ` <br> At : ` + data[i].created + `</span><br>`;
                             }
                         }
                         return button;

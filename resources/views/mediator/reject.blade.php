@@ -23,7 +23,8 @@ use App\Models\InvoledUser;
                     <thead>
                         <tr>
                             <th>Sr.No</th>
-                            <th>Case Id</th>
+                            <th>Case ID</th>
+                            <th>Ref ID</th>
                             <th>Date</th>
                             <th>Party Details</th>
                             <th>Status</th>
@@ -50,6 +51,7 @@ use App\Models\InvoledUser;
                             <tr>
                                 <td>{{ $sno }}</td>
                                 <td>{{ 'M' . sprintf('%06d', $data->mediation_case_id) }}</td>
+                                <td>{{$data->ref_id}}</td>
                                 <td>{{ date('d-m-Y', strtotime($data->created_at)) }}</td>
 
                                 <td>
