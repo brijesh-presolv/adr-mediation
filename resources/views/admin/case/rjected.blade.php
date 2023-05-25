@@ -10,6 +10,18 @@
 @section('page_title', 'Rejected Request')
 
 @section('content')
+<style>
+    table tbody .btn,  table tbody td{
+        font-size: 14px;
+    }
+    table tbody button {
+        margin-top: 7px;
+    }
+    table tbody input[type='checkbox'] {
+        margin: 15px;
+        height: 12px;
+    }
+</style>
 
 
     <section class="tabs-section">

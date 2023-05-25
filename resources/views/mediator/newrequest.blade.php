@@ -16,6 +16,19 @@
 <h4 class="page-title">New Request</h4>
 @endsection --}}
 
+<style>
+    table tbody .btn,  table tbody td{
+        font-size: 14px;
+    }
+    table tbody button {
+        margin-top: 7px;
+    }
+    table tbody input[type='checkbox'] {
+        margin: 15px;
+        height: 12px;
+    }
+</style>
+
 
 <div class="row">
     <div class="col-sm-12">
@@ -25,11 +38,12 @@
                 <thead>
                     <tr>
                         <th>Sr. No</th>
-                        <th>Select</th>
-                        <th>Case Id</th>
+                        <!-- <th>Select</th> -->
+                        <th>Case ID</th>
+                        <th>Ref ID</th>
                         <th>Date</th>
                         <th>Party Details</th>
-                        <th>Comments</th>
+                        <!-- <th>Comments</th> -->
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -436,10 +450,7 @@
         ],
         "iDisplayLength": 25,
         "columns": [{
-                "data": "key"
-            },
-            {
-                "data": "id",
+                "data": "key",
                 render: function(data, type, row) {
                     var button = "";
                     button = button + `<input type="checkbox" class="blkchk" data-caseid="` + row
@@ -447,12 +458,36 @@
                     return button;
                 }
             },
+            // {
+            //     "data": "id",
+            //     render: function(data, type, row) {
+            //         var button = "";
+            //         button = button + `<input type="checkbox" class="blkchk" data-caseid="` + row
+            //             .caseId + `" data-mediatorId="` + row.mediator_id + `">`;
+            //         return button;
+            //     }
+            // },
             {
                 "data": "caseId",
                 render: function(data, type, row) {
                     return "M" + pad(data, 6)
                 }
             },
+            {
+                    "data": "case.ref_id",
+                    render: function(data, type, row, meta) {
+                        if (data == null) {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;"> -- </p>`;
+                            return button;
+                        } else {
+                            var button = "";
+                            button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                            return button;
+                        }
+
+                    }
+                },
             {
                 "data": "date",
                 render: function(data, type, row) {
@@ -534,32 +569,32 @@
                     return d;
                 }
             },
-            {
-                "data": "caseId",
-                render: function(data, type, row) {
-                    var button = "";
-                    button = button +
-                        `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` +
-                        data +
-                        `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple btn-sm waves-effect ">Private</button>`;
-                    button += ` <span class="badge-success badge private_total">` + row.private_count +
-                        `</span>`;
-                    if (row.private_view_count != 0) {
-                        button += ` <span class="badge badge-danger private_unseen">` + row
-                            .private_view_count + `</span>`;
-                    }
-                    button = button +
-                        ` <button type="button" data-type="0" data-typename="Share" data-id="` + data +
-                        `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark btn-sm waves-effect ">Share</button>`;
-                    if (row.share_view_count !== 0) {
-                        button += ` <span class="badge  badge-danger share_unseen">` + row
-                            .share_view_count + ` </span>`;
-                    }
-                    button += ` <span class="badge badge-success share_total">` + row.share_count +
-                        `</span></div>`;
-                    return button;
-                }
-            },
+            // {
+            //     "data": "caseId",
+            //     render: function(data, type, row) {
+            //         var button = "";
+            //         button = button +
+            //             `<div class="position-relative"> <button type="button"  data-type="1" data-typename="Private" data-id="` +
+            //             data +
+            //             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-purple btn-sm waves-effect ">Private</button>`;
+            //         button += ` <span class="badge-success badge private_total">` + row.private_count +
+            //             `</span>`;
+            //         if (row.private_view_count != 0) {
+            //             button += ` <span class="badge badge-danger private_unseen">` + row
+            //                 .private_view_count + `</span>`;
+            //         }
+            //         button = button +
+            //             ` <button type="button" data-type="0" data-typename="Share" data-id="` + data +
+            //             `"  data-toggle="modal" data-target="#commentModal" class="btn btn-dark btn-sm waves-effect ">Share</button>`;
+            //         if (row.share_view_count !== 0) {
+            //             button += ` <span class="badge  badge-danger share_unseen">` + row
+            //                 .share_view_count + ` </span>`;
+            //         }
+            //         button += ` <span class="badge badge-success share_total">` + row.share_count +
+            //             `</span></div>`;
+            //         return button;
+            //     }
+            // },
             {
                 "data": "caseId",
                 render: function(data, type, row) {
