@@ -13,6 +13,18 @@ use App\Models\InvoledUser;
 @section('page_title', 'Rejected')
 
 @section('content')
+<style>
+    table tbody .btn,  table tbody td{
+        font-size: 14px;
+    }
+    table tbody button {
+        margin-top: 7px;
+    }
+    table tbody input[type='checkbox'] {
+        margin: 15px;
+        height: 12px;
+    }
+</style>
     <div class="row">
         <div class="col-sm-12">
             <div class="card-box table-responsive">
@@ -51,7 +63,7 @@ use App\Models\InvoledUser;
                             ?>
                             <td>{{ $i++ }}</td>
                             <td><?= 'M' . sprintf('%06d', $value->caseid) ?></td>
-                            <td><?= $value->ref_id; ?></td>
+                            <td><?php echo $value->ref_id; ?></td>
                             <td><?= date('d-m-Y', strtotime($value->date)) ?></td>
                             <td><a class="btn   btn-sm btn-primary label label-success {{ count($value->party) > 0 ? '' : 'disabled' }}"
                                     target="_blank" href="{{ route('user.casedetails', $value->caseid) }}">View</a></td>

@@ -13,6 +13,18 @@ use App\Models\InvoledUser;
 @section('page_title', 'Ongoing')
 
 @section('content')
+<style>
+    table tbody .btn,  table tbody td{
+        font-size: 14px;
+    }
+    table tbody button {
+        margin-top: 7px;
+    }
+    table tbody input[type='checkbox'] {
+        margin: 15px;
+        height: 12px;
+    }
+</style>
     <div class="row">
         <div class="col-sm-12">
             <div class="row">

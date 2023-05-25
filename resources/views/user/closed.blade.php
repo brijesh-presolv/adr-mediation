@@ -13,6 +13,18 @@ use App\Models\InvoledUser;
 @section('page_title', 'Closed')
 
 @section('content')
+<style>
+    table tbody .btn,  table tbody td{
+        font-size: 14px;
+    }
+    table tbody button {
+        margin-top: 7px;
+    }
+    table tbody input[type='checkbox'] {
+        margin: 15px;
+        height: 12px;
+    }
+</style>
     <div class="row">
         <div class="col-sm-12">
             <div class="card-box table-responsive">
@@ -388,10 +400,10 @@ use App\Models\InvoledUser;
                         var button = "";
                         if (data.status === 6) {
                             button = button + `<span class="">` + data.description +
-                                `| @lang('case.At'): ` + data.created + `</span>`;
+                                `<br> @lang('case.At'): ` + data.created + `</span>`;
                         } else {
                             button = button + `<span class="">` + data.description +
-                                `| @lang('case.At'): ` + data.created + `</span>`;
+                                `<br> @lang('case.At'): ` + data.created + `</span>`;
                         }
                         return button;
                     }
