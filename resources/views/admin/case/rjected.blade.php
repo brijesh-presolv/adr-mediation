@@ -241,13 +241,13 @@
                                 '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_ADMIN }}' || data[
                                     i].status == '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}'
                             ) {
-                                button = button + `<span class="badge badge-success">` + data[i]
-                                    .description + ` | At : ` + data[i].created + `</span><br>`;
+                                button = button + `<span class="">` + data[i]
+                                    .description + ` <br> At : ` + data[i].created + `</span><br>`;
                             }
                             if (data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}') {
-                                button = button + `<span class="badge badge-info ">` + data[i].description +
-                                    ` | At : ` + data[i].created + `</span><br>`;
+                                button = button + `<span class="">` + data[i].description +
+                                    ` <br> At : ` + data[i].created + `</span><br>`;
                             }
                             if (data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' || data[
@@ -256,8 +256,8 @@
                                 data[i].status ==
                                 '{{ App\Models\Mediation_status_log::STATUS_WITHDRAWN }}' || data[i]
                                 .status == '{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}') {
-                                button = button + `<span class="badge badge-danger">` + data[i]
-                                    .description + ` | At : ` + data[i].created + `</span><br>`;
+                                button = button + `<span class="">` + data[i]
+                                    .description + ` <br> At : ` + data[i].created + `</span><br>`;
                             }
                         }
                         return button;
@@ -385,17 +385,17 @@
                                             i].status ==
                                         '{{ App\Models\Mediation_status_log::STATUS_RESOLVED }}'
                                     ) {
-                                        button = button + `<span class="badge badge-success">` +
+                                        button = button + `<span class="">` +
                                             data[i]
-                                            .description + ` | At : ` + data[i].created +
+                                            .description + ` <br> At : ` + data[i].created +
                                             `</span><br>`;
                                     }
                                     if (data[i].status ==
                                         '{{ App\Models\Mediation_status_log::STATUS_ACCEPTE_BY_MEDIATOR }}'
                                     ) {
-                                        button = button + `<span class="badge badge-info ">` + data[
+                                        button = button + `<span class="">` + data[
                                                 i].description +
-                                            ` | At : ` + data[i].created + `</span><br>`;
+                                            ` <br> At : ` + data[i].created + `</span><br>`;
                                     }
                                     if (data[i].status ==
                                         '{{ App\Models\Mediation_status_log::STATUS_REJECT_BY_ADMIN }}' ||
@@ -408,9 +408,9 @@
                                         .status ==
                                         '{{ App\Models\Mediation_status_log::STATUS_UNRESOLVED }}'
                                     ) {
-                                        button = button + `<span class="badge badge-danger">` +
+                                        button = button + `<span class="">` +
                                             data[i]
-                                            .description + ` | At : ` + data[i].created +
+                                            .description + ` <br> At : ` + data[i].created +
                                             `</span><br>`;
                                     }
                                 }
