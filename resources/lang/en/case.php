@@ -52,7 +52,7 @@ return [
     "btn_case_details_view" => "Case Details View",
     "btn_case_details" => "Case Details",
     "btn_case_details_edit" => "Case Details Edit",
-    "btn_disclosure" => "Disclosure",
+    "btn_disclosure" => "Consent and Disclosure",
     "btn_private" => "Private",
     "btn_share" => "Share",
     "btn_close" => "Close",

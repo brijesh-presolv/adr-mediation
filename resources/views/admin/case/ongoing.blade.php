@@ -1318,8 +1318,8 @@
                         {
                             "data": "date",
                             render: function(data, type, row) {
-                                var button = `<p>Date of Creation<br>` + data +
-                                    `</p><p>Date of Approval<br>` + row.admin_approve + `</p>`;
+                                var button = `<p><b>Date of Creation</b><br>` + data +
+                                    `</p><p><b>Date of Approval</b><br>` + row.admin_approve + `</p>`;
                                 return button;
                             }
                         },
