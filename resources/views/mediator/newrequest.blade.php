@@ -455,7 +455,7 @@
                     var button = "";
                     button = button + `<input type="checkbox" class="blkchk" data-caseid="` + row
                         .caseId + `" data-mediatorId="` + row.mediator_id + `">`;
-                    return button;
+                    return meta.row + meta.settings._iDisplayStart + 1 + button;
                 }
             },
             // {
