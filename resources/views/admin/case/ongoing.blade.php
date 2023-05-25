@@ -10,6 +10,11 @@
 @section('page_title', 'Ongoing Request')
 
 @section('content')
+<style>
+    table tbody .btn,  table tbody td{
+        font-size: 14px;
+    }
+</style>
 
     <section class="tabs-section">
 
@@ -219,10 +224,10 @@
                                 <th>@lang('case.serial_number')</th>
                                 <!-- <th>Select</th> -->
                                 <th>@lang('case.case_id') </th>
+                                <th>@lang('case.ref_id')</th>
                                 <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                                <th>@lang('case.ref_id')</th>
                                 <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Click here to view the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -1289,14 +1294,6 @@
                             }
                         },
                         {
-                            "data": "date",
-                            render: function(data, type, row) {
-                                var button = `<p>Date of Creation<br>` + data +
-                                    `</p><p>Date of Approval<br>` + row.admin_approve + `</p>`;
-                                return button;
-                            }
-                        },
-                        {
                             "data": "case.ref_id",
                             render: function(data, type, row, meta) {
                                 if (data == null) {
@@ -1311,6 +1308,15 @@
 
                             }
                         },
+                        {
+                            "data": "date",
+                            render: function(data, type, row) {
+                                var button = `<p>Date of Creation<br>` + data +
+                                    `</p><p>Date of Approval<br>` + row.admin_approve + `</p>`;
+                                return button;
+                            }
+                        },
+                        
                         {
                             "data": "case.id",
                             render: function(data) {
