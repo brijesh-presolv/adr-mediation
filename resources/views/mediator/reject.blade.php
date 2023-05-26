@@ -14,6 +14,18 @@ use App\Models\InvoledUser;
 @section('pageTitleOnDashboard', 'Rejected')
 
 @section('content')
+<style>
+    table tbody .btn,  table tbody td{
+        font-size: 14px;
+    }
+    table tbody button {
+        margin-top: 7px;
+    }
+    table tbody input[type='checkbox'] {
+        margin: 15px;
+        height: 12px;
+    }
+</style>
     <div class="row">
         <div class="col-sm-12">
             <div class="card-box table-responsive">
@@ -59,17 +71,34 @@ use App\Models\InvoledUser;
                                     $invuser = InvoledUser::select('name', 'isOnboarded', 'isClaimant')
                                         ->where(['userPlanid' => $data->mediation_case_id])
                                         ->get();
-                                    
+                                        $d = "";
+                                        $d_ip = "<strong>Initiating Party(s) :</strong><br/>";
+                                        $d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
                                     foreach ($invuser as $key => $value) {
+                                        if($value->isOnboarded==1){
+                                            $class_name = "text-success";
+                                        } else {
+                                            $class_name = "text-danger";
+                                        }
+                                        if($value->isClaimant == 0) {
+                                            if($value->name != null) {
+                                                $d_ip = $d_ip.'<span class="'.$class_name.'">'.$value->name.'</span></br>';
+                                                }
+                                        } else {
+                                            if($value->name != null) {
+                                               $d_rp = $d_rp. '<span class="'.$class_name.'">'.$value->name.'</span></br>';
+                                                }
+                                        }
+                                        /*
                                         if ($value->isOnboarded == 1) {
                                             if ($value->name != null) {
                                                 if ($value->organization != null && $value->isClaimant == 0) {
                                                     echo '<span class="text-success">' . $value->organization . '</span></br>';
-                                                    /************ Added for IP Name **********************/
+                                                    
                                                     if ($value->name != '') {
                                                         echo '<span class="text-success">' . $value->name . '</span></br>';
                                                     }
-                                                    /************ Added for IP Name **********************/
+                                                    
                                                 } else {
                                                     echo '<span class="text-success">' . $value->name . '</span></br>';
                                                 }
@@ -84,7 +113,10 @@ use App\Models\InvoledUser;
                                                 }
                                             }
                                         }
+                                        */
                                     }
+                                    $d = $d + $d_ip + $d_rp;
+                                    echo $d;
                                     ?>
                                 </td>
                                 <td><span class="text-danger">Rejected</span><br>{{ $data->updated_at }}</td>
