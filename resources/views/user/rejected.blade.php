@@ -80,9 +80,9 @@ use App\Models\InvoledUser;
                             $d = "";
                             $d_ip = "<strong>Initiating Party(s) :</strong><br/>";
                             $d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
-                            dd($value->party);
+                            //dd($value->party);
                             foreach ($value->party as $key => $v) {
-                                if($v->isOnboarded==1){
+                                if($v->isOnboarded == 1){
                                     $class_name = "text-success";
                                 } else {
                                     $class_name = "text-danger";
@@ -96,33 +96,7 @@ use App\Models\InvoledUser;
                                        $d_rp = $d_rp. '<span class="'.$class_name.'">'.$v->name.'</span></br>';
                                         }
                                 }
-                                echo $d_ip;
-                                echo $d_rp;
-                                /*
-                                if ($v->isOnboarded == 1) {
-                                    if ($v->name != '') {
-                                        if ($v->organization != null && $v->isClaimant == 0) {
-                                            echo '<span class="text-success">' . $v->organization . '</span></br>';
-                                            
-                                            if ($v->name != '') {
-                                                echo '<span class="text-success">' . $v->name . '</span></br>';
-                                            }
-                                            
-                                        } else {
-                                            echo '<span class="text-success">' . $v->name . '</span></br>';
-                                        }
-                                    }
-                                } else {
-                                    if ($v->name != '') {
-                                    //     echo '<span class="text-danger">' . $v->name . '</span></br>';                          
-                                    if ($v->isClaimant == 0) {
-                                        echo '<span class="text-success">' . $v->name . '</span></br>';
-                                    } else {
-                                        echo '<span class="text-danger">' . $v->name . '</span></br>';
-                                    }
-                                }
-                                }
-                                */
+                               
                             }
                             $d = $d + $d_ip + $d_rp;
                             echo $d;
