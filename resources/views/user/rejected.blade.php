@@ -80,6 +80,7 @@ use App\Models\InvoledUser;
                             $d = "";
                             $d_ip = "<strong>Initiating Party(s) :</strong><br/>";
                             $d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
+                            dd($value->party);
                             foreach ($value->party as $key => $v) {
                                 if($v->isOnboarded==1){
                                     $class_name = "text-success";
