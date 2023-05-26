@@ -277,7 +277,32 @@ use App\Models\InvoledUser;
                     "data": "party",
                     render: function(data, type, row) {
                         var d = "";
+                        var d_ip = "<strong>Initiating Party(s) :</strong><br/>";
+                        var d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
                         for (i in data) {
+                            if (data[i].isOnboarded == 1) {
+                                var class_name = "text-success";
+                            } else {
+                                var class_name = "text-danger";
+                            }
+
+                            if (data[i].name != null && data[i].isClaimant == 0) {
+                                d_ip = d_ip +
+                                `<span class="party_name" data-inid="` +
+                                data[
+                                    i].id + `" data-id="` + data[i].userId +
+                                `">` + data[i]
+                                .name + `</span><br>`;
+
+                            } else {
+                                d_rp = d_rp +
+                                `<span class="`+ class_name + ` party_name" data-inid="` +
+                                data[i]
+                                .id + `" data-id="` + data[i].userId + `">` + data[
+                                    i].name +
+                                `</span><br>`;
+                            }
+                            /*
                             if (data[i].isOnboarded == 1) {
                                 if (data[i].name != null) {
                                     if (data[i].organization != null && data[i].isClaimant == 0) {
@@ -285,13 +310,13 @@ use App\Models\InvoledUser;
                                                 i].id + `" data-id="` + data[i].userId + `">` + data[i]
                                             .organization + `</span><br>`;
                                             
-                                        /************ Added for IP Name **********************/
+                                       
                                         var ip_name = data[i].name;
                                         if(ip_name != ""){
                                             d = d + `<span class="text-success party_name" data-inid="` + data[
                                                 i].id + `" data-id="` + data[i].userId + `">` + ip_name + `</span><br>`;
                                         }
-                                        /************ Added for IP Name **********************/
+                                        
                                     } else {
                                         d = d + `<span class="text-success party_name" data-inid="` + data[
                                                 i].id + `" data-id="` + data[i].userId + `">` + data[i]
@@ -313,7 +338,9 @@ use App\Models\InvoledUser;
                                     }
                                 }
                             }
+                            */
                         }
+                        d = d + d_ip + d_rp;
                         return d;
                     }
                 },

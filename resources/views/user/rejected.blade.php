@@ -77,17 +77,34 @@ use App\Models\InvoledUser;
 
 
                             <td><?php
-                            
+                            $d = "";
+                            $d_ip = "<strong>Initiating Party(s) :</strong><br/>";
+                            $d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
                             foreach ($value->party as $key => $v) {
+                                if($v->isOnboarded==1){
+                                    $class_name = "text-success";
+                                } else {
+                                    $class_name = "text-danger";
+                                }
+                                if($v->isClaimant == 0) {
+                                    if($v->name != null) {
+                                        $d_ip = $d_ip.'<span class="'.$class_name.'">'.$v->name.'</span></br>';
+                                        }
+                                } else {
+                                    if($v->name != null) {
+                                       $d_rp = $d_rp. '<span class="'.$class_name.'">'.$v->name.'</span></br>';
+                                        }
+                                }
+                                /*
                                 if ($v->isOnboarded == 1) {
                                     if ($v->name != '') {
                                         if ($v->organization != null && $v->isClaimant == 0) {
                                             echo '<span class="text-success">' . $v->organization . '</span></br>';
-                                            /************ Added for IP Name **********************/
+                                            
                                             if ($v->name != '') {
                                                 echo '<span class="text-success">' . $v->name . '</span></br>';
                                             }
-                                            /************ Added for IP Name **********************/
+                                            
                                         } else {
                                             echo '<span class="text-success">' . $v->name . '</span></br>';
                                         }
@@ -102,8 +119,10 @@ use App\Models\InvoledUser;
                                     }
                                 }
                                 }
+                                */
                             }
-                            
+                            $d = $d + $d_ip + $d_rp;
+                            echo $d;
                             ?></td>
 
                             <td>
