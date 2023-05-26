@@ -883,6 +883,21 @@
                             }
                         },
                         {
+                            "data": "case.ref_id",
+                            render: function(data, type, row, meta) {
+                                if (data == null) {
+                                    var button = "";
+                                    button = button + `<p style="font-size: 16px;"> -- </p>`;
+                                    return button;
+                                } else {
+                                    var button = "";
+                                    button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                                    return button;
+                                }
+
+                            }
+                        },
+                        {
                             "data": "date"
                         },
                         {
