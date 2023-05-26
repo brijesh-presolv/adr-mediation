@@ -95,6 +95,8 @@ use App\Models\InvoledUser;
                                        $d_rp = $d_rp. '<span class="'.$class_name.'">'.$v->name.'</span></br>';
                                         }
                                 }
+                                echo $d_ip;
+                                echo $d_rp;
                                 /*
                                 if ($v->isOnboarded == 1) {
                                     if ($v->name != '') {
