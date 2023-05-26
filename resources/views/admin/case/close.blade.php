@@ -701,7 +701,7 @@
                         // Batch Name //
                         var batch =
                         `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
-                        row.case.batch_name + `</p> </div>`;
+                        row.batch_name + `</p> </div>`;
                         // Batch Name //
                         
                         return button + batch;
@@ -1024,7 +1024,14 @@
                                 var button = ` <a href="{{ url('admin/casedetails/') }}/` +
                                     data +
                                     `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                                return button;
+                                
+                                // Batch Name //
+                                var batch =
+                                `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
+                                row.batch_name + `</p> </div>`;
+                                // Batch Name //
+                                
+                                return button + batch;
                             }
                         },
                         {

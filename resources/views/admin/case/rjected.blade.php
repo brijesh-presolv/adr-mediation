@@ -396,7 +396,7 @@
                                 // Batch Name //
                                 var batch =
                                 `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
-                                row.case.batch_name + `</p> </div>`;
+                                row.batch_name + `</p> </div>`;
                                 // Batch Name //
                                 
                                 return button + batch;
