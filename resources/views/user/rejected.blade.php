@@ -98,7 +98,7 @@ use App\Models\InvoledUser;
                                 }
                                
                             }
-                            $d = $d + $d_ip + $d_rp;
+                            $d = $d . $d_ip . $d_rp;
                             echo $d;
                             ?></td>
 
