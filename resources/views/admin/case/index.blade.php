@@ -255,7 +255,7 @@
                                 <th>@lang('case.serial_number')</th>
                                 {{-- <th>Select</th> --}}
                                 <th>@lang('case.case_id')</th>
-                                <th>@lang('case.ref_id')</th>
+                                <!-- <th>@lang('case.ref_id')</th> -->
                                 <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -882,21 +882,21 @@
                                 return button;
                             }
                         },
-                        {
-                            "data": "case.ref_id",
-                            render: function(data, type, row, meta) {
-                                if (data == null) {
-                                    var button = "";
-                                    button = button + `<p style="font-size: 16px;"> -- </p>`;
-                                    return button;
-                                } else {
-                                    var button = "";
-                                    button = button + `<p style="font-size: 16px;">` + data + `</p>`;
-                                    return button;
-                                }
+                        // {
+                        //     "data": "case.ref_id",
+                        //     render: function(data, type, row, meta) {
+                        //         if (data == null) {
+                        //             var button = "";
+                        //             button = button + `<p style="font-size: 16px;"> -- </p>`;
+                        //             return button;
+                        //         } else {
+                        //             var button = "";
+                        //             button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                        //             return button;
+                        //         }
 
-                            }
-                        },
+                        //     }
+                        // },
                         {
                             "data": "date"
                         },
@@ -920,12 +920,12 @@
                                     `" title="@lang('case.btn_case_details_edit')"><i class="mdi mdi-content-save-edit-outline"></i></a> `;
                                 
                                 // Batch Name //
-                                var batch =
-                                `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
-                                row.case.batch_name + `</p> </div>`;
+                                // var batch =
+                                // `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
+                                // row.case.batch_name + `</p> </div>`;
                                 // Batch Name //
                                 
-                                return button + batch;
+                                return button;
                             }
                         },
                         {
