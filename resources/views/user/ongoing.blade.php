@@ -55,17 +55,25 @@ use App\Models\InvoledUser;
                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead>
                         <tr>
-                            <th>@lang('case.Sr. No')</th>
+                            <th>@lang('case.Sr. No.')</th>
                             <!-- <th>Select</th> -->
                             <th>@lang('case.case_id')</th>
                             <th>@lang('case.ref_id')</th>
-                            <th>@lang('case.date')</th>
-                            <th>@lang('case.case_details')</th>
+                            <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Case Details'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                             <th>@lang('case.party_details')</th>
                             <th>@lang('case.mediator')</th>
                             <!-- <th>Comment</th> -->
-                            <th>@lang('case.session')</th>
-                            <th>@lang('case.action')</th>
+                            <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the details of the mediation session."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                             <th>@lang('case.status_logs')</th>
                         </tr>
                     </thead>

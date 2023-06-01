@@ -213,10 +213,12 @@
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
-                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                        data-original-title="Click here to view the 'Case Details'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.party_details')</th>
-                                <th>@lang('Supporting Document')</th>
+                                <th>@lang('Supporting Document') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to upload any document/s in relation to the case."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -260,10 +262,12 @@
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
-                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                        data-original-title="Click here to view the 'Case Details'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.party_details')</th>
-                                <th>@lang('Supporting Document')</th>
+                                <th>@lang('Supporting Document') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to upload any document/s in relation to the case."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>

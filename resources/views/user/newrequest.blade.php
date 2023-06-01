@@ -86,14 +86,20 @@ use App\Models\InvoledUser;
             <table  id="users" id="" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
-                        <th>@lang('case.Sr. No')</th>
+                        <th>@lang('case.Sr. No.')</th>
                         <th>@lang('case.case_id')</th>
                         <th>@lang('case.ref_id')</th>
-                        <th>@lang('case.date')</th>
-                        <th>@lang('case.case_details')</th>
+                        <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                        <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Case Details'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                         <th>@lang('case.party_details')</th>
                         <th>@lang('case.status_logs')</th>
-                        <th>@lang('Supporting Document')</th>
+                        <th>@lang('Supporting Document') <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to upload any document/s in relation to the case."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                     </tr>
                 </thead>
             </table>

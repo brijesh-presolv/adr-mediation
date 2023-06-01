@@ -63,7 +63,7 @@
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
-                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                        data-original-title="Click here to view the 'Case Details'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.party_details')</th>
                                 <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
@@ -88,7 +88,7 @@
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.case_details') <a href="#" data-toggle="tooltip" title=""
-                                        data-original-title="Click here to view the 'Request for Mediation'."><i
+                                        data-original-title="Click here to view the 'Case Details'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.party_details')</th>
                                 <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""

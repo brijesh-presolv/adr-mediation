@@ -37,7 +37,9 @@ use App\Models\InvoledUser;
                             <th>Sr.No</th>
                             <th>Case ID</th>
                             <th>Ref ID</th>
-                            <th>Date</th>
+                            <th>Date <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                             <th>Party Details</th>
                             <th>Status</th>
                         </tr>

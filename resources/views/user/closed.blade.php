@@ -36,13 +36,21 @@ use App\Models\InvoledUser;
                             <th>Sr. No</th>
                             <th>Case ID</th>
                             <th>Ref ID</th>
-                            <th>Date</th>
-                            <th>Case Details</th>
+                            <th>Date <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            <th>Case Details <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Case Details'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                             <th>Party Details</th>
                             <th>Mediator</th>
                             <!-- <th>Comment</th> -->
-                            <th>Session</th>
-                            <th>Settelment Agreement</th>
+                            <th>Session <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the details of the mediation session."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a>	</th>
+                            <th>Settlement Agreement <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to upload any document/s in relation to the case."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
 
                             <th>Status</th>
                         </tr>
