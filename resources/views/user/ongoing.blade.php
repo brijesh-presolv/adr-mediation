@@ -55,7 +55,7 @@ use App\Models\InvoledUser;
                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead>
                         <tr>
-                            <th>@lang('case.Sr. No.')</th>
+                            <th>Sr. No.</th>
                             <!-- <th>Select</th> -->
                             <th>@lang('case.case_id')</th>
                             <th>@lang('case.ref_id')</th>

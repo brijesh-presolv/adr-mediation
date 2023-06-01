@@ -86,7 +86,7 @@ use App\Models\InvoledUser;
             <table  id="users" id="" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
-                        <th>@lang('case.Sr. No.')</th>
+                        <th>Sr. No.</th>
                         <th>@lang('case.case_id')</th>
                         <th>@lang('case.ref_id')</th>
                         <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
