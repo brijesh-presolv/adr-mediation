@@ -32,7 +32,7 @@
                             <th>Sr. No.</th>
                             <!-- <th>Select</th> -->
                             <th>Case ID</th>
-                            <th>Ref ID</th>
+                            <!-- <th>Ref ID</th> -->
                             <th>Date <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -45,7 +45,7 @@
                                         data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a>	</th>
                             <th>Action <a href="#" data-toggle="tooltip" title=""
-                                        data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
+                                        data-original-title="Click here to upload any document/s in relation to the case."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                         </tr>
                     </thead>
@@ -702,21 +702,21 @@
                         return "M" + pad(data, 6);
                     }
                 },
-                {
-                    "data": "case.ref_id",
-                    render: function(data, type, row, meta) {
-                        if (data == null) {
-                            var button = "";
-                            button = button + `<p style="font-size: 16px;"> -- </p>`;
-                            return button;
-                        } else {
-                            var button = "";
-                            button = button + `<p style="font-size: 16px;">` + data + `</p>`;
-                            return button;
-                        }
+                // {
+                //     "data": "case.ref_id",
+                //     render: function(data, type, row, meta) {
+                //         if (data == null) {
+                //             var button = "";
+                //             button = button + `<p style="font-size: 16px;"> -- </p>`;
+                //             return button;
+                //         } else {
+                //             var button = "";
+                //             button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                //             return button;
+                //         }
 
-                    }
-                },
+                //     }
+                // },
                 {
                     "data": "date"
                 },

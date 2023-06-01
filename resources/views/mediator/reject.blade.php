@@ -36,7 +36,7 @@ use App\Models\InvoledUser;
                         <tr>
                             <th>Sr.No</th>
                             <th>Case ID</th>
-                            <th>Ref ID</th>
+                            <!-- <th>Ref ID</th> -->
                             <th>Date <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -65,7 +65,7 @@ use App\Models\InvoledUser;
                             <tr>
                                 <td>{{ $sno }}</td>
                                 <td>{{ 'M' . sprintf('%06d', $data->mediation_case_id) }}</td>
-                                <td>{{$data->ref_id}}</td>
+                                <!-- <td>{{$data->ref_id}}</td> -->
                                 <td>{{ date('d-m-Y', strtotime($data->created_at)) }}</td>
 
                                 <td>

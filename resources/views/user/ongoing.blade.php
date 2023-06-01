@@ -58,7 +58,7 @@ use App\Models\InvoledUser;
                             <th>Sr. No.</th>
                             <!-- <th>Select</th> -->
                             <th>@lang('case.case_id')</th>
-                            <th>@lang('case.ref_id')</th>
+                            <!-- <th>@lang('case.ref_id')</th> -->
                             <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -72,7 +72,7 @@ use App\Models\InvoledUser;
                                         data-original-title="Click here to view the details of the mediation session."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                             <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
-                                        data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
+                                        data-original-title="Click here to upload any document/s in relation to the case."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                             <th>@lang('case.status_logs')</th>
                         </tr>
@@ -362,21 +362,21 @@ use App\Models\InvoledUser;
                         return button;
                     }
                 },
-                {
-                    "data": "case.ref_id",
-                    render: function(data, type, row, meta) {
-                        if (data == null) {
-                            var button = "";
-                            button = button + `<p style="font-size: 16px;"> -- </p>`;
-                            return button;
-                        } else {
-                            var button = "";
-                            button = button + `<p style="font-size: 16px;">` + data + `</p>`;
-                            return button;
-                        }
+                // {
+                //     "data": "case.ref_id",
+                //     render: function(data, type, row, meta) {
+                //         if (data == null) {
+                //             var button = "";
+                //             button = button + `<p style="font-size: 16px;"> -- </p>`;
+                //             return button;
+                //         } else {
+                //             var button = "";
+                //             button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                //             return button;
+                //         }
 
-                    }
-                },
+                //     }
+                // },
                 {
                     "data": "date"
                 },

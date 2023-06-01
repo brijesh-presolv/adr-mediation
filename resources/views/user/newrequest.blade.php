@@ -88,7 +88,7 @@ use App\Models\InvoledUser;
                     <tr>
                         <th>Sr. No.</th>
                         <th>@lang('case.case_id')</th>
-                        <th>@lang('case.ref_id')</th>
+                        <!-- <th>@lang('case.ref_id')</th> -->
                         <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -172,21 +172,21 @@ use App\Models\InvoledUser;
                         return button;
                     }
                 },
-                {
-                    "data": "case.ref_id",
-                    render: function(data, type, row, meta) {
-                        if (data == null) {
-                            var button = "";
-                            button = button + `<p style="font-size: 16px;"> -- </p>`;
-                            return button;
-                        } else {
-                            var button = "";
-                            button = button + `<p style="font-size: 16px;">` + data + `</p>`;
-                            return button;
-                        }
+                // {
+                //     "data": "case.ref_id",
+                //     render: function(data, type, row, meta) {
+                //         if (data == null) {
+                //             var button = "";
+                //             button = button + `<p style="font-size: 16px;"> -- </p>`;
+                //             return button;
+                //         } else {
+                //             var button = "";
+                //             button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                //             return button;
+                //         }
 
-                    }
-                },
+                //     }
+                // },
                 {
                     "data": "date"
                 },

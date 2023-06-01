@@ -34,7 +34,7 @@ use App\Models\InvoledUser;
                         <tr>
                             <th>Sr. No.</th>
                             <th>Case ID</th>
-                            <th>Ref ID</th>
+                            <!-- <th>Ref ID</th> -->
                             <th>Date <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -66,6 +66,7 @@ use App\Models\InvoledUser;
                             ?>
                             <td>{{ $i++ }}</td>
                             <td><?= 'M' . sprintf('%06d', $value->caseid) ?></td>
+                            <?php /*
                             <td>
                                 <?php
                                     if($value->ref_id == null){
@@ -75,6 +76,7 @@ use App\Models\InvoledUser;
                                     }   
                                 ?>
                             <?php echo $ref_id; ?></td>
+                            */ ?>
                             <td><?= date('d-m-Y', strtotime($value->date)) ?></td>
                             <td><a class="btn   btn-sm btn-primary label label-success {{ count($value->party) > 0 ? '' : 'disabled' }}"
                                     target="_blank" href="{{ route('user.casedetails', $value->caseid) }}">View</a></td>
