@@ -185,7 +185,7 @@
                                         data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
-                                        data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
+                                        data-original-title="Click here to upload any document/s in relation to the case."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Current status of the Mediation appears here."><i
@@ -253,7 +253,7 @@
                                         data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.action') <a href="#" data-toggle="tooltip" title=""
-                                        data-original-title="Click 'Confirm' to register the Mediation (after assigning an mediator). Click 'Reject' to decline the Mediation."><i
+                                        data-original-title="Click here to upload any document/s in relation to the case."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
                                 <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Current status of the Mediation appears here."><i
