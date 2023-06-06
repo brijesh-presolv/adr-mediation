@@ -179,7 +179,7 @@
                                 <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                                <th>@lang('case.settlement_agreement')</th>
+                                <th>Documents</th>
                                 <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Current status of the Mediation appears here."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -229,7 +229,7 @@
                                 <th>@lang('case.session') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Schedule meeting date and time. Parties will be notified via email."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
-                                <th>@lang('case.settlement_agreement')</th>
+                                <th>Documents</th>
                                 <th>@lang('case.status_logs') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Current status of the Mediation appears here."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>

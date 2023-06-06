@@ -48,7 +48,7 @@ use App\Models\InvoledUser;
                             <th>Session <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Click here to view the details of the mediation session."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a>	</th>
-                            <th>Settlement Agreement <a href="#" data-toggle="tooltip" title=""
+                            <th>Documents <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Click here to view document/s uploaded in relation to the case."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
 
