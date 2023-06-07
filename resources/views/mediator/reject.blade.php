@@ -52,25 +52,23 @@ use App\Models\InvoledUser;
                         @foreach ($rejected_case as $data)
                         <?php 
                         echo "<pre>DATA===>";print_R($data);
-                        dd($data);
+                        //dd($data);
                         ?>
                             <input type="hidden" name="" id="createdBy" value="{{ $data->mediator_id }}">
 
                             <tr>
                                 <td>{{ $sno }}</td>
                                 <td>{{ 'M' . sprintf('%06d', $data->mediation_case_id) }}</td>
-                                <!-- <td>{{$data->ref_id}}</td> -->
                                 <td>{{ date('d-m-Y', strtotime($data->created_at)) }}</td>
-
                                 <td>
                                     <?php
                                     $invuser = InvoledUser::select('name', 'isOnboarded', 'isClaimant')
                                         ->where(['userPlanid' => $data->mediation_case_id])
                                         ->get();
+                                        dd($invuser);
                                         $d = "";
                                         $d_ip = "<strong>Initiating Party(s) :</strong><br/>";
                                         $d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
-                                        dd($invuser);
                                     foreach ($invuser as $key => $value) {
                                         if($value->isOnboarded==1){
                                             $class_name = "text-success";
