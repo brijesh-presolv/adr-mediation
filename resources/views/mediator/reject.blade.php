@@ -76,6 +76,7 @@ use App\Models\InvoledUser;
                                         $d = "";
                                         $d_ip = "<strong>Initiating Party(s) :</strong><br/>";
                                         $d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
+                                        //dd($invuser);
                                     foreach ($invuser as $key => $value) {
                                         if($value->isOnboarded==1){
                                             $class_name = "text-success";
@@ -117,7 +118,7 @@ use App\Models\InvoledUser;
                                         }
                                         */
                                     }
-                                    $d = $d + $d_ip + $d_rp;
+                                    $d = $d . $d_ip . $d_rp;
                                     echo $d;
                                     ?>
                                 </td>

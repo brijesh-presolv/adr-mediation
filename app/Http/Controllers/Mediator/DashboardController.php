@@ -744,7 +744,7 @@ class DashboardController extends Controller
             )
             ->where(['mediators_mediation_cases_status.mediator_id' => $loginUser, 'mediators_mediation_cases_status.status' => 2])->orderBy('mediation_case.id', 'DESC')->get();
 
-        dd($rejected_case);
+        //dd($rejected_case);
         return view('mediator.reject', compact("rejected_case"));
     }
 
