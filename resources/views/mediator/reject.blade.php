@@ -36,7 +36,6 @@ use App\Models\InvoledUser;
                         <tr>
                             <th>Sr.No</th>
                             <th>Case ID</th>
-                            <!-- <th>Ref ID</th> -->
                             <th>Date <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -45,21 +44,9 @@ use App\Models\InvoledUser;
                         </tr>
                     </thead>
                     <tbody>
-                        <!--  <tr>
-                                <td>1</td>
-                                <td>MD000200</td>
-                                <td>12/04/2021</td>
-                                <td>Party 1 <br>
-                                    Party 2 <br>
-                                    Party 3 <br>
-                                </td>
-                                <td>rejected<br>
-                                    DateOfReject
-                                </td>
-                            </tr> -->
-
                         <?php $sno = 1; ?>
                         <?php
+                        dd($rejected_case);
                             echo "<pre>";print_R($rejected_case);
                         ?>
                         @foreach ($rejected_case as $data)
