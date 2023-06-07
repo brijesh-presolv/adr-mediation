@@ -92,32 +92,10 @@ use App\Models\InvoledUser;
                                                $d_rp = $d_rp. '<span class="'.$class_name.'">'.$value->name.'</span></br>';
                                                 }
                                         }
-                                        /*
-                                        if ($value->isOnboarded == 1) {
-                                            if ($value->name != null) {
-                                                if ($value->organization != null && $value->isClaimant == 0) {
-                                                    echo '<span class="text-success">' . $value->organization . '</span></br>';
-                                                    
-                                                    if ($value->name != '') {
-                                                        echo '<span class="text-success">' . $value->name . '</span></br>';
-                                                    }
-                                                    
-                                                } else {
-                                                    echo '<span class="text-success">' . $value->name . '</span></br>';
-                                                }
-                                            }
-                                        } else {
-                                            if ($value->name != null) {
-                                                // echo '<span class="text-danger">' . $value->name . '</span></br>';
-                                                if ($value->isClaimant == 0) {
-                                                    echo '<span class="text-success">' . $value->name . '</span></br>';
-                                                } else {
-                                                    echo '<span class="text-danger">' . $value->name . '</span></br>';
-                                                }
-                                            }
-                                        }
-                                        */
                                     }
+                                    echo $d_ip;
+                                    echo $d_rp;
+                                    exit;
                                     $d = $d . $d_ip . $d_rp;
                                     echo $d;
                                     ?>
