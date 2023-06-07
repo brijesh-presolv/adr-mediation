@@ -45,15 +45,8 @@ use App\Models\InvoledUser;
                     </thead>
                     <tbody>
                         <?php $sno = 1; ?>
-                        <?php
-                        //dd($rejected_case);
-                            echo "<pre>";print_R($rejected_case);
-                        ?>
+                        
                         @foreach ($rejected_case as $data)
-                        <?php 
-                        echo "<pre>DATA===>";print_R($data);
-                        //dd($data);
-                        ?>
                             <input type="hidden" name="" id="createdBy" value="{{ $data->mediator_id }}">
 
                             <tr>
@@ -71,28 +64,22 @@ use App\Models\InvoledUser;
                                         $d_ip = "<strong>Initiating Party(s) :</strong><br/>";
                                         $d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
                                     foreach ($invuser as $key => $value) {
-                                        echo "<prE>";print_R($value);
-                                        dd($value);
-                                        if($value->isOnboarded==1){
+                                        if($value['isOnboarded'] == 1){
                                             $class_name = "text-success";
                                         } else {
                                             $class_name = "text-danger";
                                         }
-                                        if($value->isClaimant == 0) {
-                                            if($value->name != null) {
-                                                $d_ip = $d_ip.'<span class="'.$class_name.'">'.$value->name.'</span></br>';
+                                        if($value['isClaimant'] == 0) {
+                                            if($value['name'] != null) {
+                                                $d_ip = $d_ip.'<span class="'.$class_name.'">'.$value['name'].'</span></br>';
                                                 }
                                         } else {
-                                            if($value->name != null) {
-                                               $d_rp = $d_rp. '<span class="'.$class_name.'">'.$value->name.'</span></br>';
+                                            if($value['name'] != null) {
+                                               $d_rp = $d_rp. '<span class="'.$class_name.'">'.$value['name'].'</span></br>';
                                                 }
                                         }
                                     }
-                                    dd($d_ip);
-                                    echo $d_ip;
-                                    echo $d_rp;
-                                    exit;
-
+                                    
                                     $d = $d . $d_ip . $d_rp;
                                     echo $d;
                                     ?>
