@@ -65,11 +65,14 @@ use App\Models\InvoledUser;
                                     $invuser = InvoledUser::select('name', 'isOnboarded', 'isClaimant')
                                         ->where(['userPlanid' => $data->mediation_case_id])
                                         ->get();
-                                        dd($invuser);
+
+                                       // dd($invuser);
                                         $d = "";
                                         $d_ip = "<strong>Initiating Party(s) :</strong><br/>";
                                         $d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
                                     foreach ($invuser as $key => $value) {
+                                        echo "<prE>";print_R($value);
+                                        dd($value);
                                         if($value->isOnboarded==1){
                                             $class_name = "text-success";
                                         } else {
