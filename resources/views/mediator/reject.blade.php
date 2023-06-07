@@ -59,6 +59,9 @@ use App\Models\InvoledUser;
                             </tr> -->
 
                         <?php $sno = 1; ?>
+                        <?php
+                            echo "<pre>";print_R($rejected_case);
+                        ?>
                         @foreach ($rejected_case as $data)
                             <input type="hidden" name="" id="createdBy" value="{{ $data->mediator_id }}">
 
@@ -93,9 +96,11 @@ use App\Models\InvoledUser;
                                                 }
                                         }
                                     }
+                                    dd($d_ip);
                                     echo $d_ip;
                                     echo $d_rp;
                                     exit;
+
                                     $d = $d . $d_ip . $d_rp;
                                     echo $d;
                                     ?>
