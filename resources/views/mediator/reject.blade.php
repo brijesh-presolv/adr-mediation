@@ -46,10 +46,14 @@ use App\Models\InvoledUser;
                     <tbody>
                         <?php $sno = 1; ?>
                         <?php
-                        dd($rejected_case);
+                        //dd($rejected_case);
                             echo "<pre>";print_R($rejected_case);
                         ?>
                         @foreach ($rejected_case as $data)
+                        <?php 
+                        echo "<pre>DATA===>";print_R($data);
+                        dd($data);
+                        ?>
                             <input type="hidden" name="" id="createdBy" value="{{ $data->mediator_id }}">
 
                             <tr>
