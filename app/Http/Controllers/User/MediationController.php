@@ -355,7 +355,6 @@ class MediationController extends Controller
 
 
             $r = $request->post();
-
             // dd(count($r['email']));
             //udpate mediation case
 
@@ -364,6 +363,9 @@ class MediationController extends Controller
             $med->disputeCategory = $r['disputeCategory'];
             $med->amount = $r['amount'];
             $med->updated_at = date("Y-m-d H:i:s");
+            $med->noOfParties = count($r['selected_party']);
+            $med->confirm_status = 1;
+            $med->bulk_flag = 0;
             $med->save();
 
             //if user profile update
