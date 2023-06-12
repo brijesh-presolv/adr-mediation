@@ -364,7 +364,7 @@ class MediationController extends Controller
             $med->amount = $r['amount'];
             $med->updated_at = date("Y-m-d H:i:s");
             $med->noOfParties = count($r['selected_party']);
-            $med->confirm_status = 1;
+            $med->confirm_status = 0;
             $med->bulk_flag = 0;
             $med->save();
 
