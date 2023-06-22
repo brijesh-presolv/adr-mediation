@@ -64,7 +64,7 @@ return [
     "btn_unresolved" => "Unresolved",
     "btn_resolved" => "Resolved",
     "btn_view_supporting" => "View Supporting",
-    "btn_view_settelment" => "View Settelment",
+    "btn_view_settelment" => "View Settlement",
     "btn_session_view" => "Session View",
     "btn_session_add" => "Session Add",
     "btn_confirm" => "Confirm",
@@ -135,7 +135,7 @@ return [
     //Mediator Add
     "mediator_add"=>"Mediator Add",
     //swit alert
-    "settelment_has_been_uploaded" => "Settelment has been uploaded!",
+    "settelment_has_been_uploaded" => "Settlement has been uploaded!",
     "are_you_sure" => "Are you sure?",
     "add_this_comment" => "Add this comment!",
     "comment_save_successfully" => "Comment save successfully!",

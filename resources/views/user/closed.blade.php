@@ -156,7 +156,7 @@ use App\Models\InvoledUser;
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-dark">
-                    <h4 class="modal-title text-white">Settelment Agreemnet</h4>
+                    <h4 class="modal-title text-white">Settlement Agreement</h4>
                     <!-- <h5 class="modal-title mt-0">Last Session Records</h5> -->
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
