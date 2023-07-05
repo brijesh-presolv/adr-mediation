@@ -247,9 +247,8 @@ $ldate = $lastdate->format('d-m-Y');
 
     <p>8. Upon acceptance of the appointment by the mediator / conciliator, the parties shall be notified of the
         appointment.</p>
-    <br />
 
-    <p>If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
+    <p>9. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
 
     <p><b>Note: This is a system generated notice and hence does not require signature.</b></p>
     <table cellspacing="0" cellpadding="10" width="100%">
