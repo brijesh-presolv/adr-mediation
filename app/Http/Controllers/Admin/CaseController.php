@@ -2784,7 +2784,7 @@ class CaseController extends Controller
             }
             if ($errormsg == '') {
                 $csv = $this->csvToArray($tmpName);
-                if (count($csv[0]) != 16) {
+                if (count($csv[0]) != 17) {
                     $errormsg .= "Invalid csv file";
                 }
                 if ($errormsg != '') {
@@ -2798,7 +2798,7 @@ class CaseController extends Controller
                 foreach ($csv as $key => $v) {
                     $i = $key + 1;
 
-                    for ($n = 0; $n < 15; $n++) {
+                    for ($n = 0; $n < 16; $n++) {
                         if ($v[$n] == '') {
 
                             if ($n != 10 and $n != 11 and $n != 12 and $n != 7 and $n != 3 and $n != 4) {
