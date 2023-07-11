@@ -2902,6 +2902,10 @@ class CaseController extends Controller
                 $data['bulk_flag'] = 1;
                 $data['discussion'] = $value[15];
 
+                // for ref id //
+                $data['ref_id'] = $value[16];
+                // for ref id //
+
                 $med = MedCase::create($data);
 
                 $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();

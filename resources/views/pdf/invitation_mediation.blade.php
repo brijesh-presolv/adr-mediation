@@ -167,9 +167,9 @@ $ldate = $lastdate->format('d-m-Y');
                         @endif
                     @endif
                 @endforeach
-                @if ($case->otherRespondentDetails != '' && $case->otherRespondentDetails != null)
+                <!-- @if ($case->otherRespondentDetails != '' && $case->otherRespondentDetails != null)
                     <p>{{ $case->otherRespondentDetails }}</p>
-                @endif
+                @endif -->
                 <br>
                 @foreach ($party as $key => $p)
                     @if ($key != 0)
