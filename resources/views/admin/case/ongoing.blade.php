@@ -992,7 +992,7 @@
 
                         var button = "";
                         button = button + `<input type="checkbox" class="blkchkbulkcases" data-caseid="` +
-                            data.id +
+                            data+
                             `">`;
 
 
