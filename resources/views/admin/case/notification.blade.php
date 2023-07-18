@@ -78,7 +78,7 @@ $alertarr=[
                 {{-- {{dd($data)}} --}}
                 <div class="col-md-12">
                     <div class="alert alert-{{$alertarr[$item->event]}}" role="alert">
-                    @if($item->case_id != null) <?=$id?> @else @if($item->event == 'USER_REGI') User Id - @else Mediator Id - @endif {{$item->reg_id}}  @endif : @if($item->idescription != null) {{$item->idescription}} @else New @if($item->event == 'USER_REGI') User @else Mediator @endif Registration @endif
+                    @if($item->case_id != null) <?=$id?> @else @if($item->event == 'USER_REGI') User Id - @else Mediator Id - @endif {{$item->reg_id}}  @endif : @if($item->idescription != null) {{$item->idescription}} @else New @if($item->event == 'USER_REGI') User @else Mediator @endif Registration - {{$item->email}} @endif
                     <span class="float-right">{{date('d-m-Y h:m:s A',strtotime($item->created_at))}}</span>
                 </div>
                 </div>

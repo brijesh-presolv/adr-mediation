@@ -34,8 +34,9 @@ class Notification extends Model {
     public static function notificationData()
     {
 
-         $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
+         $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription' ,'users.email')
                     ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->leftJoin('users', DB::raw('users.id'), '=', DB::raw('mednotification.reg_id'))
                     ->orderBy('mednotification.id', 'DESC')->get();
 
         return $result;
