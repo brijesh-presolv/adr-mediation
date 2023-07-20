@@ -132,7 +132,7 @@
         <div class="col-12 btnsection">
           <a href="" class="btn btn-circle-y" data-toggle="modal" id="" data-target="#myModalResolve">Get Started </span></a>
           <a href="" class="btn btn-circle-y ml-2 resolvideomodal" data-toggle="modal" id="" data-target="#myModal2">Watch Video </span></a>
-          <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Fees</button>
+          <!-- <button class="btn btn-circle-y ml-2 clse" data-toggle="modal" id="" data-target="#resolvefees">Fees</button> -->
           <a href="https://presolv360.com/dispute_resolution_clause" class="btn btn-circle-y ml-2 clse" target="_blank">Clause</span></a>
           <!--<a href="https://presolv360.com/arbitrator" class="btn btn-circle-y ml-2 clse" target="_blank">Panel of Experts </span></a>-->
       </div>

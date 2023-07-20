@@ -347,6 +347,7 @@ function resolvsubmit(){
       <div class="col-md-2">
          <h5 class="mb-3">Important Links</h5>
          <a href="https://presolv360.com/faqs" target="_blank"><p>FAQs</p></a>
+         <a href="https://presolv360.com/fees" target="_blank"><p>Rules, Code & Fees</p></a>
          <a href="https://presolv360.com/terms_conditions" target="_blank"><p>Terms & Conditions</p></a>
          <a href="https://presolv360.com/privacy_policy" target="_blank"><p>Privacy Policy</p></a>
          <a href="https://presolv360.com/odr_standard" target="_blank"><p>Standards</p></a>
