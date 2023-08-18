@@ -1700,7 +1700,7 @@ class CaseController extends Controller
 
                 //     $inv->joinCode = $this->joinCode();
                 // }
-                if ($r['selected_party'][$i] == 0) {
+                if (isset($r['selected_party'][$i]) && $r['selected_party'][$i] == 0 ) {
                     $inv->isClaimant = 0;
                     $inv->joinCode = null;
                 } else {
