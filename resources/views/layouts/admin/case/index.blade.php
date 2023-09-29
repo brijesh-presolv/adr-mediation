@@ -67,7 +67,7 @@
                                         <div class="form-group">
                                             <input type="file" name="csv" id="fileInput" onchange=""
                                                 class="col-md-12 dropify" data-allowed-file-extensions="csv" required=""
-                                                data-max-file-size="20M" />
+                                                data-max-file-size="250M" />
                                         </div>
                                         <div class="form-group">
                                             {{-- <label for="batch" class="col-md-5">Batch Name: </label> --}}
@@ -362,7 +362,7 @@
                             d = d + `<form action="{{ url('admin/uploaddocument/') }}/` + data.id + `"  method="post" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
-                                    <input  class="form-control dropify" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="20M"></input>
+                                    <input  class="form-control dropify" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="250M"></input>
                                     <p>*Only Pdf zip and rar file allowed</p>
                                     <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
                                     </form>`;

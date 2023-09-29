@@ -54,7 +54,7 @@
                                 <div class="form-group">
                                     <input type="file" name="csv" id="fileInput" onchange=""
                                         data-allowed-file-extensions="csv" class="col-md-12 dropify" required=""
-                                        data-max-file-size="20M" />
+                                        data-max-file-size="250M" />
                                 </div>
 
                                 <input type="Submit" value="Submit" class="btn btn-sm btn-primary blkupdbtnsb">
@@ -100,7 +100,7 @@
                                 <div class="form-group">
                                     <input type="file" name="zip" id="fileInput" onchange=""
                                         data-allowed-file-extensions="zip" class="col-md-12 dropify" required=""
-                                        data-max-file-size="20M" />
+                                        data-max-file-size="250M" />
                                 </div>
 
                                 <input type="Submit" value="Submit" class="btn btn-sm btn-primary blkupdbtnsb">
