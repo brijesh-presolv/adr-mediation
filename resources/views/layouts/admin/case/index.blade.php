@@ -67,7 +67,7 @@
                                         <div class="form-group">
                                             <input type="file" name="csv" id="fileInput" onchange=""
                                                 class="col-md-12 dropify" data-allowed-file-extensions="csv" required=""
-                                                data-max-file-size="500M" />
+                                                data-max-file-size="500M" /> 
                                         </div>
                                         <div class="form-group">
                                             {{-- <label for="batch" class="col-md-5">Batch Name: </label> --}}

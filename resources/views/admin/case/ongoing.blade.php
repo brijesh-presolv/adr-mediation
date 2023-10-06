@@ -100,7 +100,7 @@
                                 <div class="form-group">
                                     <input type="file" name="zip" id="fileInput" onchange=""
                                         data-allowed-file-extensions="zip" class="col-md-12 dropify" required=""
-                                        data-max-file-size="500M" />
+                                        data-max-file-size="500M" /> 
                                 </div>
 
                                 <input type="Submit" value="Submit" class="btn btn-sm btn-primary blkupdbtnsb">

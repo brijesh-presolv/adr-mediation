@@ -58,7 +58,7 @@ use App\Models\InvoledUser;
                                     <input type="file" name="csv" id="fileInput" onchange="" class="col-md-12 dropify" data-allowed-file-extensions="csv" required="" data-max-file-size="500M" />
                                 </div>
 
-    <input type="Submit"  value="Submit" class="btn btn-primary blkupdbtnsb">
+    <input type="Submit"  value="Submit" class="btn btn-primary blkupdbtnsb"> 
     <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
         <span>@lang('case.btn_close')</span>
    </button>
