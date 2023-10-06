@@ -55,7 +55,7 @@ use App\Models\InvoledUser;
                                      <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" />
 
                                 <div class="form-group">
-                                    <input type="file" name="csv" id="fileInput" onchange="" class="col-md-12 dropify" data-allowed-file-extensions="csv" required="" data-max-file-size="250M" />
+                                    <input type="file" name="csv" id="fileInput" onchange="" class="col-md-12 dropify" data-allowed-file-extensions="csv" required="" data-max-file-size="500M" />
                                 </div>
 
     <input type="Submit"  value="Submit" class="btn btn-primary blkupdbtnsb">
@@ -291,7 +291,7 @@ use App\Models\InvoledUser;
                             button = button + `<form action="{{ url('user/uploaddocument/') }}/` + data.userPlanId + `"  method="post" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
-                                <input class="form-control" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="250M"></input>
+                                <input class="form-control" type="file" id="document" name="document" data-allowed-file-extensions="pdf zip rar"  data-max-file-size="500M"></input>
                                 <p>*Only Pdf zip and rar file allowed</p>
                                 <input type="submit" class="btn btn-primary btn-sm" id="upload" value="Upload">
                                 </form>`;
