@@ -223,7 +223,7 @@
                                                 Organization</label> -->
 
                                              <div class="col-sm-6 ml25 pr5">
-                                                 <input id="mobile_number" type="text" class="form-control @error('mobile_number') is-invalid @enderror" name="mobile_number" value="{{ old('mobile_number') }}" required autocomplete="mobile_number" placeholder="@lang('site.Mobile')" maxlength="15" minlength="8"  autofocus>
+                                                 <input id="mobile_number" type="number" class="form-control @error('mobile_number') is-invalid @enderror" name="mobile_number" value="{{ old('mobile_number') }}" required autocomplete="mobile_number" placeholder="@lang('site.Mobile')" autofocus>
 
                                 @error('mobile_number')
                                     <span class="invalid-feedback" role="alert">
