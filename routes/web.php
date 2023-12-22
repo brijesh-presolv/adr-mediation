@@ -252,3 +252,6 @@ Route::get('temp/que_changes', [App\Http\Controllers\Notification\WhatsappContro
 
 // Session Reminder
 Route::get('reminder/session_reminder', [App\Http\Controllers\Admin\ReminderController::class, 'index'])->name('sessionReminder');
+
+Route::get('/payment/success', [App\Http\Controllers\API\PaymentController::class, 'paymentSuccess'])->name('payment.success');
+Route::post('/payment/webhook', [App\Http\Controllers\API\PaymentController::class, 'paymentWebhook'])->name('payment.webhook');

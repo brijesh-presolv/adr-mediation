@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,16 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('payNowProcessed', [App\Http\Controllers\API\PaymentController::class, 'payNowProcessed']);
+Route::post('offerCheck', [App\Http\Controllers\API\PaymentController::class, 'offerCheck']);   
+Route::post('storerestructure', [App\Http\Controllers\API\PaymentController::class, 'storeRestructure']);   
+Route::post('getcasedetails', [App\Http\Controllers\API\PaymentController::class, 'getcasedetails']);  
+Route::post('casereplydetails', [App\Http\Controllers\API\PaymentController::class, 'casereplydetails']); 
+Route::post('paydirect', [App\Http\Controllers\API\PaymentController::class, 'payDirect']); 
+Route::post('addDisputeReply', [App\Http\Controllers\API\PaymentController::class, 'addDisputeReply']); 
+Route::get('/payment/success', [App\Http\Controllers\API\PaymentController::class, 'paymentSuccess'])->name('payment.success');
+Route::post('/payment/webhook', [App\Http\Controllers\API\PaymentController::class, 'paymentWebhook'])->name('payment.webhook');
+Route::post('/otpgenerate', [App\Http\Controllers\API\PaymentController::class, 'otpGenerate']);
+Route::post('/otpverify', [App\Http\Controllers\API\PaymentController::class, 'otpVerify']);
+

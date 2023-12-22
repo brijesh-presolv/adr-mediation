@@ -142,7 +142,7 @@ return [
         /*
          * Package Service Providers...
          */
-        Meneses\LaravelMpdf\LaravelMpdfServiceProvider::class,
+       // Meneses\LaravelMpdf\LaravelMpdfServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -151,6 +151,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+       // Barryvdh\Cors\ServiceProvider::class,
     ],
     /*
       |--------------------------------------------------------------------------
