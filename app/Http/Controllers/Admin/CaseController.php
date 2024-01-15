@@ -2784,7 +2784,7 @@ class CaseController extends Controller
             }
             if ($errormsg == '') {
                 $csv = $this->csvToArray($tmpName);
-                if (count($csv[0]) != 17) {
+                if (count($csv[0]) != 22) {
                     $errormsg .= "Invalid csv file";
                 }
                 if ($errormsg != '') {
@@ -2852,6 +2852,7 @@ class CaseController extends Controller
 
                         //$errormsg .= "Please accept and agree to abide by Mediation’s Dispute Resolution Rules, Terms & Conditions and Privacy Policy to proceed at line no $i ";
                     }
+
                 }
             }
             if ($errormsg != '') {
@@ -2888,6 +2889,10 @@ class CaseController extends Controller
                 // dd( count(explode(',', $value[15])) + 1);
                 // exit;
 
+                $length_of_string=16;
+                $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                $payToken=substr(str_shuffle($str_result),  0, $length_of_string);
+
                 $data['userid'] = $claimantid;
                 $data['disputeCategory'] = $value['0'];
                 $data['natureOfAgreement'] = $value['6'];
@@ -2905,6 +2910,21 @@ class CaseController extends Controller
                 // for ref id //
                 $data['ref_id'] = $value[16];
                 // for ref id //
+                
+                /* $mydate=date('Y-m-d');
+                $DATTTA=date('Y-m-d', strtotime($mydate. ' + 10 days')); */
+
+
+                $LinkExpire =$value[18];
+                $LinkExpiredate = new DateTime($LinkExpire);
+                $PayLinkExpire = $LinkExpiredate->format('Y-m-d H:s:i');
+
+                $data['payToken'] = $payToken;
+                $data['PayLink'] = $value[17];
+                $data['PayLinkExpire'] = $PayLinkExpire;
+                $data['restructure_offer_1'] = $value[19];
+                $data['restructure_offer_2'] = $value[20];
+                $data['restructure_offer_3'] = $value[21];
 
                 $med = MedCase::create($data);
 

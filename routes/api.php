@@ -31,3 +31,7 @@ Route::post('/payment/webhook', [App\Http\Controllers\API\PaymentController::cla
 Route::post('/otpgenerate', [App\Http\Controllers\API\PaymentController::class, 'otpGenerate']);
 Route::post('/otpverify', [App\Http\Controllers\API\PaymentController::class, 'otpVerify']);
 
+Route::post('/whatsapbotreply', [App\Http\Controllers\WhatsappChatbotController::class, 'whatsappbotReply']);
+
+Route::post('/testcode', [App\Http\Controllers\WhatsappChatbotController::class, 'testcode1']);
+

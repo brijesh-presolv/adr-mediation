@@ -1225,6 +1225,17 @@ class PaymentController extends Controller
           }
            try {
 
+              $restructure_data = DB::table('restructure_data')->select('*')->where('caseid', $caseid)->get();
+              if(count($restructure_data) > 0){
+
+                  $result['code'] = 200;
+                  $result['message'] = "Offer already selected.";
+                  $result['response'] = 'error';
+                  echo json_encode($result);
+                  exit;
+
+              }
+
               $caseData = MedCase::select("*")->where("id", $caseid)->where("payToken", $payToken)->first();
 
                if(!empty($caseData)){
@@ -1252,27 +1263,65 @@ class PaymentController extends Controller
                     
                     if($respondentdata->userEmail !=""){
                       
-                      SendGrid::send($d, $respondentdata->userEmail, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $caseData->id], $respondentdata->name);
+                      SendGrid::send($d, $respondentdata->userEmail, 'ee4e13df-fc58-441a-9843-b3e26d606f72', ["-otp-" => $otp], $respondentdata->name);
 
                     }
 
-                      if($insert_data){
+                  /* if($mobile!=""){
+                        
+                    $authKey = "353508AnLLLst4qR62ce8822P1";
+                    $mobileNumber = "+91" . $mobile;
+                    $senderId = "Prsolv";
+                    $otp = "Your Presolv360 OTP is: ".$otp;
+                    $message = urlencode($otp);
+                    $route = "4";
+                    $postData = array(
+                        'authkey' => $authKey,
+                        'mobiles' => $mobileNumber,
+                        'message' => $message,
+                        'sender' => $senderId,
+                        'route' => $route,
+                        'DLT_TE_ID'=>'1207161665402749813'
+                    );
+                    $url = "https://control.msg91.com/api/sendhttp.php";
+                    $ch = curl_init();
+                    curl_setopt_array($ch, array(
+                        CURLOPT_URL => $url,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_POST => true,
+                        CURLOPT_POSTFIELDS => $postData
+                    ));
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                    $output = curl_exec($ch);
+        
+        
+                    if (curl_errno($ch)) {
+      
+                      echo 'error:' . curl_error($ch);
+                    }
+        
+                    curl_close($ch);
+  
+                  } */
 
-                        $result['code']=200;
-                        $result['message']='OTP Send Mobile ';
-                        $result['response']='success';
-                        echo json_encode($result);
-                        exit;
-                      }
-                      else
-                      {
-                         $result['code']=500;
-                         $result['message']='Something Went Wrong';//unauthorised
-                         $result['response']='error';
-                         $result['responseData']='Something Went Wrong';
-                         echo json_encode($result);
-                         exit;
-                      }
+                  if($insert_data){
+
+                    $result['code']=200;
+                    $result['message']='OTP Send Mobile ';
+                    $result['response']='success';
+                    echo json_encode($result);
+                    exit;
+                  }
+                  else
+                  {
+                    $result['code']=500;
+                    $result['message']='Something Went Wrong';//unauthorised
+                    $result['response']='error';
+                    $result['responseData']='Something Went Wrong';
+                    echo json_encode($result);
+                    exit;
+                  }
                }
                else
                {
@@ -1305,9 +1354,6 @@ class PaymentController extends Controller
 
     public function otpVerify(Request $request){  
 
-     // echo "brijesh";die();
-
-      //if(isset($this->post['token']))
       $method = $_SERVER['REQUEST_METHOD'];
     
       if($method == "POST") {  
@@ -1390,6 +1436,177 @@ class PaymentController extends Controller
             echo json_encode($output);
             exit;
       }
+    }
+
+    public function WApayNowProcess($caseid, $PayLink){  
+
+        //echo "brijesh"; die();
+      
+        $method = $_SERVER['REQUEST_METHOD'];
+       //print_r($PayLink);die();
+     if($method == "POST") {
+
+         // $caseid= $request->input('caseid');
+         // $payToken=  $request->input('payToken');
+
+          if (empty($caseid)){
+
+            $result['code'] = 200;
+            $result['message'] = "Invalid Request";
+            $result['response']='error';
+            echo json_encode($result);
+            exit;
+          }
+        /*  if(empty($payToken)) {
+
+             $result['code'] = 500;
+             $result['message'] = "Invalid Request";
+             $result['response'] = 'error';
+             echo json_encode($result);
+             exit;
+         } */
+         if (isset($caseid)) {
+
+             try { 
+
+                 /* $check_payment_gateway_data = PaymentGatewayData::select("*")->where("userid", "=", "78")->where("is_active", "=", 1)->first();
+
+                if(empty($check_payment_gateway_data)) {
+                  $result['code'] = 500;
+                  $result['message'] = "Payment Gateway not available";
+                  $result['response'] = 'error';
+                  echo json_encode($result);
+                  exit;
+                } */
+                $caseData = MedCase::select("*")->where("id", "=", $caseid)->first();
+
+                if(empty($caseData)) {
+
+                  $result['code'] = 500;
+                  $result['message'] = "Case not found";
+                  $result['response'] = 'error';
+                  echo json_encode($result);
+                  exit;
+                }
+
+                $restructuredata=RestructureData::select('*')->where('caseid', $caseid)->first();
+
+            if(!empty($restructuredata)) {
+
+              $result['code'] = 500;
+              $result['message'] = "Already requested for the case restructure";
+              $result['response'] = 'error';
+              echo json_encode($result);
+              exit;
+
+            }
+            
+                $checkpayment = SettlementPayment::select("*")->where("caseid", "=", $caseid)->where("pay_status", "=", "success")->get();
+                //print_r($checkpayment);die();
+                $PayLinkExpire = $caseData->PayLinkExpire; 
+                $currentDate=date('Y-m-d H:i:s');
+                if (strtotime($PayLinkExpire) > strtotime($currentDate)) {
+
+                  if(count($checkpayment) == 0){
+                    
+                    $respondentdata=SettlementPayment::getrespondent($caseData->id);
+                   // print_r($respondentdata->userEmail);die();
+                    $customer_name=$respondentdata->name;
+                    $customer_email=$respondentdata->userEmail;
+                    $discount="";
+                    $length_of_string=16;
+                    $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                    $str_token=substr(str_shuffle($str_result),  0, $length_of_string);
+                    $payment_req_token=$str_token."_".$caseData->id;
+                    $payment_security_token=$caseData->id.$str_token;
+
+                    $total_amt=$caseData->amount;
+
+                    $original_price = $caseData->amount; // set original price
+                    $payArr['caseid']=$caseData->id;
+                    $payArr['customer_name']=$customer_name;
+                    $payArr['customer_email']=$customer_email;
+                    $payArr['actual_amt']=$original_price;
+                    $payArr['discount_amt']=$discount;
+                    $payArr['total_amt']=$total_amt;
+                    $payArr['pay_status']="process";
+                    //$payArr['created_at']=date('Y-m-d H:i:s');
+                    $payArr['payToken']=$caseData->payToken;
+                    $payArr['payment_req_token']=$payment_req_token;
+                    $payArr['payment_url']=$PayLink;
+                    $payArr['payment_req_created']=date('Y-m-d H:i:s');
+                    $payArr['payment_security_token']=$payment_security_token;
+                    $insert_data=SettlementPayment::create($payArr);
+                    if($insert_data){
+
+                      $_SESSION['payment_req_token'] = $payment_req_token; 
+                      $_SESSION['payment_security_token'] = $payment_security_token; 
+                      $_SESSION['pay_caseid'] = $caseData->id;
+                      $purpose="SEBI Case Payment Case Id";
+
+                      //$payresult=Payment::initiatePayment($purpose, $total_amt, $customer_name, $customer_email);
+
+                        $SettlementPayment=SettlementPayment::find($insert_data->id);
+                        $payment_url=$SettlementPayment->payment_url;
+
+                        $result['message'] = "Payment request created";
+                        $result['response']='success';
+                        $result['data'] = ['caseid'=> $caseData->id, 'total_amt'=>$total_amt, 'payment_req_token'=> $payment_req_token, 'payment_url'=>$payment_url];
+                        $result['code'] = 200;
+                       /*  echo json_encode($result);
+                        exit; */
+
+                       return json_encode($result);
+
+                    }else{
+                        $result['message'] = "Something Went Wrong";
+                        $result['response']='error';
+                        echo json_encode($result);
+                        exit;
+                    }
+
+                  }else{
+
+                    $result['message'] = "Payment already received";
+                    $result['response']='error';
+                    echo json_encode($result);
+                    exit;
+
+                  }
+                }else{
+
+                    $result['message'] = "Payment Link Expired.";
+                    $result['response']='error';
+                    echo json_encode($result);
+                    exit;
+
+                }
+             }
+             catch (Exception $e)  { 
+              // Also tried JwtException
+              echo "Caught an exception: " . $e->getMessage();
+                 $result['code'] = 500;
+                 $result['message'] = "Something Went Wrong";
+                 $result['response']='error';
+                 echo json_encode($result);
+                 exit;
+             }
+         }else {
+             $result['code'] = 500;
+             $result['message'] = "Invalid Request";
+             $result['response']='error';
+             echo json_encode($result);
+             exit;
+         }
+
+     }else {
+         $output['code']=404;//unauthorised
+         $output['message']='Method Not Found';//unauthorised
+         $output['response']='error';
+         echo json_encode($output);
+         exit;
+     } 
+
     }
 
 
