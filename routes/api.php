@@ -33,5 +33,3 @@ Route::post('/otpverify', [App\Http\Controllers\API\PaymentController::class, 'o
 
 Route::post('/whatsapbotreply', [App\Http\Controllers\WhatsappChatbotController::class, 'whatsappbotReply']);
 
-Route::post('/testcode', [App\Http\Controllers\WhatsappChatbotController::class, 'testcode1']);
-

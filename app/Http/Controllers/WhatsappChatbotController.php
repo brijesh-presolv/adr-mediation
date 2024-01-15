@@ -43,6 +43,8 @@ class WhatsappChatbotController extends Controller
                                         ->leftJoin('mediation_case as med_case', DB::raw('med_case.id'), '=', DB::raw('whatsapp_tracking.caseid'))
                                         ->where('whatsapp_tracking.request_uuid', $reply_message_id)
                                         ->first();
+
+                                        print_r($whcasedata);die();
                                     $mid = "M" . sprintf("%06d", $whcasedata->case_id);
 
                                     if($data->message=="Pay Now"){
