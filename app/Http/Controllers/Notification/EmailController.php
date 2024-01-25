@@ -25,7 +25,8 @@ class EmailController
     	
         $limit=500;
 
-        $emails=EmailQue::where(['is_sent'=>0,'is_processing'=>0])->orderBy('updated_at','DESC')->limit($limit)->get();
+        $emails=EmailQue::where(['is_sent'=>0,'is_processing'=>0,'is_hold'=> null])->orderBy('updated_at','DESC')->limit($limit)->get();
+
 
         if(count($emails)<1){
             exit();
