@@ -44,7 +44,7 @@ class WhatsappChatbotController extends Controller
                                         ->where('whatsapp_tracking.request_uuid', $reply_message_id)
                                         ->first();
 
-                                        print_r($whcasedata);die();
+                                      //  print_r($whcasedata);die();
                                     $mid = "M" . sprintf("%06d", $whcasedata->case_id);
 
                                     if($data->message=="Pay Now"){
