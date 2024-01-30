@@ -38,33 +38,32 @@ class WhatsappChatbotController extends Controller
                         $reply_message_id=$data->reply_message_id;
 
                         $whatsappbotreply= WhatsappChatbot::where('type', 'message_received')->get();
-                        $whcasedata = DB::table('whatsapp_tracking')
-                                        ->select('whatsapp_tracking.*', 'med_case.id as case_id', 'med_case.payToken', 'med_case.PayLink')
-                                        ->leftJoin('mediation_case as med_case', DB::raw('med_case.id'), '=', DB::raw('whatsapp_tracking.caseid'))
-                                        ->where('whatsapp_tracking.request_uuid', $reply_message_id)
-                                        ->first();
-
-                                      //  print_r($whcasedata);die();
+                        $whcasedata = DB::table('whatsapp_tracking')->select('whatsapp_tracking.*')->where('request_uuid', $reply_message_id)->first();
 
                                 if (!empty($whcasedata)) {
 
-                                    $mid = "M" . sprintf("%06d", $whcasedata->case_id);
+                                    $caseData = DB::table('mediation_case')->select('mediation_case.*')->where('id', $whcasedata->caseid)->first();
+
+                                    $mid = "M" . sprintf("%06d", $caseData->id);
 
                                     if($data->message=="Pay Now"){
 
-                                        $varjson = ['url' => $whcasedata->PayLink];
+                                        $varjson = ['url' => $caseData->PayLink];
                                         $var = ['-url-'];
-                                        $var1 = [$whcasedata->PayLink];
+                                        $var1 = [$caseData->PayLink];
                                         $content1 = WaTemplate::getcontent('med_bot_paynow');
                                         $haptik_tmp="med_bot_paynow";
-                                        $payresult=PaymentController::WApayNowProcess($whcasedata->case_id, $whcasedata->PayLink);
+                                       // $payresult=PaymentController::WApayNowProcess($caseData->id, $caseData->PayLink);
 
                                     }
                                     if($data->message=="Why did I get this?"){
 
-                                        $varjson = ['caseid' => $mid];
-                                        $var = ['-cid-'];
-                                        $var1 = [$mid];
+                                        $claimantdata = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $caseData->id)->first();
+                                        $claimant_name=$claimantdata->name;
+
+                                        $varjson = ['name' => $claimant_name];
+                                        $var = ['-name-'];
+                                        $var1 = [$claimant_name];
                                         $content1 = WaTemplate::getcontent('med_bot_why');
                                       //  echo "brijesgh"; print_r($content1);die();
                                         $haptik_tmp="med_bot_why";
@@ -79,11 +78,33 @@ class WhatsappChatbotController extends Controller
                                         $haptik_tmp="med_bot_Alternatives";
 
                                     }
+                                    if($data->message=="Restructure"){
+
+                                        $restructure_link="https://mediation.presolv360.com/restructure/".$caseData->id."/".$caseData->payToken;
+
+                                        $varjson = ['url' => $restructure_link];
+                                        $var = ['-url-'];
+                                        $var1 = [$restructure_link];
+                                        $content1 = WaTemplate::getcontent('med_bot_restructure');
+                                        $haptik_tmp="med_bot_restructure";
+
+                                    }
+                                    if($data->message=="Submit a Reply"){
+
+                                        $reply_link="https://mediation.presolv360.com/replyback/".$caseData->id."/".$caseData->payToken;
+
+                                        $varjson = ['url' => $reply_link];
+                                        $var = ['-url-'];
+                                        $var1 = [$reply_link];
+                                        $content1 = WaTemplate::getcontent('med_bot_submit_reply');
+                                        $haptik_tmp="med_bot_Alternatives";
+
+                                    }
 
                                     $content = str_replace($var, $var1, $content1);
 
                                     $dwa1 = [
-                                        'caseid' => $whcasedata->caseid,
+                                        'caseid' => $caseData->id,
                                         'contact' =>  $data->phone_number,
                                         'content' => ['text' => $content],
                                         'event' => "WHATSAPP_CHATBOT_MSG",
@@ -104,7 +125,6 @@ class WhatsappChatbotController extends Controller
                                         $result['message']='success';//unauthorised
                                         $result['response']='success';
                                         echo json_encode($result);
-                                        exit;
 
                                     }else{
 
@@ -112,7 +132,6 @@ class WhatsappChatbotController extends Controller
                                         $result['message']='Que not inserted';//unauthorised
                                         $result['response']='error';
                                         echo json_encode($result);
-                                        exit;
 
                                     }
                                 }else{
@@ -121,7 +140,6 @@ class WhatsappChatbotController extends Controller
                                     $result['message']='Message not found';
                                     $result['response']='error';
                                     echo json_encode($result);
-                                    exit;
 
                                 }
                     }
