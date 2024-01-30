@@ -45,6 +45,9 @@ class WhatsappChatbotController extends Controller
                                         ->first();
 
                                       //  print_r($whcasedata);die();
+
+                                if (!empty($whcasedata)) {
+
                                     $mid = "M" . sprintf("%06d", $whcasedata->case_id);
 
                                     if($data->message=="Pay Now"){
@@ -112,6 +115,15 @@ class WhatsappChatbotController extends Controller
                                         exit;
 
                                     }
+                                }else{
+
+                                    $result['code']=404;
+                                    $result['message']='Message not found';
+                                    $result['response']='error';
+                                    echo json_encode($result);
+                                    exit;
+
+                                }
                     }
                 }
                 else{
