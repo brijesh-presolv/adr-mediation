@@ -2915,16 +2915,42 @@ class CaseController extends Controller
                 $DATTTA=date('Y-m-d', strtotime($mydate. ' + 10 days')); */
 
 
-                $LinkExpire =$value[18];
-                $LinkExpiredate = new DateTime($LinkExpire);
-                $PayLinkExpire = $LinkExpiredate->format('Y-m-d H:s:i');
-
                 $data['payToken'] = $payToken;
-                $data['PayLink'] = $value[17];
-                $data['PayLinkExpire'] = $PayLinkExpire;
-                $data['restructure_offer_1'] = $value[19];
-                $data['restructure_offer_2'] = $value[20];
-                $data['restructure_offer_3'] = $value[21];
+                if (isset($value[17]) and $value[17] != '') {
+                    $data['PayLink'] = $value[17];
+                }else{
+                    $data['PayLink'] = "";
+                }
+
+                if (isset($value[18]) and $value[18] != '') {
+                    $LinkExpire =$value[18];
+                    $LinkExpiredate = new DateTime($LinkExpire);
+                    $PayLinkExpire = $LinkExpiredate->format('Y-m-d H:s:i');
+                    $data['PayLinkExpire'] = $PayLinkExpire;
+                }else{
+                    $date = new DateTime();
+                    $date->modify('+10 days');
+                    $PayLinkExpiredate=$date->format('Y-m-d H:i:s');
+                    $data['PayLinkExpire'] = $PayLinkExpiredate;
+                }
+                
+                if (isset($value[19]) and $value[19] != '') {
+                    $data['restructure_offer_1'] = $value[19];
+                }else{
+                    $data['restructure_offer_1'] = "";
+                }
+
+                if (isset($value[20]) and $value[20] != '') {
+                    $data['restructure_offer_2'] = $value[20];
+                }else{
+                    $data['restructure_offer_2'] = "";
+                }
+                if (isset($value[21]) and $value[21] != '') {
+                    $data['restructure_offer_3'] = $value[21];
+                }else{
+                    $data['restructure_offer_3'] = "";
+                }
+
 
                 $med = MedCase::create($data);
 
