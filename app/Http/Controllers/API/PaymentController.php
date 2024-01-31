@@ -360,11 +360,14 @@ class PaymentController extends Controller
 
           $method = $_SERVER['REQUEST_METHOD'];
 
-         // print_r($method);die();
+         // print_r($request['caseid']);die();
          if($method == "POST") {
   
-              $caseid= $request->input('caseid');
-              $payToken=  $request->input('payToken');
+              //$caseid= $request->input('caseid');
+             // $payToken=  $request->input('payToken');
+
+              $caseid= $request['caseid'];
+              $payToken=  $request['payToken'];
   
               if (empty($caseid)){
 
@@ -465,10 +468,11 @@ class PaymentController extends Controller
                             $SettlementPayment->payment_url=$payresult['data']['payment_url'];
                             $SettlementPayment->save();
                             $payment_url=$payresult['data']['payment_url'];
+                            $created_apy_link=$caseData->PayLink;
 
                             $result['message'] = "Payment request created";
                             $result['response']='success';
-                            $result['data'] = ['caseid'=> $caseData->id, 'total_amt'=>$total_amt, 'payment_req_token'=> $payment_req_token, 'payment_url'=>$payment_url];
+                            $result['data'] = ['caseid'=> $caseData->id, 'total_amt'=>$total_amt, 'payment_req_token'=> $payment_req_token, 'payment_url'=>$payment_url, 'created_apy_link'=>$created_apy_link];
                             $result['code'] = 200;
                             echo json_encode($result);
                             exit;
@@ -483,9 +487,7 @@ class PaymentController extends Controller
                             
 
                           }
-
-
-
+                          
                         }else{
                             $result['message'] = "Something Went Wrong";
                             $result['response']='error';

@@ -255,3 +255,7 @@ Route::get('reminder/session_reminder', [App\Http\Controllers\Admin\ReminderCont
 
 Route::get('/payment/success', [App\Http\Controllers\API\PaymentController::class, 'paymentSuccess'])->name('payment.success');
 Route::post('/payment/webhook', [App\Http\Controllers\API\PaymentController::class, 'paymentWebhook'])->name('payment.webhook');
+
+
+Route::get('restructure/{caseid}/{token}', [App\Http\Controllers\Nagotiationbot\NagotiationBotController::class, 'index']);
+Route::get('replyback/{caseid}/{token}', [App\Http\Controllers\Nagotiationbot\NagotiationBotController::class, 'replyback']);

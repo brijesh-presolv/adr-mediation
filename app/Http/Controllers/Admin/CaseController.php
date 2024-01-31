@@ -1807,6 +1807,15 @@ class CaseController extends Controller
                         $varjson = ['caseid' => "M" . sprintf("%06d", $id), 'initiating' => ($pone->organization != null) ? $pone->organization : $pone->name];
                         $var = ['-cid-', '-ip-'];
                         $var1 = ["M" . sprintf("%06d", $id), ($pone->organization != null) ? $pone->organization : $pone->name];
+
+                        $MedCasedata = MedCase::find($id);
+                        if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !=""){
+                            $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
+                            $l4_mediation_party2_tem="l4_mediation_party2_bot";
+                        }else{
+                            $content1 = WaTemplate::getcontent('l4_mediation_party2');
+                            $l4_mediation_party2_tem="l4_mediation_party2";
+                        }
                         $content1 = WaTemplate::getcontent('l4_mediation_party2');
                         $content = str_replace($var, $var1, $content1);
                         $dwa1 = [
@@ -1815,7 +1824,8 @@ class CaseController extends Controller
                             'content' => ['text' => $content],
                             'event' => 'ACPTARB_ADM_RES',
                             'varjson' => $varjson,
-                            'haptik_tmp' => 'l4_mediation_party2',
+                            'haptik_tmp' => $l4_mediation_party2_tem,
+                            //'haptik_tmp' => 'l4_mediation_party2',
 
                         ];
 
@@ -2053,7 +2063,15 @@ class CaseController extends Controller
                 $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
                 $var = ['-cid-', '-ip-'];
                 $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
-                $content1 = WaTemplate::getcontent('l4_mediation_party2');
+                $MedCasedata = MedCase::find($id);
+                if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !=""){
+                    $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
+                    $l4_mediation_party2_tem="l4_mediation_party2_bot";
+                }else{
+                    $content1 = WaTemplate::getcontent('l4_mediation_party2');
+                    $l4_mediation_party2_tem="l4_mediation_party2";
+                }
+
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $inv->userPlanId,
@@ -2061,7 +2079,8 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'ACPTARB_ADM_RES',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'l4_mediation_party2',
+                    'haptik_tmp' => $l4_mediation_party2_tem,
+                    //'haptik_tmp' => 'l4_mediation_party2',
                 ];
 
                 $access = Whatsapp::sendWamessage($dwa1);
