@@ -51,8 +51,8 @@ class WhatsappChatbotController extends Controller
                                         $varjson = ['url' => $caseData->PayLink];
                                         $var = ['-url-'];
                                         $var1 = [$caseData->PayLink];
-                                        $content1 = WaTemplate::getcontent('med_bot_paynow');
-                                        $haptik_tmp="med_bot_paynow";
+                                        $content1 = WaTemplate::getcontent('med_bot_paynow2');
+                                        $haptik_tmp="med_bot_paynow2";
                                        // $payresult=PaymentController::WApayNowProcess($caseData->id, $caseData->PayLink);
 
                                     }
@@ -74,8 +74,8 @@ class WhatsappChatbotController extends Controller
                                         $varjson = ['caseid' => $mid];
                                         $var = ['-cid-'];
                                         $var1 = [$mid];
-                                        $content1 = WaTemplate::getcontent('med_bot_Alternatives');
-                                        $haptik_tmp="med_bot_Alternatives";
+                                        $content1 = WaTemplate::getcontent('med_bot_Alternatives2');
+                                        $haptik_tmp="med_bot_Alternatives2";
 
                                     }
                                     if($data->message=="Restructure"){
