@@ -75,7 +75,7 @@ class WhatsappChatbotController extends Controller
                                         $var = ['-cid-'];
                                         $var1 = [$mid];
                                         $content1 = WaTemplate::getcontent('med_bot_Alternatives2');
-                                        $haptik_tmp="med_bot_Alternatives2";
+                                        $haptik_tmp="med_bot_alternatives2";
 
                                     }
                                     if($data->message=="Restructure"){
@@ -97,7 +97,7 @@ class WhatsappChatbotController extends Controller
                                         $var = ['-url-'];
                                         $var1 = [$reply_link];
                                         $content1 = WaTemplate::getcontent('med_bot_submit_reply');
-                                        $haptik_tmp="med_bot_Alternatives";
+                                        $haptik_tmp="med_bot_submit_reply";
 
                                     }
 
