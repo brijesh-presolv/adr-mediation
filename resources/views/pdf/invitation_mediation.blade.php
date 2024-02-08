@@ -169,8 +169,8 @@ $ldate = $lastdate->format('d-m-Y');
         
 
         @foreach ($party as $key => $p)
-            @if ($key != 0)
-                @if ($p->isClaimant != 0)
+            @if ($key != 0 && $p->isClaimant != 0)
+                <!-- @if ($p->isClaimant != 0) -->
                     <tr>
                         <td>
                         @if ($p->name != '')
@@ -211,7 +211,6 @@ $ldate = $lastdate->format('d-m-Y');
                         </td>
                     </tr>
                 @endif
-            <!-- @endif -->
         @endforeach
 
             @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
