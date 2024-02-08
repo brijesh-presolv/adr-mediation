@@ -166,7 +166,7 @@ $ldate = $lastdate->format('d-m-Y');
                 @endif
                 </td>
             </tr>
-            
+            @endif 
         @endforeach
 
         
