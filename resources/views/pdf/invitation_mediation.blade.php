@@ -138,8 +138,8 @@ $ldate = $lastdate->format('d-m-Y');
         <!-- @if ($key != 0) -->
             <!-- @if ($p->isClaimant != 0) -->
             <td>
-                @if ($p->name != '')
-                <p>{{ $p->name }}</p>
+                @if ($party[$key+1]->name != '')
+                <p>{{ $party[$key+1]->name }}</p>
                 @endif
             </td>
             <!-- @endif -->
