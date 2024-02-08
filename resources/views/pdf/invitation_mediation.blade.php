@@ -199,7 +199,7 @@ $ldate = $lastdate->format('d-m-Y');
                     @endif
                 @endif
             @endforeach
-
+            </td>
 
 
 
