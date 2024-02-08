@@ -1612,7 +1612,7 @@ class CaseController extends Controller
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
             ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
 
-        
+        dd($data["party"]);
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
         //$name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
