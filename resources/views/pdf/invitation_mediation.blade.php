@@ -187,8 +187,7 @@ $ldate = $lastdate->format('d-m-Y');
                                         {{ $p->pincode }}
                                     </p>
                                     <p>{{ $p->state }} {{ $p->country }}</p>
-                                @endif
-                                @if ($p->fulladdress != '')
+                                @endif($p->fulladdress != '')
                                     <p>{{ $p->fulladdress }} </p>
                                 @endif
                         @endif
