@@ -105,7 +105,7 @@ $ldate = $lastdate->format('d-m-Y');
     <br>
 
 
-    <table class="table_" cellspacing="0" cellpadding="10" width="100%">
+    <table class="table_" width="100%" style="border-collapse: collapse;">
         <tr>
             <th width="50%">
                 Applicant(s) / Initiating Party:
