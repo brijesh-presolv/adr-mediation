@@ -118,10 +118,11 @@ $ldate = $lastdate->format('d-m-Y');
 
         <!-- New Format -------->
         
-        @foreach ($party as $key => $p)
-        <tr>
         
+        <tr>
+        @foreach ($party as $key => $p)
         <?php
+        
             $inparty = User::find($p->userId); ?>
             @if ($p->isClaimant == 0)
             <td>
@@ -132,18 +133,22 @@ $ldate = $lastdate->format('d-m-Y');
                 </tr> -->
             </td>
             @endif
-        
+        @endforeach
 
         
-        <!-- @if ($key != 0) -->
-            <!-- @if ($p->isClaimant != 0) -->
+        
             <td>
-                @if ($party[$key+1]->name != '')
-                <p>{{ $party[$key+1]->name }}</p>
+            @foreach ($party as $key => $p)
+                @if ($key != 0)
+                    @if ($p->isClaimant != 0)
+                        @if ($p->name != '')
+                            <p>{{ $p->name }}</p>
+                        @endif
+                    @endif
                 @endif
+            @endforeach
             </td>
-            <!-- @endif -->
-        <!-- @endif -->
+           
         
         </tr>
 
@@ -151,8 +156,9 @@ $ldate = $lastdate->format('d-m-Y');
             
                 <!-- @if ($p->isClaimant == 0) -->
                 <td>
-
-                @if ($p->address1 != null)
+                @foreach ($party as $key => $p)
+                    @if ($p->isClaimant == 0)
+                        @if ($p->address1 != null)
                             <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }}, {{ $p->pincode }}</p>
                             <p>{{ $p->state }} {{ $p->country }}</p>
                         @elseif($p->fulladdress != null)
@@ -162,6 +168,8 @@ $ldate = $lastdate->format('d-m-Y');
                                 {{ $p->userpincode }}</p>
                             <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
                         @endif
+                    @endif
+                @endforeach
                 </td>
                 
                 <!-- @endif -->
@@ -171,7 +179,10 @@ $ldate = $lastdate->format('d-m-Y');
                 <!-- @if ($key != 0) -->
                     <!-- @if ($p->isClaimant != 0) -->
                     <td>
-                    @if ($p->address1 != '')
+                    @foreach ($party as $key => $p)
+                        @if ($key != 0)
+                            @if ($p->isClaimant != 0)
+                                @if ($p->address1 != '')
                                     <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }},
                                         {{ $p->pincode }}
                                     </p>
@@ -180,7 +191,9 @@ $ldate = $lastdate->format('d-m-Y');
                                 @if ($p->fulladdress != '')
                                     <p>{{ $p->fulladdress }} </p>
                                 @endif
-                                </td>
+                        @endif
+                    @endforeach
+                    </td>
                     <!-- @endif -->
                 <!-- @endif -->
             
@@ -190,10 +203,14 @@ $ldate = $lastdate->format('d-m-Y');
         <tr>
             
                 <!-- @if ($p->isClaimant == 0) -->
-                @if ($p->userEmail != '')
                 <td>
-                <p>{{ $p->userEmail }}</p>
-                @endif
+                @foreach ($party as $key => $p)
+                    @if ($p->isClaimant == 0)
+                        @if ($p->userEmail != '')
+                        <p>{{ $p->userEmail }}</p>
+                        @endif
+                    @endif
+                @endforeach
                 </td>
                 <!-- @endif -->
             
@@ -202,9 +219,15 @@ $ldate = $lastdate->format('d-m-Y');
             <!-- @if ($key != 0) -->
                         <!-- @if ($p->isClaimant != 0) -->
                         <td>
-                        @if ($p->userEmail != '')
-                        <p>{{ $p->userEmail }}</p>
+                        @foreach ($party as $key => $p)
+                        @if ($key != 0)
+                            @if ($p->isClaimant != 0)
+                                @if ($p->userEmail != '')
+                                <p>{{ $p->userEmail }}</p>
+                                @endif
+                            @endif
                         @endif
+                        @endforeach
                         </td>
                         <!-- @endif -->
                 <!-- @endif -->
