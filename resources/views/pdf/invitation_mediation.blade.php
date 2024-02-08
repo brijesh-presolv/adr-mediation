@@ -172,7 +172,7 @@ $ldate = $lastdate->format('d-m-Y');
     
         
         <td>
-        <table class="table_" cellspacing="0" cellpadding="10" width="100%">
+        <table class="table_" cellspacing="0" cellpadding="0" width="100%">
         @foreach ($party as $key => $p)
             @if ($key != 0 && $p->isClaimant != 0)
                 <!-- @if ($p->isClaimant != 0) -->
