@@ -117,89 +117,116 @@ $ldate = $lastdate->format('d-m-Y');
 
 
         <!-- New Format -------->
+        
+        @foreach ($party as $key => $p)
         <tr>
         <td>
-        @foreach ($party as $key => $p)
         <?php
             $inparty = User::find($p->userId); ?>
             @if ($p->isClaimant == 0)
-                <tr>
-                    <td>
+                <!-- <tr>
+                    <td> -->
                         <p>{{ isset($inparty->organization) ? $inparty->organization . ' through its authorized representative ' . $p->name : $p->name }}</p>
-                    </td>
-                </tr>
-
-                @if ($p->address1 != null)
-                <tr>
-                    <td>
-                        <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }}, {{ $p->pincode }}</p>
-                        <p>{{ $p->state }} {{ $p->country }}</p>
-                    </td>
-                </tr>
-                @elseif($p->fulladdress != null)
-                <tr>
-                    <td><p>{{ $p->fulladdress }}</p></td>
-                </tr>
-                @else
-                <tr>
-                    <td>
-                        <p>{{ $p->useraddress }} {{ $p->useraddress1 }}, {{ $p->usercity }},
-                                {{ $p->userpincode }}</p>
-                        <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
-                    </td>
-                </tr>
-                @endif
-
+                    <!-- </td>
+                </tr> -->
             @endif
-        @endforeach
         </td>
 
-
-
         <td>
-            @foreach ($party as $key => $p)
+        @if ($key != 0)
+            @if ($p->isClaimant != 0)
+                @if ($p->name != '')
+                <p>{{ $p->name }}</p>
+                @endif
+            @endif
+        @endif
+        </td>
+        </tr>
+
+        <tr>
+            <td>
+                @if ($p->isClaimant == 0)
+                @if ($p->address1 != null)
+                            <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }}, {{ $p->pincode }}</p>
+                            <p>{{ $p->state }} {{ $p->country }}</p>
+                        @elseif($p->fulladdress != null)
+                            <p>{{ $p->fulladdress }}</p>
+                        @else
+                            <p>{{ $p->useraddress }} {{ $p->useraddress1 }}, {{ $p->usercity }},
+                                {{ $p->userpincode }}</p>
+                            <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
+                        @endif
+                @endif
+            </td>
+
+            <td>
                 @if ($key != 0)
                     @if ($p->isClaimant != 0)
-                        @if ($p->name != '')
-                            @if ($p->name != '')
-                            <tr>
-                                <td><p>{{ $p->name }}</p></td>
-                            </tr>
-                            @endif
-
-                            @if ($p->address1 != '')
-                            <tr>
-                                <td>
+                    @if ($p->address1 != '')
                                     <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }},
                                         {{ $p->pincode }}
                                     </p>
                                     <p>{{ $p->state }} {{ $p->country }}</p>
-                                </td>
-                            </tr>
-                            @endif
-
-                            @if ($p->fulladdress != '')
-                            <tr>
-                                <td><p>{{ $p->fulladdress }} </p></td>
-                            </tr>
-                            @endif
-
-                            @if ($p->userEmail != '')
-                            <tr>
-                                <td><p>{{ $p->userEmail }}</p></td>
-                            </tr>
-                            @endif
-
-                            @if ($p->userPhone != '')
-                            <tr>
-                                <td><p>{{ $p->userPhone }}</p></td>
-                            </tr>
-                            @endif
-                        @endif
+                                @endif
+                                @if ($p->fulladdress != '')
+                                    <p>{{ $p->fulladdress }} </p>
+                                @endif
                     @endif
                 @endif
-            @endforeach
             </td>
+        </tr>
+
+
+        <tr>
+            <td>
+                @if ($p->isClaimant == 0)
+                @if ($p->userEmail != '')
+                <p>{{ $p->userEmail }}</p>
+                @endif
+                @endif
+            </td>
+
+            <td>
+            @if ($key != 0)
+                        @if ($p->isClaimant != 0)
+                        @if ($p->userEmail != '')
+                        <p>{{ $p->userEmail }}</p>
+                        @endif
+                        @endif
+                @endif
+            </td>
+        </tr>
+
+
+
+        <tr>
+            <td>
+                @if ($p->isClaimant == 0)
+                @if ($p->userPhone != '')
+                <p>{{ $p->userPhone }}</p>
+                @endif
+                @endif
+            </td>
+
+            <td>
+            @if ($key != 0)
+                        @if ($p->isClaimant != 0)
+                        @if ($p->userPhone != '')
+                        <p>{{ $p->userPhone }}</p>
+                        @endif
+                        @endif
+                @endif
+            </td>
+        </tr>
+        @endforeach
+
+
+
+
+               
+
+
+
 
 
 
