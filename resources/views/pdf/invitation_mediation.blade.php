@@ -260,7 +260,7 @@ $ldate = $lastdate->format('d-m-Y');
                 <!-- @endif -->
             
         </tr>
-        @endforeach
+        
 
 
 
