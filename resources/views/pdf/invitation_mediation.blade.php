@@ -120,32 +120,38 @@ $ldate = $lastdate->format('d-m-Y');
         
         @foreach ($party as $key => $p)
         <tr>
-        <td>
+        
         <?php
             $inparty = User::find($p->userId); ?>
             @if ($p->isClaimant == 0)
+            <td>
                 <!-- <tr>
                     <td> -->
                         <p>{{ isset($inparty->organization) ? $inparty->organization . ' through its authorized representative ' . $p->name : $p->name }}</p>
                     <!-- </td>
                 </tr> -->
+            </td>
             @endif
-        </td>
+        
 
-        <td>
-        @if ($key != 0)
+        
+        <!-- @if ($key != 0) -->
             @if ($p->isClaimant != 0)
+            <td>
                 @if ($p->name != '')
                 <p>{{ $p->name }}</p>
                 @endif
+            </td>
             @endif
-        @endif
-        </td>
+        <!-- @endif -->
+        
         </tr>
 
         <tr>
-            <td>
+            
                 @if ($p->isClaimant == 0)
+                <td>
+
                 @if ($p->address1 != null)
                             <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }}, {{ $p->pincode }}</p>
                             <p>{{ $p->state }} {{ $p->country }}</p>
@@ -156,12 +162,15 @@ $ldate = $lastdate->format('d-m-Y');
                                 {{ $p->userpincode }}</p>
                             <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
                         @endif
+                </td>
+                
                 @endif
-            </td>
+            
 
-            <td>
-                @if ($key != 0)
+           
+                <!-- @if ($key != 0) -->
                     @if ($p->isClaimant != 0)
+                    <td>
                     @if ($p->address1 != '')
                                     <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }},
                                         {{ $p->pincode }}
@@ -171,52 +180,62 @@ $ldate = $lastdate->format('d-m-Y');
                                 @if ($p->fulladdress != '')
                                     <p>{{ $p->fulladdress }} </p>
                                 @endif
+                                </td>
                     @endif
-                @endif
-            </td>
+                <!-- @endif -->
+            
         </tr>
 
 
         <tr>
-            <td>
+            
                 @if ($p->isClaimant == 0)
                 @if ($p->userEmail != '')
+                <td>
                 <p>{{ $p->userEmail }}</p>
                 @endif
+                </td>
                 @endif
-            </td>
+            
 
-            <td>
-            @if ($key != 0)
+            
+            <!-- @if ($key != 0) -->
                         @if ($p->isClaimant != 0)
+                        <td>
                         @if ($p->userEmail != '')
                         <p>{{ $p->userEmail }}</p>
                         @endif
+                        </td>
                         @endif
-                @endif
-            </td>
+                <!-- @endif -->
+            
         </tr>
 
 
 
         <tr>
-            <td>
+            
                 @if ($p->isClaimant == 0)
                 @if ($p->userPhone != '')
+                <td>
                 <p>{{ $p->userPhone }}</p>
-                @endif
-                @endif
-            </td>
+                </td>
 
-            <td>
-            @if ($key != 0)
+                @endif
+                @endif
+            
+
+            
+            <!-- @if ($key != 0) -->
                         @if ($p->isClaimant != 0)
                         @if ($p->userPhone != '')
+                        <td>
                         <p>{{ $p->userPhone }}</p>
+                        </td>
                         @endif
                         @endif
-                @endif
-            </td>
+                <!-- @endif -->
+            
         </tr>
         @endforeach
 
@@ -232,6 +251,7 @@ $ldate = $lastdate->format('d-m-Y');
 
             @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
             <tr>
+                <td></td>
                 <td><p>{{$case->otherRespondentDetails}}</p></td>
             </tr>
             @endif
