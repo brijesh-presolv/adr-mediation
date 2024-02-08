@@ -114,6 +114,107 @@ $ldate = $lastdate->format('d-m-Y');
                 Opposite / Responding Party:
             </th>
         </tr>
+
+
+        <!-- New Format -------->
+        <tr>
+        <td>
+        @foreach ($party as $key => $p)
+        <?php
+            $inparty = User::find($p->userId); ?>
+            @if ($p->isClaimant == 0)
+                <tr>
+                    <td>
+                        <p>{{ isset($inparty->organization) ? $inparty->organization . ' through its authorized representative ' . $p->name : $p->name }}</p>
+                    </td>
+                </tr>
+
+                @if ($p->address1 != null)
+                <tr>
+                    <td>
+                        <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }}, {{ $p->pincode }}</p>
+                        <p>{{ $p->state }} {{ $p->country }}</p>
+                    </td>
+                </tr>
+                @elseif($p->fulladdress != null)
+                <tr>
+                    <td><p>{{ $p->fulladdress }}</p></td>
+                </tr>
+                @else
+                <tr>
+                    <td>
+                        <p>{{ $p->useraddress }} {{ $p->useraddress1 }}, {{ $p->usercity }},
+                                {{ $p->userpincode }}</p>
+                        <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
+                    </td>
+                </tr>
+                @endif
+
+            @endif
+        @endforeach
+        </td>
+
+
+
+        <td>
+            @foreach ($party as $key => $p)
+                @if ($key != 0)
+                    @if ($p->isClaimant != 0)
+                        @if ($p->name != '')
+                            @if ($p->name != '')
+                            <tr>
+                                <td><p>{{ $p->name }}</p></td>
+                            </tr>
+                            @endif
+
+                            @if ($p->address1 != '')
+                            <tr>
+                                <td>
+                                    <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }},
+                                        {{ $p->pincode }}
+                                    </p>
+                                    <p>{{ $p->state }} {{ $p->country }}</p>
+                                </td>
+                            </tr>
+                            @endif
+
+                            @if ($p->fulladdress != '')
+                            <tr>
+                                <td><p>{{ $p->fulladdress }} </p></td>
+                            </tr>
+                            @endif
+
+                            @if ($p->userEmail != '')
+                            <tr>
+                                <td><p>{{ $p->userEmail }}</p></td>
+                            </tr>
+                            @endif
+
+                            @if ($p->userPhone != '')
+                            <tr>
+                                <td><p>{{ $p->userPhone }}</p></td>
+                            </tr>
+                            @endif
+                        @endif
+                    @endif
+                @endif
+            @endforeach
+
+
+
+
+            @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
+            <tr>
+                <td><p>{{$case->otherRespondentDetails}}</p></td>
+            </tr>
+            @endif
+        </td>
+        </tr>
+        <!-- New Format -------->
+
+
+
+        <?php /*
         <tr>
             <td>
                 @foreach ($party as $key => $p)
@@ -191,6 +292,7 @@ $ldate = $lastdate->format('d-m-Y');
                 @endif
             </td>
         </tr>
+        */ ?>
 
         @if ($case->discussion != '' && $case->discussion != null)
         <tr>
