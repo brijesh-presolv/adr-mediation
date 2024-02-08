@@ -12,7 +12,7 @@ $meddate = $meddate->format('d-m-Y');
 <html>
 
 <head>
-    <title> {{ config('app.name', 'Medtiator') }} | Appointment Letter</title>
+    <title> {{ config('app.name', 'Medtiator') }} | Settlement Agreement </title>
     <style type="text/css">
         @page {
             header: page-header;

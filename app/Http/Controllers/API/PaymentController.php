@@ -994,7 +994,7 @@ class PaymentController extends Controller
 
                         //print_r($respondentdata->userId);die();
   
-                        $restructureFile=$name = 'restructure_' . sprintf('%06d', $caseid) . time() . '.pdf';
+                        $restructureFile=$name = 'restructure_' . sprintf('%06d', $caseid) . '.pdf';
 
                         $offerArr['caseid']=$caseid;
                         $offerArr['res_user_id']=11;
