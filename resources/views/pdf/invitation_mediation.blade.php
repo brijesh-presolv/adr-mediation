@@ -136,20 +136,20 @@ $ldate = $lastdate->format('d-m-Y');
 
         
         <!-- @if ($key != 0) -->
-            @if ($p->isClaimant != 0)
+            <!-- @if ($p->isClaimant != 0) -->
             <td>
                 @if ($p->name != '')
                 <p>{{ $p->name }}</p>
                 @endif
             </td>
-            @endif
+            <!-- @endif -->
         <!-- @endif -->
         
         </tr>
 
         <tr>
             
-                @if ($p->isClaimant == 0)
+                <!-- @if ($p->isClaimant == 0) -->
                 <td>
 
                 @if ($p->address1 != null)
@@ -164,12 +164,12 @@ $ldate = $lastdate->format('d-m-Y');
                         @endif
                 </td>
                 
-                @endif
+                <!-- @endif -->
             
 
            
                 <!-- @if ($key != 0) -->
-                    @if ($p->isClaimant != 0)
+                    <!-- @if ($p->isClaimant != 0) -->
                     <td>
                     @if ($p->address1 != '')
                                     <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }},
@@ -181,7 +181,7 @@ $ldate = $lastdate->format('d-m-Y');
                                     <p>{{ $p->fulladdress }} </p>
                                 @endif
                                 </td>
-                    @endif
+                    <!-- @endif -->
                 <!-- @endif -->
             
         </tr>
@@ -189,24 +189,24 @@ $ldate = $lastdate->format('d-m-Y');
 
         <tr>
             
-                @if ($p->isClaimant == 0)
+                <!-- @if ($p->isClaimant == 0) -->
                 @if ($p->userEmail != '')
                 <td>
                 <p>{{ $p->userEmail }}</p>
                 @endif
                 </td>
-                @endif
+                <!-- @endif -->
             
 
             
             <!-- @if ($key != 0) -->
-                        @if ($p->isClaimant != 0)
+                        <!-- @if ($p->isClaimant != 0) -->
                         <td>
                         @if ($p->userEmail != '')
                         <p>{{ $p->userEmail }}</p>
                         @endif
                         </td>
-                        @endif
+                        <!-- @endif -->
                 <!-- @endif -->
             
         </tr>
@@ -215,25 +215,25 @@ $ldate = $lastdate->format('d-m-Y');
 
         <tr>
             
-                @if ($p->isClaimant == 0)
+                <!-- @if ($p->isClaimant == 0) -->
                 @if ($p->userPhone != '')
                 <td>
                 <p>{{ $p->userPhone }}</p>
                 </td>
 
                 @endif
-                @endif
+                <!-- @endif -->
             
 
             
             <!-- @if ($key != 0) -->
-                        @if ($p->isClaimant != 0)
+                        <!-- @if ($p->isClaimant != 0) -->
                         @if ($p->userPhone != '')
                         <td>
                         <p>{{ $p->userPhone }}</p>
                         </td>
                         @endif
-                        @endif
+                        <!-- @endif -->
                 <!-- @endif -->
             
         </tr>
