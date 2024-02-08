@@ -1611,8 +1611,7 @@ class CaseController extends Controller
         $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
             ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
-        echo "<pre>";print_R($data["party"]);
-        dd($data["party"]);
+        
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
         //$name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
