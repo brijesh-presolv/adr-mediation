@@ -202,10 +202,10 @@ class PaymentController extends Controller
 
                         $name = $invit_file->file_name;
                         $savePath = 'mediation_documents/mediation/' . $caseid;
-                        //$finalFilePath = $savePath . '/' . $name;
+                        $finalFilePath = $savePath . '/' . $name;
                        // $invit_file_name = Storage::disk('s3')->url($finalFilePath);
                         
-                        $finalFilePath = 'mediation_documents/mediation/93425/Invitation_mediate_M093425.pdf' ;
+                       // $finalFilePath = 'mediation_documents/mediation/93425/Invitation_mediate_M093425.pdf';
                         $invit_file_name=$this->getPreSignedUrl($finalFilePath, 15, [
                           'ResponseContentDisposition' => 'inline; filename="file.pdf"', // Set filename for inline display
                           'ContentType' => 'application/pdf', // Set the content type
