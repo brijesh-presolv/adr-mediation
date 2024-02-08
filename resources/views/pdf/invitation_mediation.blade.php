@@ -163,9 +163,10 @@ $ldate = $lastdate->format('d-m-Y');
                 @if ($p->userPhone != '')
                 
                 <p>{{ $p->userPhone }}</p>
+                @endif
                 </td>
             </tr>
-            @endif
+            
         @endforeach
 
         
