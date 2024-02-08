@@ -1358,7 +1358,7 @@ class DashboardController extends Controller
                     'event' => 'SEND_ADDI_DOC_MED',
                     'case_id' => $id,
                 ];
-                SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+                SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Mediator"], null, $filesE);
                 $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
@@ -1400,7 +1400,7 @@ class DashboardController extends Controller
         if (!empty($sendEamils)) {
 
             foreach ($sendEamils as $email) {
-                SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+                SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
             }
         }
 

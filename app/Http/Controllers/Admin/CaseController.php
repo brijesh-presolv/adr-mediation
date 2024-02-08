@@ -2579,7 +2579,7 @@ class CaseController extends Controller
                     'event' => 'SEND_ADDI_DOC_MED',
                     'case_id' => $id,
                 ];
-                SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+                SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Mediator"], null, $filesE);
 
                 $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
@@ -2619,7 +2619,7 @@ class CaseController extends Controller
 
         if (!empty($sendEamils)) {
             foreach ($sendEamils as $email) {
-                SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+                SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
             }
         }
 
@@ -3206,7 +3206,7 @@ class CaseController extends Controller
                         'event' => 'SEND_ADDI_DOC_MED',
                         'case_id' => $request->caseid,
                     ];
-                    SendGrid::send($d2, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+                    SendGrid::send($d2, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Mediator"], null, $filesE);
                     $varjson = ['caseid' => $mid];
                     $var = ['-cid-'];
                     $var1 = [$mid];
@@ -3289,7 +3289,7 @@ class CaseController extends Controller
                 $filesE = url("storage/app/" . $invUser->file_name);
 
                 if ($invUser->userEmail != null) {
-                    SendGrid::send($d, $invUser->userEmail, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+                    SendGrid::send($d, $invUser->userEmail, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
                 }
 
                 if ($invUser->userPhone != "") {
