@@ -211,7 +211,7 @@ $ldate = $lastdate->format('d-m-Y');
                         </td>
                     </tr>
                 @endif
-            @endif
+            <!-- @endif -->
         @endforeach
 
             @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
