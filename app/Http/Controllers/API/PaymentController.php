@@ -28,6 +28,12 @@ use App\Models\CaseReply;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Models\OtpCode;
+use App\Models\InvoledUser;
+use App\Http\Helpers\Whatsapp;
+use App\Models\Reminder;
+use App\Models\WaTemplate;
+use App\Models\WhatsappLog;
+use App\Models\WhatsappChatbot;
 
 
 
@@ -1010,10 +1016,33 @@ class PaymentController extends Controller
                           $savePath = 'mediation_documents/medrestructure/' . $caseData[0]->id;
                           $finalFilePath = $savePath . '/' . $restructureFile;
                           //$uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
-                          $uploadS3=true;
+                          $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+                          //$uploadS3=true;
 
                          if($uploadS3){
-  
+
+                          $s3filepath = Storage::disk('s3')->url($finalFilePath);
+                          $varjson = ['caseid' => "M" . sprintf("%06d", $caseid)];
+                          $var = ['-caseid-'];
+                          $var1 = ["M" . sprintf("%06d", $caseid)];
+                          $content1 = WaTemplate::getcontent('restructure_settlement_doc');
+                          $haptik_tmp="restructure_settlement_doc_56";
+                          $content = str_replace($var, $var1, $content1);
+
+                          if($respondentdata->userPhone !=""){
+
+                            $dwa1 = [
+                              'caseid' => $caseid,
+                              'contact' => $respondentdata->userPhone,
+                              'content' =>  ['media' => ['url' => $s3filepath, 'caption' => $content]],
+                              'event' => "RESTRUCTURE_BOT_MSG",
+                              'varjson' => $varjson,
+                              'haptik_tmp' => $haptik_tmp,
+                          ];
+
+                            $accessW = Whatsapp::sendWamessage($dwa1);
+
+                          }
                             //$restructureFile_path = S3getUrl($restructureFile, 'restructure');
                            //$restructureFile_path=base_url('assets/upload/restructure/'.$restructureFile);
                             $caption = "Please see the restructure document";
@@ -1306,6 +1335,43 @@ class PaymentController extends Controller
                     curl_close($ch);
   
                   } */
+
+                  if($respondentdata->userPhone !=""){
+
+                    $authKey = env('SMS_AUTH_KEY', '');
+                    $flowId = env('SMS_FLOW_KEY', '');
+                    $url = env('SMS_FLOW_API', '');
+                    $senderId = "Prsolv";
+                    $mobileNumber = "+91" . $respondentdata->userPhone;
+            
+                    $ch = curl_init();
+                    curl_setopt_array($ch, [
+                        CURLOPT_URL => $url,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => "{\n  \"flow_id\": \"$flowId\",\n  \"sender\": \"$senderId\",\n  \"mobiles\": \"$mobileNumber\",\n  \"otp\": \"$otp\"\n  }",
+                        CURLOPT_HTTPHEADER => [
+                            "authkey: {$authKey}",
+                            "content-type: application/JSON"
+                        ],
+                    ]);
+            
+                    $response = curl_exec($ch);
+            
+            
+                    // dd($response);
+                    //Print error if any
+                    if (curl_errno($ch)) {
+                        echo 'error:' . curl_error($ch);
+                    }
+            
+                    curl_close($ch);
+
+                  }
 
                   if($insert_data){
 
@@ -1610,6 +1676,4 @@ class PaymentController extends Controller
      } 
 
     }
-
-
 }
