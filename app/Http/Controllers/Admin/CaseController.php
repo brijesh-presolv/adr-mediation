@@ -1608,7 +1608,8 @@ class CaseController extends Controller
     {
         $data["case"] = MedCase::where("id", "=", $id)->first();
         // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
-        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
+        'users.country as usercountry', 'users.poc_name as userpname', 'users.poc_email as userpemail', 'users.poc_contact as userpcontact')
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
             ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
         
@@ -2930,6 +2931,12 @@ class CaseController extends Controller
                 // for ref id //
                 $data['ref_id'] = $value[16];
                 // for ref id //
+
+                // POC fields //
+                $data['poc_name'] = $value[17];
+                $data['poc_email'] = $value[18];
+                $data['poc_contact'] = $value[19];
+                // POC fields //
                 
                 /* $mydate=date('Y-m-d');
                 $DATTTA=date('Y-m-d', strtotime($mydate. ' + 10 days')); */
