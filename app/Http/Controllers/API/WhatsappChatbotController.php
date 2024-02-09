@@ -396,7 +396,7 @@ class WhatsappChatbotController extends Controller
         }
 
         $res = Curl::NewWhatsappRequest($url, json_encode($data), $type, $auth);
-        $resjson = json_decode($res, true);
+        $resjson = json_decode($res);
       
 
         if ($resjson) {

@@ -307,8 +307,7 @@ class WhatsappController extends Controller
         $res = Curl::NewWhatsappRequest($url, json_encode($data), $type, $auth);
         // dd($res);
 
-       // $resjson = json_decode($res);
-        $resjson = json_decode($res, true);
+        $resjson = json_decode($res);
 
 
         if ($resjson) {
@@ -323,7 +322,7 @@ class WhatsappController extends Controller
                     'content' => implode(" ", str_replace(['‘', '’'], ['::', ';;'], $d['content'])),
                     'casetype' => $d['type'],
                     'event' => $d['event'],
-                    'request_uuid' => $resjson->id,
+                    'request_uuid' => isset($resjson->id) ? $resjson->id : "",
                     'credits_charged' => '0',
                     'full_resp' => $res,
                     'created_at' => date('Y-m-d H:i:s')
@@ -343,7 +342,7 @@ class WhatsappController extends Controller
                     'media' => $d['oldcontent']['media']['url'],
                     'casetype' => $d['type'],
                     'event' => $d['event'],
-                    'request_uuid' => $resjson->id,
+                    'request_uuid' => isset($resjson->id) ? $resjson->id : "",
                     'credits_charged' => '0',
                     'full_resp' => $res,
                     'created_at' => date('Y-m-d H:i:s')
