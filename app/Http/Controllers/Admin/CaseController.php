@@ -2805,6 +2805,7 @@ class CaseController extends Controller
             }
             if ($errormsg == '') {
                 $csv = $this->csvToArray($tmpName);
+                dd($csv[0]);
                 if (count($csv[0]) != 22) {
                     $errormsg .= "Invalid csv file";
                 }
