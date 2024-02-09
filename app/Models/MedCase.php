@@ -13,7 +13,7 @@ class MedCase extends Model
     use HasFactory;
 
     protected $table = 'mediation_case';
-    protected $fillable = ['userid', 'disputeCategory', 'natureOfAgreement', 'agreementDate', 'noOfParties', 'amount', 'proposedSolution', 'issue', 'confirm_status', 'case_status', 'documentPath', 'withdraw', 'otherRespondentDetails', 'request_letter', 'batch_id', 'ref_id', 'bulk_flag', 'discussion', 'payToken', 'PayLink', 'PayLinkExpire', 'restructure_offer_1', 'restructure_offer_2', 'restructure_offer_3'];
+    protected $fillable = ['userid', 'disputeCategory', 'natureOfAgreement', 'agreementDate', 'noOfParties', 'amount', 'proposedSolution', 'issue', 'confirm_status', 'case_status', 'documentPath', 'withdraw', 'otherRespondentDetails', 'request_letter', 'batch_id', 'ref_id', 'bulk_flag', 'discussion', 'poc_name', 'poc_email', 'poc_contact', 'payToken', 'PayLink', 'PayLinkExpire', 'restructure_offer_1', 'restructure_offer_2', 'restructure_offer_3'];
 
 
     public function user_involed()
