@@ -133,13 +133,13 @@ $ldate = $lastdate->format('d-m-Y');
                             <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
                         @endif
 
-                        @if ($p->userEmail != null)
+                        <!-- @if ($p->userEmail != null)
                         <p>{{$p->userEmail}}</p>
                         @endif
 
                         @if ($p->userPhone != null)
                         <p>{{$p->userPhone}}</p>
-                        @endif
+                        @endif -->
                         <br> <br>
 
                         @if ($p->userpname != null)
