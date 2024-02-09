@@ -59,13 +59,13 @@ $ldate = $lastdate->format('d-m-Y');
         .table_ td {
             border-top: solid;
             border-width: 1px;
-            padding: 10px;
+            /* padding: 10px; */
             border: solid;
             border-width: 1px;
         }
 
         .table_ th {
-            padding: 10px;
+            /* padding: 10px; */
         }
     </style>
 </head>
