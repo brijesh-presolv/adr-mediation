@@ -1609,9 +1609,11 @@ class CaseController extends Controller
         $data["case"] = MedCase::where("id", "=", $id)->first();
         // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
-        'users.country as usercountry', 'users.poc_name as userpname', 'users.poc_email as userpemail', 'users.poc_contact as userpcontact')
+        'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
-            ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
+            ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)
+            ->where("mediation_case.id", "=", $id)->get();
         
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
         //$name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
