@@ -59,13 +59,13 @@ $ldate = $lastdate->format('d-m-Y');
         .table_ td {
             border-top: solid;
             border-width: 1px;
-            padding: 10px;
+            /* padding: 10px; */
             border: solid;
             border-width: 1px;
         }
 
         .table_ th {
-            padding: 10px;
+            /* padding: 10px; */
         }
     </style>
 </head>
@@ -122,7 +122,7 @@ $ldate = $lastdate->format('d-m-Y');
         <!-- <tr> -->
         <tr>
         <td>
-        <table class="table_" width="100%" style="border-collapse: collapse;">
+        <table width="100%" border="0" style="border-collapse: collapse; border:0px;">
         @foreach ($party as $key => $p)
             <?php
         
@@ -172,7 +172,7 @@ $ldate = $lastdate->format('d-m-Y');
     
         
         <td>
-        <table class="table_" width="100%" style="border-collapse: collapse;">
+        <table width="100%" border="0" style="border-collapse: collapse;border:0px;">
         @foreach ($party as $key => $p)
             @if ($key != 0 && $p->isClaimant != 0)
                 <!-- @if ($p->isClaimant != 0) -->
