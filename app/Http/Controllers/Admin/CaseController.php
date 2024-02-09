@@ -2806,7 +2806,7 @@ class CaseController extends Controller
             if ($errormsg == '') {
                 $csv = $this->csvToArray($tmpName);
                 //dd($csv[0]);
-                if (count($csv[0]) != 20) {
+                if (count($csv[0]) != 25) {
                     $errormsg .= "Invalid csv file";
                 }
                 if ($errormsg != '') {
@@ -2933,11 +2933,7 @@ class CaseController extends Controller
                 $data['ref_id'] = $value[16];
                 // for ref id //
 
-                // POC fields //
-                $data['poc_name'] = $value[17];
-                $data['poc_email'] = $value[18];
-                $data['poc_contact'] = $value[19];
-                // POC fields //
+                
                 
                 /* $mydate=date('Y-m-d');
                 $DATTTA=date('Y-m-d', strtotime($mydate. ' + 10 days')); */
@@ -2978,6 +2974,13 @@ class CaseController extends Controller
                 }else{
                     $data['restructure_offer_3'] = "";
                 }
+
+
+                // POC fields //
+                $data['poc_name'] = $value[22];
+                $data['poc_email'] = $value[23];
+                $data['poc_contact'] = $value[24];
+                // POC fields //
 
 
                 $med = MedCase::create($data);
