@@ -119,10 +119,11 @@ class WhatsappChatbotController extends Controller
 
                                     //$accessW = Whatsapp::sendWamessage($dwa1);
                                     //self::whatsappsend($d, str_replace('+91', '', $value->contact));
-                                    $accessW = self::whatsappsend($dwa1);
+                                    //$accessW = self::whatsappsend($dwa1);
+                                    $accessW = self::sendWamessage($dwa1);
                                     $accessW2=json_decode($accessW, true);
 
-                                    if($accessW2['response']=="success"){
+                                    /* if($accessW2['response']=="success"){ */
 
                                         $Chatbot=WhatsappChatbot::find($data->id);
                                         $Chatbot->is_send="1";
@@ -134,14 +135,14 @@ class WhatsappChatbotController extends Controller
                                         $result['response']='success';
                                         echo json_encode($result);
 
-                                    }else{
+                                    /* }else{
 
                                         $result['code']=404;
                                         $result['message']='Que not inserted';//unauthorised
                                         $result['response']='error';
                                         echo json_encode($result);
 
-                                    }
+                                    } */
                                 }else{
 
                                     $result['code']=404;
@@ -214,7 +215,80 @@ class WhatsappChatbotController extends Controller
 
             $BotQue =WhatsappBotQue::create($arr_e);
         }
-        return $BotQue;
+
+        self::send();
+
+        return true;
+    }
+
+    public function send()
+    {
+
+        $limit = 200;
+
+        $whapps = WhatsappBotQue::where(['is_sent' => 0, 'is_processing' => 0, 'is_success' => null,'is_hold'=> null])->whereDate('created_at', '>', '2022-07-31')->orderBy('created_at', 'ASC')->limit($limit)->get();
+
+        if (count($whapps) < 1) {
+            exit();
+        }
+        $whappspr = [];
+
+        foreach ($whapps as $key => $value) {
+
+            $whappspr[] = $value->id;
+        }
+
+        $setprocess = WhatsappBotQue::whereIn('id', $whappspr)->limit($limit)->update(['is_processing' => 1]);
+
+        foreach ($whapps as $key => $value) {
+
+            $content = json_decode($value->content, true);
+
+            $oldcontent = '';
+
+
+            $vararray = [];
+            $vararrayheader = [];
+            $convertarray = json_decode($value->variable, true);
+            foreach ($convertarray as $var) {
+                $vararray[] = $var;
+            }
+
+            if ($value->media == 1) {
+
+                $oldcontent = $content;
+
+                $contenturl = parse_url($content['media']['url'])["path"];
+                $file_name = basename($content['media']['url']);
+
+                $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 15);
+
+                if (!file_get_contents($content['media']['url'])) {
+                    continue;
+                } else {
+                    $path = 'public/tmp/' . $file_name;
+                    Storage::disk('local')->put($path, file_get_contents($content['media']['url']));
+                    $vararrayheader[] = url("storage/app/" . $path);
+                    // echo url("storage/app/" . $path);
+                }
+            }
+            // exit;
+
+            $d = [
+                'id' => $value->id,
+                'event' => $value->event,
+                'tempname' => $value->haptik_tmp,
+                'varbody' => $vararray,
+                'varheader' => count($vararrayheader) > 0 ? $vararrayheader : "",
+                'file_name' => isset($file_name) ? $file_name : "",
+                'content' => $content,
+                'oldcontent' => $oldcontent,
+                'type' => $value->casetype,
+                'caseid' => $value->caseid,
+            ];
+
+            $access=self::WhatsappMessage($d, str_replace('+91', '', $value->contact));
+        }
     }
 
     public function whatsappsend($whdata)
@@ -313,6 +387,14 @@ class WhatsappChatbotController extends Controller
 
         $type = "POST";
         $auth = env('INTERAKT_KEY');
+        $findtrack = WhatsappTrack::where(['que_id' => $d['id']])->orderBy('created_at', 'DESC')->limit(1)->first();
+
+        if (isset($findtrack)) {
+            if ($findtrack->request_uuid != "") {
+                return true;
+            }
+        }
+
         $res = Curl::NewWhatsappRequest($url, json_encode($data), $type, $auth);
         $resjson = json_decode($res, true);
       
@@ -363,9 +445,9 @@ class WhatsappChatbotController extends Controller
           
             if ($res_decode['result'] == true && isset($res_decode['id'])) {
 
-                $que = WhatsappBotQue::where('id', $d['id'])->update(['is_sent' => 1, 'is_success' => 1]);
+                $que = WhatsappBotQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_sent' => 1, 'is_success' => 1]);
             }
-            $que = WhatsappBotQue::where('id', $d['id'])->update(['is_processing' => 0, 'is_sent' => 1]);
+            $que = WhatsappBotQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);
 
             
             $result2['message']='Success';//unauthorised
