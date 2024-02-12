@@ -1112,7 +1112,7 @@ class CaseController extends Controller
 
         if(isset($request->fsData['sessionTime'])){
             $time = date("g:i A", strtotime($request->fsData['sessionTime']));
-            $display_date_time = str_replace('/', '-', $request->fsData['sessionTime']) . " " . $time;
+            $display_date_time = str_replace('/', '-', $request->fsData['sessionDate']) . " " . $time;
         } else {
             $time = date("g:i A", strtotime($request->sessionTime));
             $display_date_time = str_replace('/', '-', $request->sessionDate) . " " . $time;
