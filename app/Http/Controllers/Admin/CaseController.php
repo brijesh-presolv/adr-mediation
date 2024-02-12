@@ -1110,8 +1110,14 @@ class CaseController extends Controller
             $inserted_zoom_choice = "manual";
         }
 
-        $time = date("g:i A", strtotime($request->sessionTime));
-        $display_date_time = str_replace('/', '-', $request->sessionDate) . " " . $time;
+        if(isset($request->fsData['sessionTime'])){
+            $time = date("g:i A", strtotime($request->fsData['sessionTime']));
+            $display_date_time = str_replace('/', '-', $request->fsData['sessionTime']) . " " . $time;
+        } else {
+            $time = date("g:i A", strtotime($request->sessionTime));
+            $display_date_time = str_replace('/', '-', $request->sessionDate) . " " . $time;
+        }
+        
         $d = [
             'event' => 'SESS_SCHE',
             'case_id' => $request->caseId,
