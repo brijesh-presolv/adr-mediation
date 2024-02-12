@@ -1141,6 +1141,7 @@ class CaseController extends Controller
                     // dd($party_id);
 
                     $party = InvoledUser::where("userPlanId", $request->caseId)->where("id", $party_id)->first();
+                   
                     if ($inv_id == "") {
                         $inv_id = $party->id;
                     } else {
@@ -1149,11 +1150,23 @@ class CaseController extends Controller
 
 
                     if($request->zoom_choice == "manually_zoom" || $request->fsData['zoom_choice'] == "manually_zoom") {
-                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        if($request->fsData['zoom_choice'] == "manually_zoom" && $party->isClaimant != 0){
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        }elseif($request->zoom_choice == "manually_zoom"){
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        }
+                       
                     } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
-                    /**** Zoom Invitation ************/
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
-                    /**** Zoom Invitation ************/
+                        if($request->fsData['zoom_choice'] == "directly_zoom" && $party->isClaimant != 0){
+                            /**** Zoom Invitation ************/
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            /**** Zoom Invitation ************/
+                        }elseif($request-s>zoom_choice == "directly_zoom"){
+                            /**** Zoom Invitation ************/
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            /**** Zoom Invitation ************/
+                        }
+                    
                     }
                 }
                 $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -1184,9 +1197,9 @@ class CaseController extends Controller
 
                     // $access = Whatsapp::sendWamessage($dwa1);
 
-                    if($request->zoom_choice == "manually_zoom" || $request->fsData['zoom_choice'] == "manually_zoom") {
+                    if($request->zoom_choice == "manually_zoom") {
                         $is_send = $this->sned_session($request->zoomId, $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
-                    } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
+                    } else if($request->zoom_choice == "directly_zoom") {
                     /**** Zoom Invitation ************/
                         $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
                     /**** Zoom Invitation ************/
