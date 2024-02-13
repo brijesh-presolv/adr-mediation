@@ -198,6 +198,7 @@ class DashboardController extends Controller
                 Common_function::MedNotification($request->mediation_case_id, "REJECTED_MED", Auth::user()->id, Auth::user()->id, $inv_id);
             }
         }
+        //dd($request->all());
         if ($request->fsData['status'] == 1 || $request->status == 1) {
             $caseid = $request->mediation_case_id;
             $consentDisclosures = ConsentDisclosures::where("mediation_case_id", "=", $caseid)->first();
@@ -228,7 +229,15 @@ class DashboardController extends Controller
                 $consentDisclosures->particulars4 = ($request->particulars4 != null) ? $request->particulars4 : $request->fsData['particulars4'];
             }
             $consentDisclosures->save();
-            $this->send_attechment_party($caseid);
+
+
+            // for notification
+            if(isset($request->log_type) && $request->log_type != ""){
+                $case_type = 1; // bulk
+            }else {
+                $case_type = 0; // individual
+            }
+            $this->send_attechment_party($caseid, $case_type);
         } else {
             $caseid = $request->mediation_case_id;
         }
@@ -1198,7 +1207,7 @@ class DashboardController extends Controller
 
 
 
-    public function send_attechment_party($id)
+    public function send_attechment_party($id, $case_type)
     {
         $data["case"] = MedCase::where("id", "=", $id)->first();
         $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
@@ -1230,13 +1239,21 @@ class DashboardController extends Controller
         $whatsappSend = Storage::disk('s3')->url($finalFilePath);
         // dd($uploadS3);
         if ($mediator) {
-            SendGrid::send($d, $mediator->email, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
+            if($case_type == 0){
+                SendGrid::send($d, $mediator->email, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
+            }
         }
         foreach ($involedUser as $inv) {
             if ($inv->userEmail != "") {
-                SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
+                if($case_type == 1 && $inv->isClaimant != 0){
+                    SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
+                } elseif($case_type == 0){
+                    SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
+                }
+                
             }
             if ($inv->userPhone != "") {
+                if(($case_type == 1 && $inv->isClaimant != 0) || ($case_type == 0)){
                 $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
@@ -1266,6 +1283,7 @@ class DashboardController extends Controller
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
+            }
             }
         }
 

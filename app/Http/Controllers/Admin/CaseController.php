@@ -1110,8 +1110,14 @@ class CaseController extends Controller
             $inserted_zoom_choice = "manual";
         }
 
-        $time = date("g:i A", strtotime($request->sessionTime));
-        $display_date_time = str_replace('/', '-', $request->sessionDate) . " " . $time;
+        if(isset($request->fsData['sessionTime'])){
+            $time = date("g:i A", strtotime($request->fsData['sessionTime']));
+            $display_date_time = str_replace('/', '-', $request->fsData['sessionDate']) . " " . $time;
+        } else {
+            $time = date("g:i A", strtotime($request->sessionTime));
+            $display_date_time = str_replace('/', '-', $request->sessionDate) . " " . $time;
+        }
+        
         $d = [
             'event' => 'SESS_SCHE',
             'case_id' => $request->caseId,
@@ -1135,6 +1141,7 @@ class CaseController extends Controller
                     // dd($party_id);
 
                     $party = InvoledUser::where("userPlanId", $request->caseId)->where("id", $party_id)->first();
+                   
                     if ($inv_id == "") {
                         $inv_id = $party->id;
                     } else {
@@ -1143,11 +1150,23 @@ class CaseController extends Controller
 
 
                     if($request->zoom_choice == "manually_zoom" || $request->fsData['zoom_choice'] == "manually_zoom") {
-                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        if($request->fsData['zoom_choice'] == "manually_zoom" && $party->isClaimant != 0){
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        }elseif($request->zoom_choice == "manually_zoom"){
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        }
+                       
                     } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
-                    /**** Zoom Invitation ************/
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
-                    /**** Zoom Invitation ************/
+                        if($request->fsData['zoom_choice'] == "directly_zoom" && $party->isClaimant != 0){
+                            /**** Zoom Invitation ************/
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            /**** Zoom Invitation ************/
+                        }elseif($request-s>zoom_choice == "directly_zoom"){
+                            /**** Zoom Invitation ************/
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            /**** Zoom Invitation ************/
+                        }
+                    
                     }
                 }
                 $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -1178,9 +1197,9 @@ class CaseController extends Controller
 
                     // $access = Whatsapp::sendWamessage($dwa1);
 
-                    if($request->zoom_choice == "manually_zoom" || $request->fsData['zoom_choice'] == "manually_zoom") {
+                    if($request->zoom_choice == "manually_zoom") {
                         $is_send = $this->sned_session($request->zoomId, $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
-                    } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
+                    } else if($request->zoom_choice == "directly_zoom") {
                     /**** Zoom Invitation ************/
                         $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
                     /**** Zoom Invitation ************/
@@ -1247,7 +1266,11 @@ class CaseController extends Controller
                     ->first();
                 if ($mediator) {
                     $id = "M" . sprintf("%06d", $request->caseId);
-                    SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+
+                    if(!isset($request->fsData['zoom_choice'])){
+
+                        SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+                    
 
                     $varjson = ['sessionDateTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
                     $var = ['-dt-', '-cid-', '-link-'];
@@ -1265,14 +1288,15 @@ class CaseController extends Controller
                     ];
 
                     $access = Whatsapp::sendWamessage($dwa1);
+                    }
                 }
                 foreach ($allParty as $party) {
                     // $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
                     
                     
-                    if($request->fsData['zoom_choice'] == "manually_zoom") {
+                    if($request->fsData['zoom_choice'] == "manually_zoom" && $party->isClaimant != 0) {
                         $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
-                    } else if($request->fsData['zoom_choice'] == "directly_zoom") {
+                    } else if($request->fsData['zoom_choice'] == "directly_zoom" && $party->isClaimant != 0) {
                      /**** Zoom Invitation ************/
 
                      $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
@@ -1609,9 +1633,11 @@ class CaseController extends Controller
         $data["case"] = MedCase::where("id", "=", $id)->first();
         // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
         $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
-        'users.country as usercountry', 'users.poc_name as userpname', 'users.poc_email as userpemail', 'users.poc_contact as userpcontact')
+        'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
-            ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
+            ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)
+            ->where("mediation_case.id", "=", $id)->get();
         
         $pdf = PDF::loadView('pdf.invitation_mediation', $data);
         //$name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
@@ -2805,8 +2831,8 @@ class CaseController extends Controller
             }
             if ($errormsg == '') {
                 $csv = $this->csvToArray($tmpName);
-                dd($csv[0]);
-                if (count($csv[0]) != 22) {
+                //dd($csv[0]);
+                if (count($csv[0]) != 25) {
                     $errormsg .= "Invalid csv file";
                 }
                 if ($errormsg != '') {
@@ -2933,11 +2959,7 @@ class CaseController extends Controller
                 $data['ref_id'] = $value[16];
                 // for ref id //
 
-                // POC fields //
-                $data['poc_name'] = $value[17];
-                $data['poc_email'] = $value[18];
-                $data['poc_contact'] = $value[19];
-                // POC fields //
+                
                 
                 /* $mydate=date('Y-m-d');
                 $DATTTA=date('Y-m-d', strtotime($mydate. ' + 10 days')); */
@@ -2978,6 +3000,13 @@ class CaseController extends Controller
                 }else{
                     $data['restructure_offer_3'] = "";
                 }
+
+
+                // POC fields //
+                $data['poc_name'] = $value[22];
+                $data['poc_email'] = $value[23];
+                $data['poc_contact'] = $value[24];
+                // POC fields //
 
 
                 $med = MedCase::create($data);
