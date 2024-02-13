@@ -1266,7 +1266,11 @@ class CaseController extends Controller
                     ->first();
                 if ($mediator) {
                     $id = "M" . sprintf("%06d", $request->caseId);
-                    SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+
+                    if(!isset($request->fsData['zoom_choice'])){
+
+                        SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+                    
 
                     $varjson = ['sessionDateTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
                     $var = ['-dt-', '-cid-', '-link-'];
@@ -1284,14 +1288,15 @@ class CaseController extends Controller
                     ];
 
                     $access = Whatsapp::sendWamessage($dwa1);
+                    }
                 }
                 foreach ($allParty as $party) {
                     // $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
                     
                     
-                    if($request->fsData['zoom_choice'] == "manually_zoom") {
+                    if($request->fsData['zoom_choice'] == "manually_zoom" && $party->isClaimant != 0) {
                         $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
-                    } else if($request->fsData['zoom_choice'] == "directly_zoom") {
+                    } else if($request->fsData['zoom_choice'] == "directly_zoom" && $party->isClaimant != 0) {
                      /**** Zoom Invitation ************/
 
                      $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
