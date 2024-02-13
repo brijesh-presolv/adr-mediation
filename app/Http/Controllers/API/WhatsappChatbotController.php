@@ -121,9 +121,9 @@ class WhatsappChatbotController extends Controller
                                     //self::whatsappsend($d, str_replace('+91', '', $value->contact));
                                     //$accessW = self::whatsappsend($dwa1);
                                     $accessW = self::sendWamessage($dwa1);
-                                    $accessW2=json_decode($accessW, true);
+                                   // $accessW2=json_decode($accessW, true);
 
-                                    /* if($accessW2['response']=="success"){ */
+                                   if($accessW==true){
 
                                         $Chatbot=WhatsappChatbot::find($data->id);
                                         $Chatbot->is_send="1";
@@ -135,14 +135,14 @@ class WhatsappChatbotController extends Controller
                                         $result['response']='success';
                                         echo json_encode($result);
 
-                                    /* }else{
+                                     }else{
 
                                         $result['code']=404;
                                         $result['message']='Que not inserted';//unauthorised
                                         $result['response']='error';
                                         echo json_encode($result);
 
-                                    } */
+                                    } 
                                 }else{
 
                                     $result['code']=404;
