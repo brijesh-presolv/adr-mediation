@@ -33,6 +33,7 @@ class WhatsappChatbotController extends Controller
             try {
              
                 $whatsappbotreply= WhatsappChatbot::where('type', 'message_received')->where('is_send', '0')->get();
+
     
                 if(count($whatsappbotreply) > 0){
 
@@ -40,8 +41,12 @@ class WhatsappChatbotController extends Controller
 
                         $reply_message_id=$data->reply_message_id;
 
-                        $whatsappbotreply= WhatsappChatbot::where('type', 'message_received')->get();
+                        //$whatsappbotreply= WhatsappChatbot::where('type', 'message_received')->get();
                         $whcasedata = DB::table('whatsapp_tracking')->select('whatsapp_tracking.*')->where('request_uuid', $reply_message_id)->first();
+
+                        $bot_data = DB::table('whatsapp_bot_data')->select('whatsapp_bot_data.*')->where('reply_message', $data->message)->first();
+
+                        if (!empty($bot_data)) {
 
                                 if (!empty($whcasedata)) {
 
@@ -68,7 +73,6 @@ class WhatsappChatbotController extends Controller
                                         $var = ['-name-'];
                                         $var1 = [$claimant_name];
                                         $content1 = WaTemplate::getcontent('med_bot_why');
-                                      //  echo "brijesgh"; print_r($content1);die();
                                         $haptik_tmp="med_bot_why";
 
                                     }
@@ -104,7 +108,9 @@ class WhatsappChatbotController extends Controller
 
                                     }
 
+
                                     $content = str_replace($var, $var1, $content1);
+                                              
 
                                     $dwa1 = [
                                         'caseid' => $caseData->id,
@@ -118,12 +124,12 @@ class WhatsappChatbotController extends Controller
                                     ];
 
                                     //$accessW = Whatsapp::sendWamessage($dwa1);
-                                    //self::whatsappsend($d, str_replace('+91', '', $value->contact));
+                                    //$accessW=self::whatsappsend($d, str_replace('+91', '', $value->contact));
                                     //$accessW = self::whatsappsend($dwa1);
                                     $accessW = self::sendWamessage($dwa1);
-                                    $accessW2=json_decode($accessW, true);
+                                   // $accessW2=json_decode($accessW, true);
 
-                                    /* if($accessW2['response']=="success"){ */
+                                   if($accessW==true){
 
                                         $Chatbot=WhatsappChatbot::find($data->id);
                                         $Chatbot->is_send="1";
@@ -135,14 +141,14 @@ class WhatsappChatbotController extends Controller
                                         $result['response']='success';
                                         echo json_encode($result);
 
-                                    /* }else{
+                                     }else{
 
                                         $result['code']=404;
                                         $result['message']='Que not inserted';//unauthorised
                                         $result['response']='error';
                                         echo json_encode($result);
 
-                                    } */
+                                    } 
                                 }else{
 
                                     $result['code']=404;
@@ -151,6 +157,7 @@ class WhatsappChatbotController extends Controller
                                     echo json_encode($result);
 
                                 }
+                            }
                     }
                 }
                 else{
