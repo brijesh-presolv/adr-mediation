@@ -3386,7 +3386,7 @@ class CaseController extends Controller
         // Add all the pages of the PDF to merge
         foreach ($caseid as $value) {
             $invitation = InvitationFiles::where(['case_id' => $value])->orderByDesc('id')->limit(1)->first();
-            if ($invitation->file_name != null) {
+            if (isset($invitation->file_name) && $invitation->file_name != null) {
                 $exist_file = storage_path() . '/app/public/mediation/' . $value . '/' . $invitation->file_name;
                 if (File::exists($exist_file)) {
                     $save_file =  $invitation->file_name;
