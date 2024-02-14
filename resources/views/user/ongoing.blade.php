@@ -338,9 +338,9 @@ use App\Models\InvoledUser;
             "columns": [{
                     "data": "key",
                     render: function(data, type, row, meta) {
+                        
                         var button = "";
-                        button = button + `<input type="checkbox" class="blkchk" data-caseid="` + data
-                            .caseid +
+                        button = button + `<input type="checkbox" class="blkchk" data-caseid="` + row.case.caseid +
                             `">`;
                         return meta.row + meta.settings._iDisplayStart + 1 + button;
                         }
