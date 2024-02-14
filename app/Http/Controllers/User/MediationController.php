@@ -1377,15 +1377,26 @@ class MediationController extends Controller
         $indexColumn = $_POST['iSortCol_0'];
         $columnName = $_POST['mDataProp_' . $indexColumn]; // Column name
         $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
+        $batch_id = "";
+        if (isset($_POST['batch_id'])) {
+            $batch_id = $_POST['batch_id'];
+        }
         $searchValue = $_POST['sSearch'];
 
-        $casescount = MedCase::getCaseCountOngoingUser($searchValue, $role);
-        $cases = MedCase::getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role);
+        $casescount = MedCase::getCaseCountOngoingUser($searchValue, $role, $batch_id);
+        $cases = MedCase::getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id);
 
+        $final_batch = "";
         $arraydata = array();
-
         foreach ($cases as $key => $value) {
-
+            $batch_name = DB::table('batch')
+            ->select("batch.batch_name")
+            ->where('batch.id', $value->batch_id)->get();
+            if(isset($value->batch_id) && $value->batch_id != ""){
+                $final_batch = $batch_name[0]->batch_name;
+            } else {
+                $final_batch = "-";
+            }
             $arraydata[] = [
                 "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($value->date)),
@@ -1395,6 +1406,8 @@ class MediationController extends Controller
                 "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->count(),
                 "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->where('view', 0)->count(),
                 "mediator_create_action_date" =>  date('d-m-Y', strtotime($value->create)),
+                "batch_id" => $value->batch_id,
+                "batch_name" => $final_batch
             ];
         }
 
