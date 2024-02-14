@@ -58,7 +58,7 @@ use App\Models\InvoledUser;
                             <th>Sr. No.</th>
                             <!-- <th>Select</th> -->
                             <th>@lang('case.case_id')</th>
-                            <!-- <th>@lang('case.ref_id')</th> -->
+                            <th>@lang('case.ref_id')</th>
                             <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -378,14 +378,38 @@ use App\Models\InvoledUser;
                 //     }
                 // },
                 {
+                        "data": "case.ref_id",
+                        render: function(data, type, row, meta) {
+                            if (row.case.ref_id == null) {
+                                var button = "";
+                                button = button + `<p style="font-size: 16px;"> -- </p>`;
+                                return button;
+                            } else {
+                                var button = "";
+                                button = button + `<p style="font-size: 16px;">` + row.case.ref_id + `</p>`;
+                                return button;
+                            }
+
+                        }
+                    },
+                {
                     "data": "date"
                 },
                 {
                     "data": "case.caseid",
-                    render: function(data) {
+                    render: function(data, type, row) {
+                       
                         var button = ` <a href="{{ url('user/casedetails/') }}/` + data +
                             `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                        return button;
+                        
+                        
+                        // Batch Name //
+                        var batch =
+                        `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
+                        row.batch_name + `</p> </div>`;
+                        // Batch Name //
+                        
+                        return button + batch ;
                     }
                 },
                 {
