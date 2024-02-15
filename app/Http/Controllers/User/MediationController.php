@@ -707,15 +707,21 @@ class MediationController extends Controller
         // for batch dropdown //
         $batch_array = MedCase::getCaseOngoingUserBatch(Auth::user()->id);
         $final_batch = "";
+        $batch_fianl_array = [];
         foreach ($batch_array as $key => $value) {
             $batch_name = DB::table('batch')
             ->select("batch.batch_name")
             ->where('batch.id', $value->batch_id)->get();
+            
+
             if(isset($value->batch_id) && $value->batch_id != ""){
                 $final_batch = $batch_name[0]->batch_name;
             }else {
                 $final_batch = "";
             }
+
+            
+            
             $arraydata[] = [
                 "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($value->date)),

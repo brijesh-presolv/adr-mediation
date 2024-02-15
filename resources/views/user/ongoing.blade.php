@@ -55,11 +55,24 @@ use App\Models\InvoledUser;
             <div class="col-md-12">
                 <select name="batch" id="batchSelect" class="form-control" >
                     <option value="" selected>Select Batch...</option>
-                    @foreach ($batch as $value)
-                        @if(isset($value["batch_name"]) && $value["batch_name"] != "")
-                            <option value="{{ $value['batch_id'] }}">{{ $value["batch_name"] }}</option>
+
+                    <?php
+                    $batch_name_array = [];
+                        foreach($batch as $k => $bvalue){
+                            if(!in_array($bvalue["batch_name"], $batch_name_array) && $bvalue["batch_name"] != ""){
+                              
+                                $batch_name_array[$bvalue["batch_id"]] = $bvalue["batch_name"];
+                            }
+                        }
+                       
+                        
+                    ?>
+                    @foreach ($batch_name_array as $key => $value)
+                        @if(isset($value) && $value != "")
+                            <option value="{{ $key }}">{{ $value }}</option>
                         @endif
                      @endforeach
+                   
                 </select>
                 <br>
                 <br>
