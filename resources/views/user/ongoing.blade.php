@@ -48,6 +48,27 @@ use App\Models\InvoledUser;
                 </div>
             </div>
         </div>
+
+
+        <!---- Batch ------>
+        <div class="">
+            <div class="col-md-12">
+                <select name="batch" id="batchSelect" class="form-control" >
+                    <option value="" selected>Select Batch...</option>
+                    @foreach ($batch as $value)
+                        @if(isset($value["batch_name"]) && $value["batch_name"] != "")
+                            <option value="{{ $value['batch_id'] }}">{{ $value["batch_name"] }}</option>
+                        @endif
+                     @endforeach
+                </select>
+                <br>
+                <br>
+            </div>
+        </div>
+        <!---- Batch ------>
+
+
+
         <div class="col-sm-12">
             <div class="card-box table-responsive">
                 <h4 class="header-title"><b>@lang('site.Ongoing') </b></h4>
@@ -306,6 +327,8 @@ use App\Models\InvoledUser;
             str = str.toString();
             return str.length < max ? pad("0" + str, max) : str;
         }
+        var batch_id;
+
         var userTable = $('#users').DataTable({
             "serverMethod": "POST",
             "sAjaxSource": '{{ route('user.case.json', $confirm_status) }}',
@@ -322,6 +345,11 @@ use App\Models\InvoledUser;
             "responsive": true,
             serverData: function(sSource, aoData, fnCallback, oSettings) {
                 // aoData.append('token',token)
+
+                aoData.push({
+                    name: "batch_id",
+                    value: batch_id
+                });
 
                 oSettings = $.ajax({
                     dataType: "json",
@@ -434,12 +462,14 @@ use App\Models\InvoledUser;
                                 .name + `</span><br>`;
 
                             } else {
-                                d_rp = d_rp +
-                                `<span class="`+ class_name + ` party_name" data-inid="` +
-                                data[i]
-                                .id + `" data-id="` + data[i].userId + `">` + data[
-                                    i].name +
-                                `</span><br>`;
+                                if(data[i].name != null){
+                                    d_rp = d_rp +
+                                    `<span class="`+ class_name + ` party_name" data-inid="` +
+                                    data[i]
+                                    .id + `" data-id="` + data[i].userId + `">` + data[
+                                        i].name +
+                                    `</span><br>`;
+                                }
                             }
                             /*
                             if (data[i].isOnboarded == 1) {
@@ -732,6 +762,15 @@ use App\Models\InvoledUser;
                 var modal = $(this)
                 modal.find('.modal-body input[name="case_id"]').val(recipient);
             });
+
+
+
+            // batch select //
+            $("#batchSelect").change(function() {
+            batch_id = $("#batchSelect :selected").val();
+                userTable.ajax.reload(null, false);
+            });
+            // batch select //
 
 
 

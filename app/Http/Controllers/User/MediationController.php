@@ -703,7 +703,36 @@ class MediationController extends Controller
         // }
         $confirm_status = 1;
 
-        return view('user.ongoing', ['confirm_status' => $confirm_status]);
+
+        // for batch dropdown //
+        $batch_array = MedCase::getCaseOngoingUserBatch(Auth::user()->id);
+        $final_batch = "";
+        foreach ($batch_array as $key => $value) {
+            $batch_name = DB::table('batch')
+            ->select("batch.batch_name")
+            ->where('batch.id', $value->batch_id)->get();
+            if(isset($value->batch_id) && $value->batch_id != ""){
+                $final_batch = $batch_name[0]->batch_name;
+            }else {
+                $final_batch = "";
+            }
+            $arraydata[] = [
+                "key" => $key + 1,
+                "date" => date('d-m-Y', strtotime($value->date)),
+                "casestatus" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first(),
+                "case" => $value,
+                // "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get(),
+                // "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->count(),
+                // "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->where('view', 0)->count(),
+                // "mediator_create_action_date" =>  date('d-m-Y', strtotime($value->create)),
+                "batch_id" => $value->batch_id,
+                "batch_name" => $final_batch
+            ];
+        }
+       // echo "<pre>";print_r($arraydata);exit;
+        // for batch dropdown //
+
+        return view('user.ongoing', ['confirm_status' => $confirm_status, "batch" => $arraydata]);
     }
 
     public function closed()
