@@ -225,12 +225,14 @@ use App\Models\InvoledUser;
                                 .name + `</span><br>`;
 
                             } else {
+                                if(data[i].name != null){
                                 d_rp = d_rp +
                                 `<span class="`+ class_name + ` party_name" data-inid="` +
                                 data[i]
                                 .id + `" data-id="` + data[i].userId + `">` + data[
                                     i].name +
                                 `</span><br>`;
+                                }
                             }
                             /*        
                             if (data[i].isOnboarded == 1) {
