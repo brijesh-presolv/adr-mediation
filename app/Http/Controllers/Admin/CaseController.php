@@ -1478,7 +1478,7 @@ class CaseController extends Controller
         $casescount = MedCase::getCaseCount($searchValue, $role, $batch_id, $bulk);
         $cases = MedCase::getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id, $bulk);
 
-        dd($cases);
+        //dd($cases);
 
         $arraydata = array();
         foreach ($cases as $key => $d) {
