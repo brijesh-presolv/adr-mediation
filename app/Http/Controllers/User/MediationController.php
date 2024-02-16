@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\Common_function;
+use App\Http\Helpers\Curl;
 use Illuminate\Http\Request;
 use App\Models\MedCase;
 use App\Models\Mediation_status_log;
@@ -19,6 +20,9 @@ use App\Http\Helpers\Whatsapp;
 use App\Models\ConsentDisclosures;
 use App\Models\Notification;
 use App\Models\WaTemplate;
+use App\Models\EmailTrack;
+use App\Models\WhatsappTrack;
+use App\Models\CourierCsv;
 use Session;
 use Auth;
 use Validator;
@@ -1498,5 +1502,38 @@ class MediationController extends Controller
             ];
         }
         return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
+    }
+
+    // Track
+    public function track($id)
+    {
+        $whatsapp = WhatsappTrack::getByCaseIdWh($id);
+        // $casedetails = MedCase::getcasebyId($id);
+        $email = EmailTrack::getByCaseId($id);
+        // $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
+        $courierCsv = CourierCsv::select('couriercsv.*', 'courierpdf.file_name')->leftJoin('courierpdf', 'courierpdf.csv_id', '=', 'couriercsv.id')
+            ->where('couriercsv.case_id', $id)->orderBy('couriercsv.created_at', 'ASC')->get();
+
+
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+
+        $data = [];
+        $data['auth'] = "MED360AUTH";
+        $data['app'] = "P360MED";
+        $data['caseid'] = $id;
+        $url = "https://presolv360.com/functions/ivrtrack.php";
+
+        $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'), true);
+        if ($ivr['code'] != '200') {
+            $ivr = [];
+        } else {
+            $ivr = $ivr['data'];
+        }
+        
+        // dd($ivr);
+        return view('user.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv"));
     }
 }
