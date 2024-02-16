@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('user.layouts.app')
 @section('title', 'Track M' . sprintf('%06d', $id))
 
 
