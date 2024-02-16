@@ -169,6 +169,11 @@ use App\Models\InvoledUser;
                     "data": "case.userPlanId",
                     render: function(data) {
                         var button = "M" + pad(data, 6);
+                        // Track added //
+                        button = button + `<br><a href="{{ url('user/track/') }}/` +
+                        data +
+                        `" target="_blank" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
+                        // Track added //
                         return button;
                     }
                 },
