@@ -1244,8 +1244,17 @@ class CaseController extends Controller
 
             $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
             $party_ids = array();
+            $party_ids_bulk = array();
             foreach ($allParty as $party) {
-                $party_ids[] = $party->id;
+
+                if(isset($request->fsData['sessionDate']) && $request->fsData['sessionDate'] != ""){
+                    if($party->isClaimant != 0){
+                        $party_ids_bulk[] = $party->id;
+                    }
+                }else{
+                    $party_ids[] = $party->id;
+                }
+                
             }
             
             $dataToInsert = [
@@ -1255,9 +1264,10 @@ class CaseController extends Controller
                 'zoom_id' => $created_zoom_id,
                 'zoom_link' => $created_zoom_link,
                 'zoom_link_choice' => $inserted_zoom_choice,
-                'session_party_ids' => json_encode($party_ids),
+                'session_party_ids' => (!empty($party_ids_bulk)) ? json_encode($party_ids_bulk) : json_encode($party_ids),
                 'scheduled_by' => Auth::user()->id,
             ];
+            //dd($dataToInsert);
             $manage_session = DB::table('manage_session')->insert($dataToInsert);
             if ($manage_session) {
                 $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -1478,6 +1488,7 @@ class CaseController extends Controller
         $casescount = MedCase::getCaseCount($searchValue, $role, $batch_id, $bulk);
         $cases = MedCase::getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id, $bulk);
 
+        //dd($cases);
 
         $arraydata = array();
         foreach ($cases as $key => $d) {
@@ -3386,7 +3397,7 @@ class CaseController extends Controller
         // Add all the pages of the PDF to merge
         foreach ($caseid as $value) {
             $invitation = InvitationFiles::where(['case_id' => $value])->orderByDesc('id')->limit(1)->first();
-            if ($invitation->file_name != null) {
+            if (isset($invitation->file_name) && $invitation->file_name != null) {
                 $exist_file = storage_path() . '/app/public/mediation/' . $value . '/' . $invitation->file_name;
                 if (File::exists($exist_file)) {
                     $save_file =  $invitation->file_name;

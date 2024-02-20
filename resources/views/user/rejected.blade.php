@@ -65,7 +65,10 @@ use App\Models\InvoledUser;
                             
                             ?>
                             <td>{{ $i++ }}</td>
-                            <td><?= 'M' . sprintf('%06d', $value->caseid) ?></td>
+                            <td><?= 'M' . sprintf('%06d', $value->caseid) ?>
+                            <br><a href="{{ url('user/track/') }}/<?php echo $value->caseid; ?>" target="_blank" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a>
+                       
+                            </td>
                             <?php /*
                             <td>
                                 <?php
@@ -79,7 +82,7 @@ use App\Models\InvoledUser;
                             */ ?>
                             <td><?= date('d-m-Y', strtotime($value->date)) ?></td>
                             <td><a class="btn   btn-sm btn-primary label label-success {{ count($value->party) > 0 ? '' : 'disabled' }}"
-                                    target="_blank" href="{{ route('user.casedetails', $value->caseid) }}">View</a></td>
+                                    target="_blank" href="{{ route('user.casedetails', $value->caseid) }}"><i class="mdi mdi-file-eye-outline"></i></a></td>
 
 
                             <td><?php

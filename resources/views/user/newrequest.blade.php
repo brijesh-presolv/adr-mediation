@@ -169,6 +169,11 @@ use App\Models\InvoledUser;
                     "data": "case.userPlanId",
                     render: function(data) {
                         var button = "M" + pad(data, 6);
+                        // Track added //
+                        button = button + `<br><a href="{{ url('user/track/') }}/` +
+                        data +
+                        `" target="_blank" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
+                        // Track added //
                         return button;
                     }
                 },
@@ -225,12 +230,14 @@ use App\Models\InvoledUser;
                                 .name + `</span><br>`;
 
                             } else {
+                                if(data[i].name != null){
                                 d_rp = d_rp +
                                 `<span class="`+ class_name + ` party_name" data-inid="` +
                                 data[i]
                                 .id + `" data-id="` + data[i].userId + `">` + data[
                                     i].name +
                                 `</span><br>`;
+                                }
                             }
                             /*        
                             if (data[i].isOnboarded == 1) {

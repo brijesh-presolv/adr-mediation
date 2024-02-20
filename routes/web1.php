@@ -81,6 +81,8 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     //bulk upload
     Route::post('bulkupload', [App\Http\Controllers\User\MediationController::class, 'bulkUpload'])->name('user.bulkUpload');
     Route::put('uploaddocument/{id}', [App\Http\Controllers\User\MediationController::class, 'documentUpload'])->name('user.documentUpload');
+
+
 });
 
 

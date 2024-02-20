@@ -753,12 +753,14 @@
                                         `">` + data[i]
                                         .name + `</span><br>`;
                             } else {
-                                d_rp = d_rp +
+                                if(data[i].name != null){
+                                    d_rp = d_rp +
                                         `<span class="`+ class_name + ` party_name" data-inid="` +
                                         data[i]
                                         .id + `" data-id="` + data[i].userId + `">` + data[
                                             i].name +
                                         `</span><br>`;
+                                }
                             }
 
                             /*

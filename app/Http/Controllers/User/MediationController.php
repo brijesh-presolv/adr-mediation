@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\Common_function;
+use App\Http\Helpers\Curl;
 use Illuminate\Http\Request;
 use App\Models\MedCase;
 use App\Models\Mediation_status_log;
@@ -19,6 +20,9 @@ use App\Http\Helpers\Whatsapp;
 use App\Models\ConsentDisclosures;
 use App\Models\Notification;
 use App\Models\WaTemplate;
+use App\Models\EmailTrack;
+use App\Models\WhatsappTrack;
+use App\Models\CourierCsv;
 use Session;
 use Auth;
 use Validator;
@@ -703,7 +707,42 @@ class MediationController extends Controller
         // }
         $confirm_status = 1;
 
-        return view('user.ongoing', ['confirm_status' => $confirm_status]);
+
+        // for batch dropdown //
+        $batch_array = MedCase::getCaseOngoingUserBatch(Auth::user()->id);
+        $final_batch = "";
+        $batch_fianl_array = [];
+        foreach ($batch_array as $key => $value) {
+            $batch_name = DB::table('batch')
+            ->select("batch.batch_name")
+            ->where('batch.id', $value->batch_id)->get();
+            
+
+            if(isset($value->batch_id) && $value->batch_id != ""){
+                $final_batch = $batch_name[0]->batch_name;
+            }else {
+                $final_batch = "";
+            }
+
+            
+            
+            $arraydata[] = [
+                "key" => $key + 1,
+                "date" => date('d-m-Y', strtotime($value->date)),
+                "casestatus" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first(),
+                "case" => $value,
+                // "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get(),
+                // "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->count(),
+                // "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->where('view', 0)->count(),
+                // "mediator_create_action_date" =>  date('d-m-Y', strtotime($value->create)),
+                "batch_id" => $value->batch_id,
+                "batch_name" => $final_batch
+            ];
+        }
+       // echo "<pre>";print_r($arraydata);exit;
+        // for batch dropdown //
+
+        return view('user.ongoing', ['confirm_status' => $confirm_status, "batch" => $arraydata]);
     }
 
     public function closed()
@@ -1377,15 +1416,26 @@ class MediationController extends Controller
         $indexColumn = $_POST['iSortCol_0'];
         $columnName = $_POST['mDataProp_' . $indexColumn]; // Column name
         $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
+        $batch_id = "";
+        if (isset($_POST['batch_id'])) {
+            $batch_id = $_POST['batch_id'];
+        }
         $searchValue = $_POST['sSearch'];
 
-        $casescount = MedCase::getCaseCountOngoingUser($searchValue, $role);
-        $cases = MedCase::getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role);
+        $casescount = MedCase::getCaseCountOngoingUser($searchValue, $role, $batch_id);
+        $cases = MedCase::getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id);
 
+        $final_batch = "";
         $arraydata = array();
-
         foreach ($cases as $key => $value) {
-
+            $batch_name = DB::table('batch')
+            ->select("batch.batch_name")
+            ->where('batch.id', $value->batch_id)->get();
+            if(isset($value->batch_id) && $value->batch_id != ""){
+                $final_batch = $batch_name[0]->batch_name;
+            } else {
+                $final_batch = "-";
+            }
             $arraydata[] = [
                 "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($value->date)),
@@ -1395,6 +1445,8 @@ class MediationController extends Controller
                 "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->count(),
                 "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->where('view', 0)->count(),
                 "mediator_create_action_date" =>  date('d-m-Y', strtotime($value->create)),
+                "batch_id" => $value->batch_id,
+                "batch_name" => $final_batch
             ];
         }
 
@@ -1450,5 +1502,38 @@ class MediationController extends Controller
             ];
         }
         return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
+    }
+
+    // Track
+    public function track($id)
+    {
+        $whatsapp = WhatsappTrack::getByCaseIdWh($id);
+        // $casedetails = MedCase::getcasebyId($id);
+        $email = EmailTrack::getByCaseId($id);
+        // $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
+        $courierCsv = CourierCsv::select('couriercsv.*', 'courierpdf.file_name')->leftJoin('courierpdf', 'courierpdf.csv_id', '=', 'couriercsv.id')
+            ->where('couriercsv.case_id', $id)->orderBy('couriercsv.created_at', 'ASC')->get();
+
+
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+
+        $data = [];
+        $data['auth'] = "MED360AUTH";
+        $data['app'] = "P360MED";
+        $data['caseid'] = $id;
+        $url = "https://presolv360.com/functions/ivrtrack.php";
+
+        $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'), true);
+        if ($ivr['code'] != '200') {
+            $ivr = [];
+        } else {
+            $ivr = $ivr['data'];
+        }
+        
+        // dd($ivr);
+        return view('user.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv"));
     }
 }

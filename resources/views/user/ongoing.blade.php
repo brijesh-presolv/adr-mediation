@@ -48,6 +48,40 @@ use App\Models\InvoledUser;
                 </div>
             </div>
         </div>
+
+
+        <!---- Batch ------>
+        <div class="">
+            <div class="col-md-12">
+                <select name="batch" id="batchSelect" class="form-control" >
+                    <option value="" selected>Select Batch...</option>
+
+                    <?php
+                    $batch_name_array = [];
+                        foreach($batch as $k => $bvalue){
+                            if(!in_array($bvalue["batch_name"], $batch_name_array) && $bvalue["batch_name"] != ""){
+                              
+                                $batch_name_array[$bvalue["batch_id"]] = $bvalue["batch_name"];
+                            }
+                        }
+                       
+                        
+                    ?>
+                    @foreach ($batch_name_array as $key => $value)
+                        @if(isset($value) && $value != "")
+                            <option value="{{ $key }}">{{ $value }}</option>
+                        @endif
+                     @endforeach
+                   
+                </select>
+                <br>
+                <br>
+            </div>
+        </div>
+        <!---- Batch ------>
+
+
+
         <div class="col-sm-12">
             <div class="card-box table-responsive">
                 <h4 class="header-title"><b>@lang('site.Ongoing') </b></h4>
@@ -58,7 +92,7 @@ use App\Models\InvoledUser;
                             <th>Sr. No.</th>
                             <!-- <th>Select</th> -->
                             <th>@lang('case.case_id')</th>
-                            <!-- <th>@lang('case.ref_id')</th> -->
+                            <th>@lang('case.ref_id')</th>
                             <th>@lang('case.date') <a href="#" data-toggle="tooltip" title=""
                                         data-original-title="Date and time of raising the 'Request for Mediation'."><i
                                             class="fa fa-info-circle" aria-hidden="true"></i></a></th>
@@ -306,6 +340,8 @@ use App\Models\InvoledUser;
             str = str.toString();
             return str.length < max ? pad("0" + str, max) : str;
         }
+        var batch_id;
+
         var userTable = $('#users').DataTable({
             "serverMethod": "POST",
             "sAjaxSource": '{{ route('user.case.json', $confirm_status) }}',
@@ -323,6 +359,11 @@ use App\Models\InvoledUser;
             serverData: function(sSource, aoData, fnCallback, oSettings) {
                 // aoData.append('token',token)
 
+                aoData.push({
+                    name: "batch_id",
+                    value: batch_id
+                });
+
                 oSettings = $.ajax({
                     dataType: "json",
                     type: "post",
@@ -338,9 +379,9 @@ use App\Models\InvoledUser;
             "columns": [{
                     "data": "key",
                     render: function(data, type, row, meta) {
+                        
                         var button = "";
-                        button = button + `<input type="checkbox" class="blkchk" data-caseid="` + data
-                            .caseid +
+                        button = button + `<input type="checkbox" class="blkchk" data-caseid="` + row.case.caseid +
                             `">`;
                         return meta.row + meta.settings._iDisplayStart + 1 + button;
                         }
@@ -359,6 +400,11 @@ use App\Models\InvoledUser;
                     "data": "case.caseid",
                     render: function(data) {
                         var button = "M" + pad(data, 6);
+                        // Track added //
+                        button = button + `<br><a href="{{ url('user/track/') }}/` +
+                        data +
+                        `" target="_blank" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
+                        // Track added //
                         return button;
                     }
                 },
@@ -378,14 +424,38 @@ use App\Models\InvoledUser;
                 //     }
                 // },
                 {
+                        "data": "case.ref_id",
+                        render: function(data, type, row, meta) {
+                            if (row.case.ref_id == null) {
+                                var button = "";
+                                button = button + `<p style="font-size: 16px;"> -- </p>`;
+                                return button;
+                            } else {
+                                var button = "";
+                                button = button + `<p style="font-size: 16px;">` + row.case.ref_id + `</p>`;
+                                return button;
+                            }
+
+                        }
+                    },
+                {
                     "data": "date"
                 },
                 {
                     "data": "case.caseid",
-                    render: function(data) {
+                    render: function(data, type, row) {
+                       
                         var button = ` <a href="{{ url('user/casedetails/') }}/` + data +
                             `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                        return button;
+                        
+                        
+                        // Batch Name //
+                        var batch =
+                        `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
+                        row.batch_name + `</p> </div>`;
+                        // Batch Name //
+                        
+                        return button + batch ;
                     }
                 },
                 {
@@ -410,12 +480,14 @@ use App\Models\InvoledUser;
                                 .name + `</span><br>`;
 
                             } else {
-                                d_rp = d_rp +
-                                `<span class="`+ class_name + ` party_name" data-inid="` +
-                                data[i]
-                                .id + `" data-id="` + data[i].userId + `">` + data[
-                                    i].name +
-                                `</span><br>`;
+                                if(data[i].name != null){
+                                    d_rp = d_rp +
+                                    `<span class="`+ class_name + ` party_name" data-inid="` +
+                                    data[i]
+                                    .id + `" data-id="` + data[i].userId + `">` + data[
+                                        i].name +
+                                    `</span><br>`;
+                                }
                             }
                             /*
                             if (data[i].isOnboarded == 1) {
@@ -708,6 +780,15 @@ use App\Models\InvoledUser;
                 var modal = $(this)
                 modal.find('.modal-body input[name="case_id"]').val(recipient);
             });
+
+
+
+            // batch select //
+            $("#batchSelect").change(function() {
+            batch_id = $("#batchSelect :selected").val();
+                userTable.ajax.reload(null, false);
+            });
+            // batch select //
 
 
 
