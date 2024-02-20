@@ -32,4 +32,5 @@ Route::post('/otpgenerate', [App\Http\Controllers\API\PaymentController::class, 
 Route::post('/otpverify', [App\Http\Controllers\API\PaymentController::class, 'otpVerify']);
 
 Route::post('/whatsapbotreply', [App\Http\Controllers\API\WhatsappChatbotController::class, 'whatsappbotReply']);
+Route::post('/botmisreport', [App\Http\Controllers\API\WhatsappChatbotController::class, 'botmisreport']);
 

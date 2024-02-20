@@ -34,6 +34,7 @@ use App\Models\Reminder;
 use App\Models\WaTemplate;
 use App\Models\WhatsappLog;
 use App\Models\WhatsappChatbot;
+use App\Models\WhatsappBotReport;
 
 
 
@@ -464,21 +465,39 @@ class PaymentController extends Controller
                           $_SESSION['pay_caseid'] = $caseData->id;
                           $purpose="SEBI Case Payment Case Id";
 
-                          $payresult=Payment::initiatePayment($purpose, $total_amt, $customer_name, $customer_email);
+                                                    $claimantdata2 = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $caseid)->first();
+                          $claimant_name2=$claimantdata2->name;
+                          $claimant_email=$claimantdata2->userEmail;
+                          $respondentdata=SettlementPayment::getrespondent($caseid);
+                          $respondent_name=$respondentdata->name;
+                          $respondent_email=$respondentdata->userEmail;
 
-                          if($payresult['response']=='success'){
+                          $botlogdata=[
+                              'caseid' => $caseData->id,
+                              'respondent_name' =>  $respondent_name,
+                              'respondent_email' => $respondent_email,
+                              'claimant_name' => $claimant_name2,
+                              'claimant_email' => $claimant_email,
+                              'event' => "PRESS_PAY_NOW",
+                              'created_at' => date('Y-m-d H:i:s')
+                          ];
 
-                            $SettlementPayment=SettlementPayment::find($insert_data->id);
+                         $botlogsave= WhatsappBotReport::insert($botlogdata);
+                         // $payresult=Payment::initiatePayment($purpose, $total_amt, $customer_name, $customer_email);
+                         //$payresult['response']=='success'
+                          if($botlogsave){
+
+                         /*    $SettlementPayment=SettlementPayment::find($insert_data->id);
                             $SettlementPayment->payment_request_id=$payresult['data']['payment_request_id'];
                             $SettlementPayment->payment_req_created=$payresult['data']['payment_req_created'];
                             $SettlementPayment->payment_url=$payresult['data']['payment_url'];
                             $SettlementPayment->save();
-                            $payment_url=$payresult['data']['payment_url'];
+                            $payment_url=$payresult['data']['payment_url']; */
                             $created_apy_link=$caseData->PayLink;
 
                             $result['message'] = "Payment request created";
                             $result['response']='success';
-                            $result['data'] = ['caseid'=> $caseData->id, 'total_amt'=>$total_amt, 'payment_req_token'=> $payment_req_token, 'payment_url'=>$payment_url, 'created_apy_link'=>$created_apy_link];
+                            $result['data'] = ['caseid'=> $caseData->id, 'total_amt'=>$total_amt, 'payment_req_token'=> $payment_req_token, 'created_apy_link'=>$created_apy_link];
                             $result['code'] = 200;
                             echo json_encode($result);
                             exit;
@@ -1005,6 +1024,25 @@ class PaymentController extends Controller
                         $insert_data=RestructureData::create($offerArr);
   
                         if($insert_data){
+
+                          $claimantdata2 = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $caseid)->first();
+                          $claimant_name2=$claimantdata2->name;
+                          $claimant_email=$claimantdata2->userEmail;
+                          $respondentdata=SettlementPayment::getrespondent($caseid);
+                          $respondent_name=$respondentdata->name;
+                          $respondent_email=$respondentdata->userEmail;
+
+                          $botlogdata=[
+                              'caseid' => $caseid,
+                              'respondent_name' =>  $respondent_name,
+                              'respondent_email' => $respondent_email,
+                              'claimant_name' => $claimant_name2,
+                              'claimant_email' => $claimant_email,
+                              'event' => "RESTR_OFFER_SUBMIT",
+                              'restructure_option' => $offer_name,
+                              'created_at' => date('Y-m-d H:i:s')
+                          ];
+                          WhatsappBotReport::insert($botlogdata);
   
                           $inserted_id=$insert_data->id;
                           
@@ -1170,6 +1208,25 @@ class PaymentController extends Controller
 
 
                       if($insert_data){
+
+                        $claimantdata2 = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $caseid)->first();
+                        $claimant_name2=$claimantdata2->name;
+                        $claimant_email=$claimantdata2->userEmail;
+                        $respondentdata=SettlementPayment::getrespondent($caseid);
+                        $respondent_name=$respondentdata->name;
+                        $respondent_email=$respondentdata->userEmail;
+
+                        $botlogdata=[
+                            'caseid' => $caseid,
+                            'respondent_name' =>  $respondent_name,
+                            'respondent_email' => $respondent_email,
+                            'claimant_name' => $claimant_name2,
+                            'claimant_email' => $claimant_email,
+                            'event' => "SUBMIT_REPLY",
+                            'reply' => $your_reply,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+                        WhatsappBotReport::insert($botlogdata);
 
                         $result['code']=200;
                         $result['message']='Your reply has been submitted.';//unauthorised
@@ -1463,7 +1520,7 @@ class PaymentController extends Controller
                         $otpcode->save();
                         
                         $result['code']=200;
-                        $result['message']='Your reply has been submitted.';
+                        $result['message']='submitted.';
                         $result['response']='success';
                         echo json_encode($result);
                         exit;
