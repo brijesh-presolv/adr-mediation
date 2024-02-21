@@ -1169,6 +1169,8 @@ class PaymentController extends Controller
         $payToken=  $request->input('payToken');
         $your_reply=  $request->input('your_reply');
         $party_name=  $request->input('party_name');
+        //$files=  $request->file('files');
+       // print_r($files['originalName']);die();
 
           if(empty($your_reply)) {
             $result['code'] = 500;
@@ -1192,10 +1194,26 @@ class PaymentController extends Controller
   
               $caseData = MedCase::select("*")->where("id", $caseid)->where("payToken", $payToken)->first();
 
+              if ($request->hasFile('files')) {
+
+                  $image = $request->file('files');
+                  $fileName = 'replyfile_'.time().'.'.$image->getClientOriginalExtension();
+                 // $path = $image->storeAs('replyfile', $fileName, 'public');
+                 $savePath = 'mediation_documents/medreplyfile/';
+                 $finalFilePath = $savePath . '/' . $fileName;
+                // $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $image);
+                 $uploadS3 = Storage::disk('s3')->put($finalFilePath , fopen($request->file('files'), 'r+'));
+                 $file_path = Storage::disk('s3')->url($finalFilePath);
+              }else{
+
+                $fileName="";
+
+              }
+
                if(!empty($caseData)){
 
                      $sub_array1['caseid']=$caseid;
-                     $sub_array1['attachment_file']='';
+                     $sub_array1['attachment_file']=$fileName;
                      $sub_array1['organization_name']="";
                      $sub_array1['party_name']=$party_name;
                      $sub_array1['your_reply']=$your_reply;
