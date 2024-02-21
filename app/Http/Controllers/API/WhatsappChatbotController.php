@@ -519,20 +519,21 @@ class WhatsappChatbotController extends Controller
         $MIS_arr=array();
        if(count($botdata)>0){
 
-        foreach($botdata as  $key2 => $botdata){
+            foreach($botdata as  $key2 => $botdata){
 
-            $keyvalue=0;
-
-            $MIS_arr[$key2]['caseid'] = $botdata->caseid;
-           $keyvalue++;
-        }
+                $keyvalue=0;
+                
+                $MIS_arr[$key2]['caseid'] = $botdata->caseid;
+                $keyvalue++;
+            }
 
             $result['code']=200;
             $result['message']='success';//unauthorised
             $result['response']='success';
             echo json_encode($result);
+            exit;
 
-        //return Excel::download(new ExportCodyDataSheet($botdata), 'chat360_data.xlsx');
+           //return Excel::download(new ExportCodyDataSheet($botdata), 'chat360_data.xlsx');
 
        }else{
 
@@ -540,6 +541,7 @@ class WhatsappChatbotController extends Controller
         $result['message']='Data not found';//unauthorised
         $result['response']='error';
         echo json_encode($result);
+        exit;
 
        }
 

@@ -897,6 +897,25 @@ class PaymentController extends Controller
 
                 $caseData = MedCase::select("*")->where("id", "=", $caseid)->where("payToken", "=", $payToken)->first();
                 if(!empty($caseData)){
+
+                  $claimantdata2 = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $caseid)->first();
+                  $claimant_name2=$claimantdata2->name;
+                  $claimant_email=$claimantdata2->userEmail;
+                  $respondentdata=SettlementPayment::getrespondent($caseid);
+                  $respondent_name=$respondentdata->name;
+                  $respondent_email=$respondentdata->userEmail;
+
+                  $botlogdata=[
+                      'caseid' => $caseid,
+                      'respondent_name' =>  $respondent_name,
+                      'respondent_email' => $respondent_email,
+                      'claimant_name' => $claimant_name2,
+                      'claimant_email' => $claimant_email,
+                      'event' => "WHATSAPP_BOT_RESTR_LINK",
+                      'restructure_option' => "",
+                      'created_at' => date('Y-m-d H:i:s')
+                  ];
+                  WhatsappBotReport::insert($botlogdata);
   
                   $offer_list=array();
                   if(isset($caseData->restructure_offer_1) && $caseData->restructure_offer_1 !=""){
