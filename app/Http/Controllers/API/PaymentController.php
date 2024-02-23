@@ -1205,6 +1205,15 @@ class PaymentController extends Controller
             echo json_encode($result);
             exit;
           }
+          $casereply = CaseReply::select("*")->where("caseid", $caseid)->first();
+          
+          if(!empty($casereply)) {  
+            $result['code'] = 500;
+            $result['message'] = "Your reply has been already submitted";
+            $result['response'] = 'error';
+            echo json_encode($result);
+            exit;
+          }
            try {
 
             $payData=SettlementPayment::where('caseid', $caseid)->where('payToken', $payToken)->where('pay_status', "success")->first();
