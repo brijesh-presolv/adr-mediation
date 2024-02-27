@@ -19,6 +19,9 @@ use App\Http\Helpers\Curl;
 use App\Models\WhatsAppQue;
 use App\Models\WhatsappTrack;
 use App\Models\WhatsappBotQue;
+use App\Models\WhatsappBotReport;
+use App\Models\SettlementPayment;
+
 use App\Http\Controllers\API\PaymentController;
 
 class WhatsappChatbotController extends Controller
@@ -61,7 +64,9 @@ class WhatsappChatbotController extends Controller
                                         $var1 = [$caseData->PayLink];
                                         $content1 = WaTemplate::getcontent('med_bot_paynow2');
                                         $haptik_tmp="med_bot_paynow2";
+                                        $eventname="WHATSAPP_BOT_PAY";
                                        // $payresult=PaymentController::WApayNowProcess($caseData->id, $caseData->PayLink);
+                                       
 
                                     }
                                     if($data->message=="Why did I get this?"){
@@ -74,6 +79,7 @@ class WhatsappChatbotController extends Controller
                                         $var1 = [$claimant_name];
                                         $content1 = WaTemplate::getcontent('med_bot_why');
                                         $haptik_tmp="med_bot_why";
+                                        $eventname="Whatsapp_Bot_Why";
 
                                     }
                                     if($data->message=="Explore Alternatives"){
@@ -83,6 +89,7 @@ class WhatsappChatbotController extends Controller
                                         $var1 = [$mid];
                                         $content1 = WaTemplate::getcontent('med_bot_Alternatives2');
                                         $haptik_tmp="med_bot_alternatives2";
+                                        $eventname="Bot_Explore_Alternatives";
 
                                     }
                                     if($data->message=="Restructure"){
@@ -94,6 +101,7 @@ class WhatsappChatbotController extends Controller
                                         $var1 = [$restructure_link];
                                         $content1 = WaTemplate::getcontent('med_bot_restructure');
                                         $haptik_tmp="med_bot_restructure";
+                                        $eventname="WHATSAPP_BOT_RESTR";
 
                                     }
                                     if($data->message=="Submit a Reply"){
@@ -105,13 +113,11 @@ class WhatsappChatbotController extends Controller
                                         $var1 = [$reply_link];
                                         $content1 = WaTemplate::getcontent('med_bot_submit_reply');
                                         $haptik_tmp="med_bot_submit_reply";
-
+                                        $eventname="WHATSAPP_BOT_REPLY";
                                     }
-
 
                                     $content = str_replace($var, $var1, $content1);
                                               
-
                                     $dwa1 = [
                                         'caseid' => $caseData->id,
                                         'contact' =>  $data->phone_number,
@@ -122,6 +128,24 @@ class WhatsappChatbotController extends Controller
                                         'bot_id' => $data->id,
                 
                                     ];
+
+                                    $claimantdata2 = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $caseData->id)->first();
+                                    $claimant_name2=$claimantdata2->name;
+                                    $claimant_email=$claimantdata2->userEmail;
+                                    $respondentdata=SettlementPayment::getrespondent($caseData->id);
+                                    $respondent_name=$respondentdata->name;
+                                    $respondent_email=$respondentdata->userEmail;
+
+                                    $botlogdata=[
+                                        'caseid' => $caseData->id,
+                                        'respondent_name' =>  $respondent_name,
+                                        'respondent_email' => $respondent_email,
+                                        'claimant_name' => $claimant_name2,
+                                        'claimant_email' => $claimant_email,
+                                        'event' => $eventname,
+                                        'created_at' => date('Y-m-d H:i:s')
+                                    ];
+                                    WhatsappBotReport::insert($botlogdata);
 
                                     //$accessW = Whatsapp::sendWamessage($dwa1);
                                     //$accessW=self::whatsappsend($d, str_replace('+91', '', $value->contact));
@@ -467,6 +491,60 @@ class WhatsappChatbotController extends Controller
             $result2['response']='error';
             return json_encode($result2);
         }
+    }
+    
+    public function createbot_report($data){
+
+        $data1 = [
+            'caseid' => $data['caseid'],
+            'respondent_name' => $data['respondent_name'],
+            'respondent_email' => $data['respondent_email'],
+            'claimant_name' => $data['claimant_name'],
+            'claimant_email' => $data['claimant_email'],
+            'event' => $data['event'],
+            'reply' => $data['reply'],
+            'restructure_option' => $data['restructure_option'],
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        WhatsappBotReport::insert($data1);
+    }
+
+    public function botmisreport(Request $request){
+
+        $from=$request->from_caseid;
+        $to=$request->to_caseid;
+        $botdata=WhatsappBotReport::getmisreport($from, $to);
+        print_r($botdata);die();
+        $MIS_arr=array();
+       if(count($botdata)>0){
+
+            foreach($botdata as  $key2 => $botdata){
+
+                $keyvalue=0;
+                
+                $MIS_arr[$key2]['caseid'] = $botdata->caseid;
+                $keyvalue++;
+            }
+
+            $result['code']=200;
+            $result['message']='success';//unauthorised
+            $result['response']='success';
+            echo json_encode($result);
+            exit;
+
+           //return Excel::download(new ExportCodyDataSheet($botdata), 'chat360_data.xlsx');
+
+       }else{
+
+        $result['code']=404;
+        $result['message']='Data not found';//unauthorised
+        $result['response']='error';
+        echo json_encode($result);
+        exit;
+
+       }
+
     }
 
 }
