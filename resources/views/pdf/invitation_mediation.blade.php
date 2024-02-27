@@ -231,7 +231,8 @@ $ldate = $lastdate->format('d-m-Y');
         resolution of the dispute and registered a request with Presolv360.</p>
     {{-- <p>2. Presolv360 (recognised by the Department of Justice, Ministry of Law and Justice, Government of India) is a platform specializing in online dispute resolution through its ‘Arbitration360’ and ‘Mediation360’ module. It is simple to use, easily accessible and ensures that disputants are not entangled in protracted court battles.</p> --}}
     <p>2. As per the Applicant(s) / Initiating Party:</p>
-    <p style='margin-left:15px;'>{{ $case->issue }}</p>
+    <!-- <p style='margin-left:15px;'>{{ $case->issue }}</p> -->
+    <p style='margin-left:15px;'>{!! nl2br(e($case->issue)) !!}</p>
 
     {{-- <p>3. The mediation / conciliation shall be governed by and conducted in accordance with Presolv360’s Dispute Resolution Rules, a copy of which can be found 
         <a href='https://drive.google.com/file/d/1a5GkQA0KX_4-gUDf25D0uU7Rt_1S8DDl/view?usp=sharing'>here</a></p> --}}
