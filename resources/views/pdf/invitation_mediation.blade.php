@@ -235,7 +235,7 @@ $ldate = $lastdate->format('d-m-Y');
     <p style='margin-left:15px;'>
         <?php 
         $issue_text = nl2br(htmlspecialchars($case->issue));
-        $issue_desc = str_replace('\n', '', $issue_text);
+        $issue_desc = str_replace('<br>', '', $issue_text);
         echo $issue_desc; ?>
     </p>
 
