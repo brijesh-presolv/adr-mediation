@@ -233,7 +233,10 @@ $ldate = $lastdate->format('d-m-Y');
     <p>2. As per the Applicant(s) / Initiating Party:</p>
     <!-- <p style='margin-left:15px;'>{{ $case->issue }}</p> -->
     <p style='margin-left:15px;'>
-        <?php echo nl2br(htmlspecialchars($case->issue)); ?>
+        <?php 
+        $issue_text = nl2br(htmlspecialchars($case->issue));
+        $issue_desc = str_replace('\n', '', $issue_text);
+        echo $issue_desc; ?>
     </p>
 
     {{-- <p>3. The mediation / conciliation shall be governed by and conducted in accordance with Presolv360’s Dispute Resolution Rules, a copy of which can be found 
