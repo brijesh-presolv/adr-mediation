@@ -234,9 +234,10 @@ $ldate = $lastdate->format('d-m-Y');
     <!-- <p style='margin-left:15px;'>{{ $case->issue }}</p> -->
     <p style='margin-left:15px;'>
         <?php 
-        $issue_text = nl2br(htmlspecialchars($case->issue));
-        $issue_desc = str_replace('<br>', '', $issue_text);
-        echo $issue_desc; ?>
+        //$issue_text = nl2br(htmlspecialchars($case->issue));
+       // $issue_text = nl2br(htmlspecialchars($case->issue));
+       // $issue_desc = str_replace('<br>', '', $issue_text);
+        echo nl2br($case->issue); ?>
     </p>
 
     {{-- <p>3. The mediation / conciliation shall be governed by and conducted in accordance with Presolv360’s Dispute Resolution Rules, a copy of which can be found 
