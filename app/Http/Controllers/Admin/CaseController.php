@@ -1649,8 +1649,17 @@ class CaseController extends Controller
             ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
             ->where("user_involved_in_agreement.userPlanId", "=", $id)
             ->where("mediation_case.id", "=", $id)->get();
+
+         //dd($data["case"]);
+
+        // Added for icici bank ITM layout //
+        if($data["case"]->batch_id == 63){
+            $pdf = PDF::loadView('pdf.invitation_mediation_icici', $data);
+        } else {
+            $pdf = PDF::loadView('pdf.invitation_mediation', $data);
+        }
         
-        $pdf = PDF::loadView('pdf.invitation_mediation', $data);
+       
         //$name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
