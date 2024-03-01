@@ -120,7 +120,7 @@ $ldate = $lastdate->format('d-m-Y');
                 <p>ICICI Bank Ltd.</p>
                 <p>ICICI Bank Towers, North Tower,</p>
                 <p>7th Floor, Bandra Kurla Complex,</p>
-                <p>Bandra (East), Mumbai - 400 051</p>
+                <p style="margin-bottom: 10px;">Bandra (East), Mumbai - 400 051</p>
 
                 @foreach ($party as $key => $p)
                     <?php
@@ -131,7 +131,7 @@ $ldate = $lastdate->format('d-m-Y');
 
                         <p>Through {{ isset($inparty->organization) ? $inparty->organization . $p->name : $p->name }}
                         </p>
-                        @if ($p->address1 != null)
+                        <!-- @if ($p->address1 != null)
                             <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }}, {{ $p->pincode }}</p>
                             <p>{{ $p->state }} {{ $p->country }}</p>
                         @elseif($p->fulladdress != null)
@@ -140,15 +140,15 @@ $ldate = $lastdate->format('d-m-Y');
                             <p>{{ $p->useraddress }} {{ $p->useraddress1 }}, {{ $p->usercity }},
                                 {{ $p->userpincode }}</p>
                             <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
-                        @endif
+                        @endif -->
 
-                        <!-- @if ($p->userEmail != null)
+                        @if ($p->userEmail != null)
                         <p>{{$p->userEmail}}</p>
                         @endif
 
                         @if ($p->userPhone != null)
                         <p>{{$p->userPhone}}</p>
-                        @endif -->
+                        @endif
                         <br> <br>
 
                         @if ($p->userpname != null)
