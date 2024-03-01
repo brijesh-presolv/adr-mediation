@@ -120,7 +120,8 @@ $ldate = $lastdate->format('d-m-Y');
                 <p>ICICI Bank Ltd.</p>
                 <p>ICICI Bank Towers, North Tower,</p>
                 <p>7th Floor, Bandra Kurla Complex,</p>
-                <p style="margin-bottom: 10px;">Bandra (East), Mumbai - 400 051</p>
+                <p>Bandra (East), Mumbai - 400 051</p>
+                <br>
 
                 @foreach ($party as $key => $p)
                     <?php
