@@ -712,6 +712,7 @@ class MediationController extends Controller
         $batch_array = MedCase::getCaseOngoingUserBatch(Auth::user()->id);
         $final_batch = "";
         $batch_fianl_array = [];
+        $arraydata = array();
         foreach ($batch_array as $key => $value) {
             $batch_name = DB::table('batch')
             ->select("batch.batch_name")
