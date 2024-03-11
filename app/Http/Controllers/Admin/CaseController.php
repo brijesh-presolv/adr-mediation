@@ -1161,7 +1161,7 @@ class CaseController extends Controller
                             /**** Zoom Invitation ************/
                             $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
                             /**** Zoom Invitation ************/
-                        }elseif($request-s>zoom_choice == "directly_zoom"){
+                        }elseif($request->zoom_choice == "directly_zoom"){
                             /**** Zoom Invitation ************/
                             $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
                             /**** Zoom Invitation ************/
