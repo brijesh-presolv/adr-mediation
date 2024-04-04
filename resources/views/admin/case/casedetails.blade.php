@@ -328,6 +328,53 @@
 
                         </table>
                         <?php } ?>
+                        @if ($case->PayLink != null)
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Payment Link</td>
+                                <td>
+                                {{ $case->PayLink }}
+                                </td>
+                            </tr>
+                            @if ($case->restructure_offer_1 != null)
+                            <tr>
+                                <td>Restructure Offer(s)</td>
+                                <td>
+                                 1 : {{ $case->restructure_offer_1 }} <br>
+                                 @if ($case->restructure_offer_2 != null)
+                                 2 : {{ $case->restructure_offer_2 }} <br>
+                                 @endif
+                                 @if ($case->restructure_offer_3 != null)
+                                 3 : {{ $case->restructure_offer_3 }} 
+                                 @endif
+                                </td>
+                            </tr>
+                            @endif
+                            @if (!empty($case->restructureFile))
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th>Restructure Date</th>
+                                            <th>Restructure Letter</th>
+                                        </tr>
+                                        <tr>
+                                            <td> <?php $restructureDate = new DateTime($case->restructureFile->created_at);
+                                            $restructureDate = $restructureDate->format('d-m-Y'); ?>
+                                            {{ $restructureDate}}</td>
+                                            <td>  
+                                                <a href="javascript:void(0);" data-folder=""
+                                                        data-url="mediation_documents/medrestructure/{{$case->id}}/{{ $case->restructureFile->restructureFile }}" data-id="{{ $case->id }}"
+                                                        class="btn btn-success secureDownloadDirect" data-userid="{{ Auth::user()->id }}">Download</a>
+                                            </td>
+                                        </tr>
+                                    <table>
+                                </td>
+                            </tr>
+                            @endif
+                        </table>
+                        @endif
 
                     </div>
                 </div>
@@ -406,6 +453,79 @@
             });
 
             $(document).on("click", ".secureDownload", function() {
+                var id = $(this).data("id");
+                var filename = $(this).data("url");
+                var userid = $(this).data("userid");
+                var parentFolder = $(this).data("folder");
+                var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+                $.ajax({
+                    url: '{{ route('downloadSecure') }}',
+                    method: "POST",
+                    data: {
+                        id: id,
+                        urlpath: filename,
+                        parentFolder: parentFolder,
+                        user_id: userid,
+                        _token: csrf
+                    },
+                    xhrFields: {
+                        responseType: "blob", // to avoid binary data being mangled on charset conversion
+                    },
+                    success: function(blob, status, xhr) {
+                        // check for a filename
+                        var filename = "";
+                        var disposition = xhr.getResponseHeader("Content-Disposition");
+                        if (disposition && disposition.indexOf("attachment") !== -1) {
+                            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                            var matches = filenameRegex.exec(disposition);
+                            if (matches != null && matches[1])
+                                filename = matches[1].replace(/['"]/g, "");
+                        }
+
+                        if (typeof window.navigator.msSaveBlob !== "undefined") {
+                            // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                            window.navigator.msSaveBlob(blob, filename);
+                        } else {
+                            var URL = window.URL || window.webkitURL;
+                            var downloadUrl = URL.createObjectURL(blob);
+
+                            if (filename) {
+                                // use HTML5 a[download] attribute to specify filename
+                                var a = document.createElement("a");
+                                // safari doesn't support this yet
+                                if (typeof a.download === "undefined") {
+                                    window.location.href = downloadUrl;
+                                } else {
+                                    a.href = downloadUrl;
+                                    a.download = filename;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                }
+                            } else {
+                                window.location.href = downloadUrl;
+                            }
+
+                            setTimeout(function() {
+                                URL.revokeObjectURL(downloadUrl);
+                                swal({
+                                    text: "Downloaded successfully!",
+                                    title: "Thanks!",
+                                    icon: "success",
+                                }).then(function() {
+                                    location.reload();
+                                });
+                            }, 100); // cleanup
+                        }
+                    },
+
+                    error: function(err) {
+                        console.log(err);
+                    },
+                });
+            });
+
+            $(document).on("click", ".secureDownloadDirect", function() {
                 var id = $(this).data("id");
                 var filename = $(this).data("url");
                 var userid = $(this).data("userid");

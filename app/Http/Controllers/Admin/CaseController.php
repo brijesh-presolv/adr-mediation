@@ -28,6 +28,7 @@ use App\Models\Notification;
 use App\Models\Reminder;
 use App\Models\WaTemplate;
 use App\Models\WhatsappTrack;
+use App\Models\WhatsappBotReport;
 use DB;
 use PDF;
 use Auth;
@@ -207,6 +208,9 @@ class CaseController extends Controller
             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
             ->where('manage_files.case_id', $case->id)
             ->get();
+        $case->restructureFile = DB::table('restructure_data')->select('restructure_data.*')
+            ->where('restructure_data.caseid', $case->id)
+            ->first();
 
 
         return view('admin.case.casedetails', compact("case"));
@@ -3227,6 +3231,8 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
 
+        $botMisReport = WhatsappBotReport::getBotMisReport($id);
+
         $data = [];
         $data['auth'] = "MED360AUTH";
         $data['app'] = "P360MED";
@@ -3240,7 +3246,7 @@ class CaseController extends Controller
             $ivr = $ivr['data'];
         }
         // dd($ivr);
-        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv"));
+        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv", "botMisReport"));
     }
 
     public function mediatorAccessChange(Request $request)

@@ -87,6 +87,33 @@ class PaymentController extends Controller
 
     }
 
+        public function directDownloadSecure(Request $request)
+    {
+        if(isset($request->fullurl)) {
+            $path = parse_url($request->fullurl);
+            $filenametostore = ltrim($path['path'], '/');
+            $request->urlpath = basename($request->fullurl);
+        }
+        else if (isset($request->parentFolder)) {
+            $filenametostore =$request->urlpath;
+        } else {
+            $filenametostore =$request->urlpath;
+        }
+        $s3Client = Storage::cloud()->getAdapter()->getClient();
+
+        $stream = $s3Client->getObject([
+            'Bucket' => env('AWS_BUCKET'),
+            'Key'    => $filenametostore
+        ]);
+
+        return response($stream['Body'], 200)->withHeaders([
+            'Content-Type'        => $stream['ContentType'],
+            'Content-Length'      => $stream['ContentLength'],
+            'Content-Disposition' => 'attachment; filename="' . basename($request->urlpath) . '"'
+        ]);
+    }
+    
+
     public function checkPaymentAvl(){ 
       
 

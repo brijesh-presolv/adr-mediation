@@ -306,6 +306,51 @@
         </div>
     </div>
 
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5> Bot MIS Track</h5>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+
+                    <table id="courierTrack" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+
+                        <thead>
+                            <tr>
+                                <th>Pay Now</th>
+                                <th>Why </th>
+                                <th>Explore Alternatives</th>
+                                <th>Restructure Link</th>
+                                <th>Restructure Option</th>
+                                <th>Web Pay Now</th>
+                                <th>Reply Count</th>
+                                <th>Reply</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr>
+                                    <td>{{ $botMisReport[0]->Whatsapp_PayNow_Count }}</td>
+                                    <td>{{ $botMisReport[0]->Whatsapp_Why_Count }}</td>
+                                    <td>{{ $botMisReport[0]->Whatsapp_Explore_Alternatives_Count }}</td>
+                                    <td>{{ $botMisReport[0]->Whatsapp_Restructure_Link_Count }}</td>
+                                    <td>{{ $botMisReport[0]->Restructure_Option }}</td>
+                                    <td>{{ $botMisReport[0]->Web_Pay_Now_count }}</td>
+                                    <td>{{ $botMisReport[0]->Web_Submit_Reply_Count }}</td>
+                                    <td>{{ $botMisReport[0]->Reply }}</td>
+                                </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <div id="myModal230" class="logmodal modal fade " role="dialog">
         <div class="modal-dialog">
 

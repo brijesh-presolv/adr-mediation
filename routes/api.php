@@ -30,6 +30,7 @@ Route::get('/payment/success', [App\Http\Controllers\API\PaymentController::clas
 Route::post('/payment/webhook', [App\Http\Controllers\API\PaymentController::class, 'paymentWebhook'])->name('payment.webhook');
 Route::post('/otpgenerate', [App\Http\Controllers\API\PaymentController::class, 'otpGenerate']);
 Route::post('/otpverify', [App\Http\Controllers\API\PaymentController::class, 'otpVerify']);
+Route::post('/directDownloadSecure', [App\Http\Controllers\API\PaymentController::class, 'directDownloadSecure']);
 
 Route::post('/whatsapbotreply', [App\Http\Controllers\API\WhatsappChatbotController::class, 'whatsappbotReply']);
 Route::post('/botmisreport', [App\Http\Controllers\API\WhatsappChatbotController::class, 'botmisreport']);
