@@ -29,6 +29,7 @@ use App\Models\Reminder;
 use App\Models\WaTemplate;
 use App\Models\WhatsappTrack;
 use App\Models\WhatsappBotReport;
+use App\Models\RestructureData;
 use DB;
 use PDF;
 use Auth;
@@ -3490,6 +3491,15 @@ class CaseController extends Controller
             // if(File::exists($exist_file_local_find)) {
             //     unlink($exist_file_local_find);
             // }
+
+            $restructureData = RestructureData::where(['caseid' => $value])->orderByDesc('id')->limit(1)->first();
+            if(!empty($restructureData)){
+                $s3_restructure_local = Storage::disk('local')->writeStream('public/mediation/temp/medrestructure/' . $restructureData->restructureFile, Storage::disk('s3')->readStream('mediation_documents/medrestructure/'. $value . '/' . $restructureData->restructureFile));
+                $exist_file_local_res = storage_path() . '/app/public/mediation/temp/medrestructure/' . $restructureData->restructureFile;
+                $save_file_res =  $restructureData->restructureFile;
+                $zip->addFile($exist_file_local_res, $save_file_res);
+                $pdf->addPDF($exist_file_local_res, 'all');
+            }
         }
         $pathForTheMergedPdf = storage_path() . "/app/public/mergeFiles/allinone_" . time() . ".pdf";
         $pdf->merge('file', $pathForTheMergedPdf);
@@ -3655,7 +3665,10 @@ class CaseController extends Controller
                 "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
         }
 
-        $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t\n";
+        $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t";
+
+        $columnHeader = $columnHeader . "Pay Now" . "\t" . "Why did I get this" . "\t" . "Explore Alternatives" . "\t" . "Restructure Link" . "\t". "Restructure Option" . "\t" . "Web Pay Now" . "\t". "Reply Count" . "\t" . "Reply" . "\t\n";
+
 
         // dd($columnHeader);
 
@@ -3939,6 +3952,28 @@ class CaseController extends Controller
                 $caseinfo['ivrs'] = $value['status'];
                 $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
             }
+
+            $caseinfo['Whatsapp_PayNow_Count'] = "";
+            $caseinfo['Whatsapp_Why_Count'] = "";
+            $caseinfo['Whatsapp_Explore_Alternatives_Count'] = "";
+            $caseinfo['Whatsapp_Restructure_Link_Count'] = "";
+            $caseinfo['Restructure_Option'] = "";
+            $caseinfo['Web_Submit_Reply_Count'] = "";
+            $caseinfo['Web_Pay_Now_count'] = "";
+            $caseinfo['Reply'] = "";
+
+            $botMisReport = WhatsappBotReport::getBotMisReport($data['caseid']);
+            if(count($botMisReport)>0){
+
+                $caseinfo['Whatsapp_PayNow_Count'] = $botMisReport[0]->Whatsapp_PayNow_Count;
+                $caseinfo['Whatsapp_Why_Count'] = $botMisReport[0]->Whatsapp_Why_Count;
+                $caseinfo['Whatsapp_Explore_Alternatives_Count'] = $botMisReport[0]->Whatsapp_Explore_Alternatives_Count;
+                $caseinfo['Whatsapp_Restructure_Link_Count'] = $botMisReport[0]->Whatsapp_Restructure_Link_Count;
+                $caseinfo['Restructure_Option'] = $botMisReport[0]->Restructure_Option;
+                $caseinfo['Web_Submit_Reply_Count'] = $botMisReport[0]->Web_Submit_Reply_Count;
+                $caseinfo['Web_Pay_Now_count'] = $botMisReport[0]->Web_Pay_Now_count;
+                $caseinfo['Reply'] = $botMisReport[0]->Reply;
+            }
             $rowData = '';
             foreach ($caseinfo as $value) {
 
@@ -3946,7 +3981,7 @@ class CaseController extends Controller
 
                 $rowData .= $value;
             }
-            $setData .= trim($rowData) . "\n";
+            $setData .= trim($rowData) . "\n";  
         }
 
         $content = ucwords($columnHeader) . "\n" . $setData . "\n";
