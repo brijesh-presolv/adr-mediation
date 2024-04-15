@@ -3494,8 +3494,8 @@ class CaseController extends Controller
 
             $restructureData = RestructureData::where(['caseid' => $value])->orderByDesc('id')->limit(1)->first();
             if(!empty($restructureData)){
-                $s3_restructure_local = Storage::disk('local')->writeStream('public/mediation/temp/medrestructure/' . $restructureData->restructureFile, Storage::disk('s3')->readStream('mediation_documents/medrestructure/'. $value . '/' . $restructureData->restructureFile));
-                $exist_file_local_res = storage_path() . '/app/public/mediation/temp/medrestructure/' . $restructureData->restructureFile;
+                $s3_restructure_local = Storage::disk('local')->writeStream('public/mediation/medrestructure/temp/' . $restructureData->restructureFile, Storage::disk('s3')->readStream('mediation_documents/medrestructure/'. $value . '/' . $restructureData->restructureFile));
+                $exist_file_local_res = storage_path() . '/app/public/mediation/medrestructure/temp/' . $restructureData->restructureFile;
                 $save_file_res =  $restructureData->restructureFile;
                 $zip->addFile($exist_file_local_res, $save_file_res);
                 $pdf->addPDF($exist_file_local_res, 'all');
@@ -3667,7 +3667,7 @@ class CaseController extends Controller
 
         $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t";
 
-        $columnHeader = $columnHeader . "Pay Now" . "\t" . "Why did I get this" . "\t" . "Explore Alternatives" . "\t" . "Restructure Link" . "\t". "Restructure Option" . "\t" . "Web Pay Now" . "\t". "Reply Count" . "\t" . "Reply" . "\t\n";
+        $columnHeader = $columnHeader . "Why did i get this? (Button click)" . "\t" . "Pay now (Button click)" . "\t" . "Explore alternatives (Button click)" . "\t" . "Restructure (Link click)" . "\t". "Restructure (Offer selected)" . "\t". "Reply (Link click)" . "\t" . "Reply submitted" . "\t\n";
 
 
         // dd($columnHeader);
@@ -3953,25 +3953,23 @@ class CaseController extends Controller
                 $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
             }
 
-            $caseinfo['Whatsapp_PayNow_Count'] = "";
             $caseinfo['Whatsapp_Why_Count'] = "";
+            $caseinfo['Whatsapp_PayNow_Count'] = "";
             $caseinfo['Whatsapp_Explore_Alternatives_Count'] = "";
             $caseinfo['Whatsapp_Restructure_Link_Count'] = "";
             $caseinfo['Restructure_Option'] = "";
             $caseinfo['Web_Submit_Reply_Count'] = "";
-            $caseinfo['Web_Pay_Now_count'] = "";
             $caseinfo['Reply'] = "";
 
             $botMisReport = WhatsappBotReport::getBotMisReport($data['caseid']);
             if(count($botMisReport)>0){
 
-                $caseinfo['Whatsapp_PayNow_Count'] = $botMisReport[0]->Whatsapp_PayNow_Count;
                 $caseinfo['Whatsapp_Why_Count'] = $botMisReport[0]->Whatsapp_Why_Count;
+                $caseinfo['Whatsapp_PayNow_Count'] = $botMisReport[0]->Whatsapp_PayNow_Count;
                 $caseinfo['Whatsapp_Explore_Alternatives_Count'] = $botMisReport[0]->Whatsapp_Explore_Alternatives_Count;
                 $caseinfo['Whatsapp_Restructure_Link_Count'] = $botMisReport[0]->Whatsapp_Restructure_Link_Count;
                 $caseinfo['Restructure_Option'] = $botMisReport[0]->Restructure_Option;
                 $caseinfo['Web_Submit_Reply_Count'] = $botMisReport[0]->Web_Submit_Reply_Count;
-                $caseinfo['Web_Pay_Now_count'] = $botMisReport[0]->Web_Pay_Now_count;
                 $caseinfo['Reply'] = $botMisReport[0]->Reply;
             }
             $rowData = '';

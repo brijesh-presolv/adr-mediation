@@ -316,32 +316,32 @@
             <div class="row">
                 <div class="col-md-12 table-responsive">
 
-                    <table id="courierTrack" class="table table-striped table-bordered dt-responsive nowrap"
+                    <table id="BotMISTrack" class="table table-striped table-bordered dt-responsive nowrap"
                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
 
                         <thead>
                             <tr>
-                                <th>Pay Now</th>
-                                <th>Why </th>
-                                <th>Explore Alternatives</th>
-                                <th>Restructure Link</th>
-                                <th>Restructure Option</th>
-                                <th>Web Pay Now</th>
-                                <th>Reply Count</th>
-                                <th>Reply</th>
+                                <th>Why did i get this? (Button click)</th>
+                                <th>Pay now (Button click) </th>
+                                <th>Explore alternatives (Button click)</th>
+                                <th>Restructure (Link click)</th>
+                                <th>Restructure (Offer selected)</th>
+                                <th>Reply (Link click)</th>
+                                <th>Reply submitted</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @if(count($botMisReport)>0)
                                 <tr>
-                                    <td>{{ $botMisReport[0]->Whatsapp_PayNow_Count }}</td>
                                     <td>{{ $botMisReport[0]->Whatsapp_Why_Count }}</td>
+                                    <td>{{ $botMisReport[0]->Whatsapp_PayNow_Count }}</td>
                                     <td>{{ $botMisReport[0]->Whatsapp_Explore_Alternatives_Count }}</td>
                                     <td>{{ $botMisReport[0]->Whatsapp_Restructure_Link_Count }}</td>
                                     <td>{{ $botMisReport[0]->Restructure_Option }}</td>
-                                    <td>{{ $botMisReport[0]->Web_Pay_Now_count }}</td>
                                     <td>{{ $botMisReport[0]->Web_Submit_Reply_Count }}</td>
                                     <td>{{ $botMisReport[0]->Reply }}</td>
                                 </tr>
+                                @endif
                         </tbody>
                     </table>
 
@@ -514,6 +514,11 @@ $('#myModal230 .modal-body span').append( $(this).data('msg'));
             });
 
             $('#courierTrack').DataTable({
+                "responsive": true,
+                "aaSorting": []
+            });
+
+            $('#BotMISTrack').DataTable({
                 "responsive": true,
                 "aaSorting": []
             });
