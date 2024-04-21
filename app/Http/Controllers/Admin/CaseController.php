@@ -3494,11 +3494,20 @@ class CaseController extends Controller
 
             $restructureData = RestructureData::where(['caseid' => $value])->orderByDesc('id')->limit(1)->first();
             if(!empty($restructureData)){
-                $s3_restructure_local = Storage::disk('local')->writeStream('public/mediation/medrestructure/temp/' . $restructureData->restructureFile, Storage::disk('s3')->readStream('mediation_documents/medrestructure/'. $value . '/' . $restructureData->restructureFile));
-                $exist_file_local_res = storage_path() . '/app/public/mediation/medrestructure/temp/' . $restructureData->restructureFile;
-                $save_file_res =  $restructureData->restructureFile;
-                $zip->addFile($exist_file_local_res, $save_file_res);
-                $pdf->addPDF($exist_file_local_res, 'all');
+
+                $exist_file2 = storage_path() . '/app/public/mediation/medrestructure/temp/' . $restructureData->restructureFile;
+
+                if (File::exists($exist_file2)) {
+                    $save_file_res =  $restructureData->restructureFile;
+                    $zip->addFile($exist_file2, $save_file_res);
+                    $pdf->addPDF($exist_file2, 'all');
+                } else {
+                    $s3_restructure_local = Storage::disk('local')->writeStream('public/mediation/medrestructure/temp/' . $restructureData->restructureFile, Storage::disk('s3')->readStream('mediation_documents/medrestructure/'. $value . '/' . $restructureData->restructureFile));
+                    $exist_file_local_res = storage_path() . '/app/public/mediation/medrestructure/temp/' . $restructureData->restructureFile;
+                    $save_file_res =  $restructureData->restructureFile;
+                    $zip->addFile($exist_file_local_res, $save_file_res);
+                    $pdf->addPDF($exist_file_local_res, 'all');
+                }
             }
         }
         $pathForTheMergedPdf = storage_path() . "/app/public/mergeFiles/allinone_" . time() . ".pdf";
