@@ -333,7 +333,6 @@
                         <tbody>
                             @if(count($botMisReport)>0)
                                 <tr>
-<<<<<<< HEAD
                                     <td>{{ $botMisReport[0]->Whatsapp_Why_Count }}</td>
                                     <td>{{ $botMisReport[0]->Whatsapp_PayNow_Count }}</td>
                                     <td>{{ $botMisReport[0]->Whatsapp_Explore_Alternatives_Count }}</td>
@@ -341,16 +340,6 @@
                                     <td>{{ $botMisReport[0]->Restructure_Option }}</td>
                                     <td>{{ $botMisReport[0]->Web_Submit_Reply_Count }}</td>
                                     <td>{{ $botMisReport[0]->Reply }}</td>
-=======
-                                    <td>{{ isset($botMisReport[0]->Whatsapp_PayNow_Count) ? $botMisReport[0]->Whatsapp_PayNow_Count : ""}}</td>
-                                    <td>{{ isset($botMisReport[0]->Whatsapp_Why_Count) ? $botMisReport[0]->Whatsapp_Why_Count : "" }}</td>
-                                    <td>{{ isset($botMisReport[0]->Whatsapp_Explore_Alternatives_Count) ? $botMisReport[0]->Whatsapp_Explore_Alternatives_Count : "" }}</td>
-                                    <td>{{ isset($botMisReport[0]->Whatsapp_Restructure_Link_Count) ? $botMisReport[0]->Whatsapp_Restructure_Link_Count : "" }}</td>
-                                    <td>{{ isset($botMisReport[0]->Restructure_Option) ? $botMisReport[0]->Restructure_Option : "" }}</td>
-                                    <td>{{ isset($botMisReport[0]->Web_Pay_Now_count) ? $botMisReport[0]->Web_Pay_Now_count : "" }}</td>
-                                    <td>{{ isset($botMisReport[0]->Web_Submit_Reply_Count) ? $botMisReport[0]->Web_Submit_Reply_Count : "" }}</td>
-                                    <td>{{ isset($botMisReport[0]->Reply) ? $botMisReport[0]->Reply : "" }}</td>
->>>>>>> 430a69cfb1b7e30848a797656ab836f75f589dd7
                                 </tr>
                                 @endif
                         </tbody>
