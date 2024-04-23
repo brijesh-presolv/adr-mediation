@@ -1695,6 +1695,7 @@ class CaseController extends Controller
 
         //fetch all involved users
         $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get()->toArray();
+        //dd($med);
         if ($request->method() == 'POST') {
             $r = $request->post();
             //udpate mediation case
@@ -1840,7 +1841,7 @@ class CaseController extends Controller
             $invmodel->save();
 
             $InvoledUserMsg = InvoledUser::where(['userPlanId' => $med->id])->get();
-            // dd($InvoledUserMsg);
+             //dd($InvoledUserMsg);
             $responding_party = "";
             $finalFilePath = 'mediation_documents/mediation/' . $request->id . '/' . $invitation;
             $whatsappSend = Storage::disk('s3')->url($finalFilePath);
@@ -1853,7 +1854,9 @@ class CaseController extends Controller
                     }
 
                     if ($value->userEmail != null) {
-                        $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => ($pone->organization != null) ? $pone->organization : $pone->name], $value->name, $finalFilePath);
+                        if($med->bulk_flag == 0){
+                            $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => ($pone->organization != null) ? $pone->organization : $pone->name], $value->name, $finalFilePath);
+                        }
                     }
                     if ($value->userPhone != null) {
 
@@ -1882,7 +1885,9 @@ class CaseController extends Controller
 
                         ];
 
-                        $access = Whatsapp::sendWamessage($dwa1);
+                        if($med->bulk_flag == 0){
+                            $access = Whatsapp::sendWamessage($dwa1);
+                        }
 
                         $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
                         $var_file = ['-caseid-'];
@@ -1898,7 +1903,9 @@ class CaseController extends Controller
                             'haptik_tmp' => 'mediation_consent_doc',
 
                         ];
-                        $access = Whatsapp::sendWamessage($dwa2);
+                        if($med->bulk_flag == 0){
+                            $access = Whatsapp::sendWamessage($dwa2);
+                        }
                     }
                 }
             }
