@@ -1453,6 +1453,9 @@ class CaseController extends Controller
                     echo "<td>
             <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
             <button id='DeleteSession' data-id='" . $value->id . "' data-toggle='modal' data-zoom-choice='".$value->zoom_link_choice."' data-target='#Session-delete' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
+            
+            <br/>
+            <button id='MomSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>
             </td>";
                 } else if (Auth::user()->role == 1) {
                     if (Auth::user()->id == $value->scheduled_by) {
@@ -1460,6 +1463,9 @@ class CaseController extends Controller
                         echo "<td>
                     <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit-mediator' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
                     <button id='DeleteSession' data-id='" . $value->id . "' data-toggle='modal' data-zoom-choice='".$value->zoom_link_choice."' data-target='#Session-delete-meditor' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
+                    
+                    <br/>
+                    <button id='MomSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>
                     </td>";
                     } else {
                         echo "<td>--</td>";
