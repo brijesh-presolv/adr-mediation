@@ -3626,7 +3626,7 @@ class CaseController extends Controller
          }
          $invmodel->case_id = $request->MomCaseId;
          $invmodel->file_name = $invitation;
-         dd($invmodel);
+         //dd($invmodel);
          $invmodel->save();
 
         if($insertData) {
