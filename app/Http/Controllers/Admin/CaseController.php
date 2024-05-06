@@ -3657,7 +3657,7 @@ class CaseController extends Controller
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
         $savePath = 'mediation_documents/mediation/' . $data['caseid'];
         $finalFilePath = $savePath . '/' . $name;
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        Storage::put('public/mediation/' . $data['caseid'] . '/' . $name, $pdf->output());
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
