@@ -1455,7 +1455,7 @@ class CaseController extends Controller
             <button id='DeleteSession' data-id='" . $value->id . "' data-toggle='modal' data-zoom-choice='".$value->zoom_link_choice."' data-target='#Session-delete' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
             
             <br/>
-            <button id='MomSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>
+            <button id='MomSession' data-id='" . $value->id . "' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>
             </td>";
                 } else if (Auth::user()->role == 1) {
                     if (Auth::user()->id == $value->scheduled_by) {
@@ -1465,7 +1465,7 @@ class CaseController extends Controller
                     <button id='DeleteSession' data-id='" . $value->id . "' data-toggle='modal' data-zoom-choice='".$value->zoom_link_choice."' data-target='#Session-delete-meditor' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
                     
                     <br/>
-                    <button id='MomSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>
+                    <button id='MomSession' data-id='" . $value->id . "' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>
                     </td>";
                     } else {
                         echo "<td>--</td>";
@@ -3566,6 +3566,103 @@ class CaseController extends Controller
 
         return json_encode($sessionEditData);
     }
+
+
+
+    /********** Get MOM Template Data ******************* */
+    public function ShowMomSessionData(Request $request) {
+        //dd($request->all());
+        $partyArray = InvoledUser::where('userPlanId', $request['id'])->get();
+        foreach($partyArray as $party){
+            if($party['isClaimant'] == 0){
+                $data['ip_name'] = $party['name'];
+            } else {
+                $data['rp_name'] = $party['name'];
+            }
+            
+        }
+        
+        $mediator = Mediators_mediation_cases_status::select("first_name", "last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+        ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request['caseid'])
+        ->first();
+
+        $data['mediator'] = $mediator['first_name'] .' '. $mediator['last_name'];
+        //dd($data);
+        return json_encode($data);
+    }
+    /********** Get MOM Template Data ******************* */
+
+
+    /******** MOM Form submit ********************/
+    public function MomFormSubmit(Request $request) {
+        //dd($request->MomCaseId);
+        $dataToInsert = [
+            'case_id' => $request->MomCaseId,
+            'session_id' => $request->MomSessId,
+            'ip_name' => $request->ip_mom,
+            'rp_name' => $request->rp_mom,
+            'minutes' => $request->minutes_mom,
+            'next_steps' => $request->next_steps,
+            'mediator' => $request->med_name
+        ];
+        $insertData = DB::table('session_mom')->insert($dataToInsert);
+
+
+         // generate pdf
+
+         $templateData = array();
+         $templateData['caseid'] = $request->MomCaseId; 
+         $templateData['ip'] = $request->ip_mom; 
+         $templateData['rp'] = $request->rp_mom; 
+         $templateData['minutes'] = $request->minutes_mom; 
+         $templateData['next'] = $request->next_steps; 
+        
+         $invitation = $this->session_mom_template($templateData);
+
+         $invmodel = InvitationFiles::where('case_id', $request->MomCaseId)->orderByDesc('id')->limit(1)->first();
+         if (!isset($invmodel)) {
+             // dd("if");
+             $invmodel = new InvitationFiles();
+         }
+         $invmodel->case_id = $request->MomCaseId;
+         $invmodel->file_name = $invitation;
+         $invmodel->save();
+
+        if($insertData) {
+            return json_encode(['code' => 200, 'response' => 'success']);
+        }
+
+        //DB::table('manage_session')->where('case_id', $id)->get();
+
+    }
+    /******** MOM Form submit ********************/
+
+
+
+    public function session_mom_template($data)
+    {
+        $data["case"] = MedCase::where("id", "=", $data['caseid'])->first();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
+        'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $data['caseid'])
+            ->where("mediation_case.id", "=", $data['caseid'])->get();
+
+    
+        $pdf = PDF::loadView('pdf.session_mom', $data);
+        
+        $name = 'session_mom_M' . sprintf('%06d', $data['caseid']) . time() . '.pdf';
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $savePath = 'mediation_documents/mediation/' . $data['caseid'];
+        $finalFilePath = $savePath . '/' . $name;
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        return $name;
+    }
+
+
+
 
     /******************** Update Session : START  ************************************************/
     public function UpdateSession(Request $request)

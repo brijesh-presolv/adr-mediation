@@ -244,6 +244,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
 
     Route::get('uploadlocaltos3', [App\Http\Controllers\MigrateFileS3Controller::class, 'MigrateFile']);
+
+    // MOM
+    Route::post('case/get-mom-data', [App\Http\Controllers\Admin\CaseController::class, 'ShowMomSessionData'])->name('admin.case.ShowMomSessionData');
+    Route::post('case/mom-form-submit', [App\Http\Controllers\Admin\CaseController::class, 'MomFormSubmit'])->name('admin.case.MomFormSubmit');
+
 });
 
 //notification

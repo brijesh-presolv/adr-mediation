@@ -766,6 +766,68 @@
             </div>
         </div>
     </div>
+
+    <!------- MOM Section ------------------------------->
+    <div id="Session-mom" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Minutes of the Meeting</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
+                    </button>
+                </div>
+
+                <form id="MomSessionForm">
+                <input type="hidden" name="MomCaseId" id="MomCaseId">
+                <input type="hidden" name="MomSessId" id="MomSessId">
+                    
+                    <div class="custom-modal-text ">
+                        <div class="form-group">
+                            <label>Initiating Party :</label>
+                            <input type="text" autocomplete="off" id="ip_mom" class="form-control"
+                                name="ip_mom" placeholder="" data-validation="required">
+                        </div>
+                        <div class="form-group">
+                            <label>Responding Party :</label>
+                            <input type="text" id="rp_mom" value="" autocomplete="off"
+                                class="form-control" name="rp_mom" placeholder=""
+                                data-validation="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mediator :</label>
+                            <input type="text" id="med_name" value="" autocomplete="off"
+                                class="form-control" name="med_name" placeholder=""
+                                data-validation="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Minutes :</label>
+                            <textarea class="form-control" id="minutes_mom" name="minutes_mom" placeholder=""></textarea>
+                        </div>
+                       
+                        <div class="form-group zoom-id-section">
+                            <label>Next Steps :</label>
+                            <!-- <label name="get_zoom_link" id="editZoomLink"></label> -->
+                            <input type="text" id="next_steps" class="form-control" name="next_steps"
+                                data-validation="required">
+                        </div>
+                       
+                        
+                        <div class="text-right">
+                            <button type="button" class="btn-sm btn mt-3  btn-secondary"
+                                data-dismiss="modal">Close</button>
+                            <input type="submit" name="submit" class="btn-sm btn btn-primary mt-3">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <!------- MOM Section ------------------------------->
+
     <div id="Session-delete" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true"
         class="modal-demo">
         <div class="modal-dialog">
@@ -3254,6 +3316,32 @@
             $("#view_reason").text(reason);
         });
 
+
+        // MOM template show 
+        $('#Session-mom').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var SessId = button.data('id');
+            var CaseId = button.data('caseid');
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.case.ShowMomSessionData') }}",
+                data: {
+                    id: SessId,
+                    caseid : CaseId
+                },
+                dataType: "JSON",
+                success: function(response) {
+                    
+                    $('#MomCaseId').attr('value', CaseId);
+                    $('#MomSessId').attr('value', SessId);
+                    $('#ip_mom').attr('value', response.ip_name);
+                    $('#rp_mom').attr('value', response.rp_name);
+                    $('#med_name').attr('value', response.mediator);
+                }
+            });
+        });
+        // MOM template show 
+
         $("#UpdateSessionForm").on('submit', function(e) {
             e.preventDefault();
             var formSet = $('#UpdateSessionForm').serialize();
@@ -3283,6 +3371,39 @@
                 }
             });
         })
+
+
+        // MOM form submit 
+        $("#MomSessionForm").on('submit', function(e) {
+            e.preventDefault();
+            var formSet = $('#MomSessionForm').serialize();
+            console.log(formSet);
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.case.MomFormSubmit') }}",
+                data: formSet,
+                dataType: "JSON",
+                beforeSend: function() {
+                    $('#viewSession-modal').modal("hide");
+
+                    swal({
+                        title: 'Loading...',
+                        showConfirmButton: false,
+                        buttons: false,
+                        allowOutsideClick: false,
+                    });
+                },
+                success: function(response) {
+                    $('#Session-edit').modal('hide');
+                    swal("Session Updated Successfully!", {
+                        icon: "success",
+                    }).then(function() {
+                        location.reload();
+                    });
+                }
+            });
+        });
+
 
         $(document).on('click', '#sessiondeleteform', function() {
             var Sessid = $("#deleteSessId").val();
