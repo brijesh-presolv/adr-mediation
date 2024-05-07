@@ -219,34 +219,34 @@ use App\Models\User;
     
     <p>The captioned matter was referred to Presolv360 to facilitate a mutually acceptable resolution
     via online mediation. Accordingly, Invitation to Mediate dated 04-01-2023 was circulated to
-    all the parties. Ms. Gandha Sahu was appointed as the Mediator from the panel of mediators
+    all the parties. {{$session_mom->mediator}} was appointed as the Mediator from the panel of mediators
     and acceptance and consent, alongwith the requisite disclosures, was circulated to all the
     parties. Presolv360 Administrator contacted all the parties based on the information available
     and informed the parties about the mediation proceedings, explaining the process for
     onboarding and next steps to be taken.</p>
     
     <p>To arrive at an amicable resolution between the parties, a private mediation session was
-        scheduled on 11-01-2023 at 11:00 am via video conferencing.</p>
+        scheduled on {{$session_date}} at {{$session_time}} via video conferencing.</p>
     
     <table class="table_" cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td>For the Applicant(s)/Initiating Party:</td>
-            <td></td>
+            <td>{{$session_mom->ip_name}}</td>
         </tr>
 
         <tr>
             <td>For the Opposite/Responding Party:</td>
-            <td></td>
+            <td>{{$session_mom->rp_name}}</td>
         </tr>
 
         <tr>
             <td>Minutes:</td>
-            <td></td>
+            <td>{{$session_mom->minutes}}</td>
         </tr>
 
         <tr>
             <td>Next steps:</td>
-            <td></td>
+            <td>{{$session_mom->next_steps}}</td>
         </tr>
     </table>
 
@@ -254,13 +254,10 @@ use App\Models\User;
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td>
-                <p>To:</p>
-                <p>Opposite / Responding Party</p>
+                <p>Sincerely,</p>
+                <p>Presolv360 Administrator</p>
             </td>
-            <td>
-                <p>Copy to:</p>
-                <p>Applicant(s) / Initiating Party</p>
-            </td>
+            
         </tr>
     </table>
 

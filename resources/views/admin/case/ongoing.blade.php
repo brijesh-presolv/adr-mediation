@@ -807,7 +807,7 @@
                             <textarea class="form-control" id="minutes_mom" name="minutes_mom" placeholder=""></textarea>
                         </div>
                        
-                        <div class="form-group zoom-id-section">
+                        <div class="form-group">
                             <label>Next Steps :</label>
                             <!-- <label name="get_zoom_link" id="editZoomLink"></label> -->
                             <input type="text" id="next_steps" class="form-control" name="next_steps"
@@ -3336,6 +3336,10 @@
                     $('#MomSessId').attr('value', SessId);
                     $('#ip_mom').attr('value', response.ip_name);
                     $('#rp_mom').attr('value', response.rp_name);
+                    
+                    $('#minutes_mom').val(response.minutes);
+                    $('#next_steps').attr('value', response.next);
+
                     $('#med_name').attr('value', response.mediator);
                 }
             });
@@ -3377,7 +3381,7 @@
         $("#MomSessionForm").on('submit', function(e) {
             e.preventDefault();
             var formSet = $('#MomSessionForm').serialize();
-            console.log(formSet);
+            //console.log(formSet);
             $.ajax({
                 type: "POST",
                 url: "{{ route('admin.case.MomFormSubmit') }}",
@@ -3388,13 +3392,14 @@
 
                     swal({
                         title: 'Loading...',
-                        showConfirmButton: false,
-                        buttons: false,
-                        allowOutsideClick: false,
+                       // showConfirmButton: false,
+                        //buttons: false,
+                        //allowOutsideClick: false,
                     });
                 },
                 success: function(response) {
-                    $('#Session-edit').modal('hide');
+                   // console.log(response);
+                    $('#Session-mom').modal('hide');
                     swal("Session Updated Successfully!", {
                         icon: "success",
                     }).then(function() {

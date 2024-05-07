@@ -1450,13 +1450,26 @@ class CaseController extends Controller
             echo "<td>" . implode("<br>", $user) . "</td>";
             if ($value->is_deleted == 0) {
                 if (Auth::user()->role == 2) {
+                    $mom_file = DB::table('session_mom')->where('case_id', $value->case_id)->get();
+                    $doc = 'storage/app/public/mediation/' . $value->case_id . '/' . $mom_file[0]->file_name;
+                    
                     echo "<td>
             <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
             <button id='DeleteSession' data-id='" . $value->id . "' data-toggle='modal' data-zoom-choice='".$value->zoom_link_choice."' data-target='#Session-delete' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
             
             <br/>
-            <button id='MomSession' data-id='" . $value->id . "' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>
-            </td>";
+            <button id='MomSession' data-id='" . $value->id . "' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>";
+            
+
+            if(file_exists($doc)) {
+                echo "<br/>";
+                echo '<a href="'.url($doc).'"
+                target="_blank">
+                <button id="" class="btn btn-sm btn-success px-2"><i class="fa fa-download"></i></button>
+                </a>';
+            }
+            
+            echo "</td>";
                 } else if (Auth::user()->role == 1) {
                     if (Auth::user()->id == $value->scheduled_by) {
 
@@ -1476,6 +1489,7 @@ class CaseController extends Controller
                 </td>";
             }
             echo "</tr>";
+            
 
             $sn++;
         }
@@ -3571,65 +3585,119 @@ class CaseController extends Controller
 
     /********** Get MOM Template Data ******************* */
     public function ShowMomSessionData(Request $request) {
-        //dd($request->all());
-        $partyArray = InvoledUser::where('userPlanId', $request['id'])->get();
-        foreach($partyArray as $party){
-            if($party['isClaimant'] == 0){
-                $data['ip_name'] = $party['name'];
-            } else {
-                $data['rp_name'] = $party['name'];
+        
+        $if_check = DB::table('session_mom')->where('case_id', $request['caseid'])->first();
+        //echo "<pre>";print_R($if_check);
+        //dd($if_check);
+        $ip_array = array();
+        $rp_array = array();
+        if(empty($if_check)){
+            $partyArray = InvoledUser::where('userPlanId', $request['caseid'])->get();
+            
+            
+            foreach($partyArray as $party){
+                if($party['isClaimant'] === 0){
+                    if(!in_array($party['name'], $ip_array)){
+                        array_push($ip_array, $party['name']);
+                    }
+                } else if($party['isClaimant'] > 0){
+                
+                    if(!in_array($party['name'], $rp_array)){
+                        array_push($rp_array, $party['name']);
+                    }
+                } 
+                
             }
             
+            $data['ip_name'] = $ip_array;
+            $data['rp_name'] = $rp_array;
+            $data['minutes'] = "";
+            $data['next'] = "";
+            
+        } else {
+            $data['ip_name'] = $if_check->ip_name;
+            $data['rp_name'] = $if_check->rp_name;
+            $data['minutes'] = $if_check->minutes;
+            $data['next'] = $if_check->next_steps;
         }
-        
         $mediator = Mediators_mediation_cases_status::select("first_name", "last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-        ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request['caseid'])
-        ->first();
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request['caseid'])
+            ->first();
 
-        $data['mediator'] = $mediator['first_name'] .' '. $mediator['last_name'];
-        //dd($data);
-        return json_encode($data);
+            $data['mediator'] = $mediator['first_name'] .' '. $mediator['last_name'];
+        
+            return json_encode($data);
     }
     /********** Get MOM Template Data ******************* */
 
 
     /******** MOM Form submit ********************/
     public function MomFormSubmit(Request $request) {
-        //dd($request->MomCaseId);
-        $dataToInsert = [
-            'case_id' => $request->MomCaseId,
-            'session_id' => $request->MomSessId,
-            'ip_name' => $request->ip_mom,
-            'rp_name' => $request->rp_mom,
-            'minutes' => $request->minutes_mom,
-            'next_steps' => $request->next_steps,
-            'mediator' => $request->med_name
-        ];
-        $insertData = DB::table('session_mom')->insert($dataToInsert);
+        $if_check = DB::table('session_mom')->where('case_id', $request->MomCaseId)->first();
+       // echo "<pre>";print_R($if_check);exit;
+        if(empty($if_check)){
 
-
-         // generate pdf
-
-         $templateData = array();
-         $templateData['caseid'] = $request->MomCaseId; 
-         $templateData['ip'] = $request->ip_mom; 
-         $templateData['rp'] = $request->rp_mom; 
-         $templateData['minutes'] = $request->minutes_mom; 
-         $templateData['next'] = $request->next_steps; 
         
-         $invitation = $this->session_mom_template($templateData);
+                $dataToInsert = [
+                    'case_id' => $request->MomCaseId,
+                    'session_id' => $request->MomSessId,
+                    'ip_name' => $request->ip_mom,
+                    'rp_name' => $request->rp_mom,
+                    'minutes' => $request->minutes_mom,
+                    'next_steps' => $request->next_steps,
+                    'mediator' => $request->med_name
+                ];
+                $operationdata = DB::table('session_mom')->insert($dataToInsert);
 
-         $invmodel = InvitationFiles::where('case_id', $request->MomCaseId)->orderByDesc('id')->limit(1)->first();
-         if (!isset($invmodel)) {
-             // dd("if");
-             $invmodel = new InvitationFiles();
-         }
-         $invmodel->case_id = $request->MomCaseId;
-         $invmodel->file_name = $invitation;
-         //dd($invmodel);
-         $invmodel->save();
 
-        if($insertData) {
+                
+
+        } else {
+            $dataToUpdate = [
+                'id' => $if_check->id,
+                'case_id' => $request->MomCaseId,
+                'session_id' => $request->MomSessId,
+                'ip_name' => $request->ip_mom,
+                'rp_name' => $request->rp_mom,
+                'minutes' => $request->minutes_mom,
+                'next_steps' => $request->next_steps,
+                'mediator' => $request->med_name
+            ];
+            
+
+            $operationdata = DB::table('session_mom')->where('id', $if_check->id)->update($dataToUpdate);
+        }
+
+        // generate pdf
+
+        $templateData = array();
+        $templateData['sessid'] = $request->MomSessId; 
+        $templateData['caseid'] = $request->MomCaseId; 
+        $templateData['ip'] = $request->ip_mom; 
+        $templateData['rp'] = $request->rp_mom; 
+        $templateData['minutes'] = $request->minutes_mom; 
+        $templateData['next'] = $request->next_steps; 
+        $templateData['med'] = $request->med_name; 
+        
+        $invitation = $this->session_mom_template($templateData);
+
+        $invmodel = InvitationFiles::where('case_id', $request->MomCaseId)->orderByDesc('id')->limit(1)->first();
+        if (!isset($invmodel)) {
+            // dd("if");
+            $invmodel = new InvitationFiles();
+        }
+        $invmodel->case_id = $request->MomCaseId;
+        $invmodel->file_name = $invitation;
+        //dd($invmodel);
+        $invmodel->save();
+
+
+        // save file in session mom table 
+         DB::table('session_mom')->where('case_id', $request->MomCaseId)->update(['file_name' => $invitation]);
+        // save file in session mom table 
+        //dd($operationdata);
+        if(isset($operationdata)) {
+            //echo "asd";exit;
             return json_encode(['code' => 200, 'response' => 'success']);
         }
 
@@ -3650,15 +3718,33 @@ class CaseController extends Controller
             ->where("user_involved_in_agreement.userPlanId", "=", $data['caseid'])
             ->where("mediation_case.id", "=", $data['caseid'])->get();
 
+        $data['session_mom'] = DB::table('session_mom')->where('case_id', $data['caseid'])->first();
+        $session_data = DB::table('manage_session')->where('id', $data['sessid'])->first();
+
+        $session_date = explode('/', $session_data->session_date);
+
+        $data['session_date'] = $session_date[0] .'-'.$session_date[1].'-'.$session_date[2];
+        $data['session_time'] = $session_date[3];
+
+        // echo "<pre>";print_R($data);
+        // exit;
+        $data['mediator'] = $data['med'];
     
         $pdf = PDF::loadView('pdf.session_mom', $data);
         
         $name = 'session_mom_M' . sprintf('%06d', $data['caseid']) . time() . '.pdf';
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        
         $savePath = 'mediation_documents/mediation/' . $data['caseid'];
         $finalFilePath = $savePath . '/' . $name;
-        Storage::put('public/mediation/' . $data['caseid'] . '/' . $name, $pdf->output());
-        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+       // $momSend = Storage::disk('s3')->url($finalFilePath);
+
+       //$s3_local = Storage::disk('local')->writeStream('public/mediation/' . $data['caseid'] . '/' . $name, Storage::disk('s3')->readStream('mediation_documents/mediation/' . $data['caseid'] . '/' . $name));
+       $local_store = Storage::disk('local')->put('public/mediation/' . $data['caseid'] . '/' .  $name, $pdf->output());
+        // echo $finalFilePath;
+        // echo $momSend;
+        // exit;
+        
+       // $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
 
