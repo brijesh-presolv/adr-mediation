@@ -213,6 +213,8 @@ class CaseController extends Controller
             ->where('restructure_data.caseid', $case->id)
             ->first();
 
+        $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
+
 
         return view('admin.case.casedetails', compact("case"));
     }
@@ -1450,8 +1452,11 @@ class CaseController extends Controller
             echo "<td>" . implode("<br>", $user) . "</td>";
             if ($value->is_deleted == 0) {
                 if (Auth::user()->role == 2) {
-                    $mom_file = DB::table('session_mom')->where('case_id', $value->case_id)->get();
-                    $doc = 'storage/app/public/mediation/' . $value->case_id . '/' . $mom_file[0]->file_name;
+                    $mom_file = DB::table('session_mom')->select("file_name")->where('case_id', $value->case_id)->get();
+                    //echo "<prE>";print_R($mom_file);
+                    if(!empty($mom_file) && isset($mom_file[0])){
+                        $doc = 'storage/app/public/mediation/' . $value->case_id . '/' . $mom_file[0]->file_name;
+                    }
                     
                     echo "<td>
             <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
@@ -1460,13 +1465,14 @@ class CaseController extends Controller
             <br/>
             <button id='MomSession' data-id='" . $value->id . "' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>";
             
-
-            if(file_exists($doc)) {
-                echo "<br/>";
-                echo '<a href="'.url($doc).'"
-                target="_blank">
-                <button id="" class="btn btn-sm btn-success px-2"><i class="fa fa-download"></i></button>
-                </a>';
+            if(!empty($mom_file) && isset($mom_file[0])){
+                if(file_exists($doc)) {
+                    echo "<br/>";
+                    echo '<a href="'.url($doc).'"
+                    target="_blank">
+                    <button id="" class="btn btn-sm btn-success px-2"><i class="fa fa-download"></i></button>
+                    </a>';
+                }
             }
             
             echo "</td>";
@@ -3625,6 +3631,17 @@ class CaseController extends Controller
             ->first();
 
             $data['mediator'] = $mediator['first_name'] .' '. $mediator['last_name'];
+
+
+
+
+            // $data["case"] = MedCase::select('id', 'discussion', 'otherRespondentDetails')->where("id", "=", $request['caseid'])->first();
+            // $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
+            // 'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
+            //     ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            //     ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
+            //     ->where("user_involved_in_agreement.userPlanId", "=", $request['caseid'])
+            //     ->where("mediation_case.id", "=", $request['caseid'])->get();
         
             return json_encode($data);
     }
@@ -3681,27 +3698,20 @@ class CaseController extends Controller
         
         $invitation = $this->session_mom_template($templateData);
 
-        $invmodel = InvitationFiles::where('case_id', $request->MomCaseId)->orderByDesc('id')->limit(1)->first();
-        if (!isset($invmodel)) {
-            // dd("if");
-            $invmodel = new InvitationFiles();
-        }
-        $invmodel->case_id = $request->MomCaseId;
-        $invmodel->file_name = $invitation;
-        //dd($invmodel);
-        $invmodel->save();
+
+        $preview = $this->tempMOM($templateData);
+       
 
 
         // save file in session mom table 
          DB::table('session_mom')->where('case_id', $request->MomCaseId)->update(['file_name' => $invitation]);
         // save file in session mom table 
-        //dd($operationdata);
+        
         if(isset($operationdata)) {
             //echo "asd";exit;
-            return json_encode(['code' => 200, 'response' => 'success']);
+            return json_encode(['code' => 200, 'response' => 'success', 'file' => $invitation, 'path' => storage_path(), 'preview' => $preview]);
         }
 
-        //DB::table('manage_session')->where('case_id', $id)->get();
 
     }
     /******** MOM Form submit ********************/
@@ -3710,7 +3720,7 @@ class CaseController extends Controller
 
     public function session_mom_template($data)
     {
-        $data["case"] = MedCase::where("id", "=", $data['caseid'])->first();
+        $data["case"] = MedCase::select('id', 'discussion', 'otherRespondentDetails')->where("id", "=", $data['caseid'])->first();
         $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
         'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
@@ -3719,16 +3729,24 @@ class CaseController extends Controller
             ->where("mediation_case.id", "=", $data['caseid'])->get();
 
         $data['session_mom'] = DB::table('session_mom')->where('case_id', $data['caseid'])->first();
-        $session_data = DB::table('manage_session')->where('id', $data['sessid'])->first();
-
+        $session_data = DB::table('manage_session')->select('session_date')->where('id', $data['sessid'])->first();
+        //echo "<prE>session==>";print_R($session_data);
         $session_date = explode('/', $session_data->session_date);
 
         $data['session_date'] = $session_date[0] .'-'.$session_date[1].'-'.$session_date[2];
         $data['session_time'] = $session_date[3];
 
-        // echo "<pre>";print_R($data);
-        // exit;
+       
         $data['mediator'] = $data['med'];
+
+        $itm_date = InvitationFiles::select("created_at")->where(['case_id' => $data['caseid']])->orderByDesc('id')->get();
+
+       
+
+         $cdate = new DateTime($itm_date[0]->created_at);
+         $data['itm_date'] = $cdate->format('d-m-Y'); 
+
+        
     
         $pdf = PDF::loadView('pdf.session_mom', $data);
         
@@ -3744,8 +3762,43 @@ class CaseController extends Controller
         // echo $momSend;
         // exit;
         
-       // $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+       $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+
+      
         return $name;
+    }
+
+    public function tempMOM($data){
+        $data["case"] = MedCase::select('id', 'discussion', 'otherRespondentDetails')->where("id", "=", $data['caseid'])->first();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
+        'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $data['caseid'])
+            ->where("mediation_case.id", "=", $data['caseid'])->get();
+
+        $data['session_mom'] = DB::table('session_mom')->where('case_id', $data['caseid'])->first();
+        $session_data = DB::table('manage_session')->select('session_date')->where('id', $data['sessid'])->first();
+        //echo "<prE>session==>";print_R($session_data);
+        $session_date = explode('/', $session_data->session_date);
+
+        $data['session_date'] = $session_date[0] .'-'.$session_date[1].'-'.$session_date[2];
+        $data['session_time'] = $session_date[3];
+
+       
+        $data['mediator'] = $data['med'];
+
+        $itm_date = InvitationFiles::select("created_at")->where(['case_id' => $data['caseid']])->orderByDesc('id')->get();
+
+       
+
+         $cdate = new DateTime($itm_date[0]->created_at);
+         $data['itm_date'] = $cdate->format('d-m-Y'); 
+
+
+        return response()->json([
+            "html" => view('pdf.session_mom', $data)->render(),
+        ]);
     }
 
 

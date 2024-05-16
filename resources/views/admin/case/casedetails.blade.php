@@ -328,6 +328,40 @@
 
                         </table>
                         <?php } ?>
+
+
+                        <?php
+                        if(!empty($case->mom) && isset($case->mom[0])){
+                            $mom_doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->mom[0]->file_name;
+                        
+                        ?>
+                            <table class="table table-bordered">
+
+                                <tr>
+                                    <th colspan="2">Minutes of the Meeting Documents</th>
+                                </tr>
+
+                                <tr>
+                                    <td><?= basename($case->mom[0]->file_name) ?></td>
+
+                                    <td>
+
+                                        @if (file_exists($mom_doc))
+                                        <a href="javascript:void(0);" data-folder="storage/app/public/mediation/{{ $case->id }}/{{ $case->mom[0]->file_name }}"
+                                                data-url="{{ $case->mom[0]->file_name }}" data-id="{{ $case->id }}"
+                                                class="secureDownload" data-userid="{{ Auth::user()->id }}">Download</a>
+                                        
+                                        @endif
+                                        {{-- <a href="{{ url($doc) }}" class="btn btn-sm btn-success" target="_blank">View</a> --}}
+
+                                    </td>
+                                </tr>
+                            </table>
+                        <?php } ?>
+
+
+
+
                         @if ($case->PayLink != null)
                         <table class="table table-bordered">
                             <tr>

@@ -21,6 +21,10 @@
         margin: 15px;
         height: 12px;
     }
+
+    #coolModal p {
+        margin-bottom: 0px;
+    }
 </style>
 
     <section class="tabs-section">
@@ -783,13 +787,14 @@
                 <input type="hidden" name="MomSessId" id="MomSessId">
                     
                     <div class="custom-modal-text ">
+                        
                         <div class="form-group">
-                            <label>Initiating Party :</label>
+                            <label>For the Applicant(s) / Initiating Party :</label>
                             <input type="text" autocomplete="off" id="ip_mom" class="form-control"
                                 name="ip_mom" placeholder="" data-validation="required">
                         </div>
                         <div class="form-group">
-                            <label>Responding Party :</label>
+                            <label>For the Opposite / Responding Party :</label>
                             <input type="text" id="rp_mom" value="" autocomplete="off"
                                 class="form-control" name="rp_mom" placeholder=""
                                 data-validation="required">
@@ -918,6 +923,33 @@
 
         </div>
     </div>
+
+
+
+
+
+
+    <div class="modal fade" id="coolModal">
+  <div class="modal-dialog modal-lg ">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1">Minutes of Mediation Sessions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Hey check it out! I'm changing!&hellip;</p>
+        <!-- <embed src="" width="600" height="500" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html"> -->
+      </div>
+      <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">
+                <span>Close</span>
+            </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 @endsection
 
 <!-- Table datatable css -->
@@ -3331,6 +3363,9 @@
                 },
                 dataType: "JSON",
                 success: function(response) {
+
+
+                    
                     
                     $('#MomCaseId').attr('value', CaseId);
                     $('#MomSessId').attr('value', SessId);
@@ -3393,19 +3428,26 @@
                     swal({
                         title: 'Loading...',
                        // showConfirmButton: false,
-                        //buttons: false,
+                        buttons: false,
                         //allowOutsideClick: false,
                     });
                 },
                 success: function(response) {
                    // console.log(response);
                     $('#Session-mom').modal('hide');
-                    swal("Session Updated Successfully!", {
-                        icon: "success",
-                    }).then(function() {
-                        location.reload();
+                     swal({
+                    //     title: "Preview loaded successfully !",
+                    //     icon: "success",
+                       // buttons: false,
+                      }).then(function() {
+                       // location.reload();
+                       var case_id = $('#MomCaseId').val();
+                      
+                       $("#coolModal").modal('show');
+                       previewMom(case_id, response.file, response.path, response.preview.original.html);
                     });
-                }
+                },
+                
             });
         });
 
@@ -3532,5 +3574,12 @@
             });
 
         });
+
+
+        function previewMom(caseid, file_name, path, preview_html){
+            
+            $('#coolModal .modal-body').html(preview_html);
+  
+        }
     </script>
 @endsection

@@ -66,14 +66,13 @@ use App\Models\User;
     <center>
         <div class="text-center">
             <img src='{{ URL("assert/img/plogo.png") }}' style='width: 120px;'>
-            <br><br><br>
+            <br>
         </div>
     </center>
 
 
-    <h2 class="text-center">(Privileged & Confidential)</h2>
-
-    <h4 class="text-center">Included in the list of institutions <a
+    
+    <h4 class="text-center" style="font-weight: normal; font-size: 1rem;">Included in the list of institutions <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
             here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution
         (ODR) and empaneled as a Mediation Institution by various Courts in India</h4>
@@ -89,11 +88,13 @@ use App\Models\User;
                 <p>Case ID: M{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
-                <p>Date : {{ date('d-m-Y') }}</p>
+                <p>Date : {{$session_date}}</p>
             </td>
         </tr>
     </table>
     <br>
+
+    <p class="text-center" style="font-weight: bold;">(Privileged & Confidential)</p>
 
 
     <table class="table_" cellspacing="0" cellpadding="10" width="100%">
@@ -218,7 +219,7 @@ use App\Models\User;
     <br />
     
     <p>The captioned matter was referred to Presolv360 to facilitate a mutually acceptable resolution
-    via online mediation. Accordingly, Invitation to Mediate dated 04-01-2023 was circulated to
+    via online mediation. Accordingly, Invitation to Mediate dated {{$itm_date}} was circulated to
     all the parties. {{$session_mom->mediator}} was appointed as the Mediator from the panel of mediators
     and acceptance and consent, alongwith the requisite disclosures, was circulated to all the
     parties. Presolv360 Administrator contacted all the parties based on the information available
@@ -228,14 +229,16 @@ use App\Models\User;
     <p>To arrive at an amicable resolution between the parties, a private mediation session was
         scheduled on {{$session_date}} at {{$session_time}} via video conferencing.</p>
     
+        <br />
+    
     <table class="table_" cellspacing="0" cellpadding="10" width="100%">
         <tr>
-            <td>For the Applicant(s)/Initiating Party:</td>
+            <td>For the Applicant(s) / <br/>Initiating Party:</td>
             <td>{{$session_mom->ip_name}}</td>
         </tr>
 
         <tr>
-            <td>For the Opposite/Responding Party:</td>
+            <td>For the Opposite / <br/>Responding Party:</td>
             <td>{{$session_mom->rp_name}}</td>
         </tr>
 
