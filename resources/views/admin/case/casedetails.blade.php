@@ -347,7 +347,7 @@
                                     <td>
 
                                         @if (file_exists($mom_doc))
-                                        <a href="javascript:void(0);" data-folder="storage/app/public/mediation/{{ $case->id }}/{{ $case->mom[0]->file_name }}"
+                                        <a href="javascript:void(0);" data-folder=""
                                                 data-url="{{ $case->mom[0]->file_name }}" data-id="{{ $case->id }}"
                                                 class="secureDownload" data-userid="{{ Auth::user()->id }}">Download</a>
                                         
