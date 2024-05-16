@@ -1452,11 +1452,11 @@ class CaseController extends Controller
             echo "<td>" . implode("<br>", $user) . "</td>";
             if ($value->is_deleted == 0) {
                 if (Auth::user()->role == 2) {
-                    $mom_file = DB::table('session_mom')->select("file_name")->where('case_id', $value->case_id)->get();
+                   // $mom_file = DB::table('session_mom')->select("file_name")->where('case_id', $value->case_id)->get();
                     //echo "<prE>";print_R($mom_file);
-                    if(!empty($mom_file) && isset($mom_file[0])){
-                        $doc = 'storage/app/public/mediation/' . $value->case_id . '/' . $mom_file[0]->file_name;
-                    }
+                    // if(!empty($mom_file) && isset($mom_file[0])){
+                    //     $doc = 'storage/app/public/mediation/' . $value->case_id . '/' . $mom_file[0]->file_name;
+                    // }
                     
                     echo "<td>
             <button id='UpdateSession' data-id='" . $value->id . "' data-toggle='modal' data-target='#Session-edit' class='btn btn-sm btn-success px-2'><i class='far fa-edit'></i></button>
@@ -1465,15 +1465,15 @@ class CaseController extends Controller
             <br/>
             <button id='MomSession' data-id='" . $value->id . "' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>";
             
-            if(!empty($mom_file) && isset($mom_file[0])){
-                if(file_exists($doc)) {
-                    echo "<br/>";
-                    echo '<a href="'.url($doc).'"
-                    target="_blank">
-                    <button id="" class="btn btn-sm btn-success px-2"><i class="fa fa-download"></i></button>
-                    </a>';
-                }
-            }
+            // if(!empty($mom_file) && isset($mom_file[0])){
+            //     if(file_exists($doc)) {
+            //         echo "<br/>";
+            //         echo '<a href="'.url($doc).'"
+            //         target="_blank">
+            //         <button id="" class="btn btn-sm btn-success px-2"><i class="fa fa-download"></i></button>
+            //         </a>';
+            //     }
+            // }
             
             echo "</td>";
                 } else if (Auth::user()->role == 1) {
