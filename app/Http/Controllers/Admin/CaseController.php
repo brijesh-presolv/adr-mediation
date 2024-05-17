@@ -1661,6 +1661,14 @@ class CaseController extends Controller
         if($data["case"]->batch_id == 63){
             $pdf = PDF::loadView('pdf.invitation_mediation_icici', $data);
         } else {
+
+            // itm hindi //
+            if(strtolower($data['itm_lang']->itm_lang) == "hindi"){
+                $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+            }
+            // itm hindi //
+
+
             $pdf = PDF::loadView('pdf.invitation_mediation', $data);
         }
         
@@ -2866,7 +2874,7 @@ class CaseController extends Controller
             if ($errormsg == '') {
                 $csv = $this->csvToArray($tmpName);
                 //dd($csv[0]);
-                if (count($csv[0]) != 25) {
+                if (count($csv[0]) != 26) {
                     $errormsg .= "Invalid csv file";
                 }
                 if ($errormsg != '') {
@@ -3041,6 +3049,10 @@ class CaseController extends Controller
                 $data['poc_email'] = $value[23];
                 $data['poc_contact'] = $value[24];
                 // POC fields //
+
+                // itm language //
+                $data['itm_lang'] = $value[25];
+                // itm language //
 
 
                 $med = MedCase::create($data);
