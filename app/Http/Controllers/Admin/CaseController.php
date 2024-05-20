@@ -1662,14 +1662,24 @@ class CaseController extends Controller
             $pdf = PDF::loadView('pdf.invitation_mediation_icici', $data);
         } else {
 
+           // dd($data['case']->itm_lang);
             // itm hindi //
-            if(strtolower($data['itm_lang']->itm_lang) == "hindi"){
-                $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+            if(isset($data['case']->itm_lang) && strtolower($data['case']->itm_lang) == "hindi"){
+               
+               // $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+
+                $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
+                    'title' => 'ITM' . ' ' . $id,
+                    'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                ]);
+            } else {
+                //echo "else";exit;
+                $pdf = PDF::loadView('pdf.invitation_mediation', $data);
             }
             // itm hindi //
 
 
-            $pdf = PDF::loadView('pdf.invitation_mediation', $data);
+            
         }
         
        
@@ -1679,7 +1689,11 @@ class CaseController extends Controller
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
-        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+
+        //Storage::disk('s3')->readStream('mediation_documents/mediation/' . $data["case"]->id . '/' . $name);
+       $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+
+        //$uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
 
