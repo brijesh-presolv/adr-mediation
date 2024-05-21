@@ -3745,7 +3745,7 @@ class CaseController extends Controller
 
     public function send_upload_file_party_mom($id, $files)
     {
-        dd($files);
+       // dd($files);
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
@@ -3753,20 +3753,20 @@ class CaseController extends Controller
             ->first();
         $mid = "M" . sprintf("%06d", $id);
         $sendEamils = array();
-        $filesE = array();
+        //$filesE = array();
         // $access = array();
 
         $d = [
             'event' => 'SEND_ADDI_DOC',
             'case_id' => $id,
         ];
-        foreach ($files as $f) {
+       // foreach ($files as $f) {
             // $filesE[] = url("storage/app/" . $f["file_name"]);
-            $filesE[] = 'mediation_documents/mediation/' . $id  . $f["file_name"];
+            $filesE = 'mediation_documents/mediation/' . $id  . $files["file_name"];
 
             $access = explode(',', $f["access"]);
             $mediatorAccess = $f["mediator_access"];
-        }
+        //}
         foreach ($involedUser as $inv) {
             if (is_array($access) && in_array($inv->id, $access)) {
 
@@ -3790,8 +3790,8 @@ class CaseController extends Controller
                         'haptik_tmp' => 'l19_additional_doc',
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
-                    foreach ($filesE as $file) {
-                        $whatsappSend = Storage::disk('s3')->url($file);
+                    //foreach ($filesE as $file) {
+                        $whatsappSend = Storage::disk('s3')->url($filesE);
                         $varjson_file = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
@@ -3806,7 +3806,7 @@ class CaseController extends Controller
                             'haptik_tmp' => 'mediation_consent_doc',
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
-                    }
+                    //}
                 }
             }
             // $dwa2 = [
@@ -3843,8 +3843,8 @@ class CaseController extends Controller
 
                 ];
                 $accessW = Whatsapp::sendWamessage($dwa1);
-                foreach ($filesE as $file) {
-                    $whatsappSend = Storage::disk('s3')->url($file);
+                //foreach ($filesE as $file) {
+                    $whatsappSend = Storage::disk('s3')->url($filesE);
 
                     $varjson = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
@@ -3860,7 +3860,7 @@ class CaseController extends Controller
                         'haptik_tmp' => 'mediation_consent_doc',
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
-                }
+                //}
             }
         }
 
