@@ -3458,8 +3458,8 @@
                     });
                 },
                 success: function(response) {
-                    console.log(response);
-                    return false;
+                    // console.log(response);
+                    // return false;
                     $('#Session-mom').modal('hide');
                      swal({
                          //title: "Minutes Successfully Submitted !",
@@ -3607,7 +3607,7 @@
 
         function previewMom(caseid, file_name, path, preview_html){
             alert(2);
-            
+            $("#coolModal").modal('show');
             $('#coolModal .modal-body').html(preview_html);
   
         }
