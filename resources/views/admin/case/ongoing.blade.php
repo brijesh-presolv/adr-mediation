@@ -821,9 +821,6 @@
 
 
                         <div class="form-group">
-                            <label>Share With Mediator :</label>
-                            <div id="MomMediatorDocs"></div>
-                            <br>
                             <label>Share With @lang('case.session_party') :</label>
                             <div class="form-group" id="MomPartyDocs">
                         </div>

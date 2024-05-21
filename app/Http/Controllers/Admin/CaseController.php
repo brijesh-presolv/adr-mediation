@@ -3724,7 +3724,7 @@ class CaseController extends Controller
         $notification_array['uploaded_by'] = Auth::user()->id;
         $notification_array['case_id'] = $request->MomCaseId;
 
-        $this->send_upload_file_party($request->MomCaseId, $notification_array);
+        $this->send_upload_file_party_mom($request->MomCaseId, $notification_array);
 
         // Send notification to party //
         
@@ -3736,6 +3736,140 @@ class CaseController extends Controller
 
     }
     /******** MOM Form submit ********************/
+
+
+
+
+
+    public function send_upload_file_party_mom($id, $files)
+    {
+        dd($files);
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "M" . sprintf("%06d", $id);
+        $sendEamils = array();
+        $filesE = array();
+        // $access = array();
+
+        $d = [
+            'event' => 'SEND_ADDI_DOC',
+            'case_id' => $id,
+        ];
+        foreach ($files as $f) {
+            // $filesE[] = url("storage/app/" . $f["file_name"]);
+            $filesE[] = 'mediation_documents/mediation/' . $id  . $f["file_name"];
+
+            $access = explode(',', $f["access"]);
+            $mediatorAccess = $f["mediator_access"];
+        }
+        foreach ($involedUser as $inv) {
+            if (is_array($access) && in_array($inv->id, $access)) {
+
+                if ($inv->userEmail != "") {
+                    $sendEamils[] = $inv->userEmail;
+                }
+                // additional_doc
+
+                if ($inv->userPhone != "") {
+                    $varjson = ['caseid' => $mid];
+                    $var = ['-cid-'];
+                    $var1 = [$mid];
+                    $content1 = WaTemplate::getcontent('additional_doc');
+                    $content = str_replace($var, $var1, $content1);
+                    $dwa1 = [
+                        'caseid' => $id,
+                        'contact' => $inv->userPhone,
+                        'content' => ['text' => $content],
+                        'event' => 'SEND_ADDI_DOC',
+                        'varjson' => $varjson,
+                        'haptik_tmp' => 'l19_additional_doc',
+                    ];
+                    $accessW = Whatsapp::sendWamessage($dwa1);
+                    foreach ($filesE as $file) {
+                        $whatsappSend = Storage::disk('s3')->url($file);
+                        $varjson_file = ['caseid' => $mid];
+                        $var_file = ['-caseid-'];
+                        $var1_file = [$mid];
+                        $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                        $content_file = str_replace($var_file, $var1_file, $content1_file);
+                        $dwa2 = [
+                            'caseid' => $id,
+                            'contact' =>  $inv->userPhone,
+                            'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                            'event' => 'SEND_ADDI_DOC',
+                            'varjson' => $varjson_file,
+                            'haptik_tmp' => 'mediation_consent_doc',
+                        ];
+                        $accessW = Whatsapp::sendWamessage($dwa2);
+                    }
+                }
+            }
+            // $dwa2 = [
+            //     'caseid' => $id,
+            //     'contact' => $inv->userPhone,
+            //     'content' => ['media' => ['url' => $filesE, 'caption' => 'Additional Document ' . $mid]],
+            //     'event' => 'SEND_ADDI_DOC_ADM'
+            // ];
+            // $access = Whatsapp::sendWamessage($dwa2);
+
+        }
+        if ($mediator) {
+            if ($mediatorAccess == 1) {
+
+                // $sendEamils[] = $mediator->email;
+                $d1 = [
+                    'event' => 'SEND_ADDI_DOC_MED',
+                    'case_id' => $id,
+                ];
+                SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Mediator"], null, $filesE);
+
+                $varjson = ['caseid' => $mid];
+                $var = ['-cid-'];
+                $var1 = [$mid];
+                $content1 = WaTemplate::getcontent('additional_doc_med');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $id,
+                    'contact' =>  $mediator->mobile_number,
+                    'content' => ['text' => $content],
+                    'event' => 'SEND_ADDI_DOC_MED',
+                    'varjson' => $varjson,
+                    'haptik_tmp' => 'l20_additional_doc_med',
+
+                ];
+                $accessW = Whatsapp::sendWamessage($dwa1);
+                foreach ($filesE as $file) {
+                    $whatsappSend = Storage::disk('s3')->url($file);
+
+                    $varjson = ['caseid' => $mid];
+                    $var_file = ['-caseid-'];
+                    $var1_file = [$mid];
+                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                    $content_file = str_replace($var_file, $var1_file, $content1_file);
+                    $dwa2 = [
+                        'caseid' => $id,
+                        'contact' =>  $mediator->mobile_number,
+                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                        'event' => 'SEND_ADDI_DOC_MED',
+                        'varjson' => $varjson,
+                        'haptik_tmp' => 'mediation_consent_doc',
+                    ];
+                    $accessW = Whatsapp::sendWamessage($dwa2);
+                }
+            }
+        }
+
+        if (!empty($sendEamils)) {
+            foreach ($sendEamils as $email) {
+                SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
+            }
+        }
+
+        return true;
+    }
 
 
 
