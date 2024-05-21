@@ -3458,7 +3458,8 @@
                     });
                 },
                 success: function(response) {
-                   // console.log(response);
+                    console.log(response);
+                    return false;
                     $('#Session-mom').modal('hide');
                      swal({
                          //title: "Minutes Successfully Submitted !",
