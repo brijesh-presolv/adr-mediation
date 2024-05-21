@@ -3745,7 +3745,7 @@ class CaseController extends Controller
 
     public function send_upload_file_party_mom($id, $files)
     {
-        //dd($files);
+        dd($files);
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
