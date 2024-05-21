@@ -3600,7 +3600,7 @@ class CaseController extends Controller
         if(empty($if_check)){
             $partyArray = InvoledUser::where('userPlanId', $request['caseid'])->get();
             
-            
+           
             foreach($partyArray as $party){
                 if($party['isClaimant'] === 0){
                     if(!in_array($party['name'], $ip_array)){
@@ -3612,6 +3612,8 @@ class CaseController extends Controller
                         array_push($rp_array, $party['name']);
                     }
                 } 
+
+                
                 
             }
             
@@ -3631,6 +3633,7 @@ class CaseController extends Controller
             ->first();
 
             $data['mediator'] = $mediator['first_name'] .' '. $mediator['last_name'];
+            // $data['mediator_id'] = $mediator['id'];
 
 
 
@@ -3642,6 +3645,10 @@ class CaseController extends Controller
             //     ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
             //     ->where("user_involved_in_agreement.userPlanId", "=", $request['caseid'])
             //     ->where("mediation_case.id", "=", $request['caseid'])->get();
+
+            $data['party_array'] = InvoledUser::select('id', 'name')->where('userPlanId', $request['caseid'])->get();
+
+
         
             return json_encode($data);
     }
@@ -3706,6 +3713,20 @@ class CaseController extends Controller
         // save file in session mom table 
          DB::table('session_mom')->where('case_id', $request->MomCaseId)->update(['file_name' => $invitation]);
         // save file in session mom table 
+
+
+
+        // Send notification to party //
+        $notification_array = array();
+        $notification_array['file_name'] = $invitation;
+        $notification_array['access'] = $request->docs_party_ids;
+        $notification_array['mediator_access'] = 1;
+        $notification_array['uploaded_by'] = Auth::user()->id;
+        $notification_array['case_id'] = $request->MomCaseId;
+
+        $this->send_upload_file_party($request->MomCaseId, $notification_array);
+
+        // Send notification to party //
         
         if(isset($operationdata)) {
             //echo "asd";exit;

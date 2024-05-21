@@ -818,6 +818,15 @@
                             <input type="text" id="next_steps" class="form-control" name="next_steps"
                                 data-validation="required">
                         </div>
+
+
+                        <div class="form-group">
+                            <label>Share With Mediator :</label>
+                            <div id="MomMediatorDocs"></div>
+                            <br>
+                            <label>Share With @lang('case.session_party') :</label>
+                            <div class="form-group" id="MomPartyDocs">
+                        </div>
                        
                         
                         <div class="text-right">
@@ -3363,10 +3372,11 @@
                 },
                 dataType: "JSON",
                 success: function(response) {
-
+                    // console.log(response.party_array);
+                    // return false;
 
                     
-                    
+                    var data = response.party_array;
                     $('#MomCaseId').attr('value', CaseId);
                     $('#MomSessId').attr('value', SessId);
                     $('#ip_mom').attr('value', response.ip_name);
@@ -3376,6 +3386,24 @@
                     $('#next_steps').attr('value', response.next);
 
                     $('#med_name').attr('value', response.mediator);
+
+
+                    // var med_text = `<div class="form-check">
+                    // <input type="checkbox" value="` + response.mediator_id + `" class="form-check-input" name="docs_party_ids" id="party">
+                    // <label class="form-check-label" for="party">` + response.mediator + `</label>
+                    // </div>`;
+                    // $("#MomMediatorDocs").append(med_text);
+
+                    $.each(data, function(index, elm) {
+                        
+                            var party_id = elm.id;
+                            var party_name = elm.name;
+                            var text = `<div class="form-check">
+                            <input type="checkbox" value="` + party_id + `" class="form-check-input" name="docs_party_ids" id="party">
+                            <label class="form-check-label" for="party">` + party_name + `</label>
+                        </div>`;
+                            $("#MomPartyDocs").append(text);
+                    });
                 }
             });
         });
