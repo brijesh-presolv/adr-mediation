@@ -822,7 +822,7 @@
 
                         <div class="form-group">
                             <label>Share With @lang('case.session_party') :</label>
-                            <div class="form-group" id="MomPartyDocs">
+                            <div class="form-group" id="MomPartyDocs"></div>
                         </div>
                        
                         
