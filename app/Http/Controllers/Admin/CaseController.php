@@ -3764,8 +3764,8 @@ class CaseController extends Controller
             // $filesE[] = url("storage/app/" . $f["file_name"]);
             $filesE = 'mediation_documents/mediation/' . $id  . $files["file_name"];
 
-            $access = explode(',', $f["access"]);
-            $mediatorAccess = $f["mediator_access"];
+            $access = explode(',', $files["access"]);
+            $mediatorAccess = $files["mediator_access"];
         //}
         foreach ($involedUser as $inv) {
             if (is_array($access) && in_array($inv->id, $access)) {
