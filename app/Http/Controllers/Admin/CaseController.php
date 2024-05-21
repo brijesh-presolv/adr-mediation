@@ -3716,7 +3716,13 @@ class CaseController extends Controller
 
 
 
-        // Send notification to party //
+        
+        
+        if(isset($operationdata)) {
+
+            // Send notification to party //
+        echo "<pre>";print_R($request->docs_party_ids);
+        dd($request->all());
         if($request->docs_party_ids != ""){
         $notification_array = array();
         $notification_array['file_name'] = $invitation;
@@ -3729,8 +3735,6 @@ class CaseController extends Controller
         }
 
         // Send notification to party //
-        
-        if(isset($operationdata)) {
             //echo "asd";exit;
             return json_encode(['code' => 200, 'response' => 'success', 'file' => $invitation, 'path' => storage_path(), 'preview' => $preview]);
         }
