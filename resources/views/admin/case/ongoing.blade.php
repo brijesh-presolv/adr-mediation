@@ -3461,9 +3461,9 @@
                    // console.log(response);
                     $('#Session-mom').modal('hide');
                      swal({
-                         title: "Minutes Successfully Submitted !",
-                         icon: "success",
-                         buttons: true,
+                         //title: "Minutes Successfully Submitted !",
+                         //icon: "success",
+                         //buttons: true,
                       }).then(function() {
                        // location.reload();
                        var case_id = $('#MomCaseId').val();
