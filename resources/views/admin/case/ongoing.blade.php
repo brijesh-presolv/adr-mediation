@@ -3466,10 +3466,13 @@
                          //buttons: true,
                       }).then(function() {
                        // location.reload();
+
+                       setTimeout(function () {
                        var case_id = $('#MomCaseId').val();
                       
                        $("#coolModal").modal('show');
                        previewMom(case_id, response.file, response.path, response.preview.original.html);
+                       }, 2500);
                     });
                 },
                 
@@ -3602,6 +3605,7 @@
 
 
         function previewMom(caseid, file_name, path, preview_html){
+            alert(2);
             
             $('#coolModal .modal-body').html(preview_html);
   
