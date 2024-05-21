@@ -3721,8 +3721,8 @@ class CaseController extends Controller
         if(isset($operationdata)) {
 
             // Send notification to party //
-        echo "<pre>";print_R($request->docs_party_ids);
-        dd($request->all());
+        // echo "<pre>";print_R($request->docs_party_ids);
+        // dd($request->all());
         if($request->docs_party_ids != ""){
         $notification_array = array();
         $notification_array['file_name'] = $invitation;
