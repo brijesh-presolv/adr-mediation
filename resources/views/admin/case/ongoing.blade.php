@@ -3463,7 +3463,7 @@
                      swal({
                          title: "Minutes Successfully Submitted !",
                          icon: "success",
-                       // buttons: false,
+                         buttons: true,
                       }).then(function() {
                        // location.reload();
                        var case_id = $('#MomCaseId').val();

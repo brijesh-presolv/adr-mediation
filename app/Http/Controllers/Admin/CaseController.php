@@ -3725,7 +3725,7 @@ class CaseController extends Controller
         $notification_array['uploaded_by'] = Auth::user()->id;
         $notification_array['case_id'] = $request->MomCaseId;
 
-        $this->send_upload_file_party_mom($request->MomCaseId, $notification_array);
+            $this->send_upload_file_party_mom($request->MomCaseId, $notification_array);
         }
 
         // Send notification to party //
@@ -3809,60 +3809,9 @@ class CaseController extends Controller
                     //}
                 }
             }
-            // $dwa2 = [
-            //     'caseid' => $id,
-            //     'contact' => $inv->userPhone,
-            //     'content' => ['media' => ['url' => $filesE, 'caption' => 'Additional Document ' . $mid]],
-            //     'event' => 'SEND_ADDI_DOC_ADM'
-            // ];
-            // $access = Whatsapp::sendWamessage($dwa2);
-
+            
         }
-        if ($mediator) {
-            if ($mediatorAccess == 1) {
-
-                // $sendEamils[] = $mediator->email;
-                $d1 = [
-                    'event' => 'SEND_ADDI_DOC_MED',
-                    'case_id' => $id,
-                ];
-                SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Mediator"], null, $filesE);
-
-                $varjson = ['caseid' => $mid];
-                $var = ['-cid-'];
-                $var1 = [$mid];
-                $content1 = WaTemplate::getcontent('additional_doc_med');
-                $content = str_replace($var, $var1, $content1);
-                $dwa1 = [
-                    'caseid' => $id,
-                    'contact' =>  $mediator->mobile_number,
-                    'content' => ['text' => $content],
-                    'event' => 'SEND_ADDI_DOC_MED',
-                    'varjson' => $varjson,
-                    'haptik_tmp' => 'l20_additional_doc_med',
-
-                ];
-                $accessW = Whatsapp::sendWamessage($dwa1);
-                //foreach ($filesE as $file) {
-                    $whatsappSend = Storage::disk('s3')->url($filesE);
-
-                    $varjson = ['caseid' => $mid];
-                    $var_file = ['-caseid-'];
-                    $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
-                    $content_file = str_replace($var_file, $var1_file, $content1_file);
-                    $dwa2 = [
-                        'caseid' => $id,
-                        'contact' =>  $mediator->mobile_number,
-                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                        'event' => 'SEND_ADDI_DOC_MED',
-                        'varjson' => $varjson,
-                        'haptik_tmp' => 'mediation_consent_doc',
-                    ];
-                    $accessW = Whatsapp::sendWamessage($dwa2);
-                //}
-            }
-        }
+        
 
         if (!empty($sendEamils)) {
             foreach ($sendEamils as $email) {
