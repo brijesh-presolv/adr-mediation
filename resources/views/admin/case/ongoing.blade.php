@@ -3464,8 +3464,8 @@
                    // console.log(response);
                     $('#Session-mom').modal('hide');
                      swal({
-                    //     title: "Preview loaded successfully !",
-                    //     icon: "success",
+                         title: "Minutes Successfully Submitted !",
+                         icon: "success",
                        // buttons: false,
                       }).then(function() {
                        // location.reload();
