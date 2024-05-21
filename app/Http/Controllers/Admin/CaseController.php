@@ -3717,6 +3717,7 @@ class CaseController extends Controller
 
 
         // Send notification to party //
+        if($request->docs_party_ids != ""){
         $notification_array = array();
         $notification_array['file_name'] = $invitation;
         $notification_array['access'] = $request->docs_party_ids;
@@ -3725,6 +3726,7 @@ class CaseController extends Controller
         $notification_array['case_id'] = $request->MomCaseId;
 
         $this->send_upload_file_party_mom($request->MomCaseId, $notification_array);
+        }
 
         // Send notification to party //
         
@@ -3743,7 +3745,7 @@ class CaseController extends Controller
 
     public function send_upload_file_party_mom($id, $files)
     {
-        dd($files);
+        //dd($files);
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
