@@ -3766,7 +3766,7 @@ class CaseController extends Controller
         ];
        // foreach ($files as $f) {
             // $filesE[] = url("storage/app/" . $f["file_name"]);
-            $filesE = 'mediation_documents/mediation/' . $id  . $files["file_name"];
+            $filesE = 'mediation_documents/mediation/' . $id  .'/'. $files["file_name"];
 
             $access = explode(',', $files["access"]);
             $mediatorAccess = $files["mediator_access"];
@@ -3816,7 +3816,6 @@ class CaseController extends Controller
             
         }
         
-
         if (!empty($sendEamils)) {
             foreach ($sendEamils as $email) {
                 SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
@@ -3860,7 +3859,7 @@ class CaseController extends Controller
     
         $pdf = PDF::loadView('pdf.session_mom', $data);
         
-        $name = 'Minutes_of_the_Meeting' . sprintf('%06d', $data['caseid']) . '.pdf';
+        $name = 'Minutes_of_the_Meeting_' . sprintf('%06d', $data['caseid']) . '.pdf';
         
         $savePath = 'mediation_documents/mediation/' . $data['caseid'];
         $finalFilePath = $savePath . '/' . $name;
