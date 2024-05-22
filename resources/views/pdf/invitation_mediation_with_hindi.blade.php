@@ -97,7 +97,7 @@ src: url('{{ url('fonts/NotoSerifTelugu-VariableFont_wght.ttf') }}');
 
     <center>
         <div class="text-center">
-            <img src='{{ URL("assert/img/plogo.png") }}' style='width: 120px;'>
+            <img src='{{ URL("assert/img/Logo1.png") }}' style='width: 120px;'>
             <br><br><br>
         </div>
     </center>
@@ -322,7 +322,7 @@ src: url('{{ url('fonts/NotoSerifTelugu-VariableFont_wght.ttf') }}');
     @endphp
     <center>
         <div class="text-center">
-            <img src='{{ URL("assert/img/plogo.png") }}' style='width: 120px;'>
+            <img src='{{ URL("assert/img/Logo1.png") }}' style='width: 120px;'>
             <br><br><br>
         </div>
     </center>
