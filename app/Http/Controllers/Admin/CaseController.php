@@ -1691,9 +1691,9 @@ class CaseController extends Controller
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
 
         //Storage::disk('s3')->readStream('mediation_documents/mediation/' . $data["case"]->id . '/' . $name);
-       $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+      // $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
 
-        //$uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
 
