@@ -19,6 +19,19 @@ $ldate = $lastdate->format('d-m-Y');
 <head>
     <title> {{ config('app.name', 'Medtiator') }} | Invitation of Mediation / Conciliation HINDI</title>
     <style type="text/css">
+         body {
+                font-family: 'Open Sans', 'Arial', 'sans-serif', 'Hind', 'DejaVu Sans', 'freeserif', 'lohitkannada', 'pothana2000';
+                /* font-size: 14.5px;
+                border: 1px solid;
+                width: 107%;
+                height: 106%;
+                margin: 0;
+                padding: 0;
+                page-break-after: always;
+                page-break-inside: avoid;
+                box-sizing: border-box; */
+            }
+
         @page {
             header: page-header;
             footer: page-footer;
@@ -67,7 +80,17 @@ $ldate = $lastdate->format('d-m-Y');
         .table_ th {
             padding: 10px;
         }
+
+        @font-face {
+
+font-family: NotoSerifTelugu;
+
+src: url('{{ url('fonts/NotoSerifTelugu-VariableFont_wght.ttf') }}');
+}
     </style>
+
+
+<link rel="stylesheet" href="{{ url('fonts/DroidSansFallback.ttf') }}">
 </head>
 
 <body>
@@ -80,7 +103,7 @@ $ldate = $lastdate->format('d-m-Y');
     </center>
 
 
-    <h2 class="text-center">Invitation to Mediate / Conciliate English</h2>
+    <h2 class="text-center">Invitation to Mediate / Conciliate</h2>
 
     <h4 class="text-center">Included in the list of institutions <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
@@ -278,7 +301,7 @@ $ldate = $lastdate->format('d-m-Y');
     <p>9. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
 
     <p><b>Note: This is a system generated notice and hence does not require signature.</b></p>
-    <table cellspacing="0" cellpadding="10" width="100%">
+    <table cellspacing="0" cellpadding="10" width="100%" style="page-break-after: always;">
         <tr>
             <td>
                 <p>To:</p>
@@ -291,9 +314,12 @@ $ldate = $lastdate->format('d-m-Y');
         </tr>
     </table>
 
-
+    
 
     <!-------------- HINDI ------------------------------------------------------------------------------------->
+    @php
+        $langfamilyfont = 'freeserif, Open Sans, Arial, Arial, sans-serif, Verdana';
+    @endphp
     <center>
         <div class="text-center">
             <img src='{{ URL("assert/img/plogo.png") }}' style='width: 120px;'>
@@ -302,7 +328,7 @@ $ldate = $lastdate->format('d-m-Y');
     </center>
 
 
-    <h2 class="text-center" style="font-size: freeserif, Open Sans, Arial, Arial, sans-serif, Verdana;">मध्यस्थता/समझौता (Mediation/Conciliation)   करने का निमंत्रण</h2>
+    <h2 class="text-center" style="font-family:{{ $langfamilyfont }};">मध्यस्थता/समझौता (Mediation/Conciliation)   करने का निमंत्रण</h2>
 
     <h4 class="text-center">Included in the list of institutions <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
@@ -320,7 +346,7 @@ $ldate = $lastdate->format('d-m-Y');
                 <p>Case ID: M{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
-                <p>तारीख : {{ date('d-m-Y') }}</p>
+                <p style="font-family:{{ $langfamilyfont }};">तारीख : {{ date('d-m-Y') }}</p>
             </td>
         </tr>
     </table>
@@ -447,7 +473,7 @@ $ldate = $lastdate->format('d-m-Y');
 
     <br />
     
-    <p>1. सौहार्दपूर्ण समाधान पर पहुंचने की इच्छा रखते हुए, आवेदक/आरंभकर्ता पक्ष ने विवाद का सौहार्दपूर्ण समाधान मांगा है और Presolv360 के साथ अनुरोध पंजीकृत किया है।</p>
+    <p style="font-family:{{ $langfamilyfont }};">1. सौहार्दपूर्ण समाधान पर पहुंचने की इच्छा रखते हुए, आवेदक/आरंभकर्ता पक्ष ने विवाद का सौहार्दपूर्ण समाधान मांगा है और Presolv360 के साथ अनुरोध पंजीकृत किया है।</p>
   
     <p>2. As per the Applicant(s) / Initiating Party:</p>
     
@@ -455,21 +481,21 @@ $ldate = $lastdate->format('d-m-Y');
         <?php echo nl2br($case->issue); ?>
     </p>
 
-    <p>3. Presolv360 ऑनलाइन Dispute समाधान  (“ODR”) सहित वैकल्पिक Dispute समाधान (“ADR”) सेवाएं प्रदान करने वाली संस्थाओं की सूची में शामिल है और इसे भारत में विभिन्न न्यायालयों द्वारा मध्यस्थता (Mediation) संस्थान के रूप में भी सूचीबद्ध किया गया है। Presolv360 अपने प्लेटफ़ॉर्म पर मध्यस्थता (Mediation) कार्यवाही का प्रबंधन करता है, और मध्यस्थों (Mediators) के अपने पैनल पर आवश्यक योग्यता, ज्ञान और विशेषज्ञता वाले स्वतंत्र, योग्य मध्यस्थों (Mediators)को सूचीबद्ध करता है। मध्यस्थता / सुलह (Mediation/Conciliation) Presolv360 के Dispute समाधान नियमों के अनुसार संचालित   की जाएगी, जिसकी एक प्रति यहाँ पाई जा सकती है। Presolv360 मध्यस्थता कार्यवाही के संचालन के लिए सभी संबंधित पक्षों और मध्यस्थ (Mediators)  को प्रशासनिक सहायता प्रदान करता है और विवाद के परिणाम में इसकी कोई रुचि नहीं है और इसमें कोई हितों का टकराव नहीं है।</p>
+    <p style="font-family:{{ $langfamilyfont }};">3. Presolv360 ऑनलाइन Dispute समाधान  (“ODR”) सहित वैकल्पिक Dispute समाधान (“ADR”) सेवाएं प्रदान करने वाली संस्थाओं की सूची में शामिल है और इसे भारत में विभिन्न न्यायालयों द्वारा मध्यस्थता (Mediation) संस्थान के रूप में भी सूचीबद्ध किया गया है। Presolv360 अपने प्लेटफ़ॉर्म पर मध्यस्थता (Mediation) कार्यवाही का प्रबंधन करता है, और मध्यस्थों (Mediators) के अपने पैनल पर आवश्यक योग्यता, ज्ञान और विशेषज्ञता वाले स्वतंत्र, योग्य मध्यस्थों (Mediators)को सूचीबद्ध करता है। मध्यस्थता / सुलह (Mediation/Conciliation) Presolv360 के Dispute समाधान नियमों के अनुसार संचालित   की जाएगी, जिसकी एक प्रति यहाँ पाई जा सकती है। Presolv360 मध्यस्थता कार्यवाही के संचालन के लिए सभी संबंधित पक्षों और मध्यस्थ (Mediators)  को प्रशासनिक सहायता प्रदान करता है और विवाद के परिणाम में इसकी कोई रुचि नहीं है और इसमें कोई हितों का टकराव नहीं है।</p>
     
-    <p>4. जबकि यह प्रक्रिया पूरी तरह से गोपनीय है, मध्यस्थता/सुलह (Mediation/Conciliation)  की कार्यवाही गैर-भागीदारी की स्थिति में या विवाद के अनसुलझे रहने की स्थिति में उपलब्ध किसी भी कानूनी उपाय के प्रति ‘बिना किसी पूर्वाग्रह के’ है। यह सबसे अधिक लाभकारी प्रक्रियाओं में से एक बन गई है, जिसमें सभी संदर्भों की सफलता दर 90% से अधिक है।</p>
+    <p style="font-family:{{ $langfamilyfont }};">4. जबकि यह प्रक्रिया पूरी तरह से गोपनीय है, मध्यस्थता/सुलह (Mediation/Conciliation)  की कार्यवाही गैर-भागीदारी की स्थिति में या विवाद के अनसुलझे रहने की स्थिति में उपलब्ध किसी भी कानूनी उपाय के प्रति ‘बिना किसी पूर्वाग्रह के’ है। यह सबसे अधिक लाभकारी प्रक्रियाओं में से एक बन गई है, जिसमें सभी संदर्भों की सफलता दर 90% से अधिक है।</p>
     
-    <p>5. विपक्षी/प्रतिसाद देने वाला पक्ष मध्यस्थता/समाधान के लिए आमंत्रण प्राप्त होने के सात (7) कार्य दिवसों के भीतर Presolv360 को admin@presolv360.com पर ईमेल के माध्यम से उक्त आमंत्रण को स्वीकार या अस्वीकार करेगा, अन्यथा मध्यस्थता/समाधान (Mediation/Conciliation) को नॉन-स्टार्टर माना जाएगा।</p>
+    <p style="font-family:{{ $langfamilyfont }};">5. विपक्षी/प्रतिसाद देने वाला पक्ष मध्यस्थता/समाधान के लिए आमंत्रण प्राप्त होने के सात (7) कार्य दिवसों के भीतर Presolv360 को admin@presolv360.com पर ईमेल के माध्यम से उक्त आमंत्रण को स्वीकार या अस्वीकार करेगा, अन्यथा मध्यस्थता/समाधान (Mediation/Conciliation) को नॉन-स्टार्टर माना जाएगा।</p>
     
-    <p>6. दावेदार और प्रतिवादी एक अधिकृत प्रतिनिधि द्वारा प्रतिनिधित्व या सहायता के लिए चुन सकते हैं, इस मामले में नियुक्ति करने वाली पार्टी प्राधिकरण का एक पत्र प्रस्तुत करेगी, जिसका प्रारूप यहां उपलब्ध है। नियुक्त करने वाली पार्टी Presolv360 को संबोधित एक ईमेल के माध्यम से admin@presolv360.com पर “Letter of Authority | (Case ID) | (Name of the Appointing Party)”|</p>
+    <p style="font-family:{{ $langfamilyfont }};">6. दावेदार और प्रतिवादी एक अधिकृत प्रतिनिधि द्वारा प्रतिनिधित्व या सहायता के लिए चुन सकते हैं, इस मामले में नियुक्ति करने वाली पार्टी प्राधिकरण का एक पत्र प्रस्तुत करेगी, जिसका प्रारूप यहां उपलब्ध है। नियुक्त करने वाली पार्टी Presolv360 को संबोधित एक ईमेल के माध्यम से admin@presolv360.com पर “Letter of Authority | (Case ID) | (Name of the Appointing Party)”|</p>
     
-    <p>7. मध्यस्थों/समाधानकर्ताओं  (mediator / conciliator) के पैनल से एक मध्यस्थ/समाधानकर्ता की नियुक्ति की जाएगी, और ऐसी नियुक्ति मध्यस्थ/समाधानकर्ता (mediator / conciliator)  की योग्यता, ज्ञान और पक्षों के बीच विवाद के विषय-वस्तु से निपटने की क्षमता पर आधारित होगी।</p>
+    <p style="font-family:{{ $langfamilyfont }};">7. मध्यस्थों/समाधानकर्ताओं  (mediator / conciliator) के पैनल से एक मध्यस्थ/समाधानकर्ता की नियुक्ति की जाएगी, और ऐसी नियुक्ति मध्यस्थ/समाधानकर्ता (mediator / conciliator)  की योग्यता, ज्ञान और पक्षों के बीच विवाद के विषय-वस्तु से निपटने की क्षमता पर आधारित होगी।</p>
     
-    <p>8. मध्यस्थ/समाधानकर्ता द्वारा नियुक्ति स्वीकार किए जाने पर, पक्षों को नियुक्ति की सूचना दी जाएगी।</p>
+    <p style="font-family:{{ $langfamilyfont }};">8. मध्यस्थ/समाधानकर्ता द्वारा नियुक्ति स्वीकार किए जाने पर, पक्षों को नियुक्ति की सूचना दी जाएगी।</p>
 
-    <p>9. यदि किसी पक्ष को श्रवण दोष के मामले में भारतीय सांकेतिक भाषा (आईएसएल) दुभाषिया की सहायता की आवश्यकता है, तो admin@presolv360.com पर "Request for Interpreter | (Case ID)"   विषय के साथ एक ईमेल लिखें, और यह सुविधा Presolv360 द्वारा प्रदान की जाएगी।</p>
+    <p style="font-family:{{ $langfamilyfont }};">9. यदि किसी पक्ष को श्रवण दोष के मामले में भारतीय सांकेतिक भाषा (आईएसएल) दुभाषिया की सहायता की आवश्यकता है, तो admin@presolv360.com पर "Request for Interpreter | (Case ID)"   विषय के साथ एक ईमेल लिखें, और यह सुविधा Presolv360 द्वारा प्रदान की जाएगी।</p>
     
-    <p><b>नोट: यह सिस्टम द्वारा जनरेटेड नोटिस है, इसलिए इस पर हस्ताक्षर की आवश्यकता नहीं है।</b></p>
+    <p style="font-family:{{ $langfamilyfont }};"><b>नोट: यह सिस्टम द्वारा जनरेटेड नोटिस है, इसलिए इस पर हस्ताक्षर की आवश्यकता नहीं है।</b></p>
     
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
