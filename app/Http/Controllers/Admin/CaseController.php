@@ -3881,12 +3881,12 @@ class CaseController extends Controller
        // $momSend = Storage::disk('s3')->url($finalFilePath);
 
        //$s3_local = Storage::disk('local')->writeStream('public/mediation/' . $data['caseid'] . '/' . $name, Storage::disk('s3')->readStream('mediation_documents/mediation/' . $data['caseid'] . '/' . $name));
-       $local_store = Storage::disk('local')->put('public/mediation/' . $data['caseid'] . '/' .  $name, $pdf->output());
+       //$local_store = Storage::disk('local')->put('public/mediation/' . $data['caseid'] . '/' .  $name, $pdf->output());
         // echo $finalFilePath;
         // echo $momSend;
         // exit;
         
-       //$uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+       $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
 
       
         return $name;
