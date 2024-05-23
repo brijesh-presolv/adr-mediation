@@ -213,7 +213,11 @@ class CaseController extends Controller
             ->where('restructure_data.caseid', $case->id)
             ->first();
 
+
+          
         $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
+
+        
 
 
         return view('admin.case.casedetails', compact("case"));
@@ -1463,7 +1467,7 @@ class CaseController extends Controller
             <button id='DeleteSession' data-id='" . $value->id . "' data-toggle='modal' data-zoom-choice='".$value->zoom_link_choice."' data-target='#Session-delete' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
             
             <br/>
-            <button id='MomSession' data-id='" . $value->id . "' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>";
+            <button id='MomSession' data-id='" . $value->id . "' data-sn='".$sn."' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>";
             
             // if(!empty($mom_file) && isset($mom_file[0])){
             //     if(file_exists($doc)) {
@@ -1484,7 +1488,7 @@ class CaseController extends Controller
                     <button id='DeleteSession' data-id='" . $value->id . "' data-toggle='modal' data-zoom-choice='".$value->zoom_link_choice."' data-target='#Session-delete-meditor' class='btn btn-sm btn-danger mt-1 px-2'><i class='far fa-trash-alt' style='padding: 0px 2px'></i></button>
                     
                     <br/>
-                    <button id='MomSession' data-id='" . $value->id . "' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>
+                    <button id='MomSession' data-id='" . $value->id . "' data-sn='".$sn."' data-caseid='".$value->case_id."' data-toggle='modal' data-target='#Session-mom' class='btn btn-sm btn-success px-2'><i class='far fa-file' style='padding: 0px 2px'></i></button>
                     </td>";
                     } else {
                         echo "<td>--</td>";
@@ -3591,10 +3595,12 @@ class CaseController extends Controller
 
     /********** Get MOM Template Data ******************* */
     public function ShowMomSessionData(Request $request) {
+
+       
         
-        $if_check = DB::table('session_mom')->where('case_id', $request['caseid'])->first();
-        //echo "<pre>";print_R($if_check);
-        //dd($if_check);
+        $if_check = DB::table('session_mom')->where('case_id', $request['caseid'])->where('session_id', $request['id'])->first();
+        // echo "<pre>";print_R($if_check);
+        // dd($if_check);
         $ip_array = array();
         $rp_array = array();
         if(empty($if_check)){
@@ -3621,12 +3627,16 @@ class CaseController extends Controller
             $data['rp_name'] = $rp_array;
             $data['minutes'] = "";
             $data['next'] = "";
+
+            $data['selected_id'] = "";
             
         } else {
             $data['ip_name'] = $if_check->ip_name;
             $data['rp_name'] = $if_check->rp_name;
             $data['minutes'] = $if_check->minutes;
             $data['next'] = $if_check->next_steps;
+
+            $data['selected_id'] = $if_check->share_with_party_ids;
         }
         $mediator = Mediators_mediation_cases_status::select("first_name", "last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request['caseid'])
@@ -3648,7 +3658,7 @@ class CaseController extends Controller
 
             $data['party_array'] = InvoledUser::select('id', 'name')->where('userPlanId', $request['caseid'])->get();
 
-
+            
         
             return json_encode($data);
     }
@@ -3657,8 +3667,9 @@ class CaseController extends Controller
 
     /******** MOM Form submit ********************/
     public function MomFormSubmit(Request $request) {
-        $if_check = DB::table('session_mom')->where('case_id', $request->MomCaseId)->first();
-       // echo "<pre>";print_R($if_check);exit;
+        //dd($request->all());
+        $if_check = DB::table('session_mom')->where('case_id', $request->MomCaseId)->where('session_id', $request->MomSessId)->first();
+        //echo "<pre>";print_R($if_check->id);exit;
         if(empty($if_check)){
 
         
@@ -3695,6 +3706,7 @@ class CaseController extends Controller
         // generate pdf
 
         $templateData = array();
+        $templateData['sn'] = $request->MomSn; 
         $templateData['sessid'] = $request->MomSessId; 
         $templateData['caseid'] = $request->MomCaseId; 
         $templateData['ip'] = $request->ip_mom; 
@@ -3711,7 +3723,7 @@ class CaseController extends Controller
 
 
         // save file in session mom table 
-         DB::table('session_mom')->where('case_id', $request->MomCaseId)->update(['file_name' => $invitation]);
+         DB::table('session_mom')->where('session_id', $request->MomSessId)->update(['file_name' => $invitation]);
         // save file in session mom table 
 
 
@@ -3721,15 +3733,17 @@ class CaseController extends Controller
         if(isset($operationdata)) {
 
             // Send notification to party //
-        // echo "<pre>";print_R($request->docs_party_ids);
-        // dd($request->all());
-        if($request->docs_party_ids != ""){
+        
+        if(!empty($request->docs_party_ids)){
         $notification_array = array();
         $notification_array['file_name'] = $invitation;
         $notification_array['access'] = $request->docs_party_ids;
         $notification_array['mediator_access'] = 1;
         $notification_array['uploaded_by'] = Auth::user()->id;
         $notification_array['case_id'] = $request->MomCaseId;
+
+
+            DB::table('session_mom')->where('session_id', $request->MomSessId)->update(['share_with_party_ids' => implode(',',$request->docs_party_ids)]);
 
             $this->send_upload_file_party_mom($request->MomCaseId, $notification_array);
         }
@@ -3749,7 +3763,7 @@ class CaseController extends Controller
 
     public function send_upload_file_party_mom($id, $files)
     {
-       // dd($files);
+        //dd($files);
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
@@ -3768,7 +3782,8 @@ class CaseController extends Controller
             // $filesE[] = url("storage/app/" . $f["file_name"]);
             $filesE = 'mediation_documents/mediation/' . $id  .'/'. $files["file_name"];
 
-            $access = explode(',', $files["access"]);
+            //$access = explode(',', $files["access"]);
+            $access = $files["access"];
             $mediatorAccess = $files["mediator_access"];
         //}
         foreach ($involedUser as $inv) {
@@ -3837,7 +3852,7 @@ class CaseController extends Controller
             ->where("user_involved_in_agreement.userPlanId", "=", $data['caseid'])
             ->where("mediation_case.id", "=", $data['caseid'])->get();
 
-        $data['session_mom'] = DB::table('session_mom')->where('case_id', $data['caseid'])->first();
+        $data['session_mom'] = DB::table('session_mom')->where('session_id', $data['sessid'])->first();
         $session_data = DB::table('manage_session')->select('session_date')->where('id', $data['sessid'])->first();
         //echo "<prE>session==>";print_R($session_data);
         $session_date = explode('/', $session_data->session_date);
@@ -3859,7 +3874,7 @@ class CaseController extends Controller
     
         $pdf = PDF::loadView('pdf.session_mom', $data);
         
-        $name = 'Minutes_of_the_Meeting_' . sprintf('%06d', $data['caseid']) . '.pdf';
+        $name = 'Minutes_of_the_Meeting_' . $data['sn'] .'_'. sprintf('%06d', $data['caseid']) . '.pdf';
         
         $savePath = 'mediation_documents/mediation/' . $data['caseid'];
         $finalFilePath = $savePath . '/' . $name;
@@ -3871,7 +3886,7 @@ class CaseController extends Controller
         // echo $momSend;
         // exit;
         
-       $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+       //$uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
 
       
         return $name;
@@ -3886,7 +3901,7 @@ class CaseController extends Controller
             ->where("user_involved_in_agreement.userPlanId", "=", $data['caseid'])
             ->where("mediation_case.id", "=", $data['caseid'])->get();
 
-        $data['session_mom'] = DB::table('session_mom')->where('case_id', $data['caseid'])->first();
+        $data['session_mom'] = DB::table('session_mom')->where('session_id', $data['sessid'])->first();
         $session_data = DB::table('manage_session')->select('session_date')->where('id', $data['sessid'])->first();
         //echo "<prE>session==>";print_R($session_data);
         $session_date = explode('/', $session_data->session_date);

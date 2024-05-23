@@ -161,6 +161,14 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Mediator\DashboardController::class, 'getConsentAndDisclosures'])->name('mediator.getConsentAndDisclosures');
 
     Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('mediator.case.commentPDF');
+
+
+
+     // MOM
+     Route::post('case/get-mom-data', [App\Http\Controllers\Admin\CaseController::class, 'ShowMomSessionData'])->name('mediator.case.ShowMomSessionData');
+     Route::post('case/mom-form-submit', [App\Http\Controllers\Admin\CaseController::class, 'MomFormSubmit'])->name('mediator.case.MomFormSubmit');
+     
+
 });
 
 

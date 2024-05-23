@@ -785,6 +785,7 @@
                 <form id="MomSessionForm">
                 <input type="hidden" name="MomCaseId" id="MomCaseId">
                 <input type="hidden" name="MomSessId" id="MomSessId">
+                <input type="hidden" name="MomSn" id="MomSn">
                     
                     <div class="custom-modal-text ">
                         
@@ -944,10 +945,7 @@
             <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
         </button>
       </div>
-      <div class="modal-body">
-        <p>Hey check it out! I'm changing!&hellip;</p>
-        <!-- <embed src="" width="600" height="500" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html"> -->
-      </div>
+      <div class="modal-body"></div>
       <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">
                 <span>Close</span>
@@ -3360,6 +3358,7 @@
             var button = $(event.relatedTarget);
             var SessId = button.data('id');
             var CaseId = button.data('caseid');
+            var Sn = button.data('sn');
             $.ajax({
                 type: "POST",
                 url: "{{ route('admin.case.ShowMomSessionData') }}",
@@ -3369,13 +3368,11 @@
                 },
                 dataType: "JSON",
                 success: function(response) {
-                    // console.log(response.party_array);
-                    // return false;
-
                     
                     var data = response.party_array;
                     $('#MomCaseId').attr('value', CaseId);
                     $('#MomSessId').attr('value', SessId);
+                    $('#MomSn').attr('value', Sn);
                     $('#ip_mom').attr('value', response.ip_name);
                     $('#rp_mom').attr('value', response.rp_name);
                     
@@ -3390,13 +3387,24 @@
                     // <label class="form-check-label" for="party">` + response.mediator + `</label>
                     // </div>`;
                     // $("#MomMediatorDocs").append(med_text);
-
+                    $("#MomPartyDocs").empty();
                     $.each(data, function(index, elm) {
-                        
+
                             var party_id = elm.id;
                             var party_name = elm.name;
+
+                            
+                            if (response.selected_id != null) {
+                                if(response.selected_id.includes(party_id)){
+                                    var checked = "checked";
+                                }
+                                
+                            } else {
+                               
+                                var checked = "";
+                            }
                             var text = `<div class="form-check">
-                            <input type="checkbox" value="` + party_id + `" class="form-check-input" name="docs_party_ids" id="party">
+                            <input type="checkbox" ` + checked + ` value="` + party_id + `" class="form-check-input" name="docs_party_ids[]" id="party">
                             <label class="form-check-label" for="party">` + party_name + `</label>
                         </div>`;
                             $("#MomPartyDocs").append(text);
@@ -3409,7 +3417,7 @@
         $("#UpdateSessionForm").on('submit', function(e) {
             e.preventDefault();
             var formSet = $('#UpdateSessionForm').serialize();
-            console.log(formSet);
+            //console.log(formSet);
             $.ajax({
                 type: "POST",
                 url: "{{ route('admin.case.UpdateSession') }}",
@@ -3441,7 +3449,9 @@
         $("#MomSessionForm").on('submit', function(e) {
             e.preventDefault();
             var formSet = $('#MomSessionForm').serialize();
-            //console.log(formSet);
+            
+            
+
             $.ajax({
                 type: "POST",
                 url: "{{ route('admin.case.MomFormSubmit') }}",

@@ -331,8 +331,8 @@
 
 
                         <?php
-                        if(!empty($case->mom) && isset($case->mom[0])){
-                            $mom_doc = 'storage/app/public/mediation/' . $case->id . '/' . $case->mom[0]->file_name;
+                        if(!empty($case->mom) && count($case->mom)>0){
+                         
                         
                         ?>
                             <table class="table table-bordered">
@@ -340,23 +340,30 @@
                                 <tr>
                                     <th colspan="2">Minutes of the Meeting Documents</th>
                                 </tr>
+                                <?php
+                                foreach($case->mom as $mom) {
+                                    $mom_doc = 'storage/app/public/mediation/' . $case->id . '/' . $mom->file_name;
+                                ?>
 
                                 <tr>
-                                    <td><?= basename($case->mom[0]->file_name) ?></td>
+                                    <td><?= basename($mom->file_name) ?></td>
 
                                     <td>
 
                                         @if (file_exists($mom_doc))
                                         <a href="javascript:void(0);" data-folder=""
-                                                data-url="{{ $case->mom[0]->file_name }}" data-id="{{ $case->id }}"
-                                                class="secureDownload" data-userid="{{ Auth::user()->id }}">Download</a>
+                                                data-url="{{ $mom->file_name }}" data-id="{{ $case->id }}"
+                                                class="secureDownload btn btn-sm btn-success" data-userid="{{ Auth::user()->id }}">Download</a>
+                                        
+                                        <a href="{{ url($mom_doc) }}" class="btn btn-sm btn-success" target="_blank" style="margin-left: 10px;">View</a>
                                         
                                         @endif
-                                        {{-- <a href="{{ url($doc) }}" class="btn btn-sm btn-success" target="_blank">View</a> --}}
-
+                                        
                                     </td>
                                 </tr>
+                                <?php } ?>
                             </table>
+                        
                         <?php } ?>
 
 

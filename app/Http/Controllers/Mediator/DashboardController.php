@@ -815,6 +815,7 @@ class DashboardController extends Controller
             ->where('manage_files.case_id', $case->id)
             ->get();
 
+        $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
 
         return view('mediator.casedetails', compact("case"));
     }
