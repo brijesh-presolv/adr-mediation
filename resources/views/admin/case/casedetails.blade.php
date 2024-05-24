@@ -328,6 +328,47 @@
 
                         </table>
                         <?php } ?>
+
+
+                        <?php
+                        if(!empty($case->mom) && count($case->mom)>0){
+                         
+                        
+                        ?>
+                            <table class="table table-bordered">
+
+                                <tr>
+                                    <th colspan="2">Minutes of the Meeting Documents</th>
+                                </tr>
+                                <?php
+                                foreach($case->mom as $mom) {
+                                    $mom_doc = 'storage/app/public/mediation/' . $case->id . '/' . $mom->file_name;
+                                ?>
+
+                                <tr>
+                                    <td><?= basename($mom->file_name) ?></td>
+
+                                    <td>
+
+                                        @if (file_exists($mom_doc))
+                                        <a href="javascript:void(0);" data-folder=""
+                                                data-url="{{ $mom->file_name }}" data-id="{{ $case->id }}"
+                                                class="secureDownload btn btn-sm btn-success" data-userid="{{ Auth::user()->id }}">Download</a>
+                                        
+                                        <a href="{{ url($mom_doc) }}" class="btn btn-sm btn-success" target="_blank" style="margin-left: 10px;">View</a>
+                                        
+                                        @endif
+                                        
+                                    </td>
+                                </tr>
+                                <?php } ?>
+                            </table>
+                        
+                        <?php } ?>
+
+
+
+
                         @if ($case->PayLink != null)
                         <table class="table table-bordered">
                             <tr>
