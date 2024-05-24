@@ -152,7 +152,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Mccarlosen\LaravelMpdf\LaravelMpdfServiceProvider::class
         //Meneses\LaravelMpdf\LaravelMpdfServiceProvider::class,
        // Barryvdh\Cors\ServiceProvider::class,
     ],

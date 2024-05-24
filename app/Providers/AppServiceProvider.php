@@ -5,7 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Mccarlosen\LaravelMpdf\LaravelMpdf;
 
-use Mccarlosen\LaravelMpdf\LaravelMpdf;
 
 class AppServiceProvider extends ServiceProvider
 {
