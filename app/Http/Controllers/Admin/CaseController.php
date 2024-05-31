@@ -4372,7 +4372,7 @@ class CaseController extends Controller
             }
             $rowData = '';
 
-            dd($caseinfo);
+            echo "<pre>";print_R($caseinfo);
             foreach ($caseinfo as $value) {
 
                 $value = '"' . $value . '"' . "\t";
@@ -4381,6 +4381,8 @@ class CaseController extends Controller
             }
             $setData .= trim($rowData) . "\n";  
         }
+
+        dd($setData);
 
         $content = ucwords($columnHeader) . "\n" . $setData . "\n";
         $file_name = "invitationdeliverdsheet.xls";
