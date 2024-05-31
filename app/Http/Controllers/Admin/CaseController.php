@@ -4169,7 +4169,7 @@ class CaseController extends Controller
                         else if ($etrck->event  == "processed") {
                             $edate1 = new DateTime($etrck->created_at);
                             //$caseinfo['inveds'] = "delivered";
-                            $caseinfo['inveds'] = "transmitted";
+                            $caseinfo['inveds'] = "oootransmitted";
                             $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
                         // } else if ($etrck->event  == "processed") {
                         //     $edate1 = new DateTime($etrck->created_at);
@@ -4179,7 +4179,7 @@ class CaseController extends Controller
                         } else if ($etrck->event  == "bounce") {
                             $edate1 = new DateTime($etrck->created_at);
                             // /$caseinfo['invers'] = "read";
-                            $caseinfo['invers'] = "'Bounce back' message was received from the mail server";
+                            $caseinfo['invers'] = "'000Bounce back' message was received from the mail server";
                             $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
                         } else if ($etrck->event  == "deferred") {
                             $edate1 = new DateTime($etrck->created_at);
@@ -4274,17 +4274,17 @@ class CaseController extends Controller
                                         else if ($etrck->event  == "processed") {
                                             $edate1 = new DateTime($etrck->created_at);
                                             //$caseinfo['inveds'] = "delivered";
-                                            $caseinfo['einveds'] = "transmitted";
+                                            $caseinfo['einveds'] = "123transmitted";
                                             $caseinfo['einvedd'] = $edate1->format('d-m-Y H:i:s');
                                         } else if ($etrck->event  == "processed") {
                                             $edate1 = new DateTime($etrck->created_at);
                                             //$caseinfo['inveds'] = "delivered";
-                                            $caseinfo['einveds'] = "transmitted";
+                                            $caseinfo['einveds'] = "456transmitted";
                                             $caseinfo['einvedd'] = $edate1->format('d-m-Y H:i:s');
                                         } else if ($etrck->event  == "bounce") {
                                             $edate1 = new DateTime($etrck->created_at);
                                             // /$caseinfo['invers'] = "read";
-                                            $caseinfo['einvers'] = "'Bounce back' message was received from the mail server";
+                                            $caseinfo['einvers'] = "'888Bounce back' message was received from the mail server";
                                             $caseinfo['einverd'] = $edate1->format('d-m-Y H:i:s');
                                         } else if ($etrck->event  == "deferred") {
                                             $edate1 = new DateTime($etrck->created_at);
