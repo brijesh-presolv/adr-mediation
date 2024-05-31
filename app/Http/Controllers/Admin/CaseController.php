@@ -4056,7 +4056,6 @@ class CaseController extends Controller
     public function downloadLogInviation(Request $request)
     {
 
-        // dd($request->all());
         $caseinfo = [];
         $columnHeader = '';
         $setData = '';
@@ -4322,19 +4321,7 @@ class CaseController extends Controller
                                     }
                                 }
                             }
-                            // foreach ($data['ewhatsapptrck'] as $wtrck) {
-                            //     if ($wtrck->status  == "delivered") {
-                            //         $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-                            //         $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                            //         $caseinfo['einvwds' . $k] = "delivered";
-                            //         $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
-                            //     } else if ($wtrck->status  == "read") {
-                            //         $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-                            //         $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-                            //         $caseinfo['einvwrs' . $k] = "read";
-                            //         $caseinfo['einvwrd' . $k] = $time->format('d-m-Y H:i:s');
-                            //     }
-                            // }
+                           
                             if ($caseinfo['einvwrs' . $k] != "" && $caseinfo['einvwds' . $k] == "") {
                                 $caseinfo['einvwds' . $k] = "delivered";
                                 $caseinfo['einvwdd' . $k] = $caseinfo['einvwrd' . $k];
@@ -4384,6 +4371,8 @@ class CaseController extends Controller
                 $caseinfo['Reply'] = $botMisReport[0]->Reply;
             }
             $rowData = '';
+
+            dd($caseinfo);
             foreach ($caseinfo as $value) {
 
                 $value = '"' . $value . '"' . "\t";
@@ -4401,157 +4390,7 @@ class CaseController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
         ]);
 
-        // ---------------------old file log excel download-----------------------------------
-        // dd($request->all());
-        // $caseinfo = [];
-
-        // $columnHeader = '';
-        // $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" . "Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
-        //     "Initiating Registered Office" . "\t" . "Initiating Full Name" . "\t" . "Initiating Email ID" . "\t" . "Initiating WhatsApp / Mobile Number" . "\t" . "Full name of Primary Respondent" . "\t" .
-        //     "Full Address of Primary Respondent" . "\t" . "Email ID of Primary Respondent" . "\t" . "WhatsApp / Mobile Number of Primary Respondent (10 digit)" . "\t" . "Enter each additional respondent's name, status (eg.: co-borrower, guarantor), address, email ID and mobile number (leave blank if no additional respondent)" . "\t" .
-        //     "Dispute Category" . "\t" . "Nature of agreement" . "\t" . "Agreement date" . "\t" .  "Disputed amount" . "\t" . "Date of Invitation" . "\t" . "Name of Mediator" . "\t" .
-        //     "Invitation email delivery status" . "\t" . "Invitation email delivery date" . "\t" . "Invitation email read status" . "\t" . "Invitation email read date" . "\t" . "Invitation whatsapp delivery status" . "\t" . "Invitation whatsapp delivery date" . "\t" . "Invitation whatsapp read status" . "\t" . "Invitation whatsapp read date" . "\t" .  "Ivr log status" . "\t" . "Ivr log Date" . "\t\n";
-        // $setData = '';
-        // $caseid = explode(',', trim($request->ids));
-
-        // foreach ($caseid as $key => $value) {
-        //     $data['case'] = MedCase::find($value);
-        //     // dd($data);
-        //     $data['claimant'] = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $value)->first();
-        //     $data['responding'] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value)->get();
-        //     $data['inviation_file'] = InvitationFiles::where('case_id', $value)->orderByDesc('id')->limit(1)->first();
-        //     $data['mediator'] = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "first_name", "last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-        //         ->where("mediators_mediation_cases_status.mediation_case_id", "=", $value)
-        //         ->first();
-
-        //     $caseinfo['srno'] = $key + 1;
-        //     $caseinfo['caseid'] = 'M' . sprintf('%06d', $value);
-        //     $caseinfo['refid'] = $data['case']->ref_id;
-        //     $datearb = new DateTime($data['case']->created_at);
-        //     $caseinfo['datearb'] = $datearb->format('d-m-Y H:i:s');
-        //     $caseinfo['clorg'] = $data['claimant']->organization;
-        //     if ($data['claimant']->fulladdress == null) {
-        //         $caseinfo['cloff'] = $data['claimant']->address1 . ',' . $data['claimant']->address2 . ',' . $data['claimant']->city . ',' . $data['claimant']->pincode . ',' . $data['claimant']->state . ',' . $data['claimant']->country;
-        //     } else {
-        //         $caseinfo['cloff'] = $data['claimant']->fulladdress;
-        //     }
-        //     $caseinfo['clname'] = $data['claimant']->name;
-        //     $caseinfo['clemail'] = $data['claimant']->userEmail;
-        //     $caseinfo['clmob'] = $data['claimant']->userPhone;
-
-        //     if (isset($data['responding'])) {
-        //         $caseinfo['respname'] = "";
-        //         $caseinfo['respadd'] = "";
-        //         $caseinfo['respemail'] = "";
-        //         $caseinfo['respmob'] = "";
-        //         $caseinfo['otherresp'] = "";
-
-        //         foreach ($data['responding'] as $k => $v) {
-
-        //             if ($k == 0) {
-
-        //                 $caseinfo['respname'] = $v->name;
-        //                 if ($v->fulladdress == null) {
-        //                     $caseinfo['respadd'] = $v->address1 . ',' . $v->address2 . ',' . $v->city . ',' . $v->pincode . ',' . $v->state . ',' . $v->country;
-        //                 } else {
-        //                     $caseinfo['respadd'] = $v->fulladdress;
-        //                 }
-        //                 $caseinfo['respemail'] = $v->userEmail;
-        //                 $caseinfo['respmob'] = $v->userPhone;
-        //             } else {
-        //                 if ($caseinfo['otherresp'] == "") {
-        //                     $caseinfo['otherresp'] = $v->userEmail . ',' . $v->userPhone;
-        //                 } else {
-        //                     $caseinfo['otherresp'] = $caseinfo['otherresp'] . ' | ' . $v->userEmail . ',' . $v->userPhone;
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     $caseinfo['doc'] = $data['case']->disputeCategory;
-        //     $caseinfo['nature'] = $data['case']->natureOfAgreement;
-        //     $caseinfo['adate'] = $data['case']->agreementDate;
-        //     $caseinfo['amt'] = $data['case']->amount;
-        //     if (isset($data['inviation_file'])) {
-        //         $invdate = new DateTime($data['inviation_file']->created_at);
-        //         $caseinfo['invdate'] =  $invdate->format('d-m-Y H:i:s');
-        //     }
-        //     $caseinfo['medname'] = strtoupper($data['mediator']->first_name) . " " . strtoupper($data['mediator']->last_name);
-
-        //     $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $caseinfo['respemail']);
-        //     $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $caseinfo['respmob']);
-        //     $caseinfo['inveds'] = "";
-        //     $caseinfo['invedd'] = "";
-        //     $caseinfo['invers'] = "";
-        //     $caseinfo['inverd'] = "";
-        //     if (isset($data['emailtrck'])) {
-        //         foreach ($data['emailtrck'] as $etrck) {
-        //             if ($etrck->event  == "delivered") {
-        //                 $edate1 = new DateTime($etrck->created_at);
-        //                 $caseinfo['inveds'] = "delivered";
-        //                 $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
-        //             } else if ($etrck->event  == "open") {
-        //                 $edate1 = new DateTime($etrck->created_at);
-        //                 $caseinfo['invers'] = "read";
-        //                 $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
-        //             }
-        //         }
-        //     }
-        //     $caseinfo['invwds'] = "";
-        //     $caseinfo['invwdd'] = "";
-        //     $caseinfo['invwrs'] = "";
-        //     $caseinfo['invwrd'] = "";
-        //     if (isset($data['whatsapptrck'])) {
-        //         foreach ($data['whatsapptrck'] as $wtrck) {
-        //             if ($wtrck->status  == "delivered") {
-        //                 $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-        //                 $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-        //                 $caseinfo['invwds'] = "delivered";
-        //                 $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
-        //             } else if ($wtrck->status  == "read") {
-        //                 $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
-        //                 $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
-        //                 $caseinfo['invwrs'] = "read";
-        //                 $caseinfo['invwrd'] = $time->format('d-m-Y H:i:s');
-        //             }
-        //         }
-        //     }
-
-        //     $data = [];
-        //     $data['auth'] = "MED360AUTH";
-        //     $data['app'] = "P360MED";
-        //     $data['caseid'] = $value;
-        //     $url = "https://presolv360.com/functions/ivrtrack.php";
-
-        //     $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'), true);
-        //     if ($ivr['code'] != '200') {
-        //         $ivr = [];
-        //     } else {
-        //         $ivr = $ivr['data'];
-        //     }
-        //     $caseinfo['ivrs'] ="";
-        //     $caseinfo['ivrdate'] ="";
-        //     foreach($ivr as $key => $value) {
-        //         $time = new DateTime($value['created_at']);
-        //         $caseinfo['ivrs'] = $value['status'];
-        //         $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
-        //     }
-        //     $rowData = '';
-        //     foreach ($caseinfo as $value) {
-
-        //         $value = '"' . $value . '"' . "\t";
-
-        //         $rowData .= $value;
-        //     }
-        //     $setData .= trim($rowData) . "\n";
-        // }
-
-        // $content = ucwords($columnHeader) . "\n" . $setData . "\n";
-        // $file_name = "invitationdeliverdsheet.xls";
-
-        // return response($content, 200, [
-        //     'Content-Type' => 'application/octet-stream',
-        //     'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
-        // ]);
+        
     }
 
     public function BatchWiseApprove(Request $request)
