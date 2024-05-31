@@ -4169,13 +4169,13 @@ class CaseController extends Controller
                         else if ($etrck->event  == "processed") {
                             $edate1 = new DateTime($etrck->created_at);
                             //$caseinfo['inveds'] = "delivered";
-                            $caseinfo['inveds'] = "oootransmitted";
+                            $caseinfo['inveds'] = "transmitted";
                             $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
-                        // } else if ($etrck->event  == "processed") {
-                        //     $edate1 = new DateTime($etrck->created_at);
-                        //     //$caseinfo['inveds'] = "delivered";
-                        //     $caseinfo['inveds'] = "transmitted";
-                        //     $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                        } else if ($etrck->event  == "processed") {
+                            $edate1 = new DateTime($etrck->created_at);
+                            //$caseinfo['inveds'] = "delivered";
+                            $caseinfo['inveds'] = "transmitted";
+                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
                         } else if ($etrck->event  == "bounce") {
                             $edate1 = new DateTime($etrck->created_at);
                             // /$caseinfo['invers'] = "read";
@@ -4274,19 +4274,19 @@ class CaseController extends Controller
                                         else if ($etrck->event  == "processed") {
                                             $edate1 = new DateTime($etrck->created_at);
                                             //$caseinfo['inveds'] = "delivered";
-                                            $caseinfo['einveds'. $k] = "123transmitted";
+                                            $caseinfo['einveds'. $k] = "transmitted";
                                             $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
                                         } 
-                                        // else if ($etrck->event  == "processed") {
-                                        //     $edate1 = new DateTime($etrck->created_at);
-                                        //     //$caseinfo['inveds'] = "delivered";
-                                        //     $caseinfo['einveds'] = "456transmitted";
-                                        //     $caseinfo['einvedd'] = $edate1->format('d-m-Y H:i:s');
-                                        // }
+                                        else if ($etrck->event  == "processed") {
+                                            $edate1 = new DateTime($etrck->created_at);
+                                            //$caseinfo['inveds'] = "delivered";
+                                            $caseinfo['einveds'. $k] = "456transmitted";
+                                            $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
+                                        }
                                          else if ($etrck->event  == "bounce") {
                                             $edate1 = new DateTime($etrck->created_at);
                                             // /$caseinfo['invers'] = "read";
-                                            $caseinfo['einvers'. $k] = "'888Bounce back' message was received from the mail server";
+                                            $caseinfo['einvers'. $k] = "'Bounce back' message was received from the mail server";
                                             $caseinfo['einverd'. $k] = $edate1->format('d-m-Y H:i:s');
                                         } else if ($etrck->event  == "deferred") {
                                             $edate1 = new DateTime($etrck->created_at);
@@ -4348,35 +4348,34 @@ class CaseController extends Controller
             $caseinfo['ivrs'] = "";
             $caseinfo['ivrdate'] = "";
 
-            // /echo "<prE>";print_R($ivr);
+            
             foreach ($ivr as $value) {
                 $time = new DateTime($value['created_at']);
                 $caseinfo['ivrs'] = $value['status'];
                 $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
             }
 
-            // $caseinfo['Whatsapp_Why_Count'] = "";
-            // $caseinfo['Whatsapp_PayNow_Count'] = "";
-            // $caseinfo['Whatsapp_Explore_Alternatives_Count'] = "";
-            // $caseinfo['Whatsapp_Restructure_Link_Count'] = "";
-            // $caseinfo['Restructure_Option'] = "";
-            // $caseinfo['Web_Submit_Reply_Count'] = "";
-            // $caseinfo['Reply'] = "";
+            $caseinfo['Whatsapp_Why_Count'] = "";
+            $caseinfo['Whatsapp_PayNow_Count'] = "";
+            $caseinfo['Whatsapp_Explore_Alternatives_Count'] = "";
+            $caseinfo['Whatsapp_Restructure_Link_Count'] = "";
+            $caseinfo['Restructure_Option'] = "";
+            $caseinfo['Web_Submit_Reply_Count'] = "";
+            $caseinfo['Reply'] = "";
 
-            // $botMisReport = WhatsappBotReport::getBotMisReport($data['caseid']);
-            // if(count($botMisReport)>0){
+            $botMisReport = WhatsappBotReport::getBotMisReport($data['caseid']);
+            if(count($botMisReport)>0){
 
-            //     $caseinfo['Whatsapp_Why_Count'] = $botMisReport[0]->Whatsapp_Why_Count;
-            //     $caseinfo['Whatsapp_PayNow_Count'] = $botMisReport[0]->Whatsapp_PayNow_Count;
-            //     $caseinfo['Whatsapp_Explore_Alternatives_Count'] = $botMisReport[0]->Whatsapp_Explore_Alternatives_Count;
-            //     $caseinfo['Whatsapp_Restructure_Link_Count'] = $botMisReport[0]->Whatsapp_Restructure_Link_Count;
-            //     $caseinfo['Restructure_Option'] = $botMisReport[0]->Restructure_Option;
-            //     $caseinfo['Web_Submit_Reply_Count'] = $botMisReport[0]->Web_Submit_Reply_Count;
-            //     $caseinfo['Reply'] = $botMisReport[0]->Reply;
-            // }
+                $caseinfo['Whatsapp_Why_Count'] = $botMisReport[0]->Whatsapp_Why_Count;
+                $caseinfo['Whatsapp_PayNow_Count'] = $botMisReport[0]->Whatsapp_PayNow_Count;
+                $caseinfo['Whatsapp_Explore_Alternatives_Count'] = $botMisReport[0]->Whatsapp_Explore_Alternatives_Count;
+                $caseinfo['Whatsapp_Restructure_Link_Count'] = $botMisReport[0]->Whatsapp_Restructure_Link_Count;
+                $caseinfo['Restructure_Option'] = $botMisReport[0]->Restructure_Option;
+                $caseinfo['Web_Submit_Reply_Count'] = $botMisReport[0]->Web_Submit_Reply_Count;
+                $caseinfo['Reply'] = $botMisReport[0]->Reply;
+            }
              $rowData = '';
 
-            //echo "<pre>";print_R($caseinfo);
             foreach ($caseinfo as $value) {
 
                 $value = '"' . $value . '"' . "\t";
@@ -4388,8 +4387,6 @@ class CaseController extends Controller
 
         
 
-        //dd($setData);
-
         $content = ucwords($columnHeader) . "\n" . $setData . "\n";
         $file_name = "invitationdeliverdsheet.xls";
 
@@ -4397,8 +4394,6 @@ class CaseController extends Controller
             'Content-Type' => 'application/octet-stream',
             'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
         ]);
-
-        
     }
 
     public function BatchWiseApprove(Request $request)
