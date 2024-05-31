@@ -4359,20 +4359,20 @@ class CaseController extends Controller
             $caseinfo['Web_Submit_Reply_Count'] = "";
             $caseinfo['Reply'] = "";
 
-            $botMisReport = WhatsappBotReport::getBotMisReport($data['caseid']);
-            if(count($botMisReport)>0){
+            // $botMisReport = WhatsappBotReport::getBotMisReport($data['caseid']);
+            // if(count($botMisReport)>0){
 
-                $caseinfo['Whatsapp_Why_Count'] = $botMisReport[0]->Whatsapp_Why_Count;
-                $caseinfo['Whatsapp_PayNow_Count'] = $botMisReport[0]->Whatsapp_PayNow_Count;
-                $caseinfo['Whatsapp_Explore_Alternatives_Count'] = $botMisReport[0]->Whatsapp_Explore_Alternatives_Count;
-                $caseinfo['Whatsapp_Restructure_Link_Count'] = $botMisReport[0]->Whatsapp_Restructure_Link_Count;
-                $caseinfo['Restructure_Option'] = $botMisReport[0]->Restructure_Option;
-                $caseinfo['Web_Submit_Reply_Count'] = $botMisReport[0]->Web_Submit_Reply_Count;
-                $caseinfo['Reply'] = $botMisReport[0]->Reply;
-            }
-            $rowData = '';
+            //     $caseinfo['Whatsapp_Why_Count'] = $botMisReport[0]->Whatsapp_Why_Count;
+            //     $caseinfo['Whatsapp_PayNow_Count'] = $botMisReport[0]->Whatsapp_PayNow_Count;
+            //     $caseinfo['Whatsapp_Explore_Alternatives_Count'] = $botMisReport[0]->Whatsapp_Explore_Alternatives_Count;
+            //     $caseinfo['Whatsapp_Restructure_Link_Count'] = $botMisReport[0]->Whatsapp_Restructure_Link_Count;
+            //     $caseinfo['Restructure_Option'] = $botMisReport[0]->Restructure_Option;
+            //     $caseinfo['Web_Submit_Reply_Count'] = $botMisReport[0]->Web_Submit_Reply_Count;
+            //     $caseinfo['Reply'] = $botMisReport[0]->Reply;
+            // }
+            // $rowData = '';
 
-            echo "<pre>";print_R($caseinfo);
+            //echo "<pre>";print_R($caseinfo);
             foreach ($caseinfo as $value) {
 
                 $value = '"' . $value . '"' . "\t";
@@ -4382,7 +4382,7 @@ class CaseController extends Controller
             $setData .= trim($rowData) . "\n";  
         }
 
-        dd($setData);
+        //dd($setData);
 
         $content = ucwords($columnHeader) . "\n" . $setData . "\n";
         $file_name = "invitationdeliverdsheet.xls";
