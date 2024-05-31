@@ -4351,13 +4351,7 @@ class CaseController extends Controller
                 $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
             }
 
-            $caseinfo['Whatsapp_Why_Count'] = "";
-            $caseinfo['Whatsapp_PayNow_Count'] = "";
-            $caseinfo['Whatsapp_Explore_Alternatives_Count'] = "";
-            $caseinfo['Whatsapp_Restructure_Link_Count'] = "";
-            $caseinfo['Restructure_Option'] = "";
-            $caseinfo['Web_Submit_Reply_Count'] = "";
-            $caseinfo['Reply'] = "";
+            
 
             // $botMisReport = WhatsappBotReport::getBotMisReport($data['caseid']);
             // if(count($botMisReport)>0){
@@ -4382,6 +4376,14 @@ class CaseController extends Controller
             $setData .= trim($rowData) . "\n";  
         }
 
+        $caseinfo['Whatsapp_Why_Count'] = "";
+            $caseinfo['Whatsapp_PayNow_Count'] = "";
+            $caseinfo['Whatsapp_Explore_Alternatives_Count'] = "";
+            $caseinfo['Whatsapp_Restructure_Link_Count'] = "";
+            $caseinfo['Restructure_Option'] = "";
+            $caseinfo['Web_Submit_Reply_Count'] = "";
+            $caseinfo['Reply'] = "";
+
         //dd($setData);
 
         $content = ucwords($columnHeader) . "\n" . $setData . "\n";
@@ -4392,7 +4394,7 @@ class CaseController extends Controller
             'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
         ]);
 
-        
+        exit;
     }
 
     public function BatchWiseApprove(Request $request)
