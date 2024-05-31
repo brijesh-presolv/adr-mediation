@@ -4345,6 +4345,8 @@ class CaseController extends Controller
             }
             $caseinfo['ivrs'] = "";
             $caseinfo['ivrdate'] = "";
+
+            echo "<prE>";print_R($ivr);
             foreach ($ivr as $key => $value) {
                 $time = new DateTime($value['created_at']);
                 $caseinfo['ivrs'] = $value['status'];
