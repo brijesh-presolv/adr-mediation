@@ -4370,7 +4370,7 @@ class CaseController extends Controller
             //     $caseinfo['Web_Submit_Reply_Count'] = $botMisReport[0]->Web_Submit_Reply_Count;
             //     $caseinfo['Reply'] = $botMisReport[0]->Reply;
             // }
-            // $rowData = '';
+             $rowData = '';
 
             //echo "<pre>";print_R($caseinfo);
             foreach ($caseinfo as $value) {
