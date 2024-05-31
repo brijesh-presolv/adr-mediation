@@ -4171,11 +4171,11 @@ class CaseController extends Controller
                             //$caseinfo['inveds'] = "delivered";
                             $caseinfo['inveds'] = "transmitted";
                             $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
-                        } else if ($etrck->event  == "processed") {
-                            $edate1 = new DateTime($etrck->created_at);
-                            //$caseinfo['inveds'] = "delivered";
-                            $caseinfo['inveds'] = "transmitted";
-                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                        // } else if ($etrck->event  == "processed") {
+                        //     $edate1 = new DateTime($etrck->created_at);
+                        //     //$caseinfo['inveds'] = "delivered";
+                        //     $caseinfo['inveds'] = "transmitted";
+                        //     $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
                         } else if ($etrck->event  == "bounce") {
                             $edate1 = new DateTime($etrck->created_at);
                             // /$caseinfo['invers'] = "read";
@@ -4346,8 +4346,8 @@ class CaseController extends Controller
             $caseinfo['ivrs'] = "";
             $caseinfo['ivrdate'] = "";
 
-            echo "<prE>";print_R($ivr);
-            foreach ($ivr as $key => $value) {
+            // /echo "<prE>";print_R($ivr);
+            foreach ($ivr as $value) {
                 $time = new DateTime($value['created_at']);
                 $caseinfo['ivrs'] = $value['status'];
                 $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
