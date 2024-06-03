@@ -157,6 +157,45 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Notes Modal -------->
+    <div id="add_note_modal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true"
+        class="modal-demo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Change Role</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
+                    </button>
+                </div>
+
+                <form method="post">
+
+                    <input type="hidden" name="userId" id="userId">
+
+                    <div class="custom-modal-text ">
+
+                        <div class="form-group">
+                            <label>Change Role</label>
+                            <select class="form-control" name="user_role" id="user_role_select">
+
+                            </select>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="button" class="btn-sm btn mt-3  btn-secondary"
+                                data-dismiss="modal">Close</button>
+                            <input type="button" id="changeroleform" name="changerolebtn"
+                                class="btn-sm btn btn-primary mt-3" value="Submit">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Notes Modal -------->
 @endsection
 
 <!-- Table datatable css -->
@@ -277,6 +316,12 @@
                                 `" name="id" class="btn btn-primary"><i class="fas fa-user-edit"></i></button></form> `;
                             button += `<button data-id="` + data +
                                 `" name="delete" id="userDelete" class="btn btn-danger"><i class="fa fa-ban"></i></button>`;
+
+                            // notes //
+                            button += `<br/><button data-id="` + data +
+                                `" name="add_notes" id="addNotes" data-toggle='modal' data-target='#add_note_modal' class="btn btn-info">Add Notes</button>`;
+                            // notes //
+
                             return button;
                         }
                     },
