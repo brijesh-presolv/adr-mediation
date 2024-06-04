@@ -316,8 +316,10 @@
                                 `" name="delete" id="userDelete" class="btn btn-danger"><i class="fa fa-ban"></i></button>`;
 
                             // notes //
-                            button += `<br/><button data-id="` + data +
+                            if(row.role == 0){
+                                button += `<br/><button data-id="` + data +
                                 `" name="add_notes" id="addNotes" data-toggle='modal' data-target='#add_note_modal' class="btn btn-info">Add Notes</button>`;
+                            }
                             // notes //
 
                             return button;
