@@ -108,6 +108,8 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     //track
     Route::get('track/{id}', [App\Http\Controllers\User\MediationController::class, 'track'])->name('user.case.track');
 
+    
+
 });
 
 
@@ -256,6 +258,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // MOM
     Route::post('case/get-mom-data', [App\Http\Controllers\Admin\CaseController::class, 'ShowMomSessionData'])->name('admin.case.ShowMomSessionData');
     Route::post('case/mom-form-submit', [App\Http\Controllers\Admin\CaseController::class, 'MomFormSubmit'])->name('admin.case.MomFormSubmit');
+
+    // notes
+    Route::post('add-note', [App\Http\Controllers\User\MediationController::class, 'addNote'])->name('admin.users.addNote');
+    Route::get('get-note', [App\Http\Controllers\User\MediationController::class, 'getNote'])->name('admin.users.getNote');
 
 });
 

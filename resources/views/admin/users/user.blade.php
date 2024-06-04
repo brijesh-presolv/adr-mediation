@@ -165,7 +165,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel1">Change Role</h5>
+                    <h5 class="modal-title" id="exampleModalLabel1">Add Notes</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
                     </button>
@@ -178,16 +178,14 @@
                     <div class="custom-modal-text ">
 
                         <div class="form-group">
-                            <label>Change Role</label>
-                            <select class="form-control" name="user_role" id="user_role_select">
-
-                            </select>
+                            <label>Note</label>
+                            <textarea class="form-control" name="user_note" id="userNote"></textarea>
                         </div>
 
                         <div class="text-right">
                             <button type="button" class="btn-sm btn mt-3  btn-secondary"
                                 data-dismiss="modal">Close</button>
-                            <input type="button" id="changeroleform" name="changerolebtn"
+                            <input type="button" id="addNoteBtn" name="addNoteBtn"
                                 class="btn-sm btn btn-primary mt-3" value="Submit">
                         </div>
                     </div>
@@ -533,6 +531,76 @@
                 });
                 /********** Added for display message : END  ********/
             });
+
+
+
+
+
+            $('#add_note_modal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var userid = button.data('id');
+                $("#userId").val(userid);
+
+
+                    $.ajax({
+                        type: 'GET',
+                        url: '{{ route('admin.users.getNote') }}',
+                        data: {
+                            user_id : userid
+                        },
+                       
+                        dataType: 'json',
+                        
+                        success: (data) => {
+                            $('#userNote').val(data.note);
+                        },
+                        
+                    });
+                
+            });
+
+
+
+
+
+            // notes submit //
+            $('#addNoteBtn').on('click', function(e) {
+                e.preventDefault();
+                   var notes = $('#userNote').val();
+                   var user_id = $("#userId").val();
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route('admin.users.addNote') }}',
+                        data: {
+                            notes : notes,
+                            user_id : user_id
+                        },
+                       
+                        dataType: 'json',
+                        beforeSend: function() {
+                            
+
+                            swal({
+                                title: 'Loading...',
+                                showConfirmButton: false,
+                                buttons: false,
+                                allowOutsideClick: false,
+                            });
+                        },
+                        success: (data) => {
+                            //this.reset();
+                            swal("Notes added!", {
+                                icon: "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                            //$("#uploadSupportingDocsModal").modal("hide");
+                        },
+                        
+                    });
+
+            });
+            // notes submit
 
         });
         $('#change_role_model').on('show.bs.modal', function(event) {
