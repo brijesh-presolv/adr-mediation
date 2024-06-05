@@ -3902,7 +3902,7 @@ class CaseController extends Controller
     
         $pdf = PDF::loadView('pdf.session_mom', $data);
         
-        $name = 'Minutes_of_the_Meeting_' . $data['sn'] .'_'. sprintf('%06d', $data['caseid']) . '.pdf';
+        $name = 'Minutes_of_the_Meeting_' . $data['sn'] .'_'. env('PLATFORM_PREFIX'). sprintf('%06d', $data['caseid']) . '.pdf';
         
         $savePath = 'mediation_documents/mediation/' . $data['caseid'];
         $finalFilePath = $savePath . '/' . $name;
