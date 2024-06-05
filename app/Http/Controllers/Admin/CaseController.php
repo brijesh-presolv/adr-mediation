@@ -187,8 +187,6 @@ class CaseController extends Controller
 
     public function casedetails($id)
     {
-
-
         $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -3902,7 +3900,7 @@ class CaseController extends Controller
     
         $pdf = PDF::loadView('pdf.session_mom', $data);
         
-        $name = 'Minutes_of_the_Meeting_' . $data['sn'] .'_'. env('PLATFORM_PREFIX'). sprintf('%06d', $data['caseid']) . '.pdf';
+        $name = 'Minutes_of_the_Meeting_' . $data['sn'] .'_M'. sprintf('%06d', $data['caseid']) . '.pdf';
         
         $savePath = 'mediation_documents/mediation/' . $data['caseid'];
         $finalFilePath = $savePath . '/' . $name;
