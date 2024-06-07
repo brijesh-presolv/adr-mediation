@@ -46,7 +46,6 @@
                                 <th>Responding Party(s)</th>
                                 <th>Mediator</th>
                                 <th>Session Date & Time</th>
-                                <th>Session Scheduled On</th>
                                 <th>Zoom Link</th>
                             </tr>
                         </thead>

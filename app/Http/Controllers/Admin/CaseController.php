@@ -4938,12 +4938,12 @@ class CaseController extends Controller
                
                 echo "<tr>";
                 echo "<td>" . $sn . "</td>";
-                echo "<td>" . $value->case_id . "</td>";
+                echo "<td>M0" . $value->case_id . "</td>";
                 echo "<td>" . implode("<br>", $ip_user) ."</td>";
                 echo "<td>" . implode("<br>", $rp_user) ."</td>";
                 echo "<td>" . $m_name . "</td>";
                 echo "<td>" . $value->session_date . "</td>";
-                echo "<td>" . Carbon::parse($value->created_at)->format('d/m/Y') . "</td>";
+                //echo "<td>" . Carbon::parse($value->created_at)->format('d/m/Y') . "</td>";
 
                 if($value->zoom_link_choice == "manual"){
                     echo "<td>" . $value->zoom_id . "</td>";
