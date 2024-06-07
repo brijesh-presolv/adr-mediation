@@ -1554,7 +1554,7 @@ class DashboardController extends Controller
         $sessionData = DB::table('manage_session')->orderby('id', 'DESC')->take(15)->get();
 
         DB::table('manage_session')->select('manage_session.*','mediators_mediation_cases_status.mediator_id')
-                ->leftjoin('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
+                ->join('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
                 ->where('mediators_mediation_cases_status.mediator_id', Auth::user()->id)
                 ->orderby('manage_session.id', 'DESC')->take(15)->get();
         
@@ -1572,7 +1572,7 @@ class DashboardController extends Controller
             
             //$se_date = Carbon::createFromFormat('d/m/Y',$s_date)->format('d/m/Y');
 
-            $n_date = Carbon::parse("2024-07-25")->format('d/m/Y');
+           // $n_date = Carbon::parse("2024-07-25")->format('d/m/Y');
             //echo $se_date;
             //dd($today_date);
             

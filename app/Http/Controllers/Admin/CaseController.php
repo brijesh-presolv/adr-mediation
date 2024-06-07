@@ -4860,7 +4860,7 @@ class CaseController extends Controller
             
             //$se_date = Carbon::createFromFormat('d/m/Y',$s_date)->format('d/m/Y');
 
-            $n_date = Carbon::parse("2024-07-25")->format('d/m/Y');
+            //$n_date = Carbon::parse("2024-07-25")->format('d/m/Y');
             //echo $se_date;
             //dd($today_date);
             
