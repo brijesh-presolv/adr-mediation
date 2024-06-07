@@ -169,7 +169,11 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
      // MOM
      Route::post('case/get-mom-data', [App\Http\Controllers\Admin\CaseController::class, 'ShowMomSessionData'])->name('mediator.case.ShowMomSessionData');
      Route::post('case/mom-form-submit', [App\Http\Controllers\Admin\CaseController::class, 'MomFormSubmit'])->name('mediator.case.MomFormSubmit');
+    
      
+     // upcoming session
+    Route::post('case/get-upcoming-session', [App\Http\Controllers\Mediator\DashboardController::class, 'getUpcomingSession'])->name('mediator.case.getUpcomingSession');
+    
 
 });
 

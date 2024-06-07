@@ -293,14 +293,14 @@
 
 
 
-    <script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
+    <!-- <script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script> -->
 
     <!-- Datatables init -->
-    <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
+    <!-- <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ url('/') }}/assets/libs/custombox/custombox.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
 
     <script type="text/javascript">
         $(document).ready(function(){
