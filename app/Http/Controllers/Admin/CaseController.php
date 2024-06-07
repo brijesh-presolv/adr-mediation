@@ -4928,7 +4928,13 @@ class CaseController extends Controller
                 echo "<td>" . $m_name . "</td>";
                 echo "<td>" . $value->session_date . "</td>";
                 echo "<td>" . Carbon::parse($value->created_at)->format('d/m/Y') . "</td>";
-                echo "<td>" . $zoom_link . "</td>";
+
+                if($value->zoom_link_choice == "manual"){
+                    echo "<td>" . $value->zoom_id . "</td>";
+                } else {
+                    echo "<td>" . $zoom_link . "</td>";
+                }
+                
                 
                 
                 
