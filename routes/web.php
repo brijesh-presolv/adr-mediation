@@ -263,6 +263,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('add-note', [App\Http\Controllers\User\MediationController::class, 'addNote'])->name('admin.users.addNote');
     Route::get('get-note', [App\Http\Controllers\User\MediationController::class, 'getNote'])->name('admin.users.getNote');
 
+    // upcoming session
+    Route::post('case/get-upcoming-session', [App\Http\Controllers\Admin\CaseController::class, 'getUpcomingSession'])->name('admin.case.getUpcomingSession');
+
 });
 
 //notification
