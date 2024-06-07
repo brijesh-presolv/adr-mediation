@@ -1433,6 +1433,7 @@ class CaseController extends Controller
             $user = array();
             foreach ($dataArray as $d) {
                 $dd = InvoledUser::where('id', $d)->where('userPlanId', $request->caseid)->first();
+                
                 if (isset($dd)) {
                     if ($dd->name != null) {
                         $user[] = $dd->name;
@@ -4887,22 +4888,36 @@ class CaseController extends Controller
                 if (!is_null($value->session_party_ids)) {
                     $dataArray = json_decode($value->session_party_ids);
                 }
-                $user = array();
-                foreach ($dataArray as $d) {
-                    $dd = InvoledUser::where('id', $d)->where('userPlanId', $value->case_id)->first();
-                    if (isset($dd)) {
-                        if ($dd->name != null) {
-                            $user[] = $dd->name;
-                        }
-                    } else {
-                        $dd = InvoledUser::where('userId', $d)->where('userPlanId', $value->case_id)->first();
+                $ip_user = array();
+                $rp_user = array();
+               // foreach ($dataArray as $d) {
+                    $dd_data = InvoledUser::where('userPlanId', $value->case_id)->get();
+                    foreach($dd_data as $dd){
                         if (isset($dd)) {
                             if ($dd->name != null) {
-                                $user[] = $dd->name;
+
+                                if($dd->isClaimant == 0){
+                                    $ip_user[] = $dd->name;
+                                } else {
+                                    $rp_user[] = $dd->name;
+                                }
+                                
                             }
                         }
                     }
-                }
+                    // if (isset($dd)) {
+                    //     if ($dd->name != null) {
+                    //         $user[] = $dd->name;
+                    //     }
+                    // } else {
+                    //    // $dd = InvoledUser::where('userId', $d)->where('userPlanId', $value->case_id)->first();
+                    //     if (isset($dd)) {
+                    //         if ($dd->name != null) {
+                    //             $user[] = $dd->name;
+                    //         }
+                    //     }
+                    // }
+                //}
 
                 $mediator = DB::table('mediators_mediation_cases_status')->select('mediators_mediation_cases_status.mediator_id', 'users.first_name', 'users.last_name')
                 ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
@@ -4924,7 +4939,8 @@ class CaseController extends Controller
                 echo "<tr>";
                 echo "<td>" . $sn . "</td>";
                 echo "<td>" . $value->case_id . "</td>";
-                echo "<td>" . implode("<br>", $user) ."</td>";
+                echo "<td>" . implode("<br>", $ip_user) ."</td>";
+                echo "<td>" . implode("<br>", $rp_user) ."</td>";
                 echo "<td>" . $m_name . "</td>";
                 echo "<td>" . $value->session_date . "</td>";
                 echo "<td>" . Carbon::parse($value->created_at)->format('d/m/Y') . "</td>";

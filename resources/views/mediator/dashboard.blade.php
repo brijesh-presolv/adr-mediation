@@ -42,7 +42,8 @@
                             <tr>
                                 <th>@lang('case.serial_number')</th>
                                 <th>@lang('case.case_id') </th>
-                                <th>Meeting User</th>
+                                <th>Initiating Party(s)</th>
+                                <th>Responding Party(s)</th>
                                 <th>Mediator</th>
                                 <th>Session Date & Time</th>
                                 <th>Session Scheduled On</th>

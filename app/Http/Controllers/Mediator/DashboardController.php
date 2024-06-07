@@ -1571,51 +1571,43 @@ class DashboardController extends Controller
             
             $s_date = $new_date[2].'-'.$new_date[1].'-'.$new_date[0];
             
-            //$se_date = Carbon::createFromFormat('d/m/Y',$s_date)->format('d/m/Y');
-
-           // $n_date = Carbon::parse("2024-07-25")->format('d/m/Y');
-            //echo $se_date;
-            //dd($today_date);
-            
-
-          //  $session_date = date('d-m-Y', strtotime($new_date));
-            //$new_datee = DateTime::createFromFormat("d/m/Y H:i:s", $session_date)->format('d/m/Y');
-
-
-            // /$today = DateTime::createFromFormat("d/m/Y", $today_date)->format('d/m/Y');
-        
-
-             //$dateTimestamp1 = strtotime($se_date); 
-             //$dateTimestamp2 = strtotime($today_date); 
-
-         //echo "s=>".Carbon::today()->toDateString();
-        // $league->date_start = $n_date;
-         
-
-         
-
-        //  }
+           
 
              if( $s_date > Carbon::today()->toDateString() ){
                 if (!is_null($value->session_party_ids)) {
                     $dataArray = json_decode($value->session_party_ids);
                 }
-                $user = array();
-                foreach ($dataArray as $d) {
-                    $dd = InvoledUser::where('id', $d)->where('userPlanId', $value->case_id)->first();
-                    if (isset($dd)) {
-                        if ($dd->name != null) {
-                            $user[] = $dd->name;
-                        }
-                    } else {
-                        $dd = InvoledUser::where('userId', $d)->where('userPlanId', $value->case_id)->first();
+                $ip_user = array();
+                $rp_user = array();
+                $dd_data = InvoledUser::where('userPlanId', $value->case_id)->get();
+                    foreach($dd_data as $dd){
                         if (isset($dd)) {
                             if ($dd->name != null) {
-                                $user[] = $dd->name;
+
+                                if($dd->isClaimant == 0){
+                                    $ip_user[] = $dd->name;
+                                } else {
+                                    $rp_user[] = $dd->name;
+                                }
+                                
                             }
                         }
                     }
-                }
+                // foreach ($dataArray as $d) {
+                //     $dd = InvoledUser::where('id', $d)->where('userPlanId', $value->case_id)->first();
+                //     if (isset($dd)) {
+                //         if ($dd->name != null) {
+                //             $user[] = $dd->name;
+                //         }
+                //     } else {
+                //         $dd = InvoledUser::where('userId', $d)->where('userPlanId', $value->case_id)->first();
+                //         if (isset($dd)) {
+                //             if ($dd->name != null) {
+                //                 $user[] = $dd->name;
+                //             }
+                //         }
+                //     }
+                // }
 
                 $mediator = DB::table('mediators_mediation_cases_status')->select('mediators_mediation_cases_status.mediator_id', 'users.first_name', 'users.last_name')
                 ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
@@ -1637,7 +1629,8 @@ class DashboardController extends Controller
                 echo "<tr>";
                 echo "<td>" . $sn . "</td>";
                 echo "<td>" . $value->case_id . "</td>";
-                echo "<td>" . implode("<br>", $user) ."</td>";
+                echo "<td>" . implode("<br>", $ip_user) ."</td>";
+                echo "<td>" . implode("<br>", $rp_user) ."</td>";
                 echo "<td>" . $m_name . "</td>";
                 echo "<td>" . $value->session_date . "</td>";
                 echo "<td>" . Carbon::parse($value->created_at)->format('d/m/Y') . "</td>";
