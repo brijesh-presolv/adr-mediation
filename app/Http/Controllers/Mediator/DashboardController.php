@@ -1551,12 +1551,13 @@ class DashboardController extends Controller
     {
         $today_date = Carbon::today();
         $today_date = $today_date->format('d/m/Y');
-        $sessionData = DB::table('manage_session')->orderby('id', 'DESC')->take(15)->get();
+       // $sessionData = DB::table('manage_session')->orderby('id', 'DESC')->take(15)->get();
+        $sessionData = DB::table('manage_session')->select('manage_session.*','mediators_mediation_cases_status.mediator_id')
+        ->join('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
+        ->where('mediators_mediation_cases_status.mediator_id', Auth::user()->id)
+        ->orderby('manage_session.id', 'DESC')->take(15)->get();
 
-        DB::table('manage_session')->select('manage_session.*','mediators_mediation_cases_status.mediator_id')
-                ->join('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
-                ->where('mediators_mediation_cases_status.mediator_id', Auth::user()->id)
-                ->orderby('manage_session.id', 'DESC')->take(15)->get();
+        
         
         $sn = 1;
         $dataArray = array();
