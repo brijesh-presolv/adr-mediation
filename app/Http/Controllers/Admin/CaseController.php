@@ -4849,7 +4849,7 @@ class CaseController extends Controller
         ->select('manage_session.*',DB::raw("STR_TO_DATE(session_date, '%d/%m/%Y') as date_format"))
         //->orderby('id', 'DESC')->take(15)->get();
         ->where('manage_session.is_deleted', 0)
-        ->orderby('date_format', 'ASC')->get();
+        ->orderby('date_format', 'ASC')->take(15)->get();
         $sn = 1;
         $dataArray = array();
 

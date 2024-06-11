@@ -99,6 +99,9 @@
                 data: {
                    '_token': csrf
                 },
+                beforeSend: function() {
+                    $('#upcoming tbody').html('<tr>loading...</tr>');
+                },
                 success: function(data) {
 
                    
