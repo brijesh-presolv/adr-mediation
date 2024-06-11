@@ -4844,20 +4844,25 @@ class CaseController extends Controller
     public function getUpcomingSession(Request $request)
     {
         $today_date = Carbon::today();
-        $today_date = $today_date->format('d/m/Y');
-        $sessionData = DB::table('manage_session')->orderby('id', 'DESC')->take(15)->get();
-        
+        //$today_date = $today_date->format('d/m/Y');
+        $sessionData = DB::table('manage_session')
+        ->select('manage_session.*',DB::raw("STR_TO_DATE(session_date, '%d/%m/%Y') as date_format"))
+        //->orderby('id', 'DESC')->take(15)->get();
+        ->where('manage_session.is_deleted', 0)
+        ->orderby('date_format', 'ASC')->get();
         $sn = 1;
         $dataArray = array();
 
+
+        //dd($sessionData);
         
         foreach ($sessionData as $value) {
 
-            $new_date = explode('/',$value->session_date);
+           // $new_date = explode('/',$value->session_date);
 
             
             
-            $s_date = $new_date[2].'-'.$new_date[1].'-'.$new_date[0];
+            //$s_date = $new_date[2].'-'.$new_date[1].'-'.$new_date[0];
             
             //$se_date = Carbon::createFromFormat('d/m/Y',$s_date)->format('d/m/Y');
 
@@ -4876,7 +4881,7 @@ class CaseController extends Controller
              //$dateTimestamp1 = strtotime($se_date); 
              //$dateTimestamp2 = strtotime($today_date); 
 
-         //echo "s=>".Carbon::today()->toDateString();
+        //echo "s=><pre>";print_R($value);
         // $league->date_start = $n_date;
          
 
@@ -4884,7 +4889,8 @@ class CaseController extends Controller
 
         //  }
 
-             if( $s_date > Carbon::today()->toDateString() ){
+             //if( $s_date > Carbon::today()->toDateString() ){
+                if( isset($value->date_format) && $value->date_format > $today_date ){
                 if (!is_null($value->session_party_ids)) {
                     $dataArray = json_decode($value->session_party_ids);
                 }
@@ -4961,7 +4967,7 @@ class CaseController extends Controller
             }
         }
        
-        // return $sessionData;
+        
     }
     /********* Upcoming Session ****************************/
 }

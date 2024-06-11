@@ -1550,30 +1550,36 @@ class DashboardController extends Controller
     public function getUpcomingSession(Request $request)
     {
         $today_date = Carbon::today();
-        $today_date = $today_date->format('d/m/Y');
+        //$today_date = $today_date->format('d/m/Y');
        // $sessionData = DB::table('manage_session')->orderby('id', 'DESC')->take(15)->get();
-        $sessionData = DB::table('manage_session')->select('manage_session.*','mediators_mediation_cases_status.mediator_id')
+        $sessionData = DB::table('manage_session')
+        ->select('manage_session.*','mediators_mediation_cases_status.mediator_id', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
         ->join('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
         ->where('mediators_mediation_cases_status.mediator_id', Auth::user()->id)
-        ->orderby('manage_session.id', 'DESC')->take(15)->get();
+        //->orderby('manage_session.id', 'DESC')->take(15)->get();
+        ->orderby('date_format', 'ASC')->take(15)->get();
 
         
         
         $sn = 1;
         $dataArray = array();
 
+
         
+
         foreach ($sessionData as $value) {
 
-            $new_date = explode('/',$value->session_date);
+            //$new_date = explode('/',$value->session_date);
 
             
             
-            $s_date = $new_date[2].'-'.$new_date[1].'-'.$new_date[0];
+           // $s_date = $new_date[2].'-'.$new_date[1].'-'.$new_date[0];
             
-           
-
-             if( $s_date > Carbon::today()->toDateString() ){
+            
+            //if( $s_date > Carbon::today()->toDateString() ){
+            if( $value->date_format > $today_date ){
+                
+               
                 if (!is_null($value->session_party_ids)) {
                     $dataArray = json_decode($value->session_party_ids);
                 }
@@ -1650,8 +1656,8 @@ class DashboardController extends Controller
                 $sn++;
             }
         }
-       
-        // return $sessionData;
+
+        
     }
     /********* Upcoming Session ****************************/
 }
