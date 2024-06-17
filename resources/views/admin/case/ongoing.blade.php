@@ -684,6 +684,16 @@
                             <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"
                                 data-validation="required"></textarea>
                         </div>
+
+                         <!------ new field for participant ---->
+                         <div class="form-group">
+                            
+                            <label for="">Do you want session participation consent on whatsapp ?</label><br>
+                            <input type="radio" id="" name="participant_whtsapp" value="0" checked><label for="">&nbsp;No</label><br>
+                            <input type="radio" id="" name="participant_whtsapp" value="1"><label for="">&nbsp;Yes</label>
+
+                        </div>
+                        <!------ new field for participant ---->
                         {{-- <span>@lang('case.session_party'):</span>
                     <div class="form-group" id="sessionParty">
                     </div> --}}
