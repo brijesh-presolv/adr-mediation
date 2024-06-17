@@ -1144,7 +1144,7 @@ class CaseController extends Controller
                 'zoom_link_choice' => $inserted_zoom_choice,
                 'session_party_ids' => json_encode($request->session_party_ids),
                 'scheduled_by' => Auth::user()->id,
-                'participant_whtsapp' => $request->participant_whtsapp
+                'participant_whtsapp' => 0
             ];
             $insertData = DB::table('manage_session')->insert($dataToInsert);
             if ($insertData) {
@@ -1225,6 +1225,7 @@ class CaseController extends Controller
                 return json_encode(['code' => 200, 'response' => 'error']);
             }
         } else {
+            // /dd($request->all());
             $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                 ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
                 ->where("mediators_mediation_cases_status.status", "=", 1)
@@ -1268,7 +1269,7 @@ class CaseController extends Controller
                 }
                 
             }
-            
+          
             $dataToInsert = [
                 'case_id' => $request->caseId,
                 'session_date' => ($request->sessionDate != null) ? $request->sessionDate : $request->fsData['sessionDate'] . "/" . $time,
@@ -1278,7 +1279,7 @@ class CaseController extends Controller
                 'zoom_link_choice' => $inserted_zoom_choice,
                 'session_party_ids' => (!empty($party_ids_bulk)) ? json_encode($party_ids_bulk) : json_encode($party_ids),
                 'scheduled_by' => Auth::user()->id,
-                'participant_whtsapp' => $request->participant_whtsapp
+                'participant_whtsapp' => $request->fsData['participant_whtsapp']
             ];
             //dd($dataToInsert);
             $manage_session = DB::table('manage_session')->insert($dataToInsert);
