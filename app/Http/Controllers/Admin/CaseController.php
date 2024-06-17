@@ -1143,7 +1143,8 @@ class CaseController extends Controller
                 'zoom_link' => $created_zoom_link,
                 'zoom_link_choice' => $inserted_zoom_choice,
                 'session_party_ids' => json_encode($request->session_party_ids),
-                'scheduled_by' => Auth::user()->id
+                'scheduled_by' => Auth::user()->id,
+                'participant_whtsapp' => $request->participant_whtsapp
             ];
             $insertData = DB::table('manage_session')->insert($dataToInsert);
             if ($insertData) {
@@ -1277,6 +1278,7 @@ class CaseController extends Controller
                 'zoom_link_choice' => $inserted_zoom_choice,
                 'session_party_ids' => (!empty($party_ids_bulk)) ? json_encode($party_ids_bulk) : json_encode($party_ids),
                 'scheduled_by' => Auth::user()->id,
+                'participant_whtsapp' => $request->participant_whtsapp
             ];
             //dd($dataToInsert);
             $manage_session = DB::table('manage_session')->insert($dataToInsert);
