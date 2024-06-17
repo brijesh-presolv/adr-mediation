@@ -28,7 +28,7 @@ Route::get('/admin/login', function() {
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::match(['POST'], '/mediation', [App\Http\Controllers\HomeController::class, 'mediation'])->name('mediation');
 
@@ -108,6 +108,8 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     //track
     Route::get('track/{id}', [App\Http\Controllers\User\MediationController::class, 'track'])->name('user.case.track');
 
+    
+
 });
 
 
@@ -161,6 +163,18 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
     Route::get('consent-and-disclosures/{id}', [App\Http\Controllers\Mediator\DashboardController::class, 'getConsentAndDisclosures'])->name('mediator.getConsentAndDisclosures');
 
     Route::get('comment-pdf/{id}/{type?}', [App\Http\Controllers\Admin\CaseController::class, 'generatePDF'])->name('mediator.case.commentPDF');
+
+
+
+     // MOM
+     Route::post('case/get-mom-data', [App\Http\Controllers\Admin\CaseController::class, 'ShowMomSessionData'])->name('mediator.case.ShowMomSessionData');
+     Route::post('case/mom-form-submit', [App\Http\Controllers\Admin\CaseController::class, 'MomFormSubmit'])->name('mediator.case.MomFormSubmit');
+    
+     
+     // upcoming session
+    Route::post('case/get-upcoming-session', [App\Http\Controllers\Mediator\DashboardController::class, 'getUpcomingSession'])->name('mediator.case.getUpcomingSession');
+    
+
 });
 
 
@@ -244,6 +258,18 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
 
     Route::get('uploadlocaltos3', [App\Http\Controllers\MigrateFileS3Controller::class, 'MigrateFile']);
+
+    // MOM
+    Route::post('case/get-mom-data', [App\Http\Controllers\Admin\CaseController::class, 'ShowMomSessionData'])->name('admin.case.ShowMomSessionData');
+    Route::post('case/mom-form-submit', [App\Http\Controllers\Admin\CaseController::class, 'MomFormSubmit'])->name('admin.case.MomFormSubmit');
+
+    // notes
+    Route::post('add-note', [App\Http\Controllers\User\MediationController::class, 'addNote'])->name('admin.users.addNote');
+    Route::get('get-note', [App\Http\Controllers\User\MediationController::class, 'getNote'])->name('admin.users.getNote');
+
+    // upcoming session
+    Route::post('case/get-upcoming-session', [App\Http\Controllers\Admin\CaseController::class, 'getUpcomingSession'])->name('admin.case.getUpcomingSession');
+
 });
 
 //notification
@@ -258,8 +284,8 @@ Route::get('temp/que_changes', [App\Http\Controllers\Notification\WhatsappContro
 // Session Reminder
 Route::get('reminder/session_reminder', [App\Http\Controllers\Admin\ReminderController::class, 'index'])->name('sessionReminder');
 
-Route::get('/payment/success', [App\Http\Controllers\API\PaymentController::class, 'paymentSuccess'])->name('payment.success');
-Route::post('/payment/webhook', [App\Http\Controllers\API\PaymentController::class, 'paymentWebhook'])->name('payment.webhook');
+Route::get('/payment/success', [App\Http\Controllers\API\PaymentController::class, 'paymentSuccess']);
+Route::post('/payment/webhook', [App\Http\Controllers\API\PaymentController::class, 'paymentWebhook']);
 
 
 Route::get('restructure/{caseid}/{token}', [App\Http\Controllers\Nagotiationbot\NagotiationBotController::class, 'index']);

@@ -21,6 +21,10 @@
         margin: 15px;
         height: 12px;
     }
+
+    #coolModal p {
+        margin-bottom: 0px;
+    }
 </style>
 
     <section class="tabs-section">
@@ -766,6 +770,76 @@
             </div>
         </div>
     </div>
+
+    <!------- MOM Section ------------------------------->
+    <div id="Session-mom" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Minutes of the Meeting</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
+                    </button>
+                </div>
+
+                <form id="MomSessionForm">
+                <input type="hidden" name="MomCaseId" id="MomCaseId">
+                <input type="hidden" name="MomSessId" id="MomSessId">
+                <input type="hidden" name="MomSn" id="MomSn">
+                    
+                    <div class="custom-modal-text ">
+                        
+                        <div class="form-group">
+                            <label>For the Applicant(s) / Initiating Party :</label>
+                            <input type="text" autocomplete="off" id="ip_mom" class="form-control"
+                                name="ip_mom" placeholder="" data-validation="required">
+                        </div>
+                        <div class="form-group">
+                            <label>For the Opposite / Responding Party :</label>
+                            <input type="text" id="rp_mom" value="" autocomplete="off"
+                                class="form-control" name="rp_mom" placeholder=""
+                                data-validation="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mediator :</label>
+                            <input type="text" id="med_name" value="" autocomplete="off"
+                                class="form-control" name="med_name" placeholder=""
+                                data-validation="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Minutes :</label>
+                            <textarea class="form-control" id="minutes_mom" name="minutes_mom" placeholder=""></textarea>
+                        </div>
+                       
+                        <div class="form-group">
+                            <label>Next Steps :</label>
+                            <!-- <label name="get_zoom_link" id="editZoomLink"></label> -->
+                            <input type="text" id="next_steps" class="form-control" name="next_steps"
+                                data-validation="required">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Share With @lang('case.session_party') :</label>
+                            <div class="form-group" id="MomPartyDocs"></div>
+                        </div>
+                       
+                        
+                        <div class="text-right">
+                            <button type="button" class="btn-sm btn mt-3  btn-secondary"
+                                data-dismiss="modal">Close</button>
+                            <input type="submit" name="submit" class="btn-sm btn btn-primary mt-3">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <!------- MOM Section ------------------------------->
+
     <div id="Session-delete" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true"
         class="modal-demo">
         <div class="modal-dialog">
@@ -856,6 +930,30 @@
 
         </div>
     </div>
+
+
+
+
+
+
+    <div class="modal fade" id="coolModal">
+  <div class="modal-dialog modal-lg ">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1">Minutes of Mediation Sessions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span>&times;</span><span class="sr-only"> <span>@lang('case.btn_close')</span></span>
+        </button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">
+                <span>Close</span>
+            </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 @endsection
 
 <!-- Table datatable css -->
@@ -3254,10 +3352,72 @@
             $("#view_reason").text(reason);
         });
 
+
+        // MOM template show 
+        $('#Session-mom').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var SessId = button.data('id');
+            var CaseId = button.data('caseid');
+            var Sn = button.data('sn');
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.case.ShowMomSessionData') }}",
+                data: {
+                    id: SessId,
+                    caseid : CaseId
+                },
+                dataType: "JSON",
+                success: function(response) {
+                    
+                    var data = response.party_array;
+                    $('#MomCaseId').attr('value', CaseId);
+                    $('#MomSessId').attr('value', SessId);
+                    $('#MomSn').attr('value', Sn);
+                    $('#ip_mom').attr('value', response.ip_name);
+                    $('#rp_mom').attr('value', response.rp_name);
+                    
+                    $('#minutes_mom').val(response.minutes);
+                    $('#next_steps').attr('value', response.next);
+
+                    $('#med_name').attr('value', response.mediator);
+
+
+                    // var med_text = `<div class="form-check">
+                    // <input type="checkbox" value="` + response.mediator_id + `" class="form-check-input" name="docs_party_ids" id="party">
+                    // <label class="form-check-label" for="party">` + response.mediator + `</label>
+                    // </div>`;
+                    // $("#MomMediatorDocs").append(med_text);
+                    $("#MomPartyDocs").empty();
+                    $.each(data, function(index, elm) {
+
+                            var party_id = elm.id;
+                            var party_name = elm.name;
+
+                            
+                            if (response.selected_id != null) {
+                                if(response.selected_id.includes(party_id)){
+                                    var checked = "checked";
+                                }
+                                
+                            } else {
+                               
+                                var checked = "";
+                            }
+                            var text = `<div class="form-check">
+                            <input type="checkbox" ` + checked + ` value="` + party_id + `" class="form-check-input" name="docs_party_ids[]" id="party">
+                            <label class="form-check-label" for="party">` + party_name + `</label>
+                        </div>`;
+                            $("#MomPartyDocs").append(text);
+                    });
+                }
+            });
+        });
+        // MOM template show 
+
         $("#UpdateSessionForm").on('submit', function(e) {
             e.preventDefault();
             var formSet = $('#UpdateSessionForm').serialize();
-            console.log(formSet);
+            //console.log(formSet);
             $.ajax({
                 type: "POST",
                 url: "{{ route('admin.case.UpdateSession') }}",
@@ -3283,6 +3443,53 @@
                 }
             });
         })
+
+
+        // MOM form submit 
+        $("#MomSessionForm").on('submit', function(e) {
+            e.preventDefault();
+            var formSet = $('#MomSessionForm').serialize();
+            
+            
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.case.MomFormSubmit') }}",
+                data: formSet,
+                dataType: "JSON",
+                beforeSend: function() {
+                    $('#viewSession-modal').modal("hide");
+
+                    swal({
+                        title: 'Loading...',
+                       // showConfirmButton: false,
+                        buttons: false,
+                        //allowOutsideClick: false,
+                    });
+                },
+                success: function(response) {
+                    // console.log(response);
+                    // return false;
+                    $('#Session-mom').modal('hide');
+                     swal({
+                         title: "Minutes Successfully Submitted !",
+                         icon: "success",
+                         buttons: true,
+                      }).then(function() {
+                       // location.reload();
+
+                       //setTimeout(function () {
+                       var case_id = $('#MomCaseId').val();
+                      
+                       $("#coolModal").modal('show');
+                       previewMom(case_id, response.file, response.path, response.preview.original.html);
+                       //}, 2500);
+                    });
+                },
+                
+            });
+        });
+
 
         $(document).on('click', '#sessiondeleteform', function() {
             var Sessid = $("#deleteSessId").val();
@@ -3406,5 +3613,12 @@
             });
 
         });
+
+
+        function previewMom(caseid, file_name, path, preview_html){
+            $("#coolModal").modal('show');
+            $('#coolModal .modal-body').html(preview_html);
+  
+        }
     </script>
 @endsection

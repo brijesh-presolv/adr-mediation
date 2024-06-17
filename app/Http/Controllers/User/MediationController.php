@@ -888,6 +888,9 @@ class MediationController extends Controller
             ->where('manage_files.case_id', $case->id)
             ->get();
 
+
+        $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
+
         return view('user.casedetails', compact("case"));
     }
 
@@ -1536,5 +1539,32 @@ class MediationController extends Controller
         
         // dd($ivr);
         return view('user.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv"));
+    }
+
+    public function addNote(Request $request){
+        // /dd($request->all());
+
+        $is_update = User::where('id', $request->user_id)->update(['notes' => $request->notes]);
+
+        if($is_update){
+            $msg = "Notes added";
+            return json_encode(['code' => 200, 'response' => 'success', 'msg' => $msg]);
+            exit;
+        }
+
+       
+    }
+
+    public function getNote(Request $request){
+        //dd($request->user_id);
+
+        $is_get = User::select('notes')->where('id', $request->user_id)->first();
+       
+        if($is_get){
+            return json_encode(['code' => 200, 'response' => 'success', 'note' => $is_get['notes']]);
+            exit;
+        }
+
+       
     }
 }

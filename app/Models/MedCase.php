@@ -13,7 +13,7 @@ class MedCase extends Model
     use HasFactory;
 
     protected $table = 'mediation_case';
-    protected $fillable = ['userid', 'disputeCategory', 'natureOfAgreement', 'agreementDate', 'noOfParties', 'amount', 'proposedSolution', 'issue', 'confirm_status', 'case_status', 'documentPath', 'withdraw', 'otherRespondentDetails', 'request_letter', 'batch_id', 'ref_id', 'bulk_flag', 'discussion', 'poc_name', 'poc_email', 'poc_contact', 'payToken', 'PayLink', 'PayLinkExpire', 'restructure_offer_1', 'restructure_offer_2', 'restructure_offer_3'];
+    protected $fillable = ['userid', 'disputeCategory', 'natureOfAgreement', 'agreementDate', 'noOfParties', 'amount', 'proposedSolution', 'issue', 'confirm_status', 'case_status', 'documentPath', 'withdraw', 'otherRespondentDetails', 'request_letter', 'batch_id', 'ref_id', 'bulk_flag', 'discussion', 'poc_name', 'poc_email', 'poc_contact', 'itm_lang', 'payToken', 'PayLink', 'PayLinkExpire', 'restructure_offer_1', 'restructure_offer_2', 'restructure_offer_3'];
 
 
     public function user_involed()
@@ -79,7 +79,7 @@ class MedCase extends Model
         // ->join('mediation_case', DB::raw('mediation_case.id'), '=', DB::raw('user_involved_in_agreement.userPlanid'))
         // ->skip(0)
         // ->take(1);
-        $sql->select("mediation_case.*", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", "mediators_mediation_cases_status.created_at as admin_approve", "consent_disclosures.updated_at as update", "consent_disclosures.created_at as create", "batch.batch_name")
+        $sql->select("mediation_case.id", "mediation_case.batch_id", "mediation_case.ref_id", "mediation_case.created_at", "mediation_case.confirm_status", "mediation_case.bulk_flag", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", "mediators_mediation_cases_status.created_at as admin_approve", "consent_disclosures.updated_at as update", "consent_disclosures.created_at as create", "batch.batch_name")
             ->leftJoin("mediators_mediation_cases_status", function ($join) {
                 $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
                 $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
@@ -472,7 +472,7 @@ class MedCase extends Model
         
         
        
-            $sql->select('user_involved_in_agreement.*', 'mediation_case.id as caseid','mediation_case.withdraw', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', "consent_disclosures.created_at as create", "mediation_case.batch_id as batch_id", "mediation_case.ref_id as ref_id")
+            $sql->select('user_involved_in_agreement.userid', 'user_involved_in_agreement.userPlanId', 'mediation_case.id as caseid','mediation_case.withdraw', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', "consent_disclosures.created_at as create", "mediation_case.batch_id as batch_id", "mediation_case.ref_id as ref_id")
             ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => $role])
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
