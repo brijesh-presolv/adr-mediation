@@ -181,7 +181,14 @@ class WhatsappChatbotController extends Controller
                                     echo json_encode($result);
 
                                 }
-                            }
+                            }else{
+
+                                $result['code']=404;
+                                $result['message']='Data not inserted';//unauthorised
+                                $result['response']='error';
+                                echo json_encode($result);
+
+                            } 
                     }
                 }
                 else{
