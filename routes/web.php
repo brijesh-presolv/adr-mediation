@@ -270,6 +270,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // upcoming session
     Route::post('case/get-upcoming-session', [App\Http\Controllers\Admin\CaseController::class, 'getUpcomingSession'])->name('admin.case.getUpcomingSession');
 
+    // itm notifications
+    Route::get('itmnotification', [App\Http\Controllers\Admin\DashboardController::class, 'itmNotification'])->name('admin.itmnotification');
+    Route::post('case/stop-notification', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStop'])->name('admin.case.batchNotificationStop');
 });
 
 //notification
