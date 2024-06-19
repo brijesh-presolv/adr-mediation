@@ -2167,7 +2167,7 @@ class CaseController extends Controller
                     }
                 }
                 $responding_phone[] = $inv->userPhone;
-                if ($inv->userEmail != "" && $stop_ip == 0) {
+                if ($inv->userEmail != "" && $stop_rp == 0) {
                     SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
                 }
                 // break;
