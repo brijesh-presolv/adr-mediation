@@ -11,14 +11,14 @@
 
 @section('content')
     <style>
-        #mySwitch {
+        .my_switch {
             position: relative;
             left: 7%;
             width: 20px;
             height: 20px;
         }
 
-        #mySwitchLabel {
+        .mySwitchLabel {
             position: relative;
             left: 10%;
             bottom: 5px;
@@ -30,7 +30,7 @@
             <div class="row">
                 <form id="batchSubmit">
                     <div class="form-group">
-                        <label>Select the Batch for which ITM notification will </label>
+                        <label>Select the Batch in which ITM notification will be disabled</label>
                         <select name="batch" id="batchSelect" class="form-control">
                             <option value="" selected>Select Batch...</option>
                             @foreach ($batchName as $value)
@@ -39,9 +39,21 @@
                         </select>
                     </div>
 
+                    <br>
+
                     <div class="form-group">
-                        <input class="form-check-input" type="checkbox" id="mySwitch" name="mySwitch" checked>
-                        <label for="" id="mySwitchLabel">Stop Invitation To Mediate Notifications</label>
+                        <label for="">Disable ITM notification</label>
+                        <br>
+                        <input class="form-check-input my_switch" type="checkbox" id="mySwitchIP" name="mySwitchIP">
+                        <label for="" class="mySwitchLabel">Initiating Party(s)</label>
+
+                        <br>
+                        <input class="form-check-input my_switch" type="checkbox" id="mySwitchRP" name="mySwitchRP">
+                        <label for="" class="mySwitchLabel">Responding Party(s)</label>
+
+                        <br>
+                        <input class="form-check-input my_switch" type="checkbox" id="mySwitchMed" name="mySwitchMed">
+                        <label for="" class="mySwitchLabel">Mediator</label>
                     </div>
 
                     <input type="submit" id="submit" name="batchNotification"

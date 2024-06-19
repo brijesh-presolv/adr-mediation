@@ -295,7 +295,7 @@ class CaseController extends Controller
             // $invmodel->save();
             //send invitation
             $invmodel->save();
-            if ($this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->stop_itm_notification)) {
+            if ($this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med)) {
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                     $success_log = BulkLog::find($_POST['log_id']);
                     // dd($success_log);
@@ -1031,7 +1031,11 @@ class CaseController extends Controller
                 }
 
                 //generate pdf
-                $invitation = $this->mediator_appointment($request->id, $request->midater);
+
+                if($medcase->stop_itm_med == 0){
+                    $invitation = $this->mediator_appointment($request->id, $request->midater);
+                }
+                
 
                 $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
 
@@ -1043,7 +1047,7 @@ class CaseController extends Controller
                 $invmodel->save();
                 // Common_function::MedNotification($request->id, "MEDI_ADD_ADM", Auth::user()->id);
 
-                if ($medcase->bulk_flag == 0) {
+                if ($medcase->bulk_flag == 0 && $medcase->stop_itm_med == 0) {
                     $this->send_mediatorAdd($request->id, $request->midater);
                 }
                 return response()->json(["code" => 200, "response" => "success", "msg" => "midater Added"]);
@@ -1910,7 +1914,7 @@ class CaseController extends Controller
                     }
 
                     if ($value->userEmail != null) {
-                        if($med->bulk_flag == 0 && $med->stop_itm_notification == 0){
+                        if($med->bulk_flag == 0 && $med->stop_itm_ip == 0){
                             $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => ($pone->organization != null) ? $pone->organization : $pone->name], $value->name, $finalFilePath);
                         }
                     }
@@ -1942,7 +1946,7 @@ class CaseController extends Controller
 
                         ];
 
-                        if($med->bulk_flag == 0 && $med->stop_itm_notification == 0){
+                        if($med->bulk_flag == 0 && $med->stop_itm_ip == 0){
                             $access = Whatsapp::sendWamessage($dwa1);
                         }
 
@@ -1960,7 +1964,7 @@ class CaseController extends Controller
                             'haptik_tmp' => 'mediation_consent_doc',
 
                         ];
-                        if($med->bulk_flag == 0 && $med->stop_itm_notification == 0){
+                        if($med->bulk_flag == 0 && $med->stop_itm_ip == 0){
                             $access = Whatsapp::sendWamessage($dwa2);
                         }
                     }
@@ -1970,7 +1974,7 @@ class CaseController extends Controller
             if ($responding_party != "") {
                 // dd($pone);
                 if ($pone->userEmail != "") {
-                    if($med->stop_itm_notification == 0) {
+                    if($med->stop_itm_rp == 0) {
                         SendGrid::send($d2, $pone->userEmail, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $pone->name, $finalFilePath);
                     }
                 }
@@ -1993,7 +1997,7 @@ class CaseController extends Controller
 
                     ];
 
-                    if($med->stop_itm_notification == 0) {
+                    if($med->stop_itm_rp == 0) {
                         $access = Whatsapp::sendWamessage($dwa1);
                     }
 
@@ -2011,7 +2015,7 @@ class CaseController extends Controller
                         'haptik_tmp' => 'mediation_consent_doc',
 
                     ];
-                    if($med->stop_itm_notification == 0) {
+                    if($med->stop_itm_rp == 0) {
                         $access = Whatsapp::sendWamessage($dwa2);
                     }
                 }
@@ -2118,7 +2122,7 @@ class CaseController extends Controller
         }
     }
 
-    public function sned_invitation($id, $invitation, $bulk_flag = 0, $stop_notification = 0)
+    public function sned_invitation($id, $invitation, $bulk_flag = 0, $stop_ip = 0, $stop_rp = 0, $stop_med = 0)
     {
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
 
@@ -2163,7 +2167,7 @@ class CaseController extends Controller
                     }
                 }
                 $responding_phone[] = $inv->userPhone;
-                if ($inv->userEmail != "" && $stop_notification == 0) {
+                if ($inv->userEmail != "" && $stop_ip == 0) {
                     SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
                 }
                 // break;
@@ -2207,7 +2211,7 @@ class CaseController extends Controller
                     //'haptik_tmp' => 'l4_mediation_party2',
                 ];
 
-                if($stop_notification == 0) {
+                if($stop_rp == 0) {
                     $access = Whatsapp::sendWamessage($dwa1);
                 }
                 
@@ -2226,18 +2230,20 @@ class CaseController extends Controller
                     'haptik_tmp' => 'mediation_consent_doc',
                 ];
 
-                if($stop_notification == 0) {
+                if($stop_rp == 0) {
                     $access = Whatsapp::sendWamessage($dwa2);
                 }
             }
         }
 
 
-        if ($bulk_flag == 0 && $stop_notification == 0) {
+        if ($bulk_flag == 0) {
             if ($responding_party != "") {
 
                 foreach ($initiating_email as $ini_email) {
-                    SendGrid::send($d1, $ini_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
+                    if($stop_ip == 0) {
+                        SendGrid::send($d1, $ini_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
+                    }
                 }
 
 
@@ -2258,7 +2264,10 @@ class CaseController extends Controller
                         'haptik_tmp' => 'l4_mediation_initiating',
                     ];
 
-                    $access = Whatsapp::sendWamessage($dwa1);
+                    if($stop_ip == 0) {
+                        $access = Whatsapp::sendWamessage($dwa1);
+                    }
+                    
 
                     $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
                     $var_file = ['-caseid-'];
@@ -2274,7 +2283,11 @@ class CaseController extends Controller
                         'haptik_tmp' => 'mediation_consent_doc',
 
                     ];
-                    $access = Whatsapp::sendWamessage($dwa2);
+
+                    if($stop_ip == 0) {
+                        $access = Whatsapp::sendWamessage($dwa2);
+                    }
+                   
                 }
             }
         }
@@ -4941,15 +4954,15 @@ class CaseController extends Controller
 
     /*********** Stop batchwise ITM notifications ******************/
     public function batchNotificationStop(Request $request){
-        //dd($request['mySwitch']);
 
-        if(isset($request['mySwitch'])){
-            $stop_notification = 1;
-        } else {
-            $stop_notification = 0;  
-        }
+        $stop_itm_ip = isset($request['mySwitchIP']) ? 1 : 0;
+        $stop_itm_rp = isset($request['mySwitchRP']) ? 1 : 0;
+        $stop_itm_med = isset($request['mySwitchMed']) ? 1 : 0;
 
-        $is_update = MedCase::where('batch_id', $request['batch'])->update(['stop_itm_notification' => $stop_notification]);
+        
+
+        $is_update = MedCase::where('batch_id', $request['batch'])
+                    ->update(['stop_itm_ip' => $stop_itm_ip, 'stop_itm_rp' => $stop_itm_rp, 'stop_itm_med' => $stop_itm_med]);
 
         if($is_update){
             return response()->json(["type" => "success", "code" => 200, "message" => "Success"]);
