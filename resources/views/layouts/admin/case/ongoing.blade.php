@@ -123,6 +123,7 @@
                             <textarea class="form-control" id="note" name="note"
                                 placeholder="@lang('case.session_note_placeholder')" data-validation="required"></textarea>
                         </div>
+
                         {{-- <span>@lang('case.session_party'):</span>
                     <div class="form-group" id="sessionParty">
                     </div> --}}
