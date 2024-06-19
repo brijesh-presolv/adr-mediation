@@ -36,6 +36,7 @@ class WhatsappChatbotController extends Controller
             try {
              
                 $whatsappbotreply= WhatsappChatbot::where('type', 'message_received')->where('is_send', '0')->get();
+               
 
     
                 if(count($whatsappbotreply) > 0){
@@ -43,9 +44,13 @@ class WhatsappChatbotController extends Controller
                     foreach($whatsappbotreply as $data){
 
                         $reply_message_id=$data->reply_message_id;
+                       
+
 
                         //$whatsappbotreply= WhatsappChatbot::where('type', 'message_received')->get();
                         $whcasedata = DB::table('whatsapp_tracking')->select('whatsapp_tracking.*')->where('request_uuid', $reply_message_id)->first();
+
+
 
                         $bot_data = DB::table('whatsapp_bot_data')->select('whatsapp_bot_data.*')->where('reply_message', $data->message)->first();
 
@@ -120,6 +125,7 @@ class WhatsappChatbotController extends Controller
                                               
                                     $dwa1 = [
                                         'caseid' => $caseData->id,
+                                        'bot_type' => "1",
                                         'contact' =>  $data->phone_number,
                                         'content' => ['text' => $content],
                                         'event' => "WHATSAPP_CHATBOT_MSG",
@@ -218,6 +224,122 @@ class WhatsappChatbotController extends Controller
 
     }
 
+    public function whatsappconsentreply(){
+
+          
+        $method = $_SERVER['REQUEST_METHOD'];
+        if($method == "POST") {
+
+            try {
+             
+                $whatsappbotreply= WhatsappChatbot::where('type', 'message_received')->where('bot_type', '2')->where('is_send', '0')->get();
+                //print_r($whatsappbotreply);die();
+
+    
+                if(count($whatsappbotreply) > 0){
+
+                    foreach($whatsappbotreply as $data){
+
+                        $reply_message_id=$data->reply_message_id;
+                        $whcasedata = DB::table('whatsapp_tracking')->select('whatsapp_tracking.*')->where('request_uuid', $reply_message_id)->first();
+                       // $bot_data = DB::table('whatsapp_bot_data')->select('whatsapp_bot_data.*')->where('reply_message', $data->message)->first();
+                         //print_r($data);die();
+
+                                if (!empty($whcasedata)) {
+
+                                    $caseData = DB::table('mediation_case')->select('mediation_case.*')->where('id', $whcasedata->caseid)->first();
+
+                                    $mid = "M" . sprintf("%06d", $caseData->id);
+
+                                    if($data->message=="Yes"){
+                                        $varjson = ['caseid' => $mid];
+                                        $var = ['-cid-'];
+                                        $var1 = [$mid];
+                                        $content1 = WaTemplate::getcontent('lmed_wa_consent_accept_yes');
+                                        $haptik_tmp="lmed_wa_consent_accept_yes";
+                                        $eventname="WHATSAPP_CONSENT_YES";
+                                    }
+                                    if($data->message=="No"){
+
+                                        $varjson = ['caseid' => $mid];
+                                        $var = ['-cid-'];
+                                        $var1 = [$mid];
+                                        $content1 = WaTemplate::getcontent('lmed_wa_consent_accept_no');
+                                        $haptik_tmp="lmed_wa_consent_accept_no";
+                                        $eventname="WHATSAPP_CONSENT_NO";
+                                    }    
+                                    //$content = str_replace($var, $var1, $content1);
+                                    $content=$content1;
+                                            
+                                    $dwa1 = [
+                                        'caseid' => $caseData->id,
+                                        'bot_type' => "2",
+                                        'contact' =>  $data->phone_number,
+                                        'content' => ['text' => $content],
+                                        'event' => "WHATSAPP_CHATBOT_MSG",
+                                        'varjson' => $varjson,
+                                        'haptik_tmp' => $haptik_tmp,
+                                        'bot_id' => $data->id,
+                                    ];
+                                    $accessW = self::sendWamessage($dwa1);
+
+                                    if($accessW==true){
+
+                                        $Chatbot=WhatsappChatbot::find($data->id);
+                                        $Chatbot->is_send="1";
+                                        $Chatbot->updated_at=date('Y-m-d H:s:i');
+                                        $Chatbot->save();
+
+                                        $result['code']=200;
+                                        $result['message']='success';//unauthorised
+                                        $result['response']='success';
+                                        echo json_encode($result);
+
+                                    }else{
+
+                                        $result['code']=404;
+                                        $result['message']='Que not inserted';//unauthorised
+                                        $result['response']='error';
+                                        echo json_encode($result);
+
+                                    } 
+                                }else{
+
+                                    $result['code']=404;
+                                    $result['message']='Message not found';
+                                    $result['response']='error';
+                                    echo json_encode($result);
+
+                                }
+                    }
+                }
+                else{
+
+                    $result['code']=404;
+                    $result['message']='No Data Found';//unauthorised
+                    $result['response']='error';
+                    echo json_encode($result);
+                    exit;
+                }
+    
+                
+            }
+            catch (Exception $e) { 
+
+                echo "Caught an exception: " . $e->getMessage();
+
+                $result['code'] = 500;
+                $result['message'] = "Something Went Wrong";
+                $result['response']='error';
+                echo json_encode($result);
+                exit;
+
+            }
+
+        }
+
+    }
+
     public static function sendWamessage($d)
     {
 
@@ -238,6 +360,7 @@ class WhatsappChatbotController extends Controller
 
             $arr_e = array();
             $arr_e['caseid'] = $d['caseid'];
+            $arr_e['bot_type'] = $d['bot_type'];
             $arr_e['contact'] = trim($value);
             $arr_e['content'] = json_encode($d['content']);
             $arr_e['casetype'] = 2;
@@ -391,6 +514,7 @@ class WhatsappChatbotController extends Controller
 
     public function WhatsappMessage($d, $c)
     {
+        echo "succes";die();
 
         $url = "https://api.interakt.ai/v1/public/message/";
 
