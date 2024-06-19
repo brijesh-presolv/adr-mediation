@@ -35,7 +35,7 @@ class WhatsappChatbotController extends Controller
 
             try {
              
-                $whatsappbotreply= WhatsappChatbot::where('type', 'message_received')->where('is_send', '0')->get();
+                $whatsappbotreply= WhatsappChatbot::where('type', 'message_received')->where('bot_type', '1')->where('is_send', '0')->get();
                
 
     
