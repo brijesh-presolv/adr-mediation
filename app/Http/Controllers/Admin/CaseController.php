@@ -1032,9 +1032,9 @@ class CaseController extends Controller
 
                 //generate pdf
 
-                if($medcase->stop_itm_med == 0){
+                //if($medcase->stop_itm_med == 0){
                     $invitation = $this->mediator_appointment($request->id, $request->midater);
-                }
+                //}
                 
 
                 $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
@@ -4472,8 +4472,13 @@ class CaseController extends Controller
             }
 
             // start for re-approve ------------
+            $medCas = MedCase::find($request->id);
 
-            $invitation = $this->mediator_appointment($request->id, $request->mediator);
+
+            //if($medCas->stop_itm_med == 0){
+                $invitation = $this->mediator_appointment($request->id, $request->mediator);
+            //}
+            
 
             $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
 
@@ -4488,7 +4493,6 @@ class CaseController extends Controller
             // end for re-approve ------------
 
 
-            $medCas = MedCase::find($request->id);
             $medCas->confirm_status = 1;
             $medCas->case_status = 1;
              /*** Discussion field : START ***/
@@ -4523,7 +4527,7 @@ class CaseController extends Controller
 
                 // start for re-approve ------------
 
-                $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->stop_itm_notification);
+                $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med);
                 // end for re-approve ------------
 
 
