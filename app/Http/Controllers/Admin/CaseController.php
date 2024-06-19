@@ -1914,7 +1914,7 @@ class CaseController extends Controller
                     }
 
                     if ($value->userEmail != null) {
-                        if($med->bulk_flag == 0 && $med->stop_itm_ip == 0){
+                        if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
                             $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => ($pone->organization != null) ? $pone->organization : $pone->name], $value->name, $finalFilePath);
                         }
                     }
@@ -1946,7 +1946,7 @@ class CaseController extends Controller
 
                         ];
 
-                        if($med->bulk_flag == 0 && $med->stop_itm_ip == 0){
+                        if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
                             $access = Whatsapp::sendWamessage($dwa1);
                         }
 
@@ -1964,7 +1964,7 @@ class CaseController extends Controller
                             'haptik_tmp' => 'mediation_consent_doc',
 
                         ];
-                        if($med->bulk_flag == 0 && $med->stop_itm_ip == 0){
+                        if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
                             $access = Whatsapp::sendWamessage($dwa2);
                         }
                     }
