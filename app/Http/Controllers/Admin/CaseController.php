@@ -3341,7 +3341,36 @@ class CaseController extends Controller
             $ivr = $ivr['data'];
         }
         // dd($ivr);
-        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv", "botMisReport"));
+
+        $med = MedCase::select('stop_itm_ip', 'stop_itm_rp', 'stop_itm_med')->where("id", "=", $id)->first();
+
+        $parties = "";
+
+        if($med->stop_itm_ip == 1){
+            if($parties == ""){
+                $parties = $parties ."disabled for Initiating Party(s)"; 
+            }
+             
+        } 
+        if($med->stop_itm_rp == 1){
+            if($parties == ""){
+                $parties = $parties ."disabled for Responding Party(s)"; 
+            }else{
+                $parties = $parties ." & Responding Party(s)"; 
+            }
+        } 
+        if($med->stop_itm_med == 1){
+            if($parties == ""){
+                $parties = $parties ."disabled for Mediator"; 
+            }else{
+                $parties = $parties ." & Mediator"; 
+            }
+        } 
+        if($med->stop_itm_ip == 0 && $med->stop_itm_rp == 0 && $med->stop_itm_med == 0) {
+            $parties = $parties . "enabled.";
+        }
+
+        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv", "botMisReport", "parties"));
     }
 
     public function mediatorAccessChange(Request $request)
