@@ -30,6 +30,7 @@ use App\Models\WaTemplate;
 use App\Models\WhatsappTrack;
 use App\Models\WhatsappBotReport;
 use App\Models\RestructureData;
+use App\Models\WhatsAppQue;
 use DB;
 use PDF;
 use Auth;
@@ -1325,6 +1326,35 @@ class CaseController extends Controller
 
                      $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
                      /**** Zoom Invitation ************/
+                    // Session Participation Consent via Whatsapp
+                    if($party->isClaimant != 0 && $request->fsData['participant_whtsapp']=="1") {
+
+                        $latest_session = DB::table('manage_session')->select('*')->orderBy('id', 'desc')->first();
+                        $id = "M" . sprintf("%06d", $request->caseId);
+                        $varjson2 = ['caseid' => $id];
+                        $var2 = ['-cid-'];
+                        $var2 = [$id];
+                        $content2 = WaTemplate::getcontent('lmed_wa_consent_accept');
+                        $content1 = str_replace($var2, $var2, $content2);
+                        $dwa2 = [
+                            'caseid' => $request->caseId,
+                            'contact' =>  $party->userPhone,
+                            'content' => ['text' => $content1],
+                            'event' => 'WA_Session_Consent',
+                            'varjson' => $varjson2,
+                            'haptik_tmp' => 'lmed_wa_consent_accept',
+
+                        ];
+                        $access = Whatsapp::sendWamessage($dwa2);
+                        $latestque = WhatsAppQue::select("*")->orderBy('id', 'desc')->first();
+                        $dataToInsert = [
+                            'wa_que_id' => $latestque->id,
+                            'manage_session_id' => $latest_session->id,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+                        $manage_session = DB::table('wa_consent_manage')->insert($dataToInsert);
+                    }
+                     // End
                     }
                 }
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {

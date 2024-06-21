@@ -268,6 +268,25 @@ class WhatsappChatbotController extends Controller
                                         $haptik_tmp="lmed_wa_consent_accept_no";
                                         $eventname="WHATSAPP_CONSENT_NO";
                                     }    
+                                    
+                                    $wa_consent_manage = DB::table('wa_consent_manage')->select('wa_consent_manage.*')->where('wa_que_id', $whcasedata->que_id)->first();
+
+                                    if (!empty($wa_consent_manage)) {
+
+                                        $botlogdata=[
+                                            'caseid' => $caseData->id,
+                                            'chatbot_id' =>  $data->id,
+                                            'message_req_id' => $data->message_id,
+                                            'message_context_id' => $data->reply_message_id,
+                                            'mobile' => $data->phone_number,
+                                            'event' => $eventname,
+                                            'manage_session_id' => $wa_consent_manage->manage_session_id,
+                                            'wa_consent_text' => $data->message,
+                                            'created_at' => date('Y-m-d H:i:s'),
+                                        ];
+                                        $wa_bot_consent = DB::table('wa_bot_consent_details')->insert($botlogdata);
+                                    }
+
                                     //$content = str_replace($var, $var1, $content1);
                                     $content=$content1;
                                             
