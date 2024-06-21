@@ -289,6 +289,16 @@ class WhatsappChatbotController extends Controller
 
                                     //$content = str_replace($var, $var1, $content1);
                                     $content=$content1;
+
+                                    $dwa = [
+                                        'caseid' => $caseData->id,
+                                        'contact' =>  $data->phone_number,
+                                        'content' => ['text' => $content],
+                                        'event' => "WHATSAPP_CHATBOT_MSG",
+                                        'varjson' => $varjson,
+                                        'haptik_tmp' => $haptik_tmp,
+                                    ];
+                                    $access = Whatsapp::sendWamessage($dwa);
                                             
                                     $dwa1 = [
                                         'caseid' => $caseData->id,
@@ -300,15 +310,7 @@ class WhatsappChatbotController extends Controller
                                         'haptik_tmp' => $haptik_tmp,
                                         'bot_id' => $data->id,
                                     ];
-                                    $dwa = [
-                                        'bot_type' => "2",
-                                        'contact' =>  $data->phone_number,
-                                        'content' => ['text' => $content],
-                                        'event' => "WHATSAPP_CHATBOT_MSG",
-                                        'varjson' => $varjson,
-                                        'haptik_tmp' => $haptik_tmp,
-                                    ];
-                                    $access = Whatsapp::sendWamessage($dwa);
+
                                     $accessW = self::sendWamessage($dwa1);
 
                                     if($accessW==true){
