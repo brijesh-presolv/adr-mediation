@@ -1331,9 +1331,9 @@ class CaseController extends Controller
 
                         $latest_session = DB::table('manage_session')->select('*')->orderBy('id', 'desc')->first();
                         $id = "M" . sprintf("%06d", $request->caseId);
-                        $varjson2 = ['caseid' => $id];
-                        $var2 = ['-cid-'];
-                        $var2 = [$id];
+                        $varjson2 = ['datetime' => ($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
+                        $var2 = ['-datetime-'];
+                        $var2 = [($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
                         $content2 = WaTemplate::getcontent('lmed_wa_consent_accept');
                         $content1 = str_replace($var2, $var2, $content2);
                         $dwa2 = [
