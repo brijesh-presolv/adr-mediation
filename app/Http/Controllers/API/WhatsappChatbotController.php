@@ -21,6 +21,7 @@ use App\Models\WhatsappTrack;
 use App\Models\WhatsappBotQue;
 use App\Models\WhatsappBotReport;
 use App\Models\SettlementPayment;
+use App\Models\ManageSession;
 
 use App\Http\Controllers\API\PaymentController;
 
@@ -243,6 +244,8 @@ class WhatsappChatbotController extends Controller
                         $reply_message_id=$data->reply_message_id;
                         $whcasedata = DB::table('whatsapp_tracking')->select('whatsapp_tracking.*')->where('request_uuid', $reply_message_id)->first();
 
+                        //print_r($whcasedata);die();
+
                         // For the check User Reply Message
                         $consent_bot_data = DB::table('whatsapp_bot_data')->select('whatsapp_bot_data.*')->where('bot_type', "2")->where('reply_message', $data->message)->first();
                          //print_r($data);die();
@@ -276,6 +279,25 @@ class WhatsappChatbotController extends Controller
                                     $wa_consent_manage = DB::table('wa_consent_manage')->select('wa_consent_manage.*')->where('wa_que_id', $whcasedata->que_id)->first();
 
                                     if (!empty($wa_consent_manage)) {
+
+                                        $replydata1=ManageSession::where('id', $wa_consent_manage->manage_session_id)->first();
+                                        
+                                        if(!empty($replydata1)){
+
+                                            $replydata = json_decode($replydata1->wa_session_consent_data, true);
+
+                                        }
+
+                                        $replydata[]=[
+                                            'message' => $data->message,
+                                            'mobile' =>  $data->phone_number,
+                                            'created_at' => date('Y-m-d H:i:s'),
+                                        ];
+
+                                        $messagedata=json_encode($replydata);
+                                        $manage_session = ManageSession::find($wa_consent_manage->manage_session_id);
+                                        $manage_session->wa_session_consent_data=$messagedata;
+                                        $manage_session->save();
 
                                         $botlogdata=[
                                             'caseid' => $caseData->id,
