@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\MedCase;
 use App\Models\InvoledUser;
 use App\Models\Notification;
+use App\Models\Batch;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -165,5 +166,10 @@ class DashboardController extends Controller
         $data = Notification::notificationData();
         // dd($data);
         return view('admin.case.notification', compact('data'));
+    }
+
+    public function itmNotification(){
+        $batchName = Batch::get();
+        return view('admin.case.itmnotification', compact("batchName"));
     }
 }

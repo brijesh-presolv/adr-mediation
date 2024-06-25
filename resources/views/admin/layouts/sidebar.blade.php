@@ -49,6 +49,14 @@ $notification = Notification::where('view', 0)->count();
                         <li><a href="{{route('admin.case.rjectedrequest')}}">Rejected </a></li>
                     </ul>
                 </li>
+                <!---------- Batch wise notification for ITM : Start ------------>
+                <li>
+                    <a  href="{{url('admin/itmnotification')}}" class="waves-effect waves-light">
+                        <i class="fa fa-toggle-on"> </i>
+                        <span>ITM Notifications</span>
+                    </a>
+                </li>
+                <!---------- Batch wise notification for ITM : End ------------>
                 <li>
                     <a href="javascript: void(0);" class="waves-effect waves-light">
                         <i class="fas fa-user-friends"></i>

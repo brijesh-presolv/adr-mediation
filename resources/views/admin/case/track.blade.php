@@ -37,6 +37,13 @@
         <p class="m-2">The details pertaining to the delivery and service of all digital communications throughout the
             proceedings is tracked and obtained through Email and WhatsApp APIs (Application Programming Interface) integrated with Presolv360’s ODR platform.</p>
     </div>
+    
+    <!--- Added for disabled ITM notifications : START ------------->
+    <div class="card bg-info text-light">
+        <p class="m-2">Notfications {{$parties}}</p>
+    </div>
+    <!--- Added for disabled ITM notifications : END ------------->
+    
     <div class="card">
 
         <div class="card-body">
