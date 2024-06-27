@@ -44,7 +44,8 @@ class IvrController extends Controller
             ->where('mediation_status_logs.status', '1')
 
             ->get();
-
+        
+          
 
         $arraydata = array();
         foreach ($cases as $key => $case) {
@@ -78,12 +79,19 @@ class IvrController extends Controller
 
                     $respondent = $v->name;
 
-                    $contact = $v->userPhone;
+                    
+                    if($case->stop_itm_rp == 1){
+                        $contact = "";
+                    } else {
+                        $contact = $v->userPhone;
+                    }
+                    //$contact = $v->userPhone;
                 }
 
                 $i++;
             }
 
+            
 
             if ($contact != '') {
 
@@ -106,7 +114,7 @@ class IvrController extends Controller
 
 
                 $res = Curl::getdata($url, $data, 'POST', 'MED360AUTH');
-            }
+            } 
         }
 
 
@@ -168,7 +176,14 @@ class IvrController extends Controller
 
                     $respondent = $v->name;
 
-                    $contact = $v->userPhone;
+
+                    if($case->stop_itm_rp == 1){
+                        $contact = "";
+                    } else {
+                        $contact = $v->userPhone;
+                    }
+
+                    //$contact = $v->userPhone;
                 }
 
                 $i++;
