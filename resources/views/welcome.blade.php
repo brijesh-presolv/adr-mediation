@@ -1065,10 +1065,10 @@ width: 250px;" alt=""></div>
 @endsection
 
 <script>
-  <script>
+
                 $('img').click(function(){
             var video = '<div class="video-container"><iframe src="'+ $(this).attr('data-video') +'"></iframe></div>';
             $(this).replaceWith(video);
         });
-        </script>
+      
 </script>
