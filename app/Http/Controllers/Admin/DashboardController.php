@@ -172,4 +172,9 @@ class DashboardController extends Controller
         $batchName = Batch::get();
         return view('admin.case.itmnotification', compact("batchName"));
     }
+
+    public function closeCaseNotification(){
+        $batchName = Batch::get();
+        return view('admin.case.closecasenotification', compact("batchName"));
+    }
 }

@@ -95,11 +95,11 @@ class WhatsappStatus extends Controller
                 'event' => 'REM_ACPTARB_ADM_RES',
                 'case_id' => $value->userPlanId,
             ];
-            if ($value->userEmail != null) {
+            if ($value->userEmail != null && $value->stop_itm_rp == 0) {
                 $s = SendGrid::send($d, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $value->userPlanId), "-link-" => $value->joinCode, "-initiating-" => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name], $value->name, $finalFilePath);
             }
 
-            if ($value->userPhone != null) {
+            if ($value->userPhone != null && $value->stop_itm_rp == 0) {
                 $varjson = ['initiating' => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name, 'caseid' => "M" . sprintf("%06d", $value->userPlanId)];
                 $var = ['-cid-', '-ip-'];
                 $var1 = ["M" . sprintf("%06d", $value->userPlanId), ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name];

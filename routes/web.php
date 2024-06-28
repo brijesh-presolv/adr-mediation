@@ -273,6 +273,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // itm notifications
     Route::get('itmnotification', [App\Http\Controllers\Admin\DashboardController::class, 'itmNotification'])->name('admin.itmnotification');
     Route::post('case/stop-notification', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStop'])->name('admin.case.batchNotificationStop');
+
+    // close case notification
+    Route::get('closecasenotification', [App\Http\Controllers\Admin\DashboardController::class, 'closeCaseNotification'])->name('admin.closecasenotification');
 });
 
 //notification
