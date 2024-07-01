@@ -468,17 +468,17 @@ class CaseController extends Controller
                 if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
                     $mediation_status_log->description = "Request Withdrawn";
                     if ($user->bulk_flag != 1) {
-                        $this->sned_withdrawal($request->case_id);
+                        $this->sned_withdrawal($request->case_id, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
                     }
                 } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
                     $mediation_status_log->description = "Request Resolved";
                     if ($user->bulk_flag != 1) {
-                        $this->sned_resolved($request->case_id);
+                        $this->sned_resolved($request->case_id, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
                     }
                 } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
                     $mediation_status_log->description = "Request Unresolved";
                     if ($user->bulk_flag != 1) {
-                        $this->sned_unresolved($request->case_id);
+                        $this->sned_unresolved($request->case_id, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
                     }
                 }
                 $mediation_status_log->save();
@@ -2378,8 +2378,9 @@ class CaseController extends Controller
         return true;
     }
 
-    public function sned_withdrawal($id)
+    public function sned_withdrawal($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
     {
+        echo "here";exit;
         // $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -2416,7 +2417,10 @@ class CaseController extends Controller
                 $initiating_phone[] = $inv->userPhone;
                 $initiating_email = $inv->userEmail;
 
-                SendGrid::send($d1, $inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
+                if($stop_close_ip = 0){
+
+                    SendGrid::send($d1, $inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
+                }
             } else {
                 if ($inv->name != "") {
                     $responding_party = $inv->name;
@@ -2429,14 +2433,17 @@ class CaseController extends Controller
         if (isset($responding_email)) {
             foreach ($responding_email as $email) {
                 if ($email != "") {
-                    SendGrid::send($d2, $email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                    if($stop_close_rp = 0){
+
+                        SendGrid::send($d2, $email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                    }
                 }
             }
         }
 
         if (isset($responding_phone)) {
             foreach ($responding_phone as $phone) {
-                if ($phone != "") {
+                if ($phone != "" && $stop_close_rp == 0) {
                     $varjson = ['caseid' => $mid, 'initiating' => $initiating_party];
                     $var = ['-cid-', '-cl-'];
                     $var1 = [$mid, $initiating_party];
@@ -2458,7 +2465,7 @@ class CaseController extends Controller
             }
         }
 
-        if ($responding_party != "") {
+        if ($responding_party != "" && $stop_close_rp == 0) {
 
             if (isset($initiating_phone)) {
                 foreach ($initiating_phone as $ini_phone) {
@@ -2485,7 +2492,11 @@ class CaseController extends Controller
             }
         }
         if ($mediator) {
-            SendGrid::send($d3, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+
+            if($stop_close_med == 0){
+
+                SendGrid::send($d3, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
 
             $varjson = ['caseid' => $mid];
             $var = ['-cid-'];
@@ -2506,12 +2517,14 @@ class CaseController extends Controller
             // print_r($dwa1);
             // exit;
 
-            $access = Whatsapp::sendWamessage($dwa1);
+            if($stop_close_med == 0){
+                $access = Whatsapp::sendWamessage($dwa1);
+            }
         }
         return true;
     }
 
-    public function sned_resolved($id)
+    public function sned_resolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
     {
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -2532,7 +2545,7 @@ class CaseController extends Controller
                     $initiating_party = $inv->name;
                 }
             }
-            if ($inv->userEmail != "") {
+            if ($inv->userEmail != "" && $stop_close_ip == 0) {
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
 
@@ -2552,11 +2565,18 @@ class CaseController extends Controller
 
                 ];
 
-                $access = Whatsapp::sendWamessage($dwa1);
+                if($stop_close_ip == 0){
+
+                    $access = Whatsapp::sendWamessage($dwa1);
+                }
+                
             }
         }
         if ($mediator) {
-            SendGrid::send($d, $mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            if($stop_close_med == 0){
+                
+                SendGrid::send($d, $mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
             $varjson = ['caseid' => $mid];
             $var = ['-cid-'];
             $var1 = [$mid];
@@ -2572,12 +2592,15 @@ class CaseController extends Controller
 
             ];
 
-            $access = Whatsapp::sendWamessage($dwa1);
+            if($stop_close_med == 0){
+                $access = Whatsapp::sendWamessage($dwa1);
+            }
+            
         }
         return true;
     }
 
-    public function sned_unresolved($id)
+    public function sned_unresolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
     {
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -2599,7 +2622,7 @@ class CaseController extends Controller
                     $initiating_party = $inv->name;
                 }
             }
-            if ($inv->userEmail != "") {
+            if ($inv->userEmail != "" && $stop_close_ip == 0) {
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
             if ($inv->userPhone != "") {
@@ -2618,11 +2641,17 @@ class CaseController extends Controller
 
                 ];
 
-                $access = Whatsapp::sendWamessage($dwa1);
+                if($stop_close_ip == 0){
+
+                    $access = Whatsapp::sendWamessage($dwa1);
+                }
             }
         }
         if ($mediator) {
-            SendGrid::send($d, $mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            if($stop_close_med == 0){
+
+                SendGrid::send($d, $mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
             $varjson = ['caseid' => $mid];
             $var = ['-cid-'];
             $var1 = [$mid];
@@ -2638,7 +2667,10 @@ class CaseController extends Controller
 
             ];
 
-            $access = Whatsapp::sendWamessage($dwa1);
+            if($stop_close_med == 0){
+
+                $access = Whatsapp::sendWamessage($dwa1);
+            }
         }
         return true;
     }
@@ -5035,4 +5067,27 @@ class CaseController extends Controller
         
     }
     /*********** Stop batchwise ITM notifications ******************/
+
+
+
+    /*********** Stop batchwise close notifications ******************/
+    public function batchNotificationStopWhenClose(Request $request){
+
+        $stop_close_ip = isset($request['mySwitchIPClose']) ? 1 : 0;
+        $stop_close_rp = isset($request['mySwitchRPClose']) ? 1 : 0;
+        $stop_close_med = isset($request['mySwitchMedClose']) ? 1 : 0;
+
+        
+
+        $is_update = MedCase::where('batch_id', $request['batch'])
+                    ->update(['stop_close_ip' => $stop_close_ip, 'stop_close_rp' => $stop_close_rp, 'stop_close_med' => $stop_close_med]);
+
+        if($is_update){
+            return response()->json(["type" => "success", "code" => 200, "message" => "Success"]);
+        } else {
+            return response()->json(["type" => "error", "code" => 200, "message" => "Error"]);
+        }
+        
+    }
+    /*********** Stop batchwise close notifications ******************/
 }
