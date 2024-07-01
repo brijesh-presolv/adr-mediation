@@ -47,11 +47,12 @@ class ReminderController extends Controller
         //echo $query1;exit;
         $getSessionArray = DB::select($query1);
 
-        // echo "<pre>";print_R($getSessionArray);exit;
+        //  /echo "<pre>";print_R($getSessionArray);
 
         if (empty($getSessionArray)) {
             echo "No scheduled session found.";
         } else {
+
             foreach ($getSessionArray as $key => $getSessionData) {
 
                 $get_time = explode("/", $getSessionData->session_date);
@@ -64,7 +65,10 @@ class ReminderController extends Controller
                 //$toDaydate =  \Carbon\Carbon::CreateFromFormat('d/m/Y',$getSessionData->session_date);
 
                 // $allParty['party']['all'] = InvoledUser::where("userPlanId", $getSessionData->case_id)->get();
-                $allParty[$key] = InvoledUser::where("userPlanId", $getSessionData->case_id)->get();
+
+                $party_array = json_decode($getSessionData->session_party_ids);
+               
+                $allParty[$key] = InvoledUser::where("userPlanId", $getSessionData->case_id)->whereIn("id", $party_array)->get();
                 $allParty[$key]['zoom'] = $getSessionData->zoom_id;
                 $allParty[$key]['case'] = $getSessionData->case_id;
                 $allParty[$key]['zoom_link'] = $getSessionData->zoom_link;
