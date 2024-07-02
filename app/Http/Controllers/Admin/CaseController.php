@@ -4470,10 +4470,12 @@ class CaseController extends Controller
             // For Session participation consent
             $caseinfo['Session_Participation_Consent'] = "";
             $session_part = DB::table('manage_session')
-            ->where('case_id', $value)
+            ->where('case_id', $value['caseid'])
             ->first();
            
+            //dd($value['caseid']);
             $session_part_consent = isset($session_part) ? $session_part->participant_whtsapp : "";
+            
             if($session_part_consent == 1){
                 $caseinfo['Session_Participation_Consent'] = "Yes";
             } else {
