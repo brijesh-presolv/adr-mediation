@@ -4168,6 +4168,10 @@ class CaseController extends Controller
         $columnHeader = $columnHeader . "Why did i get this? (Button click)" . "\t" . "Pay now (Button click)" . "\t" . "Explore alternatives (Button click)" . "\t" . "Restructure (Link click)" . "\t". "Restructure (Offer selected)" . "\t". "Reply (Link click)" . "\t" . "Reply submitted" . "\t\n";
 
 
+        // Session participation consent column //
+        $columnHeader = $columnHeader . "Session participation consent";
+        //Session participation consent column //
+
         // dd($columnHeader);
 
         foreach ($caseid as $key => $value) {
@@ -4462,6 +4466,21 @@ class CaseController extends Controller
                 $caseinfo['Web_Submit_Reply_Count'] = $botMisReport[0]->Web_Submit_Reply_Count;
                 $caseinfo['Reply'] = $botMisReport[0]->Reply;
             }
+
+            // For Session participation consent
+            $caseinfo['Session_Participation_Consent'] = "";
+            $session_part = DB::table('manage_session')
+            ->where('case_id', $value)
+            ->first();
+           
+            $session_part_consent = isset($session_part) ? $session_part->participant_whtsapp : "";
+            if($session_part_consent == 1){
+                $caseinfo['Session_Participation_Consent'] = "Yes";
+            } else {
+                $caseinfo['Session_Participation_Consent'] = "No";
+            }
+            // For Session participation consent
+
              $rowData = '';
 
             foreach ($caseinfo as $value) {
