@@ -4165,11 +4165,11 @@ class CaseController extends Controller
 
         $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t";
 
-        $columnHeader = $columnHeader . "Why did i get this? (Button click)" . "\t" . "Pay now (Button click)" . "\t" . "Explore alternatives (Button click)" . "\t" . "Restructure (Link click)" . "\t". "Restructure (Offer selected)" . "\t". "Reply (Link click)" . "\t" . "Reply submitted" . "\t\n";
+        $columnHeader = $columnHeader . "Why did i get this? (Button click)" . "\t" . "Pay now (Button click)" . "\t" . "Explore alternatives (Button click)" . "\t" . "Restructure (Link click)" . "\t". "Restructure (Offer selected)" . "\t". "Reply (Link click)" . "\t" . "Reply submitted" . "\t";
 
 
         // Session participation consent column //
-        $columnHeader = $columnHeader . "Session participation consent";
+        $columnHeader = $columnHeader . "Session participation consent". "\t\n" ;
         //Session participation consent column //
 
         // dd($columnHeader);
