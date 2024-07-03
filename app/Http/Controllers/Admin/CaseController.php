@@ -467,19 +467,19 @@ class CaseController extends Controller
 
                 if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
                     $mediation_status_log->description = "Request Withdrawn";
-                    if ($user->bulk_flag != 1) {
+                    //if ($user->bulk_flag != 1) {
                         $this->sned_withdrawal($request->case_id, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
-                    }
+                    //}
                 } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
                     $mediation_status_log->description = "Request Resolved";
-                    if ($user->bulk_flag != 1) {
+                    //if ($user->bulk_flag != 1) {
                         $this->sned_resolved($request->case_id, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
-                    }
+                    //}
                 } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
                     $mediation_status_log->description = "Request Unresolved";
-                    if ($user->bulk_flag != 1) {
+                    //if ($user->bulk_flag != 1) {
                         $this->sned_unresolved($request->case_id, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
-                    }
+                    //}
                 }
                 $mediation_status_log->save();
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
