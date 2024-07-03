@@ -276,7 +276,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     // close case notification
     Route::get('closecasenotification', [App\Http\Controllers\Admin\DashboardController::class, 'closeCaseNotification'])->name('admin.closecasenotification');
-    Route::post('case/stop-notification', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStopWhenClose'])->name('admin.case.batchNotificationStopWhenClose');
+    Route::post('case/stop-notification-close', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStopWhenClose'])->name('admin.case.batchNotificationStopWhenClose');
 });
 
 //notification
