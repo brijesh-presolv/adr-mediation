@@ -50,12 +50,12 @@ $notification = Notification::where('view', 0)->count();
                     </ul>
                 </li>
                 <!---------- Batch wise notification for ITM : Start ------------>
-                <li>
+                <!-- <li>
                     <a  href="{{url('admin/itmnotification')}}" class="waves-effect waves-light">
                         <i class="fa fa-toggle-on"> </i>
                         <span>ITM Notifications</span>
                     </a>
-                </li>
+                </li> -->
                 <!---------- Batch wise notification for ITM : End ------------>
 
                 <!---------- Batch wise notification when close the case : Start ------------>
@@ -66,6 +66,20 @@ $notification = Notification::where('view', 0)->count();
                     </a>
                 </li> -->
                 <!---------- Batch wise notification when close the case : End ------------>
+                <li>
+                    <a href="javascript: void(0);" class="waves-effect waves-light">
+                        <i class="fa fa-toggle-on"></i>
+                        <span>Communication</span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <ul class="nav-second-level" aria-expanded="false">
+                        <li><a href="{{url('admin/itmnotification')}}">ITM Notifications</a></li>
+                        <li><a href="{{url('admin/closecasenotification')}}">Close Case Notifications</a></li>
+                        
+                    </ul>
+                </li>
+
+
                 <li>
                     <a href="javascript: void(0);" class="waves-effect waves-light">
                         <i class="fas fa-user-friends"></i>
