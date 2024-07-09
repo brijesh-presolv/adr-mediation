@@ -275,7 +275,15 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('case/stop-notification', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStop'])->name('admin.case.batchNotificationStop');
 
     // close case notification
-    Route::get('closecasenotification', [App\Http\Controllers\Admin\DashboardController::class, 'closeCaseNotification'])->name('admin.closecasenotification');
+    Route::get('manageuser', [App\Http\Controllers\Admin\CaseController::class, 'manageUser'])->name('admin.manageuser');
+    Route::post('addmiiuser', [App\Http\Controllers\Admin\CaseController::class, 'addmiiuser'])->name('admin.addmiiuser');
+    Route::get('getSubUserData', [App\Http\Controllers\Admin\CaseController::class, 'getSubUserData'])->name('admin.getSubUserData');
+    Route::post('updateSubUser', [App\Http\Controllers\Admin\CaseController::class, 'updateSubUser'])->name('admin.updateSubUser');
+    Route::post('deleteSubUser', [App\Http\Controllers\Admin\CaseController::class, 'deleteSubUser'])->name('admin.deleteSubUser');
+
+
+    // Parent Child User
+
 });
 
 //notification

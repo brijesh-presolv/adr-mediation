@@ -44,6 +44,8 @@ use ZipArchive;
 use Carbon\Carbon;
 
 use App\Http\Helpers\Zoom;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Hash;
 
 class CaseController extends Controller
 {
@@ -5056,4 +5058,129 @@ class CaseController extends Controller
         
     }
     /*********** Stop batchwise ITM notifications ******************/
+
+
+    public function manageUser(){
+
+         // Get Subusers //
+         $user_id = Auth::user()->id;
+
+         //DB::enableQueryLog();
+         $subUserData = DB::table('user_hierarchy_master')
+         ->join('users', 'users.id', '=', 'user_hierarchy_master.sub_userid')
+         ->where('user_hierarchy_master.parent_userid', $user_id)
+         ->where('users.is_deleted', '=', 0)
+         ->get();
+ 
+         //$subUserData = DB::getQueryLog();
+         // Get Subusers //
+ 
+ 
+         // dd($subUserData); 
+         // dd($subUserData);
+ 
+         return view('admin.case.manageuser', ['sub_users' => $subUserData]);
+        
+    }
+
+
+    // For add sub user //
+    public function addmiiuser(Request $request){
+        //dd($request->all());
+
+        event(new Registered($user_reg = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'username' => $request->first_name."_".rand(1,10),
+            'mobile_number' => $request->mobile_number,
+            'organization' => "",
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 3,
+            'emailotp' => rand('100000', '999999'),
+            'smsotp' => rand('100000', '999999'),
+            'is_agree' => 1,
+            'isActive' => 1,
+            'status' => 1,
+            'is_set_pwd' => 1,
+            'address' => 'address1',
+            'address1' => 'address2',
+            'pincode' => 4005,
+            'city' => 'Mumbai',
+            'state' => 'Maharastra',
+            
+        ])));
+
+
+        // Add data in user hierarchy table
+
+        $user_hie_data = array();
+        $user_hie_data['parent_userid'] = Auth::user()->id;
+        $user_hie_data['sub_userid'] = $user_reg->id;
+        $user_hie_data['role'] = 3;
+        //$user_hie_data['created_at'] = date('d-m-Y H:i:s');
+
+        
+        DB::table('user_hierarchy_master')->insert($user_hie_data);
+        
+
+        return redirect()->route('admin.manageuser');
+        //return $user_reg->id;
+
+    }
+    // For add sub user //
+
+
+    public function getSubUserData(Request $request){
+        $sub_user_data = array();
+        $usr = User::find($request->id);
+
+        $sub_user_data['id'] = $usr->id;
+        $sub_user_data['first_name'] = $usr->first_name;
+        $sub_user_data['last_name'] = $usr->last_name;
+        $sub_user_data['mobile_number'] = $usr->mobile_number;
+        $sub_user_data['email'] = $usr->email;
+        //$sub_user_data['password'] = password_hash($usr->password, PASSWORD_BCRYPT, ['cost' => 12]);
+       // $sub_user_data['first_name'] = $usr->first_name;
+
+
+        //$sub_user_data = json_decode($sub_user_data);
+        $message = "Date received successfully.";
+        return response()->json(array('type' => "success", 'message' => $message, 'sub_user_data' => $sub_user_data), 200);
+  
+    }
+
+    public function updateSubUser(Request $request){
+        $is_update = DB::table('users')->where('id', $request->UserId)->update(
+            array(
+            'first_name' => $request->first_name, 
+            'last_name' => $request->last_name, 
+            'mobile_number' => $request->mobile_number,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ));
+
+        if($is_update) {
+            $message = "Date updated successfully.";
+            return response()->json(array('type' => "success", 'message' => $message), 200);  
+        } else {
+            $message = "Some error in updating the data.";
+            return response()->json(array('type' => "error", 'message' => $message), 200); 
+        }
+    }
+
+    public function deleteSubUser(Request $request){
+        $is_delete = DB::table('users')->where('id', $request->deleteId)->update(
+            array(
+            'is_deleted' => 1 
+        ));
+
+        if($is_delete) {
+            $message = "Date deleted successfully.";
+            return response()->json(array('type' => "success", 'message' => $message), 200);  
+        } else {
+            $message = "Some error in deleting the data.";
+            return response()->json(array('type' => "error", 'message' => $message), 200); 
+        }
+    }
 }
