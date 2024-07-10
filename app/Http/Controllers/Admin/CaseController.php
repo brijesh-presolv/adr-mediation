@@ -5066,11 +5066,13 @@ class CaseController extends Controller
          $user_id = Auth::user()->id;
 
          //DB::enableQueryLog();
-         $subUserData = DB::table('user_hierarchy_master')
-         ->join('users', 'users.id', '=', 'user_hierarchy_master.sub_userid')
-         ->where('user_hierarchy_master.parent_userid', $user_id)
-         ->where('users.is_deleted', '=', 0)
-         ->get();
+
+         $subUserData = User::select('first_name', 'last_name', 'email', 'mobile_number')->where('role', 3)->where('is_deleted', 0)->get();
+        //  $subUserData = DB::table('user_hierarchy_master')
+        //  ->join('users', 'users.id', '=', 'user_hierarchy_master.sub_userid')
+        //  ->where('user_hierarchy_master.parent_userid', $user_id)
+        //  ->where('users.is_deleted', '=', 0)
+        //  ->get();
  
          //$subUserData = DB::getQueryLog();
          // Get Subusers //
@@ -5114,14 +5116,14 @@ class CaseController extends Controller
 
         // Add data in user hierarchy table
 
-        $user_hie_data = array();
-        $user_hie_data['parent_userid'] = Auth::user()->id;
-        $user_hie_data['sub_userid'] = $user_reg->id;
-        $user_hie_data['role'] = 3;
+        // $user_hie_data = array();
+        // $user_hie_data['parent_userid'] = Auth::user()->id;
+        // $user_hie_data['sub_userid'] = $user_reg->id;
+        // $user_hie_data['role'] = 3;
         //$user_hie_data['created_at'] = date('d-m-Y H:i:s');
 
         
-        DB::table('user_hierarchy_master')->insert($user_hie_data);
+       // DB::table('user_hierarchy_master')->insert($user_hie_data);
         
 
         return redirect()->route('admin.manageuser');

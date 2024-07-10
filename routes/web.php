@@ -281,7 +281,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('updateSubUser', [App\Http\Controllers\Admin\CaseController::class, 'updateSubUser'])->name('admin.updateSubUser');
     Route::post('deleteSubUser', [App\Http\Controllers\Admin\CaseController::class, 'deleteSubUser'])->name('admin.deleteSubUser');
 
-
+    Route::post('users/subuser', [App\Http\Controllers\Admin\UsersController::class, 'subUserInsert'])->name('admin.users.subuser');
     // Parent Child User
 
 });
