@@ -1919,137 +1919,143 @@ class CaseController extends Controller
                 }
             }
 
-            $invitation = $this->invitation_mediate($id);
+            /*************** ITM For ongoing cases while updating ***********************************/
+            if($med->case_status == 1) {
 
-            // $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+                    $invitation = $this->invitation_mediate($id);
 
-            // if (!isset($invmodel)) {
-            $invmodel = new InvitationFiles();
-            // }
-            $invmodel->case_id = $request->id;
-            $invmodel->file_name = $invitation;
-            $invmodel->save();
+                    // $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
 
-            $InvoledUserMsg = InvoledUser::where(['userPlanId' => $med->id])->get();
-             //dd($InvoledUserMsg);
-            $responding_party = "";
-            $finalFilePath = 'mediation_documents/mediation/' . $request->id . '/' . $invitation;
-            $whatsappSend = Storage::disk('s3')->url($finalFilePath);
-            foreach ($InvoledUserMsg as $value) {
+                    // if (!isset($invmodel)) {
+                    $invmodel = new InvitationFiles();
+                    // }
+                    $invmodel->case_id = $request->id;
+                    $invmodel->file_name = $invitation;
+                    $invmodel->save();
 
-                if ($value->isClaimant > 0) {
-                    // dd($value->name);
-                    if ($responding_party == "") {
-                        $responding_party = $value->name;
-                    }
+                    $InvoledUserMsg = InvoledUser::where(['userPlanId' => $med->id])->get();
+                    //dd($InvoledUserMsg);
+                    $responding_party = "";
+                    $finalFilePath = 'mediation_documents/mediation/' . $request->id . '/' . $invitation;
+                    $whatsappSend = Storage::disk('s3')->url($finalFilePath);
+                    foreach ($InvoledUserMsg as $value) {
 
-                    if ($value->userEmail != null) {
-                        if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
-                            $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => ($pone->organization != null) ? $pone->organization : $pone->name], $value->name, $finalFilePath);
+                        if ($value->isClaimant > 0) {
+                            // dd($value->name);
+                            if ($responding_party == "") {
+                                $responding_party = $value->name;
+                            }
+
+                            if ($value->userEmail != null) {
+                                if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
+                                    $s = SendGrid::send($d1, $value->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $value->joinCode, "-initiating-" => ($pone->organization != null) ? $pone->organization : $pone->name], $value->name, $finalFilePath);
+                                }
+                            }
+                            if ($value->userPhone != null) {
+
+                                $varjson = ['caseid' => "M" . sprintf("%06d", $id), 'initiating' => ($pone->organization != null) ? $pone->organization : $pone->name];
+                                $var = ['-cid-', '-ip-'];
+                                $var1 = ["M" . sprintf("%06d", $id), ($pone->organization != null) ? $pone->organization : $pone->name];
+
+                                $MedCasedata = MedCase::find($id);
+                                $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $med->id)->first();
+                                if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $value->userPhone){
+                                    $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
+                                    $l4_mediation_party2_tem="l4_mediation_party2_bot";
+                                }else{
+                                    $content1 = WaTemplate::getcontent('l4_mediation_party2');
+                                    $l4_mediation_party2_tem="l4_mediation_party2";
+                                }
+                                $content1 = WaTemplate::getcontent('l4_mediation_party2');
+                                $content = str_replace($var, $var1, $content1);
+                                $dwa1 = [
+                                    'caseid' => $id,
+                                    'contact' =>  $value->userPhone,
+                                    'content' => ['text' => $content],
+                                    'event' => 'ACPTARB_ADM_RES',
+                                    'varjson' => $varjson,
+                                    'haptik_tmp' => $l4_mediation_party2_tem,
+                                    //'haptik_tmp' => 'l4_mediation_party2',
+
+                                ];
+
+                                if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
+                                    $access = Whatsapp::sendWamessage($dwa1);
+                                }
+
+                                $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
+                                $var_file = ['-caseid-'];
+                                $var1_file = ["M" . sprintf("%06d", $id)];
+                                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                                $dwa2 = [
+                                    'caseid' => $id,
+                                    'contact' =>  $value->userPhone,
+                                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                                    'event' => 'ACPTARB_ADM_RES',
+                                    'varjson' => $varjson_file,
+                                    'haptik_tmp' => 'mediation_consent_doc',
+
+                                ];
+                                if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
+                                    $access = Whatsapp::sendWamessage($dwa2);
+                                }
+                            }
                         }
                     }
-                    if ($value->userPhone != null) {
-
-                        $varjson = ['caseid' => "M" . sprintf("%06d", $id), 'initiating' => ($pone->organization != null) ? $pone->organization : $pone->name];
-                        $var = ['-cid-', '-ip-'];
-                        $var1 = ["M" . sprintf("%06d", $id), ($pone->organization != null) ? $pone->organization : $pone->name];
-
-                        $MedCasedata = MedCase::find($id);
-                        $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $med->id)->first();
-                        if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $value->userPhone){
-                            $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
-                            $l4_mediation_party2_tem="l4_mediation_party2_bot";
-                        }else{
-                            $content1 = WaTemplate::getcontent('l4_mediation_party2');
-                            $l4_mediation_party2_tem="l4_mediation_party2";
-                        }
-                        $content1 = WaTemplate::getcontent('l4_mediation_party2');
-                        $content = str_replace($var, $var1, $content1);
-                        $dwa1 = [
-                            'caseid' => $id,
-                            'contact' =>  $value->userPhone,
-                            'content' => ['text' => $content],
-                            'event' => 'ACPTARB_ADM_RES',
-                            'varjson' => $varjson,
-                            'haptik_tmp' => $l4_mediation_party2_tem,
-                            //'haptik_tmp' => 'l4_mediation_party2',
-
-                        ];
-
-                        if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
-                            $access = Whatsapp::sendWamessage($dwa1);
+                    // dd($initiating_phone);
+                    if ($responding_party != "") {
+                        // dd($pone);
+                        if ($pone->userEmail != "") {
+                            if($med->stop_itm_rp == 0) {
+                                SendGrid::send($d2, $pone->userEmail, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $pone->name, $finalFilePath);
+                            }
                         }
 
-                        $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
-                        $var_file = ['-caseid-'];
-                        $var1_file = ["M" . sprintf("%06d", $id)];
-                        $content1_file = WaTemplate::getcontent('mediation_consent_doc');
-                        $content_file = str_replace($var_file, $var1_file, $content1_file);
-                        $dwa2 = [
-                            'caseid' => $id,
-                            'contact' =>  $value->userPhone,
-                            'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                            'event' => 'ACPTARB_ADM_RES',
-                            'varjson' => $varjson_file,
-                            'haptik_tmp' => 'mediation_consent_doc',
+                        if ($pone->userPhone != "") {
 
-                        ];
-                        if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
-                            $access = Whatsapp::sendWamessage($dwa2);
+                            $varjson = ['caseid' => "M" . sprintf("%06d", $id), 'responding' => $responding_party];
+                            $var = ['-cid-', '-rp-'];
+                            $var1 = ["M" . sprintf("%06d", $id), $responding_party];
+                            $content1 = WaTemplate::getcontent('l4_mediation_initiating');
+                            $content = str_replace($var, $var1, $content1);
+                            $dwa1 = [
+                                'caseid' => $id,
+                                'contact' =>  $pone->userPhone,
+                                'content' => ['text' => $content],
+                                // 'casetype' => 2,
+                                'event' => 'ACPTARB_ADM_INI',
+                                'varjson' => $varjson,
+                                'haptik_tmp' => 'l4_mediation_initiating',
+
+                            ];
+
+                            if($med->stop_itm_rp == 0) {
+                                $access = Whatsapp::sendWamessage($dwa1);
+                            }
+
+                            $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
+                            $var_file = ['-caseid-'];
+                            $var1_file = ["M" . sprintf("%06d", $id)];
+                            $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                            $content_file = str_replace($var_file, $var1_file, $content1_file);
+                            $dwa2 = [
+                                'caseid' => $id,
+                                'contact' =>  $pone->userPhone,
+                                'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                                'event' => 'ACPTARB_ADM_INI',
+                                'varjson' => $varjson_file,
+                                'haptik_tmp' => 'mediation_consent_doc',
+
+                            ];
+                            if($med->stop_itm_rp == 0) {
+                                $access = Whatsapp::sendWamessage($dwa2);
+                            }
                         }
                     }
-                }
             }
-            // dd($initiating_phone);
-            if ($responding_party != "") {
-                // dd($pone);
-                if ($pone->userEmail != "") {
-                    if($med->stop_itm_rp == 0) {
-                        SendGrid::send($d2, $pone->userEmail, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $pone->name, $finalFilePath);
-                    }
-                }
 
-                if ($pone->userPhone != "") {
-
-                    $varjson = ['caseid' => "M" . sprintf("%06d", $id), 'responding' => $responding_party];
-                    $var = ['-cid-', '-rp-'];
-                    $var1 = ["M" . sprintf("%06d", $id), $responding_party];
-                    $content1 = WaTemplate::getcontent('l4_mediation_initiating');
-                    $content = str_replace($var, $var1, $content1);
-                    $dwa1 = [
-                        'caseid' => $id,
-                        'contact' =>  $pone->userPhone,
-                        'content' => ['text' => $content],
-                        // 'casetype' => 2,
-                        'event' => 'ACPTARB_ADM_INI',
-                        'varjson' => $varjson,
-                        'haptik_tmp' => 'l4_mediation_initiating',
-
-                    ];
-
-                    if($med->stop_itm_rp == 0) {
-                        $access = Whatsapp::sendWamessage($dwa1);
-                    }
-
-                    $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
-                    $var_file = ['-caseid-'];
-                    $var1_file = ["M" . sprintf("%06d", $id)];
-                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
-                    $content_file = str_replace($var_file, $var1_file, $content1_file);
-                    $dwa2 = [
-                        'caseid' => $id,
-                        'contact' =>  $pone->userPhone,
-                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                        'event' => 'ACPTARB_ADM_INI',
-                        'varjson' => $varjson_file,
-                        'haptik_tmp' => 'mediation_consent_doc',
-
-                    ];
-                    if($med->stop_itm_rp == 0) {
-                        $access = Whatsapp::sendWamessage($dwa2);
-                    }
-                }
-            }
+            /*************** ITM For ongoing cases while updating ***********************************/
 
             $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get();
 
