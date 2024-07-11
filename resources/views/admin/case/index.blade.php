@@ -80,6 +80,14 @@
                                 </div>
                                 {{-- <input type="hidden" name="uploaded_by" value="{{auth()->user()->id}}" /> --}}
 
+
+                                <!------ Added for sub user listing --------------->
+                                <div class="form-group">
+                                    <select class="form-control" name="subuser" id="subuser" required>
+                                    </select>
+                                </div>
+                                <!------ Added for sub user listing --------------->
+
                                 <div class="form-group">
                                     <input type="file" name="csv" id="fileInput" onchange=""
                                         class="col-md-12 dropify" data-allowed-file-extensions="csv" required=""
@@ -517,6 +525,7 @@
         $(document).ready(function() {
             $('.dropify').dropify();
             $('#claimant').select2();
+            $('#subuser').select2();
         });
         var batch_id;
 
@@ -627,6 +636,8 @@
                 {
                     "data": "case.id",
                     render: function(data, type, row) {
+
+                       //console.log(row);
                         var d = '';
 
                         if (row.party.length == 0) {
@@ -642,12 +653,19 @@
                         
                         // Batch Name //
                         var batch =
-                        `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
+                        `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name </p><p style="color: blue; font-size:13px;">` +
                         row.case.batch_name + `</p> </div>`;
                         // Batch Name //
+
+                        if(row.sub_user != ""){
+                            var sub_user = `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Sub User</p><p style="color: blue; font-size:13px;">` +
+                        row.sub_user + `</p> </div>`;
+                        } else {
+                            var sub_user = ""; 
+                        }
                         
                         
-                        return button + batch;
+                        return button + batch + sub_user;
                     }
                 },
                 {
@@ -2965,5 +2983,45 @@
             window.location = "{{ route('admin.case.newrequest') }}"
         });
         <?php } ?>
+
+
+
+
+        // on change claimant event //
+        $('#claimant').change(function(){
+
+            var parent_id = $(this).val();
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+            $.ajax({
+                url: '{{ route('admin.getSubUserList') }}',
+                method: "POST",
+                data: {
+                    parent_id: parent_id,
+                    _token: csrf
+                },
+                success: function(resp) {
+                    $('#subuser').empty();
+
+                    if(resp.user_data != ""){
+                        var option_html = "<option>Select Sub User</option>";
+                        $(resp.user_data).each(function( index, element ) { 
+                            option_html += "<option value='"+element.id+"' name='sub_user_id'>"+element.first_name +" "+ element.last_name+"</option>" ; 
+                        });
+                    } else {
+                        var option_html = "<option>No Sub Users</option>";  
+                    }
+
+                    
+
+                    $('#subuser').html(option_html);
+                },
+
+                error: function(err) {
+                    console.log(err);
+                },
+            });
+        });
+        // on change claimant event //
     </script>
 @endsection

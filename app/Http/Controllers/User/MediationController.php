@@ -670,6 +670,7 @@ class MediationController extends Controller
         //     $pending[] = $value;
         // }
 
+        $user_id = Auth::user()->id;
 
         return view('user.newrequest', ['response' => Session::get('response')]);
     }
@@ -1566,5 +1567,36 @@ class MediationController extends Controller
         }
 
        
+    }
+
+    public function NewReqSub()
+    {
+        $draw = $_POST['sEcho'];
+        $row = $_POST['iDisplayStart'];
+        $rowperpage = $_POST['iDisplayLength']; // Rows display per page
+        $indexColumn = $_POST['iSortCol_0'];
+        $columnName = $_POST['mDataProp_' . $indexColumn]; // Column name
+        $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
+        $searchValue = $_POST['sSearch'];
+
+       $check = DB::table('user_hierarchy_master')->where('sub_userid', "LIKE", '%'.Auth::user()->id.   '%')->first();
+
+       //dd($check->parent_userid);
+
+        $casescount = MedCase::getCaseCountNewReqUser_sub($searchValue, $check->parent_userid);
+        //dd($casescount);
+        $cases = MedCase::getCaseNewReqUser_sub($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $check->parent_userid);
+       // dd($cases);
+        $arraydata = array();
+        foreach ($cases as $key => $value) {
+
+            $arraydata[] = [
+                "key" => $key + 1,
+                "case" => $value,
+                "date" => date('d-m-Y', strtotime($value->created_at)),
+                "party" => InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->userPlanId])->get(),
+            ];
+        }
+        return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
     }
 }

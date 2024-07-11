@@ -1570,6 +1570,15 @@ class CaseController extends Controller
             $actionDate = date('d-m-Y', strtotime($d->update));
             $createDate = date('d-m-Y', strtotime($d->create));
             $admin_approve = date('d-m-Y', strtotime($d->admin_approve));
+
+            
+            if($d->sub_user_id != null){
+                $sub_user_data = User::select("first_name", "last_name")->where("id", $d->sub_user_id)->first();
+                $sub_user = $sub_user_data->first_name ." ".$sub_user_data->last_name;
+            } else {
+                $sub_user = "";
+            }  
+            
             $arraydata[] = [
                 "key" => $key + 1,
                 "date" => date('d-m-Y', strtotime($d->created_at)),
@@ -1583,6 +1592,7 @@ class CaseController extends Controller
                 "private_view_count" => Mediation_case_comment::where("type", "=", 1)->where('mediation_case_id', $d->id)->where('view', 0)->count(),
                 "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->count(),
                 "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $d->id)->where('view', 0)->count(),
+                "sub_user" => $sub_user
             ];
         }
         return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
@@ -3160,6 +3170,13 @@ class CaseController extends Controller
                 // itm language //
 
 
+
+                // Add sub user id //
+                $data['sub_user_id'] = $request->subuser;
+                // Add sub user id //
+
+
+               // dd($request->subuser);
                 $med = MedCase::create($data);
 
                 $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();
@@ -5104,7 +5121,7 @@ class CaseController extends Controller
             'is_agree' => 1,
             'isActive' => 1,
             'status' => 1,
-            'is_set_pwd' => 1,
+            //'is_set_pwd' => 1,
             'address' => 'address1',
             'address1' => 'address2',
             'pincode' => 4005,
@@ -5184,5 +5201,29 @@ class CaseController extends Controller
             $message = "Some error in deleting the data.";
             return response()->json(array('type' => "error", 'message' => $message), 200); 
         }
+    }
+
+
+    public function getSubUserList(Request $request) {
+        //dd($request->parent_id);
+
+        $getSub = DB::table('user_hierarchy_master')
+         ->where('parent_userid', $request->parent_id)
+         ->first();
+
+        if(!empty($getSub)) {
+            $sub_user_id = json_decode($getSub->sub_userid);
+
+
+            $user_data = DB::table('users')->select('id', 'first_name', 'last_name')
+            ->whereIn('id', $sub_user_id)
+            ->get();
+        } else {
+            $user_data = ""; 
+        }
+
+        
+        
+        return response()->json(array('type' => "success", 'user_data' => $user_data), 200);
     }
 }

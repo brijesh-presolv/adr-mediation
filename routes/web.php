@@ -108,6 +108,9 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     //track
     Route::get('track/{id}', [App\Http\Controllers\User\MediationController::class, 'track'])->name('user.case.track');
 
+
+    //sub user 
+    Route::post('case/jsonnewsub', [App\Http\Controllers\User\MediationController::class, 'NewReqSub'])->name('user.case.jsonnewsub');
     
 
 });
@@ -282,6 +285,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('deleteSubUser', [App\Http\Controllers\Admin\CaseController::class, 'deleteSubUser'])->name('admin.deleteSubUser');
 
     Route::post('users/subuser', [App\Http\Controllers\Admin\UsersController::class, 'subUserInsert'])->name('admin.users.subuser');
+
+    Route::post('getSubUserList', [App\Http\Controllers\Admin\CaseController::class, 'getSubUserList'])->name('admin.getSubUserList');
     // Parent Child User
 
 });

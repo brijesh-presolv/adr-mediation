@@ -78,6 +78,16 @@ use AuthenticatesUsers;
             $USER->last_login = date("Y-m-d h:i:s");
             $USER->save();
             return route('admin.dashboard');
+        } else if (Auth::check() && (Auth::user()->role == 3)) { // for sub user
+            Session::put('last_login', Auth::user()->last_login);
+            $USER = User::find(Auth::user()->id);
+            $USER->last_login = date("Y-m-d h:i:s");
+            $USER->save();
+
+
+        
+
+         return route('user.dashboard');
         }
     }
 

@@ -251,19 +251,34 @@ class UsersController extends Controller
     }
 
     public function subUserInsert(Request $request){
-        //dd($request->all());
-        $sub_user_id = json_encode($request->sub_user);
-        //dd($sub_user_id);
-        $user_hie_data = array();
-        $user_hie_data['parent_userid'] = $request->id;
-        $user_hie_data['sub_userid'] = $sub_user_id;
-        $user_hie_data['role'] = 3;
-        // /$user_hie_data['created_at'] = date('d-m-Y H:i:s');
-//
-        
-       $is_insert = DB::table('user_hierarchy_master')->insert($user_hie_data);
 
-       if($is_insert){
+        $is_check = DB::table('user_hierarchy_master')->where('parent_userid', $request->id)->first();
+        //dd($request->all());
+        if(!empty($is_check)){
+            $sub_user_id = json_encode($request->sub_user);
+            //dd($sub_user_id);
+            $user_hie_data = array();
+            $user_hie_data['parent_userid'] = $request->id;
+            $user_hie_data['sub_userid'] = $sub_user_id;
+            $user_hie_data['role'] = 3;
+
+            $is_operation = DB::table('user_hierarchy_master')->update($user_hie_data)->where('id', $is_check->id);
+
+        } else {
+            $sub_user_id = json_encode($request->sub_user);
+            //dd($sub_user_id);
+            $user_hie_data = array();
+            $user_hie_data['parent_userid'] = $request->id;
+            $user_hie_data['sub_userid'] = $sub_user_id;
+            $user_hie_data['role'] = 3;
+            // /$user_hie_data['created_at'] = date('d-m-Y H:i:s');
+    //
+            
+            $is_operation = DB::table('user_hierarchy_master')->insert($user_hie_data);
+        }
+        
+
+       if($is_operation){
             return redirect()->route("admin.users.list");
        }
 
