@@ -4508,7 +4508,7 @@ class CaseController extends Controller
             // For Session participation consent
             $caseinfo['Session_Participation_Consent'] = "";
             $session_part = DB::table('manage_session')
-            ->where('case_id', $value['caseid'])
+            ->where('case_id', $value)
             ->first();
            
             //dd($value['caseid']);
