@@ -29,6 +29,35 @@ use App\Models\InvoledUser;
         <div class="col-sm-12">
             <div class="card-box table-responsive">
 
+            <?php if(Auth::user()->role == 3 && $is_parent == 0){ ?>
+                <table id="usersSub" class="table table-striped table-bordered dt-responsive nowrap"
+                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>Case ID</th>
+                            <!-- <th>Ref ID</th> -->
+                            <th>Date <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Date and time of raising the 'Request for Mediation'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            <th>Case Details <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the 'Case Details'."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+                            <th>Party Details</th>
+                            <th>Mediator</th>
+                            <!-- <th>Comment</th> -->
+                            <th>Session <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view the details of the mediation session."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a>	</th>
+                            <th>Documents <a href="#" data-toggle="tooltip" title=""
+                                        data-original-title="Click here to view document/s uploaded in relation to the case."><i
+                                            class="fa fa-info-circle" aria-hidden="true"></i></a></th>
+
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                </table>
+            <?php } else { ?>
                 <table id="users" class="table table-striped table-bordered dt-responsive nowrap"
                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead>
@@ -56,6 +85,9 @@ use App\Models\InvoledUser;
                         </tr>
                     </thead>
                 </table>
+            <?php } ?>
+
+                
 
             </div>
         </div>
@@ -280,10 +312,18 @@ use App\Models\InvoledUser;
                 },
                 {
                     "data": "case.caseid",
-                    render: function(data) {
+                    render: function(data, type, row) {
                         var button = ` <a href="{{ url('user/casedetails/') }}/` + data +
                             `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
-                        return button;
+                        
+                        if(row.sub_user != ""){
+                            var sub_user = `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Sub User</p><p style="color: blue; font-size:13px;">` +
+                        row.sub_user + `</p> </div>`;
+                        } else {
+                            var sub_user = ""; 
+                        }
+                        
+                        return button + sub_user;
                     }
                 },
                 {
@@ -452,6 +492,203 @@ use App\Models\InvoledUser;
                 }
             ],
         });
+
+
+
+
+        // Sub User Data //
+        var subUserTable = $('#usersSub').DataTable({
+            "serverMethod": "POST",
+            "sAjaxSource": '{{ route('user.case.jsonSub', $confirm_status) }}',
+            "processing": true,
+            "serverSide": true,
+            "order": [
+                [0, "desc"]
+            ],
+            "lengthMenu": [
+                [10, 25, 50, 100, 250, 500, 1000],
+                [10, 25, 50, 100, 250, 500, 1000],
+            ],
+            "iDisplayLength": 10,
+            "responsive": true,
+            serverData: function(sSource, aoData, fnCallback, oSettings) {
+                // aoData.append('token',token)
+
+                oSettings = $.ajax({
+                    dataType: "json",
+                    type: "post",
+                    // async: false,
+                    crossDomain: true,
+                    url: sSource,
+                    data: aoData,
+                    success: fnCallback
+
+                });
+
+            },
+            "columns": [{
+                    "data": "key",
+                },
+                {
+                    "data": "case.caseid",
+                    render: function(data) {
+                        var button = "M" + pad(data, 6);
+                        // Track added //
+                        button = button + `<br><a href="{{ url('user/track/') }}/` +
+                        data +
+                        `" target="_blank" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
+                        // Track added //
+                        return button;
+                    }
+                },
+                // {
+                //     "data": "case.ref_id",
+                //     render: function(data, type, row, meta) {
+                //         if (data == null) {
+                //             var button = "";
+                //             button = button + `<p style="font-size: 16px;"> -- </p>`;
+                //             return button;
+                //         } else {
+                //             var button = "";
+                //             button = button + `<p style="font-size: 16px;">` + data + `</p>`;
+                //             return button;
+                //         }
+
+                //     }
+                // },
+                {
+                    "data": "date"
+                },
+                {
+                    "data": "case.caseid",
+                    render: function(data, type, row) {
+                        var button = ` <a href="{{ url('user/casedetails/') }}/` + data +
+                            `" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="@lang('case.btn_case_details_view')"><i class="mdi mdi-file-eye-outline"></i></a> `;
+                       
+                        if(row.sub_user != ""){
+                            var sub_user = `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Sub User</p><p style="color: blue; font-size:13px;">` +
+                        row.sub_user + `</p> </div>`;
+                        } else {
+                            var sub_user = ""; 
+                        }
+                        return button + sub_user;
+                    }
+                },
+                {
+                    "data": "party",
+                    render: function(data, type, row) {
+                        var d = "";
+                        var d_ip = "<strong>Initiating Party(s) :</strong><br/>";
+                        var d_rp = "<br/><strong>Responding Party(s) :</strong><br/>";
+                        for (i in data) {
+                            if (data[i].isOnboarded == 1) {
+                                var class_name = "text-success";
+                            } else {
+                                var class_name = "text-danger";
+                            }
+
+                            if (data[i].name != null && data[i].isClaimant == 0) {
+                                d_ip = d_ip +
+                                `<span class="party_name" data-inid="` +
+                                data[
+                                    i].id + `" data-id="` + data[i].userId +
+                                `">` + data[i]
+                                .name + `</span><br>`;
+
+                            } else {
+                                if(data[i].name != null){
+                                d_rp = d_rp +
+                                `<span class="`+ class_name + ` party_name" data-inid="` +
+                                data[i]
+                                .id + `" data-id="` + data[i].userId + `">` + data[
+                                    i].name +
+                                `</span><br>`;
+                                }
+                            }
+                            
+                        }
+                        d = d + d_ip + d_rp;
+                        return d;
+                    }
+                },
+                {
+                    "data": "case",
+                    render: function(data, type, row) {
+                        var button = "";
+                        // return  date.toLocaleDateString('en-GB');
+                        button = button + `<button  class="btn btn-info btn-sm">` +
+                            data.mediator + ` </button>`;
+                        if (data.mstatus == 0) {
+                            button = button +
+                                `<br><span class="mediator_action" data-mediatoraction="` +
+                                data.mstatus + `">@lang('case.status_pending')</span>`;
+                        } else if (data.mstatus == 1) {
+                            button = button +
+                                `<br><span class="mediator_action" data-mediatoraction="` +
+                                data.mstatus + `">@lang('case.status_accepted')</span>`;
+                            button = button +
+                                `<br><a href="{{ url('user/consent-and-disclosures/') }}/` + data.caseid +
+                                `" target="_blank" class="btn btn-teal waves-light waves-effect btn-xs">@lang('case.btn_disclosure')</a> `;
+                            button = button + `<br><span class="">` +
+                                row.mediator_create_action_date + `</span>`;
+                        } else {
+                            button = button +
+                                `<br><span class="mediator_action" data-mediatoraction="` +
+                                data.mstatus + `">@lang('case.status_rejected')</span>`;
+                            // button = button + `<br><span class="badge badge-danger">Date of Rejection: `+row.mediator_action_date+`</span>`;
+                        }
+
+                        return button;
+                    }
+                },
+                
+                {
+                    "data": "case.caseid",
+                    render: function(data, type, row) {
+                        var button = "";
+                        button = button + ` <button id="Sessview` + data + `" value="` + data +
+                            `"  data-id="` + data +
+                            `"   class="btn btn-warning waves-effect btn-sm"  data-toggle="modal" data-target="#viewSession-modal" title="@lang('case.btn_session_view')" ><span class="mdi mdi-file-eye-outline"></span></button>`;
+                        return button;
+                    }
+                },
+                {
+                    "data": "casestatus",
+                    render: function(data, type, row) {
+                        var button = "";
+                        if (data.status === 6) {
+                            button = button + `<button value="` + row.case.caseid + `"  data-id="` + row
+                                .case.caseid +
+                                `" class="btn btn-success waves-effect btn-sm" data-toggle="modal" data-target="#settelmentModal">View</button>`;
+                        } else if (data.status === 5) {
+                            button = button + `<button value="Comment" data-withdraw="` + row.case
+                                .withdraw +
+                                `" data-toggle="modal" data-target="#withdrawModal" class="btn btn-success waves-effect btn-sm">Withdrawn</button>`;
+                        } else if (data.status === 7) {
+                            button = button + `<button value="Comment" data-withdraw="` + row.case
+                                .withdraw +
+                                `" data-toggle="modal" data-target="#withdrawModal" class="btn btn-danger waves-effect btn-sm">Unresolved</button>`;
+                        }
+                        return button;
+                    }
+                },
+                {
+                    "data": "casestatus",
+                    render: function(data, type, row) {
+                        var button = "";
+                        if (data.status === 6) {
+                            button = button + `<span class="">` + data.description +
+                                `<br> @lang('case.At'): ` + data.created + `</span>`;
+                        } else {
+                            button = button + `<span class="">` + data.description +
+                                `<br> @lang('case.At'): ` + data.created + `</span>`;
+                        }
+                        return button;
+                    }
+                }
+            ],
+        });
+        // Sub User Data //
 
         $(document).ready(function() {
 

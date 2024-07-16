@@ -113,6 +113,7 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::post('case/jsonnewsub', [App\Http\Controllers\User\MediationController::class, 'NewReqSub'])->name('user.case.jsonnewsub');
     
 
+    Route::post('case/jsonSub/{confirm_status?}', [App\Http\Controllers\User\MediationController::class, 'jsonSub'])->defaults('confirm_status', 0)->name('user.case.jsonSub');
 });
 
 

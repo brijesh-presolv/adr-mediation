@@ -115,7 +115,7 @@ class UsersController extends Controller
         $subUserData = "";
       }
 
-      //dd($subUserData['selected_sub'][0]->sub_userid);
+      //dd($subUserData);
         return view('admin.users.edit', compact("user", "medi", "areaOfSpecialization", "subUserData"));
     }
 
@@ -253,7 +253,7 @@ class UsersController extends Controller
     public function subUserInsert(Request $request){
 
         $is_check = DB::table('user_hierarchy_master')->where('parent_userid', $request->id)->first();
-        //dd($request->all());
+        
         if(!empty($is_check)){
             $sub_user_id = json_encode($request->sub_user);
             //dd($sub_user_id);
@@ -262,7 +262,7 @@ class UsersController extends Controller
             $user_hie_data['sub_userid'] = $sub_user_id;
             $user_hie_data['role'] = 3;
 
-            $is_operation = DB::table('user_hierarchy_master')->update($user_hie_data)->where('id', $is_check->id);
+            $is_operation = DB::table('user_hierarchy_master')->where('id', $is_check->id)->update($user_hie_data);
 
         } else {
             $sub_user_id = json_encode($request->sub_user);
@@ -277,8 +277,9 @@ class UsersController extends Controller
             $is_operation = DB::table('user_hierarchy_master')->insert($user_hie_data);
         }
         
+        //dd($is_operation);
 
-       if($is_operation){
+       if(isset($is_operation)){
             return redirect()->route("admin.users.list");
        }
 

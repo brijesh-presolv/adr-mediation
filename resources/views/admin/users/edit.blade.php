@@ -262,8 +262,14 @@
                                         <option value="">Select</option>
                                         @if(!empty($subUserData))
                                             @foreach ($subUserData['sub'] as $subUser)
+
+                                            @if(count($subUserData['selected_sub']) > 0)
                                             <option value="{{$subUser->id}}"
                                             {{ array_search($subUser->id, json_decode($subUserData['selected_sub'][0]->sub_userid)) !== false ? 'selected': '' }}>
+                                            @else
+                                            <option value="{{$subUser->id}}">
+                                            @endif
+                                            
                                            
                                              {{$subUser->first_name}} {{$subUser->last_name}} </option>
                                             @endforeach

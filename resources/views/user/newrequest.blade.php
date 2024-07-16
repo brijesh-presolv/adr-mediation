@@ -83,7 +83,7 @@ use App\Models\InvoledUser;
 
             </div>
         </div>
-        <?php if(Auth::user()->role == 3){ ?>
+        <?php if(Auth::user()->role == 3 && $is_parent == 0){ ?>
             <table  id="usersSub" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <thead>
                     <tr>
@@ -230,7 +230,14 @@ use App\Models\InvoledUser;
                             var button = `<a class="btn btn-sm btn-primary label label-success disabled"><i class="mdi mdi-file-eye-outline"></i></a>`;
                         }
                         
-                        return button;
+                        if(row.sub_user != ""){
+                            var sub_user = `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Sub User</p><p style="color: blue; font-size:13px;">` +
+                        row.sub_user + `</p> </div>`;
+                        } else {
+                            var sub_user = ""; 
+                        }
+
+                        return button + sub_user;
                     }
                 },
                 {
@@ -411,8 +418,16 @@ use App\Models\InvoledUser;
                         } else {
                             var button = `<a class="btn btn-sm btn-primary label label-success disabled"><i class="mdi mdi-file-eye-outline"></i></a>`;
                         }
+
                         
-                        return button;
+                        if(row.sub_user != ""){
+                            var sub_user = `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Sub User</p><p style="color: blue; font-size:13px;">` +
+                        row.sub_user + `</p> </div>`;
+                        } else {
+                            var sub_user = ""; 
+                        }
+                        
+                        return button + sub_user;
                     }
                 },
                 {

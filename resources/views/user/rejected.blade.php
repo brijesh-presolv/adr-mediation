@@ -52,6 +52,8 @@ use App\Models\InvoledUser;
                     $id='';
 
                     foreach ($closed as $key => $value) {
+                        
+                        
                      ?>
                         <tr>
 
@@ -82,7 +84,21 @@ use App\Models\InvoledUser;
                             */ ?>
                             <td><?= date('d-m-Y', strtotime($value->date)) ?></td>
                             <td><a class="btn   btn-sm btn-primary label label-success {{ count($value->party) > 0 ? '' : 'disabled' }}"
-                                    target="_blank" href="{{ route('user.casedetails', $value->caseid) }}"><i class="mdi mdi-file-eye-outline"></i></a></td>
+                                    target="_blank" href="{{ route('user.casedetails', $value->caseid) }}"><i class="mdi mdi-file-eye-outline"></i></a>
+                        
+                            <?php
+// if($value->sub_user_id != ""){
+//     echo "<br><br><span>Sub User</span>";
+//     $sub_user_data = User::select("first_name", "last_name")->where("id", $value->sub_user_id)->first();
+//     $sub_user = $sub_user_data->first_name ." ".$sub_user_data->last_name;
+//    echo $sub_user;
+// } else {
+//     echo "";
+// }
+
+                            ?>
+                                
+                            </td>
 
 
                             <td><?php

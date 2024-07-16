@@ -3175,7 +3175,7 @@ class CaseController extends Controller
                 $data['sub_user_id'] = $request->subuser;
                 // Add sub user id //
 
-
+                //dd($data);
                // dd($request->subuser);
                 $med = MedCase::create($data);
 
