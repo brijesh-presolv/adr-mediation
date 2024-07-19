@@ -83,7 +83,7 @@
 
                                 <!------ Added for sub user listing --------------->
                                 <div class="form-group">
-                                    <select class="form-control" name="subuser" id="subuser" required>
+                                    <select class="form-control" name="subuser" id="subuser">
                                     </select>
                                 </div>
                                 <!------ Added for sub user listing --------------->
