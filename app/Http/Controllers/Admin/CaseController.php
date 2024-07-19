@@ -4533,10 +4533,37 @@ class CaseController extends Controller
             //dd($value['caseid']);
             $session_part_consent = isset($session_part) ? $session_part->participant_whtsapp : "";
             
-            if($session_part_consent == 1){
-                $caseinfo['Session_Participation_Consent'] = "Yes";
-            } else {
-                $caseinfo['Session_Participation_Consent'] = "No";
+            $wa_whatsapp_tracking = DB::table('whatsapp_tracking')
+            ->where('caseid', $value)
+            ->where('event', "WA_Session_Consent")
+            ->get();
+
+            $wa_bot_consent_details = DB::table('wa_bot_consent_details')
+            ->where('caseid', $value)
+            ->get();
+
+            $Session_Participation_text="";
+
+            if(count($wa_whatsapp_tracking) > 0){
+
+                if(count($wa_bot_consent_details) > 0){
+
+                    foreach($wa_bot_consent_details as $wa_consent_data){
+
+                        $Session_Participation_text .=$wa_consent_data->mobile." - ".$wa_consent_data->wa_consent_text. "<br>";
+                    }
+
+                    $caseinfo['Session_Participation_Consent'] = $Session_Participation_text;
+
+                }else{
+
+                    $caseinfo['Session_Participation_Consent'] = "NA";
+                }
+
+            }else{
+
+                $caseinfo['Session_Participation_Consent'] = "WA Consent has not been sent";
+
             }
             // For Session participation consent
 
