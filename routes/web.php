@@ -108,8 +108,12 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     //track
     Route::get('track/{id}', [App\Http\Controllers\User\MediationController::class, 'track'])->name('user.case.track');
 
+
+    //sub user 
+    Route::post('case/jsonnewsub', [App\Http\Controllers\User\MediationController::class, 'NewReqSub'])->name('user.case.jsonnewsub');
     
 
+    Route::post('case/jsonSub/{confirm_status?}', [App\Http\Controllers\User\MediationController::class, 'jsonSub'])->defaults('confirm_status', 0)->name('user.case.jsonSub');
 });
 
 
@@ -277,6 +281,17 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // close case notification
     Route::get('closecasenotification', [App\Http\Controllers\Admin\DashboardController::class, 'closeCaseNotification'])->name('admin.closecasenotification');
     Route::post('case/stop-notification-close', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStopWhenClose'])->name('admin.case.batchNotificationStopWhenClose');
+    Route::get('manageuser', [App\Http\Controllers\Admin\CaseController::class, 'manageUser'])->name('admin.manageuser');
+    Route::post('addmiiuser', [App\Http\Controllers\Admin\CaseController::class, 'addmiiuser'])->name('admin.addmiiuser');
+    Route::get('getSubUserData', [App\Http\Controllers\Admin\CaseController::class, 'getSubUserData'])->name('admin.getSubUserData');
+    Route::post('updateSubUser', [App\Http\Controllers\Admin\CaseController::class, 'updateSubUser'])->name('admin.updateSubUser');
+    Route::post('deleteSubUser', [App\Http\Controllers\Admin\CaseController::class, 'deleteSubUser'])->name('admin.deleteSubUser');
+
+    Route::post('users/subuser', [App\Http\Controllers\Admin\UsersController::class, 'subUserInsert'])->name('admin.users.subuser');
+
+    Route::post('getSubUserList', [App\Http\Controllers\Admin\CaseController::class, 'getSubUserList'])->name('admin.getSubUserList');
+    // Parent Child User
+
 });
 
 //notification

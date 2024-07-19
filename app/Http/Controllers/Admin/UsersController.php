@@ -9,6 +9,7 @@ use App\Models\Mediation_Details;
 use App\Models\AreaOfSpecialization;
 use App\Http\Helpers\SendGrid;
 use Illuminate\Support\Facades\Storage;
+use DB;
 
 class UsersController extends Controller
 {
@@ -98,7 +99,24 @@ class UsersController extends Controller
         $user = User::findOrFail($id);
         $areaOfSpecialization = AreaOfSpecialization::all();
         $medi = Mediation_Details::where("user_id", "=", $id)->first();
-        return view('admin.users.edit', compact("user", "medi", "areaOfSpecialization"));
+
+    
+      if($user->role == 0){
+        $subUserData['sub'] = User::select('id', 'first_name', 'last_name')->where('role', 3)->where('is_deleted', 0)->get();
+
+        $subUserData['selected_sub'] = DB::table('user_hierarchy_master')
+         ->join('users', 'users.id', '=', 'user_hierarchy_master.parent_userid')
+         ->where('user_hierarchy_master.parent_userid', $id)
+         ->where('users.is_deleted', '=', 0)
+         ->get();
+
+
+      } else {
+        $subUserData = "";
+      }
+
+      //dd($subUserData);
+        return view('admin.users.edit', compact("user", "medi", "areaOfSpecialization", "subUserData"));
     }
 
     /**
@@ -230,5 +248,40 @@ class UsersController extends Controller
         } else {
             return json_encode(["message" => "error"]);
         };
+    }
+
+    public function subUserInsert(Request $request){
+
+        $is_check = DB::table('user_hierarchy_master')->where('parent_userid', $request->id)->first();
+        
+        if(!empty($is_check)){
+            $sub_user_id = json_encode($request->sub_user);
+            //dd($sub_user_id);
+            $user_hie_data = array();
+            $user_hie_data['parent_userid'] = $request->id;
+            $user_hie_data['sub_userid'] = $sub_user_id;
+            $user_hie_data['role'] = 3;
+
+            $is_operation = DB::table('user_hierarchy_master')->where('id', $is_check->id)->update($user_hie_data);
+
+        } else {
+            $sub_user_id = json_encode($request->sub_user);
+            //dd($sub_user_id);
+            $user_hie_data = array();
+            $user_hie_data['parent_userid'] = $request->id;
+            $user_hie_data['sub_userid'] = $sub_user_id;
+            $user_hie_data['role'] = 3;
+            // /$user_hie_data['created_at'] = date('d-m-Y H:i:s');
+    //
+            
+            $is_operation = DB::table('user_hierarchy_master')->insert($user_hie_data);
+        }
+        
+        //dd($is_operation);
+
+       if(isset($is_operation)){
+            return redirect()->route("admin.users.list");
+       }
+
     }
 }

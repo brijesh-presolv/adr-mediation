@@ -93,6 +93,15 @@ $notification = Notification::where('view', 0)->count();
                     </ul>
                 </li>
 
+                <!---------- Parent Child User ------------------>
+                <li>
+                    <a  href="{{url('admin/manageuser')}}" class="waves-effect waves-light">
+                        <i class="fa fa-cogs"> </i>
+                        <span>Manage Users</span>
+                    </a>
+                </li>
+                <!---------- Parent Child User ------------------>
+                
 
             </ul>
 

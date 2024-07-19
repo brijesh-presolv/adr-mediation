@@ -240,6 +240,54 @@
             </div>
         </div>
     </div>
+
+
+
+
+
+    @if ($user->role == 0)
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-box">
+                <form action="{{ route('admin.users.subuser') }}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="id" value="{{ $user->id }}">
+                        <h4 class="header-title"><b>Add Sub User</b></h4>
+                        @csrf
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="sub_user">Select Sub User</label>
+                                    <select class="select2 form-control select2-multiple" multiple="multiple"
+                                        data-placeholder="" id="sub_user" name="sub_user[]" id="sub_user" name="sub_user">
+                                        <option value="">Select</option>
+                                        @if(!empty($subUserData))
+                                            @foreach ($subUserData['sub'] as $subUser)
+
+                                            @if(count($subUserData['selected_sub']) > 0)
+                                            <option value="{{$subUser->id}}"
+                                            {{ array_search($subUser->id, json_decode($subUserData['selected_sub'][0]->sub_userid)) !== false ? 'selected': '' }}>
+                                            @else
+                                            <option value="{{$subUser->id}}">
+                                            @endif
+                                            
+                                           
+                                             {{$subUser->first_name}} {{$subUser->last_name}} </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Add Sub User</button>
+                        </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    @endif
 @endsection
 
 <!-- Table datatable css -->

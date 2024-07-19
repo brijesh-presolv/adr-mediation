@@ -19,16 +19,30 @@ class IsUser {
 
             if(Auth::user()->emailotp!=null){
           
-          return redirect('verify');
-      }  else{
+                return redirect('verify');
+            }  else{
 
-        if (Auth::user()->isActive=='0' or Auth::user()->status=='0') {
-            Auth::logout();
-            return redirect('login')->with('warning','Account Under Review.');
-        }
-        
-            return $next($request);
-      }
+                if (Auth::user()->isActive=='0' or Auth::user()->status=='0') {
+                    Auth::logout();
+                    return redirect('login')->with('warning','Account Under Review.');
+                }
+                
+                    return $next($request);
+            }
+        } else if (Auth::check() && (Auth::user()->role == 3)) {
+
+            if(Auth::user()->emailotp!=null){
+          
+                return redirect('verify');
+            }  else{
+
+                if (Auth::user()->isActive=='0' or Auth::user()->status=='0') {
+                    Auth::logout();
+                    return redirect('login')->with('warning','Account Under Review.');
+                }
+                
+                    return $next($request);
+            }
         } else {
             abort(404);
         }

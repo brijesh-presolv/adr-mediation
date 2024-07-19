@@ -1162,8 +1162,15 @@
                         `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Batch Name</p><p style="color: blue; font-size:13px;">` +
                         row.case.batch_name + `</p> </div>`;
                         // Batch Name //
+
+                        if(row.sub_user != ""){
+                            var sub_user = `<p style="margin-bottom: 0px; margin-top: 5px; font-size:13px;">Sub User</p><p style="color: blue; font-size:13px;">` +
+                        row.sub_user + `</p> </div>`;
+                        } else {
+                            var sub_user = ""; 
+                        }
                         
-                        return button + batch;
+                        return button + batch + sub_user;
                     }
                 },
                 {
