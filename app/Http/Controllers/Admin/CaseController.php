@@ -1723,7 +1723,7 @@ class CaseController extends Controller
             ->where("user_involved_in_agreement.userPlanId", "=", $id)
             ->where("mediation_case.id", "=", $id)->get();
 
-         //dd($data["case"]);
+         dd($data["case"]);
 
         // Added for icici bank ITM layout //
         if($data["case"]->batch_id == 63){
@@ -1732,6 +1732,8 @@ class CaseController extends Controller
 
            // dd($data['case']->itm_lang);
             // itm hindi //
+           
+            /*
             if(isset($data['case']->itm_lang) && strtolower($data['case']->itm_lang) == "hindi"){
                
                // $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
@@ -1745,7 +1747,68 @@ class CaseController extends Controller
                 $pdf = PDF::loadView('pdf.invitation_mediation', $data);
             }
             // itm hindi //
+            */
 
+
+            if(isset($data['case']->itm_lang)) {
+                $itm_lang_arr = explode(",", $data['case']->itm_lang);
+
+                foreach($itm_lang_arr as $itm_lang) {
+                    if($itm_lang == "hindi"){
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
+                            'title' => 'ITM' . ' ' . $id,
+                            'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                        ]);
+                    } else if($itm_lang == "marathi"){
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
+                            'title' => 'ITM' . ' ' . $id,
+                            'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                        ]);
+                    } else if($itm_lang == "punjabi"){
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
+                            'title' => 'ITM' . ' ' . $id,
+                            'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                        ]);
+                    } else if($itm_lang == "tamil"){
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
+                            'title' => 'ITM' . ' ' . $id,
+                            'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                        ]);
+                    } else if($itm_lang == "telugu"){
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
+                            'title' => 'ITM' . ' ' . $id,
+                            'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                        ]);
+                    } else if($itm_lang == "malyalam"){
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
+                            'title' => 'ITM' . ' ' . $id,
+                            'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                        ]);
+                    } else if($itm_lang == "kannad"){
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data);
+
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
+                            'title' => 'ITM' . ' ' . $id,
+                            'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                        ]);
+                    }
+                }
+            }
+
+            // English ITM
+            $pdf = PDF::loadView('pdf.invitation_mediation', $data); 
 
             
         }
@@ -2982,7 +3045,7 @@ class CaseController extends Controller
 
     public function bulkUpload(Request $request)
     {
-        // dd($request->all());
+         //dd($request->all());
         $_SESSION['last_uploaded_id'] = '';
 
         $uploaded_excel = '';
@@ -3192,9 +3255,12 @@ class CaseController extends Controller
                 // POC fields //
 
                 // itm language //
-                $data['itm_lang'] = $value[25];
+                //$data['itm_lang'] = $value[25];
+                $data['itm_lang'] = implode(",", $request['itm_lang']);
                 // itm language //
 
+
+                //dd($data);
 
                 $med = MedCase::create($data);
 
