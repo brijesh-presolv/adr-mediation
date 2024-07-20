@@ -4534,12 +4534,12 @@ class CaseController extends Controller
             $session_part_consent = isset($session_part) ? $session_part->participant_whtsapp : "";
             
             $wa_whatsapp_tracking = DB::table('whatsapp_tracking')
-            ->where('caseid', $value)
+            ->where('caseid', $data['caseid'])
             ->where('event', "WA_Session_Consent")
             ->get();
 
             $wa_bot_consent_details = DB::table('wa_bot_consent_details')
-            ->where('caseid', $value)
+            ->where('caseid', $data['caseid'])
             ->get();
 
             $Session_Participation_text="";
