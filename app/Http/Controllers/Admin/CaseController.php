@@ -4550,7 +4550,7 @@ class CaseController extends Controller
 
                     foreach($wa_bot_consent_details as $wa_consent_data){
 
-                        $Session_Participation_text .=$wa_consent_data->mobile." - ".$wa_consent_data->wa_consent_text. "<br>";
+                        $Session_Participation_text .=$wa_consent_data->mobile." - ".$wa_consent_data->wa_consent_text. ",";
                     }
 
                     $caseinfo['Session_Participation_Consent'] = $Session_Participation_text;
