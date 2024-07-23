@@ -868,7 +868,7 @@ class CaseController extends Controller
                     $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
                    
-                    $insert = '';
+                    $insert = array();
                     if(strpos($file->getClientOriginalName(), $request->caseId) !== false){
                         $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
                         //$savePath = 'public/mediation/' . $request->caseId . '/supportingDocument';
@@ -888,7 +888,7 @@ class CaseController extends Controller
                     } 
                 }
             }
-
+            //dd($insert);
             $insert_manage = DB::table('manage_files')->insert($insert, $insert);
 
             if ($insert_manage) {
