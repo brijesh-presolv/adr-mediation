@@ -868,16 +868,16 @@ class CaseController extends Controller
                     $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
                    
-                   
+                    $insert = '';
                     if(strpos($file->getClientOriginalName(), $request->caseId) !== false){
-                        $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
-                        //$savePath = 'public/mediation/' . $request->caseId . '/supportingDocument';
+                        //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
+                        $savePath = 'public/mediation/' . $request->caseId . '/supportingDocument';
                    
                    
                         $finalFilePath = $savePath . '/' . $filename;
-                        Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
+                        //Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
 
-                        //Storage::disk('local')->put($finalFilePath, file_get_contents($file));
+                        Storage::disk('local')->put($finalFilePath, file_get_contents($file));
                         // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                         $insert[$x]['file_name'] = $filename;
                         $insert[$x]['access'] = $inv_id;
