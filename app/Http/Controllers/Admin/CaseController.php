@@ -1343,8 +1343,10 @@ class CaseController extends Controller
 
                      $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
                      /**** Zoom Invitation ************/
+                    }
+
                     // Session Participation Consent via Whatsapp
-                    if($party->isClaimant != 0 && $request->fsData['participant_whtsapp']=="1") {
+                    if($party->isClaimant != 0 && $request->fsData['participant_whtsapp'] == 1) {
 
                         $latest_session = DB::table('manage_session')->select('*')->orderBy('id', 'desc')->first();
                         $id = "M" . sprintf("%06d", $request->caseId);
@@ -1371,8 +1373,7 @@ class CaseController extends Controller
                         ];
                         $manage_session = DB::table('wa_consent_manage')->insert($dataToInsert);
                     }
-                     // End
-                    }
+                    // End
                 }
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                     $success_log = BulkLog::find($_POST['log_id']);
