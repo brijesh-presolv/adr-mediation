@@ -808,10 +808,12 @@ class CaseController extends Controller
     public function storeMultiFile(Request $request)
     {
         
+        //dd($request->all());
 
         $validatedData = $request->validate([
             'files.*' => 'required',
-            'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
+            //'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
+            'files.*' => 'mimes:pdf',
             // 'docs_party_ids' => 'required',
         ]);
         $inv_id = "";
@@ -862,19 +864,28 @@ class CaseController extends Controller
 
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
-                    $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
-                    // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
-                    $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
-                    $finalFilePath = $savePath . '/' . $filename;
-                    // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
-                    Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
-                    // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
-                    $insert[$x]['file_name'] = $filename;
-                    $insert[$x]['access'] = $inv_id;
-                    $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 1;
-                    $insert[$x]['uploaded_by'] = Auth::user()->id;
-                    $insert[$x]['case_id'] = $request->caseId;
-                    // $insert[$x]['path'] = $path;
+                    //$filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
+                    $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
+                   
+                   
+                    if(strpos($file->getClientOriginalName(), $request->caseId) !== false){
+                        $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
+                        //$savePath = 'public/mediation/' . $request->caseId . '/supportingDocument';
+                   
+                   
+                        $finalFilePath = $savePath . '/' . $filename;
+                        Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
+
+                        //Storage::disk('local')->put($finalFilePath, file_get_contents($file));
+                        // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
+                        $insert[$x]['file_name'] = $filename;
+                        $insert[$x]['access'] = $inv_id;
+                        $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 1;
+                        $insert[$x]['uploaded_by'] = Auth::user()->id;
+                        $insert[$x]['case_id'] = $request->caseId;
+                        // $insert[$x]['path'] = $path;
+                    } 
                 }
             }
 
