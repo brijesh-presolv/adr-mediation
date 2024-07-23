@@ -861,14 +861,18 @@ class CaseController extends Controller
         if ($request->TotalFiles > 0) {
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
-
+                //echo $request->caseId;
+                        
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
                     //$filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
                     $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
-                   
-                    $insert = array();
+
+
+                    
+                        
+                    
                     if(strpos($file->getClientOriginalName(), $request->caseId) !== false){
                         $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
                         //$savePath = 'public/mediation/' . $request->caseId . '/supportingDocument';
@@ -877,7 +881,7 @@ class CaseController extends Controller
                         $finalFilePath = $savePath . '/' . $filename;
                         Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
 
-                        //Storage::disk('local')->put($finalFilePath, file_get_contents($file));
+                       // Storage::disk('local')->put($finalFilePath, file_get_contents($file));
                         // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                         $insert[$x]['file_name'] = $filename;
                         $insert[$x]['access'] = $inv_id;
@@ -888,8 +892,11 @@ class CaseController extends Controller
                     } 
                 }
             }
-            //dd($insert);
-            $insert_manage = DB::table('manage_files')->insert($insert, $insert);
+            
+            //if(!empty($insert)){
+                $insert_manage = DB::table('manage_files')->insert($insert);
+            //}
+            
 
             if ($insert_manage) {
                 $this->send_upload_file_party($request->caseId, $insert);
