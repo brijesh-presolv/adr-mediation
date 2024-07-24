@@ -860,7 +860,7 @@ class CaseController extends Controller
 
         if ($request->TotalFiles > 0) {
 
-            $insert = array();
+            //$insert = array();
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
                 //echo $request->caseId;
