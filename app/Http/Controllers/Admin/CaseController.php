@@ -1759,26 +1759,26 @@ class CaseController extends Controller
                 foreach($itm_lang_arr as $itm_lang) {
                     if($itm_lang == "hindi"){
 
-                        $pdf_multi = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_hindi', $data, [], [
                             'title' => 'ITM' . ' ' . $id,
                             'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
                         ]);
                     } else if($itm_lang == "marathi"){
 
-                        $pdf_multi = PDF::loadView('pdf.invitation_mediation_with_marathi', $data, [], [
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_marathi', $data, [], [
                             'title' => 'ITM' . ' ' . $id,
                             'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
                         ]);
                     } else if($itm_lang == "punjabi"){
 
-                        $pdf_multi = PDF::loadView('pdf.invitation_mediation_with_punjabi', $data, [], [
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_punjabi', $data, [], [
                             'title' => 'ITM' . ' ' . $id,
                             'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
                         ]);
                     } else if($itm_lang == "tamil"){
                         
 
-                        $pdf_multi = PDF::loadView('pdf.invitation_mediation_with_tamil', $data, [], [
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_tamil', $data, [], [
                             'title' => 'ITM' . ' ' . $id,
                             'showWatermarkImage' => true, 
                             'wialpha' => 0.1, 
@@ -1789,50 +1789,50 @@ class CaseController extends Controller
                         ]);
                     } else if($itm_lang == "telugu"){
 
-                        $pdf_multi = PDF::loadView('pdf.invitation_mediation_with_telugu', $data, [], [
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_telugu', $data, [], [
                             'title' => 'ITM' . ' ' . $id,
                             'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
                         ]);
                     } else if($itm_lang == "malyalam"){
 
-                        $pdf_multi = PDF::loadView('pdf.invitation_mediation_with_malyalam', $data, [], [
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_malyalam', $data, [], [
                             'title' => 'ITM' . ' ' . $id,
                             'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
                         ]);
                     } else if($itm_lang == "kannad"){
 
-                        $pdf_multi = PDF::loadView('pdf.invitation_mediation_with_kannad', $data, [], [
+                        $pdf = PDF::loadView('pdf.invitation_mediation_with_kannad', $data, [], [
                             'title' => 'ITM' . ' ' . $id,
                             'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
                         ]);
                     }
                 }
+            } else {
+                 // English ITM
+                $pdf = PDF::loadView('pdf.invitation_mediation', $data); 
             }
 
-            // English ITM
-            $pdf = PDF::loadView('pdf.invitation_mediation', $data); 
+           
 
             
         }
         
        
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
-        $name_multi = 'Invitation_mediate_multi_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        //$name_multi = 'Invitation_mediate_multi_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
+        
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
-        $finalFilePath_multi = $savePath . '/' . $name_multi;
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+       // $finalFilePath_multi = $savePath . '/' . $name_multi;
+        
 
         Storage::disk('s3')->readStream('mediation_documents/mediation/' . $data["case"]->id . '/' . $name);
-        Storage::disk('s3')->readStream('mediation_documents/mediation/' . $data["case"]->id . '/' . $name_multi);
+       
        //$local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
        //$local_store2 = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name_multi, $pdf_multi->output());
         //return $local_store;
-       // $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
-        // /return $name;
-
-        //echo $pdf_multi->output();exit;
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        return $name;
     }
 
     public function updatecase(Request $request, $id)
