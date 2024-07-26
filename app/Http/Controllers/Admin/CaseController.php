@@ -1774,25 +1774,23 @@ class CaseController extends Controller
                     'showWatermarkImage' => true, 'wialpha' => 0.1, 'wisize' => 'F', 'wipos' => 'F', 'mode' => 'utf-8', 'SetAutoFont' => 'AUTOFONT_THAIVIET',
                 ]);
             } else {
-                //echo "else";exit;
-                $pdf = PDF::loadView('pdf.invitation_mediation', $data);
+               
+               $pdf = PDF::loadView('pdf.invitation_mediation', $data);
             }
             // itm hindi //
 
 
             
         }
-        
+        //dd($data);
        
-        //$name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
-
-        //Storage::disk('s3')->readStream('mediation_documents/mediation/' . $data["case"]->id . '/' . $name);
-      // $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+        
+       //$local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+       //return $local_store;
 
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
