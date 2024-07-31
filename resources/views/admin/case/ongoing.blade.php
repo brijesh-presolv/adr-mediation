@@ -218,7 +218,8 @@
                                 data-target="#addSessionModelForBulk" id="bulkSessionBulkcases"
                                 style="margin-top:10px; display:none;" data-arb="<?= Auth::user()->id ?>"><span
                                     class="mdi mdi-pencil-plus"></span></button>
-                            <button class="blkbtn btn btn-primary btn-sm" id="bulkdownloadBulkcases"
+                            <button class="blkbtn btn btn-primary btn-sm" id="bulkdownloadBulkcases" data-toggle="modal"
+                                data-target="#bulkdownloadBulkcasesModal"
                                 style="margin-top:10px; display:none;">Bulk Download</button>
                             <button class="blkbtn btn btn-primary btn-sm" id="downloadExcelBulkcases"
                                 style="margin-top:10px; display:none;">Download Invitation Delivery Sheet</button>
@@ -964,6 +965,40 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+
+
+<div class="modal fade" id="bulkdownloadBulkcasesModal" tabindex="-1" aria-labelledby="bulkdownloadBulkcasesModal"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="withdrawModalLabel">Bulk Download</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="bulkdownloadBulkcasesForm" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="case_id" class="form-control">
+                        <div class="form-group">
+                            <label for="download-type" class="col-form-label">Select option for Bulk Download</label>
+                            <select class="form-control" name="download_type" id="selectOpt" required>
+                                <option value="">Select</option>
+                                <option value="1">By Case ID</option>
+                                <option value="2">By Reference ID</option>
+                                
+                            </select>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 <!-- Table datatable css -->
@@ -2990,7 +3025,7 @@
 
         });
 
-        $('#bulkdownload, #bulkdownloadBulkcases').on('click', function(e) {
+        $('#bulkdownload').on('click', function(e) {
             e.preventDefault();
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
             var withdrawcount = [];
@@ -3006,10 +3041,11 @@
 
             swal({
                 title: "@lang('case.are_you_sure')",
-                text: withdrawcountTotal.toString() + " Cases selected",
+                text: withdrawcountTotal.toString() + " Cases selected 123" + '<form role="form" id="contact-form" method="post"><div class="control-group"><label for="friend_name">Your friend\'s name</label><input type="text" placeholder="Your friend\'s full name" id="friend_name" name="friend_name" required></div><div class="control-group"><label for="email">Email</label><input type="email" placeholder="Your friend\'s Email" id="email" name="email" required></div></form>',
                 icon: "warning",
                 buttons: true,
                 dangerMode: true,
+                
             }).then(function(willDelete) {
                 if (willDelete) {
                     var cid = "";
@@ -3091,6 +3127,129 @@
                 }
             });
         });
+
+
+
+        // for refid and case id submit //
+        $('#bulkdownloadBulkcasesForm').on('submit', function(e) {
+            e.preventDefault();
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            var withdrawcount = [];
+            var count = 0;
+
+            var select_option = $('#selectOpt').val();
+            
+            $(".blkchk, .blkchkbulkcases").each(function() {
+                if (this.checked) {
+                    count++;
+                }
+                withdrawcount.push(count);
+            });
+
+            var withdrawcountTotal = Math.max.apply(Math, withdrawcount);
+
+            swal({
+                title: "@lang('case.are_you_sure')",
+                text: withdrawcountTotal.toString() + " Cases selected",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then(function(willDelete) {
+                if (willDelete) {
+                    var cid = "";
+                    var refid = "";
+                    $(".blkchk, .blkchkbulkcases").each(function() {
+                        if (this.checked) {
+                            if (cid == "") {
+                                cid = $(this).data("caseid");
+                                refid = $(this).data("refid");
+                            } else {
+                                cid = cid + "," + $(this).data("caseid");
+                                refid = refid + "," + $(this).data("refid");
+                            }
+                        }
+                    });
+
+                    // if(select_option == 1){
+                    //     var arr =  {
+                    //         allcid: cid,
+                    //         _token: csrf  
+                    //     }
+                    // } else {
+                    //     var arr =  {
+                    //         allrefid: refid,
+                    //         _token: csrf  
+                    //     }
+                    // }
+                    $.ajax({
+                        url: '{{ route('admin.case.downloadfilebulk') }}',
+                        type: 'post',
+                        data: {
+                            allcid: cid,
+                            allrefid: refid,
+                            select_option: select_option,
+                            _token: csrf
+                        },
+                        xhrFields: {
+                            responseType: 'blob'
+                        },
+                        success: (blob, status, xhr) => {
+                            if (status == 'nocontent') {
+                                swal({
+                                    title: "No files available for this Case!",
+                                    text: "",
+                                    icon: "error",
+                                });
+                            } else {
+                                var filename = "";
+                                var disposition = xhr.getResponseHeader('Content-Disposition');
+                                if (disposition && disposition.indexOf('attachment') !== -1) {
+                                    var filenameRegex =
+                                        /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                                    var matches = filenameRegex.exec(disposition);
+                                    if (matches != null && matches[1]) filename = matches[1]
+                                        .replace(/['"]/g, '');
+
+                                }
+
+                                if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                                    window.navigator.msSaveBlob(blob, filename);
+                                } else {
+
+                                    var URL = window.URL || window.webkitURL;
+                                    var downloadUrl = URL.createObjectURL(blob);
+                                    if (filename) {
+
+                                        var a = document.createElement("a");
+                                        if (typeof a.download === 'undefined') {
+                                            window.location.href = downloadUrl;
+                                        } else {
+                                            a.href = downloadUrl;
+                                            a.download = filename;
+                                            document.body.appendChild(a);
+                                            a.click();
+                                        }
+                                    } else {
+                                        window.location.href = downloadUrl;
+                                    }
+
+                                    URL.revokeObjectURL(downloadUrl);
+                                    swal({
+                                        text: "Zip downloaded successfully!",
+                                        title: "Thanks!",
+                                        icon: "success",
+                                    }).then(function() {
+                                        location.reload();
+                                    });
+                                }
+                            }
+                        },
+                    });
+                }
+            });
+
+        });
+        // for refid and case id submit //
 
         $('#commentForm').on('submit', function(e) {
             e.preventDefault();
