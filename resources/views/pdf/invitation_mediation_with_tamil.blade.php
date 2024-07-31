@@ -89,7 +89,7 @@ $ldate = $lastdate->format('d-m-Y');
 
         .table_{
         page-break-inside: avoid;
-        font-size: 14px;
+        /* font-size: 14px; */
     }
 
     </style>
@@ -252,12 +252,12 @@ $ldate = $lastdate->format('d-m-Y');
     </table>
 
 
-    <p style="font-size: 15px;">1. Desirous of arriving at an amicable resolution, the Applicant(s) / Initiating Party has sought an amicable
+    <p>1. Desirous of arriving at an amicable resolution, the Applicant(s) / Initiating Party has sought an amicable
         resolution of the dispute and registered a request with Presolv360.</p>
     {{-- <p>2. Presolv360 (recognised by the Department of Justice, Ministry of Law and Justice, Government of India) is a platform specializing in online dispute resolution through its ‘Arbitration360’ and ‘Mediation360’ module. It is simple to use, easily accessible and ensures that disputants are not entangled in protracted court battles.</p> --}}
-    <p style="font-size: 15px;">2. As per the Applicant(s) / Initiating Party:</p>
+    <p>2. As per the Applicant(s) / Initiating Party:</p>
     <!-- <p style='margin-left:15px;'>{{ $case->issue }}</p> -->
-    <p style='margin-left:15px; font-size: 15px;'>
+    <p style='margin-left:15px;'>
         <?php 
         //$issue_text = nl2br(htmlspecialchars($case->issue));
        // $issue_text = nl2br(htmlspecialchars($case->issue));
@@ -267,7 +267,7 @@ $ldate = $lastdate->format('d-m-Y');
 
     {{-- <p>3. The mediation / conciliation shall be governed by and conducted in accordance with Presolv360’s Dispute Resolution Rules, a copy of which can be found 
         <a href='https://drive.google.com/file/d/1a5GkQA0KX_4-gUDf25D0uU7Rt_1S8DDl/view?usp=sharing'>here</a></p> --}}
-    <p style="font-size: 15px;">3. Presolv360 is included in the list of institutions offering Alternative Dispute Resolution ("ADR") services
+    <p>3. Presolv360 is included in the list of institutions offering Alternative Dispute Resolution ("ADR") services
         including through Online Dispute Resolution ("ODR") and is also empaneled as a
         Mediation Institution by various Courts in India. Presolv360 administers mediation proceedings on its platform,
         and empanels independent, qualified mediators with the required competence, knowledge and expertise on its panel
@@ -278,32 +278,32 @@ $ldate = $lastdate->format('d-m-Y');
         mediation proceedings and has no interest in the outcome of the dispute and there exists no conflict of
         interest.</p>
 
-    <p style="font-size: 15px;">4. While the process is absolutely confidential, the mediation / conciliation proceedings are ‘without prejudice’
+    <p>4. While the process is absolutely confidential, the mediation / conciliation proceedings are ‘without prejudice’
         to any legal remedies available in the event of non-participation or if the dispute remains unresolved. This has
         become one of the most rewarding processes, with a success rate of over 90% of all references being made.</p>
 
-    <p style="font-size: 15px;">5. The Opposite / Responding Party shall, within seven (7) Working Days from the receipt of the Invitation to
+    <p>5. The Opposite / Responding Party shall, within seven (7) Working Days from the receipt of the Invitation to
         Mediate / Conciliate, accept or reject the said invitation by way of an email addressed to Presolv360 at
         admin@presolv360.com, failing which, the mediation / conciliation shall deemed to be a non-starter.
     </p>
 
-    <p style="font-size: 15px;">6. The parties may choose to be represented or assisted by an authorized representative, in which case the
+    <p>6. The parties may choose to be represented or assisted by an authorized representative, in which case the
         appointing party shall submit a Letter of Authority, format of which is available <a
             href='https://drive.google.com/file/d/1Q1d6_3n3R1QimVhtb1eGFC2jG3cWk7pS/view?usp=sharing'>here</a>. The
         appointing party shall submit the signed Letter of Authority by way of an email addressed to Presolv360 at
         admin@presolv360.com with the subject “Letter of Authority | (Case ID) | (Name of the Appointing Party)”.</p>
 
-    <p style="font-size: 15px;">7. A mediator / conciliator from the panel of mediators / conciliators will be appointed, and such appointment
+    <p>7. A mediator / conciliator from the panel of mediators / conciliators will be appointed, and such appointment
         shall be based on the mediator’s / conciliator’s competence, knowledge and ability to deal with subject matter
         of the dispute between the parties.</p>
 
-    <p style="font-size: 15px;">8. Upon acceptance of the appointment by the mediator / conciliator, the parties shall be notified of the
+    <p>8. Upon acceptance of the appointment by the mediator / conciliator, the parties shall be notified of the
         appointment.</p>
 
-    <p style="font-size: 15px;">9. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
+    <p>9. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
 
-    <p style="font-size: 15px;"><b>Note: This is a system generated notice and hence does not require signature.</b></p>
-    <table cellspacing="0" cellpadding="10" width="100%" style="font-size: 15px; page-break-after: always;">
+    <p><b>Note: This is a system generated notice and hence does not require signature.</b></p>
+    <table cellspacing="0" cellpadding="10" width="100%" style="page-break-after: always;">
         <tr>
             <td>
                 <p>To:</p>
@@ -474,11 +474,11 @@ $ldate = $lastdate->format('d-m-Y');
 
     
     
-    <p style="font-size: 15px;">1. ஒரு இணக்கமான தீர்வை அடையும் நோக்கத்துடன், விண்ணப்பதாரர்/துவங்கும் தரப்பானது சர்ச்சைக்கு இணக்கமான தீர்வைக் கோரியுள்ளது மற்றும் கோரிக்கையை Presolv360 இல் பதிவு செய்துள்ளது.</p>
+    <p>1. ஒரு இணக்கமான தீர்வை அடையும் நோக்கத்துடன், விண்ணப்பதாரர்/துவங்கும் தரப்பானது சர்ச்சைக்கு இணக்கமான தீர்வைக் கோரியுள்ளது மற்றும் கோரிக்கையை Presolv360 இல் பதிவு செய்துள்ளது.</p>
     
-    <p style="font-size: 15px;">2. விண்ணப்பதாரர்(கள்)/ துவங்கும் தரப்பின் படி:</p>
+    <p>2. விண்ணப்பதாரர்(கள்)/ துவங்கும் தரப்பின் படி:</p>
     <!-- <p style='margin-left:15px;'>{{ $case->issue }}</p> -->
-    <p style='margin-left:15px; font-size: 15px;'>
+    <p style='margin-left:15px;'>
         <?php 
         //$issue_text = nl2br(htmlspecialchars($case->issue));
        // $issue_text = nl2br(htmlspecialchars($case->issue));
@@ -486,7 +486,7 @@ $ldate = $lastdate->format('d-m-Y');
         echo nl2br($case->issue); ?>
     </p>
 
-    <p style="font-size: 15px;">3. Presolv360 ஆனது ஆன்லைன் டிஸ்புட் தீர்வு ("ODR") உட்பட மாற்று டிஸ்புட்  தீர்வு ("ADR") சேவைகளை 
+    <p>3. Presolv360 ஆனது ஆன்லைன் டிஸ்புட் தீர்வு ("ODR") உட்பட மாற்று டிஸ்புட்  தீர்வு ("ADR") சேவைகளை 
         வழங்குபவராக எம்பனேல் செய்யப்பட்டு, இந்தியாவில் உள்ள பல்வேறு நீதிமன்றங்களால் மத்தியஸ்த  நிறுவனமாகவும் 
         பட்டியலிடப்பட்டுள்ளது. Presolv360 அதன் தளத்தில் மத்தியஸ்த நடவடிக்கைகளை நிர்வகிக்கிறது, மேலும் அதன் 
         மத்தியஸ்தர்கள் (Mediators) குழுவில் தேவையான தகுதிகள், திறன் மற்றும் நிபுணத்துவத்துடன் சுயாதீனமான, 
@@ -497,17 +497,17 @@ $ldate = $lastdate->format('d-m-Y');
         நிர்வாக ஆதரவை வழங்குகிறது, மேலும் வாதத்தின் முடிவில் இதற்கு எந்தவித விருப்பமும், முரண்பாடுகளும் இல்லை. </p>
 
     
-    <p style="font-size: 15px;">4. செயல்முறை முற்றுலும்  ரகசியமானதாக இருக்கும் போது, 	மத்தியஸ்தம்/சமரச (Mediation/Conciliation)  நடவடிக்கைகள், பங்கேற்காத 
+    <p>4. செயல்முறை முற்றுலும்  ரகசியமானதாக இருக்கும் போது, 	மத்தியஸ்தம்/சமரச (Mediation/Conciliation)  நடவடிக்கைகள், பங்கேற்காத 
         பட்சத்தில் அல்லது தகராறு தீர்க்கப்படாமல் இருக்கும் பட்சத்தில் கிடைக்கும் எந்தவொரு சட்டப்பூர்வ தீர்வுகளுக்கும் 'பாரபட்சம் 
         இல்லாமல்' இருக்கும். இது மிகவும் நன்மைபயக்கும் செயல்முறைகளில் ஒன்றாக மாறியுள்ளது, இதில் அனைத்து குறிப்புகளின் 
         வெற்றி விகிதம் 90% க்கும் அதிகமாக உள்ளது.</p>
 
-    <p style="font-size: 15px;">5. எதிர்தரப்பினர் / பதிலளிக்கும் தரப்பினர், மத்தியஸ்தம் / சமரசம் செய்வதற்கான அழைப்பைப் பெற்றதிலிருந்து ஏழு (7) வேலை நாட்களுக்குள், 
+    <p>5. எதிர்தரப்பினர் / பதிலளிக்கும் தரப்பினர், மத்தியஸ்தம் / சமரசம் செய்வதற்கான அழைப்பைப் பெற்றதிலிருந்து ஏழு (7) வேலை நாட்களுக்குள், 
         admin@presolv360.com இல் Presolv360 என்ற மின்னஞ்சல் முகவரிக்கு அனுப்பப்பட்ட மின்னஞ்சலின் மூலம் அந்த அழைப்பை ஏற்கவும் அல்லது நிராகரிக்கவும் வேண்டும்.  
         அவ்வாறு செய்யத்தவரும் பட்சத்தில், மத்தியஸ்தம் / சமரசம் ஒரு தொடக்கமற்றதாகக் கருதப்படும்.
     </p>
 
-    <p style="font-size: 15px;">6. தரப்பினர் அங்கீகரிக்கப்பட்ட பிரதிநிதியால் பிரதிநிதித்துவம் செய்ய அல்லது உதவி செய்ய தேர்வு செய்யலாம். இந்த விசயத்தில் 
+    <p>6. தரப்பினர் அங்கீகரிக்கப்பட்ட பிரதிநிதியால் பிரதிநிதித்துவம் செய்ய அல்லது உதவி செய்ய தேர்வு செய்யலாம். இந்த விசயத்தில் 
         நியமனம் செய்யும் தரப்பினர் அங்கீகாரக் கடிதத்தை சமர்ப்பிக்க வேண்டும், அதன் வடிவம் <a
         href='https://drive.google.com/file/d/1Q1d6_3n3R1QimVhtb1eGFC2jG3cWk7pS/view?usp=sharing'>இங்கே</a>
         கொடுக்கப்பட்டுள்ளது. நியமிக்கும் தரப்பினர் Presolv360  க்கு 	admin@presolv360.com என்ற முகவரிக்கு மின்னஞ்சல் வழியாக “அதிகாரக் கடிதம் 
@@ -516,21 +516,21 @@ $ldate = $lastdate->format('d-m-Y');
     </p>
 
     
-    <p style="font-size: 15px;">7. நடுவர்கள்/சமரசம் செய்பவர்கள் குழுவில் இருந்து சமரசம் செய்பவர் நியமிக்கப்படுவார், மேலும் அத்தகைய நியமனம் 
+    <p>7. நடுவர்கள்/சமரசம் செய்பவர்கள் குழுவில் இருந்து சமரசம் செய்பவர் நியமிக்கப்படுவார், மேலும் அத்தகைய நியமனம் 
         மத்தியஸ்தரின்/சமரசம் செய்பவரின் திறமை, அறிவு மற்றும் இருதரப்பு பிரச்சினைகளுக்கு இடையேயான விவகாரம் 
         ஆகியவற்றின் அடிப்படையில் இருக்கும்.</p>
 
-    <p style="font-size: 15px;">8. நடுவர்/ சமரசம் செய்பவர் நியமனத்தை ஏற்றுக்கொண்டால், தரப்பினருக்கு நியமனம் குறித்து அறிவிக்கப்படும்.</p>
+    <p>8. நடுவர்/ சமரசம் செய்பவர் நியமனத்தை ஏற்றுக்கொண்டால், தரப்பினருக்கு நியமனம் குறித்து அறிவிக்கப்படும்.</p>
 
-    <p style="font-size: 15px;">9. ஏதேனும் ஒரு தரப்பினருக்கு செவித்திறன் குறைபாடு  இருக்கும் பட்சத்தில் அவருக்கு இந்திய சைகை மொழி (ISL) மொழிபெயர்ப்பாளரின் உதவி தேவைப்பட்டால், admin@presolv360.com க்கு "மொழிபெயர்ப்பாளருக்கான கோரிக்கை | (வழக்கு ஐடி)" 
+    <p>9. ஏதேனும் ஒரு தரப்பினருக்கு செவித்திறன் குறைபாடு  இருக்கும் பட்சத்தில் அவருக்கு இந்திய சைகை மொழி (ISL) மொழிபெயர்ப்பாளரின் உதவி தேவைப்பட்டால், admin@presolv360.com க்கு "மொழிபெயர்ப்பாளருக்கான கோரிக்கை | (வழக்கு ஐடி)" 
         என்ற தலைப்பின் கீழ் மின்னஞ்சல் எழுதவும், இந்த வசதி Presolv360 மூலம் வழங்கப்படும்.</p>
 
-    <p style="font-size: 15px;">குறிப்பு: இது கணினி ஜனரேட் செய்யப்பட்ட நோட்டீஸ், எனவே
+    <p>குறிப்பு: இது கணினி ஜனரேட் செய்யப்பட்ட நோட்டீஸ், எனவே
  இதற்கு கையொப்பம் தேவையில்லை.
 </p>
 
 
-    <table cellspacing="0" cellpadding="10" width="100%" style="font-size: 15px;">
+    <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td>
                 <p>பெறுநர்:</p>
