@@ -88,6 +88,23 @@
                                 </div>
                                 <!------ Added for sub user listing --------------->
 
+                                <!--- ITM Language ---------------->
+                                <div class="form-group">
+                                    <label for="itm_lang">Select ITM Language</label>
+                                    <select class="select2 form-control select2-multiple" multiple="multiple"
+                                    data-placeholder="" name="itm_lang[]" name="itm_lang" id="itm_lang">
+                                        <option value="">Select ITM Language</option>
+                                        <option value="hindi">Hindi</option>
+                                        <option value="marathi">Marathi</option>
+                                        <option value="punjabi">Punjabi</option>
+                                        <option value="tamil">Tamil</option>
+                                        <option value="telugu">Telugu</option>
+                                        <option value="malyalam">Malyalam</option>
+                                        <option value="kannad">Kannad</option>
+                                    </select>
+                                </div>
+                                <!--- ITM Language ---------------->
+
                                 <div class="form-group">
                                     <input type="file" name="csv" id="fileInput" onchange=""
                                         class="col-md-12 dropify" data-allowed-file-extensions="csv" required=""
@@ -526,6 +543,7 @@
             $('.dropify').dropify();
             $('#claimant').select2();
             $('#subuser').select2();
+            $('#itm_lang').select2();
         });
         var batch_id;
 

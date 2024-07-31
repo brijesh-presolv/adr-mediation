@@ -88,7 +88,6 @@ $ldate = $lastdate->format('d-m-Y');
     <center>
         <div class="text-center">
             <img src='{{ URL("assert/img/plogo.png") }}' style='width: 120px;'>
-            <br>
         </div>
     </center>
 
@@ -103,7 +102,6 @@ $ldate = $lastdate->format('d-m-Y');
     <p class="text-center" style="page-break-after:avoid;margin-top: 0px !important;font-size:14px !important; margin-bottom: 0px !important;"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
             href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
 
-    
 
     <table cellspacing="0" cellpadding="10" width="100%" style="">
         <tr>
@@ -115,7 +113,6 @@ $ldate = $lastdate->format('d-m-Y');
             </td>
         </tr>
     </table>
-   
 
 
     <table class="table_" cellspacing="0" cellpadding="10" width="100%" autosize="1" style="page-break-inside: avoid !important;">
@@ -237,8 +234,7 @@ $ldate = $lastdate->format('d-m-Y');
 
     </table>
 
-
-    <p style="font-size: 14px;">1. Desirous of arriving at an amicable resolution, the Applicant(s) / Initiating Party has sought an amicable
+    <p>1. Desirous of arriving at an amicable resolution, the Applicant(s) / Initiating Party has sought an amicable
         resolution of the dispute and registered a request with Presolv360.</p>
     {{-- <p>2. Presolv360 (recognised by the Department of Justice, Ministry of Law and Justice, Government of India) is a platform specializing in online dispute resolution through its ‘Arbitration360’ and ‘Mediation360’ module. It is simple to use, easily accessible and ensures that disputants are not entangled in protracted court battles.</p> --}}
     <p style="font-size: 14px;">2. As per the Applicant(s) / Initiating Party:</p>
