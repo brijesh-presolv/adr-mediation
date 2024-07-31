@@ -5331,4 +5331,13 @@ class CaseController extends Controller
         
         return response()->json(array('type' => "success", 'user_data' => $user_data), 200);
     }
+
+
+    public function checkSessionTime(Request $request){
+        
+        $get_session_data = DB::table('manage_session')->where('session_date', 'LIKE', '%'.$request->date.'%')->get();
+
+        echo "<pre>";print_R($get_session_data);
+        exit;
+    }
 }

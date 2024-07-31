@@ -1003,7 +1003,27 @@
 
             $("#sessionDate").datepicker({
                 minDate: 0,
-                dateFormat: 'dd/mm/yy'
+                dateFormat: 'dd/mm/yy',
+                onSelect: function (date, datepicker) { 
+                    if (date != "") { 
+                        $.ajax({
+                            url: '{{ route('admin.checkSessionTime') }}',
+                            dataType: "json",
+                            type: "POST",
+                            data: {
+                                date: date
+                            },
+                            success: function(result) {
+
+                                
+                            },  
+                            error: function(error) {
+                               
+                            }
+                
+                        }); 
+                    } 
+                } 
             });
             $("#sessionDateForBulk").datepicker({
                 minDate: 0,
