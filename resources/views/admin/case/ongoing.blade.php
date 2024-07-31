@@ -1097,11 +1097,10 @@
             "columns": [{
                     "data": "case.id",
                     render: function(data, type, row, meta) {
-
                         var button = "";
                         button = button + `<input type="checkbox" class="blkchkbulkcases" data-caseid="` +
                             data+
-                            `">`;
+                            `" data-refid="`+row.case.ref_id+`">`;
 
 
                         return meta.row + meta.settings._iDisplayStart + 1 + button;
@@ -1425,7 +1424,7 @@
                                 var button = "";
                                 button = button +
                                     `<input type="checkbox" class="blkchk" data-caseid="` + data
-                                    .id +
+                                     +
                                     `">`;
                                 return meta.row + meta.settings._iDisplayStart + 1 + button;
                             }
@@ -3014,12 +3013,15 @@
             }).then(function(willDelete) {
                 if (willDelete) {
                     var cid = "";
+                    var refid = "";
                     $(".blkchk, .blkchkbulkcases").each(function() {
                         if (this.checked) {
                             if (cid == "") {
                                 cid = $(this).data("caseid");
+                                refid = $(this).data("refid");
                             } else {
                                 cid = cid + "," + $(this).data("caseid");
+                                refid = refid + "," + $(this).data("refid");
                             }
                         }
                     });
@@ -3028,6 +3030,7 @@
                         type: 'post',
                         data: {
                             allcid: cid,
+                            allrefid: refid,
                             _token: csrf
                         },
                         xhrFields: {

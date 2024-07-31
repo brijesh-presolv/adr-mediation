@@ -3629,23 +3629,33 @@ class CaseController extends Controller
 
     public function downloadfilebulk(Request $request)
     {
-        // dd($request->all());
+         //dd($request->all());
         $zip_file = 'mediation_Invitation_' . time() . '.zip'; // Name of our archive to download
         $download_path = storage_path() . '/app/public/bulkInvitation/' . $zip_file;
         // Initializing PHP class
         $zip = new ZipArchive();
         $zip->open($download_path, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         $caseid = explode(',', $request->allcid);
+        $refid = explode(',', $request->allrefid);
         $pdf = new PDFMerger();
-        $caseid = collect($caseid)->sort();
 
+       // $caseid1 = array();
+
+        $caseid = array_combine($refid, $caseid);
+
+        //$caseid = collect($caseid)->sort();
+
+       
         // Add all the pages of the PDF to merge
-        foreach ($caseid as $value) {
+        foreach ($caseid as $key => $value) {
             $invitation = InvitationFiles::where(['case_id' => $value])->orderByDesc('id')->limit(1)->first();
+            //dd($invitation);
             if (isset($invitation->file_name) && $invitation->file_name != null) {
                 $exist_file = storage_path() . '/app/public/mediation/' . $value . '/' . $invitation->file_name;
-                if (File::exists($exist_file)) {
-                    $save_file =  $invitation->file_name;
+                if (File::exists($exist_file)) { 
+                    //$save_file =  $invitation->file_name; // for old code with case id
+                    $save_file =  $key .".pdf";
+                    //dd($save_file);
                     $zip->addFile($exist_file, $save_file);
                     $pdf->addPDF($exist_file, 'all');
                 } else {
@@ -3655,7 +3665,8 @@ class CaseController extends Controller
                     $s3_local = Storage::disk('local')->writeStream('public/mediation/temp/' . $value . '/' . $invitation->file_name, Storage::disk('s3')->readStream('mediation_documents/mediation/' . $value . '/' . $invitation->file_name));
 
                     $exist_file_local = storage_path() . '/app/public/mediation/temp/' . $value . '/' . $invitation->file_name;
-                    $save_file =  $invitation->file_name;
+                    //$save_file =  $invitation->file_name; // for old code with case id
+                    $save_file =  $key .".pdf";
 
                     $zip->addFile($exist_file_local, $save_file);
                     $pdf->addPDF($exist_file_local, 'all');
