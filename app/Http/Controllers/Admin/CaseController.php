@@ -4395,7 +4395,13 @@ class CaseController extends Controller
             $caseinfo['medname'] = isset($data['mediator']) ? strtoupper($data['mediator']->first_name) . " " . strtoupper($data['mediator']->last_name) : "";
 
             $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $caseinfo['respemail']);
-            $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $caseinfo['respmob']);
+
+            if($caseinfo['respmob'] != ""){
+                $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $caseinfo['respmob']);
+            } else {
+                $data['whatsapptrck'] = "";
+            }
+           
             $caseinfo['invets'] = "";
             $caseinfo['invetd'] = "";
             $caseinfo['inveds'] = "";
@@ -4458,7 +4464,7 @@ class CaseController extends Controller
             $caseinfo['invwdd'] = "";
             $caseinfo['invwrs'] = "";
             $caseinfo['invwrd'] = "";
-            if (isset($data['whatsapptrck'])) {
+            if (isset($data['whatsapptrck']) && $data['whatsapptrck'] != "") {
                 $time = new DateTime($data['whatsapptrck']->created_at);
                 $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                 $caseinfo['invwts'] = "transmitted";
