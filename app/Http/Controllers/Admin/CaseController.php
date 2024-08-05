@@ -4380,7 +4380,7 @@ class CaseController extends Controller
                             $caseinfo['respadd'] = $v->fulladdress;
                         }
                         $caseinfo['respemail'] = $v->userEmail;
-                        $caseinfo['respmob'] = $v->userPhone;
+                        $caseinfo['respmob'] = isset($v->userPhone) ? $v->userPhone : "";
                     }
                 }
             }
@@ -4613,8 +4613,14 @@ class CaseController extends Controller
             
             foreach ($ivr as $value) {
                 $time = new DateTime($value['created_at']);
-                $caseinfo['ivrs'] = $value['status'];
-                $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
+                if($value['status'] == "NULL"){
+                    $caseinfo['ivrs'] = "";
+                    $caseinfo['ivrdate'] = "";
+                } else {
+                    $caseinfo['ivrs'] = $value['status'];
+                    $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
+                }
+                
             }
 
             $caseinfo['Whatsapp_Why_Count'] = "";
