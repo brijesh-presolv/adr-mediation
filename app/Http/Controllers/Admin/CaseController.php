@@ -5337,6 +5337,16 @@ class CaseController extends Controller
         
         $get_session_data = DB::table('manage_session')->where('session_date', 'LIKE', '%'.$request->date.'%')->get();
 
-       
+        $time_arr = array();
+        foreach($get_session_data as $session_date){
+            $time_str = explode('/',$session_date->session_date);
+            //$time = $time_str[3];
+
+            if(!in_array($time_str[3], $time_arr)){
+                array_push($time_arr, $time_str[3]);
+            }
+        }
+
+        return json_encode(['code' => 200, 'response' => 'success', 'time_arr' => $time_arr]);
     }
 }
