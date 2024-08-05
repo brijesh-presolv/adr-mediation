@@ -595,6 +595,10 @@
                             <label>@lang('case.session_time'):</label>
                             <input type="time" id="sessionTime" autocomplete="off" class="form-control"
                                 name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
+                        
+                            <div id="bookedSlots">
+                            </div>
+                        
                         </div>
 
                         <!-- Added for 2 choices : START ---------->
@@ -1038,7 +1042,34 @@
 
             $("#sessionDate").datepicker({
                 minDate: 0,
-                dateFormat: 'dd/mm/yy'
+                dateFormat: 'dd/mm/yy',
+                onSelect: function (date, datepicker) { 
+                    if (date != "") { 
+                        $.ajax({
+                            url: '{{ route('admin.checkSessionTime') }}',
+                            dataType: "json",
+                            type: "POST",
+                            data: {
+                                date: date
+                            },
+                            success: function(result) {
+                               
+                                var booked_html = "";
+                                $.each( result.time_arr, function( key, value ) {
+                                   booked_html += "<p style='margin-bottom:0px; font-size:13px; color:red;'>Session already schedule for "+value+" on this day.</p>"
+                                });
+                                
+                                $("#bookedSlots").html(booked_html);
+                            },  
+
+
+                            error: function(error) {
+                               
+                            }
+                
+                        }); 
+                    } 
+                } 
             });
             $("#sessionDateForBulk").datepicker({
                 minDate: 0,

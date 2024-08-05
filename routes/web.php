@@ -292,6 +292,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('getSubUserList', [App\Http\Controllers\Admin\CaseController::class, 'getSubUserList'])->name('admin.getSubUserList');
     // Parent Child User
 
+
+
+    // check if session time is already taken
+    Route::post('check-session-time', [App\Http\Controllers\Admin\CaseController::class, 'checkSessionTime'])->name('admin.checkSessionTime');
+
+
 });
 
 //notification
