@@ -1021,7 +1021,7 @@
                                
                                 var booked_html = "";
                                 $.each( result.time_arr, function( key, value ) {
-                                   booked_html += "<p style='margin-bottom:0px; font-size:13px; color:red;'>Slot "+value+" is booked for this date.</p>"
+                                   booked_html += "<p style='margin-bottom:0px; font-size:13px; color:red;'>Session already schedule for "+value+" on this day.</p>"
                                 });
                                 
                                 $("#bookedSlots").html(booked_html);
