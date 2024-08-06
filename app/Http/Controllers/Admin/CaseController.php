@@ -4317,7 +4317,7 @@ class CaseController extends Controller
             $count[$key] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value)->count();
         }
         $forloopcnt = max($count);
-        $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" . "Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
+        $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" .  "Batch" . "\t" ."Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
             "Initiating Registered Office" . "\t" . "Initiating Full Name" . "\t" . "Initiating Email ID" . "\t" . "Initiating WhatsApp / Mobile Number" . "\t" . "Full name of Primary Respondent" . "\t" .
             "Full Address of Primary Respondent" . "\t" . "Email ID of Primary Respondent" . "\t" . "WhatsApp / Mobile Number of Primary Respondent (10 digit)" . "\t" . "Dispute Category" . "\t" . "Nature of agreement" . "\t" . "Agreement date" . "\t" .  "Disputed amount" . "\t" . "Date of Invitation" . "\t" . "Name of Mediator" . "\t" .
             "Invitation Primary Respondent email transmitted status" . "\t" . "Invitation Primary Respondent email transmitted date" . "\t" . "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . "\t" . "Invitation Primary Respondent whatsapp transmitted status" . "\t" . "Invitation Primary Respondent whatsapp transmitted date" . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" . "\t";
@@ -4351,6 +4351,12 @@ class CaseController extends Controller
             $caseinfo['srno'] = $key + 1;
             $caseinfo['caseid'] = 'M' . sprintf('%06d', $value);
             $caseinfo['refid'] = $data['case']->ref_id;
+            // Batch Name //
+             $batch_info = Batch::select("batch_name")->join("mediation_case", "mediation_case.batch_id", "=", "batch.id")
+            ->where("mediation_case.id", "=", $value)
+            ->first();
+            $caseinfo['batch_name'] = $batch_info['batch_name'];
+            // Batch Name //
             $datearb = new DateTime($data['case']->created_at);
             $caseinfo['datearb'] = $datearb->format('d-m-Y H:i:s');
             $caseinfo['clorg'] = $data['claimant']->organization;
