@@ -4518,9 +4518,15 @@ class CaseController extends Controller
                 foreach ($data['responding'] as $k => $v) {
                     if ($k != 0) {
                         $caseinfo['erespemail' . $k] = $v->userEmail;
-                        $caseinfo['erespmob' . $k] = $v->userPhone;
+                        $caseinfo['erespmob' . $k] = isset($v->userPhone) ? $v->userPhone : "";
                         $data['eemailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $v->userEmail);
-                        $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $v->userPhone);
+
+                        if($v->userPhone != ""){
+                            $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $v->userPhone);
+                        } else {
+                            $data['ewhatsapptrck'] = "";
+                        }
+                        
                         if (isset($data['eemailtrck'])) {
                             $time = new DateTime($data['eemailtrck']->created_at);
                             $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
@@ -4570,7 +4576,7 @@ class CaseController extends Controller
                                 $caseinfo['einvedd' . $k] = $caseinfo['einverd' . $k];
                             }
                         }
-                        if (isset($data['ewhatsapptrck'])) {
+                        if (isset($data['ewhatsapptrck']) && $data['ewhatsapptrck'] != "") {
                             $time = new DateTime($data['ewhatsapptrck']->created_at);
                             $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                             $caseinfo['einvwts' . $k] = "transmitted";
