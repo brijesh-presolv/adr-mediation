@@ -3291,8 +3291,8 @@ class CaseController extends Controller
                 // POC fields //
 
                 // itm language //
-                //$data['itm_lang'] = $value[25];
-                $data['itm_lang'] = implode(",", $request['itm_lang']);
+                $data['itm_lang'] = strtolower($value[25]);
+                //$data['itm_lang'] = implode(",", $request['itm_lang']);
                 // itm language //
 
 

@@ -89,7 +89,7 @@
                                 <!------ Added for sub user listing --------------->
 
                                 <!--- ITM Language ---------------->
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <label for="itm_lang">Select ITM Language</label>
                                     <select class="select2 form-control select2-multiple" multiple="multiple"
                                     data-placeholder="" name="itm_lang[]" name="itm_lang" id="itm_lang">
@@ -102,7 +102,7 @@
                                         <option value="malyalam">Malyalam</option>
                                         <option value="kannad">Kannad</option>
                                     </select>
-                                </div>
+                                </div> -->
                                 <!--- ITM Language ---------------->
 
                                 <div class="form-group">
