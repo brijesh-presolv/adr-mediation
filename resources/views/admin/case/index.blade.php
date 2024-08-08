@@ -3027,7 +3027,7 @@
                             option_html += "<option value='"+element.id+"' name='sub_user_id'>"+element.first_name +" "+ element.last_name+"</option>" ; 
                         });
                     } else {
-                        var option_html = "<option>No Sub Users</option>";  
+                        var option_html = "<option value='0'>No Sub Users</option>";  
                     }
 
                     

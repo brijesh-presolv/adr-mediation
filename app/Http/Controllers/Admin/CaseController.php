@@ -1783,7 +1783,7 @@ class CaseController extends Controller
             // itm hindi //
             */
 
-
+            /*
             if(isset($data['case']->itm_lang)) {
                 $itm_lang_arr = explode(",", $data['case']->itm_lang);
 
@@ -1846,8 +1846,16 @@ class CaseController extends Controller
             }
 
            
-
-            
+            */
+            $pdf = PDF::loadView('pdf.invitation_mediation_with_all', $data, [], [
+                'title' => 'ITM' . ' ' . $id,
+                'showWatermarkImage' => true, 
+                'wialpha' => 0.1, 
+                'wisize' => 'F', 
+                'wipos' => 'F', 
+                'mode' => 'utf-8',
+                'SetAutoFont' => 'AUTOFONT_THAIVIET'
+            ]);
         }
         //dd($data);
        
@@ -1856,11 +1864,11 @@ class CaseController extends Controller
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
         
-       //$local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
-       //return $local_store;
+       $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+       return $local_store;
 
-        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
-        return $name;
+        //$uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        //return $name;
     }
 
     public function updatecase(Request $request, $id)
@@ -3298,7 +3306,15 @@ class CaseController extends Controller
 
 
                 // Add sub user id //
-                $data['sub_user_id'] = $request->subuser;
+
+                
+                if($request->subuser == 0){
+                    
+                    $data['sub_user_id'] = "";
+                } else {
+                    $data['sub_user_id'] = $request->subuser;
+                }
+                //dd($data);
                 // Add sub user id //
 
                 //dd($data);
