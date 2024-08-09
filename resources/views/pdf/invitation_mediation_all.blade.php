@@ -330,8 +330,8 @@ $itm_lang_arr = explode(",", $case->itm_lang);
         </tr>
     </table>
 
-  
-        @elseif($itm_lang == "tamil")
+    @endif
+        @if($itm_lang == "tamil")
    
 
 
@@ -562,8 +562,8 @@ $itm_lang_arr = explode(",", $case->itm_lang);
     </table>
 
     <!----------------- TAMIL ------------------------------------------------------->
-
-    @elseif($itm_lang == "hindi")
+    @endif
+    @if($itm_lang == "hindi")
 
     <!-------------- HINDI ------------------------------------------------------------------------------------->
     @php
@@ -766,8 +766,8 @@ $itm_lang_arr = explode(",", $case->itm_lang);
     
     <!-------------- HINDI ------------------------------------------------------------------------------------->
 
-   
-        @elseif($itm_lang == "gujarati")
+    @endif
+        @if($itm_lang == "gujarati")
     
             <!----------------- GUJARATI ------------------------------------------------------->
 
@@ -984,9 +984,9 @@ $itm_lang_arr = explode(",", $case->itm_lang);
     <!----------------- GUJARATI ------------------------------------------------------->
 
 
-    
+    @endif
    
-        @elseif($itm_lang == "kannada")
+        @if($itm_lang == "kannada")
    
 
 
@@ -1219,9 +1219,9 @@ $itm_lang_arr = explode(",", $case->itm_lang);
 
     <!----------------- KANNAD ------------------------------------------------------->
 
-
+    @endif
    
-        @elseif($itm_lang == "malayalam")
+        @if($itm_lang == "malayalam")
    
         <!----------------- MALYALAM ------------------------------------------------------->
 
@@ -1465,8 +1465,8 @@ $itm_lang_arr = explode(",", $case->itm_lang);
 
     <!----------------- MALYALAM ------------------------------------------------------->
 
-   
-        @elseif($itm_lang == "marathi")
+    @endif
+        @if($itm_lang == "marathi")
     
     <!----------------- MARATHI ------------------------------------------------------->
 
@@ -1698,8 +1698,8 @@ $itm_lang_arr = explode(",", $case->itm_lang);
     </table>
 
     <!----------------- MARATHI ------------------------------------------------------->
-   
-        @elseif($itm_lang == "telugu")
+    @endif
+        @if($itm_lang == "telugu")
    
 
      <!----------------- TELUGU ------------------------------------------------------->
