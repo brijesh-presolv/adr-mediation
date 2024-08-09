@@ -1854,7 +1854,9 @@ class CaseController extends Controller
                 'wisize' => 'F', 
                 'wipos' => 'F', 
                 'mode' => 'utf-8',
-                'SetAutoFont' => 'AUTOFONT_THAIVIET'
+                'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                'autoLangToFont' => true,
+                'autoScriptToLang' => true
             ]);
         }
         //dd($data);
