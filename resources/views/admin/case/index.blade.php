@@ -3022,7 +3022,7 @@
                     $('#subuser').empty();
 
                     if(resp.user_data != ""){
-                        var option_html = "<option>Select Sub User</option>";
+                        var option_html = "<option value='0'>Select Sub User</option>";
                         $(resp.user_data).each(function( index, element ) { 
                             option_html += "<option value='"+element.id+"' name='sub_user_id'>"+element.first_name +" "+ element.last_name+"</option>" ; 
                         });
