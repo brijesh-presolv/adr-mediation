@@ -1847,7 +1847,7 @@ class CaseController extends Controller
 
            
             */
-            $pdf = PDF::loadView('pdf.invitation_mediation_with_all', $data, [], [
+            $pdf = PDF::loadView('pdf.invitation_mediation_all', $data, [], [
                 'title' => 'ITM' . ' ' . $id,
                 'showWatermarkImage' => true, 
                 'wialpha' => 0.1, 
@@ -1864,11 +1864,11 @@ class CaseController extends Controller
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
         
-       $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
-       return $local_store;
+       //$local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+       //return $local_store;
 
-        //$uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
-        //return $name;
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        return $name;
     }
 
     public function updatecase(Request $request, $id)
@@ -3308,12 +3308,7 @@ class CaseController extends Controller
                 // Add sub user id //
 
                 
-                if($request->subuser == 0){
-                    
-                    $data['sub_user_id'] = "";
-                } else {
-                    $data['sub_user_id'] = $request->subuser;
-                }
+                $data['sub_user_id'] = $request->subuser;
                 //dd($data);
                 // Add sub user id //
 
