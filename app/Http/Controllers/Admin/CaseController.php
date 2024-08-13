@@ -3749,11 +3749,17 @@ class CaseController extends Controller
 
                     // --------- First save into local and then add in zip and merge pdf
 
-                   $s3_local = Storage::disk('local')->writeStream('public/mediation/temp/' . $value . '/' . $invitation->file_name, Storage::disk('s3')->readStream('mediation_documents/mediation/' . $value . '/' . $invitation->file_name));
-
-                   if($s3_local) {
+                    
+                    
                     $exist_file_local = storage_path() . '/app/public/mediation/temp/' . $value . '/' . $invitation->file_name;
-                   }
+                    
+                    if(File::exists($exist_file_local)){
+                        
+                    } else {
+                        
+                        $s3_local = Storage::disk('local')->writeStream('public/mediation/temp/' . $value . '/' . $invitation->file_name, Storage::disk('s3')->readStream('mediation_documents/mediation/' . $value . '/' . $invitation->file_name));
+                    }
+                  
                     
                     if($request->select_option == 1){
                         $save_file =  $invitation->file_name; 
