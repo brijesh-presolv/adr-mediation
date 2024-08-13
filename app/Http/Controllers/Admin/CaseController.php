@@ -3751,15 +3751,18 @@ class CaseController extends Controller
 
                    $s3_local = Storage::disk('local')->writeStream('public/mediation/temp/' . $value . '/' . $invitation->file_name, Storage::disk('s3')->readStream('mediation_documents/mediation/' . $value . '/' . $invitation->file_name));
 
-                   // $exist_file_local = storage_path() . '/app/public/mediation/temp/' . $value . '/' . $invitation->file_name;
+                   if($s3_local) {
+                    $exist_file_local = storage_path() . '/app/public/mediation/temp/' . $value . '/' . $invitation->file_name;
+                   }
+                    
                     if($request->select_option == 1){
                         $save_file =  $invitation->file_name; 
                     } else {
                         $save_file =  $key .".pdf";
                     }
 
-                    $zip->addFile($s3_local, $save_file);
-                    $pdf->addPDF($s3_local, 'all');
+                    $zip->addFile($exist_file_local, $save_file);
+                    $pdf->addPDF($exist_file_local, 'all');
 
 
                     // unlink($exist_file_local);
