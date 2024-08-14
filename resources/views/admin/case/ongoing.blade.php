@@ -226,6 +226,38 @@
 
                         </div>
                     </div>
+
+
+                    <!----- Added for random cases : START ---------------->
+                    <div>
+                        
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input type="radio" id="randomCase">&nbsp;&nbsp;For Random Cases
+                                </div>
+                            </div>
+
+                            <div class="row" id="randomCaseSec" style="display:none;">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <select class="form-control" name="rCases" id="rCases" multiple>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal"
+                                    data-target="#addSessionModelForBulk" id="bulkRandomCases" data-arb="<?= Auth::user()->id ?>"><span
+                                        class="mdi mdi-pencil-plus"></span></button>
+                                </div>
+                            </div>
+                        
+                    </div>
+                    <!----- Added for random cases : END ------------------>
+
+
+                     
+        
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane fade " id="tabs-2-tab-1">
@@ -299,7 +331,15 @@
             </div>
         </div>
 
+
+
+        
+
     </section>
+
+
+
+    
 
 
 
@@ -1013,12 +1053,19 @@
         type="text/css" />
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
+    <link href="{{ url('assets/') }}/libs/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('assets/') }}/libs/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
+
     <style>
         #ui-datepicker-div {
             position: fixed !important;
             top: 176px !important;
             left: 445.5px !important;
             z-index: 1051 !important;
+        }
+
+        .select2-container {
+            width: 100% !important;
         }
     </style>
 @endsection
@@ -1036,6 +1083,9 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ url('/') }}/assets/libs/custombox/custombox.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="{{ url('assets/') }}/libs/select2/select2.min.js"></script>
+    <script src="{{ url('assets/') }}/libs/bootstrap-select/bootstrap-select.min.js"></script>
 
     <script type="text/javascript">
         $(function() {
@@ -3830,5 +3880,53 @@
             $('#coolModal .modal-body').html(preview_html);
   
         }
+
+
+
+
+        $(document).ready(function () {   
+            $('#rCases').select2();        
+            $("#randomCase").change(function () {
+                if ($("#randomCase").is(":checked")) {
+                    $('#randomCaseSec').show();
+
+                    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+                    // ajax call 
+                    $.ajax({
+                        url: '{{ route('admin.getAllCaseIDList') }}',
+                        method: "get",
+                        data: {
+                            _token: csrf
+                        },
+                        success: function(resp) {
+                            $('#rCases').empty();
+                            var result = $.parseJSON(resp);
+                            
+                            // if(resp.user_data != ""){
+                            var option_html = "";
+                               // var option_html = "<option value='0'>Select Case ID</option>";
+                                $(result.case_arr).each(function( index, element ) { 
+
+                                    option_html += "<option value='"+element.id+"' name='random_caseid'>"+element.full+"</option>" ; 
+                                });
+                            // } else {
+                            //     var option_html = "<option value='0'>No Sub Users</option>";  
+                            // }
+
+                            
+
+                             $('#rCases').html(option_html);
+                        },
+
+                        error: function(err) {
+                            console.log(err);
+                        },
+                    });
+                    // ajax call 
+                }
+            });        
+        });
+        
     </script>
 @endsection
