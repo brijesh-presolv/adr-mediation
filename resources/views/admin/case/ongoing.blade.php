@@ -239,15 +239,15 @@
 
                             <div class="row" id="randomCaseSec" style="display:none;">
                                 <div class="col-md-4">
-                                    <div class="form-group">
-                                        <select class="form-control" name="rCases" id="rCases" multiple>
+                                    <!-- <div class="form-group"> -->
+                                        <select class="blkdirtorandom" name="rCases" id="rCases" multiple style="width:50%">
                                         </select>
-                                    </div>
+                                    <!-- </div> -->
                                 </div>
 
                                 <div class="col-md-2">
                                     <button class="btn btn-pink waves-effect waves-light btn-sm" data-toggle="modal"
-                                    data-target="#addSessionModelForBulk" id="bulkRandomCases" data-arb="<?= Auth::user()->id ?>"><span
+                                    data-target="#addSessionModelForBulkRandom" id="bulkRandomCases" data-arb="<?= Auth::user()->id ?>"><span
                                         class="mdi mdi-pencil-plus"></span></button>
                                 </div>
                             </div>
@@ -750,6 +750,84 @@
             </div>
         </div>
     </div>
+
+    <!-------- Random Case Session -------------->
+    <div id="addSessionModelForBulkRandom" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true" class="modal-demo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Session for Random Cases</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span><span class="sr-only">Close</span>
+                    </button>
+                </div>
+
+                <form id="addSessionFormForBulkRandom">
+
+                    <input type="hidden" name="createdBy" id="createdByFR" value="{{ Auth::id() }}">
+                    <input type="hidden" name="caseId" value="">
+
+                    <div class="custom-modal-text ">
+                        <div class="form-group">
+                            <label>@lang('case.session_date') :</label>
+                            <input type="text" autocomplete="off" id="sessionDateForBulkRandom"
+                                class="form-control sessionDateForBulk" name="sessionDate"
+                                placeholder="@lang('case.session_date_placeholder')" data-validation="required">
+                        </div>
+                        <div class="form-group">
+                            <label>@lang('case.session_time'):</label>
+                            <input type="time" id="sessionTime" autocomplete="off" class="form-control"
+                                name="sessionTime" placeholder="@lang('case.session_time_placeholder')" data-validation="required">
+                        </div>
+
+
+                        <!-- Added for 2 choices : START ---------->
+                        <div class="form-group">
+                            <input type="radio" id="" name="zoom_choice" value="directly_zoom" checked
+                                onclick="check_zoom_choice(this.value)">
+                            <label for="">Schedule Directly</label><br>
+
+                            <input type="radio" id="" name="zoom_choice" value="manually_zoom"
+                                onclick="check_zoom_choice(this.value)">
+                            <label for="">Manually Add Link</label>
+                        </div>
+                        <!-- Added for 2 choices : END ---------->
+
+                        <div class="form-group zoom-id-section" style="display: none;">
+                            <label>@lang('case.session_zoom_id') :</label>
+                            <input type="text" id="zoomId" class="form-control" name="zoomId"
+                                placeholder="@lang('case.session_zoom_id_placeholder')">
+                        </div>
+                        <div class="form-group">
+                            <label>@lang('case.session_note'):</label>
+                            <textarea class="form-control" id="note" name="note" placeholder="@lang('case.session_note_placeholder')"
+                                data-validation="required"></textarea>
+                        </div>
+
+                         <!------ new field for participant ---->
+                         <div class="form-group">
+                            
+                            <label for="">Do you want session participation consent on whatsapp ?</label><br>
+                            <input type="radio" id="" name="participant_whtsapp" value="0" checked><label for="">&nbsp;No</label><br>
+                            <input type="radio" id="" name="participant_whtsapp" value="1"><label for="">&nbsp;Yes</label>
+
+                        </div>
+                        <!------ new field for participant ---->
+                        {{-- <span>@lang('case.session_party'):</span>
+                    <div class="form-group" id="sessionParty">
+                    </div> --}}
+                        <div class="text-center">
+                            <input type="submit" name="@lang('case.session_add_title')" class="btn-sm btn-primary mt-3">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-------- Random Case Session -------------->
+
+
     <div id="Session-edit" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true"
         class="modal-demo">
         <div class="modal-dialog">
@@ -1053,8 +1131,9 @@
         type="text/css" />
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <link href="{{ url('assets/') }}/libs/select2/select2.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets/') }}/libs/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('assets/') }}/libs/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" /> 
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
 
     <style>
         #ui-datepicker-div {
@@ -1084,8 +1163,10 @@
     <script src="{{ url('/') }}/assets/libs/custombox/custombox.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-    <script src="{{ url('assets/') }}/libs/select2/select2.min.js"></script>
-    <script src="{{ url('assets/') }}/libs/bootstrap-select/bootstrap-select.min.js"></script>
+     <!-- <script src="{{ url('assets/') }}/libs/select2/select2.min.js"></script> -->
+    <!-- <script src="{{ url('assets/') }}/libs/bootstrap-select/bootstrap-select.min.js"></script> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script type="text/javascript">
         $(function() {
@@ -1122,6 +1203,12 @@
                 } 
             });
             $("#sessionDateForBulk").datepicker({
+                minDate: 0,
+                dateFormat: 'dd/mm/yy'
+            });
+
+
+            $("#sessionDateForBulkRandom").datepicker({
                 minDate: 0,
                 dateFormat: 'dd/mm/yy'
             });
@@ -2546,6 +2633,9 @@
 
 
                     var burl = '{{ route('admin.case.addSession') }}';
+
+                    console.log(idarr);
+                    return false;
                     swal.close();
                     $(".ccdd").click();
                     $(".msgDiv").hide();
@@ -2614,6 +2704,150 @@
             });
 
         });
+
+        // Random case create session //
+        $('#addSessionFormForBulkRandom').on('submit', function(e) {
+            e.preventDefault();
+            var withdrawcount = [];
+            var count = 0;
+            // alert(444);
+            // console.log($('#rCases').val());
+            // return false;
+            // $(".blkchk, .blkchkbulkcases").each(function() {
+            //     if (this.checked) {
+            //         count++;
+            //     }
+            //     withdrawcount.push(count);
+            // });
+
+            // var withdrawcountTotal = Math.max.apply(Math, withdrawcount);
+
+            swal({
+                title: "@lang('case.are_you_sure')",
+                text: $('#rCases').val().length + " Cases are selected",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then(function(willDelete) {
+                if (willDelete) {
+                    var cids = null;
+                    var idarr = [];
+                    var ctcnt = 0;
+                    var result = {};
+
+                    // $(".blkchk, .blkchkbulkcases").each(function() {
+                    //     if (this.checked) {
+                    //         ctcnt++;
+                    //         if (cids == null) {
+                    //             cids = $(this).data("caseid");
+                    //         } else {
+                    //             cids = cids + "," + $(this).data("caseid");
+                    //         }
+                    //     }
+                    // });
+
+                    // $(".blkchk, .blkchkbulkcases").each(function() {
+                    //     if (this.checked) {
+
+                    //         $('#addSessionFormForBulk').find('input[name="caseId"]').val(id);
+                    //         var id = $(this).data("caseid");
+
+                    //         var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+                    //         $.each($('#addSessionFormForBulk').serializeArray(), function() {
+                    //             result[this.name] = this.value;
+                    //         });
+
+                    //         idarr.push({
+                    //             id: "",
+                    //             token: csrf,
+                    //             allcids: $('#rCases').join(''),
+                    //             total_row: $('#rCases').lengthS,
+                    //             fsData: result,
+                    //             log_type: "add Session",
+                    //         });
+
+                    //     }
+                    // });
+
+                    var csrf = document.querySelector('meta[name="csrf-token"]').content;
+                    var burl = '{{ route('admin.case.addSession') }}';
+                    $.each($('#addSessionFormForBulkRandom').serializeArray(), function() {
+                                result[this.name] = this.value;
+                            });
+                           
+                           // alert($("#rCases").select2().find(":selected").data("id"));
+                        var al_id = [];
+
+                        $.each($('#rCases').val(), function (key, val) {
+                            var id_int = val.replace('M0', '');
+                            var final_id = parseInt(id_int);
+                            al_id.push(final_id);
+                        });
+                       // alert(al_id.join());
+                    $.each($('#rCases').val(), function (key, val) {
+                        //alert(key + val);
+                       // alert($('#rCases').attr('myTag'));
+                        var id_int = val.replace('M0', '');
+                        var final_id = parseInt(id_int);
+
+                       // al_id.push(final_id);
+                        //alert(al_id);
+                        // var all_cids = $('#rCases').val().replace('M0', '');
+                        // all_cids = all_cids.join();
+                        idarr.push({
+                            id: final_id,
+                            token: csrf,
+                            allcids: al_id.join(),
+                            total_row: $('#rCases').val().length,
+                            fsData: result,
+                            log_type: "add Session",
+                        });
+                    });
+
+                    
+                    // console.log(idarr);
+                    // return false;
+                    swal.close();
+                    $(".ccdd").click();
+                    $(".msgDiv").hide();
+                    $(".loading_form").show();
+                    $("#loading_image").show();
+                    $(".close").hide();
+
+                    $.when
+                        .apply(
+                            $,
+                            $.map(idarr, function(item, i) {
+                                looper = looper.then(function() {
+
+                                    return ajax_request_addSession(item, burl);
+
+                                });
+                                return looper;
+
+                            })
+                        )
+                        .then(function() {
+                            swal.close();
+                            // $("#myModalcc").hide();
+                            $("#messccclose").append(
+                                '<br><center><a href="{{ route('admin.case.ongoingrequest') }}" class="btn btn-danger btn-lg">Close</a></center>'
+                            );
+                            var objDiv = document.getElementById("messcc");
+                            objDiv.scrollTop = objDiv.scrollHeight;
+                        });
+                    
+                } else {
+                    swal("@lang('case.request_canseled')").then(function() {
+                        location.reload();
+                    });
+                }
+            });
+
+        });
+        // Random case create session //
+
         $('#withdrawFormForBulk').on('submit', function(e) {
             e.preventDefault();
             var withdrawcount = [];
@@ -3885,12 +4119,26 @@
 
 
         $(document).ready(function () {   
-            $('#rCases').select2();        
+            $('#rCases').select2({
+              
+            multiple: true,
+              placeholder: "Enter Random cases",
+              closeOnSelect: false,
+              minimumInputLength: 1
+        });     
             $("#randomCase").change(function () {
                 if ($("#randomCase").is(":checked")) {
                     $('#randomCaseSec').show();
 
                     var csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+
+                   
+
+
+                            var tableId = 'randomCaseSec';     
+
+                           
 
                     // ajax call 
                     $.ajax({
@@ -3908,15 +4156,16 @@
                                // var option_html = "<option value='0'>Select Case ID</option>";
                                 $(result.case_arr).each(function( index, element ) { 
 
-                                    option_html += "<option value='"+element.id+"' name='random_caseid'>"+element.full+"</option>" ; 
+                                    option_html += "<option value='"+element.full+"' name='random_caseid' data-id='"+element.id+"' myTag='"+element.id+"'>"+element.full+"</option>" ; 
                                 });
                             // } else {
                             //     var option_html = "<option value='0'>No Sub Users</option>";  
                             // }
 
                             
-
-                             $('#rCases').html(option_html);
+                            $('#rCases').html(option_html);
+                             
+                             
                         },
 
                         error: function(err) {
@@ -3924,9 +4173,217 @@
                         },
                     });
                     // ajax call 
+
+
+                    setTimeout(function () {
+
+                    // $("#rCases").on('select2:open', function () {
+                    // console.log('clicked---');
+
+
+                    // var page_name = '{{ route('admin.getAllCaseIDList') }}';
+                    // var fromvalue = "";
+                    // var toValue = "";
+                    // var actionvalue = "";
+
+                    // getExceptDropdownRenderRandomCase(
+                    //     page_name,
+                    //     tableId,
+                    //     type,
+                    //     ".blkdirtorandom",
+                    //     fromvalue,
+                    //     toValue,
+                    //     "Enter Random cases 456",
+                    //     actionvalue,
+                    //     csrf
+                    // );
+                    // multiSelectExept(tableId);
+                    // });
+
+                    $("#" + tableId + " .blkdirtorandom")
+        //.empty()
+        .select2({
+         // multiple: true,
+        //  placeholder: "Enter Random cases",
+         // closeOnSelect: false,
+        //   minimumInputLength: 1
+        });
+
+
+
+
+
+
+                     multiSelectExept(tableId)
+                    },100);
                 }
             });        
         });
+
+
+
+
+        function multiSelectExept(tableId) {
+        //    alert(tableId);
+                var current_pin = [];
+                $("body").on(
+                    "paste",
+                    "#" + tableId + " .select2-search__field",
+                    function (e) {
+                       // alert('in');
+                        //alert(tableId);
+                    var pastedData = e.originalEvent.clipboardData.getData("text").trim();
+                    tokens = pastedData.split(/\r\n|\r|\n/g);
+
+                    console.log(tokens);
+
+                    /* print_console('pastedData', pastedData) */
+                    /* print_console('tokens', tokens) */
+                    $("#" + tableId + " .blkdirtorandom option").each(
+                        function () {
+                            current_pin.push(this.value);
+                        }
+                    );
+
+                    found_pin = tokens.filter((value) => current_pin.includes(value));
+                    console.log(found_pin);
+                     //found_pin = ['39414', '39415']
+                    /* print_console('found_pin', found_pin) */
+                    /* print_console('current_pin', current_pin) */
+                    //print_console('current input', $('#pincode_div').find('input').val());
+                    $(".select2-search__field").val("");
+                    // $('#pincode_div').find('input').attr('class')
+                    $("#" + tableId + " .blkdirtorandom").val("");
+                    $("#" + tableId + " .blkdirtorandom")
+                        .val(found_pin)
+                        .trigger("change");
+                    }
+                );
+            }
+
+
+            function getExceptDropdownRenderRandomCase(
+                page_name,
+                tableId,
+                type,
+                dropdownClass,
+                fromvalue = "",
+                toValue = "",
+                placeholderText = "From",
+                actionvalue = 0,
+                csrf
+                ) {
+                var idarr = [];
+                exceptDropDown = [];
+                $("#filter_check1").show();
+                setTimeout(() => {
+                    // $(".singlecs").each(function () {
+                    //   idarr.push($(this).data('firstid'));
+                    //   idarr.push($(this).data('searchvalue'));
+                    //   idarr.push($(this).data('lastid'));
+                    // });
+
+                    // if (tableId == "ongoing") {
+                    //   $(".singlecs").each(function () {
+                    //     idarr.push($(this).data("firstid"));
+                    //     idarr.push($(this).data("searchvalue"));
+                    //     idarr.push($(this).data("green"));
+                    //     idarr.push($(this).data("blue"));
+                    //     idarr.push($(this).data("lastid"));
+                    //   });
+                    // } else if (tableId == "closed") {
+                    //   $(".singlecsclose").each(function () {
+                    //     idarr.push($(this).data("firstid"));
+                    //     idarr.push($(this).data("searchvalue"));
+                    //     idarr.push($(this).data("green"));
+                    //     idarr.push($(this).data("blue"));
+                    //     idarr.push($(this).data("lastid"));
+                    //   });
+                    // } else if (tableId == "adminreview") {
+                    //   $(".blkchk").each(function () {
+                    //     idarr.push($(this).data("firstid"));
+                    //     idarr.push($(this).data("searchvalue"));
+                    //     idarr.push($(this).data("lastid"));
+                    //   });
+                    // }
+
+                    // // console.log(batch_name);
+                    // // console.log(idarr);
+
+                    // // var Fval = idarr[0];
+                    // var searchValue = idarr[1];
+                    // var greenmark = idarr[2];
+                    // var bluemark = idarr[3];
+                    // // var Lval = idarr[idarr.length - 1];
+
+                    // var batch_name = $("#batch_name_change").val();
+                    // var from_date = $("#from_date").val();
+                    // var to_date = $("#to_date").val();
+                    // var arb_name = $("#arbitrator_change").val();
+                    // var org_name = $("#organisation_change").val();
+                    // var current_status = $("#status_change").val();
+
+                    // if (!toValue) {
+                    //   var Fval = idarr[0];
+                    // } else {
+                    //   var Fval = toValue.replace(/^A0+|^A+/, "");
+                    // }
+                    // var searchValue = idarr[1];
+                    // if (!fromvalue) {
+                    //   var Lval = idarr[idarr.length - 1];
+                    // } else {
+                    //   var Lval = fromvalue.replace(/^A0+|^A+/, "");
+                    // }
+
+                    console.log("OK");
+
+                    $.ajax({
+                                        url: '{{ route('admin.getAllCaseIDList') }}',
+                                        method: "get",
+                                        data: {
+                                            _token: csrf
+                                        },
+                                        success: function(resp) {
+                                            var response = $.parseJSON(resp);
+                                    $("#" + tableId +  dropdownClass)
+                        .empty()
+                        .select2({
+                            multiple: true,
+                            placeholder: placeholderText,
+                            closeOnSelect: false,
+                        });
+                        var selectOptions = "";
+
+                        $.each(response, function (indexInArray, valueOfElement) {
+
+                        // if(exceptDropDown.length > 0 && exceptDropDown.length == 1){
+                        //   $("#filter_check1").hide();
+                        //   $(".filter_check").show();
+                        // }else if(exceptDropDown.length == 0){
+                        //   exceptDropDown.push(valueOfElement.caseid);
+                        // }
+                        // $("#" + tableId + "_filter " + dropdownClass).append(
+                        //   '<option class="caseidexcept">' +
+                        //   valueOfElement.caseid +
+                        //   "</option>"
+                        // );
+                        selectOptions += '<option class="caseidexcept">' + valueOfElement.full + "</option>";
+                        });
+
+                        $("#" + tableId  + dropdownClass).empty().append(selectOptions);
+
+                        $("#filter_check1").hide();
+                        $(".filter_check").show();
+                                            
+                                            
+                                        },
+
+                                        error: function(err) {
+                                            console.log(err);
+                                        },
+                                    });
+                }, 100);
+                }
         
     </script>
 @endsection
