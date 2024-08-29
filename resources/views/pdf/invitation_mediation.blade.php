@@ -77,7 +77,7 @@ $ldate = $lastdate->format('d-m-Y');
 
 .table_{
         page-break-inside: avoid;
-        font-size: 12px;
+        /* font-size: 12px; */
     }
         
     </style>
@@ -87,7 +87,7 @@ $ldate = $lastdate->format('d-m-Y');
     <div class="main_sec">
     <center>
         <div class="text-center">
-            <img src='{{ URL("assert/img/plogo.png") }}' style='width: 120px;'>
+            <img src='{{ URL("assert/img/Logo1.png") }}' style='width: 120px;'>
         </div>
     </center>
 
@@ -237,9 +237,9 @@ $ldate = $lastdate->format('d-m-Y');
     <p>1. Desirous of arriving at an amicable resolution, the Applicant(s) / Initiating Party has sought an amicable
         resolution of the dispute and registered a request with Presolv360.</p>
     {{-- <p>2. Presolv360 (recognised by the Department of Justice, Ministry of Law and Justice, Government of India) is a platform specializing in online dispute resolution through its ‘Arbitration360’ and ‘Mediation360’ module. It is simple to use, easily accessible and ensures that disputants are not entangled in protracted court battles.</p> --}}
-    <p style="font-size: 14px;">2. As per the Applicant(s) / Initiating Party:</p>
+    <p style="">2. As per the Applicant(s) / Initiating Party:</p>
     <!-- <p style='margin-left:15px;'>{{ $case->issue }}</p> -->
-    <p style='margin-left:15px; font-size: 14px;'>
+    <p style='margin-left:15px;'>
         <?php 
         //$issue_text = nl2br(htmlspecialchars($case->issue));
        // $issue_text = nl2br(htmlspecialchars($case->issue));
@@ -249,7 +249,7 @@ $ldate = $lastdate->format('d-m-Y');
 
     {{-- <p>3. The mediation / conciliation shall be governed by and conducted in accordance with Presolv360’s Dispute Resolution Rules, a copy of which can be found 
         <a href='https://drive.google.com/file/d/1a5GkQA0KX_4-gUDf25D0uU7Rt_1S8DDl/view?usp=sharing'>here</a></p> --}}
-    <p style="font-size: 14px;">3. Presolv360 is included in the list of institutions offering Alternative Dispute Resolution ("ADR") services
+    <p style="">3. Presolv360 is included in the list of institutions offering Alternative Dispute Resolution ("ADR") services
         including through Online Dispute Resolution ("ODR") and is also empaneled as a
         Mediation Institution by various Courts in India. Presolv360 administers mediation proceedings on its platform,
         and empanels independent, qualified mediators with the required competence, knowledge and expertise on its panel
@@ -260,32 +260,32 @@ $ldate = $lastdate->format('d-m-Y');
         mediation proceedings and has no interest in the outcome of the dispute and there exists no conflict of
         interest.</p>
 
-    <p style="font-size: 14px;">4. While the process is absolutely confidential, the mediation / conciliation proceedings are ‘without prejudice’
+    <p style="">4. While the process is absolutely confidential, the mediation / conciliation proceedings are ‘without prejudice’
         to any legal remedies available in the event of non-participation or if the dispute remains unresolved. This has
         become one of the most rewarding processes, with a success rate of over 90% of all references being made.</p>
 
-    <p style="font-size: 14px;">5. The Opposite / Responding Party shall, within seven (7) Working Days from the receipt of the Invitation to
+    <p style="">5. The Opposite / Responding Party shall, within seven (7) Working Days from the receipt of the Invitation to
         Mediate / Conciliate, accept or reject the said invitation by way of an email addressed to Presolv360 at
         admin@presolv360.com, failing which, the mediation / conciliation shall deemed to be a non-starter.
     </p>
 
-    <p style="font-size: 14px;">6. The parties may choose to be represented or assisted by an authorized representative, in which case the
+    <p style="">6. The parties may choose to be represented or assisted by an authorized representative, in which case the
         appointing party shall submit a Letter of Authority, format of which is available <a
             href='https://drive.google.com/file/d/1Q1d6_3n3R1QimVhtb1eGFC2jG3cWk7pS/view?usp=sharing'>here</a>. The
         appointing party shall submit the signed Letter of Authority by way of an email addressed to Presolv360 at
         admin@presolv360.com with the subject “Letter of Authority | (Case ID) | (Name of the Appointing Party)”.</p>
 
-    <p style="font-size: 14px;">7. A mediator / conciliator from the panel of mediators / conciliators will be appointed, and such appointment
+    <p style="">7. A mediator / conciliator from the panel of mediators / conciliators will be appointed, and such appointment
         shall be based on the mediator’s / conciliator’s competence, knowledge and ability to deal with subject matter
         of the dispute between the parties.</p>
 
-    <p style="font-size: 14px;">8. Upon acceptance of the appointment by the mediator / conciliator, the parties shall be notified of the
+    <p style="">8. Upon acceptance of the appointment by the mediator / conciliator, the parties shall be notified of the
         appointment.</p>
 
-    <p style="font-size: 14px;">9. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
+    <p style="">9. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
 
-    <p style="font-size: 14px;"><b>Note: This is a system generated notice and hence does not require signature.</b></p>
-    <table cellspacing="0" cellpadding="10" width="100%" style="font-size: 14px;">
+    <p style=""><b>Note: This is a system generated notice and hence does not require signature.</b></p>
+    <table cellspacing="0" cellpadding="10" width="100%" style="">
         <tr>
             <td>
                 <p>To:</p>
