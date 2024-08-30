@@ -1105,7 +1105,7 @@ class CaseController extends Controller
     /******************* Add Session Code : START  ****************************************/
     public function addSession(Request $request)
     {
-        dd($request->all());
+        //dd($request->all());
         
         /*************************Zoom API : START *******************************/
         if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {

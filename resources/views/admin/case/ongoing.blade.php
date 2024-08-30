@@ -757,7 +757,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Session for Random Cases</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add Session</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span><span class="sr-only">Close</span>
                     </button>
@@ -2780,16 +2780,43 @@
                         var al_id = [];
 
                         $.each($('#rCases').val(), function (key, val) {
-                            var id_int = val.replace('M0', '');
-                            var final_id = parseInt(id_int);
-                            al_id.push(final_id);
+
+                            if(val.indexOf('M0') != -1) {
+                                var id_int_all = val.replace('M0', '');
+                                var final_id_all = parseInt(id_int_all);
+                               // alert("1st");
+                            } 
+                            if (val.indexOf('M1') != -1) {
+                                var id_int_all = val.replace('M', '');
+                                var final_id_all = parseInt(id_int_all);
+                                //alert("2nd");
+                            }
+                            if (val.indexOf('M2') != -1) {
+                                var id_int_all = val.replace('M', '');
+                                var final_id_all = parseInt(id_int_all);
+                            }
+                            
+                            al_id.push(final_id_all);
                         });
-                       // alert(al_id.join());
-                    $.each($('#rCases').val(), function (key, val) {
+                        //alert(al_id.join());
+                    $.each($('#rCases').val(), function (key1, val1) {
                         //alert(key + val);
                        // alert($('#rCases').attr('myTag'));
-                        var id_int = val.replace('M0', '');
-                        var final_id = parseInt(id_int);
+                            if(val1.indexOf('M0') != -1) {
+                                var id_int = val1.replace('M0', '');
+                                var final_id = parseInt(id_int);
+                                //alert("1st");
+                            } 
+                            if (val1.indexOf('M1') != -1) {
+                                var id_int = val1.replace('M', '');
+                                var final_id = parseInt(id_int);
+                                //alert("2nd");
+                            }
+                            if (val1.indexOf('M2') != -1) {
+                                var id_int = val1.replace('M', '');
+                                var final_id = parseInt(id_int);
+                            }
+                        
 
                        // al_id.push(final_id);
                         //alert(al_id);
@@ -2806,7 +2833,7 @@
                     });
 
                     
-                    console.log(idarr);
+                    //console.log(idarr);
                     // return false;
                     swal.close();
                     $(".ccdd").click();
@@ -4156,7 +4183,7 @@
                                // var option_html = "<option value='0'>Select Case ID</option>";
                                 $(result.case_arr).each(function( index, element ) { 
 
-                                    option_html += "<option value='"+element.full+"' name='random_caseid' data-id='"+element.id+"' myTag='"+element.id+"'>"+element.full+"</option>" ; 
+                                    option_html += "<option value='"+element.full+"' name='random_caseid' data-id='"+element.id+"' myTag='"+element.full+"'>"+element.full+"</option>" ; 
                                 });
                             // } else {
                             //     var option_html = "<option value='0'>No Sub Users</option>";  
