@@ -2806,7 +2806,7 @@
                     });
 
                     
-                    // console.log(idarr);
+                    console.log(idarr);
                     // return false;
                     swal.close();
                     $(".ccdd").click();
