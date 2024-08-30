@@ -5486,7 +5486,7 @@ class CaseController extends Controller
 
 
     public function getAllCaseIDList(){
-        $allcases =  MedCase::select('id')->where('case_status', 1)->where('bulk_flag', 1)->limit(10)->get();
+        $allcases =  MedCase::select('id')->where('case_status', 1)->where('bulk_flag', 1)->get();
         //echo "<pre>";print_R($allcase);
         //dd($allcase['id']);
         $case_arr = array();
