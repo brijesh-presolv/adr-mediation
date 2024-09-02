@@ -640,7 +640,7 @@ class DashboardController extends Controller
             echo "<td>" . $sn . "</td>";
             echo "<td>" . $value->created_at . "</td>";
             echo "<td>" . $value->session_date . "</td>";
-            echo "<td>" . $value->zoom_id . "</td>";
+            //echo "<td>" . $value->zoom_id . "</td>";
             echo "<td>" . $value->zoom_link . "</td>";
             echo "<td>" . $value->note . "</td>";
             echo "<td>" . implode("<br>", $user) . "</td>";

@@ -586,7 +586,7 @@
                             <th scope="col">@lang('case.serial_number')</th>
                             <th scope="col">@lang('case.scheduling_done_on')</th>
                             <th scope="col">@lang('case.session_scheduled_for')</th>
-                            <th scope="col">@lang('case.session_zoom_id')</th>
+                            <!-- <th scope="col">@lang('case.session_zoom_id')</th> -->
                             <th scope="col">@lang('case.session_zoom_link')</th>
                             <th scope="col">@lang('case.session_note')</th>
                             <th scope="col">@lang('case.session_meeting_user')</th>
