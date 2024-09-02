@@ -4458,6 +4458,12 @@ class CaseController extends Controller
                         } else if ($etrck->event  == "open") {
                             $edate1 = new DateTime($etrck->created_at);
                             // /$caseinfo['invers'] = "read";
+
+                            // Added new on date 02/09/2024 //
+                            $caseinfo['inveds'] = "duly delivered";
+                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                            // Added new on date 02/09/2024 //
+
                             $caseinfo['invers'] = "The email was first read on";
                             $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
                         }
@@ -4467,19 +4473,43 @@ class CaseController extends Controller
                             //$caseinfo['inveds'] = "delivered";
                             $caseinfo['inveds'] = "transmitted";
                             $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+
+                            // Added new on date 02/09/2024 //
+                            $caseinfo['invers'] = "Invitation to mediate was transmitted on the registered email ID on";
+                            $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                            // Added new on date 02/09/2024 //
+
                         } else if ($etrck->event  == "processed") {
                             $edate1 = new DateTime($etrck->created_at);
                             //$caseinfo['inveds'] = "delivered";
                             $caseinfo['inveds'] = "transmitted";
                             $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+
+                            // Added new on date 02/09/2024 //
+                            $caseinfo['invers'] = "Invitation to mediate was transmitted on the registered email ID on";
+                            $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                            // Added new on date 02/09/2024 //
+
                         } else if ($etrck->event  == "bounce") {
                             $edate1 = new DateTime($etrck->created_at);
                             // /$caseinfo['invers'] = "read";
-                            $caseinfo['invers'] = "'000Bounce back' message was received from the mail server";
+
+                            // Added new on date 02/09/2024 //
+                            $caseinfo['inveds'] = "transmitted";
+                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                            // Added new on date 02/09/2024 //
+
+                            $caseinfo['invers'] = "'Bounce back' message was received from the mail server";
                             $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
                         } else if ($etrck->event  == "deferred") {
                             $edate1 = new DateTime($etrck->created_at);
                             // /$caseinfo['invers'] = "read";
+
+                             // Added new on date 02/09/2024 //
+                             $caseinfo['inveds'] = "transmitted";
+                             $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                             // Added new on date 02/09/2024 //
+
                             $caseinfo['invers'] = "Deferred";
                             $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
                         }
@@ -4566,8 +4596,20 @@ class CaseController extends Controller
                                         $edate1 = new DateTime($etrck->created_at);
                                         $caseinfo['einveds' . $k] = "duly delivered";
                                         $caseinfo['einvedd' . $k] = $edate1->format('d-m-Y H:i:s');
+
+                                         // Added new on date 02/09/2024 //
+                                         $caseinfo['einvers'. $k] = "The email was successfully delivered and no 'return to sender' message, 'bounce back' message or 'error' message was received from the mail server";
+                                         $caseinfo['einverd'. $k] = $edate1->format('d-m-Y H:i:s');
+                                         // Added new on date 02/09/2024 //
+
                                     } else if ($etrck->event  == "open") {
                                         $edate1 = new DateTime($etrck->created_at);
+
+                                        // Added new on date 02/09/2024 //
+                                        $caseinfo['einveds' . $k] = "duly delivered";
+                                        $caseinfo['einvedd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                        // Added new on date 02/09/2024 //
+
                                         $caseinfo['einvers' . $k] = "The email was first read on";
                                         $caseinfo['einverd' . $k] = $edate1->format('d-m-Y H:i:s');
                                     }
@@ -4578,21 +4620,43 @@ class CaseController extends Controller
                                             //$caseinfo['inveds'] = "delivered";
                                             $caseinfo['einveds'. $k] = "transmitted";
                                             $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
+
+                                            // Added new on date 02/09/2024 //
+                                            $caseinfo['einvers' . $k] = "Invitation to mediate was transmitted on the registered email ID on";
+                                            $caseinfo['einverd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                            // Added new on date 02/09/2024 //
                                         } 
                                         else if ($etrck->event  == "processed") {
                                             $edate1 = new DateTime($etrck->created_at);
                                             //$caseinfo['inveds'] = "delivered";
-                                            $caseinfo['einveds'. $k] = "456transmitted";
+                                            $caseinfo['einveds'. $k] = "transmitted";
                                             $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
+
+                                            // Added new on date 02/09/2024 //
+                                            $caseinfo['einvers' . $k] = "Invitation to mediate was transmitted on the registered email ID on";
+                                            $caseinfo['einverd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                            // Added new on date 02/09/2024 //
                                         }
                                          else if ($etrck->event  == "bounce") {
                                             $edate1 = new DateTime($etrck->created_at);
                                             // /$caseinfo['invers'] = "read";
+
+                                            // Added new on date 02/09/2024 //
+                                            $caseinfo['einveds'. $k] = "transmitted";
+                                            $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
+                                            // Added new on date 02/09/2024 //
+
                                             $caseinfo['einvers'. $k] = "'Bounce back' message was received from the mail server";
                                             $caseinfo['einverd'. $k] = $edate1->format('d-m-Y H:i:s');
                                         } else if ($etrck->event  == "deferred") {
                                             $edate1 = new DateTime($etrck->created_at);
                                             // /$caseinfo['invers'] = "read";
+
+                                            // Added new on date 02/09/2024 //
+                                            $caseinfo['einveds'. $k] = "transmitted";
+                                            $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
+                                            // Added new on date 02/09/2024 //
+
                                             $caseinfo['einvers'. $k] = "Deferred";
                                             $caseinfo['einverd'. $k] = $edate1->format('d-m-Y H:i:s');
                                         }
