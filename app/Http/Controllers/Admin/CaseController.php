@@ -1511,7 +1511,7 @@ class CaseController extends Controller
             echo "<td>" . $sn . "</td>";
             echo "<td>" . $value->created_at . "</td>";
             echo "<td>" . $value->session_date . "</td>";
-            echo "<td>" . $value->zoom_id . "</td>";
+           // echo "<td>" . $value->zoom_id . "</td>";
             echo "<td>" . $value->zoom_link . "</td>";
             echo "<td>" . $value->note . "</td>";
             echo "<td>" . implode("<br>", $user) . "</td>";
@@ -5552,5 +5552,19 @@ class CaseController extends Controller
         }
 
         return json_encode(['code' => 200, 'response' => 'success', 'time_arr' => $time_arr]);
+    }
+
+
+    public function getAllCaseIDList(){
+        $allcases =  MedCase::select('id')->where('case_status', 1)->where('bulk_flag', 1)->get();
+        //echo "<pre>";print_R($allcase);
+        //dd($allcase['id']);
+        $case_arr = array();
+        foreach($allcases as $k => $allcase){
+            $case_arr[$k]['id'] =  $allcase['id'];
+            $case_arr[$k]['full'] =  "M".sprintf('%06d', $allcase['id']);
+        }
+        //dd($case_arr);
+        return json_encode(['code' => 200, 'response' => 'success', 'case_arr' => $case_arr]);
     }
 }

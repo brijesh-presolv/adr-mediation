@@ -298,6 +298,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('check-session-time', [App\Http\Controllers\Admin\CaseController::class, 'checkSessionTime'])->name('admin.checkSessionTime');
 
 
+    // get all caseid for random case 
+    Route::get('getAllCaseIDList', [App\Http\Controllers\Admin\CaseController::class, 'getAllCaseIDList'])->name('admin.getAllCaseIDList');
 });
 
 //notification
