@@ -96,9 +96,12 @@ class IvrController extends Controller
             if ($contact != '') {
 
                 $data['contact'] = $contact;
+                
+                
+                
 
 
-                $data['template'] = 'Hello ' . $respondent . ' you are invited for mediation by ' . $claimant.' for amicably resolving your dispute.';
+                $data['template'] =  $respondent .' you are invited for mediation by '. $claimant.' for resolving your dispute. Presolv three sixty is an independent institution that will help the parties with this case. More information has been sent to you on the contact details provided by ' . $claimant;
 
                 $data['auth'] = "MED360AUTH";
 
@@ -195,7 +198,7 @@ class IvrController extends Controller
                 $data['contact'] = $contact;
 
 
-                $data['template'] = 'hello ' . $respondent . ' ' . $claimant . ' ne madhyastha ke dwara aapka vivad suljhane ke liye aapko aamantrit kiya hai.';
+                $data['template'] = $respondent .' aapko '. $claimant.' ne madhyastha ke liye aamantrit kiya hai taaki aapka vivaad suljha sake. Presolv three sixty ek nishpaksh sanstha hai jo parties ki sahayta karegi. Adhik jaankari aapke '. $claimant.' ke saath registered contact details par bheji gayi hai.';
 
                 $data['auth'] = "MED360AUTH";
 
