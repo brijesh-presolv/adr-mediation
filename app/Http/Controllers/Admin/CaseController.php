@@ -4401,6 +4401,11 @@ class CaseController extends Controller
             $caseinfo['clemail'] = $data['claimant']->userEmail;
             $caseinfo['clmob'] = $data['claimant']->userPhone;
 
+            // contact for discussion //
+            $contact_discuss = $data['case']->discussion;
+            // contact for discussion //
+            
+
             if (isset($data['responding'])) {
                 $caseinfo['respname'] = "";
                 $caseinfo['respadd'] = "";
@@ -4797,8 +4802,10 @@ class CaseController extends Controller
 
 
             // Added for Contact For Discussion //
-            $caseinfo['discussion'] = $data['case']->discussion;
+            $caseinfo['discussion'] = $contact_discuss;
             // Added for Contact For Discussion //
+
+            //dd($caseinfo);
 
              $rowData = '';
 
