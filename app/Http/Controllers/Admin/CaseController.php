@@ -4361,8 +4361,12 @@ class CaseController extends Controller
 
 
         // Session participation consent column //
-        $columnHeader = $columnHeader . "Session participation consent". "\t\n" ;
+        $columnHeader = $columnHeader . "Session participation consent". "\t" ;
         //Session participation consent column //
+
+        // Contact for discussion column //
+        $columnHeader = $columnHeader . "Contact For Discussion". "\t\n" ;
+        // Contact for discussion column //
 
         // dd($columnHeader);
 
@@ -4789,6 +4793,12 @@ class CaseController extends Controller
 
             }
             // For Session participation consent
+
+
+
+            // Added for Contact For Discussion //
+            $caseinfo['discussion'] = $data['case']->discussion;
+            // Added for Contact For Discussion //
 
              $rowData = '';
 
