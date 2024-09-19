@@ -2634,8 +2634,8 @@
 
                     var burl = '{{ route('admin.case.addSession') }}';
 
-                    console.log(idarr);
-                    return false;
+                    //console.log(idarr);
+                    //return false;
                     swal.close();
                     $(".ccdd").click();
                     $(".msgDiv").hide();
