@@ -31,6 +31,7 @@ use App\Models\WhatsappTrack;
 use App\Models\WhatsappBotReport;
 use App\Models\RestructureData;
 use App\Models\WhatsAppQue;
+use App\Models\sms_tracking;
 use DB;
 use PDF;
 use Auth;
@@ -1630,6 +1631,9 @@ class CaseController extends Controller
         $deleted->is_deleted = 1;
         $deleted->delete_reason = $request->reason;
 
+        $date_time = explode('/', $deleted->session_date);
+        $display_date_time = $date_time[0].'-'.$date_time[1].'-'.$date_time[2].' '.$date_time[3];
+
         /**** Zoom Delete *******/
         if($request->delZoomChoice == "direct"){
             $delete_zoom_meeting_response = Zoom::deleteZoomMeeting($deleted->zoom_id);
@@ -1661,6 +1665,17 @@ class CaseController extends Controller
                         }
                         if ($dd->userPhone != null) {
 
+
+                             /**** SMS Notification ****/
+                             $smsvar = ['--datetime--', '--caseid--'];
+                             $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
+                             $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
+                             
+                             Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN', 'L24_med_session_deleted');
+                             
+                             /**** SMS Notification ****/
+
+
                             $varjson = ['party' => 'Party', 'deleteDate' => $deleted->session_date, "caseid" => $caseid];
                             $var = ['-party-', '-date-', '-caseid-'];
                             $var1 = ["Party", $deleted->session_date, $caseid];
@@ -1685,6 +1700,15 @@ class CaseController extends Controller
                                 SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
                             }
                             if ($dd->userPhone != null) {
+
+                                 /**** SMS Notification ****/
+                             $smsvar = ['--datetime--', '--caseid--'];
+                             $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
+                             $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
+                             
+                             Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN', 'L24_med_session_deleted');
+                             
+                             /**** SMS Notification ****/
 
                                 $varjson = ['party' => 'Party', 'deleteDate' => $deleted->session_date, "caseid" => $caseid];
                                 $var = ['-party-', '-date-', '-caseid-'];
@@ -2338,6 +2362,19 @@ class CaseController extends Controller
         }
         foreach ($responding_phone as $phone) {
             if ($phone != "") {
+
+
+                 /**** SMS Notification ****/
+                 $smsvar = ['--caseid--', '--ipname--'];
+                 $smsvar1 = [Common_function::getsixdigitid('sc', $id), $initiating_party];
+                 $varjsonSms = ['caseid' => Common_function::changeidprefix("",$id), 'ipname' => $initiating_party];
+                 
+                 Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES', 'L4_Med_case_approve_sms');
+                 
+                 /**** SMS Notification ****/
+
+
+
                 $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
                 $var = ['-cid-', '-ip-'];
                 $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
@@ -2476,6 +2513,17 @@ class CaseController extends Controller
         }
         if ($userPhone != "") {
 
+
+            $smsvar = ['--datetime--', '--caseid--', '--url--'];
+            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $invitation];
+            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $invitation];
+            
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHED', 'L10_med_session_shedule');
+
+
+
+
+
             $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$date, $mid, $url];
@@ -2501,7 +2549,6 @@ class CaseController extends Controller
 
     public function sned_withdrawal($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
     {
-        echo "here";exit;
         // $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -2565,6 +2612,20 @@ class CaseController extends Controller
         if (isset($responding_phone)) {
             foreach ($responding_phone as $phone) {
                 if ($phone != "" && $stop_close_rp == 0) {
+
+
+                    /**** SMS Notification ****/
+                    $smsvar = ['--caseid--'];
+                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                    $varjsonSms = ['caseid' => $mid];
+                    
+                    Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL14', 'WDRN_OTHER_PARTY', 'L14_med_withdrawn');
+                    
+                    /**** SMS Notification ****/
+
+
+
+
                     $varjson = ['caseid' => $mid, 'initiating' => $initiating_party];
                     $var = ['-cid-', '-cl-'];
                     $var1 = [$mid, $initiating_party];
@@ -2671,6 +2732,18 @@ class CaseController extends Controller
             }
 
             if ($inv->userPhone != "") {
+
+                /**** SMS Notification ****/
+                $smsvar = ['--caseid--'];
+                $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                $varjsonSms = ['caseid' => $mid];
+                
+                Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL15', 'RESO_ADM', 'L15_med_successful_resolution');
+                
+                /**** SMS Notification ****/
+
+
+
                 $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
@@ -2747,6 +2820,19 @@ class CaseController extends Controller
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
             if ($inv->userPhone != "") {
+
+                /**** SMS Notification ****/
+                $smsvar = ['--caseid--'];
+                $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                $varjsonSms = ['caseid' => $mid];
+                
+                Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL16', 'UNRESO_ADM', 'L16_med_closed');
+                
+                /**** SMS Notification ****/
+
+
+
+
                 $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
@@ -5250,6 +5336,13 @@ class CaseController extends Controller
             //SendGrid::send($d, $email_id, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom" => $invitation], $email_name);
         }
         if ($userPhone != "") {
+
+            $smsvar = ['--datetime--', '--caseid--', '--url--'];
+            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $invitation];
+            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $invitation];
+            
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHED', 'L10_med_session_shedule');
+
 
             $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $invitation];
             $var = ['-dt-', '-cid-', '-link-'];
