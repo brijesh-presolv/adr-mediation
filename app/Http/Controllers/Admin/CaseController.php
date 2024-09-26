@@ -1059,7 +1059,6 @@ class CaseController extends Controller
                     $invitation = $this->mediator_appointment($request->id, $request->midater);
                 //}
                 
-
                 $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
 
                 if (!isset($invmodel)) {
@@ -2800,26 +2799,52 @@ class CaseController extends Controller
     {
         $user = User::where("id", $mediator_id)->first();
         $mid = "M" . sprintf("%06d", $id);
+
         $d = [
             'event' => 'MEDI_ADD_ADM',
             'case_id' => $id,
         ];
         SendGrid::send($d, $user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $mid], $user->name);
+
+
+        // Stop whatsapp message //
         $varjson = ['caseid' => $mid];
         $var = ['-cid-'];
         $var1 = [$mid];
-        $content1 = WaTemplate::getcontent('consent_mediator');
+        $content1 = WaTemplate::getcontent('wa_message_stop');
         $content = str_replace($var, $var1, $content1);
         $dwa1 = [
             'caseid' => $id,
             'contact' =>  $user->mobile_number,
             'content' => ['text' => $content],
-            'event' => 'MEDI_ADD_ADM',
+            'event' => 'STOP_WHTSAPP',
             'varjson' => $varjson,
-            'haptik_tmp' => 'l17_consent_mediator',
+            'haptik_tmp' => 'wa_message_stop',
         ];
 
         $access = Whatsapp::sendWamessage($dwa1);
+        // Stop whatsapp message //
+
+
+        
+            $varjson = ['caseid' => $mid];
+            $var = ['-cid-'];
+            $var1 = [$mid];
+            $content1 = WaTemplate::getcontent('consent_mediator');
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $id,
+                'contact' =>  $user->mobile_number,
+                'content' => ['text' => $content],
+                'event' => 'MEDI_ADD_ADM',
+                'varjson' => $varjson,
+                'haptik_tmp' => 'l17_consent_mediator',
+            ];
+
+            $access = Whatsapp::sendWamessage($dwa1);
+       
+        
+        
         return true;
     }
 
