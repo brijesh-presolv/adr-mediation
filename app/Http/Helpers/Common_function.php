@@ -11,6 +11,10 @@ use PDF;
 use App\Models\Arb_notification;
 use App\Models\Notification;
 
+use App\Http\Helpers\sms;
+use App\Models\sms_template;
+use App\Models\sms_tracking;
+
 class Common_function
 {
     //   public static function IdfNewUser($d)
@@ -312,4 +316,49 @@ class Common_function
 
         $pdf->save($pf);
     }
+
+
+     // sms notification function code strat ------------------
+     function sendsmsNotification($id, $contactNumber, $varjson, $varsms, $varsms1, $SmsTemplate, $eventName, $jioTmp, $pdffile = "", $isMedia = false, $mediaCaption = "")
+     {
+ 
+         $content1 = sms_template::getsmscontent($SmsTemplate);
+         $content = str_replace($varsms, $varsms1, $content1->content);
+     
+                 if (is_array($content) && array_key_exists('text', $content)) {
+                     //data sent
+                     $dwa1 = [
+                         'caseid' => $id,
+                         'casetype' => 1,
+                         'event' => $eventName,
+                         'contact' => $contactNumber,
+                         'content' => $content,
+                         'jio_tmp' => isset($jioTmp) ? $jioTmp : null,
+                         'credits_charged' => '0',
+                         'created_at' => date('Y-m-d H:i:s'),
+                         'content1' => $content1
+                     ];
+                 if ($contactNumber != "") {
+                         $access = sms::sendsmsmessage($dwa1);
+                     }
+                 } else{
+                     $dwa2 = [
+                         'caseid' => $id,
+                         'casetype' => 1,
+                         'event' => $eventName,
+                         'contact' => $contactNumber,
+                         'content' => $content,
+                         'jio_tmp' => isset($jioTmp) ? $jioTmp : null,
+                         'credits_charged' => '0',
+                         'created_at' => date('Y-m-d H:i:s'),
+                         'content1' => $content1
+ 
+                     ];
+     
+                 if ($contactNumber != "") {
+                         $access = sms::sendsmsmessage($dwa2);
+                     }
+                 } 
+     }
+     // ----------------------------- end
 }
