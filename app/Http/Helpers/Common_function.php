@@ -217,9 +217,9 @@ class Common_function
 
         if ($type == 'sc') {
 
-            return 'A' . sprintf('%06d', $id);
+            return 'M' . sprintf('%06d', $id);
         } else if ($type == 'dc') {
-            return 'A' . sprintf('%06d', $id);
+            return 'M' . sprintf('%06d', $id);
         } else if ($type == 'sp') {
             return 'PS-' . sprintf('%06d', $id);
         } else if ($type == 'dp') {
