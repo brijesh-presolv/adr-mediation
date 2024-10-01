@@ -2535,8 +2535,8 @@ class CaseController extends Controller
 
 
             $smsvar = ['--datetime--', '--caseid--', '--url--'];
-            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $invitation];
-            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $invitation];
+            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $url];
+            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $url];
             
             Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHED', 'L10_med_sess_shedule');
 
