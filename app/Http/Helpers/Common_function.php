@@ -361,4 +361,21 @@ class Common_function
                  } 
      }
      // ----------------------------- end
+
+
+     // Function for case-id prefix "B" : START //
+    public static function changeidprefix($prefix = null, $c_id, $initial = "M", $ext = null){
+        $new_prefix = env('PLATFORM_PREFIX');
+       // $new_case_id = sprintf(str_replace($initial,'%1$s',$c_id ),$new_prefix);
+        $new_case_id = sprintf('%06d', $c_id);
+        if($prefix){
+            $new_prefix = $prefix.'_'.$initial;
+        }else{
+            $new_prefix = $initial;
+        }
+        // $new_prefix = str_replace('M',$initial,$prefix);
+        $merge_id = $new_prefix.$new_case_id.$ext;
+        return $merge_id;
+    }
+    // Function for case-id prefix "B" : END //
 }
