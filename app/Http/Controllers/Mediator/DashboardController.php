@@ -1259,15 +1259,16 @@ class DashboardController extends Controller
                 if(($case_type == 1 && $inv->isClaimant != 0) || ($case_type == 0)){
 
 
-
+                   
                      /**** SMS Notification ****/
-            $smsvar = ['--caseid--'];
-            $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
-            $varjsonSms = ['caseid' => $mid];
-            
-            Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED', 'L18_Med_medaccept_sms');
-            
-            /**** SMS Notification ****/
+                     if($data["case"]->bulk_flag == 1){
+                    $smsvar = ['--caseid--'];
+                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                    $varjsonSms = ['caseid' => $mid];
+                    
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED', 'L18_Med_medaccept_sms');
+                     }
+                    /**** SMS Notification ****/
 
 
                 $varjson = ['caseid' => $mid];
@@ -1299,6 +1300,16 @@ class DashboardController extends Controller
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
+            } else if($inv->isClaimant == 0){
+                /**** SMS Notification ****/
+                if($data["case"]->bulk_flag == 0){
+                    $smsvar = ['--caseid--'];
+                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                    $varjsonSms = ['caseid' => $mid];
+                    
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED', 'L18_Med_medaccept_sms');
+                     }
+                    /**** SMS Notification ****/ 
             }
             }
         }
@@ -1309,6 +1320,7 @@ class DashboardController extends Controller
     public function send_upload_file_party($id, $files)
     {
 
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
@@ -1339,14 +1351,25 @@ class DashboardController extends Controller
                 // additional_doc
                 if ($inv->userPhone != "") {
 
+                
+
 
                      /**** SMS Notification ****/
-                $smsvar = ['--caseid--'];
-                $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
-                $varjsonSms = ['caseid' => $mid];
-                
-                Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED', 'L19_Med_adddoc_sms');
-                
+                if($is_bulk['bulk_flag'] == 0){
+                    $smsvar = ['--caseid--'];
+                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                    $varjsonSms = ['caseid' => $mid];
+                    
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED', 'L19_Med_adddoc_sms');
+                } else {
+                    if ($inv->isClaimant != 0) {
+                        $smsvar = ['--caseid--'];
+                        $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                        $varjsonSms = ['caseid' => $mid];
+                        
+                        Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED', 'L19_Med_adddoc_sms');
+                    }
+                }
                 /**** SMS Notification ****/
 
 
@@ -1456,6 +1479,7 @@ class DashboardController extends Controller
 
     public function send_settlement_agreement_party($id, $files)
     {
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
 
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -1482,12 +1506,13 @@ class DashboardController extends Controller
 
 
                 /**** SMS Notification ****/
-            $smsvar = ['--caseid--'];
-            $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
-            $varjsonSms = ['caseid' => $mid];
-            
-            Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL21', 'SEND_SETT_AGRE_MED', 'L21_Med_sadoc_sms');
-            
+                if($is_bulk['bulk_flag'] == 0){
+                    $smsvar = ['--caseid--'];
+                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                    $varjsonSms = ['caseid' => $mid];
+                    
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL21', 'SEND_SETT_AGRE_MED', 'L21_Med_sadoc_sms');
+                }
             /**** SMS Notification ****/
 
 
