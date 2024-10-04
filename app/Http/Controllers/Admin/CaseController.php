@@ -5410,7 +5410,8 @@ class CaseController extends Controller
 
          //DB::enableQueryLog();
 
-         $subUserData = User::select('first_name', 'last_name', 'email', 'mobile_number')->where('role', 3)->where('is_deleted', 0)->get();
+         //$subUserData = User::select('first_name', 'last_name', 'email', 'mobile_number')->where('role', 3)->where('is_deleted', 0)->get();
+         $subUserData = User::select('first_name', 'last_name', 'email', 'mobile_number')->where('role', 0)->where('is_deleted', 0)->orderby('id', 'DESC')->get();
         //  $subUserData = DB::table('user_hierarchy_master')
         //  ->join('users', 'users.id', '=', 'user_hierarchy_master.sub_userid')
         //  ->where('user_hierarchy_master.parent_userid', $user_id)
@@ -5441,7 +5442,8 @@ class CaseController extends Controller
             'organization' => "",
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 3,
+            //'role' => 3,
+            'role' => 0,
             'emailotp' => rand('100000', '999999'),
             'smsotp' => rand('100000', '999999'),
             'is_agree' => 1,
