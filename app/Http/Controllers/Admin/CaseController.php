@@ -1674,14 +1674,14 @@ class CaseController extends Controller
                              $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
                              $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
                              
-                             Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN', 'L24_med_session_deleted');
+                             Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN_SMS', 'L24_med_session_deleted');
                              } else {
                                if($dd->isClaimant != 0){
                                 $smsvar = ['--datetime--', '--caseid--'];
                                 $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
                                 $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
                                 
-                                Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN', 'L24_med_session_deleted');
+                                Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN_SMS', 'L24_med_session_deleted');
                                } 
                              }
                              /**** SMS Notification ****/
@@ -1718,14 +1718,14 @@ class CaseController extends Controller
                                     $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
                                     $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
                                     
-                                    Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN', 'L24_med_session_deleted');
+                                    Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN_SMS', 'L24_med_session_deleted');
                                  } else {
                                     if($dd->isClaimant != 0){
                                      $smsvar = ['--datetime--', '--caseid--'];
                                      $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
                                      $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
                                      
-                                     Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN', 'L24_med_session_deleted');
+                                     Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN_SMS', 'L24_med_session_deleted');
                                     } 
                                   }
                              /**** SMS Notification ****/
@@ -2389,7 +2389,7 @@ class CaseController extends Controller
                  $smsvar1 = [Common_function::getsixdigitid('sc', $id), $initiating_party];
                  $varjsonSms = ['caseid' => Common_function::changeidprefix("",$id), 'ipname' => $initiating_party];
                  
-                 Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES', 'L4_Med_case_approve_sms');
+                 Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES_SMS', 'L4_Med_case_approve_sms');
                  
                  /**** SMS Notification ****/
 
@@ -2538,7 +2538,7 @@ class CaseController extends Controller
             $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $url];
             $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $url];
             
-            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHED', 'L10_med_session_shedule_1');
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHED_SMS', 'L10_med_session_shedule_1');
 
 
 
@@ -2646,7 +2646,7 @@ class CaseController extends Controller
                         $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                         $varjsonSms = ['caseid' => $mid];
                         
-                        Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL14', 'WDRN_OTHER_PARTY', 'L14_med_withdrawn');
+                        Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL14', 'WDRN_OTHER_PARTY_SMS', 'L14_med_withdrawn');
                     }
                     /**** SMS Notification ****/
 
@@ -2687,7 +2687,7 @@ class CaseController extends Controller
                         $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                         $varjsonSms = ['caseid' => $mid];
                         
-                        Common_function::sendsmsNotification($id, $ini_phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL14', 'WDRN_OTHER_PARTY', 'L14_med_withdrawn');
+                        Common_function::sendsmsNotification($id, $ini_phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL14', 'WDRN_OTHER_PARTY_SMS', 'L14_med_withdrawn');
                     }
                     /**** SMS Notification ****/
 
@@ -2782,7 +2782,7 @@ class CaseController extends Controller
                     $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                     $varjsonSms = ['caseid' => $mid];
                     
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL15', 'RESO_ADM', 'L15_med_successful_resolution');
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL15', 'RESO_ADM_SMS', 'L15_med_successful_resolution');
                 }
                 /**** SMS Notification ****/
 
@@ -2872,7 +2872,7 @@ class CaseController extends Controller
                     $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                     $varjsonSms = ['caseid' => $mid];
                     
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL16', 'UNRESO_ADM', 'L16_med_closed');
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL16', 'UNRESO_ADM_SMS', 'L16_med_closed');
                 }
                 /**** SMS Notification ****/
 
@@ -5387,7 +5387,7 @@ class CaseController extends Controller
             $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $invitation];
             $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $invitation];
             
-            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHED', 'L10_med_session_shedule_1');
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHED_SMS', 'L10_med_session_shedule_1');
 
 
             $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $invitation];
