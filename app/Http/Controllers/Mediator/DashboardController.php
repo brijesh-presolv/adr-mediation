@@ -1266,7 +1266,7 @@ class DashboardController extends Controller
                     $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                     $varjsonSms = ['caseid' => $mid];
                     
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED', 'L18_Med_medaccept_sms');
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
                      }
                     /**** SMS Notification ****/
 
@@ -1307,7 +1307,7 @@ class DashboardController extends Controller
                     $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                     $varjsonSms = ['caseid' => $mid];
                     
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED', 'L18_Med_medaccept_sms');
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
                      }
                     /**** SMS Notification ****/ 
             }
@@ -1360,14 +1360,14 @@ class DashboardController extends Controller
                     $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                     $varjsonSms = ['caseid' => $mid];
                     
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED', 'L19_Med_adddoc_sms');
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED_SMS', 'L19_Med_adddoc_sms');
                 } else {
                     if ($inv->isClaimant != 0) {
                         $smsvar = ['--caseid--'];
                         $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                         $varjsonSms = ['caseid' => $mid];
                         
-                        Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED', 'L19_Med_adddoc_sms');
+                        Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED_SMS', 'L19_Med_adddoc_sms');
                     }
                 }
                 /**** SMS Notification ****/
@@ -1511,7 +1511,7 @@ class DashboardController extends Controller
                     $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                     $varjsonSms = ['caseid' => $mid];
                     
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL21', 'SEND_SETT_AGRE_MED', 'L21_Med_sadoc_sms');
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL21', 'SEND_SETT_AGRE_MED_SMS', 'L21_Med_sadoc_sms');
                 }
             /**** SMS Notification ****/
 
