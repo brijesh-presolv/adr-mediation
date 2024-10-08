@@ -437,7 +437,7 @@ class MedCase extends Model
         return $cases;
     }
 
-    static function getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id)
+    static function getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id, $parent)
     {
         
           if ($batch_id != "") {

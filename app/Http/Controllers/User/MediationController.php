@@ -1477,8 +1477,10 @@ class MediationController extends Controller
         }
         $searchValue = $_POST['sSearch'];
 
-        $casescount = MedCase::getCaseCountOngoingUser($searchValue, $role, $batch_id);
-        $cases = MedCase::getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id);
+        $check = DB::table('user_hierarchy_master')->where('sub_userid', "LIKE", '%'.Auth::user()->id.   '%')->first();
+
+        $casescount = MedCase::getCaseCountOngoingUser($searchValue, $role, $batch_id, $check->parent_userid);
+        $cases = MedCase::getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id, $check->parent_userid);
 
         $final_batch = "";
         $arraydata = array();
