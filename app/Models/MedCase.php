@@ -477,8 +477,8 @@ class MedCase extends Model
        
             $sql->select('user_involved_in_agreement.userid', 'user_involved_in_agreement.userPlanId', 'mediation_case.sub_user_id', 'mediation_case.id as caseid','mediation_case.withdraw', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', "consent_disclosures.created_at as create", "mediation_case.batch_id as batch_id", "mediation_case.ref_id as ref_id")
             ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => $role])
-            ->orWhere('user_involved_in_agreement.userId', $parent)
-            //->orWhere('mediation_case.sub_user_id', Auth::user()->id)
+            //->orWhere('user_involved_in_agreement.userId', $parent)
+            ->orWhere('mediation_case.sub_user_id', Auth::user()->id)
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -631,8 +631,8 @@ class MedCase extends Model
         }
         
         $cases = $sql->select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.sub_user_id', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', "consent_disclosures.created_at as create")
-            ->where(['mediation_case.sub_user_id' => Auth::user()->id, 'mediation_case.confirm_status' => $role])
-            ->orWhere('user_involved_in_agreement.userId', $parent)
+            ->where(['user_involved_in_agreement.userId' => Auth::user()->id, 'mediation_case.confirm_status' => $role])
+            ->orWhere('mediation_case.sub_user_id', Auth::user()->id)
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
