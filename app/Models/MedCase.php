@@ -596,7 +596,7 @@ class MedCase extends Model
         return $cases;
     }
     
-    static function getCaseCountOngoingUser($searchValue, $role, $batch_id = "")
+    static function getCaseCountOngoingUser($searchValue, $role, $batch_id = "", $parent)
     {
         if ($batch_id != "") {
             $sql = MedCase::with('user_involed')->where("mediation_case.batch_id", $batch_id);
