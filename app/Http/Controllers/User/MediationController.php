@@ -1615,8 +1615,10 @@ class MediationController extends Controller
         $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
         $searchValue = $_POST['sSearch'];
 
-        $casescount = MedCase::getCaseCountNewReqUser($searchValue);
-        $cases = MedCase::getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage);
+        $check = DB::table('user_hierarchy_master')->where('sub_userid', "LIKE", '%'.Auth::user()->id.   '%')->first();
+
+        $casescount = MedCase::getCaseCountNewReqUser($searchValue, $check->parent_userid);
+        $cases = MedCase::getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $check->parent_userid);
 
         $arraydata = array();
         foreach ($cases as $key => $value) {

@@ -689,7 +689,7 @@ class MedCase extends Model
 
 
 
-    static function getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage)
+    static function getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $parent)
     {
         $sql = MedCase::with('user_involed');
         
@@ -720,9 +720,12 @@ class MedCase extends Model
         }
         
         $sql->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 0])
+            ->orWhere('user_involved_in_agreement.userId', $parent)
             ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId');
             // ->orderby('mediation_case.id', 'DESC')
             // ->get();
+
+            //var_dump($sql->toSql());
         
         if ($columnName == "case.caseid" && $columnSortOrder == 'asc') {
             $sql->orderBy('mediation_case.id', 'ASC');
