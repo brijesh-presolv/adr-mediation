@@ -720,12 +720,12 @@ class MedCase extends Model
         }
         
         $sql->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 0])
-            ->orWhere('user_involved_in_agreement.userid', $parent)
+            ->orWhere(['user_involved_in_agreement.userid' => $parent, 'mediation_case.confirm_status' => 0])
             ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId');
             // ->orderby('mediation_case.id', 'DESC')
             // ->get();
 
-            //var_dump($sql->toSql());
+            var_dump($sql->toSql());
         
         if ($columnName == "case.caseid" && $columnSortOrder == 'asc') {
             $sql->orderBy('mediation_case.id', 'ASC');
