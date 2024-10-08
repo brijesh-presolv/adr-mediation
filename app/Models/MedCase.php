@@ -728,8 +728,9 @@ class MedCase extends Model
         //     // ->get();
 
 
-           $sql->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 0])->where(function ($q) use ($parent) {
-                $q->orWhere('mediation_case.sub_user_id', $parent)->orWhere('user_involved_in_agreement.userId', $parent);
+           $sql->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 0])
+           ->where(function ($q) use ($parent) {
+                $q->orWhere('user_involved_in_agreement.userId', $parent);
             })->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId');
         
             
