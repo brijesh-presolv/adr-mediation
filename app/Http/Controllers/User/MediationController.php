@@ -1659,8 +1659,8 @@ class MediationController extends Controller
         $caseidArr = array();
         $final_arr = array();
         foreach ($cases as $key => $val) {
-            if(!in_array($val->caseid, $caseidArr)) {
-                array_push($caseidArr, $val->caseid);
+            if(!in_array($val->userPlanId, $caseidArr)) {
+                array_push($caseidArr, $val->userPlanId);
                 $final_arr[$key]['userPlanId'] = $val->userPlanId;
                 $final_arr[$key]['sub_user_id'] = $val->sub_user_id;
                 $final_arr[$key]['created_at'] = $val->created_at;
