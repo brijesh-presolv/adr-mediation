@@ -1482,8 +1482,8 @@ class MediationController extends Controller
         $casescount = MedCase::getCaseCountOngoingUser($searchValue, $role, $batch_id);
         $cases = MedCase::getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id);
 
-
-        dd(array_unique($cases));
+        array_unique($cases);
+        dd($cases);
         $final_batch = "";
         $arraydata = array();
         foreach ($cases as $key => $value) {
