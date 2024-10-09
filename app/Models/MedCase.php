@@ -522,7 +522,7 @@ class MedCase extends Model
         }
 
         $cases = $sql->skip($row)
-            ->take($rowperpage)->groupBy('mediation_case.id')->get();
+            ->take($rowperpage)->groupBy('caseid')->get();
         return $cases;
     }
 
@@ -655,7 +655,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-            ->groupBy('mediation_case.id') 
+            ->groupBy('caseid') 
             ->count();
         
         return $cases;
