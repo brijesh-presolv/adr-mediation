@@ -526,7 +526,7 @@ class MedCase extends Model
 
 
         //dd($cases);
-        return $cases->groupBy('caseid');;
+        return $cases;
     }
 
 
