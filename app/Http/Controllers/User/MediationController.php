@@ -1491,8 +1491,14 @@ class MediationController extends Controller
             if(!in_array($value->caseid, $caseidArr)) {
                 array_push($caseidArr, $value->caseid);
             }
+        }
 
-           echo "<pre>";print_R($caseidArr);
+        foreach ($cases as $key => $value) {
+            // if(!in_array($value->caseid, $caseidArr)) {
+            //     array_push($caseidArr, $value->caseid);
+            // }
+
+           //echo "<pre>";print_R($caseidArr);
             if(in_array($value->caseid, $caseidArr)){
             $batch_name = DB::table('batch')
             ->select("batch.batch_name")
@@ -1525,7 +1531,7 @@ class MediationController extends Controller
             ];
             }
         }
-        exit;
+       // exit;
 
         // foreach ($new as $key => $value) {
         //     // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
