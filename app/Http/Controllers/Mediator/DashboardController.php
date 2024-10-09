@@ -1262,12 +1262,14 @@ class DashboardController extends Controller
                    
                      /**** SMS Notification ****/
                      if($data["case"]->bulk_flag == 1){
-                    $smsvar = ['--caseid--'];
-                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
-                    $varjsonSms = ['caseid' => $mid];
-                    
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
-                     }
+                        if($inv->isClaimant != 0) {
+                            $smsvar = ['--caseid--'];
+                            $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                            $varjsonSms = ['caseid' => $mid];
+                            
+                            Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
+                        }
+                    }
                     /**** SMS Notification ****/
 
 
@@ -1300,17 +1302,17 @@ class DashboardController extends Controller
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
-            } else if($inv->isClaimant == 0){
+            } else {
                 /**** SMS Notification ****/
-                if($data["case"]->bulk_flag == 0){
+                //if($data["case"]->bulk_flag == 0){
                     $smsvar = ['--caseid--'];
                     $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                     $varjsonSms = ['caseid' => $mid];
                     
                     Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
-                     }
+                    // }
                     /**** SMS Notification ****/ 
-            }
+                }
             }
         }
 
