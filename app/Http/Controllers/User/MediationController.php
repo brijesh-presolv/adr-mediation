@@ -1489,8 +1489,11 @@ class MediationController extends Controller
         $caseidArr = array();
         foreach ($cases as $key => $val) {
             if(!in_array($val->caseid, $caseidArr)) {
-                array_push($caseidArr[$key]['caseid'], $val->caseid);
-                array_push($caseidArr[$key]['batch_id'], $val->batch_id);
+
+                $caseidArr[$key]['caseid'] = $val->caseid;
+                $caseidArr[$key]['batch_id'] = $val->batch_id;
+                //array_push($caseidArr[$key]['caseid'], $val->caseid);
+                //array_push($caseidArr[$key]['batch_id'], $val->batch_id);
                 //array_push($caseidArr, $val->sub_user_id);
                 //array_push($caseidArr, $val->date);
             }
