@@ -1508,7 +1508,7 @@ class MediationController extends Controller
             // if(!in_array($value->caseid, $caseidArr)) {
             //     array_push($caseidArr, $value->caseid);
             // }
-
+            dd($value);
            //echo "<pre>";print_R($caseidArr);
           
             $batch_name = DB::table('batch')
