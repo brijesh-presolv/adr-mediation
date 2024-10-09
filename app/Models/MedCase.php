@@ -525,8 +525,8 @@ class MedCase extends Model
             ->take($rowperpage)->get();
 
 
-        dd($cases);
-        return $cases;
+        //dd($cases);
+        return $cases->groupBy('caseid');;
     }
 
 
