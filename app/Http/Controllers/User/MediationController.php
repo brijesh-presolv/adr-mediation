@@ -1655,10 +1655,23 @@ class MediationController extends Controller
         $cases = MedCase::getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $check->parent_userid);
 
         $arraydata = array();
-        foreach ($cases as $key => $value) {
 
-            if($value->sub_user_id != null){
-                $sub_user_data = User::select("first_name", "last_name")->where("id", $value->sub_user_id)->first();
+        $caseidArr = array();
+        $final_arr = array();
+        foreach ($cases as $key => $val) {
+            if(!in_array($val->caseid, $caseidArr)) {
+                array_push($caseidArr, $val->caseid);
+                $final_arr[$key]['userPlanId'] = $val->userPlanId;
+                $final_arr[$key]['sub_user_id'] = $val->sub_user_id;
+                $final_arr[$key]['created_at'] = $val->created_at;
+                
+            }
+        }
+        
+        foreach ($final_arr as $key => $value) {
+
+            if($value['sub_user_id'] != null){
+                $sub_user_data = User::select("first_name", "last_name")->where("id", $value['sub_user_id'])->first();
                 $sub_user = $sub_user_data->first_name ." ".$sub_user_data->last_name;
             } else {
                 $sub_user = "";
@@ -1667,9 +1680,9 @@ class MediationController extends Controller
             $arraydata[] = [
                 "key" => $key + 1,
                 "case" => $value,
-                "date" => date('d-m-Y', strtotime($value->created_at)),
+                "date" => date('d-m-Y', strtotime($value['created_at'])),
                 "sub_user" => $sub_user,
-                "party" => InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->userPlanId])->get(),
+                "party" => InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value['userPlanId']])->get(),
             ];
         }
         return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
