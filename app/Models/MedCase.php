@@ -491,10 +491,10 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             //->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId');
             // ->orderby('mediation_case.id', 'DESC')
             // ->get();
-            ->groupBy('mediation_case.id');
+            
         
         
 
@@ -522,7 +522,7 @@ class MedCase extends Model
         }
 
         $cases = $sql->skip($row)
-            ->take($rowperpage)->get();
+            ->take($rowperpage)->groupBy('mediation_case.id')->get();
         return $cases;
     }
 
