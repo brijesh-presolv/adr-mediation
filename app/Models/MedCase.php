@@ -437,7 +437,7 @@ class MedCase extends Model
         return $cases;
     }
 
-    static function getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id, $parent)
+    static function getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id)
     {
         
           if ($batch_id != "") {
@@ -477,7 +477,7 @@ class MedCase extends Model
             $login = Auth::user()->id;
             $sql->select('user_involved_in_agreement.userid', 'user_involved_in_agreement.userPlanId', 'mediation_case.sub_user_id', 'mediation_case.id as caseid','mediation_case.withdraw', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', "consent_disclosures.created_at as create", "mediation_case.batch_id as batch_id", "mediation_case.ref_id as ref_id")
             
-            ->where(function($query) use ($login, $parent) {
+            ->where(function($query) use ($login) {
                 $query->where('user_involved_in_agreement.userid', $login)
                 ->orWhere('mediation_case.sub_user_id', $login);
                 //->orWhere('user_involved_in_agreement.userid', $parent);
@@ -604,7 +604,7 @@ class MedCase extends Model
         return $cases;
     }
     
-    static function getCaseCountOngoingUser($searchValue, $role, $batch_id = "", $parent)
+    static function getCaseCountOngoingUser($searchValue, $role, $batch_id = "")
     {
         if ($batch_id != "") {
             $sql = MedCase::with('user_involed')->where("mediation_case.batch_id", $batch_id);
@@ -639,10 +639,10 @@ class MedCase extends Model
         }
         $login = Auth::user()->id;
         $cases = $sql->select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.sub_user_id', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', "consent_disclosures.created_at as create")
-                    ->where(function($query) use ($login, $parent) {
+                    ->where(function($query) use ($login) {
                         $query->where('user_involved_in_agreement.userid', $login)
-                        ->orWhere('mediation_case.sub_user_id', $login)
-                        ->orWhere('user_involved_in_agreement.userid', $parent);
+                        ->orWhere('mediation_case.sub_user_id', $login);
+                        //->orWhere('user_involved_in_agreement.userid', $parent);
                     })
         
                 //->where(['user_involved_in_agreement.userId' => Auth::user()->id, 'mediation_case.confirm_status' => $role])
