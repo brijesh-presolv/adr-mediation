@@ -522,7 +522,10 @@ class MedCase extends Model
         }
 
         $cases = $sql->skip($row)
-            ->take($rowperpage)->groupBy('caseid')->get();
+            ->take($rowperpage)->get();
+
+
+        dd($cases);
         return $cases;
     }
 
