@@ -479,8 +479,8 @@ class MedCase extends Model
             
             ->where(function($query) use ($login, $parent) {
                 $query->where('user_involved_in_agreement.userid', $login)
-                ->orWhere('mediation_case.sub_user_id', $login)
-                ->orWhere('user_involved_in_agreement.userid', $parent);
+                ->orWhere('mediation_case.sub_user_id', $login);
+                //->orWhere('user_involved_in_agreement.userid', $parent);
             })
             
             
@@ -521,7 +521,7 @@ class MedCase extends Model
         }
 
         $cases = $sql->skip($row)
-            ->take($rowperpage)->get();
+            ->take($rowperpage)->distinct()->get();
         return $cases;
     }
 
