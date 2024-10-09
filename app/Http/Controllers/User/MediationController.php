@@ -1495,6 +1495,7 @@ class MediationController extends Controller
                 $final_arr[$key]['batch_id'] = $val->batch_id;
                 $final_arr[$key]['sub_user_id'] = $val->sub_user_id;
                 $final_arr[$key]['date'] = $val->date;
+                $final_arr[$key]['create'] = $val->create;
                 //array_push($caseidArr[$key]['caseid'], $val->caseid);
                 //array_push($caseidArr[$key]['batch_id'], $val->batch_id);
                 //array_push($caseidArr, $val->sub_user_id);
@@ -1505,23 +1506,51 @@ class MediationController extends Controller
 
        // dd($final_arr);
         foreach ($final_arr as $key => $value) {
-            // if(!in_array($value->caseid, $caseidArr)) {
-            //     array_push($caseidArr, $value->caseid);
-            // }
-            dd($value);
-           //echo "<pre>";print_R($caseidArr);
+          /**** OLD CODE *************/
           
+            // $batch_name = DB::table('batch')
+            // ->select("batch.batch_name")
+            // ->where('batch.id', $value->batch_id)->get();
+            // if(isset($value->batch_id) && $value->batch_id != ""){
+            //     $final_batch = $batch_name[0]->batch_name;
+            // } else {
+            //     $final_batch = "-";
+            // }
+
+            // if($value->sub_user_id != null){
+            //     $sub_user_data = User::select("first_name", "last_name")->where("id", $value->sub_user_id)->first();
+            //     $sub_user = $sub_user_data->first_name ." ".$sub_user_data->last_name;
+            // } else {
+            //     $sub_user = "";
+            // } 
+
+            // $arraydata[] = [
+            //     "key" => $key + 1,
+            //     "date" => date('d-m-Y', strtotime($value->date)),
+            //     "casestatus" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first(),
+            //     "case" => $value,
+            //     "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get(),
+            //     "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->count(),
+            //     "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->where('view', 0)->count(),
+            //     "mediator_create_action_date" =>  date('d-m-Y', strtotime($value->create)),
+            //     "batch_id" => $value->batch_id,
+            //     "batch_name" => $final_batch,
+            //     "sub_user" => $sub_user
+            // ];
+
+            /**** OLD CODE *************/
+
             $batch_name = DB::table('batch')
             ->select("batch.batch_name")
-            ->where('batch.id', $value->batch_id)->get();
-            if(isset($value->batch_id) && $value->batch_id != ""){
+            ->where('batch.id', $value['batch_id'])->get();
+            if(isset($value['batch_id']) && $value['batch_id'] != ""){
                 $final_batch = $batch_name[0]->batch_name;
             } else {
                 $final_batch = "-";
             }
 
-            if($value->sub_user_id != null){
-                $sub_user_data = User::select("first_name", "last_name")->where("id", $value->sub_user_id)->first();
+            if($value['sub_user_id'] != null){
+                $sub_user_data = User::select("first_name", "last_name")->where("id", $value['sub_user_id'])->first();
                 $sub_user = $sub_user_data->first_name ." ".$sub_user_data->last_name;
             } else {
                 $sub_user = "";
@@ -1529,44 +1558,20 @@ class MediationController extends Controller
 
             $arraydata[] = [
                 "key" => $key + 1,
-                "date" => date('d-m-Y', strtotime($value->date)),
-                "casestatus" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first(),
+                "date" => date('d-m-Y', strtotime($value['date'])),
+                "casestatus" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value['caseid']])->orderByDesc('id')->limit(1)->first(),
                 "case" => $value,
-                "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get(),
-                "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->count(),
-                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->where('view', 0)->count(),
-                "mediator_create_action_date" =>  date('d-m-Y', strtotime($value->create)),
-                "batch_id" => $value->batch_id,
+                "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value['caseid']])->get(),
+                "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value['caseid'])->count(),
+                "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value['caseid'])->where('view', 0)->count(),
+                "mediator_create_action_date" =>  date('d-m-Y', strtotime($value['create'])),
+                "batch_id" => $value['batch_id'],
                 "batch_name" => $final_batch,
                 "sub_user" => $sub_user
             ];
             
         }
-       // exit;
-
-        // foreach ($new as $key => $value) {
-        //     // $in = InvoledUser::select('name', 'isOnboarded')->where(['userPlanid' => $value->caseid])->get();
-
-
-        //     if (isset($value->casestatus)) {
-        //         $value->casestatus->css = '';
-
-        //         if ($value->casestatus->status == 2) {
-
-        //             $value->casestatus->css = 'danger';
-        //         } else if ($value->casestatus->status == 5) {
-
-        //             $value->casestatus->css = 'danger';
-        //         } else if ($value->casestatus->status == 6) {
-
-        //             $value->casestatus->css = 'success';
-        //         } else if ($value->casestatus->status == 7) {
-
-        //             $value->casestatus->css = 'danger';
-        //         }
-        //     }
-        //     $closed[] = $value;
-        // }
+       
 
         return response()->json(["sEcho" => intval($draw), "iTotalRecords" => $casescount, "iTotalDisplayRecords" => $casescount, "aaData" => $arraydata]);
     }
