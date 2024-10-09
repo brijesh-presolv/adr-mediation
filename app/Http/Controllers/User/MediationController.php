@@ -1493,6 +1493,8 @@ class MediationController extends Controller
             }
         }
 
+
+        dd($caseidArr);
         foreach ($cases as $key => $value) {
             // if(!in_array($value->caseid, $caseidArr)) {
             //     array_push($caseidArr, $value->caseid);
