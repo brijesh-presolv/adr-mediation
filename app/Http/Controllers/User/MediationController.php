@@ -1487,21 +1487,24 @@ class MediationController extends Controller
         $arraydata = array();
 
         $caseidArr = array();
-        foreach ($cases as $key => $value) {
-            if(!in_array($value->caseid, $caseidArr)) {
-                array_push($caseidArr, $value->caseid);
+        foreach ($cases as $key => $val) {
+            if(!in_array($val->caseid, $caseidArr)) {
+                array_push($caseidArr, $val->caseid);
+                array_push($caseidArr, $val->batch_id);
+                array_push($caseidArr, $val->sub_user_id);
+                array_push($caseidArr, $val->date);
             }
         }
 
 
-        dd($caseidArr);
-        foreach ($cases as $key => $value) {
+       
+        foreach ($caseidArr as $key => $value) {
             // if(!in_array($value->caseid, $caseidArr)) {
             //     array_push($caseidArr, $value->caseid);
             // }
 
            //echo "<pre>";print_R($caseidArr);
-            if(in_array($value->caseid, $caseidArr)){
+          
             $batch_name = DB::table('batch')
             ->select("batch.batch_name")
             ->where('batch.id', $value->batch_id)->get();
@@ -1531,7 +1534,7 @@ class MediationController extends Controller
                 "batch_name" => $final_batch,
                 "sub_user" => $sub_user
             ];
-            }
+            
         }
        // exit;
 
