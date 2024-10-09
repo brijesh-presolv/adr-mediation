@@ -1482,11 +1482,15 @@ class MediationController extends Controller
         $casescount = MedCase::getCaseCountOngoingUser($searchValue, $role, $batch_id);
         $cases = MedCase::getCaseOngoingUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id);
 
-        array_unique($cases);
-        dd($cases);
+        
         $final_batch = "";
         $arraydata = array();
+
+        $caseidArr = array();
         foreach ($cases as $key => $value) {
+            array_push($caseidArr, $value->caseid);
+
+            if(!in_array($value->caseid, $caseidArr)) {
             $batch_name = DB::table('batch')
             ->select("batch.batch_name")
             ->where('batch.id', $value->batch_id)->get();
@@ -1516,6 +1520,7 @@ class MediationController extends Controller
                 "batch_name" => $final_batch,
                 "sub_user" => $sub_user
             ];
+        }
         }
 
 
