@@ -2531,16 +2531,18 @@ class CaseController extends Controller
         if ($email_id != "") {
             SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
         }
+
+        $smsvar = ['--datetime--', '--caseid--', '--url--'];
+        $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $url];
+        $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $url];
+        
+        Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_sess_shedule');
+
+
         if ($userPhone != "") {
 
 
-            $smsvar = ['--datetime--', '--caseid--', '--url--'];
-            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $url];
-            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $url];
-            
-            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHED_SMS', 'L10_med_session_shedule_1');
-
-
+           
 
 
 
@@ -5381,14 +5383,17 @@ class CaseController extends Controller
             SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, "-zoom_invitation_link-" => $invitation], $email_name);
             //SendGrid::send($d, $email_id, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom" => $invitation], $email_name);
         }
-        if ($userPhone != "") {
 
-            $smsvar = ['--datetime--', '--caseid--', '--url--'];
+        $smsvar = ['--datetime--', '--caseid--', '--url--'];
             $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $invitation];
             $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $invitation];
             
-            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHED_SMS', 'L10_med_session_shedule_1');
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_sess_shedule');
 
+
+        if ($userPhone != "") {
+
+            
 
             $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $invitation];
             $var = ['-dt-', '-cid-', '-link-'];
