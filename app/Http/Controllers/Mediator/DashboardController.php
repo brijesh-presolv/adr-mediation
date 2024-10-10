@@ -1362,14 +1362,14 @@ class DashboardController extends Controller
                     $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                     $varjsonSms = ['caseid' => $mid];
                     
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED_SMS', 'L19_Med_adddoc_sms');
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED_SMS', 'L19_med_additional_doc');
                 } else {
                     if ($inv->isClaimant != 0) {
                         $smsvar = ['--caseid--'];
                         $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
                         $varjsonSms = ['caseid' => $mid];
                         
-                        Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED_SMS', 'L19_Med_adddoc_sms');
+                        Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL19', 'SEND_ADDI_DOC_MED_SMS', 'L19_med_additional_doc');
                     }
                 }
                 /**** SMS Notification ****/
