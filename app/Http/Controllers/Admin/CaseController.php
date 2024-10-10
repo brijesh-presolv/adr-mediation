@@ -2532,12 +2532,13 @@ class CaseController extends Controller
             SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
         }
 
-        $smsvar = ['--datetime--', '--caseid--', '--url--'];
-        $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $url];
-        $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $url];
-        
-        Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_sess_shedule');
-
+        if ($userPhone != null) {
+            $smsvar = ['--datetime--', '--caseid--', '--url--'];
+            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $url];
+            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $url];
+            
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_sess_shedule');
+        }
 
         if ($userPhone != "") {
 
@@ -2776,8 +2777,7 @@ class CaseController extends Controller
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
 
-            if ($inv->userPhone != "") {
-
+            if ($inv->userPhone != null) {
                 /**** SMS Notification ****/
                 if($is_bulk['bulk_flag'] == 0){
                     $smsvar = ['--caseid--'];
@@ -2787,6 +2787,11 @@ class CaseController extends Controller
                     Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL15', 'RESO_ADM_SMS', 'L15_med_successful_resolution');
                 }
                 /**** SMS Notification ****/
+            }
+
+            if ($inv->userPhone != "") {
+
+                
 
 
 
@@ -2866,8 +2871,8 @@ class CaseController extends Controller
             if ($inv->userEmail != "" && $stop_close_ip == 0) {
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
-            if ($inv->userPhone != "") {
 
+            if ($inv->userPhone != null) {
                 /**** SMS Notification ****/
                 if($is_bulk['bulk_flag'] == 0){
                     $smsvar = ['--caseid--'];
@@ -2877,6 +2882,11 @@ class CaseController extends Controller
                     Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL16', 'UNRESO_ADM_SMS', 'L16_med_closed');
                 }
                 /**** SMS Notification ****/
+            }
+
+            if ($inv->userPhone != "") {
+
+                
 
 
 
@@ -5384,12 +5394,13 @@ class CaseController extends Controller
             //SendGrid::send($d, $email_id, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom" => $invitation], $email_name);
         }
 
-        $smsvar = ['--datetime--', '--caseid--', '--url--'];
+        if ($userPhone != null) {
+            $smsvar = ['--datetime--', '--caseid--', '--url--'];
             $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $invitation];
             $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $invitation];
             
             Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_sess_shedule');
-
+        }
 
         if ($userPhone != "") {
 
