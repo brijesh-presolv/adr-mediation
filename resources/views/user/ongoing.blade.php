@@ -156,7 +156,8 @@ use App\Models\InvoledUser;
                     </div>
                     <div class="col-md-10">
                         <button class="blkbtn btn btn-sm btn-inline btn-primary" id="bulkdownloadBtn"
-                            style="margin-top:10px; display:none;">Bulk Download</button>
+                            style="margin-top:10px; display:none;" data-toggle="modal"
+                            data-target="#bulkdownloadBulkcasesModal">Bulk Download</button>
                     </div>
 
                 </div>
@@ -340,6 +341,42 @@ use App\Models\InvoledUser;
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('case.btn_close')</button>
                         <button type="submit" class="btn btn-primary">@lang('case.btn_close_request')</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="modal fade" id="bulkdownloadBulkcasesModal" tabindex="-1" aria-labelledby="bulkdownloadBulkcasesModal"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="withdrawModalLabel">Bulk Download</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="bulkdownloadBulkcasesForm" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="case_id" class="form-control">
+                        <div class="form-group">
+                            <label for="download-type" class="col-form-label">Select option for Bulk Download</label>
+                            <select class="form-control" name="download_type" id="selectOpt" required>
+                                <option value="">Select</option>
+                                <option value="1">By Case ID</option>
+                                <option value="2">By Reference ID</option>
+                                
+                            </select>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>
@@ -1197,11 +1234,15 @@ use App\Models\InvoledUser;
             });
         });
 
-        $('#bulkdownloadBtn').on('click', function(e) {
+        //$('#bulkdownloadBtn').on('click', function(e) {
+        $('#bulkdownloadBulkcasesForm').on('submit', function(e) {
             e.preventDefault();
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
             var withdrawcount = [];
             var count = 0;
+
+            var select_option = $('#selectOpt').val();
+
             $(".blkchk").each(function() {
                 if (this.checked) {
                     count++;
@@ -1221,12 +1262,15 @@ use App\Models\InvoledUser;
                 if (willDelete) {
 
                     var cid = "";
+                    var refid = "";
                     $(".blkchk").each(function() {
                         if (this.checked) {
                             if (cid == "") {
                                 cid = $(this).data("caseid");
+                                refid = $(this).data("refid");
                             } else {
                                 cid = cid + "," + $(this).data("caseid");
+                                refid = refid + "," + $(this).data("refid");
                             }
                         }
                     });
@@ -1235,6 +1279,8 @@ use App\Models\InvoledUser;
                         type: 'post',
                         data: {
                             allcid: cid,
+                            select_option: select_option,
+                            allrefid: refid,
                             _token: csrf
                         },
                         xhrFields: {
