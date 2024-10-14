@@ -453,7 +453,7 @@ use App\Models\InvoledUser;
                         
                         var button = "";
                         button = button + `<input type="checkbox" class="blkchk" data-caseid="` + row.case.caseid +
-                            `">`;
+                            `" data-refid="`+row.case.ref_id+`">`;
                         return meta.row + meta.settings._iDisplayStart + 1 + button;
                         }
                 },
