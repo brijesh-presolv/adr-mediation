@@ -3724,14 +3724,20 @@ class CaseController extends Controller
         $zip = new ZipArchive();
         $zip->open($download_path, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         $caseid = explode(',', $request->allcid);
-        $refid = explode(',', $request->allrefid);
+
+        if(isset($request->allrefid) && $request->allrefid != ""){
+            $refid = explode(',', $request->allrefid);
+        }
         $pdf = new PDFMerger();
 
        // $caseid1 = array();
 
        
-
+       if(isset($request->allrefid) && $request->allrefid != ""){
         $caseid = array_combine($refid, $caseid);
+       } else {
+        $caseid = collect($caseid)->sort();
+       }
 
         //$caseid = collect($caseid)->sort();
 
