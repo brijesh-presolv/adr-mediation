@@ -16,7 +16,7 @@ class smsController extends Controller
     {
 
         $limit = 100;
-        $smsapp = sms_queModal::where(['is_sent' => 0, 'is_processing' => 0])->limit($limit)->get();
+        $smsapp = sms_queModal::where(['is_sent' => 0, 'is_processing' => 0])->orderBy('id', 'desc')->limit($limit)->get();
 
         if (count($smsapp) < 1) {
             exit();
