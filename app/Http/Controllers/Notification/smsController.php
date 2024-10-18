@@ -27,10 +27,11 @@ class smsController extends Controller
 
             $smsapppr[] = $value->id;
         }
+        $setprocess = sms_queModal::whereIn('id', $smsapppr)->limit($limit)->update(['is_processing' => 1]);
         
         foreach ($smsapp as $key => $value) {
             $content1 = sms_template::getsmscontent1($value->jio_tmp);
-            
+        
             $d = [
                 'id' => $value->id,
                 'event' => $value->event,
@@ -40,12 +41,11 @@ class smsController extends Controller
                 'caseid' => $value->caseid,
                 'content1' =>  $content1
             ];
-            
-            
+
+           
             self::NewsmsMessage($d, $value->contact);
-            
+
         }
-        $setprocess = sms_queModal::whereIn('id', $smsapppr)->limit($limit)->update(['is_processing' => 1]);
        
     }
 
