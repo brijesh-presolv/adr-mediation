@@ -99,7 +99,7 @@ class smsController extends Controller
             sms_tracking::insert($d2);
         }
         $que = sms_queModal::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);
-
+        echo "<pre>";print_R($que);exit;
         if ($res != " ") {
             $sms_que = sms_queModal::select('is_processing','is_sent')->where('id', '=',$d['id'])->get();
         
