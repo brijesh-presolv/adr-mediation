@@ -68,7 +68,7 @@ class smsController extends Controller
 
         $res = Curl::smsrequest($url, $postData);
 
-        dd($res);
+        //dd($res);
         // $resjson = json_decode($res);
         if (is_array($d['content']) && array_key_exists('text', $d['content'])) {
             $d1 = [
