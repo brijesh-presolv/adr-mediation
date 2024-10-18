@@ -45,6 +45,8 @@ class sms
             $arr_e = array();
             $arr_e['caseid'] = $data['caseid'];
             $arr_e['contact'] = trim($c);
+            $arr_e['content'] = $data['content'];
+            $arr_e['jio_tmp'] = $data['jio_tmp'];
             $arr_e['casetype'] = $data['casetype'];
             $arr_e['event'] = $data['event'];
             $arr_e['replylink'] = $settlelink;

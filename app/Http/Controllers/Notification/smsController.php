@@ -17,7 +17,7 @@ class smsController extends Controller
 
         $limit = 100;
         $smsapp = sms_queModal::where(['is_sent' => 0, 'is_processing' => 0])->orderBy('id', 'desc')->limit($limit)->get();
-
+        //echo "<pre>";print_R($smsapp);exit;
         if (count($smsapp) < 1) {
             exit();
         }
@@ -28,6 +28,7 @@ class smsController extends Controller
             $smsapppr[] = $value->id;
         }
         $setprocess = sms_queModal::whereIn('id', $smsapppr)->limit($limit)->update(['is_processing' => 1]);
+        
         foreach ($smsapp as $key => $value) {
             $content1 = sms_template::getsmscontent1($value->jio_tmp);
         
@@ -50,6 +51,7 @@ class smsController extends Controller
 
     public function NewsmsMessage($d, $c)
     {
+        
 
         $url = "https://control.msg91.com/api/sendhttp.php";
         $authKey = "353508AnLLLst4qR62ce8822P1";
@@ -68,7 +70,7 @@ class smsController extends Controller
 
         $res = Curl::smsrequest($url, $postData);
 
-        //dd($res);
+      
         // $resjson = json_decode($res);
         if (is_array($d['content']) && array_key_exists('text', $d['content'])) {
             $d1 = [
