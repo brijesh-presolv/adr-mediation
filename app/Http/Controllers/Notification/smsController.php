@@ -41,9 +41,13 @@ class smsController extends Controller
                 'content1' =>  $content1
             ];
 
-            self::NewsmsMessage($d, $value->contact);
+            echo "<pre>";print_R($d);
+            echo "<pre>";print_R($value);
+
+           // self::NewsmsMessage($d, $value->contact);
 
         }
+        exit;
     }
 
     public function NewsmsMessage($d, $c)
