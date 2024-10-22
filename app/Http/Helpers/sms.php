@@ -35,7 +35,8 @@ class sms
             }
 
             //que table
-            $settlelink = request()->getSchemeAndHttpHost() . '/email/reply/' . base64_encode($data['caseid']);
+          //  $settlelink = request()->getSchemeAndHttpHost() . '/email/reply/' . base64_encode($data['caseid']);
+            $settlelink = "";
             $sprintf_id = 'M' . sprintf("%06d", $data['caseid']);
             if($data['casetype'] == 1){
              $notice_type = 1 ;
