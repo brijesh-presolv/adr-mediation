@@ -1267,7 +1267,7 @@ class DashboardController extends Controller
                 }
             }
             /**** SMS Notification ****/
-            if ($inv->userPhone != "") {
+            if ($inv->userPhone != null) {
                 if(($case_type == 1 && $inv->isClaimant != 0) || ($case_type == 0)){
 
 
@@ -1372,7 +1372,7 @@ class DashboardController extends Controller
                 }
                 /**** SMS Notification ****/
                 // additional_doc
-                if ($inv->userPhone != "") {
+                if ($inv->userPhone != null) {
 
                     $varjson = ['caseid' => $mid];
                     $var = ['-cid-'];
