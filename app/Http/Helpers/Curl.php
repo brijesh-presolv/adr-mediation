@@ -103,4 +103,31 @@ class Curl
 		$output = curl_exec($ch);
 		return $output;
 	}
+
+    public static function getShortUrl($longLink)
+    {
+        $token = "KQQxsfjURpshwWhsKQQxsfjURpshwWhs";
+        $app = "P360MED";
+        $header = "PRSOLV";        
+        $api_shortUrl = "https://odrs.in/api/getshort";
+       
+        $ip =''; 
+       
+        $post_data='';
+        $post_data.='app='.$app;
+        $post_data.='&token='.$token;
+        $post_data.='&ip='.$ip;
+        $post_data.='&url='.$longLink;
+        $post_data.='&header='.$header;
+        $ch = curl_init($api_shortUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$post_data);
+        curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+        $output = curl_exec($ch);
+        curl_close ($ch);
+        //end curl
+        $output=json_decode($output)->data;
+        $shortUrl=$output->shorturl;
+        return $shortUrl;
+    }
 }
