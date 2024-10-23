@@ -2576,7 +2576,7 @@ class CaseController extends Controller
         $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
 
         
-
+        echo "<pre>";print_R($is_bulk);exit;
         // $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -2873,7 +2873,7 @@ class CaseController extends Controller
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
 
-            if ($inv->userPhone != null) {
+            //if ($inv->userPhone != null) {
                 /**** SMS Notification ****/
                 if($is_bulk['bulk_flag'] == 0){
                     $smsvar = ['--caseid--'];
@@ -2883,7 +2883,7 @@ class CaseController extends Controller
                     Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL16', 'UNRESO_ADM_SMS', 'L16_med_closed');
                 }
                 /**** SMS Notification ****/
-            }
+            //}
 
             if ($inv->userPhone != "") {
 
