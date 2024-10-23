@@ -2639,7 +2639,7 @@ class CaseController extends Controller
 
         if (isset($responding_phone)) {
             foreach ($responding_phone as $phone) {
-                if ($phone != "" && $stop_close_rp == 0) {
+                if ($phone != null && $stop_close_rp == 0) {
 
 
                     /**** SMS Notification ****/
@@ -2652,6 +2652,7 @@ class CaseController extends Controller
                         Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL14', 'WDRN_OTHER_PARTY_SMS', 'L14_med_withdrawn');
                     }
                     /**** SMS Notification ****/
+                    
 
 
 
