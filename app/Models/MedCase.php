@@ -474,9 +474,19 @@ class MedCase extends Model
         }
         
         
-       
+            $login = Auth::user()->id;
             $sql->select('user_involved_in_agreement.userid', 'user_involved_in_agreement.userPlanId', 'mediation_case.sub_user_id', 'mediation_case.id as caseid','mediation_case.withdraw', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', "consent_disclosures.created_at as create", "mediation_case.batch_id as batch_id", "mediation_case.ref_id as ref_id")
-            ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => $role])
+            
+            ->where(function($query) use ($login) {
+                $query->where('user_involved_in_agreement.userid', $login)
+                ->orWhere('mediation_case.sub_user_id', $login);
+                //->orWhere('user_involved_in_agreement.userid', $parent);
+            })
+            
+            
+           // ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => $role])
+            ->where('mediation_case.confirm_status', $role)
+            
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -484,6 +494,7 @@ class MedCase extends Model
             ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId');
             // ->orderby('mediation_case.id', 'DESC')
             // ->get();
+            
         
         
 
@@ -511,7 +522,10 @@ class MedCase extends Model
         }
 
         $cases = $sql->skip($row)
-            ->take($rowperpage)->get();
+            ->take($rowperpage)->distinct()->get();
+
+
+        //dd($cases);
         return $cases;
     }
 
@@ -627,13 +641,24 @@ class MedCase extends Model
                 });
             }
         }
-        
+        $login = Auth::user()->id;
         $cases = $sql->select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.sub_user_id', 'mediation_case.created_at as date', 'mediation_case.userid', DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator"), 'consent_disclosures.id as consent', 'mediators_mediation_cases_status.status as mstatus', 'mediators_mediation_cases_status.updated_at as update', "consent_disclosures.created_at as create")
-            ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => $role])
+                    ->where(function($query) use ($login) {
+                        $query->where('user_involved_in_agreement.userid', $login)
+                        ->orWhere('mediation_case.sub_user_id', $login);
+                        //->orWhere('user_involved_in_agreement.userid', $parent);
+                    })
+        
+                //->where(['user_involved_in_agreement.userId' => Auth::user()->id, 'mediation_case.confirm_status' => $role])
+                ->where('mediation_case.confirm_status', $role)
+
+
+
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("consent_disclosures", "mediation_case.id", "=", "consent_disclosures.mediation_case_id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->distinct()
             ->count();
         
         return $cases;
@@ -689,7 +714,7 @@ class MedCase extends Model
 
 
 
-    static function getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage)
+    static function getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $parent)
     {
         $sql = MedCase::with('user_involed');
         
@@ -719,10 +744,24 @@ class MedCase extends Model
             }
         }
         
-        $sql->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 0])
+        $login = Auth::user()->id;
+        $sql->where(function($query) use ($login) {
+            $query->where('user_involved_in_agreement.userid', $login)
+            ->orWhere('mediation_case.sub_user_id', $login);
+            //->orWhere('user_involved_in_agreement.userid', $parent);
+        })
+        ->where('mediation_case.confirm_status', 0)
+
+        // $sql->where(['mediation_case.sub_user_id' => Auth::user()->id, 'mediation_case.confirm_status' => 0])
+        //     ->orWhere('user_involved_in_agreement.userId', $parent)
+            
             ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId');
             // ->orderby('mediation_case.id', 'DESC')
             // ->get();
+
+
+           
+            
         
         if ($columnName == "case.caseid" && $columnSortOrder == 'asc') {
             $sql->orderBy('mediation_case.id', 'ASC');
@@ -743,7 +782,7 @@ class MedCase extends Model
         }
 
         $cases = $sql->skip($row)
-            ->take($rowperpage)->get();
+            ->take($rowperpage)->distinct()->get();
 
            // dd($cases);
         return $cases;
@@ -778,9 +817,20 @@ class MedCase extends Model
                 });
             }
         }
+        $login = Auth::user()->id;
         
-        $cases = $sql->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 0])
+        $cases = 
+        
+        $sql->where(function($query) use ($login) {
+            $query->where('user_involved_in_agreement.userid', $login)
+            ->orWhere('mediation_case.sub_user_id', $login);
+            //->orWhere('user_involved_in_agreement.userid', $parent);
+        })
+        ->where('mediation_case.confirm_status', 0)
+       // $sql->where(['mediation_case.sub_user_id' => Auth::user()->id, 'mediation_case.confirm_status' => 0])
+        //->orWhere('user_involved_in_agreement.userId', $parent)
             ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->distinct()
             ->count();
 
             

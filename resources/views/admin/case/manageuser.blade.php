@@ -43,6 +43,11 @@
   #accordion .panel-collapse {
     padding: 10px;
   }
+
+  #users a.btn {
+    padding: 0px 10px !important;
+    color: #fff;
+  }
 </style>
 <!------- Collapse Style ------------->
 
@@ -161,8 +166,14 @@
                       <td><?php echo $sub->first_name .' '.$sub->last_name; ?></td>
                       <td><?php echo $sub->email; ?></td>
                       <td><?php echo $sub->mobile_number; ?></td>
-                      <td><a data-toggle="modal" data-target="#updateSubUser-modal" data-subid="<?php echo $sub->id;?>" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="Edit User Info" style="padding: 10px"><i class="fa fa-edit"></i></a>  
-                      <a data-subid="<?php echo $sub->id;?>" target="_blank" class="btn btn-info waves-effect waves-light btn-sm deleteSubUser" title="Delete User" style="padding: 10px"><i class="fa fa-trash"></i></a></td>
+                      <td>
+                        <a data-toggle="modal" data-target="#updateSubUser-modal" data-subid="<?php echo $sub->id;?>" target="_blank" class="btn btn-primary waves-effect  waves-light btn-sm" title="Edit User Info" style="padding: 10px">
+                            <i class="mdi mdi-content-save-edit-outline"></i>
+                        </a>  
+                        <a data-subid="<?php echo $sub->id;?>" target="_blank" class="btn btn-info waves-effect waves-light btn-sm deleteSubUser" title="Delete User" style="padding: 10px">
+                            <i class="mdi mdi-trash-can-outline"></i>
+                        </a>
+                    </td>
                   </tr>
                   <?php } ?>
                 </tbody>
@@ -275,13 +286,31 @@
 
 
 @endsection
+@section('head')
+
+    <link href="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+
+@endsection
 
 @section('footer')
+<!-- Datatable plugin js -->
+<script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
+<script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Datatables init -->
+<script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
+
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript">
   $(document).ready(function(){
+    $('#users').DataTable();
+
+
     $('#updateSubUser-modal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
            // $("#editsessionParty").html("");
