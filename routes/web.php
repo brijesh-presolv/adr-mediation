@@ -292,6 +292,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('getSubUserList', [App\Http\Controllers\Admin\CaseController::class, 'getSubUserList'])->name('admin.getSubUserList');
     // Parent Child User
 
+    // branch wise delivery sheet
+    Route::get('getAllBranchList', [App\Http\Controllers\Admin\CaseController::class, 'getAllBranchList'])->name('admin.getAllBranchList');
+
 
 
     // check if session time is already taken

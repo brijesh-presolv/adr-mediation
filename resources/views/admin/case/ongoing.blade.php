@@ -256,6 +256,25 @@
                     <!----- Added for random cases : END ------------------>
 
 
+                    <!--------- Batch wise Delivery Sheet -->
+                    <div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <strong>Select Batch</strong>
+                            </div>
+
+                            <div class="col-md-12">
+                                    <select class="blkdirtorandom" name="branches" id="branches" multiple style="width:50%">
+                                    </select>
+                            </div>
+                        </div>
+
+                    
+                    </div>
+                    <!--------- Batch wise Delivery Sheet -->
+
+
                      
         
                 </div>
@@ -333,6 +352,8 @@
 
 
 
+
+        
         
 
     </section>
@@ -4411,6 +4432,46 @@
                                     });
                 }, 100);
                 }
+
+
+
+            // branch code
+            
+
+            //$("#branches").select2();
+           function get_branch(){
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            $.ajax({
+                    url: '{{ route('admin.getAllBranchList') }}',
+                    dataType: 'json',
+                    type: "GET",
+                    data: {
+                        _token: csrf
+                    },
+                    success: function (resp) {
+                        $('#branches').empty();
+                      
+                            
+                            var option_html = "";
+                                $(resp.batch_arr).each(function( index, element ) { 
+                                   
+                                   option_html += "<option value='"+element.id+"' name='batch_name'>"+element.batch_name+"</option>" ; 
+                                });
+                        
+                                
+                                setTimeout(() => {
+                                    $('#branches').html(option_html);
+                                }, 2000);
+                        
+                    }
+
+                });
+           }
+                
+            $(document).ready(function(){
+                get_branch();
+                $('#branches').select2();
+            }); 
         
     </script>
 @endsection

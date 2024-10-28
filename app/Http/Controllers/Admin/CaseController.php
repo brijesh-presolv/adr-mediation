@@ -5592,4 +5592,16 @@ class CaseController extends Controller
         //dd($case_arr);
         return json_encode(['code' => 200, 'response' => 'success', 'case_arr' => $case_arr]);
     }
+
+    public function getAllBranchList(){
+        $allbatches =  Batch::select('id', 'batch_name')->get();
+        
+        $batch_arr = array();
+        foreach($allbatches as $k => $allbatch){
+            $batch_arr[$k]['id'] =  $allbatch['id'];
+            $batch_arr[$k]['name'] =  $allbatch['batch_name'];
+        }
+        //dd($case_arr);
+        return response()->json(array('type' => "success", 'batch_arr' => $allbatches), 200);
+    }
 }
