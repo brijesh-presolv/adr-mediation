@@ -249,6 +249,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('case/delete-session', [App\Http\Controllers\Admin\CaseController::class, 'deleteSession'])->name('admin.case.DeleteSession');
     Route::post('case/downloadLogInviation', [App\Http\Controllers\Admin\CaseController::class, 'downloadLogInviation'])->name('admin.case.downloadLogInviation');
 
+    
+    // baatch wise delivery sheet download
+    Route::post('case/downloadLogInviationBatchWise', [App\Http\Controllers\Admin\CaseController::class, 'downloadLogInviationBatchWise'])->name('admin.case.downloadLogInviationBatchWise');
+    
     //track
     Route::get('track/{id}', [App\Http\Controllers\Admin\CaseController::class, 'track'])->name('admin.case.track');
 

@@ -5604,4 +5604,503 @@ class CaseController extends Controller
         //dd($case_arr);
         return response()->json(array('type' => "success", 'batch_arr' => $allbatches), 200);
     }
+
+
+
+    
+    public function downloadLogInviationBatchWise(Request $request)
+    {
+
+        $caseinfo = [];
+        $columnHeader = '';
+        $setData = '';
+        $count = [];
+        $caseid = explode(',', trim($request->ids));
+        foreach ($caseid as $key => $value) {
+            $count[$key] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value)->count();
+        }
+        $forloopcnt = max($count);
+        $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" .  "Batch" . "\t" ."Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
+            "Initiating Registered Office" . "\t" . "Initiating Full Name" . "\t" . "Initiating Email ID" . "\t" . "Initiating WhatsApp / Mobile Number" . "\t" . "Full name of Primary Respondent" . "\t" .
+            "Full Address of Primary Respondent" . "\t" . "Email ID of Primary Respondent" . "\t" . "WhatsApp / Mobile Number of Primary Respondent (10 digit)" . "\t" . "Dispute Category" . "\t" . "Nature of agreement" . "\t" . "Agreement date" . "\t" .  "Disputed amount" . "\t" . "Date of Invitation" . "\t" . "Name of Mediator" . "\t" .
+            "Invitation Primary Respondent email transmitted status" . "\t" . "Invitation Primary Respondent email transmitted date" . "\t" . "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . "\t" . "Invitation Primary Respondent whatsapp transmitted status" . "\t" . "Invitation Primary Respondent whatsapp transmitted date" . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" . "\t";
+
+        for ($i = 1; $i < $forloopcnt; $i++) {
+            $columnHeader = $columnHeader . "Email ID of Additional Respondent " . $i . "\t" . "WhatsApp / Mobile Number of additional Respondent " . $i . "\t" .
+                "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
+        }
+
+        $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t";
+
+        $columnHeader = $columnHeader . "Why did i get this? (Button click)" . "\t" . "Pay now (Button click)" . "\t" . "Explore alternatives (Button click)" . "\t" . "Restructure (Link click)" . "\t". "Restructure (Offer selected)" . "\t". "Reply (Link click)" . "\t" . "Reply submitted" . "\t";
+
+
+        // Session participation consent column //
+        $columnHeader = $columnHeader . "Session participation consent". "\t" ;
+        //Session participation consent column //
+
+        // Contact for discussion column //
+        $columnHeader = $columnHeader . "Contact For Discussion". "\t\n" ;
+        // Contact for discussion column //
+
+        // dd($columnHeader);
+
+        foreach ($caseid as $key => $value) {
+            $data['case'] = MedCase::find($value);
+            // dd($data);
+            $data['claimant'] = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $value)->first();
+            $data['responding'] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value)->get();
+            $data['inviation_file'] = InvitationFiles::where('case_id', $value)->orderByDesc('id')->limit(1)->first();
+
+            $data['mediator'] = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "first_name", "last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $value)
+                ->first();
+            $caseinfo['srno'] = $key + 1;
+            $caseinfo['caseid'] = 'M' . sprintf('%06d', $value);
+            $caseinfo['refid'] = $data['case']->ref_id;
+            // Batch Name //
+             $batch_info = Batch::select("batch_name")->join("mediation_case", "mediation_case.batch_id", "=", "batch.id")
+            ->where("mediation_case.id", "=", $value)
+            ->first();
+            $caseinfo['batch_name'] = $batch_info['batch_name'];
+            // Batch Name //
+            $datearb = new DateTime($data['case']->created_at);
+            $caseinfo['datearb'] = $datearb->format('d-m-Y H:i:s');
+            $caseinfo['clorg'] = $data['claimant']->organization;
+            if ($data['claimant']->fulladdress == null) {
+                $caseinfo['cloff'] = $data['claimant']->address1 . ',' . $data['claimant']->address2 . ',' . $data['claimant']->city . ',' . $data['claimant']->pincode . ',' . $data['claimant']->state . ',' . $data['claimant']->country;
+            } else {
+                $caseinfo['cloff'] = $data['claimant']->fulladdress;
+            }
+            $caseinfo['clname'] = $data['claimant']->name;
+            $caseinfo['clemail'] = $data['claimant']->userEmail;
+            $caseinfo['clmob'] = $data['claimant']->userPhone;
+
+            // contact for discussion //
+            $contact_discuss = $data['case']->discussion;
+            // contact for discussion //
+            
+
+            if (isset($data['responding'])) {
+                $caseinfo['respname'] = "";
+                $caseinfo['respadd'] = "";
+                $caseinfo['respemail'] = "";
+                $caseinfo['respmob'] = "";
+
+                foreach ($data['responding'] as $k => $v) {
+
+                    if ($k == 0) {
+
+                        $caseinfo['respname'] = $v->name;
+                        if ($v->fulladdress == null) {
+                            $caseinfo['respadd'] = $v->address1 . ',' . $v->address2 . ',' . $v->city . ',' . $v->pincode . ',' . $v->state . ',' . $v->country;
+                        } else {
+                            $caseinfo['respadd'] = $v->fulladdress;
+                        }
+                        $caseinfo['respemail'] = $v->userEmail;
+                        $caseinfo['respmob'] = isset($v->userPhone) ? $v->userPhone : "";
+                    }
+                }
+            }
+            $caseinfo['doc'] = $data['case']->disputeCategory;
+            $caseinfo['nature'] = $data['case']->natureOfAgreement;
+            $caseinfo['adate'] = $data['case']->agreementDate;
+            $caseinfo['amt'] = $data['case']->amount;
+            if (isset($data['inviation_file'])) {
+                $invdate = new DateTime($data['inviation_file']->created_at);
+                $caseinfo['invdate'] =  $invdate->format('d-m-Y H:i:s');
+            }
+            $caseinfo['medname'] = isset($data['mediator']) ? strtoupper($data['mediator']->first_name) . " " . strtoupper($data['mediator']->last_name) : "";
+
+            $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $caseinfo['respemail']);
+
+            if($caseinfo['respmob'] != ""){
+                $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $caseinfo['respmob']);
+            } else {
+                $data['whatsapptrck'] = "";
+            }
+           
+            $caseinfo['invets'] = "";
+            $caseinfo['invetd'] = "";
+            $caseinfo['inveds'] = "";
+            $caseinfo['invedd'] = "";
+            $caseinfo['invers'] = "";
+            $caseinfo['inverd'] = "";
+            if (isset($data['emailtrck'])) {
+                $time = new DateTime($data['emailtrck']->created_at);
+                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                $caseinfo['invets'] = "transmitted";
+                $caseinfo['invetd'] = $time->format('d-m-Y H:i:s');
+                if (isset($data['emailtrck']['track_data'])) {
+                    foreach ($data['emailtrck']['track_data'] as $etrck) {
+                        if ($etrck->event  == "delivered") {
+                            $edate1 = new DateTime($etrck->created_at);
+                            //$caseinfo['inveds'] = "delivered";
+                            $caseinfo['inveds'] = "duly delivered";
+                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                            $caseinfo['invers'] = "The email was successfully delivered and no 'return to sender' message, 'bounce back' message or 'error' message was received from the mail server";
+                        } else if ($etrck->event  == "open") {
+                            $edate1 = new DateTime($etrck->created_at);
+                            // /$caseinfo['invers'] = "read";
+
+                            // Added new on date 02/09/2024 //
+                            $caseinfo['inveds'] = "duly delivered";
+                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                            // Added new on date 02/09/2024 //
+
+                            $caseinfo['invers'] = "The email was first read on";
+                            $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                        }
+                        // as per arb status
+                        else if ($etrck->event  == "processed") {
+                            $edate1 = new DateTime($etrck->created_at);
+                            //$caseinfo['inveds'] = "delivered";
+                            $caseinfo['inveds'] = "transmitted";
+                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+
+                            // Added new on date 02/09/2024 //
+                            $caseinfo['invers'] = "Invitation to mediate was transmitted on the registered email ID on";
+                            $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                            // Added new on date 02/09/2024 //
+
+                        } else if ($etrck->event  == "processed") {
+                            $edate1 = new DateTime($etrck->created_at);
+                            //$caseinfo['inveds'] = "delivered";
+                            $caseinfo['inveds'] = "transmitted";
+                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+
+                            // Added new on date 02/09/2024 //
+                            $caseinfo['invers'] = "Invitation to mediate was transmitted on the registered email ID on";
+                            $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                            // Added new on date 02/09/2024 //
+
+                        } else if ($etrck->event  == "bounce") {
+                            $edate1 = new DateTime($etrck->created_at);
+                            // /$caseinfo['invers'] = "read";
+
+                            // Added new on date 02/09/2024 //
+                            $caseinfo['inveds'] = "transmitted";
+                            $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                            // Added new on date 02/09/2024 //
+
+                            $caseinfo['invers'] = "'Bounce back' message was received from the mail server";
+                            $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                        } else if ($etrck->event  == "deferred") {
+                            $edate1 = new DateTime($etrck->created_at);
+                            // /$caseinfo['invers'] = "read";
+
+                             // Added new on date 02/09/2024 //
+                             $caseinfo['inveds'] = "transmitted";
+                             $caseinfo['invedd'] = $edate1->format('d-m-Y H:i:s');
+                             // Added new on date 02/09/2024 //
+
+                            $caseinfo['invers'] = "Deferred";
+                            $caseinfo['inverd'] = $edate1->format('d-m-Y H:i:s');
+                        }
+
+                        // as per arb status
+                    }
+                }
+                if ($caseinfo['invers'] != "" && $caseinfo['inveds'] == "") {
+                    $caseinfo['inveds'] = "delivered";
+                    $caseinfo['invedd'] = $caseinfo['inverd'];
+                }
+            }
+            $caseinfo['invwts'] = "";
+            $caseinfo['invwtd'] = "";
+            $caseinfo['invwds'] = "";
+            $caseinfo['invwdd'] = "";
+            $caseinfo['invwrs'] = "";
+            $caseinfo['invwrd'] = "";
+            if (isset($data['whatsapptrck']) && $data['whatsapptrck'] != "") {
+                $time = new DateTime($data['whatsapptrck']->created_at);
+                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                $caseinfo['invwts'] = "transmitted";
+                $caseinfo['invwtd'] = $time->format('d-m-Y H:i:s');
+                if (isset($data['whatsapptrck']['whatsapp_log'])) {
+                    foreach ($data['whatsapptrck']['whatsapp_log'] as $wtrck) {
+                        if (strtolower($wtrck->status)  == "delivered") {
+                            $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            $caseinfo['invwds'] = "delivered";
+                            $caseinfo['invwdd'] = $time->format('d-m-Y H:i:s');
+                        } else if (strtolower($wtrck->status)  == "read") {
+                            $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            $caseinfo['invwrs'] = "read";
+                            $caseinfo['invwrd'] = $time->format('d-m-Y H:i:s');
+                        }
+                    }
+                }
+
+
+                if ($caseinfo['invwrs'] != "" && $caseinfo['invwds'] == "") {
+                    $caseinfo['invwds'] = "delivered";
+                    $caseinfo['invwdd'] = $caseinfo['invwrd'];
+                }
+            }
+            for ($i = 1; $i < $forloopcnt; $i++) {
+                $caseinfo['erespemail' . $i] = "";
+                $caseinfo['erespmob' . $i] = "";
+                $caseinfo['einvets' . $i] = "";
+                $caseinfo['einvetd' . $i] = "";
+                $caseinfo['einveds' . $i] = "";
+                $caseinfo['einvedd' . $i] = "";
+                $caseinfo['einvers' . $i] = "";
+                $caseinfo['einverd' . $i] = "";
+                $caseinfo['einvwts' . $i] = "";
+                $caseinfo['einvwtd' . $i] = "";
+                $caseinfo['einvwds' . $i] = "";
+                $caseinfo['einvwdd' . $i] = "";
+                $caseinfo['einvwrs' . $i] = "";
+                $caseinfo['einvwrd' . $i] = "";
+            }
+
+            if (isset($data['responding'])) {
+                foreach ($data['responding'] as $k => $v) {
+                    if ($k != 0) {
+                        $caseinfo['erespemail' . $k] = $v->userEmail;
+                        $caseinfo['erespmob' . $k] = isset($v->userPhone) ? $v->userPhone : "";
+                        $data['eemailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $v->userEmail);
+
+                        if($v->userPhone != ""){
+                            $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $v->userPhone);
+                        } else {
+                            $data['ewhatsapptrck'] = "";
+                        }
+                        
+                        if (isset($data['eemailtrck'])) {
+                            $time = new DateTime($data['eemailtrck']->created_at);
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            $caseinfo['einvets' . $k] = "transmitted";
+                            $caseinfo['einvetd' . $k] = $time->format('d-m-Y H:i:s');
+                            if (isset($data['eemailtrck']['track_data'])) {
+                                foreach ($data['eemailtrck']['track_data'] as $etrck) {
+                                    if ($etrck->event  == "delivered") {
+                                        $edate1 = new DateTime($etrck->created_at);
+                                        $caseinfo['einveds' . $k] = "duly delivered";
+                                        $caseinfo['einvedd' . $k] = $edate1->format('d-m-Y H:i:s');
+
+                                         // Added new on date 02/09/2024 //
+                                         $caseinfo['einvers'. $k] = "The email was successfully delivered and no 'return to sender' message, 'bounce back' message or 'error' message was received from the mail server";
+                                         $caseinfo['einverd'. $k] = $edate1->format('d-m-Y H:i:s');
+                                         // Added new on date 02/09/2024 //
+
+                                    } else if ($etrck->event  == "open") {
+                                        $edate1 = new DateTime($etrck->created_at);
+
+                                        // Added new on date 02/09/2024 //
+                                        $caseinfo['einveds' . $k] = "duly delivered";
+                                        $caseinfo['einvedd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                        // Added new on date 02/09/2024 //
+
+                                        $caseinfo['einvers' . $k] = "The email was first read on";
+                                        $caseinfo['einverd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                    }
+                                    
+                                    // as per arb status
+                                        else if ($etrck->event  == "processed") {
+                                            $edate1 = new DateTime($etrck->created_at);
+                                            //$caseinfo['inveds'] = "delivered";
+                                            $caseinfo['einveds'. $k] = "transmitted";
+                                            $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
+
+                                            // Added new on date 02/09/2024 //
+                                            $caseinfo['einvers' . $k] = "Invitation to mediate was transmitted on the registered email ID on";
+                                            $caseinfo['einverd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                            // Added new on date 02/09/2024 //
+                                        } 
+                                        else if ($etrck->event  == "processed") {
+                                            $edate1 = new DateTime($etrck->created_at);
+                                            //$caseinfo['inveds'] = "delivered";
+                                            $caseinfo['einveds'. $k] = "transmitted";
+                                            $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
+
+                                            // Added new on date 02/09/2024 //
+                                            $caseinfo['einvers' . $k] = "Invitation to mediate was transmitted on the registered email ID on";
+                                            $caseinfo['einverd' . $k] = $edate1->format('d-m-Y H:i:s');
+                                            // Added new on date 02/09/2024 //
+                                        }
+                                         else if ($etrck->event  == "bounce") {
+                                            $edate1 = new DateTime($etrck->created_at);
+                                            // /$caseinfo['invers'] = "read";
+
+                                            // Added new on date 02/09/2024 //
+                                            $caseinfo['einveds'. $k] = "transmitted";
+                                            $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
+                                            // Added new on date 02/09/2024 //
+
+                                            $caseinfo['einvers'. $k] = "'Bounce back' message was received from the mail server";
+                                            $caseinfo['einverd'. $k] = $edate1->format('d-m-Y H:i:s');
+                                        } else if ($etrck->event  == "deferred") {
+                                            $edate1 = new DateTime($etrck->created_at);
+                                            // /$caseinfo['invers'] = "read";
+
+                                            // Added new on date 02/09/2024 //
+                                            $caseinfo['einveds'. $k] = "transmitted";
+                                            $caseinfo['einvedd'. $k] = $edate1->format('d-m-Y H:i:s');
+                                            // Added new on date 02/09/2024 //
+
+                                            $caseinfo['einvers'. $k] = "Deferred";
+                                            $caseinfo['einverd'. $k] = $edate1->format('d-m-Y H:i:s');
+                                        }
+                                    // as per arb status
+                                }
+                            }
+                            if ($caseinfo['einvers' . $k] != "" && $caseinfo['einveds' . $k] == "") {
+                                $caseinfo['einveds' . $k] = "delivered";
+                                $caseinfo['einvedd' . $k] = $caseinfo['einverd' . $k];
+                            }
+                        }
+                        if (isset($data['ewhatsapptrck']) && $data['ewhatsapptrck'] != "") {
+                            $time = new DateTime($data['ewhatsapptrck']->created_at);
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                            $caseinfo['einvwts' . $k] = "transmitted";
+                            $caseinfo['einvwtd' . $k] = $time->format('d-m-Y H:i:s');
+                            if (isset($data['ewhatsapptrck']['whatsapp_log'])) {
+
+                                foreach ($data['ewhatsapptrck']['whatsapp_log'] as $wtrck) {
+                                    if (strtolower($wtrck->status)  == "delivered") {
+                                        $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                        $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                        $caseinfo['einvwds' . $k] = "delivered";
+                                        $caseinfo['einvwdd' . $k] = $time->format('d-m-Y H:i:s');
+                                    } else if (strtolower($wtrck->status)  == "read") {
+                                        $time = new DateTime($wtrck->updated_time, new DateTimeZone('UTC'));
+                                        $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                                        $caseinfo['einvwrs' . $k] = "read";
+                                        $caseinfo['einvwrd' . $k] = $time->format('d-m-Y H:i:s');
+                                    }
+                                }
+                            }
+                           
+                            if ($caseinfo['einvwrs' . $k] != "" && $caseinfo['einvwds' . $k] == "") {
+                                $caseinfo['einvwds' . $k] = "delivered";
+                                $caseinfo['einvwdd' . $k] = $caseinfo['einvwrd' . $k];
+                            }
+                        }
+                    }
+                }
+            }
+
+            $data = [];
+            $data['auth'] = "MED360AUTH";
+            $data['app'] = "P360MED";
+            $data['caseid'] = $value;
+            $url = "https://presolv360.com/functions/ivrtrack.php";
+
+            $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'), true);
+            if ($ivr['code'] != '200') {
+                $ivr = [];
+            } else {
+                $ivr = $ivr['data'];
+            }
+            $caseinfo['ivrs'] = "";
+            $caseinfo['ivrdate'] = "";
+
+            
+            foreach ($ivr as $value) {
+                $time = new DateTime($value['created_at']);
+                if($value['status'] == "NULL"){
+                    $caseinfo['ivrs'] = "";
+                    $caseinfo['ivrdate'] = "";
+                } else {
+                    $caseinfo['ivrs'] = $value['status'];
+                    $caseinfo['ivrdate'] = $time->format('d-m-Y H:i:s');
+                }
+                
+            }
+
+            $caseinfo['Whatsapp_Why_Count'] = "";
+            $caseinfo['Whatsapp_PayNow_Count'] = "";
+            $caseinfo['Whatsapp_Explore_Alternatives_Count'] = "";
+            $caseinfo['Whatsapp_Restructure_Link_Count'] = "";
+            $caseinfo['Restructure_Option'] = "";
+            $caseinfo['Web_Submit_Reply_Count'] = "";
+            $caseinfo['Reply'] = "";
+
+            $botMisReport = WhatsappBotReport::getBotMisReport($data['caseid']);
+            if(count($botMisReport)>0){
+
+                $caseinfo['Whatsapp_Why_Count'] = $botMisReport[0]->Whatsapp_Why_Count;
+                $caseinfo['Whatsapp_PayNow_Count'] = $botMisReport[0]->Whatsapp_PayNow_Count;
+                $caseinfo['Whatsapp_Explore_Alternatives_Count'] = $botMisReport[0]->Whatsapp_Explore_Alternatives_Count;
+                $caseinfo['Whatsapp_Restructure_Link_Count'] = $botMisReport[0]->Whatsapp_Restructure_Link_Count;
+                $caseinfo['Restructure_Option'] = $botMisReport[0]->Restructure_Option;
+                $caseinfo['Web_Submit_Reply_Count'] = $botMisReport[0]->Web_Submit_Reply_Count;
+                $caseinfo['Reply'] = $botMisReport[0]->Reply;
+            }
+
+            // For Session participation consent
+            $caseinfo['Session_Participation_Consent'] = "";
+            $session_part = DB::table('manage_session')
+            ->where('case_id', $value)
+            ->first();
+           
+            //dd($value['caseid']);
+            $session_part_consent = isset($session_part) ? $session_part->participant_whtsapp : "";
+            
+            $wa_whatsapp_tracking = DB::table('whatsapp_tracking')
+            ->where('caseid', $data['caseid'])
+            ->where('event', "WA_Session_Consent")
+            ->get();
+
+            $wa_bot_consent_details = DB::table('wa_bot_consent_details')
+            ->where('caseid', $data['caseid'])
+            ->get();
+
+            $Session_Participation_text="";
+
+            if(count($wa_whatsapp_tracking) > 0){
+
+                if(count($wa_bot_consent_details) > 0){
+
+                    foreach($wa_bot_consent_details as $wa_consent_data){
+
+                        $Session_Participation_text .=$wa_consent_data->mobile." - ".$wa_consent_data->wa_consent_text. ",";
+                    }
+
+                    $caseinfo['Session_Participation_Consent'] = $Session_Participation_text;
+
+                }else{
+
+                    $caseinfo['Session_Participation_Consent'] = "NA";
+                }
+
+            }else{
+
+                $caseinfo['Session_Participation_Consent'] = "WA Consent has not been sent";
+
+            }
+            // For Session participation consent
+
+
+
+            // Added for Contact For Discussion //
+            $caseinfo['discussion'] = $contact_discuss;
+            // Added for Contact For Discussion //
+
+            //dd($caseinfo);
+
+             $rowData = '';
+
+            foreach ($caseinfo as $value) {
+
+                $value = '"' . $value . '"' . "\t";
+
+                $rowData .= $value;
+            }
+            $setData .= trim($rowData) . "\n";  
+        }
+
+        
+
+        $content = ucwords($columnHeader) . "\n" . $setData . "\n";
+        $file_name = "invitationdeliverdsheet.xls";
+
+        return response($content, 200, [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
+        ]);
+    }
 }
