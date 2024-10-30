@@ -256,6 +256,28 @@
                     <!----- Added for random cases : END ------------------>
 
 
+                    <!--------- Batch wise Delivery Sheet -->
+                    <div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <strong>Select Batch</strong>
+                            </div>
+
+                            <div class="col-md-6">
+                                    <select class="blkdirtorandom" name="branches" id="branches" multiple style="width:50%">
+                                    </select>
+                            </div>
+
+
+                            <button class="blkbtn btn btn-primary btn-sm" id="downloadExcelBatchWise">Download Invitation Delivery Sheet</button>
+                        </div>
+
+                    
+                    </div>
+                    <!--------- Batch wise Delivery Sheet -->
+
+
                      
         
                 </div>
@@ -333,6 +355,8 @@
 
 
 
+
+        
         
 
     </section>
@@ -4136,6 +4160,91 @@
         });
 
 
+        // batch wise delivery sheet //
+        $("#downloadExcelBatchWise").on('click', function() {
+
+           // var bid = []; 
+           // bid.push($('#branches').val());
+            var bid = $('#branches').val();
+           
+            $.ajax({
+                type: 'post',
+                url: '{{ route('admin.case.downloadLogInviationBatchWise') }}',
+                data: {
+                    ids: bid
+                },
+                beforeSend: function() {
+                    swal({
+                        title: 'Loading...',
+                        showConfirmButton: false,
+                        buttons: false,
+                        allowOutsideClick: false,
+                    });
+                },
+                xhrFields: {
+                    responseType: 'blob' // to avoid binary data being mangled on charset conversion
+                },
+                success: (blob, status, xhr) => {
+                    if (status == 'nocontent') {
+                        swal({
+                            title: "No files available for this Case!",
+                            text: "",
+                            icon: "error",
+                        });
+                        // Msg.push("No files available for " + cid);
+                    } else {
+                        var filename = "";
+                        var disposition = xhr.getResponseHeader('Content-Disposition');
+                        if (disposition && disposition.indexOf('attachment') !== -1) {
+                            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                            var matches = filenameRegex.exec(disposition);
+                            if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g,
+                                '');
+
+                        }
+
+                        if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                            // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                            window.navigator.msSaveBlob(blob, filename);
+                        } else {
+
+                            var URL = window.URL || window.webkitURL;
+                            var downloadUrl = URL.createObjectURL(blob);
+                            if (filename) {
+
+                                // use HTML5 a[download] attribute to specify filename
+                                var a = document.createElement("a");
+                                // safari doesn't support this yet
+                                if (typeof a.download === 'undefined') {
+                                    window.location.href = downloadUrl;
+                                } else {
+                                    a.href = downloadUrl;
+                                    a.download = filename;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                }
+                            } else {
+                                window.location.href = downloadUrl;
+                            }
+
+                            URL.revokeObjectURL(downloadUrl);
+                            swal({
+                                text: "Excel downloaded successfully!",
+                                title: "Thanks!",
+                                icon: "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                            // Msg.push("Zip downloaded successfully for "+cid);
+                        }
+                    }
+                },
+            });
+            // console.log(cids);
+        })
+        // batch wise delivery sheet //
+
+
         function previewMom(caseid, file_name, path, preview_html){
             $("#coolModal").modal('show');
             $('#coolModal .modal-body').html(preview_html);
@@ -4411,6 +4520,46 @@
                                     });
                 }, 100);
                 }
+
+
+
+            // branch code
+            
+
+            //$("#branches").select2();
+           function get_branch(){
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            $.ajax({
+                    url: '{{ route('admin.getAllBranchList') }}',
+                    dataType: 'json',
+                    type: "GET",
+                    data: {
+                        _token: csrf
+                    },
+                    success: function (resp) {
+                        $('#branches').empty();
+                      
+                            
+                            var option_html = "";
+                                $(resp.batch_arr).each(function( index, element ) { 
+                                   
+                                   option_html += "<option value='"+element.id+"' name='batch_name'>"+element.batch_name+"</option>" ; 
+                                });
+                        
+                                
+                                setTimeout(() => {
+                                    $('#branches').html(option_html);
+                                }, 2000);
+                        
+                    }
+
+                });
+           }
+                
+            $(document).ready(function(){
+                get_branch();
+                $('#branches').select2();
+            }); 
         
     </script>
 @endsection
