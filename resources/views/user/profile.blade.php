@@ -32,7 +32,7 @@
                     @if(Session::has('key'))
                     <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('key') }}</p>
                     @elseif(Session::get('force') == 1)
-                    <p class="alert alert-info">Please update profile to continue.</p>
+                    <p class="alert alert-danger"> Please update your profile by filling all fields of the 'Edit Profile' section.</p>
                     @endif
                     <div class="table-responsive">
                         <table class="table table-bordered m-0">
@@ -89,7 +89,7 @@
                     <!-- <a href="#custom-modal" class="btn btn-dark waves-effect waves-light mt-3" data-animation="blur" data-plugin="custommodal" data-overlaySpeed="100" data-overlayColor="#36404a" >Edit profile</a>
                     -->
                     <!-- Responsive modal -->
-                    <button class="btn btn-dark waves-effect waves-light mt-3" id="editModel" data-toggle="modal" data-target="#custom-modal">Edit profile</button>
+                    <button class="btn btn-dark waves-effect waves-light mt-3" id="editModel" data-toggle="modal" data-target="#custom-modal">Edit Profile</button>
                     <!-- Accordion modal -->
 
                     <ul class="social-links list-inline mt-4">
