@@ -4163,7 +4163,8 @@
         // batch wise delivery sheet //
         $("#downloadExcelBatchWise").on('click', function() {
 
-
+           // var bid = []; 
+           // bid.push($('#branches').val());
             var bid = $('#branches').val();
            
             $.ajax({

@@ -5610,14 +5610,24 @@ class CaseController extends Controller
     
     public function downloadLogInviationBatchWise(Request $request)
     {
-
         $caseinfo = [];
         $columnHeader = '';
         $setData = '';
         $count = [];
-        $caseid = explode(',', trim($request->ids));
+
+        //$caseid_arr = [];
+        foreach ($request->ids as $key => $b_id) {
+            $caseid_arr = MedCase::select('id')->where('batch_id', $b_id)->get();
+            // array_push($caseid_arr);
+        }
+        $data_arr = $caseid_arr->map(function ($caseid_arr) {
+            return $caseid_arr->only(['id']);
+        });
+       
+       // $caseid = explode(',', trim($request->ids));
+        $caseid = $data_arr;
         foreach ($caseid as $key => $value) {
-            $count[$key] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value)->count();
+            $count[$key] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value['id'])->count();
         }
         $forloopcnt = max($count);
         $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" .  "Batch" . "\t" ."Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
@@ -5646,21 +5656,21 @@ class CaseController extends Controller
         // dd($columnHeader);
 
         foreach ($caseid as $key => $value) {
-            $data['case'] = MedCase::find($value);
-            // dd($data);
-            $data['claimant'] = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $value)->first();
-            $data['responding'] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value)->get();
-            $data['inviation_file'] = InvitationFiles::where('case_id', $value)->orderByDesc('id')->limit(1)->first();
+            $data['case'] = MedCase::find($value['id']);
+           
+            $data['claimant'] = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->where('isClaimant', 0)->leftJoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where('userPlanId', $value['id'])->first();
+            $data['responding'] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value['id'])->get();
+            $data['inviation_file'] = InvitationFiles::where('case_id', $value['id'])->orderByDesc('id')->limit(1)->first();
 
             $data['mediator'] = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "first_name", "last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $value)
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $value['id'])
                 ->first();
             $caseinfo['srno'] = $key + 1;
-            $caseinfo['caseid'] = 'M' . sprintf('%06d', $value);
+            $caseinfo['caseid'] = 'M' . sprintf('%06d', $value['id']);
             $caseinfo['refid'] = $data['case']->ref_id;
             // Batch Name //
              $batch_info = Batch::select("batch_name")->join("mediation_case", "mediation_case.batch_id", "=", "batch.id")
-            ->where("mediation_case.id", "=", $value)
+            ->where("mediation_case.id", "=", $value['id'])
             ->first();
             $caseinfo['batch_name'] = $batch_info['batch_name'];
             // Batch Name //
@@ -5712,10 +5722,10 @@ class CaseController extends Controller
             }
             $caseinfo['medname'] = isset($data['mediator']) ? strtoupper($data['mediator']->first_name) . " " . strtoupper($data['mediator']->last_name) : "";
 
-            $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $caseinfo['respemail']);
+            $data['emailtrck'] = EmailTrack::getByCaseIdAndEvent($value['id'], "ACPTARB_ADM_RES", $caseinfo['respemail']);
 
             if($caseinfo['respmob'] != ""){
-                $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $caseinfo['respmob']);
+                $data['whatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value['id'], "ACPTARB_ADM_RES",  $caseinfo['respmob']);
             } else {
                 $data['whatsapptrck'] = "";
             }
@@ -5861,10 +5871,10 @@ class CaseController extends Controller
                     if ($k != 0) {
                         $caseinfo['erespemail' . $k] = $v->userEmail;
                         $caseinfo['erespmob' . $k] = isset($v->userPhone) ? $v->userPhone : "";
-                        $data['eemailtrck'] = EmailTrack::getByCaseIdAndEvent($value, "ACPTARB_ADM_RES", $v->userEmail);
+                        $data['eemailtrck'] = EmailTrack::getByCaseIdAndEvent($value['id'], "ACPTARB_ADM_RES", $v->userEmail);
 
                         if($v->userPhone != ""){
-                            $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $v->userPhone);
+                            $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value['id'], "ACPTARB_ADM_RES",  $v->userPhone);
                         } else {
                             $data['ewhatsapptrck'] = "";
                         }
@@ -5986,7 +5996,7 @@ class CaseController extends Controller
             $data = [];
             $data['auth'] = "MED360AUTH";
             $data['app'] = "P360MED";
-            $data['caseid'] = $value;
+            $data['caseid'] = $value['id'];
             $url = "https://presolv360.com/functions/ivrtrack.php";
 
             $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'), true);
