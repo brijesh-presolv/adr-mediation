@@ -996,8 +996,14 @@
                         // },
                         {
                             "data": "case.id",
-                            render: function(data) {
+                            render: function(data, type, row) {
                                 var button = "M" + pad(data, 6);
+                                button = button  + "<br/><br/><b>Application No : </b><br/>";
+                                if (row.case.ref_id == null) {
+                                    button = button + `<span> -- </span>`;
+                                } else {
+                                    button = button + `<span>` + row.case.ref_id + `</span>`;
+                                }
                                 button = button + `<br><a href="{{ url('admin/track/') }}/` +
                                     data +
                                     `" target="_blank" class="btn btn-secondary waves-effect  waves-light btn-sm" title="Track">Track</a> `
