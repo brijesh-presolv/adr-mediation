@@ -291,7 +291,8 @@ function isreadonlys($rows)
                             <hr>
                             <div class="form-group">
                                 <label>Application Number</label>
-                                <textarea class="form-control" rows="4" name="application"><?= $medcase->application ?></textarea>
+                                <input type="text" name="application" class="form-control"
+                                value="<?= isset($medcase->ref_id) ? $medcase->ref_id : '' ?>">
                             </div>
                         </div>
                         <?php } ?>
