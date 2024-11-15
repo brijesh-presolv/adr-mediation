@@ -2124,7 +2124,7 @@ $page_break_css = 'page-break-before: always;';
         href="https://drive.google.com/file/d/1Q1d6_3n3R1QimVhtb1eGFC2jG3cWk7pS/view?usp=sharing">ଏଠାରେ</a>
         ଉପଲବ୍ଧ | ନିଯୁକ୍ତ ଦଳ ଏହି ବିଷୟ ସହିତ 
         <a href="mailto:admin@presolv360.com">admin@presolv360.com</a> 
-        ରେ Presolv360 କୁ ପଠାଯାଇଥିବା ଏକ ଇମେଲ ମାଧ୍ୟମରେ ସ୍ୱାକ୍ଷରିତ ଅଥରିଟି ଦାଖଲ କରିବେ  “Letter of Authority | (Case ID) | (Name of the Appointing Party)”.
+        ରେ Presolv360 କୁ ପଠାଯାଇଥିବା ଏକ ଇମେଲ ମାଧ୍ୟମରେ ସ୍ୱାକ୍ଷରିତ ଅଥରିଟି ଦାଖଲ କରିବେ  "Letter of Authority | (Case ID) | (Name of the Appointing Party)".
     </p>
 
     
