@@ -15,6 +15,8 @@ $ldate = $lastdate->format('d-m-Y');
 $itm_lang_arr = explode(",", $case->itm_lang);
 
 
+echo "<pre>";print_R($itm_lang_arr);exit;
+
 ?>
 
 <!DOCTYPE html>
@@ -1941,6 +1943,8 @@ $page_break_css = 'page-break-before: always;';
 
 
     @endif
+
+    
         @if($itm_lang == "odiya")
     
     <!----------------- ODIYA ------------------------------------------------------->
