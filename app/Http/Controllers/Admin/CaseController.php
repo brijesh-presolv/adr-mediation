@@ -1865,7 +1865,7 @@ class CaseController extends Controller
             }
             
         }
-        dd($data);
+       // dd($data);
        
         $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
         
