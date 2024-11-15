@@ -2121,8 +2121,7 @@ $page_break_css = 'page-break-before: always;';
     </p>
 
     <p>
-        6. ପକ୍ଷଗୁଡିକ ଏକ ପ୍ରାଧିକୃତ ପ୍ରତିନିଧୀଙ୍କ ଦ୍ ପ୍ରତିନିଧିତ୍। | ରା ପ୍ରତିନିଧିତ୍ or କିମ୍ବା ସହାୟତା କରିବାକୁ ବାଛିପାରନ୍ତି, ଯେଉଁ କ୍ଷେତ୍ରରେ ନିଯୁକ୍ତ ଦଳ ଏକ ଅଥରିଟି ଅଫ୍ ଅଥରିଟି 
-        ଦାଖଲ କରିବେ, ଯାହାର ଫର୍ମାଟ୍
+        6.
         <a href="https://drive.google.com/file/d/1Q1d6_3n3R1QimVhtb1eGFC2jG3cWk7pS/view?usp=sharing">ଏଠାରେ</a>
         ଉପଲବ୍ଧ | ନିଯୁକ୍ତ ଦଳ ଏହି ବିଷୟ ସହିତ 
         <a href="mailto:admin@presolv360.com">admin@presolv360.com</a> 
