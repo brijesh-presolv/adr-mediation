@@ -2125,7 +2125,7 @@ $page_break_css = 'page-break-before: always;';
         ଉପଲବ୍ଧ | ନିଯୁକ୍ତ ଦଳ ଏହି ବିଷୟ ସହିତ 
         <a href="mailto:admin@presolv360.com">admin@presolv360.com</a> ରେ Presolv360 କୁ ପଠାଯାଇଥିବା ଏକ ଇମେଲ ମାଧ୍ୟମରେ ସ୍ୱାକ୍ଷରିତ ଅଥରିଟି ଦାଖଲ କରିବେ  “Letter of Authority | (Case ID) | (Name of the Appointing Party)”.
     </p>
-
+-->
     
     <p>7. ମଧ୍ୟସ୍ଥି / ସମନ୍ୱୟକାରୀଙ୍କ ପ୍ୟାନେଲରୁ ଜଣେ ମଧ୍ୟସ୍ଥି / ସଂଯୋଜକ ନିଯୁକ୍ତ ହେବେ ଏବଂ ଏହିପରି ନିଯୁକ୍ତି ମଧ୍ୟସ୍ଥତା / ସମନ୍ୱୟର ଦକ୍ଷତା, ଜ୍ଞାନ ଏବଂ ପକ୍ଷ ମଧ୍ୟରେ ବିବାଦର ବିଷୟବସ୍ତୁକୁ ମୁକାବିଲା କରିବାର କ୍ଷମତା ଉପରେ ଆଧାରିତ ହେବ |</p>
 
@@ -2137,7 +2137,7 @@ $page_break_css = 'page-break-before: always;';
     </p>
 
     <p>ମନେ ରଖନ୍ତୁ: ଏହା ଏକ ସିଷ୍ଟମ୍ ଉତ୍ପାଦିତ ବିଜ୍ଞପ୍ତି ଏବଂ ତେଣୁ ଏହା ଦସ୍ତଖତ ଆବଶ୍ୟକ କରେ ନାହିଁ |</p>
-    -->
+    
 
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
