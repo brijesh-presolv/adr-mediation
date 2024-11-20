@@ -211,7 +211,7 @@ class ReinitiateController extends Controller
             // if (!isset($invmodel)) {
             $invmodel = new InvitationFiles();
             // }
-            $invmodel->case_id = $case_data['id'];
+            $invmodel->case_id = $case_data->caseid;
             $invmodel->file_name = $invitation;
             $invmodel->save();
 
