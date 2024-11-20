@@ -327,3 +327,11 @@ Route::post('/payment/webhook', [App\Http\Controllers\API\PaymentController::cla
 
 Route::get('restructure/{caseid}/{token}', [App\Http\Controllers\Nagotiationbot\NagotiationBotController::class, 'index']);
 Route::get('replyback/{caseid}/{token}', [App\Http\Controllers\Nagotiationbot\NagotiationBotController::class, 'replyback']);
+
+// Reinitiate whatsapp for given case IDs : 19/11/2024 //
+Route::get('reinitiate', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate']);
+// Reinitiate whatsapp for given case IDs : 19/11/2024 //
+
+// Regenerate ITM : 20/11/2024  //
+Route::get('regenerate_itm', [App\Http\Controllers\Notification\ReinitiateController::class, 'regenerate_itm']);
+// Regenerate ITM : 20/11/2024 //
