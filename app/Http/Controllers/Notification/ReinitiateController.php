@@ -206,7 +206,7 @@ class ReinitiateController extends Controller
         
       
        // echo "<pre>";print_R($case_data['id']);
-            $invitation = $this->invitation_mediate($case_data['case_id']);
+            $invitation = $this->invitation_mediate($case_data->caseid);
 
             // if (!isset($invmodel)) {
             $invmodel = new InvitationFiles();
@@ -216,10 +216,10 @@ class ReinitiateController extends Controller
             $invmodel->save();
 
             if($invitation) {
-                DB::table('itm_caseid')->where('caseid', $case_data['case_id'])->update(['is_itm_done' => 1]);
+                DB::table('itm_caseid')->where('caseid', $case_data->caseid)->update(['is_itm_done' => 1]);
             }
 
-            echo ($key + 1)." ITM generated for case id =".$case_data['case_id'];
+            echo ($key + 1)." ITM generated for case id =".$case_data->caseid;
             echo "<br/>".$invitation."<br/>";
        }
     }
