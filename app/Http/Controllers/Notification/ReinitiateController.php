@@ -169,7 +169,7 @@ class ReinitiateController extends Controller
     public function regenerate_itm()
     {
 
-       $all_cases = MedCase::select('id','batch_id')->whereIn("batch_id", [99, 100])->where('case_status', 1)->get();
+       $all_cases = MedCase::select('id','batch_id')->whereIn("batch_id", [184, 186])->where('case_status', 1)->get();
         //echo "<pre>";print_R($all_cases);
        foreach($all_cases as $key => $case_data) {
        // echo "<pre>";print_R($case_data['id']);
