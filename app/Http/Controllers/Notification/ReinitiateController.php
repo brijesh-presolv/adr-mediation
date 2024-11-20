@@ -183,7 +183,7 @@ class ReinitiateController extends Controller
             $invmodel->save();
 
             echo ($key + 1)." ITM generated for case id =".$case_data['id'];
-            echo "<br/>".$invitation;
+            echo "<br/>".$invitation."<br/>";
        }
     }
         
