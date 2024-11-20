@@ -170,7 +170,7 @@ class ReinitiateController extends Controller
     {
         ini_set('memory_limit', -1);
       // $all_cases = MedCase::select('id','batch_id')->whereIn("batch_id", [184, 186])->where('case_status', 1)->get();
-       $all_cases = MedCase::select('id','batch_id')->where("batch_id", 99)->where('case_status', 1)->get();
+       $all_cases = MedCase::select('id','batch_id')->where("batch_id", 184)->where('case_status', 1)->get();
 
         //echo "<pre>";print_R($all_cases);
 
@@ -198,7 +198,7 @@ class ReinitiateController extends Controller
     }
 
     if(isset($insert) && $insert != "") {
-        $getData = DB::table('itm_caseid')->where('is_itm_done', 0)->orderByDesc('id')->limit(7)->get();
+        $getData = DB::table('itm_caseid')->where('is_itm_done', 0)->orderByDesc('id')->limit(500)->get();
     }
        foreach($getData as $key => $case_data) {
 
