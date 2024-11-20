@@ -216,11 +216,17 @@ class ReinitiateController extends Controller
             $invmodel->save();
 
             if($invitation) {
-                DB::table('itm_caseid')->where('caseid', $case_data->caseid)->update(['is_itm_done' => 1]);
+                $is_update = DB::table('itm_caseid')->where('caseid', $case_data->caseid)->update(['is_itm_done' => 1]);
+
+
+                if($is_update) {
+                    echo ($key + 1)." ITM generated for case id =".$case_data->caseid;
+                    echo "<br/>".$invitation."<br/>";
+                }
+                
             }
 
-            echo ($key + 1)." ITM generated for case id =".$case_data->caseid;
-            echo "<br/>".$invitation."<br/>";
+            
        }
     }
         
