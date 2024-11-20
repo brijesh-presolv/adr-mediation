@@ -3660,6 +3660,11 @@ class CaseController extends Controller
         // $casedetails = MedCase::getcasebyId($id);
         $email = EmailTrack::getByCaseId($id);
         // $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
+
+        // sms track
+       $sms = sms_tracking::where("sms_tracking.caseid", "=", $id)->get();
+        // sms track
+
         $courierCsv = CourierCsv::select('couriercsv.*', 'courierpdf.file_name')->leftJoin('courierpdf', 'courierpdf.csv_id', '=', 'couriercsv.id')
             ->where('couriercsv.case_id', $id)->orderBy('couriercsv.created_at', 'ASC')->get();
 
@@ -3713,7 +3718,7 @@ class CaseController extends Controller
             $parties = $parties . "enabled.";
         }
 
-        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv", "botMisReport", "parties"));
+        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv", "sms", "botMisReport", "parties"));
     }
 
     public function mediatorAccessChange(Request $request)
@@ -4497,11 +4502,31 @@ class CaseController extends Controller
         $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" .  "Batch" . "\t" ."Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
             "Initiating Registered Office" . "\t" . "Initiating Full Name" . "\t" . "Initiating Email ID" . "\t" . "Initiating WhatsApp / Mobile Number" . "\t" . "Full name of Primary Respondent" . "\t" .
             "Full Address of Primary Respondent" . "\t" . "Email ID of Primary Respondent" . "\t" . "WhatsApp / Mobile Number of Primary Respondent (10 digit)" . "\t" . "Dispute Category" . "\t" . "Nature of agreement" . "\t" . "Agreement date" . "\t" .  "Disputed amount" . "\t" . "Date of Invitation" . "\t" . "Name of Mediator" . "\t" .
-            "Invitation Primary Respondent email transmitted status" . "\t" . "Invitation Primary Respondent email transmitted date" . "\t" . "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . "\t" . "Invitation Primary Respondent whatsapp transmitted status" . "\t" . "Invitation Primary Respondent whatsapp transmitted date" . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" . "\t";
+            "Invitation Primary Respondent email transmitted status" . "\t" . "Invitation Primary Respondent email transmitted date" 
+            . "\t" . "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" 
+            . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . 
+            "\t" . "Invitation Primary Respondent whatsapp transmitted status" . "\t" . "Invitation Primary Respondent whatsapp transmitted date" 
+            . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" 
+            . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" 
+            . "\t" . "Invitation Primary Respondent sms status" . "\t" . "Invitation Primary Respondent sms date"
+            . "\t";
 
         for ($i = 1; $i < $forloopcnt; $i++) {
             $columnHeader = $columnHeader . "Email ID of Additional Respondent " . $i . "\t" . "WhatsApp / Mobile Number of additional Respondent " . $i . "\t" .
-                "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
+                "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " email read status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " email read date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " sms status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " sms date" 
+                . "\t";
         }
 
         $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t";
@@ -4593,6 +4618,11 @@ class CaseController extends Controller
             } else {
                 $data['whatsapptrck'] = "";
             }
+
+
+            // sms track
+            $data['smstrck'] = sms_tracking::getByCaseId($value);
+            // sms track
            
             $caseinfo['invets'] = "";
             $caseinfo['invetd'] = "";
@@ -4713,6 +4743,37 @@ class CaseController extends Controller
                     $caseinfo['invwdd'] = $caseinfo['invwrd'];
                 }
             }
+
+
+
+            // sms track //
+            $caseinfo['invsms'] = "";
+            $caseinfo['invesmd'] = "";
+            
+            if (isset($data['smstrck'])) {
+                $time = new DateTime($data['smstrck']->created_at);
+                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+               
+                if (isset($data['smstrck'])) {
+                    foreach ($data['smstrck'] as $etrck) {
+                        if($etrck->status == 0){
+                            $caseinfo['invsms'] = "Sent";
+                            $caseinfo['invesmd'] = $time->format('d-m-Y H:i:s'); 
+                        } else {
+                            $caseinfo['invsms'] = "Not Sent";
+                            $caseinfo['invesmd'] = $time->format('d-m-Y H:i:s'); 
+                        }
+                    }
+                }
+            }
+            // sms track //
+
+
+
+
+
+
+
             for ($i = 1; $i < $forloopcnt; $i++) {
                 $caseinfo['erespemail' . $i] = "";
                 $caseinfo['erespmob' . $i] = "";

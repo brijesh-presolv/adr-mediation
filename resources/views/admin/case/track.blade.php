@@ -278,10 +278,68 @@
     </div>
 
 
+    <!--------------- SMS Track -------------------------------------->
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5>SMS Track</h5>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+
+                    <table id="smsTrack" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Case Id</th>
+                                <th>Event</th>
+                                <th>Contact</th>
+                                <th>Content</th>
+                                <th>Jio Tmp</th>
+                                <th>Request Id</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($sms as $key => $value)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $value->caseid }}</td>
+                                    <td>{{ $value->event }}</td>
+                                    <td>{{ $value->contact }}</td>
+                                    <td>{{ $value->content }}</td>
+                                    <td>{{ $value->jio_tmp }}</td>
+                                    <td>{{ $value->request_uuid }}</td>
+                                    <td>{{ $value->created_at }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--------------- SMS Track -------------------------------------->
+
+
 
     <div class="card">
         <div class="card-body">
-            <h3>IVR Log</h3>
+
+            <div class="d-flex">
+                <h5>IVR Log</h5>
+
+            </div>
+
+
+
+            <!-- <h3>IVR Log</h3> -->
             <div class="row">
                 <div class="col-sm-12 table-responsive">
                     <table id="ivrcase" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
@@ -521,6 +579,11 @@ $('#myModal230 .modal-body span').append( $(this).data('msg'));
             });
 
             $('#courierTrack').DataTable({
+                "responsive": true,
+                "aaSorting": []
+            });
+
+            $('#smsTrack').DataTable({
                 "responsive": true,
                 "aaSorting": []
             });
