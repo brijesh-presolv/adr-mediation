@@ -175,7 +175,7 @@ class ReinitiateController extends Controller
 
         //echo "<pre>";print_R($all_cases);
 
-    $getReportData = DB::table('itm_caseid')->get();
+    $getReportData = DB::table('itm_caseid')->where("batch_id", 186)->get();
 
 
     $insert_data = array();
