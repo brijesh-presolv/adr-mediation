@@ -194,11 +194,11 @@ class ReinitiateController extends Controller
     if(sizeof($getReportData) == 0 ) {
         $insert = DB::table('itm_caseid')->insert($insert_data);
     } else {
-        $getData = DB::table('itm_caseid')->where('is_itm_done', 0)->orderByDesc('id')->limit(500)->get(); 
+        $getData = DB::table('itm_caseid')->where('is_itm_done', 0)->orderByDesc('id')->limit(100)->get(); 
     }
 
     if(isset($insert) && $insert != "") {
-        $getData = DB::table('itm_caseid')->where('is_itm_done', 0)->orderByDesc('id')->limit(500)->get();
+        $getData = DB::table('itm_caseid')->where('is_itm_done', 0)->orderByDesc('id')->limit(100)->get();
     }
        foreach($getData as $key => $case_data) {
 
