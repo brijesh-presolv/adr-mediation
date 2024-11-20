@@ -170,11 +170,43 @@ class ReinitiateController extends Controller
     {
         ini_set('memory_limit', -1);
       // $all_cases = MedCase::select('id','batch_id')->whereIn("batch_id", [184, 186])->where('case_status', 1)->get();
-       $all_cases = MedCase::select('id','batch_id')->where("batch_id", 184)->where('case_status', 1)->get();
+       $all_cases = MedCase::select('id','batch_id')->where("batch_id", 99)->where('case_status', 1)->get();
+
         //echo "<pre>";print_R($all_cases);
-       foreach($all_cases as $key => $case_data) {
+
+    $getReportData = DB::table('itm_caseid')->get();
+
+
+    $insert_data = array();
+    foreach($all_cases as $key => $case_data) {
+
+       
+        // DB::table('itm_caseid')->insert([
+        //     'caseid' => $case_data['id'],
+        //     'batch_id' => $case_data['batch_id'],
+        //     'is_itm_done'=> 0
+        //  ]);
+         $insert_data[$key]['caseid'] = $case_data['id']; 
+         $insert_data[$key]['batch_id'] = $case_data['batch_id']; 
+         $insert_data[$key]['is_itm_done'] = 0; 
+    }
+
+    if(sizeof($getReportData) == 0 ) {
+        $insert = DB::table('itm_caseid')->insert($insert_data);
+    } else {
+        $getData = DB::table('itm_caseid')->where('is_itm_done', 0)->orderByDesc('id')->limit(500)->get(); 
+    }
+
+    if(isset($insert) && $insert != "") {
+        $getData = DB::table('itm_caseid')->where('is_itm_done', 0)->orderByDesc('id')->limit(7)->get();
+    }
+       foreach($getData as $key => $case_data) {
+
+       
+        
+      
        // echo "<pre>";print_R($case_data['id']);
-            $invitation = $this->invitation_mediate($case_data['id']);
+            $invitation = $this->invitation_mediate($case_data['case_id']);
 
             // if (!isset($invmodel)) {
             $invmodel = new InvitationFiles();
@@ -183,7 +215,11 @@ class ReinitiateController extends Controller
             $invmodel->file_name = $invitation;
             $invmodel->save();
 
-            echo ($key + 1)." ITM generated for case id =".$case_data['id'];
+            if($invitation) {
+                DB::table('itm_caseid')->where('caseid', $case_data['case_id'])->update(['is_itm_done' => 1]);
+            }
+
+            echo ($key + 1)." ITM generated for case id =".$case_data['case_id'];
             echo "<br/>".$invitation."<br/>";
        }
     }
