@@ -44,7 +44,7 @@ class ReinitiateController extends Controller
     public function reinitiate()
     {
 
-        $allData = DB::table('reinitiate_noti')->get();
+        $allData = DB::table('reinitiate_noti')->where('is_whtsapp_sent', 0)->limit(100)->get();
 
         
 
@@ -70,22 +70,21 @@ class ReinitiateController extends Controller
             $access1 = Whatsapp::sendWamessage($dwa1);
 
             if($access1) {
-                echo "l4_mediation_party2 added for case id =" .$data->caseid;
-                echo "<br/>";
+                $is_update_wa = DB::table('reinitiate_noti')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
+
+                if($is_update_wa) {
+                    echo "l4_mediation_party2 added for case id =" .$data->caseid;
+                    echo "<br/>";
+                }
+                
             }
 
             // attachment
 
-            $invitation = $this->invitation_mediate($data->caseid);
+            $invitation = 'Invitation_mediate_M' . sprintf('%06d', $data->caseid) . '.pdf';
 
-            // if (!isset($invmodel)) {
-            $invmodel = new InvitationFiles();
-            // }
-            $invmodel->case_id = $data->caseid;
-            $invmodel->file_name = $invitation;
-            $invmodel->save();
+             
 
-            $responding_party = "";
             $finalFilePath = 'mediation_documents/mediation/' . $data->caseid . '/' . $invitation;
             $whatsappSend = Storage::disk('s3')->url($finalFilePath);
 
@@ -108,7 +107,13 @@ class ReinitiateController extends Controller
 
 
             if($access2) {
-                echo "attachment added for case id =" .$data->caseid;
+                $is_update_pdf = DB::table('reinitiate_noti')->where('caseid', $data->caseid)->update(['is_pdf_sent' => 1]);
+
+                if($is_update_pdf) {
+                    echo "attachment added for case id =" .$data->caseid;
+                    echo "<br/>";
+                }
+               
             }
             
         }
@@ -164,6 +169,10 @@ class ReinitiateController extends Controller
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
+
+
+   
+    
         
         
     }
