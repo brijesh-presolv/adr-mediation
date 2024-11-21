@@ -44,7 +44,7 @@ class ReinitiateController extends Controller
     public function reinitiate()
     {
 
-        $allData = DB::table('reinitiate_noti')->where('is_whtsapp_sent', 0)->limit(100)->get();
+        $allData = DB::table('reinitiate_noti')->where('is_whtsapp_sent', 0)->where('is_pdf_sent', 0)->limit(100)->get();
 
         
 
