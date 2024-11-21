@@ -55,7 +55,7 @@ class ReinitiateController extends Controller
             $var1 = ["M" . sprintf("%06d", $data->caseid), $data->org];
     
     
-            $content1 = WaTemplate::getcontent('l4_mediation_party2');
+            $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $data->caseid,
@@ -63,7 +63,7 @@ class ReinitiateController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'ACPTARB_ADM_RES',
                 'varjson' => $varjson,
-                'haptik_tmp' => 'l4_mediation_party2',
+                'haptik_tmp' => 'l4_mediation_party2_v2',
     
             ];
 
@@ -73,7 +73,7 @@ class ReinitiateController extends Controller
                 $is_update_wa = DB::table('reinitiate_noti')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
 
                 if($is_update_wa) {
-                    echo "l4_mediation_party2 added for case id =" .$data->caseid;
+                    echo "l4_mediation_party2_v2 added for case id =" .$data->caseid;
                     echo "<br/>";
                 }
                 
@@ -91,7 +91,7 @@ class ReinitiateController extends Controller
             $varjson_file = ['caseid' => "M" . sprintf("%06d", $data->caseid)];
             $var_file = ['-caseid-'];
             $var1_file = ["M" . sprintf("%06d", $data->caseid)];
-            $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+            $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
             $content_file = str_replace($var_file, $var1_file, $content1_file);
             $dwa2 = [
                 'caseid' => $data->caseid,
@@ -99,7 +99,7 @@ class ReinitiateController extends Controller
                 'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                 'event' => 'ACPTARB_ADM_RES',
                 'varjson' => $varjson_file,
-                'haptik_tmp' => 'mediation_consent_doc',
+                'haptik_tmp' => 'pdf_attachment_v3',
 
             ];
             
