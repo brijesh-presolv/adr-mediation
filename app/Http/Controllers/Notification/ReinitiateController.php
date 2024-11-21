@@ -50,7 +50,7 @@ class ReinitiateController extends Controller
 
 
         foreach($allData as $data) {
-            $varjson = ['caseid' => "M" . sprintf("%06d", $data->caseid), 'initiating' => $data->org];
+            $varjson = ['initiating' => $data->org, 'caseid' => "M" . sprintf("%06d", $data->caseid)];
             $var = ['-ip-', '-cid-'];
             $var1 = [$data->org, "M" . sprintf("%06d", $data->caseid)];
     
