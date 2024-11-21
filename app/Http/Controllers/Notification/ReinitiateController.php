@@ -51,8 +51,8 @@ class ReinitiateController extends Controller
 
         foreach($allData as $data) {
             $varjson = ['caseid' => "M" . sprintf("%06d", $data->caseid), 'initiating' => $data->org];
-            $var = ['-cid-', '-ip-'];
-            $var1 = ["M" . sprintf("%06d", $data->caseid), $data->org];
+            $var = ['-ip-', '-cid-'];
+            $var1 = [$data->org, "M" . sprintf("%06d", $data->caseid)];
     
     
             $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
