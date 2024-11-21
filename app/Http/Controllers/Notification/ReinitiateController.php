@@ -44,7 +44,7 @@ class ReinitiateController extends Controller
     public function reinitiate()
     {
 
-        $allData = DB::table('reinitiate_noti')->get();
+        $allData = DB::table('reinitiate_noti')->where('is_whtsapp_sent', 0)->limit(100)->get();
 
         
 
@@ -55,7 +55,7 @@ class ReinitiateController extends Controller
             $var1 = ["M" . sprintf("%06d", $data->caseid), $data->org];
     
     
-            $content1 = WaTemplate::getcontent('l4_mediation_party2');
+            $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $data->caseid,
@@ -63,36 +63,35 @@ class ReinitiateController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'ACPTARB_ADM_RES',
                 'varjson' => $varjson,
-                'haptik_tmp' => 'l4_mediation_party2',
+                'haptik_tmp' => 'l4_mediation_party2_v2',
     
             ];
 
             $access1 = Whatsapp::sendWamessage($dwa1);
 
             if($access1) {
-                echo "l4_mediation_party2 added for case id =" .$data->caseid;
-                echo "<br/>";
+                $is_update_wa = DB::table('reinitiate_noti')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
+
+                if($is_update_wa) {
+                    echo "l4_mediation_party2_v2 added for case id =" .$data->caseid;
+                    echo "<br/>";
+                }
+                
             }
 
             // attachment
 
-            $invitation = $this->invitation_mediate($data->caseid);
+            $invitation = 'Invitation_mediate_M' . sprintf('%06d', $data->caseid) . '.pdf';
 
-            // if (!isset($invmodel)) {
-            $invmodel = new InvitationFiles();
-            // }
-            $invmodel->case_id = $data->caseid;
-            $invmodel->file_name = $invitation;
-            $invmodel->save();
+             
 
-            $responding_party = "";
             $finalFilePath = 'mediation_documents/mediation/' . $data->caseid . '/' . $invitation;
             $whatsappSend = Storage::disk('s3')->url($finalFilePath);
 
             $varjson_file = ['caseid' => "M" . sprintf("%06d", $data->caseid)];
             $var_file = ['-caseid-'];
             $var1_file = ["M" . sprintf("%06d", $data->caseid)];
-            $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+            $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
             $content_file = str_replace($var_file, $var1_file, $content1_file);
             $dwa2 = [
                 'caseid' => $data->caseid,
@@ -100,7 +99,7 @@ class ReinitiateController extends Controller
                 'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                 'event' => 'ACPTARB_ADM_RES',
                 'varjson' => $varjson_file,
-                'haptik_tmp' => 'mediation_consent_doc',
+                'haptik_tmp' => 'pdf_attachment_v3',
 
             ];
             
@@ -108,7 +107,13 @@ class ReinitiateController extends Controller
 
 
             if($access2) {
-                echo "attachment added for case id =" .$data->caseid;
+                $is_update_pdf = DB::table('reinitiate_noti')->where('caseid', $data->caseid)->update(['is_pdf_sent' => 1]);
+
+                if($is_update_pdf) {
+                    echo "attachment added for case id =" .$data->caseid;
+                    echo "<br/>";
+                }
+               
             }
             
         }
@@ -158,8 +163,8 @@ class ReinitiateController extends Controller
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
         
-       //$local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
-       //return $local_store;
+       $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+       return $local_store;
 
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
