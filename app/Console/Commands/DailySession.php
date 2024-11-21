@@ -151,7 +151,7 @@ class DailySession extends Command
             $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$date, $mid, $url];
-            $content1 = WaTemplate::getcontent('l10_session_schedule');
+            $content1 = WaTemplate::getcontent('l10__session_party_v1');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
@@ -159,7 +159,7 @@ class DailySession extends Command
                 'content' => ['text' => $content],
                 'event' => 'SESS_SCHE',
                 'varjson' => $varjson,
-                'haptik_tmp' => 'l10_session_schedule',
+                'haptik_tmp' => 'l10__session_party_v1',
 
             ];
 

@@ -1326,7 +1326,7 @@ class CaseController extends Controller
                     $varjson = ['sessionDateTime' => $request->sessionDate . "/" . $time, 'caseid' => $id, 'zoomid' => $request->zoomId];
                     $var = ['-dt-', '-cid-', '-link-'];
                     $var1 = [$request->sessionDate . "/" . $time, $id, $request->zoomId];
-                    $content1 = WaTemplate::getcontent('l10_session_schedule');
+                    $content1 = WaTemplate::getcontent('l10__session_party_v1');
                     $content = str_replace($var, $var1, $content1);
                     $dwa1 = [
                         'caseid' => $request->caseId,
@@ -1334,7 +1334,7 @@ class CaseController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SESS_SCHE',
                         'varjson' => $varjson,
-                        'haptik_tmp' => 'l10_session_schedule',
+                        'haptik_tmp' => 'l10__session_party_v1',
 
                     ];
 
@@ -2479,7 +2479,7 @@ class CaseController extends Controller
             $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$date, $mid, $url];
-            $content1 = WaTemplate::getcontent('l10_session_schedule');
+            $content1 = WaTemplate::getcontent('l10__session_party_v1');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
@@ -2487,7 +2487,7 @@ class CaseController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'SESS_SCHE',
                 'varjson' => $varjson,
-                'haptik_tmp' => 'l10_session_schedule',
+                'haptik_tmp' => 'l10__session_party_v1',
 
             ];
 
@@ -5260,7 +5260,7 @@ class CaseController extends Controller
             $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $invitation];
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$date, $mid, $invitation];
-            $content1 = WaTemplate::getcontent('l10_session_schedule');
+            $content1 = WaTemplate::getcontent('l10__session_party_v1');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
@@ -5268,7 +5268,7 @@ class CaseController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'SESS_SCHE',
                 'varjson' => $varjson,
-                'haptik_tmp' => 'l10_session_schedule',
+                'haptik_tmp' => 'l10__session_party_v1',
 
             ];
             
