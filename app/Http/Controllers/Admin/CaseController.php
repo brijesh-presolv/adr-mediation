@@ -2078,10 +2078,10 @@ class CaseController extends Controller
                                     $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
                                     $l4_mediation_party2_tem="l4_mediation_party2_bot";
                                 }else{
-                                    $content1 = WaTemplate::getcontent('l4_mediation_party2');
-                                    $l4_mediation_party2_tem="l4_mediation_party2";
+                                    $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
+                                    $l4_mediation_party2_tem="l4_mediation_party2_v2";
                                 }
-                                $content1 = WaTemplate::getcontent('l4_mediation_party2');
+                                $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
                                 $content = str_replace($var, $var1, $content1);
                                 $dwa1 = [
                                     'caseid' => $id,
@@ -2101,7 +2101,7 @@ class CaseController extends Controller
                                 $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
                                 $var_file = ['-caseid-'];
                                 $var1_file = ["M" . sprintf("%06d", $id)];
-                                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                                $content1_file = WaTemplate::getcontent('pdf_attachment');
                                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                                 $dwa2 = [
                                     'caseid' => $id,
@@ -2109,7 +2109,7 @@ class CaseController extends Controller
                                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                                     'event' => 'ACPTARB_ADM_RES',
                                     'varjson' => $varjson_file,
-                                    'haptik_tmp' => 'mediation_consent_doc',
+                                    'haptik_tmp' => 'pdf_attachment',
 
                                 ];
                                 if($med->bulk_flag == 0 && $med->stop_itm_rp == 0){
@@ -2152,7 +2152,7 @@ class CaseController extends Controller
                             $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
                             $var_file = ['-caseid-'];
                             $var1_file = ["M" . sprintf("%06d", $id)];
-                            $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                            $content1_file = WaTemplate::getcontent('pdf_attachment');
                             $content_file = str_replace($var_file, $var1_file, $content1_file);
                             $dwa2 = [
                                 'caseid' => $id,
@@ -2160,7 +2160,7 @@ class CaseController extends Controller
                                 'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                                 'event' => 'ACPTARB_ADM_INI',
                                 'varjson' => $varjson_file,
-                                'haptik_tmp' => 'mediation_consent_doc',
+                                'haptik_tmp' => 'pdf_attachment',
 
                             ];
                             if($med->stop_itm_rp == 0) {
@@ -2347,8 +2347,8 @@ class CaseController extends Controller
                     $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
                     $l4_mediation_party2_tem="l4_mediation_party2_bot";
                 }else{
-                    $content1 = WaTemplate::getcontent('l4_mediation_party2');
-                    $l4_mediation_party2_tem="l4_mediation_party2";
+                    $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
+                    $l4_mediation_party2_tem="l4_mediation_party2_v2";
                 }
 
                 $content = str_replace($var, $var1, $content1);
@@ -2370,7 +2370,7 @@ class CaseController extends Controller
                 $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
                 $var_file = ['-caseid-'];
                 $var1_file = ["M" . sprintf("%06d", $id)];
-                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                $content1_file = WaTemplate::getcontent('pdf_attachment');
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $ini_userPlanId,
@@ -2378,7 +2378,7 @@ class CaseController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'ACPTARB_ADM_RES',
                     'varjson' => $varjson_file,
-                    'haptik_tmp' => 'mediation_consent_doc',
+                    'haptik_tmp' => 'pdf_attachment',
                 ];
 
                 if($stop_rp == 0) {
@@ -2423,7 +2423,7 @@ class CaseController extends Controller
                     $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
                     $var_file = ['-caseid-'];
                     $var1_file = ["M" . sprintf("%06d", $id)];
-                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $ini_userPlanId,
@@ -2431,7 +2431,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'ACPTARB_ADM_INI',
                         'varjson' => $varjson_file,
-                        'haptik_tmp' => 'mediation_consent_doc',
+                        'haptik_tmp' => 'pdf_attachment',
 
                     ];
 
@@ -2874,7 +2874,7 @@ class CaseController extends Controller
                         $varjson_file = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
-                        $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                        $content1_file = WaTemplate::getcontent('pdf_attachment');
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
@@ -2882,7 +2882,7 @@ class CaseController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson_file,
-                            'haptik_tmp' => 'mediation_consent_doc',
+                            'haptik_tmp' => 'pdf_attachment',
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     }
@@ -2928,7 +2928,7 @@ class CaseController extends Controller
                     $varjson = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
@@ -2936,7 +2936,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson,
-                        'haptik_tmp' => 'mediation_consent_doc',
+                        'haptik_tmp' => 'pdf_attachment',
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
                 }
@@ -2997,7 +2997,7 @@ class CaseController extends Controller
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
@@ -3005,7 +3005,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_SETT_AGRE',
                         'varjson' => $varjson_file,
-                        'haptik_tmp' => 'mediation_consent_doc',
+                        'haptik_tmp' => 'pdf_attachment',
 
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
@@ -3048,7 +3048,7 @@ class CaseController extends Controller
                 $varjson = ['caseid' => $mid];
                 $var_file = ['-caseid-'];
                 $var1_file = [$mid];
-                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                $content1_file = WaTemplate::getcontent('pdf_attachment');
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $id,
@@ -3056,7 +3056,7 @@ class CaseController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_SETT_AGRE_MED',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'mediation_consent_doc',
+                    'haptik_tmp' => 'pdf_attachment',
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
@@ -3610,7 +3610,7 @@ class CaseController extends Controller
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $request->caseid,
@@ -3618,7 +3618,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $filesE, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson_file,
-                        'haptik_tmp' => 'mediation_consent_doc',
+                        'haptik_tmp' => 'pdf_attachment',
 
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
@@ -3694,7 +3694,7 @@ class CaseController extends Controller
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $invUser->userPlanId,
@@ -3702,7 +3702,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $filesE, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC',
                         'varjson' => $varjson_file,
-                        'haptik_tmp' => 'mediation_consent_doc',
+                        'haptik_tmp' => 'pdf_attachment',
 
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
@@ -4128,7 +4128,7 @@ class CaseController extends Controller
                         $varjson_file = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
-                        $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                        $content1_file = WaTemplate::getcontent('pdf_attachment');
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
@@ -4136,7 +4136,7 @@ class CaseController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson_file,
-                            'haptik_tmp' => 'mediation_consent_doc',
+                            'haptik_tmp' => 'pdf_attachment',
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     //}

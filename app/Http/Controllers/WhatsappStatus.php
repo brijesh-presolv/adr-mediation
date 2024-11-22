@@ -103,7 +103,7 @@ class WhatsappStatus extends Controller
                 $varjson = ['initiating' => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name, 'caseid' => "M" . sprintf("%06d", $value->userPlanId)];
                 $var = ['-cid-', '-ip-'];
                 $var1 = ["M" . sprintf("%06d", $value->userPlanId), ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name];
-                $content1 = WaTemplate::getcontent('l4_mediation_party2');
+                $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $value->userPlanId,
@@ -111,7 +111,7 @@ class WhatsappStatus extends Controller
                     'content' => ['text' => $content],
                     'event' => 'REM_ACPTARB_ADM_RES',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'l4_mediation_party2',
+                    'haptik_tmp' => 'l4_mediation_party2_v2',
 
                 ];
 
@@ -120,7 +120,7 @@ class WhatsappStatus extends Controller
                 $varjson_file = ['caseid' => "M" . sprintf("%06d", $value->userPlanId)];
                 $var_file = ['-caseid-'];
                 $var1_file = ["M" . sprintf("%06d", $value->userPlanId)];
-                $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                $content1_file = WaTemplate::getcontent('pdf_attachment');
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' =>  $value->userPlanId,
@@ -128,7 +128,7 @@ class WhatsappStatus extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'REM_ACPTARB_ADM_RES',
                     'varjson' => $varjson_file,
-                    'haptik_tmp' => 'mediation_consent_doc',
+                    'haptik_tmp' => 'pdf_attachment',
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);

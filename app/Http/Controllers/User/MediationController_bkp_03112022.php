@@ -161,7 +161,7 @@ class MediationController extends Controller
                         $varjson_file = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
-                        $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                        $content1_file = WaTemplate::getcontent('pdf_attachment');
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
@@ -169,7 +169,7 @@ class MediationController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson_file,
-                            'haptik_tmp' => 'mediation_consent_doc'
+                            'haptik_tmp' => 'pdf_attachment'
 
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
@@ -207,7 +207,7 @@ class MediationController extends Controller
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('mediation_consent_doc');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
@@ -215,7 +215,7 @@ class MediationController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson_file,
-                        'haptik_tmp' => 'mediation_consent_doc'
+                        'haptik_tmp' => 'pdf_attachment'
 
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
