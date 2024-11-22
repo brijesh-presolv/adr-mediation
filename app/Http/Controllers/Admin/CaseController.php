@@ -2068,16 +2068,24 @@ class CaseController extends Controller
                             }
                             if ($value->userPhone != null) {
 
-                                $varjson = ['caseid' => "M" . sprintf("%06d", $id), 'initiating' => ($pone->organization != null) ? $pone->organization : $pone->name];
-                                $var = ['-cid-', '-ip-'];
-                                $var1 = ["M" . sprintf("%06d", $id), ($pone->organization != null) ? $pone->organization : $pone->name];
+                                //$varjson = ['caseid' => "M" . sprintf("%06d", $id), 'initiating' => ($pone->organization != null) ? $pone->organization : $pone->name];
+                                // $var = ['-cid-', '-ip-'];
+                                // $var1 = ["M" . sprintf("%06d", $id), ($pone->organization != null) ? $pone->organization : $pone->name];
 
                                 $MedCasedata = MedCase::find($id);
                                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $med->id)->first();
                                 if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $value->userPhone){
+                                    $varjson = ['caseid' => "M" . sprintf("%06d", $id), 'initiating' => ($pone->organization != null) ? $pone->organization : $pone->name];
+                                    $var = ['-cid-', '-ip-'];
+                                    $var1 = ["M" . sprintf("%06d", $id), ($pone->organization != null) ? $pone->organization : $pone->name];
+                                    
                                     $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
                                     $l4_mediation_party2_tem="l4_mediation_party2_bot";
                                 }else{
+                                    $varjson = ['initiating' => ($pone->organization != null) ? $pone->organization : $pone->name, 'caseid' => "M" . sprintf("%06d", $id)];
+                                    $var = ['-ip-', '-cid-'];
+                                    $var1 = [($pone->organization != null) ? $pone->organization : $pone->name, "M" . sprintf("%06d", $id)];
+
                                     $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
                                     $l4_mediation_party2_tem="l4_mediation_party2_v2";
                                 }
@@ -2339,14 +2347,18 @@ class CaseController extends Controller
         foreach ($responding_phone as $phone) {
             if ($phone != "") {
                 $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
-                $var = ['-cid-', '-ip-'];
-                $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
+                // $var = ['-cid-', '-ip-'];
+                // $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
                 $MedCasedata = MedCase::find($id);
                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $id)->first();
                 if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $phone){
+                    $var = ['-cid-', '-ip-'];
+                    $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
                     $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
                     $l4_mediation_party2_tem="l4_mediation_party2_bot";
                 }else{
+                    $var = ['-ip-','-cid-'];
+                    $var1 = [$initiating_party, "M" . sprintf("%06d", $id)];
                     $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
                     $l4_mediation_party2_tem="l4_mediation_party2_v2";
                 }

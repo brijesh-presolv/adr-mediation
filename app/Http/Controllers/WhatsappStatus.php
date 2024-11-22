@@ -101,8 +101,8 @@ class WhatsappStatus extends Controller
 
             if ($value->userPhone != null && $value->stop_itm_rp == 0) {
                 $varjson = ['initiating' => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name, 'caseid' => "M" . sprintf("%06d", $value->userPlanId)];
-                $var = ['-cid-', '-ip-'];
-                $var1 = ["M" . sprintf("%06d", $value->userPlanId), ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name];
+                $var = ['-ip-', '-cid-'];
+                $var1 = [($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name, "M" . sprintf("%06d", $value->userPlanId)];
                 $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
