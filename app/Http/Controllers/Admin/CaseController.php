@@ -1024,7 +1024,33 @@ class CaseController extends Controller
                 ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
                 ->where(['user_involved_in_agreement.userPlanid' => $request->id])->get();
 
+                $mid = "M" . sprintf("%06d", $request->id);
+
             if ($inv[0]->address1 != null || $inv[0]->useraddress != null) {
+
+
+                     // Stop whatsapp message //
+                    if($inv[0]->isClaimant == 0) {
+                    $varjson = ['caseid' => $mid];
+                    $var = ['-cid-'];
+                    $var1 = [$mid];
+                    $content1 = WaTemplate::getcontent('wa_message_stop');
+                    $content = str_replace($var, $var1, $content1);
+                    $dwa1 = [
+                        'caseid' => $request->id,
+                        'contact' =>  $inv[0]->userPhone,
+                        'content' => ['text' => $content],
+                        'event' => 'STOP_WHTSAPP',
+                        'varjson' => $varjson,
+                        'haptik_tmp' => 'wa_message_stop',
+                    ];
+
+                    $access = Whatsapp::sendWamessage($dwa1);
+                    }
+                    // Stop whatsapp message //
+
+
+
 
                 $medcase = MedCase::find($request->id);
 
@@ -2807,24 +2833,7 @@ class CaseController extends Controller
         SendGrid::send($d, $user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $mid], $user->name);
 
 
-        // Stop whatsapp message //
-        $varjson = ['caseid' => $mid];
-        $var = ['-cid-'];
-        $var1 = [$mid];
-        $content1 = WaTemplate::getcontent('wa_message_stop');
-        $content = str_replace($var, $var1, $content1);
-        $dwa1 = [
-            'caseid' => $id,
-            'contact' =>  $user->mobile_number,
-            'content' => ['text' => $content],
-            'event' => 'STOP_WHTSAPP',
-            'varjson' => $varjson,
-            'haptik_tmp' => 'wa_message_stop',
-        ];
-
-        $access = Whatsapp::sendWamessage($dwa1);
-        // Stop whatsapp message //
-
+       
 
         
             $varjson = ['caseid' => $mid];
