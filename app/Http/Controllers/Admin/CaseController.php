@@ -1031,21 +1031,21 @@ class CaseController extends Controller
 
                      // Stop whatsapp message //
                     if($inv[0]->isClaimant > 0) {
-                    $varjson = ['caseid' => $mid];
-                    $var = ['-cid-'];
-                    $var1 = [$mid];
-                    $content1 = WaTemplate::getcontent('wa_message_stop');
-                    $content = str_replace($var, $var1, $content1);
-                    $dwa1 = [
-                        'caseid' => $request->id,
-                        'contact' =>  $inv[0]->userPhone,
-                        'content' => ['text' => $content],
-                        'event' => 'STOP_WHTSAPP',
-                        'varjson' => $varjson,
-                        'haptik_tmp' => 'wa_message_stop',
-                    ];
+                        $varjson = ['caseid' => $mid];
+                        $var = ['-cid-'];
+                        $var1 = [$mid];
+                        $content1 = WaTemplate::getcontent('wa_message_stop');
+                        $content = str_replace($var, $var1, $content1);
+                        $dwa1 = [
+                            'caseid' => $request->id,
+                            'contact' =>  $inv[0]->userPhone,
+                            'content' => ['text' => $content],
+                            'event' => 'STOP_WHTSAPP',
+                            'varjson' => $varjson,
+                            'haptik_tmp' => 'wa_message_stop',
+                        ];
 
-                    $access = Whatsapp::sendWamessage($dwa1);
+                        $access = Whatsapp::sendWaStopmessage($dwa1);
                     }
                     // Stop whatsapp message //
 

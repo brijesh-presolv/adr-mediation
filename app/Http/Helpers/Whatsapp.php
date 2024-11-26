@@ -29,7 +29,7 @@ class Whatsapp
         // Check if user stopped the whtsapp notification //
 
 
-        //if($check_phone == 0){
+        if($check_phone == 0){
 
             foreach ($ocarr as $key => $value) {
 
@@ -60,7 +60,7 @@ class Whatsapp
                 WhatsAppQue::create($arr_e);
             }
 
-       // }
+        }
 
         
 
@@ -292,4 +292,52 @@ class Whatsapp
             return false;
         }
     }
+
+
+    // For stop whtsapp message //
+    
+    public static function sendWaStopmessage($d)
+    {
+
+        $ocarr = [];
+
+        $ocarr[] = $d['contact'];
+
+
+            foreach ($ocarr as $key => $value) {
+
+                if ($value == '') {
+                    continue;
+                }
+                // dd(strlen($value));
+                if (strlen($value) == 10) {
+                    $value = '+91' . $value;
+                } else {
+                    $value = $value;
+                }
+    
+                $arr_e = array();
+                $arr_e['caseid'] = $d['caseid'];
+                $arr_e['contact'] = trim($value);
+                $arr_e['content'] = json_encode($d['content']);
+                $arr_e['casetype'] = 2;
+                $arr_e['event'] = $d['event'];
+                $arr_e['variable'] = json_encode($d['varjson']);
+                $arr_e['haptik_tmp'] = $d['haptik_tmp'];
+    
+                if (array_key_exists('media', $d['content'])) {
+                    $arr_e['media'] = 1;
+                }
+    
+    
+                WhatsAppQue::create($arr_e);
+            }
+
+       
+
+        return true;
+        
+    }
+    // For stop whtsapp message //
+
 }
