@@ -29,7 +29,7 @@ class Whatsapp
         // Check if user stopped the whtsapp notification //
 
 
-        if($check_phone == 0){
+        //if($check_phone == 0){
 
             foreach ($ocarr as $key => $value) {
 
@@ -60,7 +60,7 @@ class Whatsapp
                 WhatsAppQue::create($arr_e);
             }
 
-        }
+       // }
 
         
 
