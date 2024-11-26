@@ -1030,7 +1030,7 @@ class CaseController extends Controller
 
 
                      // Stop whatsapp message //
-                    if($inv[0]->isClaimant == 0) {
+                    if($inv[0]->isClaimant > 0) {
                     $varjson = ['caseid' => $mid];
                     $var = ['-cid-'];
                     $var1 = [$mid];
