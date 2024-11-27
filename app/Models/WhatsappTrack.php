@@ -74,7 +74,7 @@ class WhatsappTrack extends Model
         $result = WhatsappTrack::with('whatsapp_log')->where('caseid', $id)->where('event', $event)
             ->where('media', '!=', null)
             ->where('contact', 'LIKE', "%{$mobile}%")
-            ->where('request_uuid', '!=', null)         // added on 27/11/2024 for blank whtsapp status
+            ->where('request_uuid', '!=', '')         // added on 27/11/2024 for blank whtsapp status
             ->orderBy('id', 'ASC')->limit(1)->first();
            
         if(isset($result)) {
