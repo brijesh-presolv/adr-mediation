@@ -28,7 +28,7 @@ class Whatsapp
         $check_phone = Common_function::checkIfPhoneExist($d['contact']);
         // Check if user stopped the whtsapp notification //
 
-
+       
         if($check_phone == 0){
 
             foreach ($ocarr as $key => $value) {
@@ -176,44 +176,51 @@ class Whatsapp
         }
 
         $i = 1;
-        foreach ($ocarr as $key => $value) {
 
-            if ($value == '') {
-                continue;
+        // Check if user stopped the whtsapp notification //
+        $check_phone = Common_function::checkIfPhoneExist($d['contact']);
+        // Check if user stopped the whtsapp notification //
+
+        if($check_phone == 0){
+            foreach ($ocarr as $key => $value) {
+
+                if ($value == '') {
+                    continue;
+                }
+
+                if ($i == 1) {
+                    $c = $value;
+                } else {
+
+                    $c = '+91' . $value;
+                }
+
+                if($c=='+919414784873'){
+
+                    continue;
+                }
+
+
+
+                //que table
+                $arr_e = array();
+                $arr_e['caseid'] = $d['caseid'];
+                $arr_e['contact'] = trim($c);
+                $arr_e['content'] = json_encode($d['content']);
+                $arr_e['casetype'] = 2;
+                $arr_e['event'] = $d['event'];
+                $arr_e['variable'] = json_encode($d['varjson']);
+                $arr_e['haptik_tmp'] = isset($d['haptik_tmp']) ? $d['haptik_tmp'] : null;
+
+                if (array_key_exists('media', $d['content'])) {
+
+                    $arr_e['media'] = 1;
+                }
+
+                WhatsAppQue::insert($arr_e);
+
+                $i++;
             }
-
-            if ($i == 1) {
-                $c = $value;
-            } else {
-
-                $c = '+91' . $value;
-            }
-
-            if($c=='+919414784873'){
-
-                continue;
-            }
-
-
-
-            //que table
-            $arr_e = array();
-            $arr_e['caseid'] = $d['caseid'];
-            $arr_e['contact'] = trim($c);
-            $arr_e['content'] = json_encode($d['content']);
-            $arr_e['casetype'] = 2;
-            $arr_e['event'] = $d['event'];
-            $arr_e['variable'] = json_encode($d['varjson']);
-            $arr_e['haptik_tmp'] = isset($d['haptik_tmp']) ? $d['haptik_tmp'] : null;
-
-            if (array_key_exists('media', $d['content'])) {
-
-                $arr_e['media'] = 1;
-            }
-
-            WhatsAppQue::insert($arr_e);
-
-            $i++;
         }
         return true;
 
