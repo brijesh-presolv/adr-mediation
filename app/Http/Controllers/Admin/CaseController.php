@@ -1024,7 +1024,10 @@ class CaseController extends Controller
                 ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
                 ->where(['user_involved_in_agreement.userPlanid' => $request->id])->get();
 
+                $mid = "M" . sprintf("%06d", $request->id);
+
             if ($inv[0]->address1 != null || $inv[0]->useraddress != null) {
+
 
                 $medcase = MedCase::find($request->id);
 
@@ -1059,7 +1062,6 @@ class CaseController extends Controller
                     $invitation = $this->mediator_appointment($request->id, $request->midater);
                 //}
                 
-
                 $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
 
                 if (!isset($invmodel)) {
@@ -2345,6 +2347,7 @@ class CaseController extends Controller
 
         }
         foreach ($responding_phone as $phone) {
+
             if ($phone != "") {
                 $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
                 // $var = ['-cid-', '-ip-'];
@@ -2375,7 +2378,7 @@ class CaseController extends Controller
                 ];
 
                 if($stop_rp == 0) {
-                    $access = Whatsapp::sendWamessage($dwa1);
+                    $access = Whatsapp::sendWaStopmessage($dwa1);
                 }
                 
 
@@ -2394,8 +2397,30 @@ class CaseController extends Controller
                 ];
 
                 if($stop_rp == 0) {
-                    $access = Whatsapp::sendWamessage($dwa2);
+                    $access = Whatsapp::sendWaStopmessage($dwa2);
                 }
+
+
+
+                // Stop whatsapp message //
+           
+                $varjson = ['caseid' => "M" . sprintf("%06d", $id)];
+                $var = ['-cid-'];
+                $var1 = ["M" . sprintf("%06d", $id)];
+                $content1 = WaTemplate::getcontent('wa_message_stop');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $inv->userPlanId,
+                    'contact' =>  $phone,
+                    'content' => ['text' => $content],
+                    'event' => 'STOP_WHTSAPP',
+                    'varjson' => $varjson,
+                    'haptik_tmp' => 'wa_message_stop',
+                ];
+
+                $access = Whatsapp::sendWaStopmessage($dwa1);
+           
+            // Stop whatsapp message //
             }
         }
 
@@ -2812,26 +2837,35 @@ class CaseController extends Controller
     {
         $user = User::where("id", $mediator_id)->first();
         $mid = "M" . sprintf("%06d", $id);
+
         $d = [
             'event' => 'MEDI_ADD_ADM',
             'case_id' => $id,
         ];
         SendGrid::send($d, $user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $mid], $user->name);
-        $varjson = ['caseid' => $mid];
-        $var = ['-cid-'];
-        $var1 = [$mid];
-        $content1 = WaTemplate::getcontent('consent_mediator');
-        $content = str_replace($var, $var1, $content1);
-        $dwa1 = [
-            'caseid' => $id,
-            'contact' =>  $user->mobile_number,
-            'content' => ['text' => $content],
-            'event' => 'MEDI_ADD_ADM',
-            'varjson' => $varjson,
-            'haptik_tmp' => 'l17_consent_mediator',
-        ];
 
-        $access = Whatsapp::sendWamessage($dwa1);
+
+       
+
+        
+            $varjson = ['caseid' => $mid];
+            $var = ['-cid-'];
+            $var1 = [$mid];
+            $content1 = WaTemplate::getcontent('consent_mediator');
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $id,
+                'contact' =>  $user->mobile_number,
+                'content' => ['text' => $content],
+                'event' => 'MEDI_ADD_ADM',
+                'varjson' => $varjson,
+                'haptik_tmp' => 'l17_consent_mediator',
+            ];
+
+            $access = Whatsapp::sendWamessage($dwa1);
+       
+        
+        
         return true;
     }
 

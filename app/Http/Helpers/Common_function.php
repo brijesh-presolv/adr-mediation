@@ -10,6 +10,7 @@ use App\Models\Arbcase;
 use PDF;
 use App\Models\Arb_notification;
 use App\Models\Notification;
+use App\Models\UserStopWhatsapp;
 
 class Common_function
 {
@@ -312,4 +313,17 @@ class Common_function
 
         $pdf->save($pf);
     }
+
+
+    // For stop whtsapp notification //
+    public static function checkIfPhoneExist($phone){
+        $is_phone = UserStopWhatsapp::select('id', 'reply_message')->where("phone_number", $phone)->first();
+
+        if($is_phone['reply_message'] == "STOP"){
+            return 1;
+        }else {
+            return 0;
+        }
+    }
+    // For stop whtsapp notification //
 }
