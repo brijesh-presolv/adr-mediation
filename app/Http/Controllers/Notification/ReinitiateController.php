@@ -91,7 +91,7 @@ class ReinitiateController extends Controller
             $varjson_file = ['caseid' => "M" . sprintf("%06d", $data->caseid)];
             $var_file = ['-caseid-'];
             $var1_file = ["M" . sprintf("%06d", $data->caseid)];
-            $content1_file = WaTemplate::getcontent('pdf_attachment');
+            $content1_file = WaTemplate::getcontent('pdf_attachment_v1');
             $content_file = str_replace($var_file, $var1_file, $content1_file);
             $dwa2 = [
                 'caseid' => $data->caseid,
@@ -99,7 +99,7 @@ class ReinitiateController extends Controller
                 'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                 'event' => 'ACPTARB_ADM_RES',
                 'varjson' => $varjson_file,
-                'haptik_tmp' => 'pdf_attachment',
+                'haptik_tmp' => 'pdf_attachment_v1',
 
             ];
             
