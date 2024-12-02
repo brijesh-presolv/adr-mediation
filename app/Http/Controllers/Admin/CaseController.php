@@ -2088,10 +2088,10 @@ class CaseController extends Controller
                                     $var = ['-ip-', '-cid-'];
                                     $var1 = [($pone->organization != null) ? $pone->organization : $pone->name, "M" . sprintf("%06d", $id)];
 
-                                    $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
-                                    $l4_mediation_party2_tem="l4_mediation_party2_v2";
+                                    $content1 = WaTemplate::getcontent('l4_mediation_party2_v3');
+                                    $l4_mediation_party2_tem="l4_mediation_party2_v3";
                                 }
-                                $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
+                                $content1 = WaTemplate::getcontent('l4_mediation_party2_v3');
                                 $content = str_replace($var, $var1, $content1);
                                 $dwa1 = [
                                     'caseid' => $id,
@@ -2362,8 +2362,8 @@ class CaseController extends Controller
                 }else{
                     $var = ['-ip-','-cid-'];
                     $var1 = [$initiating_party, "M" . sprintf("%06d", $id)];
-                    $content1 = WaTemplate::getcontent('l4_mediation_party2_v2');
-                    $l4_mediation_party2_tem="l4_mediation_party2_v2";
+                    $content1 = WaTemplate::getcontent('l4_mediation_party2_v3');
+                    $l4_mediation_party2_tem="l4_mediation_party2_v3";
                 }
 
                 $content = str_replace($var, $var1, $content1);
@@ -2407,7 +2407,7 @@ class CaseController extends Controller
                 $varjson = ['caseid' => "M" . sprintf("%06d", $id)];
                 $var = ['-cid-'];
                 $var1 = ["M" . sprintf("%06d", $id)];
-                $content1 = WaTemplate::getcontent('wa_message_stop');
+                $content1 = WaTemplate::getcontent('wa_message_stop_v3');
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $inv->userPlanId,
@@ -2415,7 +2415,7 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'STOP_WHTSAPP',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'wa_message_stop',
+                    'haptik_tmp' => 'wa_message_stop_v3',
                 ];
 
                 $access = Whatsapp::sendWaStopmessage($dwa1);
