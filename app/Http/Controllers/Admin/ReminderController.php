@@ -128,7 +128,7 @@ class ReminderController extends Controller
             $varjson = ['caseid' => $mid, 'sessionDteaTime' => $date, 'zoomid' => $invitation];
             $var = ['-cid-', '-dt-', '-link-'];
             $var1 = [$mid, $date, $invitation];
-            $content1 = WaTemplate::getcontent('l10_session_party_v2');
+            $content1 = WaTemplate::getcontent('l10_session_party_v2_l0');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
@@ -136,7 +136,7 @@ class ReminderController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'SESS_SCHE',
                 'varjson' => $varjson,
-                'haptik_tmp' => 'l10_session_party_v2',
+                'haptik_tmp' => 'l10_session_party_v2_l0',
 
             ];
             
@@ -162,7 +162,7 @@ class ReminderController extends Controller
             $varjson = ['caseid' => $mid, 'sessionDteaTime' => $date, 'zoomid' => $url];
             $var = ['-cid-', '-dt-', '-link-'];
             $var1 = [$mid, $date, $url];
-            $content1 = WaTemplate::getcontent('l10_session_party_v2');
+            $content1 = WaTemplate::getcontent('l10_session_party_v2_l0');
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
@@ -170,7 +170,7 @@ class ReminderController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'SESS_SCHE',
                 'varjson' => $varjson,
-                'haptik_tmp' => 'l10_session_party_v2',
+                'haptik_tmp' => 'l10_session_party_v2_l0',
 
             ];
 
