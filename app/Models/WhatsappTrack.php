@@ -72,7 +72,7 @@ class WhatsappTrack extends Model
         //     ->where('contact', $mobile)->orderBy('id', 'ASC')->limit(1)->first();
 
         $result = WhatsappTrack::with('whatsapp_log')->where('caseid', $id)->where('event', $event)
-            ->where('media', '!=', null)
+            // ->where('media', '!=', null)           // commented on 05/12/2024 for Hdfc B26 and Hdfc B28 blank issue
             ->where('contact', 'LIKE', "%{$mobile}%")
             ->where('request_uuid', '!=', '')         // added on 27/11/2024 for blank whtsapp status
             ->orderBy('id', 'ASC')->limit(1)->first();
