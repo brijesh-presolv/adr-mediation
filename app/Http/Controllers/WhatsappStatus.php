@@ -103,7 +103,11 @@ class WhatsappStatus extends Controller
                 $varjson = ['initiating' => ($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name, 'caseid' => "M" . sprintf("%06d", $value->userPlanId)];
                 $var = ['-ip-', '-cid-'];
                 $var1 = [($initiating_party->organization != null) ? $initiating_party->organization : $initiating_party->name, "M" . sprintf("%06d", $value->userPlanId)];
-                $content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
+                
+                $template_name = WaTemplate::getRandomTemplate('ITML4');
+                
+                //$content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
+                $content1 = WaTemplate::getcontent($template_name);
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $value->userPlanId,
@@ -111,7 +115,7 @@ class WhatsappStatus extends Controller
                     'content' => ['text' => $content],
                     'event' => 'REM_ACPTARB_ADM_RES',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'l4_mediation_party2_v3_a0',
+                    'haptik_tmp' => $template_name,
 
                 ];
 

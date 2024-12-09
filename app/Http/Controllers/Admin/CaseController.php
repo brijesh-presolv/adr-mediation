@@ -1874,8 +1874,8 @@ class CaseController extends Controller
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
         
-      // $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
-      // return $local_store;
+       $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+       return $local_store;
 
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
@@ -2075,6 +2075,9 @@ class CaseController extends Controller
                                 // $var1 = ["M" . sprintf("%06d", $id), ($pone->organization != null) ? $pone->organization : $pone->name];
 
                                 $MedCasedata = MedCase::find($id);
+
+                                $template_name = WaTemplate::getRandomTemplate('ITML4');
+                                
                                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $med->id)->first();
                                 if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $value->userPhone){
                                     $varjson = ['caseid' => "M" . sprintf("%06d", $id), 'initiating' => ($pone->organization != null) ? $pone->organization : $pone->name];
@@ -2088,10 +2091,15 @@ class CaseController extends Controller
                                     $var = ['-ip-', '-cid-'];
                                     $var1 = [($pone->organization != null) ? $pone->organization : $pone->name, "M" . sprintf("%06d", $id)];
 
-                                    $content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
-                                    $l4_mediation_party2_tem="l4_mediation_party2_v3_a0";
+                                    
+
+                                    //$content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
+                                    $content1 = WaTemplate::getcontent($template_name);
+                                    //$l4_mediation_party2_tem="l4_mediation_party2_v3_a0";
+                                    $l4_mediation_party2_tem=$template_name;
                                 }
-                                $content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
+                               // $content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
+                                
                                 $content = str_replace($var, $var1, $content1);
                                 $dwa1 = [
                                     'caseid' => $id,
@@ -2354,6 +2362,9 @@ class CaseController extends Controller
                 // $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
                 $MedCasedata = MedCase::find($id);
                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $id)->first();
+                
+                $template_name = WaTemplate::getRandomTemplate('ITML4');
+                
                 if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $phone){
                     $var = ['-cid-', '-ip-'];
                     $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
@@ -2362,8 +2373,10 @@ class CaseController extends Controller
                 }else{
                     $var = ['-ip-','-cid-'];
                     $var1 = [$initiating_party, "M" . sprintf("%06d", $id)];
-                    $content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
-                    $l4_mediation_party2_tem="l4_mediation_party2_v3_a0";
+                    //$content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
+                    $content1 = WaTemplate::getcontent($template_name);
+                    //$l4_mediation_party2_tem="l4_mediation_party2_v3_a0";
+                    $l4_mediation_party2_tem=$template_name;
                 }
 
                 $content = str_replace($var, $var1, $content1);
