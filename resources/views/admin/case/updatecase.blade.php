@@ -285,10 +285,25 @@ function isreadonlys($rows)
                 <?php } ?>
                 <section>
                     <div class="row">
+                        <!--- Application Number ---->
+                        <?php if($medcase->bulk_flag == 0) { ?>
                         <div class="col-md-12">
                             <hr>
                             <div class="form-group">
-                                <label>Dispute details <span style="color:red; ">*</span></label>
+                                <label>Application Number</label>
+                                <input type="text" name="application" class="form-control"
+                                value="<?= isset($medcase->ref_id) ? $medcase->ref_id : '' ?>">
+                            </div>
+                        </div>
+                        <?php } ?>
+                        <!--- Application Number ---->
+
+
+
+                        <div class="col-md-12">
+                            <hr>
+                            <div class="form-group">
+                                <label>Dispute Details <span style="color:red; ">*</span></label>
                                 <textarea class="form-control" rows="4" name="issue" required=""><?= $medcase->issue ?></textarea>
                             </div>
                         </div>

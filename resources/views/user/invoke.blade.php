@@ -215,10 +215,21 @@ function isreadonlys($rows) {
             </section>
             <section>
                 <div class="row">
+
+                    <!---- Added for Application Number ---->
                     <div class="col-md-12">
                         <hr>
                         <div class="form-group">
-                            <label>Dispute details <span style="color:red; ">*</span></label>
+                            <label>Application Number</label>
+                            <input class="form-control" name="application" />
+                        </div>
+                    </div>
+                    <!---- Added for Application Number ---->
+
+                    <div class="col-md-12">
+                        <hr>
+                        <div class="form-group">
+                            <label>Dispute Details <span style="color:red; ">*</span></label>
                             <textarea class="form-control" rows="4" name="issue" required=""><?= $medcase->issue ?></textarea>
                         </div>
                     </div>

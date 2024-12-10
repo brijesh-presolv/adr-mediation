@@ -1907,6 +1907,7 @@ class CaseController extends Controller
             //udpate mediation case
             $med->proposedSolution = $r['proposedSolution'];
             $med->issue = $r['issue'];
+            $med->ref_id = $r['application'];
             $med->updated_at = date("Y-m-d H:i:s");
             $med->save();
             //if user profile update
