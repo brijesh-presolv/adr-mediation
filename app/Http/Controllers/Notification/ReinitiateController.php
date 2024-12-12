@@ -54,8 +54,9 @@ class ReinitiateController extends Controller
             $var = ['-ip-', '-cid-'];
             $var1 = [$data->org, "M" . sprintf("%06d", $data->caseid)];
     
-    
-            $content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
+            $template_name = WaTemplate::getRandomTemplate('ITML4');
+
+            $content1 = WaTemplate::getcontent($template_name);
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $data->caseid,
@@ -63,7 +64,7 @@ class ReinitiateController extends Controller
                 'content' => ['text' => $content],
                 'event' => 'ACPTARB_ADM_RES',
                 'varjson' => $varjson,
-                'haptik_tmp' => 'l4_mediation_party2_v3_a0',
+                'haptik_tmp' => $template_name,
     
             ];
 
@@ -73,7 +74,7 @@ class ReinitiateController extends Controller
                 $is_update_wa = DB::table('reinitiate_noti_axis_25')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
 
                 if($is_update_wa) {
-                    echo "l4_mediation_party2_v3_a0 added for case id =" .$data->caseid;
+                    echo $template_name ." added for case id =" .$data->caseid;
                     echo "<br/>";
                 }
                 

@@ -26,4 +26,18 @@ class WaTemplate extends Model
 
         return  str_replace(['::', ';;'], ['‘', '’'], $query['content']);
     }
+
+
+    // choose random template from table //
+    static function getRandomTemplate($slug){
+        
+        $query = WaTemplate::select('name')
+            ->where('slug',$slug)
+            ->where('is_active',1)
+            ->orderByRaw('RAND()')
+            ->first();
+
+        return $query['name'];
+    }
+    // choose random template from table //
 }
