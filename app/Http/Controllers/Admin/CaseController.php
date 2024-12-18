@@ -2041,6 +2041,8 @@ class CaseController extends Controller
 
 
             /*************** ITM For ongoing cases while updating ***********************************/
+            /********** ITM code comment out while updating the case : 18/12/2024 **************************/
+            /*
             if($med->case_status == 1) {
 
                     $invitation = $this->invitation_mediate($id);
@@ -2192,6 +2194,8 @@ class CaseController extends Controller
                     }
             }
 
+
+            */
             /*************** ITM For ongoing cases while updating ***********************************/
 
             $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get();
