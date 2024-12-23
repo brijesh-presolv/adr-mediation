@@ -1058,6 +1058,8 @@ class CaseController extends Controller
 
                 //generate pdf
 
+                
+                //$invitation = "";
                 //if($medcase->stop_itm_med == 0){
                     $invitation = $this->mediator_appointment($request->id, $request->midater);
                 //}

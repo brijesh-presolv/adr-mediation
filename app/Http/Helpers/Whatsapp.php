@@ -8,63 +8,88 @@ use App\Models\WhatsappTrack;
 
 use App\Http\Helpers\Common_function;
 
+use DB;
+
 class Whatsapp
 {
     public static function sendWamessage($d)
     {
 
-        $ocarr = [];
 
-        $ocarr[] = $d['contact'];
+        // To check if template is active or not //
+        $findtemplate = WhatsappTrack::select('caseid', 'event', 'request_uuid', 'full_resp')->where(['event' => $d['event'], 'request_uuid' => ''])->where('full_resp', 'LIKE', '%{\"result\": false%')->orderBy('created_at', 'DESC')->limit(1)->first();
+        // To check if template is active or not //
 
-        // if ($oc != '') {
 
-        //     $ocarr = array_merge($ocarr, explode(',', $oc));
-        // }
+        if(!empty($findtemplate)){
+            // /WaTemplate::where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->update(['is_active' => 0]);
 
-        // $i = 1;
+            DB::table('wa_template')
+                ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')
+                ->update(["is_active" => 0]);
+        }
 
-        // Check if user stopped the whtsapp notification //
-        $check_phone = Common_function::checkIfPhoneExist($d['contact']);
-        // Check if user stopped the whtsapp notification //
+        //$get_template_status = WaTemplate::select('is_active')->where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->first();
+
+        $get_template_status = DB::table('wa_template')->select('is_active')
+        ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')->first();
+        
+        if($get_template_status->is_active == 1) {
+                $ocarr = [];
+
+                $ocarr[] = $d['contact'];
+
+                // if ($oc != '') {
+
+                //     $ocarr = array_merge($ocarr, explode(',', $oc));
+                // }
+
+                // $i = 1;
+
+                // Check if user stopped the whtsapp notification //
+                $check_phone = Common_function::checkIfPhoneExist($d['contact']);
+                // Check if user stopped the whtsapp notification //
 
        
-        if($check_phone == 0){
+                if($check_phone == 0){
 
-            foreach ($ocarr as $key => $value) {
+                    foreach ($ocarr as $key => $value) {
 
-                if ($value == '') {
-                    continue;
-                }
-                // dd(strlen($value));
-                if (strlen($value) == 10) {
-                    $value = '+91' . $value;
-                } else {
-                    $value = $value;
-                }
-    
-                $arr_e = array();
-                $arr_e['caseid'] = $d['caseid'];
-                $arr_e['contact'] = trim($value);
-                $arr_e['content'] = json_encode($d['content']);
-                $arr_e['casetype'] = 2;
-                $arr_e['event'] = $d['event'];
-                $arr_e['variable'] = json_encode($d['varjson']);
-                $arr_e['haptik_tmp'] = $d['haptik_tmp'];
-    
-                if (array_key_exists('media', $d['content'])) {
-                    $arr_e['media'] = 1;
-                }
-    
-    
-                WhatsAppQue::create($arr_e);
-            }
+                        if ($value == '') {
+                            continue;
+                        }
+                        // dd(strlen($value));
+                        if (strlen($value) == 10) {
+                            $value = '+91' . $value;
+                        } else {
+                            $value = $value;
+                        }
+            
+                        $arr_e = array();
+                        $arr_e['caseid'] = $d['caseid'];
+                        $arr_e['contact'] = trim($value);
+                        $arr_e['content'] = json_encode($d['content']);
+                        $arr_e['casetype'] = 2;
+                        $arr_e['event'] = $d['event'];
+                        $arr_e['variable'] = json_encode($d['varjson']);
+                        $arr_e['haptik_tmp'] = $d['haptik_tmp'];
+            
+                        if (array_key_exists('media', $d['content'])) {
+                            $arr_e['media'] = 1;
+                        }
+            
+            
+                        WhatsAppQue::create($arr_e);
+                    }
 
-        }
+                }
 
         
 
-        return true;
+                return true;
+        } else {
+            return false;
+        }
         // dd(date('Y-m-d H:i:s'));
 
         $url = "https://api.karix.io/message/";
@@ -164,7 +189,25 @@ class Whatsapp
     public static function sendWaSmessage($d, $oc = '')
     {
 
+        // To check if template is active or not //
+        $findtemplate = WhatsappTrack::select('caseid', 'event', 'request_uuid', 'full_resp')->where(['event' => $d['event'], 'request_uuid' => ''])->where('full_resp', 'LIKE', '%{\"result\": false%')->orderBy('created_at', 'DESC')->limit(1)->first();
+        // To check if template is active or not //
+
+
+        if(!empty($findtemplate)){
+            // /WaTemplate::where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->update(['is_active' => 0]);
+
+            DB::table('wa_template')
+                ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')
+                ->update(["is_active" => 0]);
+        }
+
         // return true;
+
+        $get_template_status = DB::table('wa_template')->select('is_active')
+        ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')->first();
+        
+        if($get_template_status->is_active == 1) {
 
         $ocarr = [];
 
@@ -223,6 +266,7 @@ class Whatsapp
             }
         }
         return true;
+        }
 
         $url = "https://api.karix.io/message/";
 
@@ -306,43 +350,66 @@ class Whatsapp
     public static function sendWaStopmessage($d)
     {
 
-        $ocarr = [];
+         // To check if template is active or not //
+         $findtemplate = WhatsappTrack::select('caseid', 'event', 'request_uuid', 'full_resp')->where(['event' => $d['event'], 'request_uuid' => ''])->where('full_resp', 'LIKE', '%{\"result\": false%')->orderBy('created_at', 'DESC')->limit(1)->first();
+         // To check if template is active or not //
+ 
+ 
+         if(!empty($findtemplate)){
+             // /WaTemplate::where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->update(['is_active' => 0]);
+ 
+             DB::table('wa_template')
+                 ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')
+                 ->update(["is_active" => 0]);
+         }
+ 
+         //$get_template_status = WaTemplate::select('is_active')->where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->first();
+ 
+         $get_template_status = DB::table('wa_template')->select('is_active')
+         ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')->first();
 
-        $ocarr[] = $d['contact'];
 
 
-            foreach ($ocarr as $key => $value) {
+        if($get_template_status->is_active == 1) {
 
-                if ($value == '') {
-                    continue;
+            $ocarr = [];
+
+            $ocarr[] = $d['contact'];
+
+
+                foreach ($ocarr as $key => $value) {
+
+                    if ($value == '') {
+                        continue;
+                    }
+                    // dd(strlen($value));
+                    if (strlen($value) == 10) {
+                        $value = '+91' . $value;
+                    } else {
+                        $value = $value;
+                    }
+        
+                    $arr_e = array();
+                    $arr_e['caseid'] = $d['caseid'];
+                    $arr_e['contact'] = trim($value);
+                    $arr_e['content'] = json_encode($d['content']);
+                    $arr_e['casetype'] = 2;
+                    $arr_e['event'] = $d['event'];
+                    $arr_e['variable'] = json_encode($d['varjson']);
+                    $arr_e['haptik_tmp'] = $d['haptik_tmp'];
+        
+                    if (array_key_exists('media', $d['content'])) {
+                        $arr_e['media'] = 1;
+                    }
+        
+        
+                    WhatsAppQue::create($arr_e);
                 }
-                // dd(strlen($value));
-                if (strlen($value) == 10) {
-                    $value = '+91' . $value;
-                } else {
-                    $value = $value;
-                }
-    
-                $arr_e = array();
-                $arr_e['caseid'] = $d['caseid'];
-                $arr_e['contact'] = trim($value);
-                $arr_e['content'] = json_encode($d['content']);
-                $arr_e['casetype'] = 2;
-                $arr_e['event'] = $d['event'];
-                $arr_e['variable'] = json_encode($d['varjson']);
-                $arr_e['haptik_tmp'] = $d['haptik_tmp'];
-    
-                if (array_key_exists('media', $d['content'])) {
-                    $arr_e['media'] = 1;
-                }
-    
-    
-                WhatsAppQue::create($arr_e);
-            }
 
-       
+        
 
-        return true;
+            return true;
+        }
         
     }
     // For stop whtsapp message //
