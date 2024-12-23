@@ -1059,9 +1059,9 @@ class CaseController extends Controller
                 //generate pdf
 
                 
-                $invitation = "";
+                //$invitation = "";
                 //if($medcase->stop_itm_med == 0){
-                    //$invitation = $this->mediator_appointment($request->id, $request->midater);
+                    $invitation = $this->mediator_appointment($request->id, $request->midater);
                 //}
                 
                 $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
