@@ -901,7 +901,13 @@ class CaseController extends Controller
             
 
             if ($insert_manage) {
-                $this->send_upload_file_party($request->caseId, $insert);
+
+                if(isset($request->allcids)) {
+                    $is_bulk = 1;
+                } else {
+                    $is_bulk = 0;
+                }
+                $this->send_upload_file_party($request->caseId, $insert, $is_bulk);
 
                 // dd($request->log_id);
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
@@ -1165,6 +1171,9 @@ class CaseController extends Controller
             'case_id' => $request->caseId,
         ];
         $medcase = MedCase::find($request->caseId);
+
+
+        
         if (isset($request->session_party_ids)) {
             $dataToInsert = [
                 'case_id' => $request->caseId,
@@ -1178,6 +1187,11 @@ class CaseController extends Controller
                 'participant_whtsapp' => 0
             ];
             $insertData = DB::table('manage_session')->insert($dataToInsert);
+
+
+            
+
+
             if ($insertData) {
                 $inv_id = "";
                 foreach ($request->session_party_ids as $party_id) {
@@ -1193,8 +1207,15 @@ class CaseController extends Controller
 
 
                     if($request->zoom_choice == "manually_zoom" || $request->fsData['zoom_choice'] == "manually_zoom") {
-                        if($request->fsData['zoom_choice'] == "manually_zoom" && $party->isClaimant != 0){
-                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        //if($request->fsData['zoom_choice'] == "manually_zoom" && $party->isClaimant != 0){
+                        if($request->fsData['zoom_choice'] == "manually_zoom"){
+
+                            if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                                $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                            } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                                $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                            }
+                            
                         }elseif($request->zoom_choice == "manually_zoom"){
                             $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
                         }
@@ -1202,7 +1223,13 @@ class CaseController extends Controller
                     } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
                         if($request->fsData['zoom_choice'] == "directly_zoom" && $party->isClaimant != 0){
                             /**** Zoom Invitation ************/
-                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+
+                            if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                                $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                                $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            }
+                            
                             /**** Zoom Invitation ************/
                         }elseif($request->zoom_choice == "directly_zoom"){
                             /**** Zoom Invitation ************/
@@ -1241,10 +1268,14 @@ class CaseController extends Controller
                     // $access = Whatsapp::sendWamessage($dwa1);
 
                     if($request->zoom_choice == "manually_zoom") {
-                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
+                        if($medcase->stop_bulk_session_med == 0) {
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
+                        }
                     } else if($request->zoom_choice == "directly_zoom") {
                     /**** Zoom Invitation ************/
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
+                        if($medcase->stop_bulk_session_med == 0) {
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
+                        }
                     /**** Zoom Invitation ************/
                     }
                 }
@@ -1324,70 +1355,121 @@ class CaseController extends Controller
 
                     if(!isset($request->fsData['zoom_choice'])){
 
-                        SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
-                    
+                        if($medcase->stop_bulk_session_med == 0) {
+                            SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+                        
 
-                    $varjson = ['caseid' => $id, 'sessionDateTime' => $request->sessionDate . "/" . $time, 'zoomid' => $request->zoomId];
-                    $var = ['-cid-', '-dt-', '-link-'];
-                    $var1 = [$id, $request->sessionDate . "/" . $time, $request->zoomId];
+                            $varjson = ['caseid' => $id, 'sessionDateTime' => $request->sessionDate . "/" . $time, 'zoomid' => $request->zoomId];
+                            $var = ['-cid-', '-dt-', '-link-'];
+                            $var1 = [$id, $request->sessionDate . "/" . $time, $request->zoomId];
 
-                    $template_name = WaTemplate::getRandomTemplate('L10');
+                            $template_name = WaTemplate::getRandomTemplate('L10');
 
-                    $content1 = WaTemplate::getcontent($template_name);
-                    $content = str_replace($var, $var1, $content1);
-                    $dwa1 = [
-                        'caseid' => $request->caseId,
-                        'contact' =>  $mediator->mobile_number,
-                        'content' => ['text' => $content],
-                        'event' => 'SESS_SCHE',
-                        'varjson' => $varjson,
-                        'haptik_tmp' => $template_name,
+                            $content1 = WaTemplate::getcontent($template_name);
+                            $content = str_replace($var, $var1, $content1);
+                            $dwa1 = [
+                                'caseid' => $request->caseId,
+                                'contact' =>  $mediator->mobile_number,
+                                'content' => ['text' => $content],
+                                'event' => 'SESS_SCHE',
+                                'varjson' => $varjson,
+                                'haptik_tmp' => $template_name,
 
-                    ];
+                            ];
 
-                    $access = Whatsapp::sendWamessage($dwa1);
+                            $access = Whatsapp::sendWamessage($dwa1);
+                        }
                     }
                 }
                 foreach ($allParty as $party) {
                     // $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone);
                     
                     
-                    if($request->fsData['zoom_choice'] == "manually_zoom" && $party->isClaimant != 0) {
-                        $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
-                    } else if($request->fsData['zoom_choice'] == "directly_zoom" && $party->isClaimant != 0) {
+                    //if($request->fsData['zoom_choice'] == "manually_zoom" && $party->isClaimant != 0) {
+                    if($request->fsData['zoom_choice'] == "manually_zoom") {
+
+                        if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                            $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
+                        } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                            $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
+                        }
+
+
+
+
+                        
+                   // } else if($request->fsData['zoom_choice'] == "directly_zoom" && $party->isClaimant != 0) {
+                    } else if($request->fsData['zoom_choice'] == "directly_zoom") {
                      /**** Zoom Invitation ************/
 
-                     $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                     if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                     } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                     }
+                     
                      /**** Zoom Invitation ************/
                     }
 
                     // Session Participation Consent via Whatsapp
-                    if($party->isClaimant != 0 && $request->fsData['participant_whtsapp'] == 1) {
+                    //if($party->isClaimant != 0 && $request->fsData['participant_whtsapp'] == 1) {
+                    if($request->fsData['participant_whtsapp'] == 1) {
 
-                        $latest_session = DB::table('manage_session')->select('*')->orderBy('id', 'desc')->first();
-                        $id = "M" . sprintf("%06d", $request->caseId);
-                        $varjson2 = ['datetime' => ($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
-                        $var2 = ['-datetime-'];
-                        $var2 = [($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
-                        $content2 = WaTemplate::getcontent('lmed_wa_consent_accept');
-                        $content1 = str_replace($var2, $var2, $content2);
-                        $dwa2 = [
-                            'caseid' => $request->caseId,
-                            'contact' =>  $party->userPhone,
-                            'content' => ['text' => $content1],
-                            'event' => 'WA_Session_Consent',
-                            'varjson' => $varjson2,
-                            'haptik_tmp' => 'lmed_wa_consent_accept',
+                        if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                            $latest_session = DB::table('manage_session')->select('*')->orderBy('id', 'desc')->first();
+                            $id = "M" . sprintf("%06d", $request->caseId);
+                            $varjson2 = ['datetime' => ($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
+                            $var2 = ['-datetime-'];
+                            $var2 = [($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
+                            $content2 = WaTemplate::getcontent('lmed_wa_consent_accept');
+                            $content1 = str_replace($var2, $var2, $content2);
+                            $dwa2 = [
+                                'caseid' => $request->caseId,
+                                'contact' =>  $party->userPhone,
+                                'content' => ['text' => $content1],
+                                'event' => 'WA_Session_Consent',
+                                'varjson' => $varjson2,
+                                'haptik_tmp' => 'lmed_wa_consent_accept',
 
-                        ];
-                        $access = Whatsapp::sendWamessage($dwa2);
-                        $latestque = WhatsAppQue::select("*")->orderBy('id', 'desc')->first();
-                        $dataToInsert = [
-                            'wa_que_id' => $latestque->id,
-                            'manage_session_id' => $latest_session->id,
-                            'created_at' => date('Y-m-d H:i:s')
-                        ];
-                        $manage_session = DB::table('wa_consent_manage')->insert($dataToInsert);
+                            ];
+                            $access = Whatsapp::sendWamessage($dwa2);
+                            $latestque = WhatsAppQue::select("*")->orderBy('id', 'desc')->first();
+                            $dataToInsert = [
+                                'wa_que_id' => $latestque->id,
+                                'manage_session_id' => $latest_session->id,
+                                'created_at' => date('Y-m-d H:i:s')
+                            ];
+                            $manage_session = DB::table('wa_consent_manage')->insert($dataToInsert);
+                        } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                            $latest_session = DB::table('manage_session')->select('*')->orderBy('id', 'desc')->first();
+                            $id = "M" . sprintf("%06d", $request->caseId);
+                            $varjson2 = ['datetime' => ($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
+                            $var2 = ['-datetime-'];
+                            $var2 = [($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
+                            $content2 = WaTemplate::getcontent('lmed_wa_consent_accept');
+                            $content1 = str_replace($var2, $var2, $content2);
+                            $dwa2 = [
+                                'caseid' => $request->caseId,
+                                'contact' =>  $party->userPhone,
+                                'content' => ['text' => $content1],
+                                'event' => 'WA_Session_Consent',
+                                'varjson' => $varjson2,
+                                'haptik_tmp' => 'lmed_wa_consent_accept',
+
+                            ];
+                            $access = Whatsapp::sendWamessage($dwa2);
+                            $latestque = WhatsAppQue::select("*")->orderBy('id', 'desc')->first();
+                            $dataToInsert = [
+                                'wa_que_id' => $latestque->id,
+                                'manage_session_id' => $latest_session->id,
+                                'created_at' => date('Y-m-d H:i:s')
+                            ];
+                            $manage_session = DB::table('wa_consent_manage')->insert($dataToInsert);
+
+                        }
+                        
+
+                        
                     }
                     // End
                 }
@@ -2524,47 +2606,49 @@ class CaseController extends Controller
         }
     }
 
-    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone, $userType)
+    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone, $userType, $caseType, $partyType)
     {
         $mid = "M" . sprintf("%06d", $id);
         $d = [
             'event' => 'SESS_SCHE',
             'case_id' => $id,
         ];
-        if ($email_id != "") {
-            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
-        }
-        if ($userPhone != "") {
+        
+       
+            if ($email_id != "") {
+                SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
+            }
+            if ($userPhone != "") {
 
-            $varjson = ['caseid' => $mid, 'sessionDteaTime' => $date, 'zoomid' => $url];
-            $var = ['-cid-', '-dt-', '-link-'];
-            $var1 = [$mid, $date, $url];
+                $varjson = ['caseid' => $mid, 'sessionDteaTime' => $date, 'zoomid' => $url];
+                $var = ['-cid-', '-dt-', '-link-'];
+                $var1 = [$mid, $date, $url];
 
-            $template_name = WaTemplate::getRandomTemplate('L10');
+                $template_name = WaTemplate::getRandomTemplate('L10');
 
-            $content1 = WaTemplate::getcontent($template_name);
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $id,
-                'contact' =>  $userPhone,
-                'content' => ['text' => $content],
-                'event' => 'SESS_SCHE',
-                'varjson' => $varjson,
-                'haptik_tmp' => $template_name,
+                $content1 = WaTemplate::getcontent($template_name);
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $id,
+                    'contact' =>  $userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'SESS_SCHE',
+                    'varjson' => $varjson,
+                    'haptik_tmp' => $template_name,
 
-            ];
+                ];
 
-            // print_r($dwa1);
-            // exit;
+                // print_r($dwa1);
+                // exit;
 
-            $access = Whatsapp::sendWamessage($dwa1);
-        }
+                $access = Whatsapp::sendWamessage($dwa1);
+            }
+        
         return true;
     }
 
     public function sned_withdrawal($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
     {
-        echo "here";exit;
         // $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -2895,8 +2979,13 @@ class CaseController extends Controller
         return true;
     }
 
-    public function send_upload_file_party($id, $files)
+    public function send_upload_file_party($id, $files, $is_bulk = "")
     {
+
+        
+            $med = MedCase::select('stop_bulk_upload_ip', 'stop_bulk_upload_rp', 'stop_bulk_upload_med')->where("id", "=", $id)->first();
+        
+        
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
@@ -2921,44 +3010,129 @@ class CaseController extends Controller
         foreach ($involedUser as $inv) {
             if (is_array($access) && in_array($inv->id, $access)) {
 
-                if ($inv->userEmail != "") {
-                    $sendEamils[] = $inv->userEmail;
-                }
-                // additional_doc
 
-                if ($inv->userPhone != "") {
-                    $varjson = ['caseid' => $mid];
-                    $var = ['-cid-'];
-                    $var1 = [$mid];
-                    $content1 = WaTemplate::getcontent('additional_doc');
-                    $content = str_replace($var, $var1, $content1);
-                    $dwa1 = [
-                        'caseid' => $id,
-                        'contact' => $inv->userPhone,
-                        'content' => ['text' => $content],
-                        'event' => 'SEND_ADDI_DOC',
-                        'varjson' => $varjson,
-                        'haptik_tmp' => 'l19_additional_doc',
-                    ];
-                    $accessW = Whatsapp::sendWamessage($dwa1);
-                    foreach ($filesE as $file) {
-                        $whatsappSend = Storage::disk('s3')->url($file);
-                        $varjson_file = ['caseid' => $mid];
-                        $var_file = ['-caseid-'];
-                        $var1_file = [$mid];
-                        $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
-                        $content_file = str_replace($var_file, $var1_file, $content1_file);
-                        $dwa2 = [
+                if($is_bulk == 1) {
+                    if($med->stop_bulk_upload_ip == 1 && $inv->isClaimant != 0) {
+                        if ($inv->userEmail != "") {
+                            $sendEamils[] = $inv->userEmail;
+                        }
+                        // additional_doc
+        
+                        if ($inv->userPhone != "") {
+                            $varjson = ['caseid' => $mid];
+                            $var = ['-cid-'];
+                            $var1 = [$mid];
+                            $content1 = WaTemplate::getcontent('additional_doc');
+                            $content = str_replace($var, $var1, $content1);
+                            $dwa1 = [
+                                'caseid' => $id,
+                                'contact' => $inv->userPhone,
+                                'content' => ['text' => $content],
+                                'event' => 'SEND_ADDI_DOC',
+                                'varjson' => $varjson,
+                                'haptik_tmp' => 'l19_additional_doc',
+                            ];
+                            $accessW = Whatsapp::sendWamessage($dwa1);
+                            foreach ($filesE as $file) {
+                                $whatsappSend = Storage::disk('s3')->url($file);
+                                $varjson_file = ['caseid' => $mid];
+                                $var_file = ['-caseid-'];
+                                $var1_file = [$mid];
+                                $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                                $dwa2 = [
+                                    'caseid' => $id,
+                                    'contact' =>  $inv->userPhone,
+                                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                                    'event' => 'SEND_ADDI_DOC',
+                                    'varjson' => $varjson_file,
+                                    'haptik_tmp' => 'pdf_attachment_v3',
+                                ];
+                                $accessW = Whatsapp::sendWamessage($dwa2);
+                            }
+                        }
+                    } else if($med->stop_bulk_upload_rp == 1 && $inv->isClaimant == 0) {
+                        if ($inv->userEmail != "") {
+                            $sendEamils[] = $inv->userEmail;
+                        }
+                        // additional_doc
+        
+                        if ($inv->userPhone != "") {
+                            $varjson = ['caseid' => $mid];
+                            $var = ['-cid-'];
+                            $var1 = [$mid];
+                            $content1 = WaTemplate::getcontent('additional_doc');
+                            $content = str_replace($var, $var1, $content1);
+                            $dwa1 = [
+                                'caseid' => $id,
+                                'contact' => $inv->userPhone,
+                                'content' => ['text' => $content],
+                                'event' => 'SEND_ADDI_DOC',
+                                'varjson' => $varjson,
+                                'haptik_tmp' => 'l19_additional_doc',
+                            ];
+                            $accessW = Whatsapp::sendWamessage($dwa1);
+                            foreach ($filesE as $file) {
+                                $whatsappSend = Storage::disk('s3')->url($file);
+                                $varjson_file = ['caseid' => $mid];
+                                $var_file = ['-caseid-'];
+                                $var1_file = [$mid];
+                                $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                                $dwa2 = [
+                                    'caseid' => $id,
+                                    'contact' =>  $inv->userPhone,
+                                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                                    'event' => 'SEND_ADDI_DOC',
+                                    'varjson' => $varjson_file,
+                                    'haptik_tmp' => 'pdf_attachment_v3',
+                                ];
+                                $accessW = Whatsapp::sendWamessage($dwa2);
+                            }
+                        }
+                    }
+                } else {
+                    if ($inv->userEmail != "") {
+                        $sendEamils[] = $inv->userEmail;
+                    }
+                    // additional_doc
+    
+                    if ($inv->userPhone != "") {
+                        $varjson = ['caseid' => $mid];
+                        $var = ['-cid-'];
+                        $var1 = [$mid];
+                        $content1 = WaTemplate::getcontent('additional_doc');
+                        $content = str_replace($var, $var1, $content1);
+                        $dwa1 = [
                             'caseid' => $id,
-                            'contact' =>  $inv->userPhone,
-                            'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                            'contact' => $inv->userPhone,
+                            'content' => ['text' => $content],
                             'event' => 'SEND_ADDI_DOC',
-                            'varjson' => $varjson_file,
-                            'haptik_tmp' => 'pdf_attachment_v3',
+                            'varjson' => $varjson,
+                            'haptik_tmp' => 'l19_additional_doc',
                         ];
-                        $accessW = Whatsapp::sendWamessage($dwa2);
+                        $accessW = Whatsapp::sendWamessage($dwa1);
+                        foreach ($filesE as $file) {
+                            $whatsappSend = Storage::disk('s3')->url($file);
+                            $varjson_file = ['caseid' => $mid];
+                            $var_file = ['-caseid-'];
+                            $var1_file = [$mid];
+                            $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                            $content_file = str_replace($var_file, $var1_file, $content1_file);
+                            $dwa2 = [
+                                'caseid' => $id,
+                                'contact' =>  $inv->userPhone,
+                                'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                                'event' => 'SEND_ADDI_DOC',
+                                'varjson' => $varjson_file,
+                                'haptik_tmp' => 'pdf_attachment_v3',
+                            ];
+                            $accessW = Whatsapp::sendWamessage($dwa2);
+                        }
                     }
                 }
+
+                
             }
             // $dwa2 = [
             //     'caseid' => $id,
@@ -2972,53 +3146,73 @@ class CaseController extends Controller
         if ($mediator) {
             if ($mediatorAccess == 1) {
 
-                // $sendEamils[] = $mediator->email;
-                $d1 = [
-                    'event' => 'SEND_ADDI_DOC_MED',
-                    'case_id' => $id,
-                ];
-                SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Mediator"], null, $filesE);
 
-                $varjson = ['caseid' => $mid];
-                $var = ['-cid-'];
-                $var1 = [$mid];
-                $content1 = WaTemplate::getcontent('additional_doc_med');
-                $content = str_replace($var, $var1, $content1);
-                $dwa1 = [
-                    'caseid' => $id,
-                    'contact' =>  $mediator->mobile_number,
-                    'content' => ['text' => $content],
-                    'event' => 'SEND_ADDI_DOC_MED',
-                    'varjson' => $varjson,
-                    'haptik_tmp' => 'l20_additional_doc_med',
+                if($med->stop_bulk_upload_med == 0) {
 
-                ];
-                $accessW = Whatsapp::sendWamessage($dwa1);
-                foreach ($filesE as $file) {
-                    $whatsappSend = Storage::disk('s3')->url($file);
+                    // $sendEamils[] = $mediator->email;
+                    $d1 = [
+                        'event' => 'SEND_ADDI_DOC_MED',
+                        'case_id' => $id,
+                    ];
+                    SendGrid::send($d1, $mediator->email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Mediator"], null, $filesE);
 
                     $varjson = ['caseid' => $mid];
-                    $var_file = ['-caseid-'];
-                    $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
-                    $content_file = str_replace($var_file, $var1_file, $content1_file);
-                    $dwa2 = [
+                    $var = ['-cid-'];
+                    $var1 = [$mid];
+                    $content1 = WaTemplate::getcontent('additional_doc_med');
+                    $content = str_replace($var, $var1, $content1);
+                    $dwa1 = [
                         'caseid' => $id,
                         'contact' =>  $mediator->mobile_number,
-                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                        'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson,
-                        'haptik_tmp' => 'pdf_attachment_v3',
+                        'haptik_tmp' => 'l20_additional_doc_med',
+
                     ];
-                    $accessW = Whatsapp::sendWamessage($dwa2);
+                    $accessW = Whatsapp::sendWamessage($dwa1);
+                    foreach ($filesE as $file) {
+                        $whatsappSend = Storage::disk('s3')->url($file);
+
+                        $varjson = ['caseid' => $mid];
+                        $var_file = ['-caseid-'];
+                        $var1_file = [$mid];
+                        $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                        $content_file = str_replace($var_file, $var1_file, $content1_file);
+                        $dwa2 = [
+                            'caseid' => $id,
+                            'contact' =>  $mediator->mobile_number,
+                            'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                            'event' => 'SEND_ADDI_DOC_MED',
+                            'varjson' => $varjson,
+                            'haptik_tmp' => 'pdf_attachment_v3',
+                        ];
+                        $accessW = Whatsapp::sendWamessage($dwa2);
+                    }
                 }
             }
         }
 
         if (!empty($sendEamils)) {
-            foreach ($sendEamils as $email) {
-                SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
+            if($is_bulk == 1) {
+                if($med->stop_bulk_upload_ip == 1 && $inv->isClaimant != 0) {
+                    foreach ($sendEamils as $email) {
+                        SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
+                    }
+
+                } else if($med->stop_bulk_upload_rp == 1 && $inv->isClaimant == 0) {
+                    foreach ($sendEamils as $email) {
+                        SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
+                    }
+    
+                }
+            } else {
+                foreach ($sendEamils as $email) {
+                    SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
+                }
             }
+            
+            
         }
 
         return true;
@@ -5484,6 +5678,58 @@ class CaseController extends Controller
         
     }
     /*********** Stop batchwise close notifications ******************/
+
+
+    /*********** Stop batchwise bulk session notifications ******************/
+    public function batchNotificationStopWhenBulkSession(Request $request) {
+
+        $stop_bulk_session_ip = isset($request['mySwitchIPClose']) ? 1 : 0;
+        $stop_bulk_session_rp = isset($request['mySwitchRPClose']) ? 1 : 0;
+        $stop_bulk_session_med = isset($request['mySwitchMedClose']) ? 1 : 0;
+
+        $is_update = MedCase::where('batch_id', $request['batch'])
+                    ->update([
+                        'stop_bulk_session_ip' => $stop_bulk_session_ip, 
+                        'stop_bulk_session_rp' => $stop_bulk_session_rp, 
+                        'stop_bulk_session_med' => $stop_bulk_session_med
+                    ]);
+
+        if($is_update){
+            return response()->json(["type" => "success", "code" => 200, "message" => "Success"]);
+        } else {
+            return response()->json(["type" => "error", "code" => 200, "message" => "Error"]);
+        }
+        
+    }
+    /*********** Stop batchwise bulk session notifications ******************/
+
+
+
+
+     /*********** Stop batchwise bulk upload notifications ******************/
+     public function batchNotificationStopWhenBulkDocument(Request $request) {
+
+        $stop_bulk_session_ip = isset($request['mySwitchIPClose']) ? 1 : 0;
+        $stop_bulk_session_rp = isset($request['mySwitchRPClose']) ? 1 : 0;
+        $stop_bulk_session_med = isset($request['mySwitchMedClose']) ? 1 : 0;
+
+        $is_update = MedCase::where('batch_id', $request['batch'])
+                    ->update([
+                        'stop_bulk_upload_ip' => $stop_bulk_session_ip, 
+                        'stop_bulk_upload_rp' => $stop_bulk_session_rp, 
+                        'stop_bulk_upload_med' => $stop_bulk_session_med
+                    ]);
+
+        if($is_update){
+            return response()->json(["type" => "success", "code" => 200, "message" => "Success"]);
+        } else {
+            return response()->json(["type" => "error", "code" => 200, "message" => "Error"]);
+        }
+        
+    }
+    /*********** Stop batchwise bulk upload notifications ******************/
+
+
     public function manageUser(){
 
          // Get Subusers //
@@ -6186,6 +6432,22 @@ class CaseController extends Controller
         return response($content, 200, [
             'Content-Type' => 'application/octet-stream',
             'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
+        ]);
+    }
+
+
+    public function getDisableParty(Request $request) {
+       
+        
+        $allcases =  MedCase::select('stop_itm_ip', 'stop_itm_rp', 'stop_itm_med')->where('batch_id', $request['batch_id'])->orderByDesc('id')->first();
+       
+        return response()->json(
+            ["type" => "success", 
+            "code" => 200, 
+            "message" => "Success", 
+            'ip' => $allcases['stop_itm_ip'],
+            'rp' => $allcases['stop_itm_rp'],
+            'med' => $allcases['stop_itm_med']
         ]);
     }
 }

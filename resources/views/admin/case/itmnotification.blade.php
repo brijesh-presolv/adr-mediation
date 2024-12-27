@@ -105,6 +105,35 @@
                 }
             });
         });
+
+
+
+        // On branch change get data 
+        $('#batchSelect').on('change', function(){
+            var batch_id = $(this).val();
+           
+            $.ajax({
+                type: 'GET',
+                url: '{{ route('admin.case.getDisableParty') }}',
+                data: {
+                    batch_id : batch_id
+                },
+                dataType: 'json',
+                success: (data) => {
+                   if(data.ip == 1) {
+                    $("input[type='checkbox']").prop('checked', false); 
+                    $('#mySwitchIP').prop("checked", "1");
+                   } else if(data.rp == 1) {
+                    $("input[type='checkbox']").prop('checked', false); 
+                    $('#mySwitchRP').prop("checked", "1");
+                   } else if(data.med == 1){
+                    $("input[type='checkbox']").prop('checked', false); 
+                    $('#mySwitchMed').prop("checked", "1");
+                   }
+                }
+            });
+        });
+        // On branch change get data 
     });
 </script>
 

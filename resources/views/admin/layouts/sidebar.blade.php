@@ -75,7 +75,8 @@ $notification = Notification::where('view', 0)->count();
                     <ul class="nav-second-level" aria-expanded="false">
                         <li><a href="{{url('admin/itmnotification')}}">ITM Notifications</a></li>
                         <li><a href="{{url('admin/closecasenotification')}}">Close Case Notifications</a></li>
-                        
+                        <li><a href="{{url('admin/sessionschedulenotification')}}">Bulk Session Scheduling Notifications</a></li>
+                        <li><a href="{{url('admin/bulkuploadnotification')}}">Bulk Upload Supporting Documents Notifications</a></li>
                     </ul>
                 </li>
 
