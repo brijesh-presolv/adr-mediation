@@ -2408,7 +2408,7 @@ class CaseController extends Controller
                 $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
                 $var_file = ['-caseid-'];
                 $var1_file = ["M" . sprintf("%06d", $id)];
-                $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $ini_userPlanId,
@@ -2416,7 +2416,7 @@ class CaseController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'ACPTARB_ADM_RES',
                     'varjson' => $varjson_file,
-                    'haptik_tmp' => 'pdf_attachment_v3',
+                    'haptik_tmp' => 'pdf_attachment_v5',
                 ];
 
                 if($stop_rp == 0) {
@@ -2430,7 +2430,7 @@ class CaseController extends Controller
                 $varjson = ['caseid' => "M" . sprintf("%06d", $id)];
                 $var = ['-cid-'];
                 $var1 = ["M" . sprintf("%06d", $id)];
-                $content1 = WaTemplate::getcontent('wa_message_stop_v3');
+                $content1 = WaTemplate::getcontent('wa_message_stop_v5_m9');
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $inv->userPlanId,
@@ -2438,7 +2438,7 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'STOP_WHTSAPP',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'wa_message_stop_v3',
+                    'haptik_tmp' => 'wa_message_stop_v5_m9',
                 ];
 
                 $access = Whatsapp::sendWaStopmessage($dwa1);
@@ -2483,7 +2483,7 @@ class CaseController extends Controller
                     $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
                     $var_file = ['-caseid-'];
                     $var1_file = ["M" . sprintf("%06d", $id)];
-                    $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $ini_userPlanId,
@@ -2491,7 +2491,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'ACPTARB_ADM_INI',
                         'varjson' => $varjson_file,
-                        'haptik_tmp' => 'pdf_attachment_v3',
+                        'haptik_tmp' => 'pdf_attachment_v5',
 
                     ];
 
@@ -2945,7 +2945,7 @@ class CaseController extends Controller
                         $varjson_file = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
-                        $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                        $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
@@ -2953,7 +2953,7 @@ class CaseController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson_file,
-                            'haptik_tmp' => 'pdf_attachment_v3',
+                            'haptik_tmp' => 'pdf_attachment_v5',
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     }
@@ -2999,7 +2999,7 @@ class CaseController extends Controller
                     $varjson = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
@@ -3007,7 +3007,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson,
-                        'haptik_tmp' => 'pdf_attachment_v3',
+                        'haptik_tmp' => 'pdf_attachment_v5',
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
                 }
@@ -3068,7 +3068,7 @@ class CaseController extends Controller
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
@@ -3076,7 +3076,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_SETT_AGRE',
                         'varjson' => $varjson_file,
-                        'haptik_tmp' => 'pdf_attachment_v3',
+                        'haptik_tmp' => 'pdf_attachment_v5',
 
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
@@ -3119,7 +3119,7 @@ class CaseController extends Controller
                 $varjson = ['caseid' => $mid];
                 $var_file = ['-caseid-'];
                 $var1_file = [$mid];
-                $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $id,
@@ -3127,7 +3127,7 @@ class CaseController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_SETT_AGRE_MED',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'pdf_attachment_v3',
+                    'haptik_tmp' => 'pdf_attachment_v5',
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
@@ -3681,7 +3681,7 @@ class CaseController extends Controller
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $request->caseid,
@@ -3689,7 +3689,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $filesE, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson_file,
-                        'haptik_tmp' => 'pdf_attachment_v3',
+                        'haptik_tmp' => 'pdf_attachment_v5',
 
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
@@ -3765,7 +3765,7 @@ class CaseController extends Controller
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $invUser->userPlanId,
@@ -3773,7 +3773,7 @@ class CaseController extends Controller
                         'content' => ['media' => ['url' => $filesE, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC',
                         'varjson' => $varjson_file,
-                        'haptik_tmp' => 'pdf_attachment_v3',
+                        'haptik_tmp' => 'pdf_attachment_v5',
 
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa2);
@@ -4199,7 +4199,7 @@ class CaseController extends Controller
                         $varjson_file = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
-                        $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                        $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
@@ -4207,7 +4207,7 @@ class CaseController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson_file,
-                            'haptik_tmp' => 'pdf_attachment_v3',
+                            'haptik_tmp' => 'pdf_attachment_v5',
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     //}

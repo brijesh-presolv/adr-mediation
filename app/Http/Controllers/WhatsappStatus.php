@@ -124,7 +124,7 @@ class WhatsappStatus extends Controller
                 $varjson_file = ['caseid' => "M" . sprintf("%06d", $value->userPlanId)];
                 $var_file = ['-caseid-'];
                 $var1_file = ["M" . sprintf("%06d", $value->userPlanId)];
-                $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' =>  $value->userPlanId,
@@ -132,7 +132,7 @@ class WhatsappStatus extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'REM_ACPTARB_ADM_RES',
                     'varjson' => $varjson_file,
-                    'haptik_tmp' => 'pdf_attachment_v3',
+                    'haptik_tmp' => 'pdf_attachment_v5',
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);

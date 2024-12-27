@@ -1280,7 +1280,7 @@ class DashboardController extends Controller
                 $varjson_file = ['caseid' => $mid];
                 $var_file = ['-caseid-'];
                 $var1_file = [$mid];
-                $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $id,
@@ -1288,7 +1288,7 @@ class DashboardController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_APPO_MED',
                     'varjson' => $varjson_file,
-                    'haptik_tmp' => 'pdf_attachment_v3'
+                    'haptik_tmp' => 'pdf_attachment_v5'
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
@@ -1352,7 +1352,7 @@ class DashboardController extends Controller
                         $varjson_file = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
-                        $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                        $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
@@ -1360,7 +1360,7 @@ class DashboardController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson_file,
-                        'haptik_tmp' => 'pdf_attachment_v3'
+                        'haptik_tmp' => 'pdf_attachment_v5'
 
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
@@ -1407,7 +1407,7 @@ class DashboardController extends Controller
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
@@ -1415,7 +1415,7 @@ class DashboardController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson_file,
-                    'haptik_tmp' => 'pdf_attachment_v3'
+                    'haptik_tmp' => 'pdf_attachment_v5'
 
 
                     ];
@@ -1479,7 +1479,7 @@ class DashboardController extends Controller
                     $varjson_file = ['caseid' => $mid];
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
-                    $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                    $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
@@ -1487,7 +1487,7 @@ class DashboardController extends Controller
                         'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                         'event' => 'SEND_SETT_AGRE',
                         'varjson' => $varjson_file,
-                    'haptik_tmp' => 'pdf_attachment_v3'
+                    'haptik_tmp' => 'pdf_attachment_v5'
 
                     ];
                     $access = Whatsapp::sendWamessage($dwa2);
@@ -1530,7 +1530,7 @@ class DashboardController extends Controller
                 $varjson_file = ['caseid' => $mid];
                 $var_file = ['-caseid-'];
                 $var1_file = [$mid];
-                $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                 $dwa2 = [
                     'caseid' => $id,
@@ -1538,7 +1538,7 @@ class DashboardController extends Controller
                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                     'event' => 'SEND_SETT_AGRE_MED',
                     'varjson' => $varjson_file,
-                'haptik_tmp' => 'pdf_attachment_v3'
+                'haptik_tmp' => 'pdf_attachment_v5'
 
                 ];
                 $access = Whatsapp::sendWamessage($dwa2);
