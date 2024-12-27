@@ -14,27 +14,7 @@ class Whatsapp
 {
     public static function sendWamessage($d)
     {
-
-
-        // To check if template is active or not //
-        $findtemplate = WhatsappTrack::select('caseid', 'event', 'request_uuid', 'full_resp')->where(['event' => $d['event'], 'request_uuid' => ''])->where('full_resp', 'LIKE', '%{\"result\": false%')->orderBy('created_at', 'DESC')->limit(1)->first();
-        // To check if template is active or not //
-
-
-        if(!empty($findtemplate)){
-            // /WaTemplate::where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->update(['is_active' => 0]);
-
-            DB::table('wa_template')
-                ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')
-                ->update(["is_active" => 0]);
-        }
-
-        //$get_template_status = WaTemplate::select('is_active')->where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->first();
-
-        $get_template_status = DB::table('wa_template')->select('is_active')
-        ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')->first();
         
-        if($get_template_status->is_active == 1) {
                 $ocarr = [];
 
                 $ocarr[] = $d['contact'];
@@ -87,9 +67,7 @@ class Whatsapp
         
 
                 return true;
-        } else {
-            return false;
-        }
+       
         // dd(date('Y-m-d H:i:s'));
 
         $url = "https://api.karix.io/message/";
@@ -189,26 +167,8 @@ class Whatsapp
     public static function sendWaSmessage($d, $oc = '')
     {
 
-        // To check if template is active or not //
-        $findtemplate = WhatsappTrack::select('caseid', 'event', 'request_uuid', 'full_resp')->where(['event' => $d['event'], 'request_uuid' => ''])->where('full_resp', 'LIKE', '%{\"result\": false%')->orderBy('created_at', 'DESC')->limit(1)->first();
-        // To check if template is active or not //
-
-
-        if(!empty($findtemplate)){
-            // /WaTemplate::where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->update(['is_active' => 0]);
-
-            DB::table('wa_template')
-                ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')
-                ->update(["is_active" => 0]);
-        }
-
-        // return true;
-
-        $get_template_status = DB::table('wa_template')->select('is_active')
-        ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')->first();
         
-        if($get_template_status->is_active == 1) {
-
+       
         $ocarr = [];
 
         $ocarr[] = $d['contact'];
@@ -266,7 +226,7 @@ class Whatsapp
             }
         }
         return true;
-        }
+        
 
         $url = "https://api.karix.io/message/";
 
@@ -350,28 +310,8 @@ class Whatsapp
     public static function sendWaStopmessage($d)
     {
 
-         // To check if template is active or not //
-         $findtemplate = WhatsappTrack::select('caseid', 'event', 'request_uuid', 'full_resp')->where(['event' => $d['event'], 'request_uuid' => ''])->where('full_resp', 'LIKE', '%{\"result\": false%')->orderBy('created_at', 'DESC')->limit(1)->first();
-         // To check if template is active or not //
- 
- 
-         if(!empty($findtemplate)){
-             // /WaTemplate::where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->update(['is_active' => 0]);
- 
-             DB::table('wa_template')
-                 ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')
-                 ->update(["is_active" => 0]);
-         }
- 
-         //$get_template_status = WaTemplate::select('is_active')->where('haptik_tmp', 'LIKE', '%'.$d['haptik_tmp'].'%')->first();
- 
-         $get_template_status = DB::table('wa_template')->select('is_active')
-         ->where("haptik_tmp", "LIKE", '%'.$d['haptik_tmp'].'%')->first();
-
-
-
-        if($get_template_status->is_active == 1) {
-
+        
+        
             $ocarr = [];
 
             $ocarr[] = $d['contact'];
@@ -409,7 +349,7 @@ class Whatsapp
         
 
             return true;
-        }
+       
         
     }
     // For stop whtsapp message //
