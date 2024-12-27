@@ -92,7 +92,10 @@ class ReinitiateController extends Controller
             $varjson_file = ['caseid' => "M" . sprintf("%06d", $data->caseid)];
             $var_file = ['-caseid-'];
             $var1_file = ["M" . sprintf("%06d", $data->caseid)];
-            $content1_file = WaTemplate::getcontent('pdf_attachment_v5');
+
+            $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
+
+            $content1_file = WaTemplate::getcontent($pdf_template_name);
             $content_file = str_replace($var_file, $var1_file, $content1_file);
             $dwa2 = [
                 'caseid' => $data->caseid,
@@ -100,7 +103,7 @@ class ReinitiateController extends Controller
                 'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                 'event' => 'ACPTARB_ADM_RES',
                 'varjson' => $varjson_file,
-                'haptik_tmp' => 'pdf_attachment_v5',
+                'haptik_tmp' =>  $pdf_template_name,
 
             ];
             
@@ -111,7 +114,7 @@ class ReinitiateController extends Controller
                 $is_update_pdf = DB::table('reinitiate_noti_axis_b31_gj')->where('caseid', $data->caseid)->update(['is_pdf_sent' => 1]);
 
                 if($is_update_pdf) {
-                    echo "attachment template pdf_attachment_v5 added for case id =" .$data->caseid;
+                    echo "attachment template added for case id =" .$data->caseid;
                     echo "<br/>";
                 }
                
