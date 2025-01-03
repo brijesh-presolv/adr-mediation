@@ -2653,7 +2653,7 @@ class CaseController extends Controller
             }
         }
 
-        if ($responding_party != "" && $stop_close_rp == 0) {
+        if ($responding_party != "") {
 
             if (isset($initiating_phone)) {
                 foreach ($initiating_phone as $ini_phone) {
@@ -2674,8 +2674,9 @@ class CaseController extends Controller
 
                     // print_r($dwa1);
                     // exit;
-
-                    $access = Whatsapp::sendWamessage($dwa1);
+                    if($stop_close_ip == 0){
+                        $access = Whatsapp::sendWamessage($dwa1);
+                    }
                 }
             }
         }
