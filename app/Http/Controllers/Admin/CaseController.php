@@ -2605,7 +2605,7 @@ class CaseController extends Controller
                 $initiating_phone[] = $inv->userPhone;
                 $initiating_email = $inv->userEmail;
 
-                if($stop_close_ip = 0){
+                if($stop_close_ip == 0){
 
                     SendGrid::send($d1, $inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
                 }
@@ -2621,7 +2621,7 @@ class CaseController extends Controller
         if (isset($responding_email)) {
             foreach ($responding_email as $email) {
                 if ($email != "") {
-                    if($stop_close_rp = 0){
+                    if($stop_close_rp == 0){
 
                         SendGrid::send($d2, $email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
                     }
