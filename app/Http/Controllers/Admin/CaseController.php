@@ -2606,7 +2606,7 @@ class CaseController extends Controller
         }
     }
 
-    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone, $userType, $caseType, $partyType)
+    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone, $userType)
     {
         $mid = "M" . sprintf("%06d", $id);
         $d = [
