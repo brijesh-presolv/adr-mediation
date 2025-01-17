@@ -131,10 +131,12 @@ $page_break_css = 'page-break-before: always;';
 
     <h2 class="text-center" style="margin-top: 0px !important;">Invitation to Mediate / Conciliate</h2>
 
-    <h4 class="text-center" style="margin-bottom: 0px !important; margin-top: 0px !important;font-size:14px !important;">Included in the list of institutions <a
+    <h4 class="text-center" style="margin-bottom: 0px !important; margin-top: 0px !important;font-size:14px !important;">
+        <!-- Included in the list of institutions <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
             here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution
-        (ODR) and empaneled as a Mediation Institution by various Courts in India</h4>
+        (ODR) and  -->
+        Empaneled as a Mediation Institution by various Courts in India</h4>
 
     <p class="text-center" style="page-break-after:avoid;margin-top: 0px !important;font-size:14px !important; margin-bottom: 0px !important;"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
             href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
@@ -289,8 +291,10 @@ $page_break_css = 'page-break-before: always;';
 
     {{-- <p>3. The mediation / conciliation shall be governed by and conducted in accordance with Presolv360’s Dispute Resolution Rules, a copy of which can be found 
         <a href='https://drive.google.com/file/d/1a5GkQA0KX_4-gUDf25D0uU7Rt_1S8DDl/view?usp=sharing'>here</a></p> --}}
-    <p>3. Presolv360 is included in the list of institutions offering Alternative Dispute Resolution ("ADR") services
-        including through Online Dispute Resolution ("ODR") and is also empaneled as a
+    <p>3. Presolv360 is
+        <!-- is included in the list of institutions offering Alternative Dispute Resolution ("ADR") services
+        including through Online Dispute Resolution ("ODR") and is also  -->
+        empaneled as a
         Mediation Institution by various Courts in India. Presolv360 administers mediation proceedings on its platform,
         and empanels independent, qualified mediators with the required competence, knowledge and expertise on its panel
         of mediators. The mediation / conciliation shall be governed by and conducted in accordance with Presolv360’s
@@ -590,10 +594,12 @@ $page_break_css = 'page-break-before: always;';
 
     <h2 class="text-center" style="font-family:{{ $langfamilyfont }};">मध्यस्थता/समझौता (Mediation/Conciliation)   करने का निमंत्रण</h2>
 
-    <h4 class="text-center">Included in the list of institutions <a
+    <h4 class="text-center">
+        <!-- Included in the list of institutions <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
             here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution
-        (ODR) and empaneled as a Mediation Institution by various Courts in India</h4>
+        (ODR) and  -->
+        Empaneled as a Mediation Institution by various Courts in India</h4>
 
     <p class="text-center"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
             href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
@@ -741,7 +747,9 @@ $page_break_css = 'page-break-before: always;';
         <?php echo nl2br($case->issue); ?>
     </p>
 
-    <p style="font-family:{{ $langfamilyfont }};">3. Presolv360 ऑनलाइन Dispute समाधान  (“ODR”) सहित वैकल्पिक Dispute समाधान (“ADR”) सेवाएं प्रदान करने वाली संस्थाओं की सूची में शामिल है और इसे भारत में विभिन्न न्यायालयों द्वारा मध्यस्थता (Mediation) संस्थान के रूप में भी सूचीबद्ध किया गया है। Presolv360 अपने प्लेटफ़ॉर्म पर मध्यस्थता (Mediation) कार्यवाही का प्रबंधन करता है, और मध्यस्थों (Mediators) के अपने पैनल पर आवश्यक योग्यता, ज्ञान और विशेषज्ञता वाले स्वतंत्र, योग्य मध्यस्थों (Mediators)को सूचीबद्ध करता है। मध्यस्थता / सुलह (Mediation/Conciliation) Presolv360 के Dispute समाधान नियमों के अनुसार संचालित   की जाएगी, जिसकी एक प्रति यहाँ पाई जा सकती है। Presolv360 मध्यस्थता कार्यवाही के संचालन के लिए सभी संबंधित पक्षों और मध्यस्थ (Mediators)  को प्रशासनिक सहायता प्रदान करता है और विवाद के परिणाम में इसकी कोई रुचि नहीं है और इसमें कोई हितों का टकराव नहीं है।</p>
+    <p style="font-family:{{ $langfamilyfont }};">3. Presolv360 
+        <!-- ऑनलाइन Dispute समाधान  (“ODR”) सहित वैकल्पिक Dispute समाधान (“ADR”) सेवाएं प्रदान करने वाली संस्थाओं की सूची में शामिल है और इसे  -->
+        भारत में विभिन्न न्यायालयों द्वारा मध्यस्थता (Mediation) संस्थान के रूप में भी सूचीबद्ध किया गया है। Presolv360 अपने प्लेटफ़ॉर्म पर मध्यस्थता (Mediation) कार्यवाही का प्रबंधन करता है, और मध्यस्थों (Mediators) के अपने पैनल पर आवश्यक योग्यता, ज्ञान और विशेषज्ञता वाले स्वतंत्र, योग्य मध्यस्थों (Mediators)को सूचीबद्ध करता है। मध्यस्थता / सुलह (Mediation/Conciliation) Presolv360 के Dispute समाधान नियमों के अनुसार संचालित   की जाएगी, जिसकी एक प्रति यहाँ पाई जा सकती है। Presolv360 मध्यस्थता कार्यवाही के संचालन के लिए सभी संबंधित पक्षों और मध्यस्थ (Mediators)  को प्रशासनिक सहायता प्रदान करता है और विवाद के परिणाम में इसकी कोई रुचि नहीं है और इसमें कोई हितों का टकराव नहीं है।</p>
     
     <p style="font-family:{{ $langfamilyfont }};">4. जबकि यह प्रक्रिया पूरी तरह से गोपनीय है, मध्यस्थता/सुलह (Mediation/Conciliation)  की कार्यवाही गैर-भागीदारी की स्थिति में या विवाद के अनसुलझे रहने की स्थिति में उपलब्ध किसी भी कानूनी उपाय के प्रति ‘बिना किसी पूर्वाग्रह के’ है। यह सबसे अधिक लाभकारी प्रक्रियाओं में से एक बन गई है, जिसमें सभी संदर्भों की सफलता दर 90% से अधिक है।</p>
     
@@ -792,9 +800,11 @@ $page_break_css = 'page-break-before: always;';
 
     <p class="text-center" style="font-size:30px; margin-bottom: 0px; margin-top: 0px !important;">મધ્યસ્થી / સમાધાન માટે આમંત્રણ </p>
     
-    <p class="text-center" style="font-size:14px; margin-bottom: 0px !important; margin-top: 0px !important;">ઓનલાઈન ડિસ્પ્યુટ રિઝોલ્યુશન (ODR) સહિતની વૈકલ્પિક તકરાર નિરાકરણ (ADR) સેવાઓ પ્રદાન કરતી સંસ્થાઓની સૂચિમાં <a
+    <p class="text-center" style="font-size:14px; margin-bottom: 0px !important; margin-top: 0px !important;">
+        <!-- ઓનલાઈન ડિસ્પ્યુટ રિઝોલ્યુશન (ODR) સહિતની વૈકલ્પિક તકરાર નિરાકરણ (ADR) સેવાઓ પ્રદાન કરતી સંસ્થાઓની સૂચિમાં <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(અહીં ઉપલબ્ધ છે)</a> 
-            સામેલ છે અને ભારતની વિવિધ અદાલતો દ્વારા મધ્યસ્થી સંસ્થા તરીકે સૂચિબદ્ધ છે.
+            સામેલ છે અને  -->
+            ભારતની વિવિધ અદાલતો દ્વારા મધ્યસ્થી સંસ્થા તરીકે સૂચિબદ્ધ છે.
 </p>
 
     <p class="text-center" style="margin-top: 0px !important;font-size:14px !important; margin-bottom: 0px !important;"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
@@ -944,8 +954,9 @@ $page_break_css = 'page-break-before: always;';
         echo nl2br($case->issue); ?>
     </p>
 
-    <p>3. PRESOLV360 સુચિમાં શામેલ છે ઓનલાઈન ડિસ્પ્યુટ રિઝોલ્યુશન ("ODR") સહિત વૈકલ્પિક વિવાદ નિરાકરણ ("ADR") સેવાઓ પ્રદાન કરતી સંસ્થાઓની સૂચિમાં 
-        અને ભારતમાં વિવિધ અદાલતો દ્વારા મધ્યસ્થી સંસ્થા તરીકે પણ સૂચિબદ્ધ છે. Presolv360 તેના પ્લેટફોર્મ પર મધ્યસ્થી પ્રક્રિયાઓનું સંચાલન કરે છે, અને તેના 
+    <p>3. PRESOLV360 
+        <!-- સુચિમાં શામેલ છે ઓનલાઈન ડિસ્પ્યુટ રિઝોલ્યુશન ("ODR") સહિત વૈકલ્પિક વિવાદ નિરાકરણ ("ADR") સેવાઓ પ્રદાન કરતી સંસ્થાઓની સૂચિમાં અને  -->
+        ભારતમાં વિવિધ અદાલતો દ્વારા મધ્યસ્થી સંસ્થા તરીકે પણ સૂચિબદ્ધ છે. Presolv360 તેના પ્લેટફોર્મ પર મધ્યસ્થી પ્રક્રિયાઓનું સંચાલન કરે છે, અને તેના 
         મધ્યસ્થીઓની પેનલ પર જરૂરી યોગ્યતા, જ્ઞાન અને કુશળતા સાથે સ્વતંત્ર, લાયક મધ્યસ્થીઓની પસંદગી કરે છે. મધ્યસ્થી / સમાધાન Presolv360 ના વિવાદ 
         નિરાકરણ નિયમો દ્વારા સંચાલિત અને હાથ ધરવામાં આવશે, જેની એક નકલ 
         <a href="https://drive.google.com/file/d/1a5GkQA0KX_4-gUDf25D0uU7Rt_1S8DDl/view?usp=sharing">અહીં</a> મળી શકે છે. 
@@ -1492,9 +1503,10 @@ $page_break_css = 'page-break-before: always;';
     <p class="text-center" style="font-size:30px; margin-bottom: 0px; margin-top: 0px !important;">मध्यस्थी / सामंजस्य करण्यासाठी आमंत्रण </p>
     
     <p class="text-center" style="font-size:14px; margin-bottom: 0px !important; margin-top: 0px !important;">
-    ऑनलॉइन विवाद निराकरणासह (ODR) पर्यायी विवाद निराकरण सेवा (ADR) प्रदान करणाऱ्या आणि विविध न्यायालयांद्वारे मध्यस्थी संस्था म्हणून नामांकीत केलेल्या संस्थांचा यादीमध्ये  <a
+    ऑनलॉइन विवाद निराकरणासह (ODR) पर्यायी विवाद निराकरण सेवा (ADR) प्रदान करणाऱ्या आणि विविध न्यायालयांद्वारे मध्यस्थी संस्था 
+    <!-- म्हणून नामांकीत केलेल्या संस्थांचा यादीमध्ये  <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing"> (येथे माहिती उपलब्ध आहे) </a> 
-            समावेश आहे.
+            समावेश आहे. -->
 </p>
 
     <p class="text-center" style="margin-top: 0px !important;font-size:14px !important; margin-bottom: 0px !important;"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
@@ -1646,8 +1658,9 @@ $page_break_css = 'page-break-before: always;';
         echo nl2br($case->issue); ?>
     </p>
 
-    <p>3. ऑनलाइन विवाद निराकरणासह ("ODR") पर्यायी विवाद निराकरण सेवा प्रदान करणाऱ्या ("ADR")आणि भारतातील विविध न्यायालयांद्वारे मध्यस्थी संस्था म्हणून 
-        पॅनेलमध्ये सामिल केलेल्या संस्थांच्या यादीमध्ये Presolv360 समाविष्ट केले गेले आहे. Presolv360 त्याच्या प्लॅटफॉर्मवर मध्यस्थी कार्यवाही प्रशासित करते आणि त्याच्या 
+    <p>3. ऑनलाइन विवाद निराकरणासह ("ODR") पर्यायी विवाद निराकरण सेवा प्रदान करणाऱ्या ("ADR")आणि भारतातील विविध न्यायालयांद्वारे मध्यस्थी संस्था 
+        <!-- म्हणून पॅनेलमध्ये सामिल केलेल्या संस्थांच्या यादीमध्ये Presolv360 समाविष्ट केले गेले आहे.  -->
+        Presolv360 त्याच्या प्लॅटफॉर्मवर मध्यस्थी कार्यवाही प्रशासित करते आणि त्याच्या 
         मध्यस्थांच्या पॅनेलवर आवश्यक क्षमता, ज्ञान आणि कौशल्य असलेल्या स्वतंत्र, पात्र मध्यस्थांना समाविष्ट करते. 
         मध्यस्थी / सामंजस्य Presolv360 च्या विवाद निराकरण नियमांनुसार नियंत्रित आणि आयोजित केले जाईल, ज्याची प्रत इथे 
         <a href="https://drive.google.com/file/d/1a5GkQA0KX_4-gUDf25D0uU7Rt_1S8DDl/view?usp=sharing">here</a> मिळू शकते. Presolv360 सर्व 
