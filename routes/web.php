@@ -250,7 +250,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('case/downloadLogInviation', [App\Http\Controllers\Admin\CaseController::class, 'downloadLogInviation'])->name('admin.case.downloadLogInviation');
 
     
-    // baatch wise delivery sheet download
+    // batch wise delivery sheet download
     Route::post('case/downloadLogInviationBatchWise', [App\Http\Controllers\Admin\CaseController::class, 'downloadLogInviationBatchWise'])->name('admin.case.downloadLogInviationBatchWise');
     
     //track
@@ -281,10 +281,22 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // itm notifications
     Route::get('itmnotification', [App\Http\Controllers\Admin\DashboardController::class, 'itmNotification'])->name('admin.itmnotification');
     Route::post('case/stop-notification', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStop'])->name('admin.case.batchNotificationStop');
+    
+    Route::get('case/get-disable-party', [App\Http\Controllers\Admin\CaseController::class, 'getDisableParty'])->name('admin.case.getDisableParty');
 
     // close case notification
     Route::get('closecasenotification', [App\Http\Controllers\Admin\DashboardController::class, 'closeCaseNotification'])->name('admin.closecasenotification');
     Route::post('case/stop-notification-close', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStopWhenClose'])->name('admin.case.batchNotificationStopWhenClose');
+   
+    // bulk session scheduling notification
+    Route::get('sessionschedulenotification', [App\Http\Controllers\Admin\DashboardController::class, 'sessionScheduleNotification'])->name('admin.sessionschedulenotification');
+    Route::post('case/stop-notification-bulk-session', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStopWhenBulkSession'])->name('admin.case.batchNotificationStopWhenBulkSession');
+   
+    // bulk supporting document upload notification
+    Route::get('bulkuploadnotification', [App\Http\Controllers\Admin\DashboardController::class, 'bulkUploadNotification'])->name('admin.bulkuploadnotification');
+    Route::post('case/stop-notification-bulk-upload', [App\Http\Controllers\Admin\CaseController::class, 'batchNotificationStopWhenBulkDocument'])->name('admin.case.batchNotificationStopWhenBulkDocument');
+   
+
     Route::get('manageuser', [App\Http\Controllers\Admin\CaseController::class, 'manageUser'])->name('admin.manageuser');
     Route::post('addmiiuser', [App\Http\Controllers\Admin\CaseController::class, 'addmiiuser'])->name('admin.addmiiuser');
     Route::get('getSubUserData', [App\Http\Controllers\Admin\CaseController::class, 'getSubUserData'])->name('admin.getSubUserData');

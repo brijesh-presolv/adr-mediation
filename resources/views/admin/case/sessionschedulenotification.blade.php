@@ -1,13 +1,13 @@
 @extends('admin.layouts.app')
-@section('title', "ITM Notifications")
+@section('title', "Bulk Session Scheduling Notifications")
 
 @section('breadcrumb')
 <!-- start page title -->
 <li class="breadcrumb-item"><a href="javascript: void(0);">@lang('case.home')</a></li>
-<li class="breadcrumb-item"><a href="javascript: void(0);">Invitation To Mediate Notifications</a></li>
+<li class="breadcrumb-item"><a href="javascript: void(0);">Bulk Session Scheduling Notifications</a></li>
 <!-- end page title -->
 @endsection
-@section('page_title', "ITM Notifications")
+@section('page_title', "Bulk Session Scheduling Notifications")
 
 @section('content')
     <style>
@@ -28,9 +28,9 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <form id="batchSubmit">
+                <form id="batchSubmitClose">
                     <div class="form-group">
-                        <label>Select the Batch in which ITM notification will be disabled</label>
+                        <label>Select the Batch in which Bulk Session Scheduling notification will be disabled</label>
                         <select name="batch" id="batchSelect" class="form-control">
                             <option value="" selected>Select Batch...</option>
                             @foreach ($batchName as $value)
@@ -42,17 +42,17 @@
                     <br>
 
                     <div class="form-group">
-                        <label for="">Disable ITM notification</label>
+                        <label for="">Disable notification when bulk session scheduled</label>
                         <br>
-                        <input class="form-check-input my_switch" type="checkbox" id="mySwitchIP" name="mySwitchIP">
+                        <input class="form-check-input my_switch" type="checkbox" id="mySwitchIPClose" name="mySwitchIPClose">
                         <label for="" class="mySwitchLabel">Initiating Party(s)</label>
 
                         <br>
-                        <input class="form-check-input my_switch" type="checkbox" id="mySwitchRP" name="mySwitchRP">
+                        <input class="form-check-input my_switch" type="checkbox" id="mySwitchRPClose" name="mySwitchRPClose">
                         <label for="" class="mySwitchLabel">Responding Party(s)</label>
 
                         <br>
-                        <input class="form-check-input my_switch" type="checkbox" id="mySwitchMed" name="mySwitchMed">
+                        <input class="form-check-input my_switch" type="checkbox" id="mySwitchMedClose" name="mySwitchMedClose">
                         <label for="" class="mySwitchLabel">Mediator</label>
                     </div>
 
@@ -72,13 +72,13 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     $(document).ready(function(){
-        $('#batchSubmit').submit(function(e) {
+        $('#batchSubmitClose').submit(function(e) {
             e.preventDefault();
             var formData = new FormData(this);
 
             $.ajax({
                 type: 'POST',
-                url: '{{ route('admin.case.batchNotificationStop') }}',
+                url: '{{ route('admin.case.batchNotificationStopWhenBulkSession') }}',
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -105,35 +105,6 @@
                 }
             });
         });
-
-
-
-        // On branch change get data 
-        $('#batchSelect').on('change', function(){
-            var batch_id = $(this).val();
-           
-            $.ajax({
-                type: 'GET',
-                url: '{{ route('admin.case.getDisableParty') }}',
-                data: {
-                    batch_id : batch_id
-                },
-                dataType: 'json',
-                success: (data) => {
-                   if(data.ip == 1) {
-                    $("input[type='checkbox']").prop('checked', false); 
-                    $('#mySwitchIP').prop("checked", "1");
-                   } else if(data.rp == 1) {
-                    $("input[type='checkbox']").prop('checked', false); 
-                    $('#mySwitchRP').prop("checked", "1");
-                   } else if(data.med == 1){
-                    $("input[type='checkbox']").prop('checked', false); 
-                    $('#mySwitchMed').prop("checked", "1");
-                   }
-                }
-            });
-        });
-        // On branch change get data 
     });
 </script>
 
