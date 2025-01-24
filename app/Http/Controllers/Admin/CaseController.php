@@ -2512,7 +2512,7 @@ class CaseController extends Controller
                 $varjson = ['caseid' => "M" . sprintf("%06d", $id)];
                 $var = ['-cid-'];
                 $var1 = ["M" . sprintf("%06d", $id)];
-                $content1 = WaTemplate::getcontent('wa_message_stop_v3');
+                $content1 = WaTemplate::getcontent('wa_message_stop_v9_n4');
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $inv->userPlanId,
@@ -2520,7 +2520,7 @@ class CaseController extends Controller
                     'content' => ['text' => $content],
                     'event' => 'STOP_WHTSAPP',
                     'varjson' => $varjson,
-                    'haptik_tmp' => 'wa_message_stop_v3',
+                    'haptik_tmp' => 'wa_message_stop_v9_n4',
                 ];
 
                 $access = Whatsapp::sendWaStopmessage($dwa1);
