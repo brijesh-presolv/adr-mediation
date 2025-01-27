@@ -10,7 +10,7 @@ include_once $projectpath . '/app/Http/helpers/Curl.php';
 
 $json = file_get_contents('php://input');
 
- $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
+ $myFile = "webhook/whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
 
  try{

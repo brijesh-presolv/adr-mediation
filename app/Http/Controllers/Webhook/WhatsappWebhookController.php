@@ -69,7 +69,7 @@ class WhatsappWebhookController extends Controller
             
     public function whresmovetos3(){
     
-        $path='../functions/whatsapp_log_latest';
+        $path='../webhook/whatsapp_log_latest';
     
         $logs=WhatsappLog::whereNotNull('response')->where('response', '<>', '')->limit(1000)->get();
     
@@ -215,7 +215,7 @@ for ($i=0; $i < 1000; $i++) {
 
                 if($stage==0){
 
-                    $track = MedWhatsappTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                    $track = WhatsappTrack::where('request_uuid', $data['data']['message']['id'])->get();
 
                     if (count($track) >0 ) {
 
