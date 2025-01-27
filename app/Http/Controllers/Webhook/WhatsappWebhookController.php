@@ -101,9 +101,9 @@ class WhatsappWebhookController extends Controller
     {
 
         // $myFile = "wapp_status/testFile".date('Y-m-d_H:i:s').".txt";
-        $path='../functions/whatsapp_log_latest';
+        $path='../webhook/whatsapp_log_latest';
 
-
+        echo $path;exit;
 
         $files = scandir($path);
 
