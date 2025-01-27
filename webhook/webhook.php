@@ -4,13 +4,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 error_reporting(E_ALL);
-$projectpath = dirname(dirname(__FILE__));
+$projectpath = $_SERVER['DOCUMENT_ROOT'];
 include_once $projectpath . '/config/constants.php';
 include_once $projectpath . '/app/Http/helpers/Curl.php';
-
+//echo $_SERVER['DOCUMENT_ROOT'];
 $json = file_get_contents('php://input');
 
- $myFile = "webhook/whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
+ $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
 
  try{
