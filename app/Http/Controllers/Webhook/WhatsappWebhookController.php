@@ -10,25 +10,25 @@ use App\Models\WhatsappLogExt;
 
 use App\Models\WhatsappWebhook;
 use App\Models\WhatsappTrack;
-use App\Models\MedWhatsappTrack;
-use App\Models\MedWhatsappCTrack;
+//use App\Models\MedWhatsappTrack;
+//use App\Models\MedWhatsappCTrack;
 
-use App\Models\MedWhatsappLog;
-use App\Models\MedWhatsappCLog;
-
-
-use App\Models\MedWhatsappSLog;
-use App\Models\MedWhatsappSTrack;
-
-use App\Models\MedWhatsappSebiTrack;
-use App\Models\MedWhatsappSebiLog;
-
-use App\Models\ArbWhatsappSLog;
-use App\Models\ArbWhatsappSTrack;
+//use App\Models\MedWhatsappLog;
+//use App\Models\MedWhatsappCLog;
 
 
-use App\Models\ArbWhatsappSebiLog;
-use App\Models\ArbWhatsappSebiTrack;
+//use App\Models\MedWhatsappSLog;
+//use App\Models\MedWhatsappSTrack;
+
+//use App\Models\MedWhatsappSebiTrack;
+//use App\Models\MedWhatsappSebiLog;
+
+//use App\Models\ArbWhatsappSLog;
+//use App\Models\ArbWhatsappSTrack;
+
+
+//use App\Models\ArbWhatsappSebiLog;
+//use App\Models\ArbWhatsappSebiTrack;
 
 
 use Illuminate\Support\Facades\Hash;
@@ -82,7 +82,8 @@ class WhatsappWebhookController extends Controller
                 
                 if($s){
                 
-                $log->response=null;
+                //$log->response=null;
+                $log->response="";
                 
                 $log->save();
                 
@@ -116,22 +117,22 @@ class WhatsappWebhookController extends Controller
         }
 
 
-for ($i=0; $i < 1000; $i++) {  
+        for ($i=0; $i < 1000; $i++) {  
 
-    if(!isset($files[$i])){
+            if(!isset($files[$i])){
 
-        continue;
-    }
+                continue;
+            }
 
-  $fullpath=$path.'/'.$files[$i];
+            $fullpath=$path.'/'.$files[$i];
 
-  $fh = file_get_contents($fullpath);
+            $fh = file_get_contents($fullpath);
 
 
 
-  $json=$fh;
+            $json=$fh;
 
-  $data = json_decode($fh, true);
+            $data = json_decode($fh, true);
 
 
 
@@ -225,87 +226,87 @@ for ($i=0; $i < 1000; $i++) {
 
                 //arbitration
 
-                if($stage==0){
+                // if($stage==0){
 
 
-                $track = WhatsappTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                //     $track = WhatsappTrack::where('request_uuid', $data['data']['message']['id'])->get();
 
 
-                if (count($track) >0) {
+                //     if (count($track) >0) {
 
-                    $stage='arb';
-                } 
+                //         $stage='arb';
+                //     } 
 
-            }
+                // }
 
 
 
                 // sahmati arb
 
 
-                if($stage==0){
+                // if($stage==0){
 
-                    $track = ArbWhatsappSTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                //     $track = ArbWhatsappSTrack::where('request_uuid', $data['data']['message']['id'])->get();
 
-                    if (count($track) > 0) {
+                //     if (count($track) > 0) {
 
-                             $stage='sarb';
-                    } 
+                //              $stage='sarb';
+                //     } 
 
-                }
+                // }
 
                 // sebi arb
 
 
-                if($stage==0){
+                // if($stage==0){
 
-                    $track = ArbWhatsappSebiTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                //     $track = ArbWhatsappSebiTrack::where('request_uuid', $data['data']['message']['id'])->get();
 
-                    if (count($track) > 0) {
+                //     if (count($track) > 0) {
 
-                             $stage='sebiarb';
-                    } 
+                //              $stage='sebiarb';
+                //     } 
 
-                }
+                // }
 
                 //sahmati mediation
 
-                if($stage==0){
+                // if($stage==0){
 
-                    $track = MedWhatsappSTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                //     $track = MedWhatsappSTrack::where('request_uuid', $data['data']['message']['id'])->get();
 
-                    if (count($track) >0) {
+                //     if (count($track) >0) {
 
-                             $stage='smed';
-                    } 
+                //              $stage='smed';
+                //     } 
 
-                }
+                // }
 
                 
 
                 //sebi
 
-                if($stage==0){
+                // if($stage==0){
 
-                    $track = MedWhatsappSebiTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                //     $track = MedWhatsappSebiTrack::where('request_uuid', $data['data']['message']['id'])->get();
 
-                    if (count($track) > 0) {
+                //     if (count($track) > 0) {
 
-                             $stage='sebi';
-                    } 
+                //              $stage='sebi';
+                //     } 
 
-                }
+                // }
 
                 //court
 
-                if($stage==0){
+                // if($stage==0){
 
-                    $track = MedWhatsappCTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                //     $track = MedWhatsappCTrack::where('request_uuid', $data['data']['message']['id'])->get();
 
-                    if (count($track) > 0) {
+                //     if (count($track) > 0) {
 
-                             $stage='court';
-                    } 
+                //              $stage='court';
+                //     } 
 
                 }
 
@@ -371,7 +372,7 @@ for ($i=0; $i < 1000; $i++) {
 
 
                     if ($log) {
-  $this->deletelogfile($fullpath);
+                        $this->deletelogfile($fullpath);
 
                         echo '202';
                     }
@@ -387,127 +388,127 @@ for ($i=0; $i < 1000; $i++) {
 
 
                     // dd($track);
-                    $log = ArbWhatsappSLog::create([
-                        'request_id' => $request_id,
-                        'created_time' => $created_time,
-                        'sent_time' => $sent_time,
-                        'delivered_time' => $delivered_time,
-                        'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
-                        'status' => $status,
-                        'response' => $json,
-                        'created_at' => date('Y-m-d H:s:i')
-                    ]);
-                    if ($log) {
-  $this->deletelogfile($fullpath);
+                    // $log = ArbWhatsappSLog::create([
+                    //     'request_id' => $request_id,
+                    //     'created_time' => $created_time,
+                    //     'sent_time' => $sent_time,
+                    //     'delivered_time' => $delivered_time,
+                    //     'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
+                    //     'status' => $status,
+                    //     'response' => $json,
+                    //     'created_at' => date('Y-m-d H:s:i')
+                    // ]);
+                    // if ($log) {
+                    //     $this->deletelogfile($fullpath);
 
-                        echo '202';
-                    }
+                    //     echo '202';
+                    // }
 
                         
                     break;
                     case 'sebiarb':
                     
-                    Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_sebiarb' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                    // Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_sebiarb' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
 
 
 
 
 
-                    // dd($track);
-                    $log = ArbWhatsappSebiLog::create([
-                        'request_id' => $request_id,
-                        'created_time' => $created_time,
-                        'sent_time' => $sent_time,
-                        'delivered_time' => $delivered_time,
-                        'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
-                        'status' => $status,
-                        'response' => $json,
-                        'created_at' => date('Y-m-d H:s:i')
-                    ]);
-                    if ($log) {
-  $this->deletelogfile($fullpath);
+                    // // dd($track);
+                    // $log = ArbWhatsappSebiLog::create([
+                    //     'request_id' => $request_id,
+                    //     'created_time' => $created_time,
+                    //     'sent_time' => $sent_time,
+                    //     'delivered_time' => $delivered_time,
+                    //     'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
+                    //     'status' => $status,
+                    //     'response' => $json,
+                    //     'created_at' => date('Y-m-d H:s:i')
+                    // ]);
+                    // if ($log) {
+                    //     $this->deletelogfile($fullpath);
 
-                        echo '202';
-                    }
+                    //     echo '202';
+                    // }
 
                         
                     break;
                     case 'smed':
 
-                    Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_smed' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                    // Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_smed' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
 
 
 
 
 
-                    // dd($track);
-                    $log = MedWhatsappSLog::create([
-                        'request_id' => $request_id,
-                        'created_time' => $created_time,
-                        'sent_time' => $sent_time,
-                        'delivered_time' => $delivered_time,
-                        'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
-                        'status' => $status,
-                        'response' => $json,
-                        'created_at' => date('Y-m-d H:s:i')
-                    ]);
-                    if ($log) {
-  $this->deletelogfile($fullpath);
+                    // // dd($track);
+                    // $log = MedWhatsappSLog::create([
+                    //     'request_id' => $request_id,
+                    //     'created_time' => $created_time,
+                    //     'sent_time' => $sent_time,
+                    //     'delivered_time' => $delivered_time,
+                    //     'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
+                    //     'status' => $status,
+                    //     'response' => $json,
+                    //     'created_at' => date('Y-m-d H:s:i')
+                    // ]);
+                    // if ($log) {
+                    //     $this->deletelogfile($fullpath);
 
-                        echo '202';
-                    }
+                    //     echo '202';
+                    // }
                         
                     break;
 
                     case 'sebi';
 
 
-                    Storage::disk('s3_mediation')->put('public/whatsapp_status_sebi/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                    // Storage::disk('s3_mediation')->put('public/whatsapp_status_sebi/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
 
 
 
-                        // dd($track);
-                    $log = MedWhatsappSebiLog::create([
-                        'request_id' => $request_id,
-                        'created_time' => $created_time,
-                        'sent_time' => $sent_time,
-                        'delivered_time' => $delivered_time,
-                        'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
-                        'status' => $status,
-                        'response' => $json,
-                        'created_at' => date('Y-m-d H:s:i')
-                    ]);
-                    if ($log) {
-  $this->deletelogfile($fullpath);
+                    //     // dd($track);
+                    // $log = MedWhatsappSebiLog::create([
+                    //     'request_id' => $request_id,
+                    //     'created_time' => $created_time,
+                    //     'sent_time' => $sent_time,
+                    //     'delivered_time' => $delivered_time,
+                    //     'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
+                    //     'status' => $status,
+                    //     'response' => $json,
+                    //     'created_at' => date('Y-m-d H:s:i')
+                    // ]);
+                    // if ($log) {
+                    //     $this->deletelogfile($fullpath);
 
-                        echo '202';
-                    }
+                    //     echo '202';
+                    // }
 
                     break;
 
                     case 'court';
 
 
-                    Storage::disk('s3_mediation')->put('public/whatsapp_status_c/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                    // Storage::disk('s3_mediation')->put('public/whatsapp_status_c/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
 
 
 
-                        // dd($track);
-                    $log = MedWhatsappCLog::create([
-                        'request_id' => $request_id,
-                        'created_time' => $created_time,
-                        'sent_time' => $sent_time,
-                        'delivered_time' => $delivered_time,
-                        'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
-                        'status' => $status,
-                        'response' => $json,
-                        'created_at' => date('Y-m-d H:s:i')
-                    ]);
-                    if ($log) {
-  $this->deletelogfile($fullpath);
+                    //     // dd($track);
+                    // $log = MedWhatsappCLog::create([
+                    //     'request_id' => $request_id,
+                    //     'created_time' => $created_time,
+                    //     'sent_time' => $sent_time,
+                    //     'delivered_time' => $delivered_time,
+                    //     'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
+                    //     'status' => $status,
+                    //     'response' => $json,
+                    //     'created_at' => date('Y-m-d H:s:i')
+                    // ]);
+                    // if ($log) {
+                    //     $this->deletelogfile($fullpath);
 
-                        echo '202';
-                    }
+                    //     echo '202';
+                    // }
 
                     break;
                     
