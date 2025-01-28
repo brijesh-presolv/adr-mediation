@@ -5,8 +5,10 @@ ini_set('display_startup_errors', 1);
 
 error_reporting(E_ALL);
 $projectpath = $_SERVER['DOCUMENT_ROOT'];
-include_once $projectpath . '/mediation/config/constants.php';
-include_once $projectpath . '/mediation/app/Http/helpers/Curl.php';
+//include_once $projectpath . '/mediation/config/constants.php';
+include_once $projectpath . '/config/constants.php';
+//include_once $projectpath . '/mediation/app/Http/helpers/Curl.php';
+include_once $projectpath . '/app/Http/helpers/Curl.php';
 //echo $_SERVER['DOCUMENT_ROOT'];
 $json = file_get_contents('php://input');
 
