@@ -357,7 +357,7 @@ for ($i=0; $i < 1000; $i++) {
 
 
                     // dd($track);
-                    $log = MedWhatsappLog::create([
+                    $log = WhatsappLog::create([
                         'request_id' => $request_id,
                         'created_time' => $created_time,
                         'sent_time' => $sent_time,
