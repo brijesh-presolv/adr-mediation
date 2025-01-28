@@ -18,7 +18,7 @@ $json = file_get_contents('php://input');
  try{
         // file_put_contents($myFile,$json);
          if (file_put_contents($myFile,$json)){ 
-            echo "here";exit;
+           
                   whatsappbotlogAsync($myFile, function () {
                   
                   echo "whatsappbotlog completed asynchronously.";
