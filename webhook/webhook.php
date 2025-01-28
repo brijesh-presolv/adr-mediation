@@ -8,7 +8,7 @@ $projectpath = $_SERVER['DOCUMENT_ROOT'];
 //include_once $projectpath . '/mediation/config/constants.php';
 include_once $projectpath . '/config/constants.php';
 //include_once $projectpath . '/mediation/app/Http/helpers/Curl.php';
-include_once $projectpath . '/app/Http/helpers/Curl.php';
+include_once $projectpath . '/app/Http/Helpers/Curl.php';
 //echo $_SERVER['DOCUMENT_ROOT'];
 $json = file_get_contents('php://input');
 
