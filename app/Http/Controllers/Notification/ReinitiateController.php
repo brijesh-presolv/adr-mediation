@@ -44,7 +44,7 @@ class ReinitiateController extends Controller
     public function reinitiate()
     {
 
-        $allData = DB::table('reinitiate_noti_axis_b31_latest2')->where('is_whtsapp_sent', 0)->where('is_pdf_sent', 0)->limit(100)->get();
+        $allData = DB::table('reinitiate_noti_axis_b36')->where('is_whtsapp_sent', 0)->where('is_pdf_sent', 0)->limit(100)->get();
 
         
 
@@ -71,7 +71,7 @@ class ReinitiateController extends Controller
             $access1 = Whatsapp::sendWamessage($dwa1);
 
             if($access1) {
-                $is_update_wa = DB::table('reinitiate_noti_axis_b31_latest2')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
+                $is_update_wa = DB::table('reinitiate_noti_axis_b36')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
 
                 if($is_update_wa) {
                     echo $template_name ." added for case id =" .$data->caseid;
@@ -111,7 +111,7 @@ class ReinitiateController extends Controller
 
 
             if($access2) {
-                $is_update_pdf = DB::table('reinitiate_noti_axis_b31_latest2')->where('caseid', $data->caseid)->update(['is_pdf_sent' => 1]);
+                $is_update_pdf = DB::table('reinitiate_noti_axis_b36')->where('caseid', $data->caseid)->update(['is_pdf_sent' => 1]);
 
                 if($is_update_pdf) {
                     echo "attachment template added for case id =" .$data->caseid;
