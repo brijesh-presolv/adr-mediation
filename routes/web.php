@@ -344,6 +344,11 @@ Route::get('replyback/{caseid}/{token}', [App\Http\Controllers\Nagotiationbot\Na
 Route::get('reinitiate', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate']);
 // Reinitiate whatsapp for given case IDs : 19/11/2024 //
 
-// Regenerate ITM : 20/11/2024  //
+// Regenerate ITM :  //
 Route::get('regenerate_itm', [App\Http\Controllers\Notification\ReinitiateController::class, 'regenerate_itm']);
-// Regenerate ITM : 20/11/2024 //
+// Regenerate ITM :  //
+
+
+// Change POC Contact :  //
+Route::get('change_poc_contact', [App\Http\Controllers\Notification\ReinitiateController::class, 'change_poc_contact']);
+// Change POC Contact  :  //

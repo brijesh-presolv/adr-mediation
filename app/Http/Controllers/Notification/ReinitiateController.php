@@ -178,13 +178,16 @@ class ReinitiateController extends Controller
     public function regenerate_itm()
     {
         ini_set('memory_limit', -1);
-      // $all_cases = MedCase::select('id','batch_id')->whereIn("batch_id", [184, 186])->where('case_status', 1)->get();
-       //$all_cases = MedCase::select('id','batch_id')->where("batch_id", 184)->where('case_status', 1)->get();
-       $all_cases = MedCase::select('id','batch_id')->where("batch_id", 186)->where('case_status', 1)->get();
+        //$all_cases = MedCase::select('id','batch_id')->where("batch_id", 186)->where('case_status', 1)->get();
 
+       // $query = "CAST(CAST(poc_contact  AS FLOAT) AS bigint)";
+      //  $all_cases = DB::table('mediation_case')->where("batch_id", 50)->orderByRaw($query)->get();
+        $all_cases = MedCase::select('id','batch_id', 'poc_contact')->where("batch_id", 260)->where('case_status', 1)->get();
+     
         //echo "<pre>";print_R($all_cases);
 
-    $getReportData = DB::table('itm_caseid')->where("batch_id", 186)->get();
+    //$getReportData = DB::table('itm_caseid')->where("batch_id", 186)->get();
+    $getReportData = DB::table('itm_caseid')->where("batch_id", 260)->get();
 
 
     $insert_data = array();
@@ -238,6 +241,22 @@ class ReinitiateController extends Controller
 
             
        }
+    }
+
+
+    public function change_poc_contact() {
+        $getAll = DB::table('change_poc_contact_axis_b36 as cp')->select('cp.caseid', 'cp.poc_contact as cp_contact', 'mediation_case.id', 'mediation_case.poc_contact')
+        ->join('mediation_case', 'mediation_case.id', '=', 'cp.caseid')
+        ->where('cp.batchid', 260)
+        ->get();
+
+        foreach($getAll as $myData) {
+            $is_update = DB::table('mediation_case')->where('id', $myData->id)->update(['poc_contact' => $myData->cp_contact]);
+
+            if($is_update) {
+                echo "<br/>caseid ".$myData->id. " old contact ".$myData->poc_contact." updated to new ".$myData->cp_contact;
+            }
+        }
     }
         
         
