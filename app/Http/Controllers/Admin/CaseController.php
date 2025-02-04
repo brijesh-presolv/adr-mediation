@@ -3168,9 +3168,8 @@ class CaseController extends Controller
                     $var_file = ['-caseid-'];
                     $var1_file = [$mid];
 
-                    $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
-
-                    $content1_file = WaTemplate::getcontent($pdf_template_name);
+                    
+                    $content1_file = WaTemplate::getcontent('additional_doc_med');
                     $content_file = str_replace($var_file, $var1_file, $content1_file);
                     $dwa2 = [
                         'caseid' => $id,
@@ -3178,7 +3177,7 @@ class CaseController extends Controller
                         'content' => ['text' => $content],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson,
-                        'haptik_tmp' => $pdf_template_name,
+                        'haptik_tmp' => 'l20_additional_doc_med',
                     ];
                     $accessW = Whatsapp::sendWamessage($dwa1);
                     foreach ($filesE as $file) {
