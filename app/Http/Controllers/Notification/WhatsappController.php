@@ -215,7 +215,12 @@ class WhatsappController extends Controller
                 $contenturl = parse_url($content['media']['url'])["path"];
                 $file_name = basename($content['media']['url']);
 
-                $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 15);
+                $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 360);
+        
+                echo "url =>".$contenturl;
+                echo "<br/>";
+                echo "<pre>";print_R($content['media']['url']);
+                exit;
 
                 // $vararrayheader[] = $this->getPreSignedUrl(urldecode($contenturl), 15);
 

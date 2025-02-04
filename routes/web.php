@@ -352,3 +352,6 @@ Route::get('regenerate_itm', [App\Http\Controllers\Notification\ReinitiateContro
 // Change POC Contact :  //
 Route::get('change_poc_contact', [App\Http\Controllers\Notification\ReinitiateController::class, 'change_poc_contact']);
 // Change POC Contact  :  //
+
+
+Route::get('reinitiate_260', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate_260']);
