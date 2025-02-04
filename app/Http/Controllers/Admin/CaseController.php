@@ -3083,7 +3083,8 @@ class CaseController extends Controller
                                 $varjson_file = ['caseid' => $mid];
                                 $var_file = ['-caseid-'];
                                 $var1_file = [$mid];
-                                $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                                $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
+                                $content1_file = WaTemplate::getcontent($pdf_template_name);
                                 $content_file = str_replace($var_file, $var1_file, $content1_file);
                                 $dwa2 = [
                                     'caseid' => $id,
@@ -3091,7 +3092,7 @@ class CaseController extends Controller
                                     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                                     'event' => 'SEND_ADDI_DOC',
                                     'varjson' => $varjson_file,
-                                    'haptik_tmp' => 'pdf_attachment_v3',
+                                    'haptik_tmp' => $pdf_template_name,
                                 ];
                                 $accessW = Whatsapp::sendWamessage($dwa2);
                             }
@@ -3115,7 +3116,7 @@ class CaseController extends Controller
                             'content' => ['text' => $content],
                             'event' => 'SEND_ADDI_DOC',
                             'varjson' => $varjson,
-                            'haptik_tmp' => $pdf_template_name,
+                            'haptik_tmp' => 'l19_additional_doc',
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa1);
                         foreach ($filesE as $file) {
@@ -3123,7 +3124,8 @@ class CaseController extends Controller
                             $varjson_file = ['caseid' => $mid];
                             $var_file = ['-caseid-'];
                             $var1_file = [$mid];
-                            $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                            $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
+                            $content1_file = WaTemplate::getcontent($pdf_template_name);
                             $content_file = str_replace($var_file, $var1_file, $content1_file);
                             $dwa2 = [
                                 'caseid' => $id,
@@ -3131,7 +3133,7 @@ class CaseController extends Controller
                                 'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                                 'event' => 'SEND_ADDI_DOC',
                                 'varjson' => $varjson_file,
-                                'haptik_tmp' => 'pdf_attachment_v3',
+                                'haptik_tmp' => $pdf_template_name,
                             ];
                             $accessW = Whatsapp::sendWamessage($dwa2);
                         }
@@ -3185,7 +3187,8 @@ class CaseController extends Controller
                         $varjson = ['caseid' => $mid];
                         $var_file = ['-caseid-'];
                         $var1_file = [$mid];
-                        $content1_file = WaTemplate::getcontent('pdf_attachment_v3');
+                        $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
+                        $content1_file = WaTemplate::getcontent($pdf_template_name);
                         $content_file = str_replace($var_file, $var1_file, $content1_file);
                         $dwa2 = [
                             'caseid' => $id,
@@ -3193,7 +3196,7 @@ class CaseController extends Controller
                             'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
                             'event' => 'SEND_ADDI_DOC_MED',
                             'varjson' => $varjson,
-                            'haptik_tmp' => 'pdf_attachment_v3',
+                            'haptik_tmp' => $pdf_template_name,
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa2);
                     }
