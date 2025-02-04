@@ -15,6 +15,8 @@ use App\Models\WaTemplate;
 use App\Models\WhatsAppQue;
 use App\Models\InvoledUser;
 use App\Models\InvitationFiles;
+use App\Models\User;
+use App\Models\EmailTrack;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\MedCase;
@@ -170,7 +172,7 @@ class ReinitiateController extends Controller
 
             // attachment
 
-            $invitation = 'Invitation_mediate_M' . sprintf('%06d', $data->caseid) . '.pdf';
+            $invitation = 'Invitaton_med_M' . sprintf('%06d', $data->caseid) . '.pdf';
 
              
 
@@ -216,12 +218,12 @@ class ReinitiateController extends Controller
              $test_invitation = 'Invitaton_med_M274281.pdf';
 
              $test_finalFilePath = 'mediation_documents/mediation/' . $data->caseid . '/' . $test_invitation;
-             $is_email = $this->send_email_batch_260($data->caseid, $test_finalFilePath);  // test path
+            $this->send_email_batch_260($data->caseid, $test_finalFilePath);  // test path
 
-             if($is_email) {
-                    echo "email sent for case id =" .$data->caseid;
-                    echo "<br/>";
-             }
+            //  if($is_email) {
+            //         echo "email sent for case id =" .$data->caseid;
+            //         echo "<br/>";
+            //  }
              // send email function
             
         }
