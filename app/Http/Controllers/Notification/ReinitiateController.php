@@ -214,16 +214,14 @@ class ReinitiateController extends Controller
 
 
              // send email function
-             //$is_email = $this->send_email_batch_260($data->caseid, $finalFilePath);
-             $test_invitation = 'Invitaton_med_M274281.pdf';
+             $is_email = $this->send_email_batch_260($data->caseid, $finalFilePath);
+             
+            //$this->send_email_batch_260($data->caseid, $finalFilePath);  // test path
 
-             $test_finalFilePath = 'mediation_documents/mediation/' . $data->caseid . '/' . $test_invitation;
-            $this->send_email_batch_260($data->caseid, $test_finalFilePath);  // test path
-
-            //  if($is_email) {
-            //         echo "email sent for case id =" .$data->caseid;
-            //         echo "<br/>";
-            //  }
+             if($is_email) {
+                    echo "email sent for case id =" .$data->caseid;
+                    echo "<br/>";
+             }
              // send email function
             
         }
