@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Helpers\Curl;
 use App\Http\Helpers\Whatsapp;
+use App\Http\Helpers\SendGrid;
 use App\Models\WhatsappTrack;
 use App\Http\Traits\UploadTrait;
 use App\Models\System;
@@ -176,6 +177,8 @@ class ReinitiateController extends Controller
             $finalFilePath = 'mediation_documents/mediation/' . $data->caseid . '/' . $invitation;
             $whatsappSend = Storage::disk('s3')->url($finalFilePath);
 
+
+
             $varjson_file = ['caseid' => "M" . sprintf("%06d", $data->caseid)];
             $var_file = ['-caseid-'];
             $var1_file = ["M" . sprintf("%06d", $data->caseid)];
@@ -206,7 +209,72 @@ class ReinitiateController extends Controller
                 }
                
             }
+
+
+             // send email function
+             //$is_email = $this->send_email_batch_260($data->caseid, $finalFilePath);
+             $test_invitation = 'Invitaton_med_M274281.pdf';
+
+             $test_finalFilePath = 'mediation_documents/mediation/' . $data->caseid . '/' . $test_invitation;
+             $is_email = $this->send_email_batch_260($data->caseid, $test_finalFilePath);  // test path
+
+             if($is_email) {
+                    echo "email sent for case id =" .$data->caseid;
+                    echo "<br/>";
+             }
+             // send email function
             
+        }
+    }
+
+
+
+
+    public function send_email_batch_260($id, $finalFilePath){
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+
+
+        $initiating_party = "";
+        $initiating_phone = [];
+        $initiating_email = [];
+        $responding_party = "";
+        $ini_userPlanId = "";
+        $responding_email = [];
+        $responding_phone = [];
+       
+        $d2 = [
+            'event' => 'ACPTARB_ADM_RES',
+            'case_id' => $id,
+        ];
+        // $mid = "M" . sprintf("%06d", $id);
+        // $responding_phone = "";
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($initiating_party == "") {
+                    if ($inv->organization != null) {
+                        $initiating_party = $inv->organization;
+                    } else {
+                        $initiating_party = $inv->name;
+                    }
+                }
+                $ini_userPlanId = $inv->userPlanId;
+                $initiating_phone[] = $inv->userPhone;
+                $initiating_email[] = $inv->userEmail;
+            } else if ($inv->isOnboarded == 0) {
+                $code = $inv->joinCode;
+                if ($inv->name != "") {
+                    if ($responding_party == "") {
+                        $responding_party = $inv->name;
+                    }
+                }
+                $responding_phone[] = $inv->userPhone;
+                if ($inv->userEmail != "") {
+                    SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
+                }
+                
+            }
+           
+
         }
     }
     // whtsapp and email for batch 260
