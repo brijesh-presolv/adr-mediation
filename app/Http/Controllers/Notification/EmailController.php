@@ -202,7 +202,11 @@ class EmailController
         try {
           $response = $sendgrid->send($email);
 
+          echo "<pre>";print_R($response);
+
            $et= self::Etrack($response, $d, $uemail);
+
+           dd($et);
 
            if($et==true){
            	$setprocess=EmailQue::where(['id'=>$d['id'],'is_sent'=>0])->limit(1)->update(['is_processing' => 0,'is_sent'=>1]);
