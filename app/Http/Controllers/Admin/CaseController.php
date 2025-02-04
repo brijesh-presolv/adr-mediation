@@ -3114,7 +3114,7 @@ class CaseController extends Controller
                             'contact' => $inv->userPhone,
                             'content' => ['text' => $content],
                             'event' => 'SEND_ADDI_DOC',
-                            'varjson' => $varjson_file,
+                            'varjson' => $varjson,
                             'haptik_tmp' => $pdf_template_name,
                         ];
                         $accessW = Whatsapp::sendWamessage($dwa1);
