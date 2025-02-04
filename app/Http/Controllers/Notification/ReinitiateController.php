@@ -135,6 +135,8 @@ class ReinitiateController extends Controller
 
 
         foreach($allData as $data) {
+
+
             $varjson = ['initiating' => $data->org, 'caseid' => "M" . sprintf("%06d", $data->caseid)];
             $var = ['-ip-', '-cid-'];
             $var1 = [$data->org, "M" . sprintf("%06d", $data->caseid)];
@@ -252,7 +254,8 @@ class ReinitiateController extends Controller
         //}
        // dd($data);
        
-        $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
+        //$name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
+        $name = 'Invitaton_med_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
         
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
