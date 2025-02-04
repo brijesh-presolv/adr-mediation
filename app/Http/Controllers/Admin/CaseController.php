@@ -3586,7 +3586,8 @@ class CaseController extends Controller
                 // POC fields //
                 $data['poc_name'] = $value[22];
                 $data['poc_email'] = $value[23];
-                $data['poc_contact'] = $value[24];
+                //$data['poc_contact'] = $value[24];
+                $data['poc_contact'] = (int)$value[24];
                 // POC fields //
 
                 // itm language //
