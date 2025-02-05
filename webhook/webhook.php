@@ -56,12 +56,12 @@ $json = '{"version":"1.0","timestamp":"2025-01-27T13:40:04.510243","type":"Webho
       echo "in thhisssss";
       $token = '';
       $curl = new Curl();
-
+      echo "<pre>";print_R($curl);
       $fh = file_get_contents($myFile);
       $json=$fh;
       $data = json_decode($fh, true);
       
-      //dd($data);
+      dd($data);
       
       if($data){
          echo "yes";
