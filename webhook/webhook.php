@@ -1,29 +1,29 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
 
 error_reporting(E_ALL);
 $projectpath = $_SERVER['DOCUMENT_ROOT'];
 //include_once $projectpath . '/mediation/config/constants.php';
 include_once $projectpath . '/config/constants.php';
 //include_once $projectpath . '/mediation/app/Http/helpers/Curl.php';
-//include_once $projectpath . '/app/Http/Helpers/Curl.php';
-include_once 'https://testmed.presolv360.com/app/Http/Helpers/Curl.php';
+include_once $projectpath . '/app/Http/Helpers/Curl.php';
+
 //echo $_SERVER['DOCUMENT_ROOT'];
 //echo $projectpath . '/app/Http/Helpers/Curl.php';
 $json = file_get_contents('php://input');
 
-$data1 = json_decode( file_get_contents( 'php://input' ));
-var_dump($data1);
+// $data1 = json_decode( file_get_contents( 'php://input' ));
+// var_dump($data1);
 
-echo "<BR>-----------</br>";
+// echo "<BR>-----------</br>";
 
  $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
 
  try{
-         file_put_contents($myFile,$json);
+         //file_put_contents($myFile,$json);
          if (file_put_contents($myFile,$json)){ 
            
                   whatsappbotlogAsync($myFile, function () {
