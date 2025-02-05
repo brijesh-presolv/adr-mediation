@@ -135,7 +135,7 @@ class RegisterController extends Controller
                 'organization' => $data['organization'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
-                'role' => 0,
+                'role' => 0, 
                 'emailotp' => rand('100000', '999999'),
                 'smsotp' => rand('100000', '999999'),
                 'isActive' => 1,
