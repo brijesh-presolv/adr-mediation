@@ -37,7 +37,7 @@ $json = file_get_contents('php://input');
          }
 
      } catch(Exception $e){
-      echo "catch";exit;
+      
 
         echo $e->getMessage();
      }
@@ -46,7 +46,7 @@ $json = file_get_contents('php://input');
     // exit();
 
      function whatsappbotlogAsync($myFile, $callback) {
-
+            echo "here";
             // Simulate asynchronous whatsappbotlog execution
             whatsapbotlog($myFile);
 
