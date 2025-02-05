@@ -8,10 +8,16 @@ $projectpath = $_SERVER['DOCUMENT_ROOT'];
 //include_once $projectpath . '/mediation/config/constants.php';
 include_once $projectpath . '/config/constants.php';
 //include_once $projectpath . '/mediation/app/Http/helpers/Curl.php';
-include_once $projectpath . '/app/Http/Helpers/Curl.php';
+//include_once $projectpath . '/app/Http/Helpers/Curl.php';
+include_once 'https://testmed.presolv360.com/app/Http/Helpers/Curl.php';
 //echo $_SERVER['DOCUMENT_ROOT'];
-echo $projectpath . '/app/Http/Helpers/Curl.php';
+//echo $projectpath . '/app/Http/Helpers/Curl.php';
 $json = file_get_contents('php://input');
+
+$data1 = json_decode( file_get_contents( 'php://input' ));
+var_dump($data1);
+
+echo "<BR>-----------</br>";
 
  $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
