@@ -123,6 +123,7 @@ class RegisterController extends Controller
         $InvoledUser = InvoledUser::where(['userEmail' => $data['email']])->first();
 
 
+       
         if ($InvoledUser) {
 
 
@@ -134,7 +135,7 @@ class RegisterController extends Controller
                 'organization' => $data['organization'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
-                'role' => $role,
+                'role' => 0,
                 'emailotp' => rand('100000', '999999'),
                 'smsotp' => rand('100000', '999999'),
                 'isActive' => 1,
@@ -143,7 +144,6 @@ class RegisterController extends Controller
 
             ]);
         } else {
-
             return User::create([
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
