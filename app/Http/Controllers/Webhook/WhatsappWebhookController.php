@@ -553,13 +553,13 @@ class WhatsappWebhookController extends Controller
 
         // $json = json_encode($json);
 
-        try {
-            // file_put_contents($myFile, $json);
-            $success = Storage::put('public/whatsapp_log/testFile' . date('Y-m-d_H:i:s') . '.txt', $json);
-        } catch (Exception $e) {
+        // try {
+        //     // file_put_contents($myFile, $json);
+        //     $success = Storage::put('public/whatsapp_log/testFile' . date('Y-m-d_H:i:s') . '.txt', $json);
+        // } catch (Exception $e) {
 
-            echo $e->getMessage();
-        }
+        //     echo $e->getMessage();
+        // }
         $data = json_decode($json);
 
         exit;
