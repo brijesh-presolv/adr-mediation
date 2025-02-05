@@ -12,12 +12,10 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
 //echo $_SERVER['DOCUMENT_ROOT'];
 //echo $projectpath . '/app/Http/Helpers/Curl.php';
-$json = file_get_contents('php://input');
+//$json = file_get_contents('php://input');
+$json = '{"version":"1.0","timestamp":"2025-01-27T13:40:04.510243","type":"Webhook Test","data":{"customer":{},"message":{}}}';
 
-// $data1 = json_decode( file_get_contents( 'php://input' ));
-// var_dump($data1);
 
-// echo "<BR>-----------</br>";
 
  $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
@@ -26,7 +24,7 @@ $json = file_get_contents('php://input');
 
    echo "in this";
          //file_put_contents($myFile,$json);
-         if (file_put_contents($myFile,"test")){ 
+         if (file_put_contents($myFile,$json)){ 
             echo "this";
            
                   whatsappbotlogAsync($myFile, function () {
@@ -55,16 +53,18 @@ $json = file_get_contents('php://input');
 
    function whatsapbotlog($myFile){
 
-
+      echo "in thhisssss";
       $token = '';
       $curl = new Curl();
 
       $fh = file_get_contents($myFile);
       $json=$fh;
       $data = json_decode($fh, true);
-      dd($data);
+      
+      //dd($data);
       
       if($data){
+         echo "yes";
 
          if ($data['type'] != "") {
 
@@ -105,7 +105,7 @@ $json = file_get_contents('php://input');
    
                       $url = $_SERVER['REQUEST_URI']."api/medwhatsappbotlog";
 
-                      echo $url;exit;
+                      echo $url;
    
                       $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
    
