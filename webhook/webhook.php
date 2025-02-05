@@ -62,7 +62,7 @@ $json = file_get_contents('php://input');
       $fh = file_get_contents($myFile);
       $json=$fh;
       $data = json_decode($fh, true);
-      
+      dd($data);
       
       if($data){
 
