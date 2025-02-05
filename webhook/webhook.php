@@ -23,8 +23,11 @@ $json = file_get_contents('php://input');
 
 
  try{
+
+   echo "in this";
          //file_put_contents($myFile,$json);
          if (file_put_contents($myFile,$json)){ 
+            echo "this";exit;
            
                   whatsappbotlogAsync($myFile, function () {
                   
@@ -34,6 +37,7 @@ $json = file_get_contents('php://input');
          }
 
      } catch(Exception $e){
+      echo "catch";exit;
 
         echo $e->getMessage();
      }
