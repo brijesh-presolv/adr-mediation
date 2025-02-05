@@ -104,6 +104,8 @@ $json = file_get_contents('php://input');
                 
    
                       $url = $_SERVER['REQUEST_URI']."api/medwhatsappbotlog";
+
+                      echo $url;exit;
    
                       $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
    
