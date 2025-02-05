@@ -562,7 +562,7 @@ class WhatsappWebhookController extends Controller
         // }
         $data = json_decode($json);
 
-        exit;
+        //exit;
         // dd($data);
 
         if ($data) {
