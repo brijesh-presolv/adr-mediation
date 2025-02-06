@@ -55,6 +55,8 @@ $json = '{"version":"1.0","timestamp":"2025-02-06T12:04:09.096009","type":"messa
      // $curl = new Curl();
      
       $fh = file_get_contents($myFile);
+      echo "fh";
+      dd($fh);
       $json=$fh;
       $data = json_decode($fh, true);
       
