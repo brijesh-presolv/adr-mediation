@@ -104,10 +104,11 @@ class WhatsappWebhookController extends Controller
         // $myFile = "wapp_status/testFile".date('Y-m-d_H:i:s').".txt";
         $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest';
 
-       
+       echo "here=================".$path;
         $files = scandir($path);
 
-        $filescount=count($files);
+        //$filescount=count($files);
+        $filescount=1;
 
         $maxfiles=1000;
 
@@ -124,20 +125,21 @@ class WhatsappWebhookController extends Controller
                 continue;
             }
 
-            $fullpath=$path.'/'.$files[$i];
+           // $fullpath=$path.'/'.$files[$i];
+            $fullpath=$path.'/log_new.txt';
 
-            echo $fullpath;
+            echo "<br/>full path==>".$fullpath;
 
             $fh = file_get_contents($fullpath);
 
-
+            echo 'fh';print_R($fh);
 
             $json=$fh;
 
             $data = json_decode($fh, true);
 
 
-
+            echo "<br/>here<pre>";print_R($data);
 
         if ($data) {
 
@@ -195,6 +197,8 @@ class WhatsappWebhookController extends Controller
                 
             } else {
 
+                echo "dfd";
+
                 if(!isset($data['data']['message']['id'])){
 
                     continue;
@@ -216,8 +220,9 @@ class WhatsappWebhookController extends Controller
                 //mediation
 
                 if($stage==0){
-
                     $track = WhatsappTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                    echo "msg ib".$data['data']['message']['id'];
+                   // echo "in ths";print_R($track);exit;
 
                     if (count($track) >0 ) {
 
@@ -319,41 +324,41 @@ class WhatsappWebhookController extends Controller
 
 
 
-                    $log = WhatsappLog::create([
-                        'request_id' => $request_id,
-                        'created_time' => $created_time,
-                        'sent_time' => $sent_time,
-                        'delivered_time' => $delivered_time,
-                        'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
-                        'status' => $status,
-                        'response' => '',
-                        'created_at' => date('Y-m-d H:s:i')
-                    ]);
+                    // $log = WhatsappLog::create([
+                    //     'request_id' => $request_id,
+                    //     'created_time' => $created_time,
+                    //     'sent_time' => $sent_time,
+                    //     'delivered_time' => $delivered_time,
+                    //     'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
+                    //     'status' => $status,
+                    //     'response' => '',
+                    //     'created_at' => date('Y-m-d H:s:i')
+                    // ]);
 
-                    if($log){
+                    // if($log){
                     
-                      Storage::disk('s3')->put('public/new_wh_stslog/' . $log->id . '.txt', $json);
+                    //   Storage::disk('s3')->put('public/new_wh_stslog/' . $log->id . '.txt', $json);
                     
 
-                      //WhatsappLogExt::create([
-                        //'log_id'=>$log->id,
-                        //'response'=>$json,
-                      //]);  
-                    }
-                    if ($log) {
-                         $this->deletelogfile($fullpath);
+                    //   //WhatsappLogExt::create([
+                    //     //'log_id'=>$log->id,
+                    //     //'response'=>$json,
+                    //   //]);  
+                    // }
+                    // if ($log) {
+                    //      $this->deletelogfile($fullpath);
 
-                        echo '202';
-                    } else {
+                    //     echo '202';
+                    // } else {
                     
-                    Storage::disk('s3')->put('public/new_wh_stslog/arbitration_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
-                    }
+                    // Storage::disk('s3')->put('public/new_wh_stslog/arbitration_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                    // }
 
                         
                     break;
                     case 'med':
 
-                    Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                    //Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
 
 
 
@@ -374,7 +379,7 @@ class WhatsappWebhookController extends Controller
 
 
                     if ($log) {
-                        $this->deletelogfile($fullpath);
+                        //$this->deletelogfile($fullpath);
 
                         echo '202';
                     }
