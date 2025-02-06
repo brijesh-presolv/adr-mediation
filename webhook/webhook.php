@@ -22,10 +22,8 @@ $json = '{"version":"1.0","timestamp":"2025-01-27T13:40:04.510243","type":"Webho
 
  try{
 
-   echo "in this";
          //file_put_contents($myFile,$json);
          if (file_put_contents($myFile,$json)){ 
-            echo "this";
            
                   whatsappbotlogAsync($myFile, function () {
                   
@@ -44,7 +42,6 @@ $json = '{"version":"1.0","timestamp":"2025-01-27T13:40:04.510243","type":"Webho
     // exit();
 
      function whatsappbotlogAsync($myFile, $callback) {
-            echo "here";
             // Simulate asynchronous whatsappbotlog execution
             whatsapbotlog($myFile);
 
@@ -53,15 +50,15 @@ $json = '{"version":"1.0","timestamp":"2025-01-27T13:40:04.510243","type":"Webho
 
    function whatsapbotlog($myFile){
 
-      echo "in thhisssss";
+     
       $token = '';
-      $curl = new Curl();
-      echo "<pre>";print_R($curl);
+     // $curl = new Curl();
+     
       $fh = file_get_contents($myFile);
       $json=$fh;
       $data = json_decode($fh, true);
       
-      dd($data);
+      //dd($data);
       
       if($data){
          echo "yes";
@@ -105,15 +102,15 @@ $json = '{"version":"1.0","timestamp":"2025-01-27T13:40:04.510243","type":"Webho
    
                       $url = $_SERVER['REQUEST_URI']."api/medwhatsappbotlog";
 
-                      echo $url;
+                     
    
                       $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
    
                       $data = json_encode($formdata);
                       $type = "POST";
                   
-                      $curl = new Curl();
-                      $res = $curl->request($url, $data, $type, $token);
+                      //$curl = new Curl();
+                      $res = Curl::request($url, $data, $type, $auth);
                       
                       $res1 = json_decode($res, true);
    
