@@ -61,7 +61,6 @@ $json = file_get_contents('php://input');
       //dd($data);
       
       if($data){
-         echo "yes";
 
          if ($data['type'] != "") {
 
