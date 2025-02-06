@@ -1,19 +1,19 @@
 <?php
 
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 
 error_reporting(E_ALL);
 $projectpath = $_SERVER['DOCUMENT_ROOT'];
 //include_once $projectpath . '/mediation/config/constants.php';
 include_once $projectpath . '/config/constants.php';
-//include_once $projectpath . '/mediation/app/Http/helpers/Curl.php';
+//include_once $projectpath . '/mediation/app/Http/Helpers/Curl.php';
 include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
 //echo $_SERVER['DOCUMENT_ROOT'];
 //echo $projectpath . '/app/Http/Helpers/Curl.php';
-$json = file_get_contents('php://input');
-//$json = '{"version":"1.0","timestamp":"2025-01-27T13:40:04.510243","type":"Webhook Test","data":{"customer":{},"message":{}}}';
+//$json = file_get_contents('php://input');
+$json = '{"version":"1.0","timestamp":"2025-02-06T12:04:09.096009","type":"message_api_sent","data":{"customer":{"id":"3fa92f7d-c41a-49fc-b0af-b740a4075c00","channel_phone_number":"917567043843","phone_number":"7567043843","country_code":"+91","traits":{"name":"","whatsapp_opted_in":true,"source_id":null,"source_url":null}},"message":{"id":"0e09a0a3-c647-4ebe-a84b-d652a3e6d831","chat_message_type":"PublicApiMessage","channel_failure_reason":null,"message_status":"Sent","received_at_utc":"2025-02-06T12:04:08.988554","delivered_at_utc":null,"seen_at_utc":null,"campaign_id":null,"is_template_message":true,"raw_template":"{\"id\": \"e33f311b-c0e9-499e-9611-234453e66930\", \"created_at_utc\": \"2025-01-20T10:46:00.101\", \"modified_at_utc\": \"2025-01-20T10:46:27.586\", \"created_by_user_id\": \"41278f73-503f-4a89-87c9-6fd0cf909d5a\", \"is_deleted\": false, \"name\": \"l19_additional_doc\", \"language\": \"en\", \"category\": \"UTILITY\", \"sub_category\": null, \"template_category_label\": null, \"header_format\": null, \"header\": null, \"header_handle\": null, \"header_handle_file_url\": null, \"header_handle_file_name\": null, \"header_text\": null, \"body\": \"Dear Party,\\n\\nAn Additional Document has been uploaded in the mediation proceedings having Case ID {{1}}. The same has been transmitted on the registered email ID and can also be viewed by logging into your Presolv360 account.\\n\\nThis is a system generated message. Kindly do not respond here.\\n\\nBest regards,\\nPresolv360 Administrator\", \"body_text\": \"[\\n    \\\"M000000\\\"\\n]\", \"footer\": null, \"buttons\": \"{}\", \"button_text\": null, \"allow_category_change\": true, \"limited_time_offer\": null, \"carousel_cards\": \"[]\", \"message_send_ttl_seconds\": null, \"wa_template_ad_id\": null, \"wa_template_ad_account_id\": null, \"autosubmitted_for\": null, \"display_name\": \"l19_additional_doc\", \"organization_id\": \"f4107514-7ab7-47ae-93dd-b89f2e95a14f\", \"approval_status\": \"APPROVED\", \"wa_template_id\": \"2887779794727695\", \"is_archived\": false, \"channel_type\": \"Whatsapp\", \"is_click_tracking_enabled\": false, \"is_conversion_tracking_enabled\": false, \"allow_delete\": true, \"rejection_reason\": null, \"is_mpm\": false, \"is_carousel\": false, \"add_security_recommendation\": false, \"code_expiration_minutes\": null, \"is_ai_recommended\": true, \"order_details\": null, \"is_whatsapp_pay_template\": false}","channel_error_code":null,"message_content_type":"Template","media_url":null,"message":"[{\"type\": \"body\", \"parameters\": [{\"type\": \"text\", \"text\": \"M201344\"}]}]","meta_data":{"source":"PublicInterakt","source_data":{"callback_data":null},"msg_source":"PublicInterakt"}}}}';
 
 
 
