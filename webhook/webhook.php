@@ -12,8 +12,8 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
 //echo $_SERVER['DOCUMENT_ROOT'];
 //echo $projectpath . '/app/Http/Helpers/Curl.php';
-//$json = file_get_contents('php://input');
-$json = '{"version":"1.0","timestamp":"2025-01-27T13:40:04.510243","type":"Webhook Test","data":{"customer":{},"message":{}}}';
+$json = file_get_contents('php://input');
+//$json = '{"version":"1.0","timestamp":"2025-01-27T13:40:04.510243","type":"Webhook Test","data":{"customer":{},"message":{}}}';
 
 
 
