@@ -820,13 +820,13 @@ class WhatsappChatbotController extends Controller
                     $med_whatsapp_json=$request->med_whatsapp_json;
                     $reply_message_id=$request->reply_message_id;
 
-                    $fh = file_get_contents($json_full_path);
-                    $json=$fh;
+                   // $fh = file_get_contents($json_full_path);
+                    //$json=$fh;
                      //Storage::disk('s3_mediation')->put($med_whatsapp_log_path, $json);
 
                      $medtrackdata = WhatsappTrack::where('request_uuid', $request_message_id)->first();
 
-                     if($medtrackdata->event=="WA_Session_Consent"){
+                     if($medtrackdata->event === "WA_Session_Consent"){
 
                         $bot_type="2";
 
@@ -853,7 +853,7 @@ class WhatsappChatbotController extends Controller
                             $response['message']="Whatsapp chat log created successfully";
                             return response()->json($response, 200);
 
-                     }else{
+                     } else {
 
                         $bot_type="1";
 
