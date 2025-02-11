@@ -17,23 +17,23 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
 
 
- $myFile = "whatsapp_log_latest/log_new.txt";
+ //$myFile = "whatsapp_log_latest/log_new.txt";
  $json = file_get_contents('php://input');
 
- //$myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
+ $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
 
  try{
 
          //file_put_contents($myFile,$json);
-         //if (file_put_contents($myFile,$json)){ 
+         if (file_put_contents($myFile,$json)){ 
            
                   whatsappbotlogAsync($myFile, function () {
                   
                   echo "whatsappbotlog completed asynchronously.";
               });
 
-         //}
+         }
 
      } catch(Exception $e){
       

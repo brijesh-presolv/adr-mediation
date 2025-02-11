@@ -104,7 +104,7 @@ class WhatsappWebhookController extends Controller
         // $myFile = "wapp_status/testFile".date('Y-m-d_H:i:s').".txt";
         $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest';
 
-       echo "here=================".$path;
+       //echo "here=================".$path;
         $files = scandir($path);
 
         $filescount=count($files);
@@ -127,7 +127,7 @@ class WhatsappWebhookController extends Controller
             $fullpath=$path.'/'.$files[$i];
            // $fullpath=$path.'/log_new.txt';
 
-            echo "<br/>full path==>".$fullpath;
+           // echo "<br/>full path==>".$fullpath;
 
             $fh = file_get_contents($fullpath);
 
@@ -136,7 +136,7 @@ class WhatsappWebhookController extends Controller
             $data = json_decode($fh, true);
 
 
-            echo "<br/>here<pre>";print_R($data);
+           // echo "<br/>here<pre>";print_R($data);
 
         if ($data) {
 
@@ -182,7 +182,7 @@ class WhatsappWebhookController extends Controller
 
                 if ($log) {
                 
-                        // $this->deletelogfile($fullpath);
+                         $this->deletelogfile($fullpath);
                     
                     echo '200';
                 } else {
@@ -194,7 +194,7 @@ class WhatsappWebhookController extends Controller
                 
             } else {
 
-                echo "dfd<br/>";
+               // echo "dfd<br/>";
 
                 if(!isset($data['data']['message']['id'])){
 
@@ -218,7 +218,7 @@ class WhatsappWebhookController extends Controller
 
                 if($stage==0){
                     $track = WhatsappTrack::where('request_uuid', $data['data']['message']['id'])->get();
-                    echo "msg ib-->".$data['data']['message']['id'];
+                    //echo "msg ib-->".$data['data']['message']['id'];
                    // echo "in ths";print_R($track);exit;
 
                     if (count($track) >0 ) {
@@ -377,7 +377,7 @@ class WhatsappWebhookController extends Controller
 
 
                     if ($log) {
-                        //$this->deletelogfile($fullpath);
+                        $this->deletelogfile($fullpath);
 
                         echo '202';
                     }
