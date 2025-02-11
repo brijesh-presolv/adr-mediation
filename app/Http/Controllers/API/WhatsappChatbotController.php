@@ -750,7 +750,7 @@ class WhatsappChatbotController extends Controller
         $method = $_SERVER['REQUEST_METHOD'];
 
         $reqdata=array('req_type'=>$method,"req_data"=> json_encode($request->all()), "created_at"=>date('Y-m-d_H:i:s'));
-        echo "<pre>";print_R($reqdata);
+        //echo "<pre>";print_R($reqdata);
         $insertedId = DB::table('whatsappbot_req_log')->insertGetId($reqdata);
 
         if($method == "POST") { 
@@ -800,8 +800,12 @@ class WhatsappChatbotController extends Controller
 
                 $medtrack = WhatsappTrack::where('request_uuid', $request_message_id)->get();
 
+                echo "this";
+
                 if (count($medtrack) > 0 && $request->type=="message_received")
                 {
+
+                    echo "in this"; exit;
 
                     $phone_number= $request->phone_number;
                     $type= $request->type;
