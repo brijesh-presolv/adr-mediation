@@ -2,33 +2,18 @@
 
 namespace App\Http\Controllers\WhatsappBot;
 
-use App\Http\Controllers\Controller;
-use App\Http\Helpers\Common_function;
-use DateTime;
-use App\Http\Traits\UploadTrait;
-//use Firebase\JWT\JWT;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Aws\S3\S3Client;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-//use Illuminate\Support\Facades\URL;
-//use Illuminate\Support\Facades\Config;
-use PDF;
-use Illuminate\Support\Facades\Http;
-//use App\Models\Chat360;
-//use Illuminate\Support\Facades\Cookie;
-//use Maatwebsite\Excel\Facades\Excel;
-//use App\Exports\ExportCodyDataSheet;
-//use App\Models\MedWhatsappChatbot;
-//use App\Models\MedWhatsappTrack;
+
+use App\Http\Helpers\SendGrid;
+use App\Http\Helpers\Whatsapp;
+
+use App\Models\WhatsappLog;
 use App\Models\WhatsappChatbot;
 use App\Models\WhatsappTrack;
-use App\Http\Helpers\Curl;
-//use App\Models\User_stop_whatsapp;
 use App\Models\UserStopWhatsapp;
-//use App\Models\MedUser_stop_whatsapp;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 
 // use App\Http\Traits\UploadTrait;
