@@ -125,8 +125,8 @@ class WhatsappWebhookController extends Controller
                 continue;
             }
 
-           // $fullpath=$path.'/'.$files[$i];
-            $fullpath=$path.'/log_new.txt';
+            $fullpath=$path.'/'.$files[$i];
+           // $fullpath=$path.'/log_new.txt';
 
             echo "<br/>full path==>".$fullpath;
 
@@ -358,7 +358,7 @@ class WhatsappWebhookController extends Controller
                     break;
                     case 'med':
 
-                    //Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                    Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
 
 
 
