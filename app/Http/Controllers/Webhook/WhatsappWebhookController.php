@@ -197,7 +197,7 @@ class WhatsappWebhookController extends Controller
                 
             } else {
 
-                echo "dfd";
+                echo "dfd<br/>";
 
                 if(!isset($data['data']['message']['id'])){
 
@@ -221,7 +221,7 @@ class WhatsappWebhookController extends Controller
 
                 if($stage==0){
                     $track = WhatsappTrack::where('request_uuid', $data['data']['message']['id'])->get();
-                    echo "msg ib".$data['data']['message']['id'];
+                    echo "msg ib-->".$data['data']['message']['id'];
                    // echo "in ths";print_R($track);exit;
 
                     if (count($track) >0 ) {
@@ -358,7 +358,8 @@ class WhatsappWebhookController extends Controller
                     break;
                     case 'med':
 
-                    Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                   // Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                    Storage::disk('s3')->put('mediation_documents/mediation/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
 
 
 
