@@ -800,12 +800,12 @@ class WhatsappChatbotController extends Controller
 
                 $medtrack = WhatsappTrack::where('request_uuid', $request_message_id)->get();
 
-                echo "this";
+                //echo "this";
 
                 if (count($medtrack) > 0 && $request->type=="message_received")
                 {
 
-                    echo "in this"; exit;
+                    //echo "in this"; exit;
 
                     $phone_number= $request->phone_number;
                     $type= $request->type;
