@@ -177,8 +177,10 @@ class WhatsappChatbotController extends Controller
     public function medwhatsappbotlog(Request $request){ 
       
         $method = $_SERVER['REQUEST_METHOD'];
-
+        echo "here";
         $reqdata=array('req_type'=>$method,"req_data"=> json_encode($request->all()), "created_at"=>date('Y-m-d_H:i:s'));
+
+        echo "<pre>";print_R($reqdata);
         $insertedId = DB::table('whatsappbot_req_log')->insertGetId($reqdata);
 
         if($method == "POST") { 
