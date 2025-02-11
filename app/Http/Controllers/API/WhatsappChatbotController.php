@@ -22,6 +22,7 @@ use App\Models\WhatsappBotQue;
 use App\Models\WhatsappBotReport;
 use App\Models\SettlementPayment;
 use App\Models\ManageSession;
+use App\Models\UserStopWhatsapp;
 
 use App\Http\Controllers\API\PaymentController;
 
