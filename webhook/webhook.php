@@ -100,7 +100,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
    
                 
    
-                      $url = $_SERVER['REQUEST_URI']."api/medwhatsappbotlog";
+                      $url = "https://mediation.presolv360.com/api/medwhatsappbotlog";
 
                      
                      echo $url;
