@@ -108,7 +108,6 @@ class WhatsappWebhookController extends Controller
         $files = scandir($path);
 
         $filescount=count($files);
-        //$filescount=1;
 
         $maxfiles=1000;
 

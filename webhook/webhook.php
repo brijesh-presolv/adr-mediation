@@ -57,17 +57,9 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
       $token = '';
      // $curl = new Curl();
      
-      $fh = file_get_contents($myFile);
-      echo "fh";
-     print_R($fh);
-      //$json=$fh;
-      $data = json_decode($fh);
-      //$data = $fh;
-      echo "<br/>";
-      //var_dump($data);
-      echo "<pre>";print_R($data);
-      
-      //dd($data);
+     $fh = file_get_contents($myFile);
+     $json=$fh;
+     $data = json_decode($fh, true);
       
       if($data){
 
