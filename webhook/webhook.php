@@ -17,23 +17,23 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
 
 
- //$myFile = "whatsapp_log_latest/log_new.txt";
+ $myFile = "whatsapp_log_latest/log_new.txt";
  $json = file_get_contents('php://input');
 
- $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
+ //$myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
 
  try{
 
          //file_put_contents($myFile,$json);
-         if (file_put_contents($myFile,$json)){ 
+         //if (file_put_contents($myFile,$json)){ 
            
                   whatsappbotlogAsync($myFile, function () {
                   
                   echo "whatsappbotlog completed asynchronously.";
               });
 
-         }
+         //}
 
      } catch(Exception $e){
       
@@ -103,7 +103,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
                       $url = $_SERVER['REQUEST_URI']."api/medwhatsappbotlog";
 
                      
-   
+                     echo $url;
                       $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
    
                       $data = json_encode($formdata);
