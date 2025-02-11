@@ -182,7 +182,7 @@ class WhatsappWebhookController extends Controller
 
                 if ($log) {
                 
-                         $this->deletelogfile($fullpath);
+                        // $this->deletelogfile($fullpath);
                     
                     echo '200';
                 } else {
@@ -377,7 +377,7 @@ class WhatsappWebhookController extends Controller
 
 
                     if ($log) {
-                        $this->deletelogfile($fullpath);
+                        //$this->deletelogfile($fullpath);
 
                         echo '202';
                     }
