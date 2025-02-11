@@ -37,6 +37,8 @@ class WhatsappBotController extends Controller
     use UploadTrait;
 
     public function medwhatsappbotlog(Request $request){ 
+
+        echo "in this function==>";
       
         $method = $_SERVER['REQUEST_METHOD'];
 
@@ -49,7 +51,8 @@ class WhatsappBotController extends Controller
 
                 $message_id=$request->message_id;
                 $med_whatsapp_json=$request->med_whatsapp_json;
-                $path=Config::get('constants.DOMAIN')."functions";
+                $path=$_SERVER['DOCUMENT_ROOT']."whatsapp_log_latest";
+                echo $path;exit;
                 $med_whatsapp_log_path="public/medwhatsapp_bot/mediation_wha_".$message_id."_". date('Y-m-d_H:i:s').".txt";
                 $json_full_path=$path.'/'.$med_whatsapp_json;
 
