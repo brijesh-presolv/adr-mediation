@@ -55,7 +55,7 @@ echo $projectpath . '/app/Http/Helpers/Curl.php';
 
      
       $token = '';
-      $curl = new Curl();
+      //$curl = new Curl();
      
      $fh = file_get_contents($myFile);
      $json=$fh;
@@ -109,13 +109,42 @@ echo $projectpath . '/app/Http/Helpers/Curl.php';
                       $data = json_encode($formdata);
                       $type = "POST";
                   
-                      $curl = new Curl();
-                      //$res = Curl::request($url, $data, $type, $auth);
-                      $res = $curl->request($url, $data, $type, $auth);
+
+
+
                       
-                      $res1 = json_decode($res, true);
+                     $ch = curl_init();
+                     curl_setopt($ch, CURLOPT_URL, $url);
+                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
+                     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+                     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                     'Content-Type: application/json',
+                     'Authorization: Basic ' . $auth,
+                     ));
+                     curl_setopt($ch, CURLOPT_TIMEOUT, 500);
+                     $response = curl_exec($ch);
+                     //echo '<pre>';print_r($response);die;
+                     curl_close($ch);
+                    // return $response;
+
+
+
+
+
+
+
+
+                     //  $curl = new Curl();
+                     //  //$res = Curl::request($url, $data, $type, $auth);
+                     //  $res = $curl->request($url, $data, $type, $auth);
+                      
+                     //  $res1 = json_decode($res, true);
    
-                     if ($res) {
+                     if ($response) {
                         echo "success";
                      }else{
                         echo "fail";
