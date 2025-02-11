@@ -107,8 +107,8 @@ class WhatsappWebhookController extends Controller
        echo "here=================".$path;
         $files = scandir($path);
 
-        //$filescount=count($files);
-        $filescount=1;
+        $filescount=count($files);
+        //$filescount=1;
 
         $maxfiles=1000;
 
@@ -131,8 +131,6 @@ class WhatsappWebhookController extends Controller
             echo "<br/>full path==>".$fullpath;
 
             $fh = file_get_contents($fullpath);
-
-            echo 'fh';print_R($fh);
 
             $json=$fh;
 
