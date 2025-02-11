@@ -110,7 +110,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
                       $type = "POST";
                   
                       //$curl = new Curl();
-                      $res = Curl::request($url, $data, $type, $token);
+                      $res = Curl::request($url, $data, $type, $auth);
                       
                       $res1 = json_decode($res, true);
    
