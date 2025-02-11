@@ -58,7 +58,7 @@ class Curl
         ));
         curl_setopt($ch, CURLOPT_TIMEOUT, 500);
         $response = curl_exec($ch);
-        //echo '<pre>';print_r($response);die;
+        echo '<pre>curl response==>';print_r($response);
         curl_close($ch);
         return $response;
     }
