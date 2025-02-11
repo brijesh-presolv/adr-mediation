@@ -13,5 +13,5 @@ class WhatsappWebhook extends Model
 
     const UPDATED_AT = null;
 
-    protected $fillable = ['sender', 'sender_profile', 'message_sent', 'total_cost', 'response', 'aread', 'created_at','media'];
+    protected $fillable = ['sender', 'sender_profile', 'message_sent', 'media', 'total_cost', 'response', 'aread', 'created_at'];
 }
