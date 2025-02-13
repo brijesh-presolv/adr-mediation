@@ -261,9 +261,9 @@
                                         data-placeholder="" id="sub_user" name="sub_user[]" id="sub_user" name="sub_user">
                                         <option value="">Select</option>
                                         <?php
-                                            dd($subUserData);
+                                        echo "here<pre>";print_R($subUserData);
                                         ?>
-                                        @if(!empty($subUserData))
+                                        @if(!empty($subUserData && count($subUserData) > 0))
                                             @foreach ($subUserData['sub'] as $subUser)
 
                                             @if(count($subUserData['selected_sub']) > 0)
