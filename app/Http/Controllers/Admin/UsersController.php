@@ -106,12 +106,17 @@ class UsersController extends Controller
         $subUserData['sub'] = User::select('id', 'first_name', 'last_name')->where('role', 0)->where('is_deleted', 0)->get();
 
         DB::enableQueryLog();
-        $subUserData['selected_sub'] = DB::table('user_hierarchy_master')->select('user_hierarchy_master.parent_userid', 'users.id')
-         ->leftjoin('users', 'users.id', '=', 'user_hierarchy_master.parent_userid')
-         ->where(['user_hierarchy_master.parent_userid' => $id, 'users.is_deleted' => 0])
-         //->where('user_hierarchy_master.parent_userid', $id)
-        // ->where('users.is_deleted', '=', 0)
-         ->get();
+        // $subUserData['selected_sub'] = DB::table('user_hierarchy_master')->select('user_hierarchy_master.parent_userid', 'users.id')
+        //  ->leftjoin('users', 'users.id', '=', 'user_hierarchy_master.parent_userid')
+        //  ->where(['user_hierarchy_master.parent_userid' => $id, 'users.is_deleted' => 0])
+        //  //->where('user_hierarchy_master.parent_userid', $id)
+        // // ->where('users.is_deleted', '=', 0)
+        //  ->get();
+
+         $subUserData['selected_sub'] = DB::table('user_hierarchy_master as um')
+        ->join('users', 'users.id', '=', 'um.parent_userid')
+        ->where('um.parent_userid', 900)
+        ->get();
          dd(DB::getQueryLog());
          dd($subUserData);
 
