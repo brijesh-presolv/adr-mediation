@@ -106,12 +106,12 @@ class UsersController extends Controller
         $subUserData['sub'] = User::select('id', 'first_name', 'last_name')->where('role', 0)->where('is_deleted', 0)->get();
 
         $subUserData['selected_sub'] = DB::table('user_hierarchy_master')
-         ->join('users', 'users.id', '=', 'user_hierarchy_master.parent_userid')
+         ->leftjoin('users', 'users.id', '=', 'user_hierarchy_master.parent_userid')
          ->where('user_hierarchy_master.parent_userid', $id)
          ->where('users.is_deleted', '=', 0)
          ->get();
 
-         dd(DB::getQueryLog());
+         //dd(DB::getQueryLog());
          dd($subUserData);
 
       } else {
