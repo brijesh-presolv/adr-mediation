@@ -117,8 +117,11 @@ class UsersController extends Controller
         ->join('users', 'users.id', '=', 'um.parent_userid')
         ->where('um.parent_userid', $id)
         ->get();
+
+        echo "<pre>";print_R($subUserData);
+        exit;
         // dd(DB::getQueryLog());
-         dd($subUserData);
+         //dd($subUserData);
 
       } else {
         $subUserData = "";
