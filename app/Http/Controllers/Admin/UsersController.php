@@ -111,6 +111,7 @@ class UsersController extends Controller
          ->where('users.is_deleted', '=', 0)
          ->get();
 
+         dd(DB::getQueryLog());
          dd($subUserData);
 
       } else {
