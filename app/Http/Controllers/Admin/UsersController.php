@@ -118,8 +118,8 @@ class UsersController extends Controller
         ->where('um.parent_userid', $id)
         ->get();
 
-        echo "<pre>";print_R($subUserData);
-        exit;
+        // echo "<pre>";print_R($subUserData);
+        // exit;
         // dd(DB::getQueryLog());
          //dd($subUserData);
 
