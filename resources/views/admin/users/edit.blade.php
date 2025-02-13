@@ -260,9 +260,7 @@
                                     <select class="select2 form-control select2-multiple" multiple="multiple"
                                         data-placeholder="" id="sub_user" name="sub_user[]" id="sub_user" name="sub_user">
                                         <option value="">Select</option>
-                                        <?php
-                                        echo "here<pre>";print_R($subUserData);
-                                        ?>
+                                        
                                         @if(!empty($subUserData))
                                             @foreach ($subUserData['sub'] as $subUser)
 
