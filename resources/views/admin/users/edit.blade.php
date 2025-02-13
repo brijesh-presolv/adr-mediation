@@ -267,9 +267,9 @@
                                             @if(count($subUserData['selected_sub']) > 0)
                                             <option value="{{$subUser->id}}"
                                             <?php
-                                            if(is_array($subUserData['selected_sub'])){?>
+                                            //if(is_array($subUserData['selected_sub'])){?>
                                             {{ array_search($subUser->id, json_decode($subUserData['selected_sub'][0]->sub_userid)) !== false ? 'selected': '' }}>
-                                            <?php } ?>
+                                            <?php //} ?>
                                             @else
                                             <option value="{{$subUser->id}}">
                                             @endif
