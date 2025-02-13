@@ -110,8 +110,8 @@ class UsersController extends Controller
          ->where('user_hierarchy_master.parent_userid', $id)
          ->where('users.is_deleted', '=', 0)
          ->get();
-
-         //dd(DB::getQueryLog());
+         DB::enableQueryLog();
+         dd(DB::getQueryLog());
          dd($subUserData);
 
       } else {
