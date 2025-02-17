@@ -428,7 +428,7 @@ class ReinitiateController extends Controller
 
 
         
-        dd($allData);
+        //dd($allData);
         foreach($allData as $data) {
 
 
@@ -439,7 +439,7 @@ class ReinitiateController extends Controller
 
             $session_date = "27/02/2025/3:00 PM";
 
-            $dd = InvoledUser::where('id', $data->caseid)->where('userPlanId', $data->caseid)->first();
+            $dd = InvoledUser::where('userPlanId', $data->caseid)->first();
 
             echo "<pre>";print_R($dd);exit;
 
