@@ -428,7 +428,7 @@ class ReinitiateController extends Controller
 
 
         
-
+        dd($allData);
         foreach($allData as $data) {
 
 
