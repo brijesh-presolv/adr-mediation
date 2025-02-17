@@ -441,6 +441,8 @@ class ReinitiateController extends Controller
 
             $dd = InvoledUser::where('id', $data->caseid)->where('userPlanId', $data->caseid)->first();
 
+            echo "<pre>";print_R($dd);
+
             if ($dd->userEmail != null) {
                 $is_email = SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => "M" . sprintf("%06d", $data->caseid), "-date-" => $session_date, "-type-" => "Party"], $dd->name);
             
