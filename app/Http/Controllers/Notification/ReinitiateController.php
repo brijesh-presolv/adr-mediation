@@ -439,12 +439,9 @@ class ReinitiateController extends Controller
 
             $session_date = "27/02/2025/3:00 PM";
 
-            $dd = InvoledUser::where('userPlanId', $data->caseid)->first();
-
-            echo "<pre>";print_R($dd);exit;
-
-            if ($dd->userEmail != null) {
-                $is_email = SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => "M" . sprintf("%06d", $data->caseid), "-date-" => $session_date, "-type-" => "Party"], $dd->name);
+           
+            if ($data->email != null) {
+                $is_email = SendGrid::send($d1, $data->email, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => "M" . sprintf("%06d", $data->caseid), "-date-" => $session_date, "-type-" => "Party"], "Party");
             
                 if($is_email){
 
@@ -460,7 +457,7 @@ class ReinitiateController extends Controller
                 }
             
             }
-            if ($dd->userPhone != null) {
+            if ($data->phone != null) {
 
                 $varjson = ['party' => 'Party', 'deleteDate' => $session_date, "caseid" => "M" . sprintf("%06d", $data->caseid)];
                 $var = ['-party-', '-date-', '-caseid-'];
@@ -469,7 +466,7 @@ class ReinitiateController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $data->caseid,
-                    'contact' =>  $dd->userPhone,
+                    'contact' =>  $data->phone,
                     'content' => ['text' => $content],
                     'event' => 'SESS_CEN',
                     'varjson' => $varjson,
