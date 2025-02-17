@@ -355,3 +355,7 @@ Route::get('change_poc_contact', [App\Http\Controllers\Notification\ReinitiateCo
 
 
 Route::get('reinitiate_260', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate_260']);
+
+
+// delete session notification
+Route::get('delete_session', [App\Http\Controllers\Notification\ReinitiateController::class, 'delete_session']);

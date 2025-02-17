@@ -419,6 +419,78 @@ class ReinitiateController extends Controller
             }
         }
     }
+
+
+
+    // delete session notification
+    public function delete_session(){
+        $allData = DB::table('reini_delete_session')->where('is_email_sent', 0)->where('is_wa_sent', 0)->limit(100)->get();
+
+
+        
+
+        foreach($allData as $data) {
+
+
+            $d1 = [
+                'event' => 'SESS_CEN_PARTY',
+                'case_id' => $data->caseid,
+            ];
+
+            $session_date = "27/02/2025/3:00 PM";
+
+            $dd = InvoledUser::where('id', $d)->where('userPlanId', $data->caseid)->first();
+
+            if ($dd->userEmail != null) {
+                $is_email = SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => "M" . sprintf("%06d", $data->caseid), "-date-" => $session_date, "-type-" => "Party"], $dd->name);
+            
+                if($is_email){
+
+
+
+                    $is_update_email = DB::table('reini_delete_session')->where('caseid', $data->caseid)->update(['is_email_sent' => 1]);
+
+                    if($is_update_email) {
+                        echo "Email sent for case id " .$data->caseid;
+                        echo "<br/>";
+                    }
+
+                }
+            
+            }
+            if ($dd->userPhone != null) {
+
+                $varjson = ['party' => 'Party', 'deleteDate' => $session_date, "caseid" => "M" . sprintf("%06d", $data->caseid)];
+                $var = ['-party-', '-date-', '-caseid-'];
+                $var1 = ["Party", $session_date, "M" . sprintf("%06d", $data->caseid)];
+                $content1 = WaTemplate::getcontent('L24_cancel_mediation_session');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $data->caseid,
+                    'contact' =>  $dd->userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'SESS_CEN',
+                    'varjson' => $varjson,
+                    'haptik_tmp' => 'mediation_cancle_session',
+
+                ];
+
+                $access = Whatsapp::sendWamessage($dwa1);
+
+                if($access) {
+
+                    $is_update_wa = DB::table('reini_delete_session')->where('caseid', $data->caseid)->update(['is_wa_sent' => 1]);
+
+                    if($is_wa_sent) {
+                        echo "Whatsapp sent for case id" .$data->caseid;
+                        echo "<br/>";
+                    }
+                }
+            }
+
+        }
+    }
+    // delete session notification
         
         
 }
