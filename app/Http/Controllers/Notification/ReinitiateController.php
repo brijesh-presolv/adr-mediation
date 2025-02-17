@@ -480,7 +480,7 @@ class ReinitiateController extends Controller
 
                     $is_update_wa = DB::table('reini_delete_session')->where('caseid', $data->caseid)->update(['is_wa_sent' => 1]);
 
-                    if($is_wa_sent) {
+                    if($is_update_wa) {
                         echo "Whatsapp sent for case id" .$data->caseid;
                         echo "<br/>";
                     }
