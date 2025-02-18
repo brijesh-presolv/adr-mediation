@@ -497,6 +497,7 @@ use App\Models\InvoledUser;
                 {
                         "data": "case.ref_id",
                         render: function(data, type, row, meta) {
+                        
                             if (row.case.ref_id == null) {
                                 var button = "";
                                 button = button + `<p style="font-size: 16px;"> -- </p>`;

@@ -839,8 +839,9 @@ class MediationController extends Controller
 
         $check = DB::table('user_hierarchy_master')->where('sub_userid', "LIKE", '%'.Auth::user()->id.   '%')->first();
 			
+        //dd($is_check);
 
-        if($is_check) {
+        if($is_check || $check == null) {
             $is_parent = 1;
             $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.sub_user_id', 'mediation_case.created_at as date', 'mediation_case.withdraw', 'mediation_case.ref_id')
             ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 3])
@@ -1503,6 +1504,7 @@ class MediationController extends Controller
                 $final_arr[$key]['sub_user_id'] = $val->sub_user_id;
                 $final_arr[$key]['date'] = $val->date;
                 $final_arr[$key]['create'] = $val->create;
+                $final_arr[$key]['ref_id'] = $val->ref_id;
                 //array_push($caseidArr[$key]['caseid'], $val->caseid);
                 //array_push($caseidArr[$key]['batch_id'], $val->batch_id);
                 //array_push($caseidArr, $val->sub_user_id);
@@ -1629,6 +1631,7 @@ class MediationController extends Controller
                 "date" => date('d-m-Y', strtotime($value->date)),
                 "casestatus" => Mediation_status_log::select("status", "description", DB::raw("DATE_FORMAT(created_at,'%d-%c-%y %h:%i %p') as created"))->where(['mediation_case_id' => $value->caseid])->orderByDesc('id')->limit(1)->first(),
                 "case" => $value,
+                "ref_id" => $value->ref_id,
                 "party" => InvoledUser::select('user_involved_in_agreement.id', 'user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->caseid])->get(),
                 "share_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->count(),
                 "share_view_count" => Mediation_case_comment::where("type", "=", 0)->where('mediation_case_id', $value->caseid)->where('view', 0)->count(),
@@ -1656,10 +1659,14 @@ class MediationController extends Controller
         $columnSortOrder = $_POST['sSortDir_0']; // asc or desc
         $searchValue = $_POST['sSearch'];
 
-        $check = DB::table('user_hierarchy_master')->where('sub_userid', "LIKE", '%'.Auth::user()->id.   '%')->first();
+        //$check = DB::table('user_hierarchy_master')->where('sub_userid', "LIKE", '%'.Auth::user()->id.   '%')->first();
 
-        $casescount = MedCase::getCaseCountNewReqUser($searchValue, $check->parent_userid);
-        $cases = MedCase::getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $check->parent_userid);
+        //$casescount = MedCase::getCaseCountNewReqUser($searchValue, $check->parent_userid);
+        $casescount = MedCase::getCaseCountNewReqUser($searchValue);
+        //$cases = MedCase::getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $check->parent_userid);
+        $cases = MedCase::getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage);
+
+        //dd($cases);
 
         $arraydata = array();
 
@@ -1671,6 +1678,7 @@ class MediationController extends Controller
                 $final_arr[$key]['userPlanId'] = $val->userPlanId;
                 $final_arr[$key]['sub_user_id'] = $val->sub_user_id;
                 $final_arr[$key]['created_at'] = $val->created_at;
+                $final_arr[$key]['ref_id'] = $val->ref_id;
                 
             }
         }
@@ -1786,6 +1794,7 @@ class MediationController extends Controller
             $arraydata[] = [
                 "key" => $key + 1,
                 "case" => $value,
+                "ref_id" => $value->ref_id,
                 "date" => date('d-m-Y', strtotime($value->created_at)),
                 "sub_user" => $sub_user,
                 "party" => InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.isOnboarded', 'user_involved_in_agreement.isClaimant', "user_involved_in_agreement.userId", "users.organization")->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $value->userPlanId])->get(),

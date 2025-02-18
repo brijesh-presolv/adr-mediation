@@ -715,7 +715,7 @@ class MedCase extends Model
 
 
 
-    static function getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $parent)
+    static function getCaseNewReqUser($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage)
     {
         $sql = MedCase::with('user_involed');
         
