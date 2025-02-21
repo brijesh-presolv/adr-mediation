@@ -2406,6 +2406,17 @@ class CaseController extends Controller
             'event' => 'ACPTARB_ADM_RES',
             'case_id' => $id,
         ];
+
+
+
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $id,
+        ];
+        $zoom_date_temp = "23/02/2025/4:00 PM";
+        $zoom_link_temp = "http://test.com";
+
+
         // $mid = "M" . sprintf("%06d", $id);
         // $responding_phone = "";
         foreach ($involedUser as $inv) {
@@ -2442,6 +2453,14 @@ class CaseController extends Controller
                 //     'event' => 'ACPTARB_ADM'
                 // ];
                 // $access = Whatsapp::sendWamessage($dwa2);
+
+
+                //***************** */ L10 session email go ******************//
+               
+                if ($inv->userEmail != "") {
+                    SendGrid::send($d, $inv->userEmail, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
+                }
+                //***************** */ L10 session email go ******************//
             }
             // continue;
 
@@ -2455,7 +2474,8 @@ class CaseController extends Controller
                 $MedCasedata = MedCase::find($id);
                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $id)->first();
                 
-                $template_name = WaTemplate::getRandomTemplate('ITML4');
+                //$template_name = WaTemplate::getRandomTemplate('ITML4');
+                $template_name = WaTemplate::getRandomTemplate('L4L10');
                 
                 if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $phone){
                     $var = ['-cid-', '-ip-'];
@@ -2487,47 +2507,47 @@ class CaseController extends Controller
                 }
                 
 
-                $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
-                $var_file = ['-caseid-'];
-                $var1_file = ["M" . sprintf("%06d", $id)];
+                // $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
+                // $var_file = ['-caseid-'];
+                // $var1_file = ["M" . sprintf("%06d", $id)];
 
-                $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
+                // $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
 
-                //$content1_file = WaTemplate::getcontent('pdf_attachment_v5');
-                $content1_file = WaTemplate::getcontent($pdf_template_name);
-                $content_file = str_replace($var_file, $var1_file, $content1_file);
-                $dwa2 = [
-                    'caseid' => $ini_userPlanId,
-                    'contact' =>  $phone,
-                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                    'event' => 'ACPTARB_ADM_RES',
-                    'varjson' => $varjson_file,
-                    'haptik_tmp' => $pdf_template_name,
-                ];
+                // //$content1_file = WaTemplate::getcontent('pdf_attachment_v5');
+                // $content1_file = WaTemplate::getcontent($pdf_template_name);
+                // $content_file = str_replace($var_file, $var1_file, $content1_file);
+                // $dwa2 = [
+                //     'caseid' => $ini_userPlanId,
+                //     'contact' =>  $phone,
+                //     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                //     'event' => 'ACPTARB_ADM_RES',
+                //     'varjson' => $varjson_file,
+                //     'haptik_tmp' => $pdf_template_name,
+                // ];
 
-                if($stop_rp == 0) {
-                    $access = Whatsapp::sendWaStopmessage($dwa2);
-                }
+                // if($stop_rp == 0) {
+                //     $access = Whatsapp::sendWaStopmessage($dwa2);
+                // }
 
 
 
                 // Stop whatsapp message //
            
-                $varjson = ['caseid' => "M" . sprintf("%06d", $id)];
-                $var = ['-cid-'];
-                $var1 = ["M" . sprintf("%06d", $id)];
-                $content1 = WaTemplate::getcontent('wa_message_stop_v9_n4');
-                $content = str_replace($var, $var1, $content1);
-                $dwa1 = [
-                    'caseid' => $inv->userPlanId,
-                    'contact' =>  $phone,
-                    'content' => ['text' => $content],
-                    'event' => 'STOP_WHTSAPP',
-                    'varjson' => $varjson,
-                    'haptik_tmp' => 'wa_message_stop_v9_n4',
-                ];
+                // $varjson = ['caseid' => "M" . sprintf("%06d", $id)];
+                // $var = ['-cid-'];
+                // $var1 = ["M" . sprintf("%06d", $id)];
+                // $content1 = WaTemplate::getcontent('wa_message_stop_v9_n4');
+                // $content = str_replace($var, $var1, $content1);
+                // $dwa1 = [
+                //     'caseid' => $inv->userPlanId,
+                //     'contact' =>  $phone,
+                //     'content' => ['text' => $content],
+                //     'event' => 'STOP_WHTSAPP',
+                //     'varjson' => $varjson,
+                //     'haptik_tmp' => 'wa_message_stop_v9_n4',
+                // ];
 
-                $access = Whatsapp::sendWaStopmessage($dwa1);
+                // $access = Whatsapp::sendWaStopmessage($dwa1);
            
             // Stop whatsapp message //
             }
@@ -2541,6 +2561,14 @@ class CaseController extends Controller
                     if($stop_ip == 0) {
                         SendGrid::send($d1, $ini_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
                     }
+
+
+                    //***************** */ L10 session email go ******************//
+                
+                        if ($ini_email != "") {
+                            SendGrid::send($d, $ini_email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
+                        }
+                    //***************** */ L10 session email go ******************//
                 }
 
 
@@ -2566,25 +2594,25 @@ class CaseController extends Controller
                     }
                     
 
-                    $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
-                    $var_file = ['-caseid-'];
-                    $var1_file = ["M" . sprintf("%06d", $id)];
-                    $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
-                    $content1_file = WaTemplate::getcontent( $pdf_template_name);
-                    $content_file = str_replace($var_file, $var1_file, $content1_file);
-                    $dwa2 = [
-                        'caseid' => $ini_userPlanId,
-                        'contact' =>  $ini_phone,
-                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                        'event' => 'ACPTARB_ADM_INI',
-                        'varjson' => $varjson_file,
-                        'haptik_tmp' =>  $pdf_template_name,
+                    // $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
+                    // $var_file = ['-caseid-'];
+                    // $var1_file = ["M" . sprintf("%06d", $id)];
+                    // $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
+                    // $content1_file = WaTemplate::getcontent( $pdf_template_name);
+                    // $content_file = str_replace($var_file, $var1_file, $content1_file);
+                    // $dwa2 = [
+                    //     'caseid' => $ini_userPlanId,
+                    //     'contact' =>  $ini_phone,
+                    //     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                    //     'event' => 'ACPTARB_ADM_INI',
+                    //     'varjson' => $varjson_file,
+                    //     'haptik_tmp' =>  $pdf_template_name,
 
-                    ];
+                    // ];
 
-                    if($stop_ip == 0) {
-                        $access = Whatsapp::sendWamessage($dwa2);
-                    }
+                    // if($stop_ip == 0) {
+                    //     $access = Whatsapp::sendWamessage($dwa2);
+                    // }
                    
                 }
             }
@@ -2964,21 +2992,21 @@ class CaseController extends Controller
        
 
         
-            $varjson = ['caseid' => $mid];
-            $var = ['-cid-'];
-            $var1 = [$mid];
-            $content1 = WaTemplate::getcontent('consent_mediator');
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $id,
-                'contact' =>  $user->mobile_number,
-                'content' => ['text' => $content],
-                'event' => 'MEDI_ADD_ADM',
-                'varjson' => $varjson,
-                'haptik_tmp' => 'l17_consent_mediator',
-            ];
+            // $varjson = ['caseid' => $mid];
+            // $var = ['-cid-'];
+            // $var1 = [$mid];
+            // $content1 = WaTemplate::getcontent('consent_mediator');
+            // $content = str_replace($var, $var1, $content1);
+            // $dwa1 = [
+            //     'caseid' => $id,
+            //     'contact' =>  $user->mobile_number,
+            //     'content' => ['text' => $content],
+            //     'event' => 'MEDI_ADD_ADM',
+            //     'varjson' => $varjson,
+            //     'haptik_tmp' => 'l17_consent_mediator',
+            // ];
 
-            $access = Whatsapp::sendWamessage($dwa1);
+            // $access = Whatsapp::sendWamessage($dwa1);
        
         
         
