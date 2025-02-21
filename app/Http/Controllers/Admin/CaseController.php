@@ -2565,9 +2565,9 @@ class CaseController extends Controller
 
                     //***************** */ L10 session email go ******************//
                 
-                        if ($ini_email != "") {
-                            SendGrid::send($d, $ini_email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
-                        }
+                        // if ($ini_email != "") {
+                        //     SendGrid::send($d, $ini_email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
+                        // }
                     //***************** */ L10 session email go ******************//
                 }
 
