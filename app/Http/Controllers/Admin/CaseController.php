@@ -2468,7 +2468,13 @@ class CaseController extends Controller
         foreach ($responding_phone as $phone) {
 
             if ($phone != "") {
-                $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
+                $varjson = [
+                    "initiating" => $initiating_party, 
+                    'caseid' => "M" . sprintf("%06d", $id),
+                    'caseid' => "M" . sprintf("%06d", $id),
+                    'sessionDteaTime' => $zoom_date_temp,
+                    'zoomid' => $zoom_link_temp
+                ];
                 // $var = ['-cid-', '-ip-'];
                 // $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
                 $MedCasedata = MedCase::find($id);
@@ -2483,8 +2489,8 @@ class CaseController extends Controller
                     $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
                     $l4_mediation_party2_tem="l4_mediation_party2_bot";
                 }else{
-                    $var = ['-ip-','-cid-'];
-                    $var1 = [$initiating_party, "M" . sprintf("%06d", $id)];
+                    $var = ['-ip-','-cid-', '-cid-', '-dt-', '-link-'];
+                    $var1 = [$initiating_party, "M" . sprintf("%06d", $id), "M" . sprintf("%06d", $id), $zoom_date_temp, $zoom_link_temp];
                     //$content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
                     $content1 = WaTemplate::getcontent($template_name);
                     //$l4_mediation_party2_tem="l4_mediation_party2_v3_a0";
