@@ -2483,12 +2483,17 @@ class CaseController extends Controller
                     $caseid = "M" . sprintf("%06d", $id);
 
                     $var = ['-ip-','-cid-','-cid-','-dt-','-link-'];
-                    $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp, $zoom_link_temp];
+                    $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp,$zoom_link_temp];
                     $content1 = WaTemplate::getcontent($template_name);
                     $l4_mediation_party2_tem=$template_name;
                 
 
                 $content = str_replace($var, $var1, $content1);
+
+                echo "<pre>varjson";print_R($varjson);
+                echo "<pre>var";print_R($var);
+                echo "<pre>var1";print_R($var1);
+                exit;
                 $dwa1 = [
                     'caseid' => $inv->userPlanId,
                     'contact' =>  $phone,
