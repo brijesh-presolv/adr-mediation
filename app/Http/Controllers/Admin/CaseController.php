@@ -2483,19 +2483,19 @@ class CaseController extends Controller
                 //$template_name = WaTemplate::getRandomTemplate('ITML4');
                 $template_name = WaTemplate::getRandomTemplate('L4L10');
                 
-                if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $phone){
-                    $var = ['-cid-', '-ip-'];
-                    $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
-                    $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
-                    $l4_mediation_party2_tem="l4_mediation_party2_bot";
-                }else{
-                    $var = ['-ip-','-cid-', '-cid-', '-dt-', '-link-'];
+                // if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $phone){
+                //     $var = ['-cid-', '-ip-'];
+                //     $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
+                //     $content1 = WaTemplate::getcontent('l4_mediation_party2_bot');
+                //     $l4_mediation_party2_tem="l4_mediation_party2_bot";
+                // }else{
+                    $var = ['-ip-','-cid-','-cid-','-dt-','-link-'];
                     $var1 = [$initiating_party, "M" . sprintf("%06d", $id), "M" . sprintf("%06d", $id), $zoom_date_temp, $zoom_link_temp];
                     //$content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
                     $content1 = WaTemplate::getcontent($template_name);
                     //$l4_mediation_party2_tem="l4_mediation_party2_v3_a0";
                     $l4_mediation_party2_tem=$template_name;
-                }
+                //}
 
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
@@ -2508,9 +2508,9 @@ class CaseController extends Controller
                     //'haptik_tmp' => 'l4_mediation_party2',
                 ];
 
-                if($stop_rp == 0) {
+               // if($stop_rp == 0) {
                     $access = Whatsapp::sendWaStopmessage($dwa1);
-                }
+               // }
                 
 
                 // $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
