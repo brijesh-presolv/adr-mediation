@@ -614,7 +614,7 @@ use App\Models\InvoledUser;
                     "data": "case",
                     render: function(data, type, row) {
                         var button = "";
-                        console.log(data);
+                        //console.log(data);
                         // return  date.toLocaleDateString('en-GB');
                         button = button + `<button  class="btn btn-info btn-sm">` +
                             data.mediator + ` </button>`;
@@ -680,6 +680,7 @@ use App\Models\InvoledUser;
                 {
                     "data": "casestatus",
                     render: function(data, type, row) {
+                        //console.log(row);
                         var button = "";
                         button = `<span class="">` + data.description +
                             `<br> @lang('case.At'): ` + data.created + `</span>`;

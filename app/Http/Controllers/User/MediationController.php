@@ -841,19 +841,19 @@ class MediationController extends Controller
 			
         //dd($is_check);
 
-        if($is_check || $check == null) {
+       // if($is_check || $check == null) {
             $is_parent = 1;
             $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.sub_user_id', 'mediation_case.created_at as date', 'mediation_case.withdraw', 'mediation_case.ref_id')
             ->where(['user_involved_in_agreement.userid' => Auth::user()->id, 'mediation_case.confirm_status' => 3])
             ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
             ->get();
-        } else {
-            $is_parent = 0;
-            $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', 'mediation_case.sub_user_id', 'mediation_case.withdraw', 'mediation_case.ref_id')
-            ->where(['user_involved_in_agreement.userId' => $check->parent_userid, 'mediation_case.confirm_status' => 3, 'mediation_case.sub_user_id' => Auth::user()->id])
-            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-            ->get();
-        }
+        // } else {
+        //     $is_parent = 0;
+        //     $new = MedCase::select('user_involved_in_agreement.*', 'mediation_case.id as caseid', 'mediation_case.created_at as date', 'mediation_case.sub_user_id', 'mediation_case.withdraw', 'mediation_case.ref_id')
+        //     ->where(['user_involved_in_agreement.userId' => $check->parent_userid, 'mediation_case.confirm_status' => 3, 'mediation_case.sub_user_id' => Auth::user()->id])
+        //     ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+        //     ->get();
+        // }
 
 
        
@@ -1505,6 +1505,8 @@ class MediationController extends Controller
                 $final_arr[$key]['date'] = $val->date;
                 $final_arr[$key]['create'] = $val->create;
                 $final_arr[$key]['ref_id'] = $val->ref_id;
+                $final_arr[$key]['mediator'] = $val->mediator;
+                $final_arr[$key]['mstatus'] = $val->mstatus;
                 //array_push($caseidArr[$key]['caseid'], $val->caseid);
                 //array_push($caseidArr[$key]['batch_id'], $val->batch_id);
                 //array_push($caseidArr, $val->sub_user_id);

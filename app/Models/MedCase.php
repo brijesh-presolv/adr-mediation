@@ -853,6 +853,8 @@ class MedCase extends Model
             // ->orderby('mediation_case.id', 'DESC')
             // ->get();
 
+        //var_dump($sql->toSql());
+
         $cases = $sql->get();
         return $cases;
     }
