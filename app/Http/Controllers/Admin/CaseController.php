@@ -2493,7 +2493,7 @@ class CaseController extends Controller
                     'caseid' => $inv->userPlanId,
                     'contact' =>  $phone,
                     'content' => ['text' => $content],
-                    'event' => 'ACPTARB_ADM_RES',
+                    'event' => 'ACPTARB_ADM_RES_MERGE',
                     'varjson' => $varjson,
                     'haptik_tmp' => $l4_mediation_party2_tem,
                     //'haptik_tmp' => 'l4_mediation_party2',
