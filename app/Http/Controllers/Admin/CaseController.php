@@ -2484,14 +2484,13 @@ class CaseController extends Controller
                 //     $l4_mediation_party2_tem="l4_mediation_party2_bot";
                 // }else{
                     $varjson = [
-                        "initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id),
-                        'caseid' => "M" . sprintf("%06d", $id),
-                        'sessionDteaTime' => $zoom_date_temp,
-                        'zoomid' => $zoom_link_temp
+                        "initiating" => $initiating_party,'caseid' => "M" . sprintf("%06d", $id),'caseid' => "M" . sprintf("%06d", $id),'sessionDteaTime' => $zoom_date_temp,'zoomid' => $zoom_link_temp
                     ];
 
+                    $caseid = "M" . sprintf("%06d", $id);
+
                     $var = ['-ip-','-cid-','-cid-','-dt-','-link-'];
-                    $var1 = [$initiating_party, "M" . sprintf("%06d", $id), "M" . sprintf("%06d", $id), $zoom_date_temp, $zoom_link_temp];
+                    $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp, $zoom_link_temp];
                     //$content1 = WaTemplate::getcontent('l4_mediation_party2_v3_a0');
                     $content1 = WaTemplate::getcontent($template_name);
                     //$l4_mediation_party2_tem="l4_mediation_party2_v3_a0";
@@ -2503,7 +2502,7 @@ class CaseController extends Controller
                     'caseid' => $inv->userPlanId,
                     'contact' =>  $phone,
                     'content' => ['text' => $content],
-                    'event' => 'ACPTARB_ADM_RES_MERGE',
+                    'event' => 'ACPTARB_ADM_RES',
                     'varjson' => $varjson,
                     'haptik_tmp' => $l4_mediation_party2_tem,
                     //'haptik_tmp' => 'l4_mediation_party2',
