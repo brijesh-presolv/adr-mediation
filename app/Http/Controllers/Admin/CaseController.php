@@ -2477,7 +2477,11 @@ class CaseController extends Controller
                 
                 
                     $varjson = [
-                        "initiating" => $initiating_party,'caseid' => "M" . sprintf("%06d", $id),'caseid' => "M" . sprintf("%06d", $id),'sessionDteaTime' => $zoom_date_temp,'zoomid' => $zoom_link_temp
+                        "initiating" => $initiating_party,
+                        'caseid' => "M" . sprintf("%06d", $id),
+                        'scaseid' => "M" . sprintf("%06d", $id),
+                        'sessionDteaTime' => $zoom_date_temp,
+                        'zoomid' => $zoom_link_temp
                     ];
 
                     $caseid = "M" . sprintf("%06d", $id);
@@ -2490,15 +2494,12 @@ class CaseController extends Controller
 
                 $content = str_replace($var, $var1, $content1);
 
-                echo "<pre>varjson";print_R($varjson);
-                echo "<pre>var";print_R($var);
-                echo "<pre>var1";print_R($var1);
-                exit;
+               
                 $dwa1 = [
                     'caseid' => $inv->userPlanId,
                     'contact' =>  $phone,
                     'content' => ['text' => $content],
-                    'event' => 'ACPTARB_ADM_RES_MERGE',
+                    'event' => 'ACPTARB_ADM_RES',
                     'varjson' => $varjson,
                     'haptik_tmp' => $l4_mediation_party2_tem,
                     //'haptik_tmp' => 'l4_mediation_party2',
