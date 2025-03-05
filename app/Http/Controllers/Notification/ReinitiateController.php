@@ -525,7 +525,9 @@ class ReinitiateController extends Controller
 
 
                    // echo "<pre>";print_R($value);
-                    if($is_track->request_uuid == $value['2']){
+
+                  
+                    if(isset($is_track->request_uuid) && $is_track->request_uuid == $value['2']){
 
                          $data['request_id'] = $value[2];
                          $data['created_time'] = "";
@@ -540,7 +542,10 @@ class ReinitiateController extends Controller
                         
                          $logs = WhatsappLog::create($data);
 
-                         echo $logs;
+                         if($logs){
+                            echo "Log " .$value[2]." added";
+                         }
+
                     }
 
                 }
