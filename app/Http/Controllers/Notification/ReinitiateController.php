@@ -529,26 +529,34 @@ class ReinitiateController extends Controller
                   
                     if(isset($is_track->request_uuid) && $is_track->request_uuid == $value['2']){
 
-                         $data['request_id'] = $value[2];
-                         $data['created_time'] = "";
-                         $data['sent_time'] = "";
-                         $data['delivered_time'] = $value[11];
-                         $data['updated_time'] = "";
-                         $data['status'] = $value[13];
-                         $data['response'] = "";
-                         $data['created_at'] = date('Y-m-d H:s:i');
+                         $data[$k]['request_id'] = $value[2];
+                         $data[$k]['created_time'] = "";
+                         $data[$k]['sent_time'] = "";
+                         $data[$k]['delivered_time'] = $value[11];
+                         $data[$k]['updated_time'] = "";
+                         $data[$k]['status'] = $value[13];
+                         $data[$k]['response'] = "";
+                         $data[$k]['created_at'] = date('Y-m-d H:s:i');
 
                         // date('Y-m-d H:s:i')
                         
-                         $logs = WhatsappLog::create($data);
+                        //  $logs = WhatsappLog::create($data);
 
-                         if($logs){
-                            echo "Log " .$value[2]." added";
-                         }
+                        //  if($logs){
+                        //     echo "Log " .$value[2]." added";
+                        //  }
 
                     }
 
                 }
+
+                $logs = WhatsappLog::insert($data);
+
+                if($logs){
+                    echo count($data)." added.";
+                   //echo "Log " .$value[2]." added";
+                }
+               // $insert_manage = DB::table('manage_files')->insert($insert);
             }
         }
     }
