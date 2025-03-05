@@ -359,3 +359,8 @@ Route::get('reinitiate_260', [App\Http\Controllers\Notification\ReinitiateContro
 
 // delete session notification
 Route::get('delete_session', [App\Http\Controllers\Notification\ReinitiateController::class, 'delete_session']);
+
+
+// whatsapp log intry
+Route::get('insert_wa_log', [App\Http\Controllers\Notification\ReinitiateController::class, 'insert_wa_log']);
+Route::post('create_wa_log', [App\Http\Controllers\Notification\ReinitiateController::class, 'create_wa_log'])->name('create_wa_log');

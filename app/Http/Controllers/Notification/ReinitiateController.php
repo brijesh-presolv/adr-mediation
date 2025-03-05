@@ -20,6 +20,7 @@ use App\Models\EmailTrack;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\MedCase;
+use App\Models\WhatsappLog;
 
 use DB;
 
@@ -490,6 +491,89 @@ class ReinitiateController extends Controller
         }
     }
     // delete session notification
+
+
+
+    public function insert_wa_log(){
+        return view('insertlog');
+    }
+
+    public function create_wa_log(Request $request){
+        //dd($request->all());
+        $selectCsv = $request->file('log_file');
+        if ($selectCsv == null) {
+            $errormsg .= 'Please Select File';
+            // return redirect('/admin/case/new-request')->with(['error' => $errormsg]);
+            return json_encode(['code' => 200, 'response' => 'error', 'msg' => $errormsg]);
+            exit;
+        } else {
+
+            $tmpName = $selectCsv->getPathname();
+
+            $ext = pathinfo($selectCsv->getClientOriginalName(), PATHINFO_EXTENSION);
+            // dd($ext);
+
+
+            if ($ext != 'csv') {
+                $errormsg .= 'Please upload csv file';
+            } else {
+                $csv = $this->csvToArray($tmpName);
+
+                $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
+                foreach ($csv as $k => $value) {
+                    $is_track =  DB::table('whatsapp_tracking')->where("request_uuid","=", $value['2'])->first();
+
+
+                   // echo "<pre>";print_R($value);
+                    if($is_track->request_uuid == $value['2']){
+
+                         $data['request_id'] = $value[2];
+                         $data['created_time'] = "";
+                         $data['sent_time'] = "";
+                         $data['delivered_time'] = $value[11];
+                         $data['updated_time'] = "";
+                         $data['status'] = $value[13];
+                         $data['response'] = "";
+                         $data['created_at'] = date('Y-m-d H:s:i');
+
+                        // date('Y-m-d H:s:i')
+                        
+                         $logs = WhatsappLog::create($data);
+
+                         echo $logs;
+                    }
+
+                }
+            }
+        }
+    }
+
+
+    public function csvToArray($file)
+    {
+        $rows = array();
+        $headers = array();
+        if (file_exists($file) && is_readable($file)) {
+            $handle = fopen($file, 'r');
+            // dd($handle);
+            while (!feof($handle)) {
+                $row = fgetcsv($handle, 10240, ',', '"');
+
+
+                if (empty($headers))
+                    $headers = $row;
+                else if (is_array($row)) {
+                    array_splice($row, count($headers));
+                    //$rows[] = array_combine($headers, $row);
+                    $rows[] = $row;
+                }
+            }
+            fclose($handle);
+        } else {
+            throw new Exception($file . ' doesn`t exist or is not readable.');
+        }
+        return $rows;
+    }
         
         
 }
