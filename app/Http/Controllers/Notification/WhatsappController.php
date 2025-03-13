@@ -418,20 +418,20 @@ class WhatsappController extends Controller
                 $contenturl = parse_url($content['media']['url'])["path"];
                 $file_name = basename($content['media']['url']);
 
-                //$content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 360);
-                $content['media']['url'] = "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf";
+                $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 360);
+                //$content['media']['url'] = "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf";
                 
 
                 
 
-                // if (!file_get_contents($content['media']['url'])) {
-                //     continue;
-                // } else {
+                if (!file_get_contents($content['media']['url'])) {
+                    continue;
+                } else {
                     $path = 'public/tmp/' . $file_name;
                     Storage::disk('local')->put($path, file_get_contents($content['media']['url']));
                     $vararrayheader[] = url("storage/app/" . $path);
                     
-                //}
+                }
             }
             // exit;
 
@@ -462,17 +462,23 @@ class WhatsappController extends Controller
        
         $url = "https://rcmapi.instaalerts.zone/services/rcm/sendMessage";
 
-
-        
-        $finalbody = "";
-        foreach($d['varbody'] as $k => $body) {
-            $finalbody .= '"'.$k.'" : "'.$body.'"';
-        }
-
-        
-        // echo "<pre>";print_R($d);
-        // echo "<pre>";print_R(json_encode($d['varbody']));exit;
+         
         if ($d['varheader'] != "") {
+            $finalMediabody = "";
+            $array = $d['varbody'];
+            $last_key = count($d['varbody']);
+
+            foreach($d['varbody'] as $k => $body) {
+                $last = $k+1;
+                if ($last == $last_key) { // last element
+                    $finalMediabody .= '"'.$k.'" : "'.$body.'"';
+                } else {
+                    $finalMediabody .= '"'.$k.'" : "'.$body.'",';  // not last element
+                }
+            
+            }
+
+           // echo $finalMediabody;exit;
             // $data = [
             //     "message" => [
             //         "channel" => "WABA",
@@ -506,6 +512,8 @@ class WhatsappController extends Controller
             //     ]
             // ];
 
+           // "url" : "'.$d['varheader'][0].'",
+
             $data = '{
                 "message" : {
                     "channel" : "WABA",
@@ -516,29 +524,47 @@ class WhatsappController extends Controller
                             "templateId" : "'.$d['tempname'].'",
                             "media" : {
                                 "type" : "document",
-                                "url" : "'.$d['varheader'][0].'",
+                                "url" : "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf",
                                 "fileName" : "'.$d['file_name'].'"
                             },
-                            "bodyParameterValues" : "'.$d['varbody'].'"
+                            "bodyParameterValues" : {
+                                '.$finalMediabody.'
+                            }
                         },
                         "shorten_url" : true
                     },
                     "recipient" : {
-                        "to" : "91"'.$c.'",
+                        "to" : "91'.$c.'",
                         "recipient_type" : "individual"
                     },
-                    "sender" => {
+                    "sender" : {
                         "from" : "918879651360"
                     },
                     "preferences" : {
                         "webHookDNId" : "1001"
                     }
                 },
-                "metaData" => {
+                "metaData" : {
                     "version" : "v1.0.9"
                 }
             }';
+
+          
         } else {
+
+            $finalbody = "";
+            $array = $d['varbody'];
+            $last_key = count($d['varbody']);
+
+            foreach($d['varbody'] as $k => $body) {
+                $last = $k+1;
+                if ($last == $last_key) { // last element
+                    $finalbody .= '"'.$k.'" : "'.$body.'"';
+                } else {
+                    $finalbody .= '"'.$k.'" : "'.$body.'",';  // not last element
+                }
+            
+            }
 
             // $data = [
             //     "message" => [
@@ -600,7 +626,7 @@ class WhatsappController extends Controller
             }';
         }
 
-    //    / echo $data;exit;
+    
        
         $type = "POST";
         $auth = env('MTALKZ_KEY');
@@ -613,14 +639,12 @@ class WhatsappController extends Controller
             }
         }
 
-        //echo "<pre>";print_R(http_build_query($data));exit;
+       
        // $res = Curl::NewWhatsappMtalkzRequest($url, json_encode($data), $type, $auth);
         $res = Curl::NewWhatsappMtalkzRequest($url, $data, $type, $auth);
-         //dd($res);
-
+        
         $resjson = json_decode($res);
-        //dd($resjon);
-
+        
         if ($resjson) {
 
             if (array_key_exists('text', $d['content'])) {
@@ -663,7 +687,9 @@ class WhatsappController extends Controller
             }
 
             $res_decode = json_decode($res, true);
-            if ($res_decode['result'] == true && isset($res_decode['id'])) {
+            //dd($res_decode);
+            //if ($res_decode['result'] == true && isset($res_decode['id'])) {
+            if ($res_decode['statusCode'] == 200 && isset($res_decode['mid'])) {
                 $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_success' => 1]);
             }
             $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);

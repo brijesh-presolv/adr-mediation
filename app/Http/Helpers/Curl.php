@@ -90,7 +90,7 @@ class Curl
 
 
     // Mtalkz Code 
-    public static function NewWhatsappMtalkzRequest($url, $formdata = '', $type = "", $auth)
+    public static function NewWhatsappMtalkzRequest_original($url, $formdata = '', $type = "", $auth)
 	{
         
         // echo $formdata;
@@ -214,6 +214,74 @@ class Curl
     // curl_close($ch);
 
     // return $response;
+    
+	}
+
+
+
+
+
+
+
+
+    public static function NewWhatsappMtalkzRequest($url, $formdata = '', $type = "", $auth)
+	{
+        /*
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => $type,
+          CURLOPT_POSTFIELDS => $formdata,
+        
+          CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'Authentication: Bearer '.$auth
+          ),
+        ));
+
+       
+
+       
+        
+        $response = curl_exec($curl);
+        
+        curl_close($curl);
+        
+        return $response;
+        */
+
+      //  echo $formdata;exit;
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://rcmapi.instaalerts.zone/services/rcm/sendMessage',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => $formdata,
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'Authentication: Bearer MVq7GiiTpO4H3ew6P6EOzw=='
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
+        return $response;
+    
 	}
     // Mtalkz Code 
 }
