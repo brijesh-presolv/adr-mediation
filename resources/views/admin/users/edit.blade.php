@@ -217,7 +217,7 @@
                                     <br><img width="12%"
                                         src="{{ $user->role == 1 ? Config::get('constants.mediator_path') : Config::get('constants.user_path') }}/{{ $user->id }}/signature/{{ $user->signature_photo }}" />
                                 @endif
-                                <input type="file" class="form-control" id="signature" name="signature">
+                                <input type="file" class="form-control" id="signature" name="signature" accept="application/pdf,image/jpeg,image/jpg,image/png">
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="state">Status</label>
