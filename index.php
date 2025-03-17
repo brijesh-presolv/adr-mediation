@@ -9,8 +9,8 @@ header('X-Frame-Options: DENY');
 // Uses a secure connection (HTTPS) if possible
 ini_set('session.cookie_secure', 1);
 ini_set('session.Set-Cookie', 'HttpOnly;Secure;SameSite=None');
-header('Strict-Transport-Security', 'max-age=36000; includeSubDomains;');
-header("strict-transport-security: max-age=3600");
+header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains;');
+header("strict-transport-security: max-age=31536000");
 header_remove('X-Powered-By');
 header("X-Robots-Tag: noindex", true);
 
