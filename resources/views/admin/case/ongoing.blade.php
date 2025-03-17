@@ -1183,7 +1183,8 @@
 
     <!-- Datatables init -->
     <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+    <script src="{{ url('/') }}/assets/js/sweetalert.min.js"></script>
     <script src="{{ url('/') }}/assets/libs/custombox/custombox.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 

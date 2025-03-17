@@ -135,7 +135,8 @@
 <!-- Datatable plugin js -->
 <script src="{{ url('/') }}/assets/libs/datatables/jquery.dataTables.min.js"></script>
 <script src="{{ url('/') }}/assets/libs/datatables/dataTables.bootstrap4.min.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+<script src="{{ url('/') }}/assets/js/sweetalert.min.js"></script>
 
 <!-- Datatables init -->
 <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>

@@ -404,7 +404,8 @@ use App\Models\InvoledUser;
     <!-- Datatables init -->
     <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
 
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+    <script src="{{ url('/') }}/assets/js/sweetalert.min.js"></script>
 
     <script type="text/javascript">
         function pad(str, max) {
