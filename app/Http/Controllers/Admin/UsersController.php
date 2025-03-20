@@ -10,6 +10,7 @@ use App\Models\AreaOfSpecialization;
 use App\Http\Helpers\SendGrid;
 use Illuminate\Support\Facades\Storage;
 use DB;
+use Session;
 
 class UsersController extends Controller
 {
@@ -138,6 +139,10 @@ class UsersController extends Controller
      */
     public function update(Request $request)
     {
+      //  echo $request->id;exit;
+
+        $user1 = User::findOrFail($request->id);
+
         $user = User::find($request->id);
         $user->first_name = ucfirst($request->first_name);
         $user->last_name = ucfirst($request->last_name);
@@ -156,6 +161,22 @@ class UsersController extends Controller
             $user->isDone = $request->status;
         }
         if ($request->hasFile('signature')) {
+            
+            // check for pdf validation 
+            $msg = "";
+            $content = file_get_contents($request->signature);
+           // echo "<prE>";print_R($_REQUEST);
+            //dd($content);
+            if (preg_match('/\/JS|\/JavaScript|\/OpenAction/', $content)) {
+                $msg = "PDF file contains restricted data , please check and re-upload.";
+                return $msg;
+              // return redirect()->back()->with('msg', $msg);   
+             // return redirect()->route("admin.users.list");
+            }
+            // check for pdf validation 
+
+
+
             if ($user->role == 0) {
                 if ($user->signature_photo != null) {
                     Storage::disk('local')->delete('public/user/' . $request->id . '/signature/' . $user->signature_photo);
