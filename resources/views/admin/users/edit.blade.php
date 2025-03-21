@@ -317,21 +317,14 @@
     
     <script>
         $(document).ready(function() {
-            $('.select2-multiple').select2();
-
-          //  $('input[type="file"').on("change", function(){ beforeSubmit(); });
-
-
-         
+            $('.select2-multiple').select2(); 
         });
 
         function beforeSubmit(elm)
         {
             
             var csrf = document.querySelector('meta[name="csrf-token"]').content;
-            alert(csrf);
-           // $('#filesForBulk')[0]
-           console.log($('#signature')[0].files[0]);
+            
            var formData = new FormData($('#userUpdate')[0]);
            formData.append('token', csrf);
 
@@ -340,24 +333,25 @@
                 $.ajax({
                 url: '{{ route('admin.checkPdfContent') }}',
                 type: "POST",
-               contentType: false,
-              processData: false,
+                dataType: "JSON",
+                contentType: false,
+                processData: false,
                 data: formData,
                 
                 success: function(result) {
-                    console.log(result);
+                    if(result.response == "err"){
+                        $("<span id='fileWar' style='color: red;'>"+result.msg+"</span>").insertAfter(elm);
+                        //elm.after("<span>"+result.msg+"</span>");
+                    } else {
+                        $('#fileWar').remove();   
+                    }
+                    console.log(result.response);
                     
                 }
                 
             });
-                
-          
             
         }
-        
-
-
-        
         
     </script>
     <script>

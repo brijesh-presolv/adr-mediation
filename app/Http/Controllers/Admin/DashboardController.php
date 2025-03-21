@@ -192,15 +192,14 @@ class DashboardController extends Controller
 
     // check vapt file content
     public function checkPdfContent(Request $request){
-       //dd($request->all());
+    //   / dd($request->all());
         $file = $request['signature'];
-        //echo "<pre>";print_R($file);
+        
         $content = file_get_contents($file);
-        if (preg_match('/\/JS|\/JavaScript|\/OpenAction|/', $content)) {
-            $msg = "file contains restricted data , please check and re-upload.<br>";
+        if (preg_match('/\/JS|\/JavaScript|\/OpenAction|XSS/', $content)) {
+            $msg = "File contains restricted data , please check and re-upload.<br>";
             return json_encode(['code' => 200, 'response' => 'err', 'msg' => $msg]);
         } else {
-            echo "here";exit;
             return json_encode(['code' => 200, 'response' => 'success']);
         }
     }
