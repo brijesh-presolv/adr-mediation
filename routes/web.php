@@ -319,6 +319,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     // get all caseid for random case 
     Route::get('getAllCaseIDList', [App\Http\Controllers\Admin\CaseController::class, 'getAllCaseIDList'])->name('admin.getAllCaseIDList');
+
+
+
+    // check vapt file content
+    Route::post('checkPdfContent', [App\Http\Controllers\Admin\DashboardController::class, 'checkPdfContent'])->name('admin.checkPdfContent');
+
+
 });
 
 //notification

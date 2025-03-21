@@ -187,4 +187,12 @@ class DashboardController extends Controller
         $batchName = Batch::get();
         return view('admin.case.bulkuploadnotification', compact("batchName"));
     }
+
+
+
+    // check vapt file content
+    public function checkPdfContent(Request $request){
+        dd($request->all());
+    }
+    // check vapt file content
 }

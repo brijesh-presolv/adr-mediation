@@ -13,7 +13,8 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card-box">
-                <form action="{{ route('admin.users.update') }}" method="post" enctype="multipart/form-data">
+                <!-- <form onSubmit="return beforeSubmit()" method="post" enctype="multipart/form-data" action="{{ route('admin.users.update') }}" > -->
+                <form onSubmit="return beforeSubmit()" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="{{ $user->id }}">
                     <h4 class="header-title"><b>@lang('user.edit_title')</b></h4>
                     @csrf
@@ -317,6 +318,52 @@
         $(document).ready(function() {
             $('.select2-multiple').select2();
         });
+        function beforeSubmit()
+        {
+           
+            alert(2);
+            var pdf_file = document.querySelector('input[type="file"]');
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+           
+            //if (pdf_file) {
+                $.ajax({
+                url: '{{ route('admin.checkPdfContent') }}',
+                dataType: "json",
+                type: "POST",
+                data: {
+                    file: pdf_file,
+                    _token: csrf
+                },
+
+                success: function(result) {
+
+                    
+                }
+                
+            });
+                
+           // }
+            
+            //  var upload = document.querySelector('input[type="file"]');
+            
+
+            //  if(content.match('/\/JS|\/JavaScript|\/OpenAction|')) {
+            //     alert('yes');
+            //  }
+            // alert(upload);'
+            // upload.addEventListener('change', function() {
+            //     alert(333);
+            //     var files = this.files;
+            //     for (var i = 0; i < files.length; i++) {
+            //         var file = files.item(i);
+            //         console.log(file);
+            //         if (!file.name.match(/.txt$/i) || file.type != 'text/plain') {
+            //             console.log(file.name + ' is not a .txt file.');
+            //         }
+            //     }
+            // });
+            
+                    }
     </script>
     <script>
         $.validate();
