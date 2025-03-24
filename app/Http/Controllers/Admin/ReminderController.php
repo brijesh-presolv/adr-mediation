@@ -29,6 +29,8 @@ class ReminderController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
+    /*
     public function index()
     {
         $date = \Carbon\Carbon::today();
@@ -187,4 +189,5 @@ class ReminderController extends Controller
         }
         return true;
     }
+    */
 }
