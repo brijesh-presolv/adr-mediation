@@ -111,7 +111,7 @@
                 <div id="custom-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
                     <div class="modal-dialog">
 
-                        <form action = "{{ route('user.profile.update',['id'=> $profileData->id]) }}" method = "post" enctype="multipart/form-data">
+                        <form action = "{{ route('user.profile.update',['id'=> $profileData->id]) }}" method = "post" enctype="multipart/form-data" id="userProfile" >
                             <input type = "hidden" name = "_token" value = "<?php echo csrf_token(); ?>">
                             <input type = "hidden" name = "profileID" value = "{{ $profileData->id }}">
 
@@ -250,7 +250,7 @@
                                                 @if($profileData->signature_photo != null) 
                                                     <br><img  width="12%" src="{{Config::get('constants.user_path')}}/{{$profileData->id}}/signature/{{$profileData->signature_photo}}" />  
                                                 @endif
-                                                <input type="file" class="form-control" id="signature"  name="signature">
+                                                <input type="file" class="form-control" id="signature"  name="signature" onchange='beforeSubmit(this)'>
                                             </div>
                                         </div>
                                     </div>
@@ -289,6 +289,40 @@
         // console.log(errorMobile);
         $("#editModel").click();
     }
+
+
+    function beforeSubmit(elm)
+        {
+            
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            
+           var formData = new FormData($('#userProfile')[0]);
+           formData.append('token', csrf);
+
+           var pdf_file = $('#signature')[0].files[0];
+            //if (pdf_file) {
+                $.ajax({
+                url: '{{ route('user.checkPdfContent') }}',
+                type: "POST",
+                dataType: "JSON",
+                contentType: false,
+                processData: false,
+                data: formData,
+                
+                success: function(result) {
+                    if(result.response == "err"){
+                        $("<span id='fileWar' style='color: red;'>"+result.msg+"</span>").insertAfter(elm);
+                        //elm.after("<span>"+result.msg+"</span>");
+                    } else {
+                        $('#fileWar').remove();   
+                    }
+                    console.log(result.response);
+                    
+                }
+                
+            });
+            
+        }
 
 </script>
 @endsection

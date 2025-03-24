@@ -114,6 +114,12 @@ Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     
 
     Route::post('case/jsonSub/{confirm_status?}', [App\Http\Controllers\User\MediationController::class, 'jsonSub'])->defaults('confirm_status', 0)->name('user.case.jsonSub');
+
+
+    // check vapt file content
+    Route::post('checkPdfContent', [App\Http\Controllers\Admin\DashboardController::class, 'checkPdfContent'])->name('user.checkPdfContent');
+
+
 });
 
 
@@ -178,6 +184,9 @@ Route::prefix('mediator')->middleware(['auth', 'mediator'])->group(function () {
      // upcoming session
     Route::post('case/get-upcoming-session', [App\Http\Controllers\Mediator\DashboardController::class, 'getUpcomingSession'])->name('mediator.case.getUpcomingSession');
     
+     // check vapt file content
+     Route::post('checkPdfContent', [App\Http\Controllers\Admin\DashboardController::class, 'checkPdfContent'])->name('mediator.checkPdfContent');
+
 
 });
 

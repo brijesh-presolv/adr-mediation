@@ -18,7 +18,7 @@
             <div class="card-header">
                 <h3>Profile Update</h3>
             </div>
-            <form action="{{ route('mediator.profile_save') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('mediator.profile_save') }}" method="post" enctype="multipart/form-data" id="medProfile">
                 @csrf
                 <input type="hidden" name="id" value="{{ Auth::user()->id }}">
                 <div class="card-body">
@@ -112,7 +112,7 @@
                             @if(Auth::user()->signature_photo != null) 
                                 <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{Auth::user()->id}}/signature/{{Auth::user()->signature_photo}}" /> 
                             @endif
-                            <input type="file" class="form-control" id="signature"  name="signature">
+                            <input type="file" class="form-control" id="signature"  name="signature" onchange='beforeSubmit(this)'>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="signature">Upload Profile Pic</label>
@@ -169,5 +169,39 @@ $(document).ready(function () {
 </script>
 <script>
     $.validate();
+
+
+    function beforeSubmit(elm)
+        {
+            
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            
+           var formData = new FormData($('#medProfile')[0]);
+           formData.append('token', csrf);
+
+           var pdf_file = $('#signature')[0].files[0];
+            //if (pdf_file) {
+                $.ajax({
+                url: '{{ route('mediator.checkPdfContent') }}',
+                type: "POST",
+                dataType: "JSON",
+                contentType: false,
+                processData: false,
+                data: formData,
+                
+                success: function(result) {
+                    if(result.response == "err"){
+                        $("<span id='fileWar' style='color: red;'>"+result.msg+"</span>").insertAfter(elm);
+                        //elm.after("<span>"+result.msg+"</span>");
+                    } else {
+                        $('#fileWar').remove();   
+                    }
+                    console.log(result.response);
+                    
+                }
+                
+            });
+            
+        }
 </script>
 @endsection
