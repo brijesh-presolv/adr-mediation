@@ -8,9 +8,10 @@ define('LARAVEL_START', microtime(true));
 header('X-Frame-Options: DENY');
 // Uses a secure connection (HTTPS) if possible
 ini_set('session.cookie_secure', 1);
-//ini_set('session.Set-Cookie', 'HttpOnly; Secure; SameSite=None');
+ini_set('session.Set-Cookie', 'HttpOnly; Secure; SameSite=None');
+ini_set('session.Set-Cookie', 'Secure');
 ini_set( 'session.cookie_httponly', 1); // Prevent JavaScript access
-ini_set('session.cookie_samesite', 'Strict');  // CSRF protection
+ini_set('session.cookie_samesite', 'Lax');  // CSRF protection
 header('Strict-Transport-Security', 'max-age=36000; includeSubDomains;');
 header("strict-transport-security: max-age=3600");
 header_remove('X-Powered-By');
