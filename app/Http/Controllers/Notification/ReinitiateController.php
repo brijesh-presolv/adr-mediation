@@ -637,7 +637,7 @@ class ReinitiateController extends Controller
                 $content1 = WaTemplate::getcontent($template_name);
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
-                    'caseid' => $id,
+                    'caseid' => $data->caseid,
                     'contact' =>  $userPhone,
                     'content' => ['text' => $content],
                     'event' => 'SESS_SCHE',
@@ -653,7 +653,7 @@ class ReinitiateController extends Controller
                     $is_update_wa = DB::table('retrigger_session_axis_b59')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
     
                     if($is_update_wa) {
-                        echo "Email sent for case id " .$data->caseid;
+                        echo "Whatsapp sent for case id " .$data->caseid;
                         echo "<br/>";
                     }
                     
