@@ -638,7 +638,7 @@ class ReinitiateController extends Controller
                 $content = str_replace($var, $var1, $content1);
                 $dwa1 = [
                     'caseid' => $data->caseid,
-                    'contact' =>  $userPhone,
+                    'contact' =>  $data->phone,
                     'content' => ['text' => $content],
                     'event' => 'SESS_SCHE',
                     'varjson' => $varjson,
