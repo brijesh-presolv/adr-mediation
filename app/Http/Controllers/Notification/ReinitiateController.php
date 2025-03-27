@@ -587,8 +587,81 @@ class ReinitiateController extends Controller
         }
         return $rows;
     }
-        
-        
+
+
+
+
+
+
+
+    // whtsapp and email session notification
+    public function reinitiate_session_notification()
+    {
+
+        $allData = DB::table('retrigger_session_axis_b59')->where('is_whtsapp_sent', 0)->where('is_email_sent', 0)->limit(100)->get();
+
+        foreach($allData as $data) {
+
+            $mid = "M" . sprintf("%06d", $data->caseid);
+            $d = [
+                'event' => 'SESS_SCHE',
+                'case_id' => $data->caseid,
+            ];
+
+            $userType = "Party";
+            $date = "28/03/2025/11:00 AM";
+            $invitation = "https://us02web.zoom.us/j/83855382739?pwd=8FZULOISsB44aSGFfwWuFaTlBAb3Kb.1";
+            if ($data->email != "") {
+                $is_email = SendGrid::send($d, $data->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, "-zoom_invitation_link-" => $invitation], $data->name);
+            
+            
+                if($is_email){
+                    $is_update_email = DB::table('retrigger_session_axis_b59')->where('caseid', $data->caseid)->update(['is_email_sent' => 1]);
+
+                    if($is_update_email) {
+                        echo "Email sent for case id " .$data->caseid;
+                        echo "<br/>";
+                    }
+                }
+            
+            
+            }
+            if ($data->phone != "") {
+
+                $varjson = ['caseid' => $mid, 'sessionDteaTime' => $date, 'zoomid' => $invitation];
+                $var = ['-cid-', '-dt-', '-link-'];
+                $var1 = [$mid, $date, $invitation];
+
+                $template_name = WaTemplate::getRandomTemplate('L10');
+
+                $content1 = WaTemplate::getcontent($template_name);
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $id,
+                    'contact' =>  $userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'SESS_SCHE',
+                    'varjson' => $varjson,
+                    'haptik_tmp' => $template_name,
+
+                ];
+                
+
+                $access = Whatsapp::sendWaSmessage($dwa1);
+
+                if($access) {
+                    $is_update_wa = DB::table('retrigger_session_axis_b59')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
+    
+                    if($is_update_wa) {
+                        echo "Email sent for case id " .$data->caseid;
+                        echo "<br/>";
+                    }
+                    
+                }
+            } 
+        }
+    }
+       
 }
 
     
