@@ -598,7 +598,7 @@ class ReinitiateController extends Controller
     public function reinitiate_session_notification()
     {
 
-        $allData = DB::table('retrigger_session_axis_b59')->where('is_whtsapp_sent', 0)->where('is_email_sent', 0)->limit(100)->get();
+        $allData = DB::table('retrigger_session_axis_b63')->where('is_whtsapp_sent', 0)->where('is_email_sent', 0)->limit(100)->get();
 
         foreach($allData as $data) {
 
@@ -610,13 +610,13 @@ class ReinitiateController extends Controller
 
             $userType = "Party";
             $date = "28/03/2025/11:00 AM";
-            $invitation = "https://us02web.zoom.us/j/83855382739?pwd=8FZULOISsB44aSGFfwWuFaTlBAb3Kb.1";
+            $invitation = "https://us02web.zoom.us/j/84715690254?pwd=HRYjbXftCpOHZMolWaPBQDzX4Qsd8n.1";
             if ($data->email != "") {
                 $is_email = SendGrid::send($d, $data->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, "-zoom_invitation_link-" => $invitation], $data->name);
             
             
                 if($is_email){
-                    $is_update_email = DB::table('retrigger_session_axis_b59')->where('caseid', $data->caseid)->update(['is_email_sent' => 1]);
+                    $is_update_email = DB::table('retrigger_session_axis_b63')->where('caseid', $data->caseid)->update(['is_email_sent' => 1]);
 
                     if($is_update_email) {
                         echo "Email sent for case id " .$data->caseid;
@@ -650,7 +650,7 @@ class ReinitiateController extends Controller
                 $access = Whatsapp::sendWaSmessage($dwa1);
 
                 if($access) {
-                    $is_update_wa = DB::table('retrigger_session_axis_b59')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
+                    $is_update_wa = DB::table('retrigger_session_axis_b63')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
     
                     if($is_update_wa) {
                         echo "Whatsapp sent for case id " .$data->caseid;
