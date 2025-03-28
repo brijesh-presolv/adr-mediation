@@ -23,11 +23,12 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
  $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
 
+
  try{
 
          //file_put_contents($myFile,$json);
          if (file_put_contents($myFile,$json)){ 
-           
+                  echo "here";
                   whatsappbotlogAsync($myFile, function () {
                   
                   echo "whatsappbotlog completed asynchronously.";
@@ -45,6 +46,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
     // exit();
 
      function whatsappbotlogAsync($myFile, $callback) {
+      echo "in this";
             // Simulate asynchronous whatsappbotlog execution
             whatsapbotlog($myFile);
 
@@ -61,6 +63,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
      $json=$fh;
      $data = json_decode($fh, true);
       
+     dd($data);
       if($data){
 
          if ($data['type'] != "") {
