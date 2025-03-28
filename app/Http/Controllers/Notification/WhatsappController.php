@@ -366,6 +366,348 @@ class WhatsappController extends Controller
     }
 
 
+
+
+
+    //Mtalkz code //
+    public function sendMtalkz()
+    {
+
+       
+        $limit = 200;
+
+        $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0, 'is_success' => null,'is_hold'=> null])->whereDate('created_at', '>', '2022-07-31')->orderBy('created_at', 'ASC')->limit($limit)->get();
+
+        if (count($whapps) < 1) {
+            exit();
+        }
+        
+
+        $whappspr = [];
+
+        foreach ($whapps as $key => $value) {
+
+            $whappspr[] = $value->id;
+        }
+
+
+
+        $setprocess = WhatsAppQue::whereIn('id', $whappspr)->limit($limit)->update(['is_processing' => 1]);
+
+
+        foreach ($whapps as $key => $value) {
+
+            $content = json_decode($value->content, true);
+
+            $oldcontent = '';
+
+
+            $vararray = [];
+            $vararrayheader = [];
+            $convertarray = json_decode($value->variable, true);
+            foreach ($convertarray as $var) {
+                $vararray[] = $var;
+            }
+
+            if ($value->media == 1) {
+
+                $oldcontent = $content;
+
+
+
+                $contenturl = parse_url($content['media']['url'])["path"];
+                $file_name = basename($content['media']['url']);
+
+                $content['media']['url'] = $this->getPreSignedUrl(urldecode($contenturl), 360);
+                //$content['media']['url'] = "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf";
+                
+
+                
+
+                if (!file_get_contents($content['media']['url'])) {
+                    continue;
+                } else {
+                    $path = 'public/tmp/' . $file_name;
+                    Storage::disk('local')->put($path, file_get_contents($content['media']['url']));
+                    $vararrayheader[] = url("storage/app/" . $path);
+                    
+                }
+            }
+            // exit;
+
+            $d = [
+                'id' => $value->id,
+                'event' => $value->event,
+                'tempname' => $value->haptik_tmp,
+                'varbody' => $vararray,
+                'varheader' => count($vararrayheader) > 0 ? $vararrayheader : "",
+                'file_name' => isset($file_name) ? $file_name : "",
+                'content' => $content,
+                'oldcontent' => $oldcontent,
+                'type' => $value->casetype,
+                'caseid' => $value->caseid,
+            ];
+
+             
+
+
+            self::NewWhatsappMtalkzMessage($d, str_replace('+91', '', $value->contact));
+        }
+    }
+   
+
+
+    public function NewWhatsappMtalkzMessage($d, $c)
+    {
+       
+        $url = "https://rcmapi.instaalerts.zone/services/rcm/sendMessage";
+
+         
+        if ($d['varheader'] != "") {
+            $finalMediabody = "";
+            $array = $d['varbody'];
+            $last_key = count($d['varbody']);
+
+            foreach($d['varbody'] as $k => $body) {
+                $last = $k+1;
+                if ($last == $last_key) { // last element
+                    $finalMediabody .= '"'.$k.'" : "'.$body.'"';
+                } else {
+                    $finalMediabody .= '"'.$k.'" : "'.$body.'",';  // not last element
+                }
+            
+            }
+
+           // echo $finalMediabody;exit;
+            // $data = [
+            //     "message" => [
+            //         "channel" => "WABA",
+            //         "content" => [
+            //             "preview_url" => false,
+            //             "type" => "MEDIA_TEMPLATE",
+            //             "mediaTemplate" => [
+            //                 "templateId" => $d['tempname'],
+            //                 "media" => [
+            //                     "type" => "document",
+            //                     "url" => $d['varheader'][0],
+            //                     "fileName" => $d['file_name']
+            //                 ],
+            //                 "bodyParameterValues" => $d['varbody']
+            //             ],
+            //             "shorten_url" => true
+            //         ],
+            //         "recipient" => [
+            //             "to" => "91".$c,
+            //             "recipient_type" => "individual"
+            //         ],
+            //         "sender" => [
+            //             "from" => "918879651360"
+            //         ],
+            //         "preferences" => [
+            //             "webHookDNId" => "1001"
+            //         ]
+            //     ],
+            //     "metaData" => [
+            //         "version" => "v1.0.9"
+            //     ]
+            // ];
+
+           // "url" : "'.$d['varheader'][0].'",
+
+            $data = '{
+                "message" : {
+                    "channel" : "WABA",
+                    "content" : {
+                        "preview_url" : false,
+                        "type" : "MEDIA_TEMPLATE",
+                        "mediaTemplate" : {
+                            "templateId" : "'.$d['tempname'].'",
+                            "media" : {
+                                "type" : "document",
+                                "url" : "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf",
+                                "fileName" : "'.$d['file_name'].'"
+                            },
+                            "bodyParameterValues" : {
+                                '.$finalMediabody.'
+                            }
+                        },
+                        "shorten_url" : true
+                    },
+                    "recipient" : {
+                        "to" : "91'.$c.'",
+                        "recipient_type" : "individual"
+                    },
+                    "sender" : {
+                        "from" : "918879651360"
+                    },
+                    "preferences" : {
+                        "webHookDNId" : "1001"
+                    }
+                },
+                "metaData" : {
+                    "version" : "v1.0.9"
+                }
+            }';
+
+          
+        } else {
+
+            $finalbody = "";
+            $array = $d['varbody'];
+            $last_key = count($d['varbody']);
+
+            foreach($d['varbody'] as $k => $body) {
+                $last = $k+1;
+                if ($last == $last_key) { // last element
+                    $finalbody .= '"'.$k.'" : "'.$body.'"';
+                } else {
+                    $finalbody .= '"'.$k.'" : "'.$body.'",';  // not last element
+                }
+            
+            }
+
+            // $data = [
+            //     "message" => [
+            //         "channel" => "WABA",
+            //         "content" => [
+            //             "preview_url" => false,
+            //             "type" => "TEMPLATE",
+            //             "template" => [
+            //                 "templateId" => $d['tempname'],
+            //                 "parameterValues" => $d['varbody'],
+            //                 "headerTitle" => "{{1}}"
+            //             ],
+            //             "shorten_url" => true
+            //         ],
+            //         "recipient" => [
+            //             "to" => "91".$c,
+            //             "recipient_type" => "individual"
+            //         ],
+            //         "sender" => [
+            //             "from" => "918879651360"
+            //         ],
+            //         "preferences" => [
+            //             "webHookDNId" => "1001"
+            //         ]
+            //     ],
+            //     "metaData" => [
+            //         "version" => "v1.0.9"
+            //     ]
+            // ];
+            $data = '{
+                "message" : {
+                    "channel" : "WABA",
+                    "content" : {
+                        "preview_url" : false,
+                        "type" : "TEMPLATE",
+                        "template" : {
+                            "templateId" : "'.$d['tempname'].'",
+                            "parameterValues" : {
+                                '.$finalbody.'
+                            },
+                            "headerTitle" : "{{1}}"
+                        },
+                        "shorten_url" : true
+                    },
+                    "recipient" : {
+                        "to" : "91'.$c.'",
+                        "recipient_type" : "individual"
+                    },
+                    "sender" : {
+                        "from" : "918879651360"
+                    },
+                    "preferences" : {
+                        "webHookDNId" : "1001"
+                    }
+                },
+                "metaData" : {
+                    "version" : "v1.0.9"
+                }
+            }';
+        }
+
+    
+       
+        $type = "POST";
+        $auth = env('MTALKZ_KEY');
+
+        $findtrack = WhatsappTrack::where(['que_id' => $d['id']])->orderBy('created_at', 'DESC')->limit(1)->first();
+
+        if (isset($findtrack)) {
+            if ($findtrack->request_uuid != "") {
+                return true;
+            }
+        }
+
+       
+       // $res = Curl::NewWhatsappMtalkzRequest($url, json_encode($data), $type, $auth);
+        $res = Curl::NewWhatsappMtalkzRequest($url, $data, $type, $auth);
+        
+        $resjson = json_decode($res);
+        
+        if ($resjson) {
+
+            if (array_key_exists('text', $d['content'])) {
+
+                $data1 = [
+
+                    'caseid' => $d['caseid'],
+                    'que_id' => $d['id'],
+                    'contact' => $c,
+                    'content' => implode(" ", str_replace(['‘', '’'], ['::', ';;'], $d['content'])),
+                    'casetype' => $d['type'],
+                    'event' => $d['event'],
+                    'request_uuid' => isset($resjson->id) ? $resjson->id : "",
+                    'credits_charged' => '0',
+                    'full_resp' => $res,
+                    'created_at' => date('Y-m-d H:i:s')
+
+
+                ];
+
+                WhatsappTrack::insert($data1);
+            } else {
+
+                $data2 = [
+
+                    'caseid' => $d['caseid'],
+                    'que_id' => $d['id'],
+                    'contact' => $c,
+                    'content' => "",
+                    'media' => $d['oldcontent']['media']['url'],
+                    'casetype' => $d['type'],
+                    'event' => $d['event'],
+                    'request_uuid' => isset($resjson->id) ? $resjson->id : "",
+                    'credits_charged' => '0',
+                    'full_resp' => $res,
+                    'created_at' => date('Y-m-d H:i:s')
+                ];
+
+                WhatsappTrack::insert($data2);
+            }
+
+            $res_decode = json_decode($res, true);
+            //dd($res_decode);
+            //if ($res_decode['result'] == true && isset($res_decode['id'])) {
+            if ($res_decode['statusCode'] == 200 && isset($res_decode['mid'])) {
+                $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_success' => 1]);
+            }
+            $que = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 1, 'id' => $d['id']])->update(['is_processing' => 0, 'is_sent' => 1]);
+
+            return "success";
+        } else {
+
+            return "Fail";
+        }
+    }
+
+    //Mtalkz code //
+
+
+
+
+
+
     public function sendwhapp($d, $c)
     {
 

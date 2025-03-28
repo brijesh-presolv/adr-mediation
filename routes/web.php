@@ -329,6 +329,10 @@ Route::get('notification/whatsapp/send', [App\Http\Controllers\Notification\What
 Route::get('temp/que_changes', [App\Http\Controllers\Notification\WhatsappController::class, 'que_changes']);
 
 
+// Mtalkz code 
+Route::get('notification/whatsapp/sendMtalkz', [App\Http\Controllers\Notification\WhatsappController::class, 'sendMtalkz']);
+// Mtalkz code 
+
 
 // Session Reminder
 Route::get('reminder/session_reminder', [App\Http\Controllers\Admin\ReminderController::class, 'index'])->name('sessionReminder');
