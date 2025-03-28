@@ -65,7 +65,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
      $json=$fh;
      $data = json_decode($fh, true);
       
-     dd($data);
+     echo "<pre>";print_R($data);exit;
       if($data){
 
          if ($data['type'] != "") {
