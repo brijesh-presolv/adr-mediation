@@ -2456,9 +2456,10 @@ class CaseController extends Controller
 
 
                 //***************** */ L10 session email go ******************//
-               
-                if ($inv->userEmail != "") {
-                    SendGrid::send($d, $inv->userEmail, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
+                if ($bulk_flag == 1) {
+                    if ($inv->userEmail != "") {
+                        SendGrid::send($d, $inv->userEmail, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
+                    }
                 }
                 //***************** */ L10 session email go ******************//
             }
@@ -2473,7 +2474,11 @@ class CaseController extends Controller
                 $MedCasedata = MedCase::find($id);
                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $id)->first();
                 
-                $template_name = WaTemplate::getRandomTemplate('L4L10');
+                if ($bulk_flag == 1) {
+                    $template_name = WaTemplate::getRandomTemplate('L4L10');
+                } else {
+                    $template_name = WaTemplate::getRandomTemplate('ITML4');
+                }
 
                 if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $phone){
                     $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
@@ -2491,8 +2496,14 @@ class CaseController extends Controller
                     ];
 
                     $caseid = "M" . sprintf("%06d", $id);
-                    $var = ['-ip-','-cid-','-cid-','-dt-','-link-'];
-                    $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp,$zoom_link_temp];
+                    if ($bulk_flag == 1) {
+                        $var = ['-ip-','-cid-','-cid-','-dt-','-link-'];
+                        $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp,$zoom_link_temp];
+                    } else {
+                        $var = ['-ip-','-cid-'];
+                        $var1 = [$initiating_party, "M" . sprintf("%06d", $id)];
+                    }
+                   
                     $content1 = WaTemplate::getcontent($template_name);
                     $l4_mediation_party2_tem=$template_name;
                 } 
@@ -2511,9 +2522,9 @@ class CaseController extends Controller
                     //'haptik_tmp' => 'l4_mediation_party2',
                 ];
 
-               // if($stop_rp == 0) {
+                if($stop_rp == 0) {
                     $access = Whatsapp::sendWaStopmessage($dwa1);
-               // }
+                }
                 
 
                 // $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
