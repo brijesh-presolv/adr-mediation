@@ -2135,9 +2135,9 @@ class CaseController extends Controller
             $content = str_replace($var, $var1, $content1);
             $dwa1 = [
                 'caseid' => $id,
-                'contact' =>  $pone->userPhone,
+                //'contact' =>  $pone->userPhone,
+                'contact' =>  "+917567043843",
                 'content' => ['text' => $content],
-                // 'casetype' => 2,
                 'event' => 'ACPTARB_ADM_RES',
                 'varjson' => $varjson,
                 'haptik_tmp' => 'new_latest',
