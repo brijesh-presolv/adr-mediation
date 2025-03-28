@@ -1,7 +1,7 @@
 <?php
 
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 
 error_reporting(E_ALL);
 $projectpath = $_SERVER['DOCUMENT_ROOT'];
@@ -19,6 +19,8 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
  //$myFile = "whatsapp_log_latest/log_new.txt";
  $json = file_get_contents('php://input');
+
+ $json = '{"channel":"WABA","appDetails":{"type":"LIVE"},"recipient":{},"events":{"eventType":"User initiated","timestamp":"1743146005","date":"2025-March-28"},"eventContent":{"message":{"from":"917567043843","id":"wamid.HBgMOTE3NTY3MDQzODQzFQIAEhggMUI4Q0U3MTFDOEI0NDZEMTJBMzZDRTM5RTI1NDI5NkMA","text":{"body":"Dhwani is here"},"to":"918879651360","contentType":"text","messageType":"text","profileName":"Dhwani"}}}';
 
  $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
