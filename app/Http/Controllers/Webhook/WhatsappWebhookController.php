@@ -144,24 +144,25 @@ class WhatsappWebhookController extends Controller
             echo $files[$i];
 
 
-            if ($data['type'] == 'message_received') {
+            if ($data['events']['eventType'] == 'User initiated') {
                 
                 // echo "203";
                 // dd($data);
 
                 // $message='';
 
-                $sender = $data['data']['customer']['channel_phone_number'];
-                $profile =  $data['data']['customer']['traits']['name'];
+                $sender = substr($data['data']['eventContent']['from'], 2, -1);
+                $profile =  $data['eventContent']['profileName'];
                 // if ($data['data']['message']['message_content_type'] == 'Text') {
                 //     $message = $data['data']['message']['message'];
                 // } elseif ($data['data']['message']['message_content_type'] == 'Media') {
                 //     $message = "";
                 // }
 
-                $media=$data['data']['message']['media_url'];
-                $message = $data['data']['message']['message'];
-                $message_content_type = $data['data']['message']['message_content_type'];
+                //$media=$data['data']['message']['media_url'];
+                $media="";
+                $message = $data['data']['eventContent']['message']['text']['body'];
+                $message_content_type = $data['eventContent']['contentType'];
 
 
                 $total_cost = 0;
@@ -196,19 +197,22 @@ class WhatsappWebhookController extends Controller
 
                // echo "dfd<br/>";
 
-                if(!isset($data['data']['message']['id'])){
+                if(!isset($data['data']['events']['mid'])){
 
                     continue;
                 }
 
 
 
-                $request_id = $data['data']['message']['id'];
-                $created_time = $data['timestamp'];
-                $sent_time = $data['data']['message']['received_at_utc'];
-                $delivered_time = $data['data']['message']['delivered_at_utc'];
-                $updated_time = $data['data']['message']['seen_at_utc'];
-                $status = $data['data']['message']['message_status'];
+                $request_id = $data['data']['events']['mid'];
+                $created_time = $data['events']['timestamp'];
+                // $sent_time = $data['data']['message']['received_at_utc'];
+                // $delivered_time = $data['data']['message']['delivered_at_utc'];
+                // $updated_time = $data['data']['message']['seen_at_utc'];
+                $sent_time = "";
+                $delivered_time = "";
+                $updated_time = "";
+                $status = $data['data']['notificationAttributes']['status'];
                 $json = addcslashes($json, "'");
 
                 $stage=0;
@@ -217,7 +221,7 @@ class WhatsappWebhookController extends Controller
                 //mediation
 
                 if($stage==0){
-                    $track = WhatsappTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                    $track = WhatsappTrack::where('request_uuid', $data['data']['events']['mid'])->get();
                     //echo "msg ib-->".$data['data']['message']['id'];
                    // echo "in ths";print_R($track);exit;
 
