@@ -2534,29 +2534,30 @@ class CaseController extends Controller
                 }
                 
 
-                // $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
-                // $var_file = ['-caseid-'];
-                // $var1_file = ["M" . sprintf("%06d", $id)];
+                if ($bulk_flag == 0) {
+                    $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
+                    $var_file = ['-caseid-'];
+                    $var1_file = ["M" . sprintf("%06d", $id)];
 
-                // $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
+                    $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
 
-                // //$content1_file = WaTemplate::getcontent('pdf_attachment_v5');
-                // $content1_file = WaTemplate::getcontent($pdf_template_name);
-                // $content_file = str_replace($var_file, $var1_file, $content1_file);
-                // $dwa2 = [
-                //     'caseid' => $ini_userPlanId,
-                //     'contact' =>  $phone,
-                //     'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                //     'event' => 'ACPTARB_ADM_RES',
-                //     'varjson' => $varjson_file,
-                //     'haptik_tmp' => $pdf_template_name,
-                // ];
+                    //$content1_file = WaTemplate::getcontent('pdf_attachment_v5');
+                    $content1_file = WaTemplate::getcontent($pdf_template_name);
+                    $content_file = str_replace($var_file, $var1_file, $content1_file);
+                    $dwa2 = [
+                        'caseid' => $ini_userPlanId,
+                        'contact' =>  $phone,
+                        'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                        'event' => 'ACPTARB_ADM_RES',
+                        'varjson' => $varjson_file,
+                        'haptik_tmp' => $pdf_template_name,
+                    ];
 
-                // if($stop_rp == 0) {
-                //     $access = Whatsapp::sendWaStopmessage($dwa2);
-                // }
+                    if($stop_rp == 0) {
+                        $access = Whatsapp::sendWaStopmessage($dwa2);
+                    }
 
-
+                }
 
                 // Stop whatsapp message //
            
