@@ -2474,11 +2474,16 @@ class CaseController extends Controller
                 $MedCasedata = MedCase::find($id);
                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $id)->first();
                 
+                
                 if ($bulk_flag == 1) {
+                
                     $template_name = WaTemplate::getRandomTemplate('L4L10');
                 } else {
+                
                     $template_name = WaTemplate::getRandomTemplate('ITML4');
                 }
+
+                
 
                 if($MedCasedata->PayLink !="" and $MedCasedata->restructure_offer_1 !="" and $responding_partyforbot->userPhone == $phone){
                     $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
@@ -2509,6 +2514,7 @@ class CaseController extends Controller
                 } 
                 
 
+                
                 $content = str_replace($var, $var1, $content1);
 
                
