@@ -2505,7 +2505,7 @@ class CaseController extends Controller
                         $var = ['-ip-','-cid-','-cid-','-dt-','-link-'];
                         $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp,$zoom_link_temp];
                     } else {
-                        $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
+                        $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
                         $var = ['-ip-','-cid-'];
                         $var1 = [$initiating_party, "M" . sprintf("%06d", $id)];
                     }
