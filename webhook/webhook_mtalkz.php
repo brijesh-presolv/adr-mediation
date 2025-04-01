@@ -83,22 +83,23 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
                  // echo $datetime;
                   //exit;
 
-                  $message_id=$data['data']['events']['mid'];
+                  $message_id=$data['events']['mid'];
                   $type= $data['notificationAttributes']['status'];
-                  $phone_number= substr($data['data']['recipient']['to'], 2, -1);
-                  $country_code=substr($data['data']['recipient']['to'], 0, 2);
-                  $chat_message_type= $data['data']['convDetails']['conversationType'];
+                  $phone_number= substr($data['recipient']['to'], 2, -1);
+                  $country_code=substr($data['recipient']['to'], 0, 2);
+                  $chat_message_type= $data['convDetails']['conversationType'];
                   //$replymsg= $data['data']['message']['message'];
                   $msgtimestamp= $data['events']['timestamp'];
-                  $received_at_utc= date('Y-m-d', $data['events']['date']);
+                  //$received_at_utc= date('Y-m-d', $data['events']['date']);
+                  $received_at_utc= "";
                   $message_status= $data['notificationAttributes']['status'];
-                  $message_content_type=$data['data']['templateCategory'];
+                  $message_content_type=$data['templateCategory'];
                   $med_whatsapp_json=$myFile;
 
                   if($data['notificationAttributes']['status']=="delivered"){
 
-                      $reply_from=substr($data['data']['sender']['from'], 2, -1);
-                      $reply_message_id=$data['data']['events']['mid'];
+                      $reply_from=substr($data['sender']['from'], 2, -1);
+                      $reply_message_id=$data['events']['mid'];
 
                       $formdata = [];
                       $formdata['message_id'] = $message_id;
