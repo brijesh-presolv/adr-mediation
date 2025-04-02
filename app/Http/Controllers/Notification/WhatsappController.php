@@ -643,13 +643,13 @@ class WhatsappController extends Controller
        // $res = Curl::NewWhatsappMtalkzRequest($url, json_encode($data), $type, $auth);
         $res = Curl::NewWhatsappMtalkzRequest($url, $data, $type, $auth);
 
-        echo "<pre>";print_R($res);
+       // echo "<pre>";print_R($res);
         
         $resjson = json_decode($res);
 
 
-        echo "<pre>";print_R($resjson);
-        exit;
+        // echo "<pre>";print_R($resjson);
+        // exit;
         
         if ($resjson) {
 
@@ -663,7 +663,7 @@ class WhatsappController extends Controller
                     'content' => implode(" ", str_replace(['‘', '’'], ['::', ';;'], $d['content'])),
                     'casetype' => $d['type'],
                     'event' => $d['event'],
-                    'request_uuid' => isset($resjson->id) ? $resjson->id : "",
+                    'request_uuid' => isset($resjson->mid) ? $resjson->mid : "",
                     'credits_charged' => '0',
                     'full_resp' => $res,
                     'created_at' => date('Y-m-d H:i:s')
@@ -683,7 +683,7 @@ class WhatsappController extends Controller
                     'media' => $d['oldcontent']['media']['url'],
                     'casetype' => $d['type'],
                     'event' => $d['event'],
-                    'request_uuid' => isset($resjson->id) ? $resjson->id : "",
+                    'request_uuid' => isset($resjson->mid) ? $resjson->mid : "",
                     'credits_charged' => '0',
                     'full_resp' => $res,
                     'created_at' => date('Y-m-d H:i:s')
