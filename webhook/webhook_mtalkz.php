@@ -89,6 +89,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
                   $country_code=substr($data['recipient']['to'], 0, 2);
                   $chat_message_type= $data['convDetails']['conversationType'];
                   //$replymsg= $data['data']['message']['message'];
+                  $replymsg= "";
                   $msgtimestamp= $data['events']['timestamp'];
                   //$received_at_utc= date('Y-m-d', $data['events']['date']);
                   $received_at_utc= "";
@@ -108,7 +109,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
                       $formdata['country_code'] = $country_code;
                       $formdata['chat_message_type'] = $chat_message_type;
                       $formdata['message_content_type'] = $message_content_type;
-                     // $formdata['replymsg'] = $replymsg;
+                      $formdata['replymsg'] = $replymsg;
                       $formdata['msgtimestamp'] = $msgtimestamp;
                       $formdata['received_at_utc'] = $received_at_utc;
                       $formdata['message_status'] = $message_status;
@@ -118,7 +119,8 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
    
                 
    
-                      $url = "https://mediation.presolv360.com/api/medwhatsappbotlog";
+                      //$url = "https://mediation.presolv360.com/api/medwhatsappbotlog";
+                      $url = "https://mediation.presolv360.com/api/medwhatsappbotlogmtalkz";
 
                      
                      

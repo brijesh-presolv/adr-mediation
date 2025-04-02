@@ -642,8 +642,14 @@ class WhatsappController extends Controller
        
        // $res = Curl::NewWhatsappMtalkzRequest($url, json_encode($data), $type, $auth);
         $res = Curl::NewWhatsappMtalkzRequest($url, $data, $type, $auth);
+
+        echo "<pre>";print_R($res);
         
         $resjson = json_decode($res);
+
+
+        echo "<pre>";print_R($resjson);
+        exit;
         
         if ($resjson) {
 

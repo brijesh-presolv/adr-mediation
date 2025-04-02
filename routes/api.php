@@ -46,7 +46,7 @@ Route::get('whresmovetos3', [App\Http\Controllers\Webhook\WhatsappWebhookControl
 Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\WhatsappWebhookController::class, 'WhatsappLog']);
 
 // Whatsapp chat log API
-Route::post('medwhatsappbotlog', [App\Http\Controllers\API\WhatsappChatbotController::class, 'medwhatsappbotlog']);
+Route::post('medwhatsappbotlogmtalkz', [App\Http\Controllers\API\WhatsappChatbotController::class, 'medwhatsappbotlogmtalkz']);
 
 
 
