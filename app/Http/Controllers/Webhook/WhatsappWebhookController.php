@@ -124,8 +124,8 @@ class WhatsappWebhookController extends Controller
                 continue;
             }
 
-           // $fullpath=$path.'/'.$files[$i];
-            $fullpath=$path.'/log2025-03-28_122.txt';
+            $fullpath=$path.'/'.$files[$i];
+           // $fullpath=$path.'/log2025-03-28_122.txt';
 
            // echo "<br/>full path==>".$fullpath;
 
