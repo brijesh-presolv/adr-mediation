@@ -231,7 +231,7 @@ class WhatsappWebhookController extends Controller
                     break;
                     case 'med':
 
-                   // Storage::disk('s3')->put('mediation_documents/mediation/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                    Storage::disk('s3')->put('mediation_documents/mediation/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
 
 
                     $log = WhatsappLog::create([
