@@ -104,7 +104,7 @@ class WhatsappWebhookController extends Controller
         // $myFile = "wapp_status/testFile".date('Y-m-d_H:i:s').".txt";
         $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest';
 
-       echo "here=================".$path;
+      // echo "here=================".$path;
         $files = scandir($path);
 
         $filescount=count($files);
@@ -136,7 +136,7 @@ class WhatsappWebhookController extends Controller
             $data = json_decode($fh, true);
 
 
-            echo "<br/>here<pre>";print_R($data);exit;
+          //  echo "<br/>here<pre>";print_R($data);exit;
 
         if ($data) {
 
@@ -144,7 +144,7 @@ class WhatsappWebhookController extends Controller
             echo $files[$i];
 
 
-            if ($data['events']['eventType'] == 'User initiated') {
+            if (isset($data['events']['eventType']) && $data['events']['eventType'] == 'User initiated') {
                 
                
                 $sender = $data['eventContent']['message']['from'];
