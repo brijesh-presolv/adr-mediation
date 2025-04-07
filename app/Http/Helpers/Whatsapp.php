@@ -20,7 +20,7 @@ class Whatsapp
        
 
         if($platform['platform_name'] == "Mtalkz"){
-            $this->sendWaMtalkzmessage();
+           sendWaMtalkzmessage();
         } else {
                 $ocarr = [];
 
@@ -178,7 +178,7 @@ class Whatsapp
 
         if($platform['platform_name'] == "Mtalkz"){
 
-            $this->sendWaMtalkzmessage();
+            sendWaMtalkzmessage();
         } else {
        
             $ocarr = [];
@@ -324,7 +324,7 @@ class Whatsapp
         $platform = SendWhatsappChoice::select('platform_name')->where("is_active", "=", 1)->first();;
 
         if($platform['platform_name'] == "Mtalkz"){
-            $this->sendWaMtalkzmessage();
+            sendWaMtalkzmessage();
         } else {
             
         
