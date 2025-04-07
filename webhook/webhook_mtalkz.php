@@ -75,7 +75,14 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
                   // $message_content_type=$data['data']['message']['message_content_type'];
                   // $med_whatsapp_json=$myFile;
 
-                 // $datetime = $data['events']['date'].' '.$data['events']['timestamp'];
+                  $final_date = date("Y-m-d", $data['events']['date']);
+
+                  $ms = $data['events']['timestamp'];
+                  $s = floor($ms/1000);
+                  date_default_timezone_set('Asia/Kolkata');
+                  //$timestamp = date("Y-m-d H:i:s");
+                  $temp = date('Y-m-d H:i:s', $s);
+                  $final_time = date("Y-m-d\TH:i:s.000", strtotime($temp));
                   
                  // echo date('m/d/Y H:i:s', 1128297600);
                   //echo date('Y-m-d H:i:s', strtotime($data['events']['timestamp']));
@@ -90,9 +97,9 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
                   $chat_message_type= $data['convDetails']['conversationType'];
                   //$replymsg= $data['data']['message']['message'];
                   $replymsg= "";
-                  $msgtimestamp= $data['events']['timestamp'];
+                  $msgtimestamp= $final_time;
                   //$received_at_utc= date('Y-m-d', $data['events']['date']);
-                  $received_at_utc= "";
+                  $received_at_utc= $final_time;
                   $message_status= $data['notificationAttributes']['status'];
                   $message_content_type=$data['templateCategory'];
                   $med_whatsapp_json=$myFile;

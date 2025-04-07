@@ -198,16 +198,22 @@ class WhatsappWebhookController extends Controller
                     continue;
                 }
 
-
+                    $ms = $data['events']['timestamp'];
+                  $s = floor($ms/1000);
+                  date_default_timezone_set('Asia/Kolkata');
+                  //$timestamp = date("Y-m-d H:i:s");
+                  $temp = date('Y-m-d H:i:s', $s);
+                  $final_time = date("Y-m-d\TH:i:s.000", strtotime($temp));
 
                 $request_id = $data['events']['mid'];
-                $created_time = $data['events']['timestamp'];
+                $created_time = $final_time;
                 // $sent_time = $data['data']['message']['received_at_utc'];
                 // $delivered_time = $data['data']['message']['delivered_at_utc'];
                 // $updated_time = $data['data']['message']['seen_at_utc'];
-                $sent_time = "";
-                $delivered_time = "";
-                $updated_time = "";
+               
+                $sent_time = ($data['notificationAttributes']['status'] == "read") ? $final_time : "";
+                $delivered_time = ($data['notificationAttributes']['status'] == "delivered") ? $final_time : "";
+                $updated_time = ($data['notificationAttributes']['status'] == "read") ? $final_time : "";
                 $status = $data['notificationAttributes']['status'];
                 $json = addcslashes($json, "'");
 
