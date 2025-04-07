@@ -2129,24 +2129,24 @@ class CaseController extends Controller
 
             // Mtalkz API Code //
             
-            $varjson = ['ip' => "DevPresolv", 'caseid' => "M" . sprintf("%06d", $id), 'link' => "http://mediation.localhost.com/"];
-            $var = ['-ip-', '-caseid-', '-link-'];
-            $var1 = ["DevPresolv", "M" . sprintf("%06d", $id), "http://mediation.localhost.com/"];
-            $content1 = WaTemplate::getcontent('new_latest');
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $id,
-                //'contact' =>  $pone->userPhone,
-                'contact' =>  "+917567043843",
-                'content' => ['text' => $content],
-                'event' => 'ACPTARB_ADM_RES',
-                'varjson' => $varjson,
-                'haptik_tmp' => 'new_latest',
+            // $varjson = ['ip' => "DevPresolv", 'caseid' => "M" . sprintf("%06d", $id), 'link' => "http://mediation.localhost.com/"];
+            // $var = ['-ip-', '-caseid-', '-link-'];
+            // $var1 = ["DevPresolv", "M" . sprintf("%06d", $id), "http://mediation.localhost.com/"];
+            // $content1 = WaTemplate::getcontent('new_latest');
+            // $content = str_replace($var, $var1, $content1);
+            // $dwa1 = [
+            //     'caseid' => $id,
+            //     //'contact' =>  $pone->userPhone,
+            //     'contact' =>  "+917567043843",
+            //     'content' => ['text' => $content],
+            //     'event' => 'ACPTARB_ADM_RES',
+            //     'varjson' => $varjson,
+            //     'haptik_tmp' => 'new_latest',
 
-            ];
+            // ];
            
-            //$access = Whatsapp::sendWaMtalkzmessage($dwa1);
-            $access = Whatsapp::sendWamessage($dwa1);
+            // //$access = Whatsapp::sendWaMtalkzmessage($dwa1);
+            // $access = Whatsapp::sendWamessage($dwa1);
 
             // $media_file = "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf";
 
