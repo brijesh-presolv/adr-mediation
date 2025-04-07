@@ -11,6 +11,7 @@ use App\Http\Traits\UploadTrait;
 use App\Models\System;
 use App\Models\WaTemplate;
 use App\Models\WhatsAppQue;
+use App\Models\SendWhatsappChoice;
 use Illuminate\Support\Facades\Storage;
 
 class WhatsappController extends Controller
@@ -147,6 +148,14 @@ class WhatsappController extends Controller
 
         // exit;
 
+        $platform = SendWhatsappChoice::select('platform_name')->where("is_active", "=", 1)->first();
+
+       
+
+        if($platform['platform_name'] == "Mtalkz"){
+            $this->sendMtalkz();
+        } else {
+
         $limit = 200;
 
         $whapps = WhatsAppQue::where(['is_sent' => 0, 'is_processing' => 0, 'is_success' => null,'is_hold'=> null])->whereDate('created_at', '>', '2022-07-31')->orderBy('created_at', 'ASC')->limit($limit)->get();
@@ -248,6 +257,7 @@ class WhatsappController extends Controller
 
 
             self::NewWhatsappMessage($d, str_replace('+91', '', $value->contact));
+        }
         }
     }
 

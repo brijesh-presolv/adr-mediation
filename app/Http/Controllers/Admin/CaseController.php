@@ -31,6 +31,7 @@ use App\Models\WhatsappTrack;
 use App\Models\WhatsappBotReport;
 use App\Models\RestructureData;
 use App\Models\WhatsAppQue;
+use App\Models\SendWhatsappChoice;
 use DB;
 use PDF;
 use Auth;
@@ -2144,7 +2145,8 @@ class CaseController extends Controller
 
             ];
            
-            $access = Whatsapp::sendWaMtalkzmessage($dwa1);
+            //$access = Whatsapp::sendWaMtalkzmessage($dwa1);
+            $access = Whatsapp::sendWamessage($dwa1);
 
             // $media_file = "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf";
 
@@ -6518,5 +6520,36 @@ class CaseController extends Controller
             'rp' => $allcases['stop_itm_rp'],
             'med' => $allcases['stop_itm_med']
         ]);
+    }
+
+
+    public function platformWiseWhtsapp(Request $request) {
+            if(isset($request->platform)) {
+
+
+                
+        
+                // dd($dataToUpdate);
+        
+               
+                if($request->platform == "i"){
+                    $platform_active = "Interekt";
+                } else if($request->platform == "m") {
+                    $platform = "Mtalkz";
+                }
+                $dataToUpdate = [
+                    'is_active' => 1,
+                    'updated_at' => date('Y-m-d H:i:s')
+                ];
+
+                $is_update = SendWhatsappChoice::where('platform_name', $platform)->update($dataToUpdate);
+                if($is_update) {
+                    return response()->json(
+                        ["type" => "success", 
+                        "code" => 200, 
+                        "message" => "Success"
+                    ]);
+                }
+            }   
     }
 }

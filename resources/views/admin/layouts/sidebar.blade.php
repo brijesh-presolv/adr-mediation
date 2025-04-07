@@ -81,6 +81,19 @@ $notification = Notification::where('view', 0)->count();
                 </li>
 
 
+                <!-------- Choose whatsapp notification platform ------>
+                <li>
+                    <a href="javascript: void(0);" class="waves-effect waves-light">
+                        <i class="fas fa-user-friends"></i>
+                        <span>Whatsapp Notification Platforms</span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <ul class="nav-second-level" aria-expanded="false">
+                        <li><a href="{{url('admin/selectplatform')}}">Select Platform</a></li>
+                    </ul>
+                </li>
+                <!-------- Choose whatsapp notification platform ------>
+
                 <li>
                     <a href="javascript: void(0);" class="waves-effect waves-light">
                         <i class="fas fa-user-friends"></i>

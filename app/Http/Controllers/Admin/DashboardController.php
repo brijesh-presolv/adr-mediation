@@ -187,4 +187,8 @@ class DashboardController extends Controller
         $batchName = Batch::get();
         return view('admin.case.bulkuploadnotification', compact("batchName"));
     }
+
+    public function selectplatform(){
+        return view('admin.case.selectplatform'); 
+    }
 }
