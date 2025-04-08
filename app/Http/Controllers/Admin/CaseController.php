@@ -3662,8 +3662,11 @@ class CaseController extends Controller
         // $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
 
         // sms track
-       $sms = sms_tracking::where("sms_tracking.caseid", "=", $id)->get();
+       //$sms = sms_tracking::where("sms_tracking.caseid", "=", $id)->get();
+       $sms = sms_tracking::getByCaseId($id);
         // sms track
+
+        //echo "<pre>";print_r($sms);exit;
 
         $courierCsv = CourierCsv::select('couriercsv.*', 'courierpdf.file_name')->leftJoin('courierpdf', 'courierpdf.csv_id', '=', 'couriercsv.id')
             ->where('couriercsv.case_id', $id)->orderBy('couriercsv.created_at', 'ASC')->get();
