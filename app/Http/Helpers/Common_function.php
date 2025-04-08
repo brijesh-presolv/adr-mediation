@@ -319,48 +319,93 @@ class Common_function
 
 
      // sms notification function code strat ------------------
-     function sendsmsNotification($id, $contactNumber, $varjson, $varsms, $varsms1, $SmsTemplate, $eventName, $jioTmp, $pdffile = "", $isMedia = false, $mediaCaption = "")
-     {
+    //  function sendsmsNotification($id, $contactNumber, $varjson, $varsms, $varsms1, $SmsTemplate, $eventName, $jioTmp, $pdffile = "", $isMedia = false, $mediaCaption = "")
+    //  {
  
-         $content1 = sms_template::getsmscontent($SmsTemplate);
-         $content = str_replace($varsms, $varsms1, $content1->content);
+    //      $content1 = sms_template::getsmscontent($SmsTemplate);
+    //      $content = str_replace($varsms, $varsms1, $content1->content);
      
-                 if (is_array($content) && array_key_exists('text', $content)) {
-                     //data sent
-                     $dwa1 = [
-                         'caseid' => $id,
-                         'casetype' => 1,
-                         'event' => $eventName,
-                         'contact' => $contactNumber,
-                         'content' => $content,
-                         'jio_tmp' => isset($jioTmp) ? $jioTmp : null,
-                         'credits_charged' => '0',
-                         'created_at' => date('Y-m-d H:i:s'),
-                         'content1' => $content1
-                     ];
-                 if ($contactNumber != "") {
-                         $access = sms::sendsmsmessage($dwa1);
-                     }
-                 } else{
-                     $dwa2 = [
-                         'caseid' => $id,
-                         'casetype' => 1,
-                         'event' => $eventName,
-                         'contact' => $contactNumber,
-                         'content' => $content,
-                         'jio_tmp' => isset($jioTmp) ? $jioTmp : null,
-                         'credits_charged' => '0',
-                         'created_at' => date('Y-m-d H:i:s'),
-                         'content1' => $content1
+    //              if (is_array($content) && array_key_exists('text', $content)) {
+    //                  //data sent
+    //                  $dwa1 = [
+    //                      'caseid' => $id,
+    //                      'casetype' => 1,
+    //                      'event' => $eventName,
+    //                      'contact' => $contactNumber,
+    //                      'content' => $content,
+    //                      'jio_tmp' => isset($jioTmp) ? $jioTmp : null,
+    //                      'credits_charged' => '0',
+    //                      'created_at' => date('Y-m-d H:i:s'),
+    //                      'content1' => $content1
+    //                  ];
+    //              if ($contactNumber != "") {
+    //                      $access = sms::sendsmsmessage($dwa1);
+    //                  }
+    //              } else{
+    //                  $dwa2 = [
+    //                      'caseid' => $id,
+    //                      'casetype' => 1,
+    //                      'event' => $eventName,
+    //                      'contact' => $contactNumber,
+    //                      'content' => $content,
+    //                      'jio_tmp' => isset($jioTmp) ? $jioTmp : null,
+    //                      'credits_charged' => '0',
+    //                      'created_at' => date('Y-m-d H:i:s'),
+    //                      'content1' => $content1
  
-                     ];
+    //                  ];
      
-                 if ($contactNumber != "") {
-                         $access = sms::sendsmsmessage($dwa2);
-                     }
-                 } 
-     }
+    //              if ($contactNumber != "") {
+    //                      $access = sms::sendsmsmessage($dwa2);
+    //                  }
+    //              } 
+    //  }
      // ----------------------------- end
+
+     // sms notification function code strat ------------------
+    public function sendsmsNotification($id, $caseType, $contactNumber, $varjson, $varsms, $varsms1, $SmsTemplate, $eventName, $jioTmp, $pdffile = "", $isMedia = false, $mediaCaption = "")
+    {
+        $content1 = sms_template::getsmscontent($SmsTemplate);
+        $content = str_replace($varsms, $varsms1, $content1->content);
+
+        if (is_array($content) && array_key_exists('text', $content)) {
+            //data sent
+            $dwa1 = [
+                'caseid' => $id,
+                'casetype' => $caseType,
+                'event' => $eventName,
+                'contact' => $contactNumber,
+                'content' => $content,
+                'jio_tmp' => isset($jioTmp) ? $jioTmp : null,
+                'credits_charged' => '0',
+                'created_at' => date('Y-m-d H:i:s'),
+                'content1' => $content1,
+                'varjson' => $varjson,
+            ];
+            if ($contactNumber != "") {
+                $access = sms::sendsmsmessage($dwa1);
+            }
+        } else {
+            $dwa2 = [
+                'caseid' => $id,
+                'casetype' => $caseType,
+                'event' => $eventName,
+                'contact' => $contactNumber,
+                'content' => $content,
+                'jio_tmp' => isset($jioTmp) ? $jioTmp : null,
+                'credits_charged' => '0',
+                'created_at' => date('Y-m-d H:i:s'),
+                'content1' => $content1,
+                'varjson' => $varjson,
+
+            ];
+
+            if ($contactNumber != "") {
+                $access = sms::sendsmsmessage($dwa2);
+            }
+        }
+    }
+    // ----------------------------- end
 
 
      // Function for case-id prefix "B" : START //
