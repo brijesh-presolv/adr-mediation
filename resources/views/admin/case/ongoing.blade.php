@@ -265,7 +265,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                    <select class="blkdirtorandom" name="branches" id="branches" multiple style="width:50%">
+                                    <select class="blkdirtorandom" name="branches[]" id="branches" multiple style="width:50%">
                                     </select>
                             </div>
 
@@ -4173,6 +4173,8 @@
            // var bid = []; 
            // bid.push($('#branches').val());
             var bid = $('#branches').val();
+
+            //alert(bid);
            
             $.ajax({
                 type: 'post',

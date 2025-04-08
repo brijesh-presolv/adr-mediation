@@ -6017,18 +6017,29 @@ class CaseController extends Controller
         $columnHeader = '';
         $setData = '';
         $count = [];
+        // dd($request->all());
+        // echo "<pre>";print_R($request->ids);
 
+        $caseids = implode(',', $request->ids);
+        $b_id = '['.$caseids.']';
+
+       
         //$caseid_arr = [];
-        foreach ($request->ids as $key => $b_id) {
-            $caseid_arr = MedCase::select('id')->where('batch_id', $b_id)->get();
-            // array_push($caseid_arr);
-        }
-        $data_arr = $caseid_arr->map(function ($caseid_arr) {
-            return $caseid_arr->only(['id']);
-        });
+        // foreach ($request->ids as $key => $b_id) {
+        //     $caseid_arr = MedCase::select('id')->where('batch_id', $b_id)->get();
+        //     // array_push($caseid_arr);
+        // }
+
+        $caseid_arr = MedCase::select('id')->whereIn('batch_id', [16,17])->get();
+        // echo "<pre>";print_R($caseid_arr);exit;
+        // $data_arr = $caseid_arr->map(function ($caseid_arr) {
+        //     return $caseid_arr->only(['id']);
+        // });
+
+        //dd($data_arr);
        
        // $caseid = explode(',', trim($request->ids));
-        $caseid = $data_arr;
+        $caseid = $caseid_arr;
         foreach ($caseid as $key => $value) {
             $count[$key] = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $value['id'])->count();
         }
