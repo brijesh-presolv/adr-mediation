@@ -363,7 +363,7 @@ class Common_function
      // ----------------------------- end
 
      // sms notification function code strat ------------------
-    public function sendsmsNotification($id, $caseType = 1, $contactNumber, $varjson, $varsms, $varsms1, $SmsTemplate, $eventName, $jioTmp, $pdffile = "", $isMedia = false, $mediaCaption = "")
+    public function sendsmsNotification($id, $contactNumber, $varjson, $varsms, $varsms1, $SmsTemplate, $eventName, $jioTmp, $pdffile = "", $isMedia = false, $mediaCaption = "")
     {
         $content1 = sms_template::getsmscontent($SmsTemplate);
         $content = str_replace($varsms, $varsms1, $content1->content);
@@ -372,7 +372,8 @@ class Common_function
             //data sent
             $dwa1 = [
                 'caseid' => $id,
-                'casetype' => $caseType,
+                //'casetype' => $caseType,
+                'casetype' => 1,
                 'event' => $eventName,
                 'contact' => $contactNumber,
                 'content' => $content,
@@ -388,7 +389,8 @@ class Common_function
         } else {
             $dwa2 = [
                 'caseid' => $id,
-                'casetype' => $caseType,
+                //'casetype' => $caseType,
+                'casetype' => 1,
                 'event' => $eventName,
                 'contact' => $contactNumber,
                 'content' => $content,
