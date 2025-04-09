@@ -6021,18 +6021,26 @@ class CaseController extends Controller
          //echo "<pre>";print_R($request->ids);
        // dd(count($request->ids));
 
-        
-        $caseids = implode(',', $request->ids);
-        $b_id = '['.$caseids.']';
+       if(count($request->ids) == 1){
+            $b_id = $request->ids;
+            $caseid_arr = MedCase::select('id')->where('batch_id', $b_id)->get();
+       } else {
+            $caseids = implode(',', $request->ids);
+            $b_id = '['.$caseids.']';
 
-       echo $b_id;exit;
+            $caseid_arr = MedCase::select('id')->whereIn('batch_id', $b_id)->get();
+       }
+        
+       
+
+      // echo $b_id;exit;
         //$caseid_arr = [];
         // foreach ($request->ids as $key => $b_id) {
         //     $caseid_arr = MedCase::select('id')->where('batch_id', $b_id)->get();
         //     // array_push($caseid_arr);
         // }
 
-        $caseid_arr = MedCase::select('id')->whereIn('batch_id', $b_id)->get();
+       // $caseid_arr = MedCase::select('id')->whereIn('batch_id', $b_id)->get();
         // echo "<pre>";print_R($caseid_arr);exit;
         // $data_arr = $caseid_arr->map(function ($caseid_arr) {
         //     return $caseid_arr->only(['id']);
