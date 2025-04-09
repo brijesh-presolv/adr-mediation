@@ -6025,7 +6025,7 @@ class CaseController extends Controller
         $caseids = implode(',', $request->ids);
         $b_id = '['.$caseids.']';
 
-       
+       echo $b_id;exit;
         //$caseid_arr = [];
         // foreach ($request->ids as $key => $b_id) {
         //     $caseid_arr = MedCase::select('id')->where('batch_id', $b_id)->get();
