@@ -6018,8 +6018,10 @@ class CaseController extends Controller
         $setData = '';
         $count = [];
         // dd($request->all());
-         echo "<pre>";print_R($request->ids);
-        dd(count($request->ids));
+         //echo "<pre>";print_R($request->ids);
+       // dd(count($request->ids));
+
+        
         $caseids = implode(',', $request->ids);
         $b_id = '['.$caseids.']';
 
@@ -6030,7 +6032,7 @@ class CaseController extends Controller
         //     // array_push($caseid_arr);
         // }
 
-        $caseid_arr = MedCase::select('id')->whereIn('batch_id', [16,17])->get();
+        $caseid_arr = MedCase::select('id')->whereIn('batch_id', $b_id)->get();
         // echo "<pre>";print_R($caseid_arr);exit;
         // $data_arr = $caseid_arr->map(function ($caseid_arr) {
         //     return $caseid_arr->only(['id']);
