@@ -6018,8 +6018,8 @@ class CaseController extends Controller
         $setData = '';
         $count = [];
         // dd($request->all());
-        // echo "<pre>";print_R($request->ids);
-
+         echo "<pre>";print_R($request->ids);
+        dd(count($request->ids));
         $caseids = implode(',', $request->ids);
         $b_id = '['.$caseids.']';
 
