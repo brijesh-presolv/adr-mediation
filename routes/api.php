@@ -38,4 +38,16 @@ Route::post('/botmisreport', [App\Http\Controllers\API\WhatsappChatbotController
 Route::post('/whatsappconsentreply', [App\Http\Controllers\API\WhatsappChatbotController::class, 'whatsappconsentreply']);
 
 
+// Whatsapp chat log API
+Route::post('medwhatsappbotlog', [App\Http\Controllers\API\WhatsappChatbotController::class, 'medwhatsappbotlog']);
 
+//Whatsapp Webhook
+Route::get('whatsapp_webhook_status', [App\Http\Controllers\Webhook\WhatsappWebhookController::class, 'WhatsappStatus']);
+
+Route::get('whresmovetos3', [App\Http\Controllers\Webhook\WhatsappWebhookController::class, 'whresmovetos3']);
+
+
+
+Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\WhatsappWebhookController::class, 'WhatsappLog']);
+
+//Route::post('medwhatsappbotlog', [App\Http\Controllers\WhatsappBot\WhatsappBotController::class, 'medwhatsappbotlog']);
