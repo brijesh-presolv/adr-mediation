@@ -136,7 +136,7 @@ class WhatsappWebhookController extends Controller
             $data = json_decode($fh, true);
 
 
-           // echo "<br/>here<pre>";print_R($data);
+            echo "<br/>here<pre>";print_R($data);exit;
 
         if ($data) {
 
