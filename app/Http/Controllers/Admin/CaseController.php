@@ -2508,7 +2508,7 @@ class CaseController extends Controller
                         $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp,$zoom_link_temp];
                         */
                         $varjson = [
-                            "responding" => $responding_party,
+                            "responding" => $responding_partyforbot->name,
                             "initiating" => $initiating_party,
                             "refid" => $MedCasedata->ref_id,
                             "sessionDteaTime" => $zoom_date_temp,
@@ -2516,7 +2516,7 @@ class CaseController extends Controller
                             "zoomid" => $zoom_link_temp
                         ];
                         $var = ['-rp-','-ip-','-refid-','-dt-','-cid-','-link-'];
-                        $var1 = [$responding_party,$initiating_party,$MedCasedata->ref_id,$zoom_date_temp,$caseid,$zoom_link_temp];
+                        $var1 = [$responding_partyforbot->name,$initiating_party,$MedCasedata->ref_id,$zoom_date_temp,$caseid,$zoom_link_temp];
                     } else {
                         $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
                         $var = ['-ip-','-cid-'];
