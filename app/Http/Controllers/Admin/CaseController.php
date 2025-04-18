@@ -2477,7 +2477,8 @@ class CaseController extends Controller
                 
                 if ($bulk_flag == 1) {
                 
-                    $template_name = WaTemplate::getRandomTemplate('L4L10');
+                    //$template_name = WaTemplate::getRandomTemplate('L4L10');
+                    $template_name = WaTemplate::getRandomTemplate('L4L10REF');
                 } else {
                 
                     $template_name = WaTemplate::getRandomTemplate('ITML4');
@@ -2495,6 +2496,7 @@ class CaseController extends Controller
                     
                     if ($bulk_flag == 1) {
                         $caseid = "M" . sprintf("%06d", $id);
+                        /*
                         $varjson = [
                             "initiating" => $initiating_party,
                             'caseid' => "M" . sprintf("%06d", $id),
@@ -2504,6 +2506,17 @@ class CaseController extends Controller
                         ];
                         $var = ['-ip-','-cid-','-cid-','-dt-','-link-'];
                         $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp,$zoom_link_temp];
+                        */
+                        $varjson = [
+                            "responding" => $responding_party,
+                            "initiating" => $initiating_party,
+                            "refid" => $MedCasedata->ref_id,
+                            "sessionDteaTime" => $zoom_date_temp,
+                            "caseid" => "M" . sprintf("%06d", $id),
+                            "zoomid" => $zoom_link_temp
+                        ];
+                        $var = ['-rp-','-ip-','-refid-','-dt-','-cid-','-link-'];
+                        $var1 = [$responding_party,$initiating_party,$MedCasedata->ref_id,$zoom_date_temp,$caseid,$zoom_link_temp];
                     } else {
                         $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
                         $var = ['-ip-','-cid-'];
