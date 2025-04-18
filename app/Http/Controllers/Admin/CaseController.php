@@ -2413,8 +2413,8 @@ class CaseController extends Controller
             'event' => 'SESS_SCHE',
             'case_id' => $id,
         ];
-        $zoom_date_temp = "16/04/2025/11:00AM-1:00PM";
-        $zoom_link_temp = "https://us02web.zoom.us/j/88342772416?pwd=IdsatYzQXiElbDMMcWfkVoqPP1lYM9.1";
+        $zoom_date_temp = "28/04/2025/11:00AM-2:00PM";
+        $zoom_link_temp = "https://us02web.zoom.us/j/87921905115?pwd=RJ2jaehYODzgvkTcMNxoXuVYvjv4Jm.1";
 
 
         // $mid = "M" . sprintf("%06d", $id);
@@ -2439,6 +2439,7 @@ class CaseController extends Controller
                     }
                 }
                 $responding_phone[] = $inv->userPhone;
+                $responding_party_name[] = $inv->name;
                 if ($inv->userEmail != "" && $stop_rp == 0) {
                     SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
                 }
@@ -2466,7 +2467,7 @@ class CaseController extends Controller
             // continue;
 
         }
-        foreach ($responding_phone as $phone) {
+        foreach ($responding_phone as $k => $phone) {
 
             if ($phone != "") {
                 
@@ -2508,7 +2509,7 @@ class CaseController extends Controller
                         $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp,$zoom_link_temp];
                         */
                         $varjson = [
-                            "responding" => $responding_partyforbot->name,
+                            "responding" => $responding_party_name[$k],
                             "initiating" => $initiating_party,
                             "refid" => $MedCasedata->ref_id,
                             "sessionDteaTime" => $zoom_date_temp,
@@ -2516,7 +2517,7 @@ class CaseController extends Controller
                             "zoomid" => $zoom_link_temp
                         ];
                         $var = ['-rp-','-ip-','-refid-','-dt-','-cid-','-link-'];
-                        $var1 = [$responding_partyforbot->name,$initiating_party,$MedCasedata->ref_id,$zoom_date_temp,$caseid,$zoom_link_temp];
+                        $var1 = [$responding_party_name[$k],$initiating_party,$MedCasedata->ref_id,$zoom_date_temp,$caseid,$zoom_link_temp];
                     } else {
                         $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
                         $var = ['-ip-','-cid-'];
