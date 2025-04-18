@@ -103,7 +103,7 @@ class WhatsappWebhookController extends Controller
 
         // $myFile = "wapp_status/testFile".date('Y-m-d_H:i:s').".txt";
         $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest';
-        echo $path;exit;
+        //echo $path;exit;
 
        //echo "here=================".$path;
         $files = scandir($path);
@@ -137,7 +137,7 @@ class WhatsappWebhookController extends Controller
             $data = json_decode($fh, true);
 
 
-            echo "<br/>here<pre>";print_R($data);exit;
+            //echo "<br/>here<pre>";print_R($data);exit;
 
         if ($data) {
 
