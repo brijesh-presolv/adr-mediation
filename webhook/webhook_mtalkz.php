@@ -8,7 +8,6 @@ $projectpath = $_SERVER['DOCUMENT_ROOT'];
 include_once $projectpath . '/config/constants.php';
 include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
-echo $projectpath;exit;
  //$myFile = "whatsapp_log_latest/log_new.txt";
  $json = file_get_contents('php://input');
 
