@@ -1,9 +1,9 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
 
-error_reporting(E_ALL);
+//error_reporting(E_ALL);
 $projectpath = $_SERVER['DOCUMENT_ROOT'];
 include_once $projectpath . '/config/constants.php';
 include_once $projectpath . '/app/Http/Helpers/Curl.php';
@@ -22,7 +22,6 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
  try{
 
          if (file_put_contents($myFile,$json)){ 
-                  echo "here";
                   whatsappbotlogAsync($myFile, function () {
                   
                   echo "whatsappbotlog completed asynchronously.";
@@ -40,7 +39,6 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
     // exit();
 
      function whatsappbotlogAsync($myFile, $callback) {
-      echo "in this";
             // Simulate asynchronous whatsappbotlog execution
             whatsapbotlog($myFile);
 
