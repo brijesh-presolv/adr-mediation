@@ -9,7 +9,6 @@ include_once $projectpath . '/config/constants.php';
 include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
 
-
  //$myFile = "whatsapp_log_latest/log_new.txt";
  $json = file_get_contents('php://input');
 
@@ -55,7 +54,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
      $json=$fh;
      $data = json_decode($fh, true);
       
-    // echo "<pre>";print_R($data);exit;
+     echo "<pre>";print_R($data);exit;
       if($data){
 
          if ($data['notificationAttributes']['status'] != "") {
