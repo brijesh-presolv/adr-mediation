@@ -1,14 +1,14 @@
 <?php
 
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 
-//error_reporting(E_ALL);
+error_reporting(E_ALL);
 $projectpath = $_SERVER['DOCUMENT_ROOT'];
 include_once $projectpath . '/config/constants.php';
 include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
-
+echo $projectpath;exit;
  //$myFile = "whatsapp_log_latest/log_new.txt";
  $json = file_get_contents('php://input');
 
