@@ -15,7 +15,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
 
  //$json = '{"channel":"WABA","appDetails":{"type":"LIVE","id":""},"recipient":{"to":"917567043843","recipient_type":"individual"},"batchId":"","campaignId":"","templateId":"new_latest","templateCategory":"UTILITY","sender":{"from":"918879651360"},"events":{"eventType":"DELIVERY EVENTS","timestamp":"1743144770000","date":"2025-March-28","mid":"410135450328122240866789"},"notificationAttributes":{"status":"delivered","reason":"Delivered to User","code":"101"},"convDetails":{"conversationType":"utility","isBillable":"true","waConvId":"46868470b4d1e2108065294233df534b","kxBillable":"N","uim":"","bim":""}}';
 
- $myFile = "whatsapp_log_latest/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
+ $myFile = "whatsapp_log_latest_m/log".date('Y-m-d_H:i:s').'_'.rand(9,9999999).".txt";
 
  //$myFile = "whatsapp_log_latest/log2025-03-28_121.txt";
 

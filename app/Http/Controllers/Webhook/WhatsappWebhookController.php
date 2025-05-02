@@ -69,7 +69,7 @@ class WhatsappWebhookController extends Controller
             
     public function whresmovetos3(){
     
-        $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest';
+        $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest_m';
     
         $logs=WhatsappLog::whereNotNull('response')->where('response', '<>', '')->limit(1000)->get();
     
@@ -102,7 +102,7 @@ class WhatsappWebhookController extends Controller
     {
 
         // $myFile = "wapp_status/testFile".date('Y-m-d_H:i:s').".txt";
-        $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest';
+        $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest_m';
 
       // echo "here=================".$path;
         $files = scandir($path);
