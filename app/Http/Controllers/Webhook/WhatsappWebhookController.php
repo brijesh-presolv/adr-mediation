@@ -10,6 +10,8 @@ use App\Models\WhatsappLogExt;
 
 use App\Models\WhatsappWebhook;
 use App\Models\WhatsappTrack;
+
+use App\Models\SendWhatsappChoice;
 //use App\Models\MedWhatsappTrack;
 //use App\Models\MedWhatsappCTrack;
 
@@ -102,7 +104,15 @@ class WhatsappWebhookController extends Controller
     {
 
         // $myFile = "wapp_status/testFile".date('Y-m-d_H:i:s').".txt";
-        $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest_m';
+
+        $is_mtalkz = SendWhatsappChoice::select('platform_name', 'is_active')->where('is_active', 1)->first();
+        
+        if($is_mtalkz['platform_name'] == 'Mtalkz') {
+            $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest_m';
+        } else if($is_mtalkz['platform_name'] == 'Interekt'){
+            $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest';
+        }
+        
 
       // echo "here=================".$path;
         $files = scandir($path);
@@ -144,156 +154,304 @@ class WhatsappWebhookController extends Controller
             echo $files[$i];
 
 
-            if (isset($data['events']['eventType']) && $data['events']['eventType'] == 'User initiated') {
+            if($is_mtalkz['platform_name'] == 'Mtalkz') {
+                if (isset($data['events']['eventType']) && $data['events']['eventType'] == 'User initiated') {
                 
                
-                $sender = $data['eventContent']['message']['from'];
-                $profile =  $data['eventContent']['message']['profileName'];
-                // if ($data['data']['message']['message_content_type'] == 'Text') {
-                //     $message = $data['data']['message']['message'];
-                // } elseif ($data['data']['message']['message_content_type'] == 'Media') {
-                //     $message = "";
-                // }
-
-                //$media=$data['data']['message']['media_url'];
-                $media="";
-                $message = $data['eventContent']['message']['text']['body'];
-                $message_content_type = $data['eventContent']['message']['contentType'];
-
-                
-
-                $total_cost = 0;
-                if($message_content_type !="Unknown" or $message_content_type !=""){
-                   
-                    $log = WhatsappWebhook::create([
-                        "sender" => "+" . $sender,
-                        "sender_profile" => $profile,
-                        "message_sent" => $message,
-                        "total_cost" => $total_cost,
-                        "response" => $json,
-                        "media"=>$media,
-                    ]);
+                    $sender = $data['eventContent']['message']['from'];
+                    $profile =  $data['eventContent']['message']['profileName'];
+                    // if ($data['data']['message']['message_content_type'] == 'Text') {
+                    //     $message = $data['data']['message']['message'];
+                    // } elseif ($data['data']['message']['message_content_type'] == 'Media') {
+                    //     $message = "";
+                    // }
+    
+                    //$media=$data['data']['message']['media_url'];
+                    $media="";
+                    $message = $data['eventContent']['message']['text']['body'];
+                    $message_content_type = $data['eventContent']['message']['contentType'];
+    
                     
-                    Storage::put('public/new_wh_inlog/'. $log->id.'.txt', $json);
-
-                    
-                }
-
-                if ($log) {
-                
-                         $this->deletelogfile($fullpath);
-                    
-                    echo '200';
-                } else {
-                
-                    Storage::put('public/new_wh_inlog/testFile_incoming_' . date('Y-m-d_H:i:s') . '.txt', $json);
-                }
-                
-                
-                
-            } else {
-
-                if(!isset($data['events']['mid'])){
-
-                    continue;
-                }
-
-                    $ms = $data['events']['timestamp'];
-                  $s = floor($ms/1000);
-                  date_default_timezone_set('Asia/Kolkata');
-                  //$timestamp = date("Y-m-d H:i:s");
-                  $temp = date('Y-m-d H:i:s', $s);
-                  $final_time = date("Y-m-d\TH:i:s.000", strtotime($temp));
-
-                $request_id = $data['events']['mid'];
-                $created_time = $final_time;
-                // $sent_time = $data['data']['message']['received_at_utc'];
-                // $delivered_time = $data['data']['message']['delivered_at_utc'];
-                // $updated_time = $data['data']['message']['seen_at_utc'];
-               
-                $sent_time = ($data['notificationAttributes']['status'] == "read") ? $final_time : "";
-                $delivered_time = ($data['notificationAttributes']['status'] == "delivered") ? $final_time : "";
-                $updated_time = ($data['notificationAttributes']['status'] == "read") ? $final_time : "";
-                $status = $data['notificationAttributes']['status'];
-                $json = addcslashes($json, "'");
-
-                $stage=0;
-
-
-                //mediation
-
-                if($stage==0){
-                    $track = WhatsappTrack::where('request_uuid', $data['events']['mid'])->get();
-
-                    if (count($track) >0 ) {
-
-                             $stage='med';
-                    } 
-
-                }
-
-                switch ($stage) {
-                    case 'arb':
-                    break;
-                    case 'med':
-
-                    Storage::disk('s3')->put('mediation_documents/mediation/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
-
-
-                    $log = WhatsappLog::create([
-                        'request_id' => $request_id,
-                        'created_time' => $created_time,
-                        'sent_time' => $sent_time,
-                        'delivered_time' => $delivered_time,
-                        'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
-                        'status' => $status,
-                        'response' => $json,
-                        'created_at' => date('Y-m-d H:s:i')
-                    ]);
-
-
-
-                    if ($log) {
-                        $this->deletelogfile($fullpath);
-
-                        echo '202';
+    
+                    $total_cost = 0;
+                    if($message_content_type !="Unknown" or $message_content_type !=""){
+                       
+                        $log = WhatsappWebhook::create([
+                            "sender" => "+" . $sender,
+                            "sender_profile" => $profile,
+                            "message_sent" => $message,
+                            "total_cost" => $total_cost,
+                            "response" => $json,
+                            "media"=>$media,
+                        ]);
+                        
+                        Storage::put('public/new_wh_inlog/'. $log->id.'.txt', $json);
+    
+                        
                     }
-
+    
+                    if ($log) {
+                    
+                             $this->deletelogfile($fullpath);
                         
-                    break;
-                    case 'sarb':
+                        echo '200';
+                    } else {
+                    
+                        Storage::put('public/new_wh_inlog/testFile_incoming_' . date('Y-m-d_H:i:s') . '.txt', $json);
+                    }
                     
                     
-                    break;
-                    case 'sebiarb':
                     
-                    break;
-                    case 'smed':
-                    
-                    break;
-
-                    case 'sebi';
-
-                    break;
-
-                    case 'court';
-                    break;
-                    
-                    default:
-
-                    $this->movelogfile($path,$files[$i],$fullpath);
-
+                } else {
+    
+                    if(!isset($data['events']['mid'])){
+    
+                        continue;
+                    }
+    
+                        $ms = $data['events']['timestamp'];
+                      $s = floor($ms/1000);
+                      date_default_timezone_set('Asia/Kolkata');
+                      //$timestamp = date("Y-m-d H:i:s");
+                      $temp = date('Y-m-d H:i:s', $s);
+                      $final_time = date("Y-m-d\TH:i:s.000", strtotime($temp));
+    
+                    $request_id = $data['events']['mid'];
+                    $created_time = $final_time;
+                    // $sent_time = $data['data']['message']['received_at_utc'];
+                    // $delivered_time = $data['data']['message']['delivered_at_utc'];
+                    // $updated_time = $data['data']['message']['seen_at_utc'];
+                   
+                    $sent_time = ($data['notificationAttributes']['status'] == "read") ? $final_time : "";
+                    $delivered_time = ($data['notificationAttributes']['status'] == "delivered") ? $final_time : "";
+                    $updated_time = ($data['notificationAttributes']['status'] == "read") ? $final_time : "";
+                    $status = $data['notificationAttributes']['status'];
+                    $json = addcslashes($json, "'");
+    
+                    $stage=0;
+    
+    
+                    //mediation
+    
+                    if($stage==0){
+                        $track = WhatsappTrack::where('request_uuid', $data['events']['mid'])->get();
+    
+                        if (count($track) >0 ) {
+    
+                                 $stage='med';
+                        } 
+    
+                    }
+    
+                    switch ($stage) {
+                        case 'arb':
+                        break;
+                        case 'med':
+    
+                        Storage::disk('s3')->put('mediation_documents/mediation/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+    
+    
+                        $log = WhatsappLog::create([
+                            'request_id' => $request_id,
+                            'created_time' => $created_time,
+                            'sent_time' => $sent_time,
+                            'delivered_time' => $delivered_time,
+                            'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
+                            'status' => $status,
+                            'response' => $json,
+                            'created_at' => date('Y-m-d H:s:i')
+                        ]);
+    
+    
+    
+                        if ($log) {
+                            $this->deletelogfile($fullpath);
+    
+                            echo '202';
+                        }
+    
+                            
+                        break;
+                        case 'sarb':
                         
-                    break;
+                        
+                        break;
+                        case 'sebiarb':
+                        
+                        break;
+                        case 'smed':
+                        
+                        break;
+    
+                        case 'sebi';
+    
+                        break;
+    
+                        case 'court';
+                        break;
+                        
+                        default:
+    
+                        $this->movelogfile($path,$files[$i],$fullpath);
+    
+                            
+                        break;
+                    }
+    
+    
+    
+                    
                 }
 
-
-
+            } else if($is_mtalkz['platform_name'] == 'Interekt'){
                 
+                    if ($data['type'] == 'message_received') {
+                       
+                        // $message='';
+
+                        $sender = $data['data']['customer']['channel_phone_number'];
+                        $profile =  $data['data']['customer']['traits']['name'];
+                        
+                        $media=$data['data']['message']['media_url'];
+                        $message = $data['data']['message']['message'];
+                        $message_content_type = $data['data']['message']['message_content_type'];
+
+
+                        $total_cost = 0;
+                        if($message_content_type !="Unknown" or $message_content_type !=""){
+                            $log = WhatsappWebhook::create([
+                                "sender" => "+" . $sender,
+                                "sender_profile" => $profile,
+                                "message_sent" => $message,
+                                "total_cost" => $total_cost,
+                                "response" => $json,
+                                "media"=>$media,
+                            ]);
+                            
+                            Storage::put('public/new_wh_inlog/'. $log->id.'.txt', $json);
+
+                            
+                        }
+
+                        if ($log) {
+                        
+                                $this->deletelogfile($fullpath);
+                            
+                            echo '200';
+                        } else {
+                        
+                            Storage::put('public/new_wh_inlog/testFile_incoming_' . date('Y-m-d_H:i:s') . '.txt', $json);
+                        }
+                        
+                        
+                        
+                    } else {
+
+                    
+
+                        if(!isset($data['data']['message']['id'])){
+
+                            continue;
+                        }
+
+
+
+                        $request_id = $data['data']['message']['id'];
+                        $created_time = $data['timestamp'];
+                        $sent_time = $data['data']['message']['received_at_utc'];
+                        $delivered_time = $data['data']['message']['delivered_at_utc'];
+                        $updated_time = $data['data']['message']['seen_at_utc'];
+                        $status = $data['data']['message']['message_status'];
+                        $json = addcslashes($json, "'");
+
+                        $stage=0;
+
+
+                        //mediation
+
+                        if($stage==0){
+                            $track = WhatsappTrack::where('request_uuid', $data['data']['message']['id'])->get();
+                           
+
+                            if (count($track) >0 ) {
+
+                                    $stage='med';
+                            } 
+
+                        }
+
+                        switch ($stage) {
+                            case 'arb':
+                                
+                            break;
+                            case 'med':
+
+                        // Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+                            Storage::disk('s3')->put('mediation_documents/mediation/whatsapp_status/mediation_sent_' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+
+
+
+
+
+                            // dd($track);
+                            $log = WhatsappLog::create([
+                                'request_id' => $request_id,
+                                'created_time' => $created_time,
+                                'sent_time' => $sent_time,
+                                'delivered_time' => $delivered_time,
+                                'updated_time' => ($updated_time == null) ? $delivered_time : $updated_time,
+                                'status' => $status,
+                                'response' => $json,
+                                'created_at' => date('Y-m-d H:s:i')
+                            ]);
+
+
+
+                            if ($log) {
+                                $this->deletelogfile($fullpath);
+
+                                echo '202';
+                            }
+
+                                
+                            break;
+                            case 'sarb':
+                            
+                            Storage::disk('s3_mediation')->put('public/whatsapp_status/mediation_sent_sarb' . $request_id . "_" . date('Y-m-d_H:i:s') . '.txt', $json);
+
+   
+                            break;
+                            case 'sebiarb':
+                            
+                             
+                            break;
+                            case 'smed':
+                            break;
+
+                            case 'sebi';
+
+
+
+                            break;
+
+                            case 'court';
+
+
+                            break;
+                            
+                            default:
+
+                            $this->movelogfile($path,$files[$i],$fullpath);
+
+                                
+                            break;
+                        }
+
+
+
+                        
+                    }
             }
-
-            
-
 
 
 
