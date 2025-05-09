@@ -70,8 +70,16 @@ class WhatsappWebhookController extends Controller
             
             
     public function whresmovetos3(){
+
+        $is_mtalkz = SendWhatsappChoice::select('platform_name', 'is_active')->where('is_active', 1)->first();
+        
+        if($is_mtalkz['platform_name'] == 'Mtalkz') {
+            $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest_m';
+        } else if($is_mtalkz['platform_name'] == 'Interekt'){
+            $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest';
+        }
     
-        $path=$_SERVER['DOCUMENT_ROOT'].'/webhook/whatsapp_log_latest_m';
+        
     
         $logs=WhatsappLog::whereNotNull('response')->where('response', '<>', '')->limit(1000)->get();
     
