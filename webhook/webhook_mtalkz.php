@@ -53,7 +53,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
      $json=$fh;
      $data = json_decode($fh, true);
       
-     echo "<pre>";print_R($data);exit;
+     //echo "<pre>";print_R($data);exit;
       if($data){
 
          if ($data['notificationAttributes']['status'] != "") {
