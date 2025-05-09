@@ -614,8 +614,7 @@ class WhatsappController extends Controller
                             "templateId" : "'.$d['tempname'].'",
                             "parameterValues" : {
                                 '.$finalbody.'
-                            },
-                            "headerTitle" : "{{1}}"
+                            }
                         },
                         "shorten_url" : true
                     },
