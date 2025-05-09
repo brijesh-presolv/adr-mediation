@@ -31,6 +31,7 @@ use App\Models\WhatsappTrack;
 use App\Models\WhatsappBotReport;
 use App\Models\RestructureData;
 use App\Models\WhatsAppQue;
+use App\Models\SendWhatsappChoice;
 use DB;
 use PDF;
 use Auth;
@@ -2123,6 +2124,50 @@ class CaseController extends Controller
                 }
             }
 
+
+
+
+            // Mtalkz API Code //
+            
+            // $varjson = ['ip' => "DevPresolv", 'caseid' => "M" . sprintf("%06d", $id), 'link' => "http://mediation.localhost.com/"];
+            // $var = ['-ip-', '-caseid-', '-link-'];
+            // $var1 = ["DevPresolv", "M" . sprintf("%06d", $id), "http://mediation.localhost.com/"];
+            // $content1 = WaTemplate::getcontent('new_latest');
+            // $content = str_replace($var, $var1, $content1);
+            // $dwa1 = [
+            //     'caseid' => $id,
+            //     //'contact' =>  $pone->userPhone,
+            //     'contact' =>  "+917567043843",
+            //     'content' => ['text' => $content],
+            //     'event' => 'ACPTARB_ADM_RES',
+            //     'varjson' => $varjson,
+            //     'haptik_tmp' => 'new_latest',
+
+            // ];
+           
+            // //$access = Whatsapp::sendWaMtalkzmessage($dwa1);
+            // $access = Whatsapp::sendWamessage($dwa1);
+
+            // $media_file = "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf";
+
+            // $varjson_file = ['caseid' => "M" . sprintf("%06d", $id)];
+            // $var_file = ['-caseid-'];
+            // $var1_file = ["M" . sprintf("%06d", $id)];
+            // $content1_file = WaTemplate::getcontent('pdf_attachmet_v18_v1');
+            // $content_file = str_replace($var_file, $var1_file, $content1_file);
+            // $dwa2 = [
+            //     'caseid' => $id,
+            //     'contact' =>  "+917567043843",
+            //     'content' => ['media' => ['url' => $media_file, 'caption' => $content_file]],
+            //     'event' => 'ACPTARB_ADM_RES',
+            //     'varjson' => $varjson_file,
+            //     'haptik_tmp' => 'pdf_attachmet_v18_v1',
+
+            // ];
+
+            // $access = Whatsapp::sendWaMtalkzmessage($dwa2);
+           
+            // Mtalkz API Code //
 
             /*************** ITM For ongoing cases while updating ***********************************/
             /********** ITM code comment out while updating the case : 18/12/2024 **************************/
@@ -6568,5 +6613,36 @@ class CaseController extends Controller
             'rp' => $allcases['stop_itm_rp'],
             'med' => $allcases['stop_itm_med']
         ]);
+    }
+
+
+    public function platformWiseWhtsapp(Request $request) {
+            if(isset($request->platform)) {
+
+
+                
+        
+                // dd($dataToUpdate);
+        
+               
+                if($request->platform == "i"){
+                    $platform_active = "Interekt";
+                } else if($request->platform == "m") {
+                    $platform = "Mtalkz";
+                }
+                $dataToUpdate = [
+                    'is_active' => 1,
+                    'updated_at' => date('Y-m-d H:i:s')
+                ];
+
+                $is_update = SendWhatsappChoice::where('platform_name', $platform)->update($dataToUpdate);
+                if($is_update) {
+                    return response()->json(
+                        ["type" => "success", 
+                        "code" => 200, 
+                        "message" => "Success"
+                    ]);
+                }
+            }   
     }
 }

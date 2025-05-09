@@ -5,6 +5,7 @@ namespace App\Http\Helpers;
 use App\Http\Helpers\Curl;
 use App\Models\WhatsAppQue;
 use App\Models\WhatsappTrack;
+use App\Models\SendWhatsappChoice;
 
 use App\Http\Helpers\Common_function;
 
@@ -14,7 +15,13 @@ class Whatsapp
 {
     public static function sendWamessage($d)
     {
-        
+        $platform = SendWhatsappChoice::select('platform_name')->where("is_active", "=", 1)->first();
+
+       
+
+        if($platform['platform_name'] == "Mtalkz"){
+            self::sendWaMtalkzmessage($d);
+        } else {
                 $ocarr = [];
 
                 $ocarr[] = $d['contact'];
@@ -67,7 +74,7 @@ class Whatsapp
         
 
                 return true;
-       
+        }
         // dd(date('Y-m-d H:i:s'));
 
         $url = "https://api.karix.io/message/";
@@ -167,66 +174,71 @@ class Whatsapp
     public static function sendWaSmessage($d, $oc = '')
     {
 
-        
+        $platform = SendWhatsappChoice::select('platform_name')->where("is_active", "=", 1)->first();;
+
+        if($platform['platform_name'] == "Mtalkz"){
+
+            self::sendWaMtalkzmessage($d);
+        } else {
        
-        $ocarr = [];
+            $ocarr = [];
 
-        $ocarr[] = $d['contact'];
+            $ocarr[] = $d['contact'];
 
-        if ($oc != '') {
+            if ($oc != '') {
 
-            $ocarr = array_merge($ocarr, explode(',', $oc));
-        }
-
-        $i = 1;
-
-        // Check if user stopped the whtsapp notification //
-        $check_phone = Common_function::checkIfPhoneExist($d['contact']);
-        // Check if user stopped the whtsapp notification //
-
-        if($check_phone == 0){
-            foreach ($ocarr as $key => $value) {
-
-                if ($value == '') {
-                    continue;
-                }
-
-                if ($i == 1) {
-                    $c = $value;
-                } else {
-
-                    $c = '+91' . $value;
-                }
-
-                if($c=='+919414784873'){
-
-                    continue;
-                }
-
-
-
-                //que table
-                $arr_e = array();
-                $arr_e['caseid'] = $d['caseid'];
-                $arr_e['contact'] = trim($c);
-                $arr_e['content'] = json_encode($d['content']);
-                $arr_e['casetype'] = 2;
-                $arr_e['event'] = $d['event'];
-                $arr_e['variable'] = json_encode($d['varjson']);
-                $arr_e['haptik_tmp'] = isset($d['haptik_tmp']) ? $d['haptik_tmp'] : null;
-
-                if (array_key_exists('media', $d['content'])) {
-
-                    $arr_e['media'] = 1;
-                }
-
-                WhatsAppQue::insert($arr_e);
-
-                $i++;
+                $ocarr = array_merge($ocarr, explode(',', $oc));
             }
+
+            $i = 1;
+
+            // Check if user stopped the whtsapp notification //
+            $check_phone = Common_function::checkIfPhoneExist($d['contact']);
+            // Check if user stopped the whtsapp notification //
+
+            if($check_phone == 0){
+                foreach ($ocarr as $key => $value) {
+
+                    if ($value == '') {
+                        continue;
+                    }
+
+                    if ($i == 1) {
+                        $c = $value;
+                    } else {
+
+                        $c = '+91' . $value;
+                    }
+
+                    if($c=='+919414784873'){
+
+                        continue;
+                    }
+
+
+
+                    //que table
+                    $arr_e = array();
+                    $arr_e['caseid'] = $d['caseid'];
+                    $arr_e['contact'] = trim($c);
+                    $arr_e['content'] = json_encode($d['content']);
+                    $arr_e['casetype'] = 2;
+                    $arr_e['event'] = $d['event'];
+                    $arr_e['variable'] = json_encode($d['varjson']);
+                    $arr_e['haptik_tmp'] = isset($d['haptik_tmp']) ? $d['haptik_tmp'] : null;
+
+                    if (array_key_exists('media', $d['content'])) {
+
+                        $arr_e['media'] = 1;
+                    }
+
+                    WhatsAppQue::insert($arr_e);
+
+                    $i++;
+                }
+            }
+            return true;
         }
-        return true;
-        
 
         $url = "https://api.karix.io/message/";
 
@@ -309,7 +321,12 @@ class Whatsapp
     
     public static function sendWaStopmessage($d)
     {
+        $platform = SendWhatsappChoice::select('platform_name')->where("is_active", "=", 1)->first();;
 
+        if($platform['platform_name'] == "Mtalkz"){
+            self::sendWaMtalkzmessage($d);
+        } else {
+            
         
         
             $ocarr = [];
@@ -350,8 +367,53 @@ class Whatsapp
 
             return true;
        
-        
+        } 
     }
     // For stop whtsapp message //
+
+
+    // Mtalkz Code //
+    public static function sendWaMtalkzmessage($d)
+    {
+       // dd($d);
+        $ocarr = [];
+
+        $ocarr[] = $d['contact'];
+
+        
+            foreach ($ocarr as $key => $value) {
+
+                if ($value == '') {
+                    continue;
+                }
+                // dd(strlen($value));
+                if (strlen($value) == 10) {
+                    $value = '+91' . $value;
+                } else {
+                    $value = $value;
+                }
+    
+                $arr_e = array();
+                $arr_e['caseid'] = $d['caseid'];
+                $arr_e['contact'] = trim($value);
+                $arr_e['content'] = json_encode($d['content']);
+                $arr_e['casetype'] = 2;
+                $arr_e['event'] = $d['event'];
+                $arr_e['variable'] = json_encode($d['varjson']);
+                $arr_e['haptik_tmp'] = $d['haptik_tmp'];
+    
+                if (array_key_exists('media', $d['content'])) {
+                    $arr_e['media'] = 1;
+                }
+    
+    
+                WhatsAppQue::create($arr_e);
+            }
+
+        
+        return true;
+       
+    }
+    // Mtalkz Code //
 
 }

@@ -41,6 +41,11 @@ Route::post('/whatsappconsentreply', [App\Http\Controllers\API\WhatsappChatbotCo
 // Whatsapp chat log API
 Route::post('medwhatsappbotlog', [App\Http\Controllers\API\WhatsappChatbotController::class, 'medwhatsappbotlog']);
 
+// Whatsapp chat log API
+Route::post('medwhatsappbotlogmtalkz', [App\Http\Controllers\API\WhatsappChatbotController::class, 'medwhatsappbotlogmtalkz']);
+
+
+
 //Whatsapp Webhook
 Route::get('whatsapp_webhook_status', [App\Http\Controllers\Webhook\WhatsappWebhookController::class, 'WhatsappStatus']);
 

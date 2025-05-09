@@ -319,6 +319,11 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     // get all caseid for random case 
     Route::get('getAllCaseIDList', [App\Http\Controllers\Admin\CaseController::class, 'getAllCaseIDList'])->name('admin.getAllCaseIDList');
+
+
+    Route::get('selectplatform', [App\Http\Controllers\Admin\DashboardController::class, 'selectplatform'])->name('admin.selectplatform');
+    Route::post('case/send-notification-platform-wise', [App\Http\Controllers\Admin\CaseController::class, 'platformWiseWhtsapp'])->name('admin.case.platformWiseWhtsapp');
+
 });
 
 //notification
@@ -328,6 +333,10 @@ Route::get('notification/whatsapp/send', [App\Http\Controllers\Notification\What
 
 Route::get('temp/que_changes', [App\Http\Controllers\Notification\WhatsappController::class, 'que_changes']);
 
+
+// Mtalkz code 
+Route::get('notification/whatsapp/sendMtalkz', [App\Http\Controllers\Notification\WhatsappController::class, 'sendMtalkz']);
+// Mtalkz code 
 
 
 // Session Reminder
