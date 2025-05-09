@@ -2591,7 +2591,7 @@ class CaseController extends Controller
                 ];
 
                 if($stop_rp == 0) {
-                   // $access = Whatsapp::sendWaStopmessage($dwa1);
+                    $access = Whatsapp::sendWaStopmessage($dwa1);
                 }
                 
 
@@ -2615,7 +2615,7 @@ class CaseController extends Controller
                     ];
 
                     if($stop_rp == 0) {
-                       // $access = Whatsapp::sendWaStopmessage($dwa2);
+                        $access = Whatsapp::sendWaStopmessage($dwa2);
                     }
 
                 }
@@ -2679,7 +2679,7 @@ class CaseController extends Controller
                     ];
 
                     if($stop_ip == 0) {
-                       // $access = Whatsapp::sendWamessage($dwa1);
+                        $access = Whatsapp::sendWamessage($dwa1);
                     }
                     
 
