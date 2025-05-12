@@ -2523,7 +2523,8 @@ class CaseController extends Controller
                 
                 if ($bulk_flag == 1) {
                 
-                    $template_name = WaTemplate::getRandomTemplate('L4L10');
+                    //$template_name = WaTemplate::getRandomTemplate('L4L10');
+                    $template_name = WaTemplate::getRandomTemplate('L4L10REF');
                 } else {
                 
                     $template_name = WaTemplate::getRandomTemplate('ITML4');
@@ -2542,18 +2543,18 @@ class CaseController extends Controller
                     if ($bulk_flag == 1) {
                         $caseid = "M" . sprintf("%06d", $id);
                         
-                        $varjson = [
-                            "initiating" => $initiating_party,
-                            'caseid' => "M" . sprintf("%06d", $id),
-                            'scaseid' => "M" . sprintf("%06d", $id),
-                            'sessionDteaTime' => $zoom_date_temp,
-                            'zoomid' => $zoom_link_temp
-                        ];
-                        $var = ['-ip-','-cid-','-cid-','-dt-','-link-'];
-                        $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp,$zoom_link_temp];
+                        // $varjson = [
+                        //     "initiating" => $initiating_party,
+                        //     'caseid' => "M" . sprintf("%06d", $id),
+                        //     'scaseid' => "M" . sprintf("%06d", $id),
+                        //     'sessionDteaTime' => $zoom_date_temp,
+                        //     'zoomid' => $zoom_link_temp
+                        // ];
+                        // $var = ['-ip-','-cid-','-cid-','-dt-','-link-'];
+                        // $var1 = [$initiating_party,$caseid,$caseid,$zoom_date_temp,$zoom_link_temp];
                         
 
-                        /*
+                        
                         $varjson = [
                             "responding" => $responding_party_name[$k],
                             "initiating" => $initiating_party,
@@ -2564,7 +2565,7 @@ class CaseController extends Controller
                         ];
                         $var = ['-rp-','-ip-','-refid-','-dt-','-cid-','-link-'];
                         $var1 = [$responding_party_name[$k],$initiating_party,$MedCasedata->ref_id,$zoom_date_temp,$caseid,$zoom_link_temp];
-                        */
+                        
                     } else {
                         $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
                         $var = ['-ip-','-cid-'];
