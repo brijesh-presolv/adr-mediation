@@ -377,3 +377,6 @@ Route::post('create_wa_log', [App\Http\Controllers\Notification\ReinitiateContro
 
 // retrigger session notifications
 Route::get('reinitiate_session_notification', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate_session_notification']);
+
+// retrigger refid
+Route::get('reinitiate_refid', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate_refid']);
