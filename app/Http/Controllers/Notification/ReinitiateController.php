@@ -683,7 +683,7 @@ class ReinitiateController extends Controller
                 "zoomid" => $zoom_link_temp
             ];
             $var = ['-rp-','-ip-','-refid-','-dt-','-cid-','-link-'];
-            $var1 = [$data->rp_name,$ip_name,$data->refid,$zoom_date_temp,$caseid,$zoom_link_temp];
+            $var1 = [$data->rp_name,$ip_name,$data->refid,$zoom_date_temp,"M" . sprintf("%06d", $data->caseid),$zoom_link_temp];
                         
     
             $template_name = WaTemplate::getRandomTemplate('L4L10REF');
