@@ -596,7 +596,7 @@ class ReinitiateController extends Controller
         $zoom_date_temp = "20/05/2025/11:00AM-2:00PM";
         $zoom_link_temp = "https://us02web.zoom.us/j/82342965445?pwd=fElQtSuSVWE8IuuvzPyaMD7M8JYW8e.1";
 
-        $ip_name = "Jignesh V. Trivedi";
+        $ip_name = "Axis Bank Ltd.";
 
         foreach($allData as $data) {
             $varjson = [
