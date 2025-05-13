@@ -596,11 +596,12 @@ class ReinitiateController extends Controller
         $zoom_date_temp = "20/05/2025/11:00AM-2:00PM";
         $zoom_link_temp = "https://us02web.zoom.us/j/82342965445?pwd=fElQtSuSVWE8IuuvzPyaMD7M8JYW8e.1";
 
-        $ip_name = "Axis Bank Ltd.";
+        $ip_name = "Axis Bank LTD.";
+        $rp_name = "Responding Party";
 
         foreach($allData as $data) {
             $varjson = [
-                "responding" => $data->rp_name,
+                "responding" => $rp_name,
                 "initiating" => $ip_name,
                 "refid" => $data->refid,
                 "sessionDteaTime" => $zoom_date_temp,
@@ -608,7 +609,7 @@ class ReinitiateController extends Controller
                 "zoomid" => $zoom_link_temp
             ];
             $var = ['-rp-','-ip-','-refid-','-dt-','-cid-','-link-'];
-            $var1 = [$data->rp_name,$ip_name,$data->refid,$zoom_date_temp,"M" . sprintf("%06d", $data->caseid),$zoom_link_temp];
+            $var1 = [$rp_name,$ip_name,$data->refid,$zoom_date_temp,"M" . sprintf("%06d", $data->caseid),$zoom_link_temp];
                         
     
             $template_name = WaTemplate::getRandomTemplate('L4L10REF');
