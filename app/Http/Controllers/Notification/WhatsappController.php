@@ -524,6 +524,8 @@ class WhatsappController extends Controller
 
            // "url" : "'.$d['varheader'][0].'",
 
+           // "url" : "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf",
+
             $data = '{
                 "message" : {
                     "channel" : "WABA",
@@ -534,7 +536,7 @@ class WhatsappController extends Controller
                             "templateId" : "'.$d['tempname'].'",
                             "media" : {
                                 "type" : "document",
-                                "url" : "https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf",
+                                "url" : "'.$d['varheader'][0].'",
                                 "fileName" : "'.$d['file_name'].'"
                             },
                             "bodyParameterValues" : {
