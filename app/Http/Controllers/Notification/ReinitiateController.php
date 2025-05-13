@@ -667,6 +667,57 @@ class ReinitiateController extends Controller
     public function reinitiate_refid() {
         $allData = DB::table('reinitiate_refid')->where('is_whtsapp_sent', 0)->limit(100)->get();
 
+    public function reinitiate_refid() {
+        $allData = DB::table('reinitiate_refid')->where('is_whtsapp_sent', 0)->limit(100)->get();
+
+        
+        $zoom_date_temp = "20/05/2025/11:00AM-2:00PM";
+        $zoom_link_temp = "https://us02web.zoom.us/j/82342965445?pwd=fElQtSuSVWE8IuuvzPyaMD7M8JYW8e.1";
+
+        $ip_name = "Axis Bank LTD.";
+        $rp_name = "Responding Party";
+
+        foreach($allData as $data) {
+            $varjson = [
+                "responding" => $rp_name,
+                "initiating" => $ip_name,
+                "refid" => $data->refid,
+                "sessionDteaTime" => $zoom_date_temp,
+                "caseid" => "M" . sprintf("%06d", $data->caseid),
+                "zoomid" => $zoom_link_temp
+            ];
+            $var = ['-rp-','-ip-','-refid-','-dt-','-cid-','-link-'];
+            $var1 = [$rp_name,$ip_name,$data->refid,$zoom_date_temp,"M" . sprintf("%06d", $data->caseid),$zoom_link_temp];
+                        
+    
+            $template_name = WaTemplate::getRandomTemplate('L4L10REF');
+
+            $content1 = WaTemplate::getcontent($template_name);
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $data->caseid,
+                'contact' =>  $data->phone,
+                'content' => ['text' => $content],
+                'event' => 'ACPTARB_ADM_RES',
+                'varjson' => $varjson,
+                'haptik_tmp' => $template_name,
+    
+            ];
+
+            $access1 = Whatsapp::sendWamessage($dwa1);
+
+            if($access1) {
+                $is_update_wa = DB::table('reinitiate_refid')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
+
+                if($is_update_wa) {
+                    echo $template_name ." added for case id =" .$data->caseid;
+                    echo "<br/>";
+                }
+                
+            }
+        }
+
+    }
         
         $zoom_date_temp = "20/05/2025/11:00AM-2:00PM";
         $zoom_link_temp = "https://us02web.zoom.us/j/82342965445?pwd=fElQtSuSVWE8IuuvzPyaMD7M8JYW8e.1";

@@ -551,7 +551,7 @@ class WhatsappController extends Controller
                         "from" : "918879651360"
                     },
                     "preferences" : {
-                        "webHookDNId" : "1001"
+                        "webHookDNId" : "<webHookDNId>"
                     }
                 },
                 "metaData" : {
@@ -614,8 +614,7 @@ class WhatsappController extends Controller
                             "templateId" : "'.$d['tempname'].'",
                             "parameterValues" : {
                                 '.$finalbody.'
-                            },
-                            "headerTitle" : "{{1}}"
+                            }
                         },
                         "shorten_url" : true
                     },
@@ -627,7 +626,7 @@ class WhatsappController extends Controller
                         "from" : "918879651360"
                     },
                     "preferences" : {
-                        "webHookDNId" : "1001"
+                        "webHookDNId" : "<webHookDNId>"
                     }
                 },
                 "metaData" : {

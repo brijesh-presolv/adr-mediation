@@ -20,7 +20,10 @@ class Whatsapp
        
 
         if($platform['platform_name'] == "Mtalkz"){
-            self::sendWaMtalkzmessage($d);
+           $temp = self::sendWaMtalkzmessage($d);
+           if($temp) {
+            return true;
+           }
         } else {
                 $ocarr = [];
 
