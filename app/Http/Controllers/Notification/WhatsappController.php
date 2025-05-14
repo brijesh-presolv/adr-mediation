@@ -550,7 +550,7 @@ class WhatsappController extends Controller
                         "recipient_type" : "individual"
                     },
                     "sender" : {
-                        "from" : "918879651360"
+                        "from" : "919152857360"
                     },
                     "preferences" : {
                         "webHookDNId" : "<webHookDNId>"
@@ -625,7 +625,7 @@ class WhatsappController extends Controller
                         "recipient_type" : "individual"
                     },
                     "sender" : {
-                        "from" : "918879651360"
+                        "from" : "919152857360"
                     },
                     "preferences" : {
                         "webHookDNId" : "<webHookDNId>"
