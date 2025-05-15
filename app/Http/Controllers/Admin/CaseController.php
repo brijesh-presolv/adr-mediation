@@ -6624,7 +6624,11 @@ class CaseController extends Controller
                 
         
                 // dd($dataToUpdate);
-        
+                $dataToUpdate_first = [
+                    'is_active' => 0,
+                    'updated_at' => date('Y-m-d H:i:s')
+                ];
+                SendWhatsappChoice::where('is_active', 1)->update($dataToUpdate_first);
                
                 if($request->platform == "i"){
                     $platform = "Interekt";
