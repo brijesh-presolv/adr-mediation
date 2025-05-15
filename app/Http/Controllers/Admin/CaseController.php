@@ -6627,7 +6627,7 @@ class CaseController extends Controller
         
                
                 if($request->platform == "i"){
-                    $platform_active = "Interekt";
+                    $platform = "Interekt";
                 } else if($request->platform == "m") {
                     $platform = "Mtalkz";
                 }
