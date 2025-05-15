@@ -24,7 +24,7 @@ class sms
 
             //que table
             $settlelink = 'https://'.$_SERVER['SERVER_NAME'].'/email/reply/' . base64_encode($data['caseid']);
-            $sprintf_id = 'A' . sprintf("%06d", $data['caseid']);
+            $sprintf_id = 'M' . sprintf("%06d", $data['caseid']);
             if ($data['casetype'] == 1) {
                 $notice_type = 1;
             } else {
