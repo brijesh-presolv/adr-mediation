@@ -550,7 +550,7 @@ class WhatsappController extends Controller
                         "recipient_type" : "individual"
                     },
                     "sender" : {
-                        "from" : "'.env('MTALKZ_KEY').'"
+                        "from" : "'.env('MTALKZ_NUM').'"
                     },
                     "preferences" : {
                         "webHookDNId" : "<webHookDNId>"
@@ -625,7 +625,7 @@ class WhatsappController extends Controller
                         "recipient_type" : "individual"
                     },
                     "sender" : {
-                        "from" : "'.env('MTALKZ_KEY').'"
+                        "from" : "'.env('MTALKZ_NUM').'"
                     },
                     "preferences" : {
                         "webHookDNId" : "<webHookDNId>"
