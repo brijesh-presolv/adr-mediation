@@ -2458,8 +2458,8 @@ class CaseController extends Controller
             'event' => 'SESS_SCHE',
             'case_id' => $id,
         ];
-        $zoom_date_temp = "28/05/2025/11:00AM-2:00PM";
-        $zoom_link_temp = "https://us02web.zoom.us/j/88121705140?pwd=Wvihi2irXK4ZbI8WIbxJ9SBkMoalsQ.1";
+        $zoom_date_temp = "30/05/2025/11:00AM-1:00PM";
+        $zoom_link_temp = "https://us02web.zoom.us/j/88293413084?pwd=JFA8uLB0vYyTabo9CHKXI3ZRe1XK3r.1";
 
 
         // $mid = "M" . sprintf("%06d", $id);
