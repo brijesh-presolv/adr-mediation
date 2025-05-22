@@ -175,8 +175,8 @@ class WhatsappWebhookController extends Controller
                     // }
     
                     //$media=$data['data']['message']['media_url'];
-                    $media="";
-                    $message = $data['eventContent']['message']['text']['body'];
+                    $media=$data['eventContent']['message']['image']['fileLink'];
+                    $message = isset($data['eventContent']['message']['text']['body']) ? $data['eventContent']['message']['text']['body'] : "";
                     $message_content_type = $data['eventContent']['message']['contentType'];
     
                     
