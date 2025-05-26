@@ -668,8 +668,8 @@ class ReinitiateController extends Controller
         $allData = DB::table('reinitiate_refid')->where('is_whtsapp_sent', 0)->limit(100)->get();
 
         
-        $zoom_date_temp = "30/05/2025/11:00AM-1:00PM";
-        $zoom_link_temp = "https://us02web.zoom.us/j/88293413084?pwd=JFA8uLB0vYyTabo9CHKXI3ZRe1XK3r.1";
+        $zoom_date_temp = "31/05/2025/11:00AM-5:00PM";
+        $zoom_link_temp = "https://us02web.zoom.us/j/89755436391?pwd=heQqasKUEahTZahiEUJW6o9gX9KWBD.1";
 
         $ip_name = "Axis Bank LTD.";
         $rp_name = "Responding Party";
