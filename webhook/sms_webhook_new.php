@@ -129,8 +129,8 @@ $db_var = new mysqli($db_host, $db_username, $db_password,$db_name);
                      VALUES ('" . $requestID . "','" . $userId . "','" . $senderId . "','" . $date . "','" . $receiver . "','" . $status . "','" . $desc . "','" . $failedReason . "','" . $fh . "','" . $datetime . "','" . $datetime . "','" . $datetime . "','" . $datetime . "')";
             // echo $query;
             // exit;
-            $result = $db_var->query($query);
-            // $result = mysqli_query($db_var, $query);
+            //$result = $db_var->query($query);
+             $result = mysqli_query($db_var, $query);
 
 
          
