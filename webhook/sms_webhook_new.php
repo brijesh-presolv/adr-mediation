@@ -83,7 +83,7 @@ $db_password = 'vD8gmE3EoBHmHAnjUgk4pj';
 
 $db_name = 'mediation';
 
-$db_host = '3.109.229.56';
+$db_host = '13.232.40.128';
 
 
 
