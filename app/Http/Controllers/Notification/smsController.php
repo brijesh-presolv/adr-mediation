@@ -130,11 +130,11 @@ class smsController extends Controller
         $authKey = env('SMS_AUTH_KEY');
         $mobile_Number = $c;
         // $mobile_Number = '8866822947';
-        $senderId = "Preslv";
+        $senderId = "Prsolv";
         $route = "4";
         $postData = array(
             'authkey' => $authKey,
-            'mobiles' => "91" . $mobile_Number,
+            'mobiles' => "+91" . $mobile_Number,
             'message' => $d['content'],
             'sender' => $senderId,
             'route' => $route,
