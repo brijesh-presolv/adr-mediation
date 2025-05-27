@@ -127,13 +127,14 @@ $db_var = new mysqli($db_host, $db_username, $db_password,$db_name);
 
             $query = "INSERT INTO sms_status (request_id,user_id,sender_id,date,receiver,status,status_description,failedReason, response_data,sent_time,delivered_time,updated_time,created_at) 
                      VALUES ('" . $requestID . "','" . $userId . "','" . $senderId . "','" . $date . "','" . $receiver . "','" . $status . "','" . $desc . "','" . $failedReason . "','" . $fh . "','" . $datetime . "','" . $datetime . "','" . $datetime . "','" . $datetime . "')";
-            // echo $query;
+             echo $query;
             // exit;
-            //$result = $db_var->query($query);
-             $result = mysqli_query($db_var, $query);
+            $result = $db_var->query($query);
+            // $result = mysqli_query($db_var, $query);
 
 
-         
+            echo "<pre>";print_R($result);
+            exit;
 
 
                       
