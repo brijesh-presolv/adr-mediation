@@ -77,7 +77,19 @@ function smsBotLogAsync($myFile, $callback)
 function smsBotlog($myFile)
 {
 
-   global $db_var;
+   $db_username = 'meduser';
+
+$db_password = 'vD8gmE3EoBHmHAnjUgk4pj';
+
+$db_name = 'mediation';
+
+$db_host = '3.109.229.56';
+
+
+
+$db_var = new mysqli($db_host, $db_username, $db_password,$db_name);
+
+ //  global $db_var;
    $token = '';
    //$curl = new Curl();
 
@@ -121,32 +133,27 @@ function smsBotlog($myFile)
             // $result = mysqli_query($db_var, $query);
 
 
-            $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
-   
-                      $data = json_encode($value);
-                      $type = "POST";
-                  
-
+         
 
 
                       
-                     $ch = curl_init();
-                     curl_setopt($ch, CURLOPT_URL, $url);
-                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
-                     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-                     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                     'Content-Type: application/json',
-                     'Authorization: Basic ' . $auth,
-                     ));
-                     curl_setopt($ch, CURLOPT_TIMEOUT, 500);
-                     $response = curl_exec($ch);
-                     //echo '<pre>';print_r($response);die;
-                     curl_close($ch);
-                    // return $response;
+                    $curl = curl_init();
+
+curl_setopt_array($curl, [
+  CURLOPT_URL => "https://api.msg91.com/api/v2/logs",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "GET",  
+  CURLOPT_HTTPHEADER => [ 'authkey: 446869AcMa6eCNF68063658P1', 'Content-Type: application/json' ],
+]);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
 
             if ($result) {
                // unlink($myFile);
