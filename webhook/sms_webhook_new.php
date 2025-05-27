@@ -79,7 +79,7 @@ function smsBotlog($myFile)
 
    global $db_var;
    $token = '';
-   $curl = new Curl();
+   //$curl = new Curl();
 
 
    $fh = file_get_contents($myFile);
@@ -119,6 +119,34 @@ function smsBotlog($myFile)
             // exit;
             $result = $db_var->query($query) or die(mysqli_error($db_var));
             // $result = mysqli_query($db_var, $query);
+
+
+            $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
+   
+                      $data = json_encode($value);
+                      $type = "POST";
+                  
+
+
+
+                      
+                     $ch = curl_init();
+                     curl_setopt($ch, CURLOPT_URL, $url);
+                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
+                     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+                     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                     'Content-Type: application/json',
+                     'Authorization: Basic ' . $auth,
+                     ));
+                     curl_setopt($ch, CURLOPT_TIMEOUT, 500);
+                     $response = curl_exec($ch);
+                     //echo '<pre>';print_r($response);die;
+                     curl_close($ch);
+                    // return $response;
 
             if ($result) {
                // unlink($myFile);
