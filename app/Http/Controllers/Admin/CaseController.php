@@ -2822,15 +2822,15 @@ class CaseController extends Controller
             $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
             $var = ['-dt-', '-cid-', '-link-'];
             $var1 = [$date, $mid, $url];
-            $content1 = WaTemplate::getcontent('l10_session_schedule');
-            $content = str_replace($var, $var1, $content1);
-            $dwa1 = [
-                'caseid' => $id,
-                'contact' =>  $userPhone,
-                'content' => ['text' => $content],
-                'event' => 'SESS_SCHE',
-                'varjson' => $varjson,
-                'haptik_tmp' => 'l10_session_schedule',
+            // $content1 = WaTemplate::getcontent('l10_session_schedule');
+            // $content = str_replace($var, $var1, $content1);
+            // $dwa1 = [
+            //     'caseid' => $id,
+            //     'contact' =>  $userPhone,
+            //     'content' => ['text' => $content],
+            //     'event' => 'SESS_SCHE',
+            //     'varjson' => $varjson,
+            //     'haptik_tmp' => 'l10_session_schedule',
 
                 $template_name = WaTemplate::getRandomTemplate('L10');
 
