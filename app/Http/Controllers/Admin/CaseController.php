@@ -32,6 +32,7 @@ use App\Models\WhatsappBotReport;
 use App\Models\RestructureData;
 use App\Models\WhatsAppQue;
 use App\Models\SendWhatsappChoice;
+use App\Models\sms_tracking;
 use DB;
 use PDF;
 use Auth;
@@ -1716,9 +1717,14 @@ class CaseController extends Controller
     {
         $id = $request->SessId;
 
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+
         $deleted = ManageSession::find($id);
         $deleted->is_deleted = 1;
         $deleted->delete_reason = $request->reason;
+
+        $date_time = explode('/', $deleted->session_date);
+        $display_date_time = $date_time[0].'-'.$date_time[1].'-'.$date_time[2].' '.$date_time[3];
 
         /**** Zoom Delete *******/
         if($request->delZoomChoice == "direct"){
@@ -1751,6 +1757,26 @@ class CaseController extends Controller
                         }
                         if ($dd->userPhone != null) {
 
+
+                             /**** SMS Notification ****/
+                             if($is_bulk['bulk_flag'] == 0){
+                             $smsvar = ['--datetime--', '--caseid--'];
+                             $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
+                             $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
+                             
+                             Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN_SMS', 'L24_med_session_deleted');
+                             } else {
+                               if($dd->isClaimant != 0){
+                                $smsvar = ['--datetime--', '--caseid--'];
+                                $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
+                                $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
+                                
+                                Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN_SMS', 'L24_med_session_deleted');
+                               } 
+                             }
+                             /**** SMS Notification ****/
+
+
                             $varjson = ['party' => 'Party', 'deleteDate' => $deleted->session_date, "caseid" => $caseid];
                             $var = ['-party-', '-date-', '-caseid-'];
                             $var1 = ["Party", $deleted->session_date, $caseid];
@@ -1775,6 +1801,24 @@ class CaseController extends Controller
                                 SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
                             }
                             if ($dd->userPhone != null) {
+
+                                 /**** SMS Notification ****/
+                                 if($is_bulk['bulk_flag'] == 0){
+                                    $smsvar = ['--datetime--', '--caseid--'];
+                                    $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
+                                    $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
+                                    
+                                    Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN_SMS', 'L24_med_session_deleted');
+                                 } else {
+                                    if($dd->isClaimant != 0){
+                                     $smsvar = ['--datetime--', '--caseid--'];
+                                     $smsvar1 = [$display_date_time, Common_function::getsixdigitid('sc', $deleted->case_id)];
+                                     $varjsonSms = ['datetime' => $display_date_time, 'caseid' => $caseid];
+                                     
+                                     Common_function::sendsmsNotification($deleted->case_id, $dd->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL24', 'SESS_CEN_SMS', 'L24_med_session_deleted');
+                                    } 
+                                  }
+                             /**** SMS Notification ****/
 
                                 $varjson = ['party' => 'Party', 'deleteDate' => $deleted->session_date, "caseid" => $caseid];
                                 $var = ['-party-', '-date-', '-caseid-'];
@@ -2517,6 +2561,22 @@ class CaseController extends Controller
             if ($phone != "") {
                 
                
+
+
+                 /**** SMS Notification ****/
+                 $smsvar = ['--caseid--', '--ipname--'];
+                 $smsvar1 = [Common_function::getsixdigitid('sc', $id), $initiating_party];
+                 $varjsonSms = ['caseid' => Common_function::changeidprefix("",$id), 'ipname' => $initiating_party];
+                 
+                 Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES_SMS', 'L4_Med_case_approve_sms');
+                 
+                 /**** SMS Notification ****/
+
+
+
+                $varjson = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
+                $var = ['-cid-', '-ip-'];
+                $var1 = ["M" . sprintf("%06d", $id), $initiating_party];
                 $MedCasedata = MedCase::find($id);
                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $id)->first();
                 
@@ -2736,16 +2796,41 @@ class CaseController extends Controller
             'event' => 'SESS_SCHE',
             'case_id' => $id,
         ];
-        
-       
-            if ($email_id != "") {
-                SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
-            }
-            if ($userPhone != "") {
+        if ($email_id != "") {
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
+        }
 
-                $varjson = ['caseid' => $mid, 'sessionDteaTime' => $date, 'zoomid' => $url];
-                $var = ['-cid-', '-dt-', '-link-'];
-                $var1 = [$mid, $date, $url];
+        if ($userPhone != null) {
+
+            $smsPresolv360Url = Curl::getShortUrl($url); // get short url
+
+
+            $smsvar = ['--datetime--', '--caseid--', '--url--'];
+            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $smsPresolv360Url];
+            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $smsPresolv360Url];
+            
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_sess_shedule');
+        }
+
+        if ($userPhone != "") {
+
+
+           
+
+
+
+            $varjson = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];
+            $var = ['-dt-', '-cid-', '-link-'];
+            $var1 = [$date, $mid, $url];
+            $content1 = WaTemplate::getcontent('l10_session_schedule');
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $id,
+                'contact' =>  $userPhone,
+                'content' => ['text' => $content],
+                'event' => 'SESS_SCHE',
+                'varjson' => $varjson,
+                'haptik_tmp' => 'l10_session_schedule',
 
                 $template_name = WaTemplate::getRandomTemplate('L10');
 
@@ -2772,6 +2857,11 @@ class CaseController extends Controller
 
     public function sned_withdrawal($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
     {
+
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+
+        
+        //echo "<pre>";print_R($is_bulk);exit;
         // $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
@@ -2834,7 +2924,24 @@ class CaseController extends Controller
 
         if (isset($responding_phone)) {
             foreach ($responding_phone as $phone) {
-                if ($phone != "" && $stop_close_rp == 0) {
+                if ($phone != null && $stop_close_rp == 0) {
+
+
+                    /**** SMS Notification ****/
+                    if($is_bulk['bulk_flag'] == 0){
+                    
+                        $smsvar = ['--caseid--'];
+                        $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                        $varjsonSms = ['caseid' => $mid];
+                        
+                        Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL14', 'WDRN_OTHER_PARTY_SMS', 'L14_med_withdrawn');
+                    }
+                    /**** SMS Notification ****/
+                    
+
+
+
+
                     $varjson = ['caseid' => $mid, 'initiating' => $initiating_party];
                     $var = ['-cid-', '-cl-'];
                     $var1 = [$mid, $initiating_party];
@@ -2860,6 +2967,21 @@ class CaseController extends Controller
 
             if (isset($initiating_phone)) {
                 foreach ($initiating_phone as $ini_phone) {
+
+
+                     /**** SMS Notification ****/
+                     if($is_bulk['bulk_flag'] == 0){
+                    
+                        $smsvar = ['--caseid--'];
+                        $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                        $varjsonSms = ['caseid' => $mid];
+                        
+                        Common_function::sendsmsNotification($id, $ini_phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL14', 'WDRN_OTHER_PARTY_SMS', 'L14_med_withdrawn');
+                    }
+                    /**** SMS Notification ****/
+
+
+
                     $varjson = ['caseid' => $mid, 'responding' => $responding_party];
                     $var = ['-cid-', '-rp-'];
                     $var1 = [$mid, $responding_party];
@@ -2918,6 +3040,7 @@ class CaseController extends Controller
 
     public function sned_resolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
     {
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
@@ -2941,7 +3064,24 @@ class CaseController extends Controller
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
 
+            if ($inv->userPhone != null) {
+                /**** SMS Notification ****/
+                if($is_bulk['bulk_flag'] == 0){
+                    $smsvar = ['--caseid--'];
+                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                    $varjsonSms = ['caseid' => $mid];
+                    
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL15', 'RESO_ADM_SMS', 'L15_med_successful_resolution');
+                }
+                /**** SMS Notification ****/
+            }
+
             if ($inv->userPhone != "") {
+
+                
+
+
+
                 $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
@@ -2994,6 +3134,7 @@ class CaseController extends Controller
 
     public function sned_unresolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
     {
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
@@ -3017,7 +3158,26 @@ class CaseController extends Controller
             if ($inv->userEmail != "" && $stop_close_ip == 0) {
                 SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
             }
+
+            //if ($inv->userPhone != null) {
+                /**** SMS Notification ****/
+                if($is_bulk['bulk_flag'] == 0){
+                    $smsvar = ['--caseid--'];
+                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                    $varjsonSms = ['caseid' => $mid];
+                    
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL16', 'UNRESO_ADM_SMS', 'L16_med_closed');
+                }
+                /**** SMS Notification ****/
+            //}
+
             if ($inv->userPhone != "") {
+
+                
+
+
+
+
                 $varjson = ['caseid' => $mid];
                 $var = ['-cid-'];
                 $var1 = [$mid];
@@ -3912,6 +4072,14 @@ class CaseController extends Controller
         // $casedetails = MedCase::getcasebyId($id);
         $email = EmailTrack::getByCaseId($id);
         // $courierCsv = CourierCsv::with('pdf')->where('case_id', $id)->orderBy('status_as_on_date', 'DESC')->get();
+
+        // sms track
+       //$sms = sms_tracking::where("sms_tracking.caseid", "=", $id)->get();
+       $sms = sms_tracking::getByCaseId($id);
+        // sms track
+
+        //echo "<pre>";print_r($sms);exit;
+
         $courierCsv = CourierCsv::select('couriercsv.*', 'courierpdf.file_name')->leftJoin('courierpdf', 'courierpdf.csv_id', '=', 'couriercsv.id')
             ->where('couriercsv.case_id', $id)->orderBy('couriercsv.created_at', 'ASC')->get();
 
@@ -3965,7 +4133,7 @@ class CaseController extends Controller
             $parties = $parties . "enabled.";
         }
 
-        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv", "botMisReport", "parties"));
+        return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "ivr", "courierCsv", "sms", "botMisReport", "parties"));
     }
 
     public function mediatorAccessChange(Request $request)
@@ -4764,11 +4932,31 @@ class CaseController extends Controller
         $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" .  "Batch" . "\t" ."Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
             "Initiating Registered Office" . "\t" . "Initiating Full Name" . "\t" . "Initiating Email ID" . "\t" . "Initiating WhatsApp / Mobile Number" . "\t" . "Full name of Primary Respondent" . "\t" .
             "Full Address of Primary Respondent" . "\t" . "Email ID of Primary Respondent" . "\t" . "WhatsApp / Mobile Number of Primary Respondent (10 digit)" . "\t" . "Dispute Category" . "\t" . "Nature of agreement" . "\t" . "Agreement date" . "\t" .  "Disputed amount" . "\t" . "Date of Invitation" . "\t" . "Name of Mediator" . "\t" .
-            "Invitation Primary Respondent email transmitted status" . "\t" . "Invitation Primary Respondent email transmitted date" . "\t" . "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . "\t" . "Invitation Primary Respondent whatsapp transmitted status" . "\t" . "Invitation Primary Respondent whatsapp transmitted date" . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" . "\t";
+            "Invitation Primary Respondent email transmitted status" . "\t" . "Invitation Primary Respondent email transmitted date" 
+            . "\t" . "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" 
+            . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . 
+            "\t" . "Invitation Primary Respondent whatsapp transmitted status" . "\t" . "Invitation Primary Respondent whatsapp transmitted date" 
+            . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" 
+            . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" 
+            . "\t" . "Invitation Primary Respondent sms status" . "\t" . "Invitation Primary Respondent sms date"
+            . "\t";
 
         for ($i = 1; $i < $forloopcnt; $i++) {
             $columnHeader = $columnHeader . "Email ID of Additional Respondent " . $i . "\t" . "WhatsApp / Mobile Number of additional Respondent " . $i . "\t" .
-                "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
+                "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " email read status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " email read date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" 
+                . "\t" . "Invitation Additional Respondent " . $i . " sms status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " sms date" 
+                . "\t";
         }
 
         $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t";
@@ -4860,6 +5048,11 @@ class CaseController extends Controller
             } else {
                 $data['whatsapptrck'] = "";
             }
+
+
+            // sms track
+            $data['smstrck'] = sms_tracking::getByCaseId($value);
+            // sms track
            
             $caseinfo['invets'] = "";
             $caseinfo['invetd'] = "";
@@ -4980,6 +5173,37 @@ class CaseController extends Controller
                     $caseinfo['invwdd'] = $caseinfo['invwrd'];
                 }
             }
+
+
+
+            // sms track //
+            $caseinfo['invsms'] = "";
+            $caseinfo['invesmd'] = "";
+            
+            if (isset($data['smstrck'])) {
+                $time = new DateTime($data['smstrck']->created_at);
+                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+               
+                if (isset($data['smstrck'])) {
+                    foreach ($data['smstrck'] as $etrck) {
+                        if($etrck->status == 0){
+                            $caseinfo['invsms'] = "Sent";
+                            $caseinfo['invesmd'] = $time->format('d-m-Y H:i:s'); 
+                        } else {
+                            $caseinfo['invsms'] = "Not Sent";
+                            $caseinfo['invesmd'] = $time->format('d-m-Y H:i:s'); 
+                        }
+                    }
+                }
+            }
+            // sms track //
+
+
+
+
+
+
+
             for ($i = 1; $i < $forloopcnt; $i++) {
                 $caseinfo['erespemail' . $i] = "";
                 $caseinfo['erespmob' . $i] = "";
@@ -5665,6 +5889,16 @@ class CaseController extends Controller
             SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, "-zoom_invitation_link-" => $invitation], $email_name);
             //SendGrid::send($d, $email_id, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom" => $invitation], $email_name);
         }
+
+        if ($userPhone != null) {
+            $smsPresolv360Url = Curl::getShortUrl($invitation); // get short url
+            $smsvar = ['--datetime--', '--caseid--', '--url--'];
+            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $smsPresolv360Url];
+            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $smsPresolv360Url];
+            
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_sess_shedule');
+        }
+
         if ($userPhone != "") {
 
             $varjson = ['caseid' => $mid, 'sessionDteaTime' => $date, 'zoomid' => $invitation];

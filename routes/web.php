@@ -331,6 +331,8 @@ Route::get('notification/email/send', [App\Http\Controllers\Notification\EmailCo
 
 Route::get('notification/whatsapp/send', [App\Http\Controllers\Notification\WhatsappController::class, 'send']);
 
+Route::get('notification/sms/send', [App\Http\Controllers\Notification\smsController::class, 'send']);
+
 Route::get('temp/que_changes', [App\Http\Controllers\Notification\WhatsappController::class, 'que_changes']);
 
 

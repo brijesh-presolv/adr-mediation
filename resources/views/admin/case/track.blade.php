@@ -14,24 +14,24 @@
 
     <?php
     
-    function mapEmail($d, $e)
-    {
-        if ($d['user1email'] == $e) {
-            return ['type' => 'Claimant', 'name' => $d['user1name'], 'id' => 1];
-        } elseif ($d['user2email'] == $e) {
-            return ['type' => 'Respondent', 'name' => $d['user2name'], 'id' => 2];
-        } elseif ($d['arbemail'] == $e) {
-            return ['type' => 'Arbitrator', 'name' => $d['arbname'], 'id' => 3];
-        } else {
-            if ($d['OtherEmail'] != '') {
-                if (in_array($e, explode(',', $d['OtherEmail']))) {
-                    return ['type' => 'Other Respondent', 'name' => $d['Other Respondent'], 'id' => 2];
-                }
+    // function mapEmail($d, $e)
+    // {
+    //     if ($d['user1email'] == $e) {
+    //         return ['type' => 'Claimant', 'name' => $d['user1name'], 'id' => 1];
+    //     } elseif ($d['user2email'] == $e) {
+    //         return ['type' => 'Respondent', 'name' => $d['user2name'], 'id' => 2];
+    //     } elseif ($d['arbemail'] == $e) {
+    //         return ['type' => 'Arbitrator', 'name' => $d['arbname'], 'id' => 3];
+    //     } else {
+    //         if ($d['OtherEmail'] != '') {
+    //             if (in_array($e, explode(',', $d['OtherEmail']))) {
+    //                 return ['type' => 'Other Respondent', 'name' => $d['Other Respondent'], 'id' => 2];
+    //             }
     
-                return ['type' => 'Claimant', 'name' => $d['user1name'], 'id' => 1];
-            }
-        }
-    }
+    //             return ['type' => 'Claimant', 'name' => $d['user1name'], 'id' => 1];
+    //         }
+    //     }
+    // }
     ?>
     <div class="card bg-info text-light">
         <p class="m-2">The details pertaining to the delivery and service of all digital communications throughout the
@@ -278,10 +278,148 @@
     </div>
 
 
+    <!--------------- SMS Track -------------------------------------->
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex">
+                <h5>SMS Track</h5>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+
+                    <table id="smsTrack" class="table table-striped table-bordered dt-responsive nowrap"
+                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+
+                        <thead>
+                            <tr>
+                            <th>Event Title</th>
+                                <th>Event Description</th>
+                                <th>Event Date and Time</th>
+                                <th>Message</th>
+                                <!-- <th>Name</th> -->
+                                <th>Mobile No.</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php 
+                                           $smsevent='';
+                                           $smstitle='';
+                                           $smsdesc='';
+                                           $dpmsg='';
+                                            foreach($sms as $key => $value){
+                                                
+                                              //  $smsdata=mapEmail($value->contact, 0);
+            
+                                               // $smdata=getEventDetails($render_array['eventCodes'],$value->event,$smsdata['id']);
+                                         ?>
+                           
+                                <tr>
+                                <td>
+                                    <?php
+                                    // if (!empty($smdata)) {
+                                    //     if (isset($smdata->title) && $smdata->title != $smstitle) {
+                                    //         echo $smdata->title;
+                                    //     }
+                                    //     $smstitle = $smdata->title;
+                                    // } else {
+                                    //     $smstitle = '';
+                                    // }
+                                    echo $value->event;
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    // if (!empty($smdata)) {
+                                    //     if (isset($smdata->smsdescription)) {
+                                    //         if ($smdata->smsdescription != $smsdesc) {
+                                    //             echo $smdata->smsdescription;
+                                    //         }
+                                    
+                                    //         $smsdesc = $smdata->smsdescription;
+                                    //     } else {
+                                    //         $smsdesc = '';
+                                    //     }
+                                    // } else {
+                                    //     $smsdesc = '';
+                                    // }
+                                    echo $value->content;
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if ($smsevent != $value->event) {
+                                        $date = new DateTime($value->created_at);
+                                        echo $date->format('d-m-Y H:i:s');
+                                        $smsevent = $value->event;
+                                    }
+                                    ?>
+                                </td>
+
+                                <td>
+
+                                    <?php
+                                                if($value->content!='' and $dpmsg!=$value->request_id){
+                                              $dpmsg=$value->request_id;
+                                                 ?>
+                                    <button class="btn btn-primary viewmsg" data-toggle="modal"
+                                        data-target="#myModal230"
+                                        data-msg="<?= str_replace(['::', ';;'], ['‘', '’'], $value->content) ?>">View</button>
+                                    <?php }?>
+                                </td>
+
+
+                                <!-- <td>
+                                    <?php
+                                    //echo "test";
+                                    ?>
+                                </td> -->
+                                <td>
+                                    <?= $value->contact ?>
+                                </td>
+                                <td>
+
+                                    <?php if (ucfirst($value->smstatus) === '1') {
+                                        echo 'Sent';
+                                    } else {
+                                        echo 'Failed';
+                                    } ?>
+
+
+                                </td>
+                                <td>
+                                    <?php $date = new DateTime($value->smsdate);
+                                    echo $date->format('d-m-Y H:i:s');
+                                    ?>
+                                </td>
+                                </tr>
+                                <?php  } ?>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--------------- SMS Track -------------------------------------->
+
+
 
     <div class="card">
         <div class="card-body">
-            <h3>IVR Log</h3>
+
+            <div class="d-flex">
+                <h5>IVR Log</h5>
+
+            </div>
+
+
+
+            <!-- <h3>IVR Log</h3> -->
             <div class="row">
                 <div class="col-sm-12 table-responsive">
                     <table id="ivrcase" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0"
@@ -377,6 +515,49 @@
 
         </div>
     </div>
+
+<?php 
+
+function mapEmail($e, $r)
+{
+    if (array_key_exists($e, $r)) {
+        if ($r[$e]['role'] == 'Claimant') {
+            return ['type' => 'Claimant', 'name' => $r[$e]['name'], 'id' => 1];
+        }
+
+        if ($r[$e]['role'] == 'Respondent') {
+            return ['type' => 'Respondent', 'name' => $r[$e]['name'], 'id' => 2];
+        }
+
+        if ($r[$e]['role'] == 'Arbitrator') {
+            return ['type' => 'Arbitrator', 'name' => $r[$e]['name'], 'id' => 3];
+        }
+
+        if ($r[$e]['role'] == 'Lawyer') {
+            return ['type' => 'Respondent', 'name' => 'Authorized Representative', 'id' => 2];
+        }
+
+        if ($r[$e]['role'] == 'Other Respondent') {
+            return ['type' => 'Respondent', 'name' => $r[$e]['name'], 'id' => 2];
+        }
+
+        if ($r[$e]['role'] == 'Other Claimant') {
+            return ['type' => 'Claimant', 'name' => $r[$e]['name'], 'id' => 1];
+        }
+    }
+
+        return ['type' => 'Respondent', 'name' => 'Other Respondent', 'id' => 2];
+}
+
+function getEventDetails($e, $ev, $t)
+{
+    foreach ($e as $v) {
+        if ($v->type == "$t" and $v->code == "$ev") {
+            return $v;
+        }
+    }
+}
+?>
 
     {{-- <script type="text/javascript">
 function xyz($) {
@@ -522,6 +703,11 @@ $('#myModal230 .modal-body span').append( $(this).data('msg'));
             });
 
             $('#courierTrack').DataTable({
+                "responsive": true,
+                "aaSorting": []
+            });
+
+            $('#smsTrack').DataTable({
                 "responsive": true,
                 "aaSorting": []
             });
