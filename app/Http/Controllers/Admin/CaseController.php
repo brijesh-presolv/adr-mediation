@@ -3295,7 +3295,7 @@ class CaseController extends Controller
             if (is_array($access) && in_array($inv->id, $access)) {
 
 
-                if($is_bulk == 1) {
+                if($is_bulk['bulk_flag'] == 1) {
                     if($med->stop_bulk_upload_ip == 1 && $inv->isClaimant != 0) {
                         if ($inv->userEmail != "") {
                             $sendEamils[] = $inv->userEmail;
