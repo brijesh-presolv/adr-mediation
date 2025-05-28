@@ -2800,7 +2800,7 @@ class CaseController extends Controller
             SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
         }
 
-        if ($userPhone != null) {
+        if ($userPhone != "") {
 
             $smsPresolv360Url = Curl::getShortUrl($url); // get short url
 
@@ -5908,7 +5908,7 @@ class CaseController extends Controller
             //SendGrid::send($d, $email_id, ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => "Party", "-zoom" => $invitation], $email_name);
         }
 
-        if ($userPhone != null) {
+        if ($userPhone != "") {
             $smsPresolv360Url = Curl::getShortUrl($invitation); // get short url
             $smsvar = ['--datetime--', '--caseid--', '--url--'];
             $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $smsPresolv360Url];
