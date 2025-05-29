@@ -303,7 +303,7 @@ class Curl
     {
         $token = "KQQxsfjURpshwWhsKQQxsfjURpshwWhs";
         $app = "P360MED";
-        $header = "Preslv";        
+        $header = "PRSOLV";        
         $api_shortUrl = "https://odrs.in/api/getshort";
        
         $ip =''; 
