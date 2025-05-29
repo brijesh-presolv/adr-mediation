@@ -2809,7 +2809,7 @@ class CaseController extends Controller
             $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $url];
             $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $url];
             
-            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'med_session_l10');
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_session_shedule_1');
         }
 
         if ($userPhone != "") {
@@ -5914,7 +5914,7 @@ class CaseController extends Controller
             $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $invitation];
             $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $invitation];
             
-            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'med_session_l10');
+            Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_session_shedule_1');
         
         }
 
