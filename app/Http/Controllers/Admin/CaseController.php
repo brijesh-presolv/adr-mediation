@@ -2802,12 +2802,12 @@ class CaseController extends Controller
 
         if ($userPhone != "") {
 
-            //$smsPresolv360Url = Curl::getShortUrl($url); // get short url
+            $smsPresolv360Url = Curl::getShortUrl($url); // get short url
 
 
             $smsvar = ['--datetime--', '--caseid--', '--url--'];
-            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $url];
-            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $url];
+            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $smsPresolv360Url];
+            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $smsPresolv360Url];
             
             Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_session_shedule_1');
         }
@@ -5909,10 +5909,10 @@ class CaseController extends Controller
         }
 
         if ($userPhone != "") {
-            //$smsPresolv360Url = Curl::getShortUrl($invitation); // get short url
+            $smsPresolv360Url = Curl::getShortUrl($invitation); // get short url
             $smsvar = ['--datetime--', '--caseid--', '--url--'];
-            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $invitation];
-            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $invitation];
+            $smsvar1 = [$date, Common_function::getsixdigitid('sc', $id), $smsPresolv360Url];
+            $varjsonSms = ['datetime' => $date, 'caseid' => $mid, 'url' => $smsPresolv360Url];
             
             Common_function::sendsmsNotification($id, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_session_shedule_1');
         
