@@ -15,3 +15,7 @@ yarn-error.log
 /storage
 .htaccess
 .env.swp
+/webhook/whatsapp_log_latest_m
+/webhook/whatsapp_log_latest
+/webhook/sms_log_latest
+/public/images
