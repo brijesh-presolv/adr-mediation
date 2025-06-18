@@ -2503,8 +2503,8 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         
-        $zoom_date_temp = "27/06/2025/11:00AM-2:00PM";
-        $zoom_link_temp = "https://us02web.zoom.us/j/84095511579?pwd=gvX1i1OMCwVhj31tcuocWaTiqbplIH.1";
+        $zoom_date_temp = "25/06/2025/11:00AM-2:00PM";
+        $zoom_link_temp = "https://us02web.zoom.us/j/82815985066?pwd=LAQlZnLQLLo74bMkBlvqbEUeyhoj0b.1";
 
 
         // $mid = "M" . sprintf("%06d", $id);
