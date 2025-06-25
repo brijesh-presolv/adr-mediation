@@ -15,6 +15,8 @@ class Whatsapp
 {
     public static function sendWamessage($d)
     {
+        return true;
+        die();
         $platform = SendWhatsappChoice::select('platform_name')->where("is_active", "=", 1)->first();
 
        
