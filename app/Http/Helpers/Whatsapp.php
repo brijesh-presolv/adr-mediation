@@ -15,8 +15,6 @@ class Whatsapp
 {
     public static function sendWamessage($d)
     {
-        return true;
-        die();
         $platform = SendWhatsappChoice::select('platform_name')->where("is_active", "=", 1)->first();
 
        
@@ -326,8 +324,6 @@ class Whatsapp
     
     public static function sendWaStopmessage($d)
     {
-        return true;
-        die();
         $platform = SendWhatsappChoice::select('platform_name')->where("is_active", "=", 1)->first();;
 
         if($platform['platform_name'] == "Mtalkz"){
