@@ -26,9 +26,6 @@ class SendGrid
         $file = NULL
     ) {
 
-        return true;
-        die();
-
 
         $all_email = array();
 
