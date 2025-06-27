@@ -771,7 +771,7 @@ class ReinitiateController extends Controller
 
             $smsvar = ['--datetime--', '--caseid--', '--url--'];
             $smsvar1 = [$zoom_date_temp, Common_function::getsixdigitid('sc', $data->caseid), $smsPresolv360Url];
-            $varjsonSms = ['datetime' => $zoom_date_temp, 'caseid' => $mid, 'url' => $smsPresolv360Url];
+            $varjsonSms = ['datetime' => $zoom_date_temp, 'caseid' => Common_function::changeidprefix("",$data->caseid), 'url' => $smsPresolv360Url];
             
             Common_function::sendsmsNotification($data->caseid, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_session_shedule_1');
             //if($access1) {
