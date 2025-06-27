@@ -19,6 +19,8 @@ use App\Models\User;
 use App\Models\EmailTrack;
 use Illuminate\Support\Facades\Storage;
 
+use App\Http\Helpers\Common_function;
+
 use App\Models\MedCase;
 use App\Models\WhatsappLog;
 
@@ -715,6 +717,39 @@ class ReinitiateController extends Controller
         }
 
     }
+
+
+
+    // retrigger register case sms //
+    public function reinitiate_reg_sms() {
+        $allData = DB::table('reinitiate_sms')->where('is_sms_sent', 0)->limit(100)->get();
+
+        
+       
+        $initiating_party = "Kotak Mahindra Pvt Ltd.";
+
+        foreach($allData as $data) {
+            $smsvar = ['--caseid--', '--ipname--'];
+            $smsvar1 = [Common_function::getsixdigitid('sc', $data->caseid), $initiating_party];
+            $varjsonSms = ['caseid' => Common_function::changeidprefix("",$data->caseid), 'ipname' => $initiating_party];
+            
+            $access1 = Common_function::sendsmsNotification($data->caseid, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES_SMS', 'L4_Med_case_approve_sms');
+             
+
+            if($access1) {
+                $is_update_wa = DB::table('reinitiate_sms')->where('caseid', $data->caseid)->update(['is_sms_sent' => 1]);
+
+                if($is_update_wa) {
+                    echo "sms sent for case id =" .$data->caseid;
+                    echo "<br/>";
+                }
+                
+            }
+        }
+
+    }
+    // retrigger register case sms //
+
        
 }
 
