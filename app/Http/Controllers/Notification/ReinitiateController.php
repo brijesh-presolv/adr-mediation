@@ -733,7 +733,7 @@ class ReinitiateController extends Controller
             $smsvar1 = [Common_function::getsixdigitid('sc', $data->caseid), $initiating_party];
             $varjsonSms = ['caseid' => Common_function::changeidprefix("",$data->caseid), 'ipname' => $initiating_party];
             
-            $access1 = Common_function::sendsmsNotification($data->caseid, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES_SMS', 'L4_Med_case_approve_sms');
+            $access1 = Common_function::sendsmsNotification($data->caseid, $data->phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES_SMS', 'L4_Med_case_approve_sms');
              
 
             if($access1) {
