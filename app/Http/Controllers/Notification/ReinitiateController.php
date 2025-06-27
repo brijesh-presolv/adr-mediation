@@ -726,17 +726,17 @@ class ReinitiateController extends Controller
 
         
        
-        $initiating_party = "Kotak Mahindra Pvt Ltd.";
+        $initiating_party = "Kotak Mahindra Pvt Ltd";
 
         foreach($allData as $data) {
             $smsvar = ['--caseid--', '--ipname--'];
             $smsvar1 = [Common_function::getsixdigitid('sc', $data->caseid), $initiating_party];
             $varjsonSms = ['caseid' => Common_function::changeidprefix("",$data->caseid), 'ipname' => $initiating_party];
             
-            $access1 = Common_function::sendsmsNotification($data->caseid, $data->phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES_SMS', 'L4_Med_case_approve_sms');
+            Common_function::sendsmsNotification($data->caseid, $data->phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES_SMS', 'L4_Med_case_approve_sms');
              
 
-            if($access1) {
+            //if($access1) {
                 $is_update_wa = DB::table('reinitiate_sms')->where('caseid', $data->caseid)->update(['is_sms_sent' => 1]);
 
                 if($is_update_wa) {
@@ -744,11 +744,49 @@ class ReinitiateController extends Controller
                     echo "<br/>";
                 }
                 
-            }
+            //}
         }
 
     }
     // retrigger register case sms //
+
+
+
+
+
+    // retrigger session sms //
+    public function reinitiate_session_sms() {
+        $allData = DB::table('reinitiate_session_sms')->where('is_sms_sent', 0)->limit(100)->get();
+
+        
+       
+      
+
+        $zoom_date_temp = "28/06/2025/11:00AM-5:00PM";
+        $zoom_link_temp = "https://us02web.zoom.us/j/83703000820?pwd=0Va5xJuV8oAszkSaTUy7F3ylQ4BQGC.1";
+
+        foreach($allData as $data) {
+            $smsPresolv360Url = Curl::getShortUrl($zoom_link_temp); // get short url
+
+
+            $smsvar = ['--datetime--', '--caseid--', '--url--'];
+            $smsvar1 = [$zoom_date_temp, Common_function::getsixdigitid('sc', $data->caseid), $smsPresolv360Url];
+            $varjsonSms = ['datetime' => $zoom_date_temp, 'caseid' => $mid, 'url' => $smsPresolv360Url];
+            
+            Common_function::sendsmsNotification($data->caseid, $userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL10', 'SESS_SCHE_SMS', 'L10_med_session_shedule_1');
+            //if($access1) {
+                $is_update_wa = DB::table('reinitiate_session_sms')->where('caseid', $data->caseid)->update(['is_sms_sent' => 1]);
+
+                if($is_update_wa) {
+                    echo "sms sent for case id =" .$data->caseid;
+                    echo "<br/>";
+                }
+                
+            //}
+        }
+
+    }
+    // retrigger session sms //
 
        
 }

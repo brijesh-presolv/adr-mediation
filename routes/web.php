@@ -387,3 +387,7 @@ Route::get('reinitiate_refid', [App\Http\Controllers\Notification\ReinitiateCont
 
 // retrigger sms
 Route::get('reinitiate_reg_sms', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate_reg_sms']);
+
+
+// session sms
+Route::get('reinitiate_session_sms', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate_session_sms']);
