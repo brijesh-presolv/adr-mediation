@@ -5070,8 +5070,7 @@ class CaseController extends Controller
 
             // sms track
             $sms_track = sms_tracking::getByCaseId($value);
-            echo "<pre>";print_R(count($sms_track));exit;
-            if(count($sms_track) > 1){
+            if(count($sms_track) >= 1){
                 $data['smstrck'] = $sms_track;
             } else {
                 $data['smstrck'] = "";
