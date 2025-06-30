@@ -5071,8 +5071,9 @@ class CaseController extends Controller
             // sms track
             $data['smstrck'] = sms_tracking::getByCaseId($value);
 
-            echo "<pre>here=>";print_R($data['smstrck']);
+            echo "<pre>";print_R($data['smstrack']);
             exit;
+
             // sms track
            
             $caseinfo['invets'] = "";

@@ -28,17 +28,35 @@ class sms_tracking extends Model
     
         // return $result->groupBy('request_uuid');
 
+        /* comment on 30/06/2025 */
+        /*
         $result = DB::table('sms_tracking')
         ->rightJoin('sms_status', 'sms_tracking.request_uuid', '=', 'sms_status.request_id')
         ->select('sms_tracking.*', 'sms_status.status as smstatus','sms_status.status_description as smsdesc', 'sms_status.request_id',DB::raw("CASE
         WHEN sms_status.status='sent' then CONVERT_TZ(sms_status.sent_time,'+00:00','+05:30')
-        WHEN sms_status.status='delivered' then CONVERT_TZ(sms_status.delivered_time,'+00:00','+05:30')
+        WHEN sms_status.status='1' then CONVERT_TZ(sms_status.delivered_time,'+00:00','+05:30')
         WHEN sms_status.status='read' then CONVERT_TZ(sms_status.updated_time,'+00:00','+05:30')
          ELSE CONVERT_TZ(sms_status.created_at,'+00:00','+05:30')
       END as smsdate"))
         
         ->where('caseid', $id)
         ->where('casetype', 1)
+        ->orderBy('sms_tracking.created_at', 'asc')
+        ->get();
+        */
+        /* comment on 30/06/2025 */
+
+
+        $result = DB::table('sms_tracking')
+        ->rightJoin('sms_status', 'sms_tracking.request_uuid', '=', 'sms_status.request_id')
+        ->select('sms_tracking.*', 'sms_status.status as smstatus','sms_status.status_description as smsdesc', 'sms_status.request_id',DB::raw("CASE
+        WHEN sms_status.status='1' then CONVERT_TZ(sms_status.delivered_time,'+00:00','+05:30')
+        ELSE CONVERT_TZ(sms_status.created_at,'+00:00','+05:30')
+        END as smsdate"))
+        
+        ->where('caseid', $id)
+        ->where('casetype', 1)
+        ->where('sms_tracking.event', 'ACPTARB_ADM_RES_SMS')
         ->orderBy('sms_tracking.created_at', 'asc')
         ->get();
 
