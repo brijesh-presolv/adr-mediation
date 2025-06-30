@@ -60,6 +60,8 @@ class sms_tracking extends Model
         ->orderBy('sms_tracking.created_at', 'asc')
         ->first();
 
+        echo "<pre>";print_R($result);exit;
+
         return $result ;
     }
 }
