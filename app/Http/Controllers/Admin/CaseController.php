@@ -5214,7 +5214,7 @@ class CaseController extends Controller
                
                 if (isset($data['smstrck'])) {
                     foreach ($data['smstrck'] as $etrck) {
-                        if($etrck->status == 0){
+                        if($etrck->smstatus == 1){
                             $caseinfo['invsms'] = "Sent";
                             $caseinfo['invesmd'] = $time->format('d-m-Y H:i:s'); 
                         } else {
