@@ -5213,15 +5213,15 @@ class CaseController extends Controller
                 $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                
                 if (isset($data['smstrck'])) {
-                    foreach ($data['smstrck'] as $etrck) {
-                        if($etrck->smstatus == 1){
+                    //foreach ($data['smstrck'] as $etrck) {
+                        if($data['smstrck']->smstatus == 1){
                             $caseinfo['invsms'] = "Sent";
                             $caseinfo['invesmd'] = $time->format('d-m-Y H:i:s'); 
                         } else {
                             $caseinfo['invsms'] = "Not Sent";
                             $caseinfo['invesmd'] = $time->format('d-m-Y H:i:s'); 
                         }
-                    }
+                    //}
                 }
             }
             // sms track //
