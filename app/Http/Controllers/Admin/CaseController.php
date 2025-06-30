@@ -5069,7 +5069,14 @@ class CaseController extends Controller
 
 
             // sms track
-            $data['smstrck'] = sms_tracking::getByCaseId($value);
+            $sms_track = sms_tracking::getByCaseId($value);
+
+            if(count($sms_track) > 1){
+                $data['smstrck'] = $sms_track;
+            } else {
+                $data['smstrck'] = "";
+            }
+            
 
             echo "<pre>";print_R($data['smstrack']);
             exit;
@@ -5202,7 +5209,7 @@ class CaseController extends Controller
             $caseinfo['invsms'] = "";
             $caseinfo['invesmd'] = "";
             
-            if (isset($data['smstrck'])) {
+            if (isset($data['smstrck']) && $data['smstrck'] != "") {
                 $time = new DateTime($data['smstrck']->created_at);
                 $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
                
