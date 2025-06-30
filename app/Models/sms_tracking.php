@@ -58,7 +58,7 @@ class sms_tracking extends Model
         ->where('casetype', 1)
         ->where('sms_tracking.event', 'ACPTARB_ADM_RES_SMS')
         ->orderBy('sms_tracking.created_at', 'asc')
-        ->get();
+        ->first();
 
         return $result ;
     }
