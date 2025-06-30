@@ -50,7 +50,7 @@ class sms_tracking extends Model
         $result = DB::table('sms_tracking')
         ->rightJoin('sms_status', 'sms_tracking.request_uuid', '=', 'sms_status.request_id')
         ->select('sms_tracking.*', 'sms_status.status as smstatus','sms_status.status_description as smsdesc', 'sms_status.request_id',DB::raw("CASE
-        WHEN sms_status.status='1' then CONVERT_TZ(sms_status.delivered_time,'+00:00','+05:30')
+        WHEN sms_status.status=1 then CONVERT_TZ(sms_status.delivered_time,'+00:00','+05:30')
         ELSE CONVERT_TZ(sms_status.created_at,'+00:00','+05:30')
         END as smsdate"))
         
@@ -59,6 +59,9 @@ class sms_tracking extends Model
         ->where('sms_tracking.event', 'ACPTARB_ADM_RES_SMS')
         ->orderBy('sms_tracking.created_at', 'asc')
         ->get();
+
+        echo "<pre>result===>";print_R($result);
+        exit;
 
         return $result ;
     }
