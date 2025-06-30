@@ -70,6 +70,7 @@ class ProfileController extends Controller
                     'new_password.required' => 'Enter new Password*',
                     'new_confirm_password.required' => 'Enter Confirm Password*',
                     'new_confirm_password.same' => 'New password is not matched with confirm password please re-enter*',
+                    'signature' => 'nullable|mimes:jpg,jpeg,png|max:4048',  // 2MB size limit
                 ],
             );
 

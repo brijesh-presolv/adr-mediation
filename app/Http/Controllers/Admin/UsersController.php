@@ -138,6 +138,10 @@ class UsersController extends Controller
      */
     public function update(Request $request)
     {
+        $request->validate([
+    'signature' => 'nullable|mimes:jpg,jpeg,png|max:4048',  // 2MB size limit
+    'profilePic' => 'nullable|mimes:jpg,jpeg,png|max:4048',  // 2MB size limit
+]);
         $user = User::find($request->id);
         $user->first_name = ucfirst($request->first_name);
         $user->last_name = ucfirst($request->last_name);
