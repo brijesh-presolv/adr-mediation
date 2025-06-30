@@ -4937,7 +4937,7 @@ class CaseController extends Controller
 
     public function downloadLogInviation(Request $request)
     {
-         
+
         $caseinfo = [];
         $columnHeader = '';
         $setData = '';
