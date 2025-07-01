@@ -5074,6 +5074,8 @@ class CaseController extends Controller
                 $data['smstrck'] = $sms_track;
             } else {
                 $data['smstrck'] = "";
+                $caseinfo['invsms'] = "";
+                $caseinfo['invesmd'] = "";
             }
             
 
