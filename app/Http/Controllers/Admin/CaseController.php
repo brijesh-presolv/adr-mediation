@@ -4093,7 +4093,7 @@ class CaseController extends Controller
 
         // sms track
        //$sms = sms_tracking::where("sms_tracking.caseid", "=", $id)->get();
-       $sms = sms_tracking::getByCaseId($id);
+       $sms = sms_tracking::getTrackByCaseId($id);
         // sms track
 
         //echo "<pre>";print_r($sms);exit;
