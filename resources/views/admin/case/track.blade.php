@@ -320,32 +320,11 @@
                                 <tr>
                                 <td>
                                     <?php
-                                    // if (!empty($smdata)) {
-                                    //     if (isset($smdata->title) && $smdata->title != $smstitle) {
-                                    //         echo $smdata->title;
-                                    //     }
-                                    //     $smstitle = $smdata->title;
-                                    // } else {
-                                    //     $smstitle = '';
-                                    // }
                                     echo $value->event;
                                     ?>
                                 </td>
                                 <td>
                                     <?php
-                                    // if (!empty($smdata)) {
-                                    //     if (isset($smdata->smsdescription)) {
-                                    //         if ($smdata->smsdescription != $smsdesc) {
-                                    //             echo $smdata->smsdescription;
-                                    //         }
-                                    
-                                    //         $smsdesc = $smdata->smsdescription;
-                                    //     } else {
-                                    //         $smsdesc = '';
-                                    //     }
-                                    // } else {
-                                    //     $smsdesc = '';
-                                    // }
                                     echo $value->content;
                                     ?>
                                 </td>
