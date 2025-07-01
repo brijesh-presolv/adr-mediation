@@ -6701,8 +6701,6 @@ class CaseController extends Controller
                             $data['esmstrck'] = $sms_track;
                         } else {
                             $data['esmstrck'] = "";
-                            $caseinfo['einvsms'] = "";
-                            $caseinfo['einvesmd'] = "";
                         }
                         
                         if (isset($data['eemailtrck'])) {
