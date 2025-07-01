@@ -5264,7 +5264,7 @@ class CaseController extends Controller
 
                         $e_sms_track = sms_tracking::getByCaseId($value);
                         if($e_sms_track != ""){
-                            $data['esmstrck'] = $sms_track;
+                            $data['esmstrck'] = $e_sms_track;
                         } else {
                             $data['esmstrck'] = "";
                             $caseinfo['einvsms'] = "";
