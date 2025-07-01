@@ -6696,6 +6696,16 @@ class CaseController extends Controller
                         } else {
                             $data['ewhatsapptrck'] = "";
                         }
+
+
+                        $e_sms_track = sms_tracking::getByCaseId($value);
+                        if($e_sms_track != ""){
+                            $data['esmstrck'] = $sms_track;
+                        } else {
+                            $data['esmstrck'] = "";
+                            $caseinfo['einvsms'] = "";
+                            $caseinfo['einvesmd'] = "";
+                        }
                         
                         if (isset($data['eemailtrck'])) {
                             $time = new DateTime($data['eemailtrck']->created_at);
