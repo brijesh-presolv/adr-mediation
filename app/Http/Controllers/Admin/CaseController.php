@@ -6681,8 +6681,8 @@ class CaseController extends Controller
                 $caseinfo['einvwrs' . $i] = "";
                 $caseinfo['einvwrd' . $i] = "";
 
-                $caseinfo['einvsms' . $i] = "";
-                $caseinfo['einvesmd' . $i] = "";
+                $caseinfo['einvsms'] = "";
+                $caseinfo['einvesmd'] = "";
             }
 
             if (isset($data['responding'])) {
