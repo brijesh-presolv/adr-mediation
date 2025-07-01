@@ -5067,23 +5067,6 @@ class CaseController extends Controller
                 $data['whatsapptrck'] = "";
             }
 
-
-            // sms track
-            $sms_track = sms_tracking::getByCaseId($value);
-            if($sms_track != ""){
-                $data['smstrck'] = $sms_track;
-            } else {
-                $data['smstrck'] = "";
-                $caseinfo['invsms'] = "";
-                $caseinfo['invesmd'] = "";
-            }
-            
-
-            // echo "<pre>";print_R($data['smstrack']);
-            // exit;
-
-            // sms track
-           
             $caseinfo['invets'] = "";
             $caseinfo['invetd'] = "";
             $caseinfo['inveds'] = "";
@@ -5206,6 +5189,19 @@ class CaseController extends Controller
 
 
 
+             // sms track
+            $sms_track = sms_tracking::getByCaseId($value);
+            if($sms_track != ""){
+                $data['smstrck'] = $sms_track;
+            } else {
+                $data['smstrck'] = "";
+                $caseinfo['invsms'] = "Not Sent 12";
+                $caseinfo['invesmd'] = "";
+            }
+            
+
+            // sms track
+
             // sms track //
             $caseinfo['invsms'] = "";
             $caseinfo['invesmd'] = "";
@@ -5249,6 +5245,9 @@ class CaseController extends Controller
                 $caseinfo['einvwdd' . $i] = "";
                 $caseinfo['einvwrs' . $i] = "";
                 $caseinfo['einvwrd' . $i] = "";
+
+                $caseinfo['einvsms'] = "";
+                $caseinfo['einvesmd'] = "";
             }
 
             if (isset($data['responding'])) {
@@ -5262,6 +5261,15 @@ class CaseController extends Controller
                             $data['ewhatsapptrck'] = WhatsappTrack::getByCaseIdWhAndEvent($value, "ACPTARB_ADM_RES",  $v->userPhone);
                         } else {
                             $data['ewhatsapptrck'] = "";
+                        }
+
+                        $e_sms_track = sms_tracking::getByCaseId($value);
+                        if($e_sms_track != ""){
+                            $data['esmstrck'] = $sms_track;
+                        } else {
+                            $data['esmstrck'] = "";
+                            $caseinfo['einvsms'] = "Not Sent 12";
+                            $caseinfo['einvesmd'] = "";
                         }
                         
                         if (isset($data['eemailtrck'])) {
@@ -5372,6 +5380,24 @@ class CaseController extends Controller
                             if ($caseinfo['einvwrs' . $k] != "" && $caseinfo['einvwds' . $k] == "") {
                                 $caseinfo['einvwds' . $k] = "delivered";
                                 $caseinfo['einvwdd' . $k] = $caseinfo['einvwrd' . $k];
+                            }
+                        }
+
+
+                        if (isset($data['esmstrck']) && $data['esmstrck'] != "") {
+                            $time = new DateTime($data['esmstrck']->created_at);
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                        
+                            if (isset($data['esmstrck'])) {
+                                //foreach ($data['smstrck'] as $etrck) {
+                                    if($data['esmstrck']->smstatus == 1){
+                                        $caseinfo['einvsms' . $k] = "Sent";
+                                        $caseinfo['einvesmd' . $k] = $time->format('d-m-Y H:i:s'); 
+                                    } else {
+                                        $caseinfo['einvsms' . $k] = "Not Sent";
+                                        $caseinfo['einvesmd' . $k] = $time->format('d-m-Y H:i:s'); 
+                                    }
+                                //}
                             }
                         }
                     }
