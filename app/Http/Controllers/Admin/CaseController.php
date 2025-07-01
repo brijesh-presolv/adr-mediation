@@ -5268,7 +5268,7 @@ class CaseController extends Controller
                             $data['esmstrck'] = $sms_track;
                         } else {
                             $data['esmstrck'] = "";
-                            $caseinfo['einvsms'] = "Not Sent 12";
+                            $caseinfo['einvsms'] = "";
                             $caseinfo['einvesmd'] = "";
                         }
                         
@@ -6410,11 +6410,15 @@ class CaseController extends Controller
         $columnHeader =  "Sr. No." . "\t" . "Case ID" . "\t" . "Reference ID" . "\t" .  "Batch" . "\t" ."Date of Invoking Mediation" . "\t" . "Initiating Organization Name" . "\t" .
             "Initiating Registered Office" . "\t" . "Initiating Full Name" . "\t" . "Initiating Email ID" . "\t" . "Initiating WhatsApp / Mobile Number" . "\t" . "Full name of Primary Respondent" . "\t" .
             "Full Address of Primary Respondent" . "\t" . "Email ID of Primary Respondent" . "\t" . "WhatsApp / Mobile Number of Primary Respondent (10 digit)" . "\t" . "Dispute Category" . "\t" . "Nature of agreement" . "\t" . "Agreement date" . "\t" .  "Disputed amount" . "\t" . "Date of Invitation" . "\t" . "Name of Mediator" . "\t" .
-            "Invitation Primary Respondent email transmitted status" . "\t" . "Invitation Primary Respondent email transmitted date" . "\t" . "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . "\t" . "Invitation Primary Respondent whatsapp transmitted status" . "\t" . "Invitation Primary Respondent whatsapp transmitted date" . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" . "\t";
+            "Invitation Primary Respondent email transmitted status" . "\t" . "Invitation Primary Respondent email transmitted date" . "\t" . "Invitation Primary Respondent email delivery status" . "\t" . "Invitation Primary Respondent email delivery date" . "\t" . "Invitation Primary Respondent email read status" . "\t" . "Invitation Primary Respondent email read date" . "\t" . "Invitation Primary Respondent whatsapp transmitted status" . "\t" . "Invitation Primary Respondent whatsapp transmitted date" . "\t" . "Invitation Primary Respondent whatsapp delivery status" . "\t" . "Invitation Primary Respondent whatsapp delivery date" . "\t" . "Invitation Primary Respondent whatsapp read status" . "\t" . "Invitation Primary Respondent whatsapp read date" . "\t".
+            "Invitation Primary Respondent sms status" . "\t" . "Invitation Primary Respondent sms date". "\t";
 
         for ($i = 1; $i < $forloopcnt; $i++) {
             $columnHeader = $columnHeader . "Email ID of Additional Respondent " . $i . "\t" . "WhatsApp / Mobile Number of additional Respondent " . $i . "\t" .
-                "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t";
+                "Invitation Additional Respondent " . $i . " email transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " email transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " email delivery status" . "\t" . "Invitation Additional Respondent " . $i . " email delivery date" . "\t" . "Invitation Additional Respondent " . $i . " email read status" . "\t" . "Invitation Additional Respondent " . $i . " email read date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp transmitted date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp delivery date" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read status" . "\t" . "Invitation Additional Respondent " . $i . " whatsapp read date" . "\t" .
+                 "Invitation Additional Respondent " . $i . " sms status" 
+                . "\t" . "Invitation Additional Respondent " . $i . " sms date" 
+                . "\t";
         }
 
         $columnHeader = $columnHeader . "Ivr log status" . "\t" . "Ivr log Date" . "\t";
@@ -6626,6 +6630,43 @@ class CaseController extends Controller
                     $caseinfo['invwdd'] = $caseinfo['invwrd'];
                 }
             }
+
+              // sms track
+            $sms_track = sms_tracking::getByCaseId($value);
+            if($sms_track != ""){
+                $data['smstrck'] = $sms_track;
+            } else {
+                $data['smstrck'] = "";
+                $caseinfo['invsms'] = "Not Sent 12";
+                $caseinfo['invesmd'] = "";
+            }
+            
+
+            // sms track
+
+            // sms track //
+            $caseinfo['invsms'] = "";
+            $caseinfo['invesmd'] = "";
+            
+            if (isset($data['smstrck']) && $data['smstrck'] != "") {
+                $time = new DateTime($data['smstrck']->created_at);
+                $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+               
+                if (isset($data['smstrck'])) {
+                    //foreach ($data['smstrck'] as $etrck) {
+                        if($data['smstrck']->smstatus == 1){
+                            $caseinfo['invsms'] = "Sent";
+                            $caseinfo['invesmd'] = $time->format('d-m-Y H:i:s'); 
+                        } else {
+                            $caseinfo['invsms'] = "Not Sent";
+                            $caseinfo['invesmd'] = $time->format('d-m-Y H:i:s'); 
+                        }
+                    //}
+                }
+            }
+            // sms track //
+
+
             for ($i = 1; $i < $forloopcnt; $i++) {
                 $caseinfo['erespemail' . $i] = "";
                 $caseinfo['erespmob' . $i] = "";
@@ -6764,6 +6805,24 @@ class CaseController extends Controller
                             if ($caseinfo['einvwrs' . $k] != "" && $caseinfo['einvwds' . $k] == "") {
                                 $caseinfo['einvwds' . $k] = "delivered";
                                 $caseinfo['einvwdd' . $k] = $caseinfo['einvwrd' . $k];
+                            }
+                        }
+
+
+                        if (isset($data['esmstrck']) && $data['esmstrck'] != "") {
+                            $time = new DateTime($data['esmstrck']->created_at);
+                            $time->setTimezone(new DateTimeZone('Asia/Kolkata'));
+                        
+                            if (isset($data['esmstrck'])) {
+                                //foreach ($data['smstrck'] as $etrck) {
+                                    if($data['esmstrck']->smstatus == 1){
+                                        $caseinfo['einvsms' . $k] = "Sent";
+                                        $caseinfo['einvesmd' . $k] = $time->format('d-m-Y H:i:s'); 
+                                    } else {
+                                        $caseinfo['einvsms' . $k] = "Not Sent";
+                                        $caseinfo['einvesmd' . $k] = $time->format('d-m-Y H:i:s'); 
+                                    }
+                                //}
                             }
                         }
                     }
