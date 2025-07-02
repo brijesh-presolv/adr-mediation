@@ -6631,7 +6631,7 @@ class CaseController extends Controller
             }
 
               // sms track
-            $sms_track = sms_tracking::getByCaseId($value);
+            $sms_track = sms_tracking::getByCaseId($value['id']);
             if($sms_track != ""){
                 $data['smstrck'] = $sms_track;
             } else {
@@ -6699,7 +6699,7 @@ class CaseController extends Controller
                         }
 
 
-                        $e_sms_track = sms_tracking::getByCaseId($value);
+                        $e_sms_track = sms_tracking::getByCaseId($value['id']);
                         if($e_sms_track != ""){
                             $data['esmstrck'] = $e_sms_track;
                         } else {
