@@ -3060,8 +3060,11 @@ class CaseController extends Controller
                     $initiating_party = $inv->name;
                 }
             }
-            if ($inv->userEmail != "" && $stop_close_ip == 0) {
-                SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+            if ($inv->userEmail != "") {
+                if($stop_close_ip == 0) {
+
+                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                }
             }
 
             if ($inv->userPhone != null) {
@@ -3076,7 +3079,7 @@ class CaseController extends Controller
                 /**** SMS Notification ****/
             }
 
-            if ($inv->userPhone != "") {
+            if ($inv->userPhone != null) {
 
                 
 
@@ -3155,8 +3158,11 @@ class CaseController extends Controller
                     $initiating_party = $inv->name;
                 }
             }
-            if ($inv->userEmail != "" && $stop_close_ip == 0) {
-                SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+            if ($inv->userEmail != "") {
+                if($stop_close_ip == 0) {
+
+                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                }
             }
 
             //if ($inv->userPhone != null) {
@@ -3171,7 +3177,7 @@ class CaseController extends Controller
                 /**** SMS Notification ****/
             //}
 
-            if ($inv->userPhone != "") {
+            if ($inv->userPhone != null) {
 
                 
 
