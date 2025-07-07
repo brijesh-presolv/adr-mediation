@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="card-box">
-                <form action="{{ route('admin.users.update') }}" method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" action="{{ route('admin.users.update') }}" id="userUpdate" >
                     <input type="hidden" name="id" value="{{ $user->id }}">
                     <h4 class="header-title"><b>@lang('user.edit_title')</b></h4>
                     @csrf
@@ -218,10 +218,11 @@
                                     <br><img width="12%"
                                         src="{{ $user->role == 1 ? Config::get('constants.mediator_path') : Config::get('constants.user_path') }}/{{ $user->id }}/signature/{{ $user->signature_photo }}" />
                                 @endif
-                                <input type="file" class="form-control" id="signature" name="signature" accept="application/pdf,image/jpeg,image/jpg,image/png">
+                                <!-- <input type="file" class="form-control" id="signature" name="signature" accept="application/pdf,image/jpeg,image/jpg,image/png"> -->
                                 <!-- @if (Session::has('msg'))
                                     <span style="color: red;">{!! Session::get('msg') !!}</span>
                                 @endif -->
+                                <input type="file" class="form-control" id="signature" name="signature" onchange='beforeSubmit(this)' accept="application/pdf,image/jpeg,image/jpg,image/png">
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="state">Status</label>
@@ -317,10 +318,46 @@
     <script src="{{ url('/') }}/assets/js/pages/datatables.init.js"></script>
     <script src="{{ url('assets/') }}/libs/select2/select2.min.js"></script>
     <script src="{{ url('assets/') }}/libs/bootstrap-select/bootstrap-select.min.js"></script>
+
+    
     <script>
         $(document).ready(function() {
-            $('.select2-multiple').select2();
+            $('.select2-multiple').select2(); 
         });
+
+        function beforeSubmit(elm)
+        {
+            
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            
+           var formData = new FormData($('#userUpdate')[0]);
+           formData.append('token', csrf);
+
+           var pdf_file = $('#signature')[0].files[0];
+            //if (pdf_file) {
+                $.ajax({
+                url: '{{ route('admin.checkPdfContent') }}',
+                type: "POST",
+                dataType: "JSON",
+                contentType: false,
+                processData: false,
+                data: formData,
+                
+                success: function(result) {
+                    if(result.response == "err"){
+                        $("<span id='fileWar' style='color: red;'>"+result.msg+"</span>").insertAfter(elm);
+                        //elm.after("<span>"+result.msg+"</span>");
+                    } else {
+                        $('#fileWar').remove();   
+                    }
+                    console.log(result.response);
+                    
+                }
+                
+            });
+            
+        }
+        
     </script>
     <script>
         $.validate();

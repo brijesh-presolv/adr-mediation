@@ -191,4 +191,20 @@ class DashboardController extends Controller
     public function selectplatform(){
         return view('admin.case.selectplatform'); 
     }
+
+
+    // check vapt file content
+    public function checkPdfContent(Request $request){
+    //   / dd($request->all());
+        $file = $request['signature'];
+        
+        $content = file_get_contents($file);
+        if (preg_match('/\/JS|\/JavaScript|\/OpenAction|XSS/', $content)) {
+            $msg = "File contains restricted data , please check and re-upload.<br>";
+            return json_encode(['code' => 200, 'response' => 'err', 'msg' => $msg]);
+        } else {
+            return json_encode(['code' => 200, 'response' => 'success']);
+        }
+    }
+    // check vapt file content
 }
