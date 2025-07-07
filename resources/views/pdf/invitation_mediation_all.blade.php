@@ -383,8 +383,8 @@ $page_break_css = 'page-break-before: always;';
                 <p>வழக்கு ஐடி: எம்{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
-                <p>Date: {{ date('d-m-Y') }}</p>
-                <p>தேதி: {{ date('d-m-Y') }}</p>
+                <p>Date: 18-04-2025</p>
+                <p>தேதி: 18-04-2025</p>
             </td>
         </tr>
     </table>
