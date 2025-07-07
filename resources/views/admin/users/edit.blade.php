@@ -213,11 +213,15 @@
                             @endif
                             <div class="form-group col-md-6">
                                 <label for="signature">Upload Signature</label>
+                                
                                 @if ($user->signature_photo != null)
                                     <br><img width="12%"
                                         src="{{ $user->role == 1 ? Config::get('constants.mediator_path') : Config::get('constants.user_path') }}/{{ $user->id }}/signature/{{ $user->signature_photo }}" />
                                 @endif
-                                <input type="file" class="form-control" id="signature" name="signature">
+                                <input type="file" class="form-control" id="signature" name="signature" accept="application/pdf,image/jpeg,image/jpg,image/png">
+                                <!-- @if (Session::has('msg'))
+                                    <span style="color: red;">{!! Session::get('msg') !!}</span>
+                                @endif -->
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="state">Status</label>
