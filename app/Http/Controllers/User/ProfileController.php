@@ -100,6 +100,11 @@ class ProfileController extends Controller
             ]
         );
 
+        $request->validate([
+            'signature' => 'nullable|mimes:jpg,jpeg,png|max:4048',  // 2MB size limit
+            'profilePic' => 'nullable|mimes:jpg,jpeg,png|max:4048',  // 2MB size limit
+        ]);
+
         // dd("hello");
 
 
