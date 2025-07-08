@@ -250,7 +250,7 @@
                                                 @if($profileData->signature_photo != null) 
                                                     <br><img  width="12%" src="{{Config::get('constants.user_path')}}/{{$profileData->id}}/signature/{{$profileData->signature_photo}}" />  
                                                 @endif
-                                                <input type="file" class="form-control" id="signature"  name="signature" onchange='beforeSubmit(this)'>
+                                                <input type="file" class="form-control" id="signature"  name="signature" onchange='beforeSubmit(this)' accept="application/pdf,image/jpeg,image/jpg,image/png">
                                             </div>
                                         </div>
                                     </div>
