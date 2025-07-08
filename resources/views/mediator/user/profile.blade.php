@@ -112,14 +112,14 @@
                             @if(Auth::user()->signature_photo != null) 
                                 <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{Auth::user()->id}}/signature/{{Auth::user()->signature_photo}}" /> 
                             @endif
-                            <input type="file" class="form-control" id="signature"  name="signature" onchange='beforeSubmit(this)'>
+                            <input type="file" class="form-control" id="signature"  name="signature" onchange='beforeSubmit(this)' accept="application/pdf,image/jpeg,image/jpg,image/png">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="signature">Upload Profile Pic</label>
                             @if(Auth::user()->profile_pic != null) 
                                 <br><img  width="12%" src="{{Config::get('constants.mediator_path')}}/{{Auth::user()->id}}/profile/{{Auth::user()->profile_pic}}" /> 
                             @endif
-                            <input type="file" class="form-control" id="profilePic"  name="profilePic">
+                            <input type="file" class="form-control" id="profilePic"  name="profilePic" onchange='beforeSubmit(this)' accept="application/pdf,image/jpeg,image/jpg,image/png">
                         </div>
                         <div class="form-group col-md-4  d-none">
                             <label for="field1">@lang('user.field_1')</label>
