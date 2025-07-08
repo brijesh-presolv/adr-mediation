@@ -1099,7 +1099,7 @@ use App\Models\InvoledUser;
             $("#mediatorDocs").html("");
             $("#file_select").html("");
             var fileSelect =
-                `<input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />`;
+                `<input type="file" name="files[]" id="files" class="dropify" data-height="150" accept="application/pdf" multiple required />`;
             $("#file_select").append(fileSelect);
             $('.dropify').dropify();
 
