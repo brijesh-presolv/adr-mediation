@@ -862,7 +862,8 @@ class CaseController extends Controller
 
         if ($request->TotalFiles > 0) {
 
-            //$insert = array();
+            $insert = array();
+            $insert_manage = "";
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
                 //echo $request->caseId;
@@ -896,13 +897,13 @@ class CaseController extends Controller
                     } 
                 }
             }
-            
-            //if(!empty($insert)){
+            //dd($insert);
+            if(!empty($insert)){
                 $insert_manage = DB::table('manage_files')->insert($insert);
-            //}
+            }
             
-
-            if ($insert_manage) {
+            
+            if (isset($insert_manage) && $insert_manage != "") {
 
                 if(isset($request->allcids)) {
                     $is_bulk = 1;
