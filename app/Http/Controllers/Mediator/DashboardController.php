@@ -860,12 +860,15 @@ class DashboardController extends Controller
 
         $validatedData = $request->validate([
             'files0' => 'required',
-            'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
+            'files.*' => 'mimes:pdf,jpg,jpeg,png',
             // 'docs_party_ids' => 'required',
         ],
         [
             'files0.required' => 'You have to choose the file!',
         ]);
+        if ($validatedData->fails()) {
+            return response()->json(['errors' => $validatedData->errors(), 'fileerr' => 1]);
+        }
         $inv_id = "";
         if ($request->has('docs_party_ids')) {
             $inv_id = $request->docs_party_ids;

@@ -156,8 +156,9 @@
                         enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="caseId" value="">
-                        <input type="file" name="files[]" id="filesForBulk" class="dropify" data-height="150"
+                        <input type="file" name="files[]" id="filesForBulk" class="dropify" data-height="150" accept="application/pdf,image/jpeg,image/jpg,image/png"
                             multiple />
+                            <span>(Supported file type: PDF, JPG & PNG.)</span>
                         <br>
                         <input type="submit" id="submit" name="addSupportingDocs" class="btn-sm btn-primary mt-3">
                         <br>
@@ -222,8 +223,9 @@
                         enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="caseId" id="caseIdF1" value="">
-                        <input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple
+                        <input type="file" name="files[]" id="files" class="dropify" data-height="150" accept="application/pdf,image/jpeg,image/jpg,image/png" multiple
                             required />
+                            <span>(Supported file type: PDF, JPG & PNG.)</span>
                         <br><br>
                         <span>Share With:</span>
                         <div class="form-group" id="PartyDocs">
@@ -1293,10 +1295,10 @@
                         } else {
                             failId = failId + "," + item.id;
                         }
-                        $("#messcc").append(
-                            "<center style='color: red;'>Case ID : M" +
-                            item.cid.toString().padStart(6, "0") + " Failed.</center>"
-                        );
+                        // $("#messcc").append(
+                        //     "<center style='color: red;'>Case ID : M" +
+                        //     item.cid.toString().padStart(6, "0") + " Failed.</center>"
+                        // );
                         $("#mess").append(
                             "<center>Case Id A00" + error.caseid + " Failed.</center>"
                         );
@@ -1851,9 +1853,15 @@
                 },
                 error: function(data) {
                     //alert(data.responseJSON.errors.files[0]);
-                    swal(data.responseJSON.errors.files0[0], {
-                        icon: "error",
-                    });
+                     $(data.responseJSON.errors).each(function(i, j){
+                        swal('files0'+i, {
+                            icon: "error",
+                            text: "Please upload pdf, jpg, jpeg, png format"
+                        })
+                     });
+                    // swal(data.responseJSON.errors.files0[0], {
+                    //     icon: "error",
+                    // });
                 }
             });
         });

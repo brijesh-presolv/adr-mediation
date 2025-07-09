@@ -1099,7 +1099,8 @@ use App\Models\InvoledUser;
             $("#mediatorDocs").html("");
             $("#file_select").html("");
             var fileSelect =
-                `<input type="file" name="files[]" id="files" class="dropify" data-height="150" accept="application/pdf" multiple required />`;
+                `<input type="file" name="files[]" id="files" class="dropify" data-height="150" accept="application/pdf,image/jpeg,image/jpg,image/png" multiple required />
+                <span>(Supported file type: PDF, JPG & PNG.)</span>`;
             $("#file_select").append(fileSelect);
             $('.dropify').dropify();
 
@@ -1192,11 +1193,16 @@ use App\Models\InvoledUser;
                     // $("#uploadSupportingDocsModal").modal("hide");
                 },
                 error: function(data) {
-                    //alert(data.responseJSON.errors.files[0]);
-                    // console.log(data.responseJSON.errors.files[0]);
-                    swal(data.responseJSON.errors.files[0], {
-                        icon: "error",
-                    });
+                    
+                     $(data.responseJSON.errors).each(function(i, j){
+                        swal('files'+i, {
+                            icon: "error",
+                            text: "Please upload pdf, jpg, jpeg, png format"
+                        })
+                     });
+                    // swal(data.responseJSON.errors.files[0], {
+                    //     icon: "error",
+                    // });
                 }
             });
         });

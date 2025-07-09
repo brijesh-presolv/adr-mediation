@@ -72,9 +72,15 @@ class MediationController extends Controller
         // dd($request->all());
         $validatedData = $request->validate([
             'files' => 'required',
-            'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
+            'files.*' => 'mimes:pdf,jpg,jpeg,png',
             // 'docs_party_ids' => 'required',
         ]);
+
+        if ($validatedData->fails()) {
+            return response()->json(['errors' => $validatedData->errors()]);
+        }
+
+
         $inuser = InvoledUser::where('userId', Auth::user()->id)->where('userPlanId', $request->caseId)->first();
         if ($request->docs_party_ids == null) {
             $totalAccess = $inuser->id;
