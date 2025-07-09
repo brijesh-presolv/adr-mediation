@@ -3507,7 +3507,7 @@ class CaseController extends Controller
         }
 
         if (!empty($sendEamils)) {
-            if($is_bulk == 1) {
+            if($is_bulk['bulk_flag'] == 1) {
                 if($med->stop_bulk_upload_ip == 1 && $inv->isClaimant != 0) {
                     foreach ($sendEamils as $email) {
                         SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
