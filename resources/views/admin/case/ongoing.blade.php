@@ -3156,8 +3156,7 @@
             $("#mediatorDocs").html("");
             $("#file_select").html("");
             var fileSelect =
-                `<input type="file" name="files[]" id="files" class="dropify" data-height="150" accept="application/pdf,image/jpeg,image/jpg,image/png" multiple required />
-                <span>(Supported file type: PDF, JPG & PNG.)</span>`;
+                `<input type="file" name="files[]" id="files" class="dropify" data-height="150" multiple required />`;
             $("#file_select").append(fileSelect);
             $('.dropify').dropify();
             mediatorData.each(function() {
@@ -3244,12 +3243,6 @@
                 error: function(data) {
                     //alert(data.responseJSON.errors.files[0]);
                     console.log(data);
-                    $(data.responseJSON.errors).each(function(i, j){
-                        swal('files0'+i, {
-                            icon: "error",
-                            text: "Please upload pdf, jpg, jpeg, png format"
-                        })
-                    });
                 }
             });
         });

@@ -815,13 +815,9 @@ class CaseController extends Controller
         $validatedData = $request->validate([
             'files.*' => 'required',
             //'files.*' => 'mimes:csv,txt,xlx,xls,pdf,rar,zip',
-            'files.*' => 'pdf,jpg,jpeg,png',
+            'files.*' => 'mimes:pdf',
             // 'docs_party_ids' => 'required',
         ]);
-
-        if ($validatedData->fails()) {
-            return response()->json(['errors' => $validatedData->errors()]);
-        }
         $inv_id = "";
         if ($request->has('docs_party_ids')) {
             $inv_id = $request->docs_party_ids;
