@@ -866,17 +866,17 @@ class CaseController extends Controller
             $insert_manage = "";
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
-                //echo $request->caseId;
+               
                         
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
                     //$filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
-                    $filename = "supportingdoc".$x+1."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    $filename = "supportingdoc".($x+1)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
 
 
                     
-                        
+                       
                     
                     if(strpos($file->getClientOriginalName(), $request->caseId) !== false){
                         $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
@@ -885,8 +885,8 @@ class CaseController extends Controller
                    
                         $finalFilePath = $savePath . '/' . $filename;
                         Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
-
-                       // Storage::disk('local')->put($finalFilePath, file_get_contents($file));
+                        //Storage::disk('local')->put('public/mediation/' . $request->caseId . '/supportingDocument/' .  $filename, file_get_contents($file));
+                       //Storage::disk('local')->put($finalFilePath, file_get_contents($file));
                         // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                         $insert[$x]['file_name'] = $filename;
                         $insert[$x]['access'] = $inv_id;
@@ -895,8 +895,11 @@ class CaseController extends Controller
                         $insert[$x]['case_id'] = $request->caseId;
                         // $insert[$x]['path'] = $path;
                     } 
+
+                   
                 }
             }
+           // exit;
             //dd($insert);
             if(!empty($insert)){
                 $insert_manage = DB::table('manage_files')->insert($insert);
@@ -954,6 +957,8 @@ class CaseController extends Controller
                     return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
                 }
             } else {
+
+                
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
                     $faild_log = BulkLog::find($_POST['log_id']);
                     if ($faild_log->failed_row == null) {
