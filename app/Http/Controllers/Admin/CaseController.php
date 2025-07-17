@@ -871,7 +871,7 @@ class CaseController extends Controller
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
                     //$filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
-                    $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    $filename = "supportingdoc".$x+1."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
 
 
