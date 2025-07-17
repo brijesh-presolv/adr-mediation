@@ -5900,7 +5900,12 @@ class CaseController extends Controller
                             } else {
                                 $array1['noticeId'] = $explodeArray[1];
                             }
+
+                            echo "<pre>";print_R($array1['noticeId']);
+                            echo "request==>".$request->type;
                             $csvdata = CourierCsv::where('noticeId', $array1['noticeId'])->where('type', $request->type)->where('pdf_uploaded', 0)->first();
+                            dd($csvdata);
+                            
                             if (!$csvdata) {
                                 $errormsg .= "Please First upload csv file";
                                 return response()->json(["type" => "error", "code" => 200, "message" => $errormsg]);
