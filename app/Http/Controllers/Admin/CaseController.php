@@ -865,6 +865,9 @@ class CaseController extends Controller
             $insert = array();
             $insert_manage = "";
 
+            $previous_file_count = DB::table('manage_files')->where("mediation_case_id", "=", $request->caseId)->count();
+            echo "filecount==>".$previous_file_count;exit;
+
             for ($x = 0; $x < $request->TotalFiles; $x++) {
                
                         
