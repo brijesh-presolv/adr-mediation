@@ -866,7 +866,11 @@ class CaseController extends Controller
             $insert_manage = "";
 
             $previous_file_count = DB::table('manage_files')->where("case_id", "=", $request->caseId)->count();
-            echo "filecount==>".$previous_file_count;exit;
+            if($previous_file_count > 0){
+                $f_count = $previous_file_count;
+            } else {
+                $f_count = 1;
+            }
 
             for ($x = 0; $x < $request->TotalFiles; $x++) {
                
@@ -874,7 +878,7 @@ class CaseController extends Controller
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
                     //$filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
-                    $filename = "supportingdoc".($x+1)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    $filename = "supportingdoc".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
 
 
@@ -901,6 +905,8 @@ class CaseController extends Controller
 
                    
                 }
+
+                $f_count++;
             }
            // exit;
             //dd($insert);
