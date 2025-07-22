@@ -867,7 +867,7 @@ class CaseController extends Controller
 
             $previous_file_count = DB::table('manage_files')->where("case_id", "=", $request->caseId)->count();
             if($previous_file_count > 0){
-                $f_count = $previous_file_count;
+                $f_count = $previous_file_count + 1;
             } else {
                 $f_count = 1;
             }
