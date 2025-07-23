@@ -23,6 +23,11 @@
             left: 10%;
             bottom: 5px;
         }
+
+        .select2-container--default .select2-selection--single {
+            height: 35px;
+            border: 1px solid #dee2e6;
+        }
     </style>
 
     <div class="card">
@@ -31,6 +36,7 @@
                 <form id="batchSubmitClose">
                     <div class="form-group">
                         <label>Select the Batch in which Bulk Session Scheduling notification will be disabled</label>
+                        <br>
                         <select name="batch" id="batchSelect" class="form-control">
                             <option value="" selected>Select Batch...</option>
                             @foreach ($batchName as $value)
@@ -38,8 +44,6 @@
                             @endforeach
                         </select>
                     </div>
-
-                    <br>
 
                     <div class="form-group">
                         <label for="">Disable notification when bulk session scheduled</label>
@@ -66,11 +70,15 @@
 @endsection
 
 <!-- Table datatable css -->
+@section('head')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+@endsection
 
 @section('footer')
 <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
 <script src="{{ url('/') }}/assets/js/sweetalert.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function(){
         $('#batchSubmitClose').submit(function(e) {
@@ -106,6 +114,8 @@
                 }
             });
         });
+
+        $('#batchSelect').select2();
     });
 </script>
 
