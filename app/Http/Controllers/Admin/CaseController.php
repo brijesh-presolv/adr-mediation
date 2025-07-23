@@ -3496,7 +3496,7 @@ class CaseController extends Controller
                         'varjson' => $varjson,
                         'haptik_tmp' => 'l20_additional_doc_med',
                     ];
-                    $accessW = Whatsapp::sendWamessage($dwa1);
+                    $accessW = Whatsapp::sendWamessage($dwa2);
                     foreach ($filesE as $file) {
                         $whatsappSend = Storage::disk('s3')->url($file);
 
