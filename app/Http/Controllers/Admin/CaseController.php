@@ -3491,7 +3491,7 @@ class CaseController extends Controller
                     $dwa2 = [
                         'caseid' => $id,
                         'contact' =>  $mediator->mobile_number,
-                        'content' => ['text' => $content],
+                        'content' => ['text' => $content_file],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson,
                         'haptik_tmp' => 'l20_additional_doc_med',
