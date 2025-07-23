@@ -865,18 +865,25 @@ class CaseController extends Controller
             $insert = array();
             $insert_manage = "";
 
+            $previous_file_count = DB::table('manage_files')->where("case_id", "=", $request->caseId)->count();
+            if($previous_file_count > 0){
+                $f_count = $previous_file_count + 1;
+            } else {
+                $f_count = 1;
+            }
+
             for ($x = 0; $x < $request->TotalFiles; $x++) {
-                //echo $request->caseId;
+               
                         
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
                     //$filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
-                    $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    $filename = "supportingdoc".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
 
 
                     
-                        
+                       
                     
                     if(strpos($file->getClientOriginalName(), $request->caseId) !== false){
                         $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
@@ -885,8 +892,8 @@ class CaseController extends Controller
                    
                         $finalFilePath = $savePath . '/' . $filename;
                         Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
-
-                       // Storage::disk('local')->put($finalFilePath, file_get_contents($file));
+                        //Storage::disk('local')->put('public/mediation/' . $request->caseId . '/supportingDocument/' .  $filename, file_get_contents($file));
+                       //Storage::disk('local')->put($finalFilePath, file_get_contents($file));
                         // $path = $file->storeAs('/supporting/' . $request->caseId, pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension());
                         $insert[$x]['file_name'] = $filename;
                         $insert[$x]['access'] = $inv_id;
@@ -895,8 +902,13 @@ class CaseController extends Controller
                         $insert[$x]['case_id'] = $request->caseId;
                         // $insert[$x]['path'] = $path;
                     } 
+
+                   
                 }
+
+                $f_count++;
             }
+           // exit;
             //dd($insert);
             if(!empty($insert)){
                 $insert_manage = DB::table('manage_files')->insert($insert);
@@ -954,6 +966,8 @@ class CaseController extends Controller
                     return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
                 }
             } else {
+
+                
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
                     $faild_log = BulkLog::find($_POST['log_id']);
                     if ($faild_log->failed_row == null) {
@@ -3477,12 +3491,12 @@ class CaseController extends Controller
                     $dwa2 = [
                         'caseid' => $id,
                         'contact' =>  $mediator->mobile_number,
-                        'content' => ['text' => $content],
+                        'content' => ['text' => $content_file],
                         'event' => 'SEND_ADDI_DOC_MED',
                         'varjson' => $varjson,
                         'haptik_tmp' => 'l20_additional_doc_med',
                     ];
-                    $accessW = Whatsapp::sendWamessage($dwa1);
+                    $accessW = Whatsapp::sendWamessage($dwa2);
                     foreach ($filesE as $file) {
                         $whatsappSend = Storage::disk('s3')->url($file);
 
