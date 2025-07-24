@@ -25,6 +25,11 @@
     #coolModal p {
         margin-bottom: 0px;
     }
+
+    .select2-container--default .select2-selection--single {
+        height: 35px;
+        border: 1px solid #dee2e6;
+    }
 </style>
 
     <section class="tabs-section">
@@ -4567,6 +4572,7 @@
             $(document).ready(function(){
                 get_branch();
                 $('#branches').select2();
+                $("#batchSelect").select2();
             }); 
         
     </script>

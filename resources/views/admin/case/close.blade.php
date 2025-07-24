@@ -22,6 +22,10 @@
         margin: 15px;
         height: 12px;
     }
+    .select2-container--default .select2-selection--single {
+        height: 35px;
+        border: 1px solid #dee2e6;
+    }
 </style>
 
     <section class="tabs-section">
@@ -573,6 +577,8 @@
     <link href="{{ url('/') }}/assets/libs/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
         type="text/css" />
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
 @endsection
 
 
@@ -589,6 +595,8 @@
     <script src="{{ url('/') }}/assets/js/sweetalert.min.js"></script>
     <script src="{{ url('/') }}/assets/libs/custombox/custombox.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script type="text/javascript">
         $(function() {
             $("#sessionDate").datepicker({
@@ -2179,5 +2187,7 @@
             });
 
         });
+
+        $('#batchSelect').select2();
     </script>
 @endsection
