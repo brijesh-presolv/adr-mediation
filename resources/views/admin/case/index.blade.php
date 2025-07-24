@@ -22,6 +22,11 @@
         margin: 15px;
         height: 12px;
     }
+
+    .select2-container--default .select2-selection--single {
+        height: 35px;
+        border: 1px solid #dee2e6;
+    }
 </style>
 
     <section class="tabs-section">
@@ -33,19 +38,26 @@
                 <br>
                 <br>
             </div>
-            <div class="col-md-6 text-right">
-                <select name="batch" id="batchSelectForApprove" class="form-control w-50 d-inline mr-2">
+            <div class="col-md-6">
+                <div class="row">
+                <div class="col-md-8">
+                     <select name="batch" id="batchSelectForApprove" class="form-control w-50 d-inline mr-2 col-md-4">
                     <option value="" selected>Select Batch...</option>
                     @foreach ($batchName as $value)
                         <option value={{ $value->id }}>{{ $value->batch_name }}</option>
                     @endforeach
-                </select>
-                <button class="btn btn-primary btn-sm text-center" data-toggle="modal"
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                     <button class="btn btn-primary btn-sm text-center" data-toggle="modal"
                     data-target="#batchWiseMidaterAddForBulk" id="batchWiseApproveBtn"
                     data-arb="<?= Auth::user()->id ?>">Batch Wise Approve</button>
+                </div>
+                </div>
             </div>
         </div>
-        <br><br>
+        <br>
         <div id="myModalbupldAdmin" class="mdladcm modal fade " role="dialog" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog">
 
@@ -545,6 +557,11 @@
             $('#claimant').select2();
             $('#subuser').select2();
             $('#itm_lang').select2();
+            
+            $('#batchSelectForApprove').select2();
+            $('#batchSelect').select2();
+
+
         });
         var batch_id;
 
@@ -1139,7 +1156,7 @@
 
         // console.log(batchdata);
 
-        var selectBatchOption = '<div class="ml-3" style="display: inline-flex; width: 50%;">' +
+        var selectBatchOption = '<div class="ml-3" style="display: inline-flex; width: 50%; text-align: left;">' +
             '<select name="batch" id="batchSelect" class="form-control">' +
             '<option value="" selected>Select Batch...</option>';
         batchdata.map(e => {
