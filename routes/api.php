@@ -56,3 +56,18 @@ Route::get('whresmovetos3', [App\Http\Controllers\Webhook\WhatsappWebhookControl
 Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\WhatsappWebhookController::class, 'WhatsappLog']);
 
 //Route::post('medwhatsappbotlog', [App\Http\Controllers\WhatsappBot\WhatsappBotController::class, 'medwhatsappbotlog']);
+
+
+
+
+/************************ UK Version API Section : START **************************************************/
+// Route::group([
+//     'prefix' => 'auth',
+// ], function ($router) {
+   
+//     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+//     Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
+// });
+
+ Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
+/************************ UK Version API Section : END ****************************************************/
