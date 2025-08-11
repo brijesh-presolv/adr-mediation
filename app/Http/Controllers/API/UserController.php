@@ -25,6 +25,8 @@ use App\Models\ManageSession;
 use App\Models\UserStopWhatsapp;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Helpers\Token;
+
 use App\Http\Controllers\API\PaymentController;
 
 class UserController extends Controller 
@@ -38,7 +40,7 @@ public $successStatus = 200;
     public function login(Request $request){ 
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
             $user = Auth::user(); 
-            $success['token'] =  $request->_token; 
+            $success['token'] =   $token = Token::createToken(['role' => 'admin', 'id' => 1]); 
             return response()->json(['success' => $success], $this->successStatus); 
         } 
         else{ 
