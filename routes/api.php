@@ -69,5 +69,12 @@ Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\Whatsa
 //     Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
 // });
 
- Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+], function ($router) {
+    Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
+});
+
+ //Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
 /************************ UK Version API Section : END ****************************************************/
