@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Auth;
 
-class apiadmin {
+class admin {
 
     /**
      * Handle an incoming request.

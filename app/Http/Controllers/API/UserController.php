@@ -104,7 +104,6 @@ public $successStatus = 200;
 
         } catch (Exception $e) {
 
-
             $result['success'] = "false";
             $result['message'] = "Registration failed.";
             $result['message'] = $e->getMessage();
