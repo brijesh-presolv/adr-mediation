@@ -77,4 +77,13 @@ Route::group([
 });
 
  //Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
+
+ Route::post('/register', [App\Http\Controllers\API\UserController::class, 'register']);
+
+
+ // Admin API Routes
+ Route::middleware(['apiauth', 'admin'])->group(function () {
+
+ });
+
 /************************ UK Version API Section : END ****************************************************/
