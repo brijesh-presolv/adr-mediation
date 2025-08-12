@@ -64,10 +64,10 @@ public $successStatus = 200;
         try {
             // Validate input
             $validator = Validator::make($request->all(), [
-                'name'     => 'required|string|max:255',
+                'first_name'     => 'required|string|max:255',
+                'last_name'     => 'required|string|max:255',
                 'email'    => 'required|string|email|unique:users',
                 'password' => 'required|string|min:6',
-                'role'     => 'required|in:user,admin,mediator'
             ]);
 
             if ($validator->fails()) {
@@ -86,7 +86,7 @@ public $successStatus = 200;
                 'username' => $request->username,
                 'mobile_number' => $request->mobile_number,
                 'organization' => $request->organization,
-                'email' => $$request->email,
+                'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => 0, 
                 'emailotp' => rand('100000', '999999'),
