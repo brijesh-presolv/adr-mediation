@@ -78,7 +78,7 @@ public $successStatus = 200;
                 return response()->json($result, 422);
             }
 
-            $is_agree = isset($request->is_agree) ? $request->is_agree : null;
+            $is_agree = isset($request->is_agree) ? $request->is_agree : 0;
 
             // Create user
 
