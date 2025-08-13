@@ -74,9 +74,11 @@ public $successStatus = 200;
 
                 $result['success'] = false;
                 $result['message'] = "Validation failed";
-                $result['message'] = $validator->errors();
+                $result['error'] = $validator->errors();
                 return response()->json($result, 422);
             }
+
+            $is_agree = isset($request->is_agree) ? $request->is_agree : null;
 
             // Create user
 
@@ -106,7 +108,7 @@ public $successStatus = 200;
 
             $result['success'] = "false";
             $result['message'] = "Registration failed.";
-            $result['message'] = $e->getMessage();
+            $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
     }
