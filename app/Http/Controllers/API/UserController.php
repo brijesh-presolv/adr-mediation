@@ -47,12 +47,12 @@ public $successStatus = 200;
             $data['userid'] = $user->id;
             $data['role'] = $user->role;
             $result['success'] = "true";
-            $result['success_msg'] = "Authenticated successfully.";
+            $result['message'] = "User has logged in successfully.";
             $result['data'] = $data;
             $result['token'] = Token::createToken(['role' => 'admin', 'id' => 1]); 
             $result['expiry_token'] = 900;
 
-            return response()->json(['result' => $result], $this->successStatus); 
+            return response()->json($result, $this->successStatus); 
         } 
         else{ 
             return response()->json(['error'=>'Unauthorised'], 401); 

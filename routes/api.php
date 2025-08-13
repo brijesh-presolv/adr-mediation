@@ -61,20 +61,13 @@ Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\Whatsa
 
 
 /************************ UK Version API Section : START **************************************************/
-// Route::group([
-//     'prefix' => 'auth',
-// ], function ($router) {
-   
-//     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-//     Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
-// });
 
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'auth'
-], function ($router) {
-    Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
-});
+// Route::group([
+//     'middleware' => 'api',
+//     'prefix' => 'auth'
+// ], function ($router) {
+//     Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
+// });
 
  //Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
 
@@ -86,4 +79,5 @@ Route::group([
 
  });
 
+ Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
 /************************ UK Version API Section : END ****************************************************/
