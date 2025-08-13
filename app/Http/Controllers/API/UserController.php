@@ -98,15 +98,15 @@ public $successStatus = 200;
             ]);
 
             $data['userid'] = $user->id;
-            $data['role'] = $user->role;
-            $result['success'] = "true";
+
+            $result['success'] = true;
             $result['message'] = "User registered successfully.";
             $result['data'] = $data;
             return response()->json($result, 201);
 
         } catch (Exception $e) {
 
-            $result['success'] = "false";
+            $result['success'] = false;
             $result['message'] = "Registration failed.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
