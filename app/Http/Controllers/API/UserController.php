@@ -79,7 +79,6 @@ public $successStatus = 200;
                 'password' => 'required|string|min:6',
                 'mobile_number' => 'required|digits:10',
                 'is_agree' => 'required',
-                'actype' => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -90,13 +89,13 @@ public $successStatus = 200;
                 return response()->json($result, 422);
             }
 
-            if ($request->input('actype') == 1) {
+           /*  if ($request->input('actype') == 1) {
                 $role = 0;
             } else if ($request->input('actype') == 2) {
                 $role = 1;
             }else{
                 $role = 1;
-            }
+            } */
 
             if($request->input('is_agree') == 1) {
                 $is_agree = 1;
@@ -114,7 +113,7 @@ public $successStatus = 200;
                 'organization' => $request->input('organization'),
                 'email' => $request->input('email'),
                 'password' => Hash::make($request->input('password')),
-                'role' => $role, 
+                'role' => 0, 
                 'emailotp' => rand('100000', '999999'),
                 'smsotp' => rand('100000', '999999'),
                 'is_agree' => $is_agree
