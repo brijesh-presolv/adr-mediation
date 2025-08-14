@@ -18,7 +18,12 @@ class admin {
     public function handle(Request $request, Closure $next) {
 
         if (!isset($request->userData['role']) || $request->userData['role'] !== '2') {
-            return response()->json(['error' => 'Access denied'], 403);
+
+            $result['success'] = false;
+            $result['message'] = "Access denied.";
+            $result['error'] = "Access denied";
+            return response()->json($result, 403);
+
         }
         
         return $next($request);

@@ -73,6 +73,8 @@ Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\Whatsa
 
  Route::post('/register', [App\Http\Controllers\API\UserController::class, 'register']);
 
+// 
+ Route::middleware('apiauth')->get('/auth/session', [App\Http\Controllers\API\AuthController::class, 'checkAuth']);
 
  // Admin API Routes
  Route::middleware(['apiauth', 'admin'])->group(function () {
