@@ -21,9 +21,17 @@ class apiauth
 
         try {
 
-           $token = $request->header('token');
+           if ($request->cookie('auth_token') || $request->header('token')) {
 
-           if ((isset($token))) {
+                //$token = $request->cookie('auth_token');
+
+               if($request->cookie('auth_token')){
+
+                    $token = $request->cookie('auth_token');
+               }else{
+
+                    $token = $request->header('token');
+               }
 
                $credentials = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
 

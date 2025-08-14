@@ -52,7 +52,15 @@ public $successStatus = 200;
             $result['token'] = Token::createToken(['role' => 'admin', 'id' => 1]); 
             $result['expiry_token'] = 900;
 
-            return response()->json($result, $this->successStatus); 
+            return response()->json($result, $this->successStatus)->cookie(
+        'auth_token', // cookie name
+        $token,       // cookie value
+        15,           // minutes
+        '/',          // path
+        null,         // domain
+        false,        // secure
+        true          // httpOnly
+    ); 
         } 
         else{ 
             return response()->json(['error'=>'Unauthorised'], 401); 
@@ -61,6 +69,7 @@ public $successStatus = 200;
 
      public function register(Request $request)
     {
+        
         try {
             // Validate input
             $validator = Validator::make($request->all(), [
@@ -68,6 +77,9 @@ public $successStatus = 200;
                 'last_name'     => 'required|string|max:255',
                 'email'    => 'required|string|email|unique:users',
                 'password' => 'required|string|min:6',
+                'mobile_number' => 'required|digits:10',
+                'is_agree' => 'required',
+                'actype' => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -78,19 +90,31 @@ public $successStatus = 200;
                 return response()->json($result, 422);
             }
 
-            $is_agree = isset($request->is_agree) ? $request->is_agree : 0;
+            if ($request->input('actype') == 1) {
+                $role = 0;
+            } else if ($request->input('actype') == 2) {
+                $role = 1;
+            }else{
+                $role = 1;
+            }
+
+            if($request->input('is_agree') == 1) {
+                $is_agree = 1;
+            } else {
+                $is_agree = 0;
+            }
 
             // Create user
 
             $user = User::create([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'username' => $request->username,
-                'mobile_number' => $request->mobile_number,
-                'organization' => $request->organization,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'role' => 0, 
+                'first_name' => $request->input('first_name'),
+                'last_name' =>  $request->input('last_name'),
+                'username' => $request->input('username'),
+                'mobile_number' =>  $request->input('mobile_number'),
+                'organization' => $request->input('organization'),
+                'email' => $request->input('email'),
+                'password' => Hash::make($request->input('password')),
+                'role' => $role, 
                 'emailotp' => rand('100000', '999999'),
                 'smsotp' => rand('100000', '999999'),
                 'is_agree' => $is_agree
