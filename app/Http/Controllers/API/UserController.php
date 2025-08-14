@@ -46,6 +46,8 @@ public $successStatus = 200;
             
             $data['userid'] = $user->id;
             $data['role'] = $user->role;
+            $data['email'] = $user->email;
+            $data['first_name'] = $user->first_name;
             $result['success'] = "true";
             $result['message'] = "User has logged in successfully.";
             $result['data'] = $data;
@@ -64,7 +66,7 @@ public $successStatus = 200;
                                 ); 
         } 
         else{ 
-            
+
             $result['success'] = false;
             $result['message'] = "Unauthorized request.";
             $result['error'] = "Unauthorized";
