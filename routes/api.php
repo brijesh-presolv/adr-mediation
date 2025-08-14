@@ -81,7 +81,9 @@ Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\Whatsa
 });
 
  // Admin API Routes
- Route::middleware(['apiauth', 'admin'])->group(function () {
+ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
+
+    Route::post('/admin/dashboard', [App\Http\Controllers\API\Admin\AdminController::class, 'dashboard']);
 
  });
 

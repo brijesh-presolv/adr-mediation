@@ -38,7 +38,7 @@ class apiauth
                 
             }
 
-             $request->userData = (array) $credentials; // store decoded data
+             $request->attributes->set('authdata', (array) $credentials);
 
            }else{
                 $result['success'] = false;

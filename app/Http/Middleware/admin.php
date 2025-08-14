@@ -4,7 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Auth;
+use Firebase\JWT\JWT;
+use Illuminate\Support\Facades\Config;
+use Firebase\JWT\Key;
 
 class admin {
 
@@ -17,7 +19,9 @@ class admin {
      */
     public function handle(Request $request, Closure $next) {
 
-        if (!isset($request->userData['role']) || $request->userData['role'] !== '2') {
+        $authdata = $request->attributes->get('authdata');
+
+        if (!isset($authdata['data']->userid) || $authdata['data']->role != 2) {
 
             $result['success'] = false;
             $result['message'] = "Access denied.";
