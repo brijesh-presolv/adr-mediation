@@ -47,11 +47,11 @@ public $successStatus = 200;
             $data['userid'] = $user->id;
             $data['role'] = $user->role;
             $data['email'] = $user->email;
-            $data['first_name'] = $user->first_name;
+            $data['name'] = $user->first_name;
             $result['success'] = "true";
             $result['message'] = "User has logged in successfully.";
             $result['data'] = $data;
-            $result['token'] = Token::createToken(['role' => 'admin', 'id' => 1]); 
+            $result['token'] = Token::createToken($data); 
             $result['expiry_token'] = 900;
 
             return response()->json($result, $this->successStatus)

@@ -22,16 +22,9 @@ class apiauth
 
         try {
 
-           if ($request->cookie('auth_token') || $request->header('token')) {
+           if ($request->cookie('auth_token')) {
 
-                //$token = $request->cookie('auth_token');
-
-               if($request->cookie('auth_token')){
-
-                    $token = $request->cookie('auth_token');
-               }else{
-                    $token = $request->header('token');
-               }
+                $token = $request->cookie('auth_token');
 
                 $JWT_KEY = env('JWT_KEY');
                 $credentials = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
@@ -39,7 +32,7 @@ class apiauth
             if (!$credentials) {
 
                 $result['success'] = false;
-                $result['message'] = "Unauthorized.";
+                $result['message'] = "Unauthorized request.";
                 $result['error'] = "Unauthorized";
                 return response()->json($result, 401);
                 
@@ -49,7 +42,7 @@ class apiauth
 
            }else{
                 $result['success'] = false;
-                $result['message'] = "Unauthorized.";
+                $result['message'] = "Unauthorized request.";
                 $result['error'] = "Unauthorized";
                 return response()->json($result, 401);
            }
@@ -57,7 +50,7 @@ class apiauth
         } catch (\Exception $e) {
 
             $result['success'] = false;
-            $result['message'] = "Unauthorized.";
+            $result['message'] = "Unauthorized request.";
             $result['error'] = "Unauthorized";
             return response()->json($result, 401);
         }

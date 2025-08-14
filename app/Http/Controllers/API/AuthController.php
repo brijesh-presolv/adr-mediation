@@ -21,13 +21,13 @@ class AuthController  extends Controller
     public function checkAuth(Request $request)
     {
 
-        if ($request->cookie('auth_token') || $request->header('token')) {
+        if ($request->cookie('auth_token')) {
 
             $token = $request->cookie('auth_token');
             $JWT_KEY = env('JWT_KEY');
             $jwtdata = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
 
-            if (!isset($jwtdata->data->id) || !isset($jwtdata->data->role)) {
+            if (!isset($jwtdata->data->userid) || !isset($jwtdata->data->role)) {
 
                 $result['success'] = false;
                 $result['message'] = "Invalid request";
@@ -36,14 +36,14 @@ class AuthController  extends Controller
 
             }else{
 
-                $data['userid'] = $jwtdata->data->id;
+                $data['userid'] = $jwtdata->data->userid;
                 $data['role'] = $jwtdata->data->role;
-                $data['userid'] = $jwtdata->data->email;
-                $data['name'] = $jwtdata->data->first_name;
+                $data['email'] = $jwtdata->data->email;
+                $data['name'] = $jwtdata->data->name;
 
 
                 $result['success'] = true;
-                $result['message'] = "User registered successfully.";
+                $result['message'] = "Authorized User.";
                 $result['data'] = $data;
                 return response()->json($result, 200);
             }
