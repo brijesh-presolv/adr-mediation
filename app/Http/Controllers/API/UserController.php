@@ -52,15 +52,16 @@ public $successStatus = 200;
             $result['token'] = Token::createToken(['role' => 'admin', 'id' => 1]); 
             $result['expiry_token'] = 900;
 
-            return response()->json($result, $this->successStatus)->cookie(
-        'auth_token', // cookie name
-        $token,       // cookie value
-        15,           // minutes
-        '/',          // path
-        null,         // domain
-        false,        // secure
-        true          // httpOnly
-    ); 
+            return response()->json($result, $this->successStatus)
+                                ->cookie(
+                                    'auth_token',           // cookie name
+                                    $result['token'],       // cookie value
+                                    15,                     // minutes
+                                    '/',                    // path
+                                    null,                   // domain
+                                    false,                  // secure
+                                    true                    // httpOnly
+                                ); 
         } 
         else{ 
             return response()->json(['error'=>'Unauthorised'], 401); 
