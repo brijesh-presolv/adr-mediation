@@ -64,7 +64,11 @@ public $successStatus = 200;
                                 ); 
         } 
         else{ 
-            return response()->json(['error'=>'Unauthorised'], 401); 
+            
+            $result['success'] = false;
+            $result['message'] = "Unauthorized request.";
+            $result['error'] = "Unauthorized";
+            return response()->json($result, 401);
         } 
     }
 
