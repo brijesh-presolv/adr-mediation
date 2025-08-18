@@ -8,7 +8,7 @@ define('LARAVEL_START', microtime(true));
 header('X-Frame-Options: DENY');
 // Uses a secure connection (HTTPS) if possible
 ini_set('session.cookie_secure', 1);
-//ini_set('session.cookie_secure', on);
+ini_set('session.cookie_secure', on);
 //ini_set('session.Set-Cookie', 'HttpOnly; Secure; SameSite=Lax');
 ini_set('session.Set-Cookie', 'HttpOnly;Secure;SameSite=None');
 ini_set('session.Set-Cookie', 'Secure');
