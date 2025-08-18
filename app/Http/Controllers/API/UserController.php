@@ -56,14 +56,16 @@ public $successStatus = 200;
 
             return response()->json($result, $this->successStatus)
                                 ->cookie(
-                                    'auth_token',           // cookie name
-                                    $result['token'],       // cookie value
-                                    15,                     // minutes
-                                    '/',                    // path
-                                    null,                   // domain
-                                    false,                  // secure
-                                    true                    // httpOnly
-                                ); 
+                                        'auth_token',           // cookie name
+                                        $result['token'],       // cookie value
+                                        15,                     // minutes
+                                        '/',
+                                        null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
+                                        true,                   // secure = true (required for cross-site cookies on HTTPS)
+                                        true,                   // httpOnly
+                                        false,                  // raw
+                                        'None'                  // SameSite=None (allow cross-site)
+                                    ); 
         } 
         else{ 
 
