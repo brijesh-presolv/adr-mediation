@@ -85,7 +85,13 @@ Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\Whatsa
 
     Route::post('/admin/dashboard', [App\Http\Controllers\API\Admin\AdminController::class, 'dashboard']);
 
+    // New request case api route
+   
+
  });
 
  Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
+
+  Route::get('/admin/cases/newreq', [App\Http\Controllers\API\Admin\CaseController::class, 'newreq']);
+
 /************************ UK Version API Section : END ****************************************************/

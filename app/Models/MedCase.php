@@ -45,7 +45,31 @@ class MedCase extends Model
         return $this->hasMany(DocumentSettlement::class, 'mediation_case_id', 'id');
     }
 
-    static function getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id = "", $bulk)
+
+    static function getCase($role, $bulk){
+         $sql = MedCase::with('user_involed');
+
+          $sql->select("mediation_case.id", "mediation_case.batch_id", "mediation_case.ref_id", "mediation_case.created_at", "mediation_case.confirm_status", "mediation_case.bulk_flag", "mediation_case.sub_user_id", DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"), "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", "mediators_mediation_cases_status.created_at as admin_approve", "consent_disclosures.updated_at as update", "consent_disclosures.created_at as create", "batch.batch_name")
+            ->leftJoin("mediators_mediation_cases_status", function ($join) {
+                $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
+                $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(select max(`mediators_mediation_cases_status2`.`id`) from mediators_mediation_cases_status as mediators_mediation_cases_status2 Where `mediators_mediation_cases_status2`.`mediation_case_id`=`mediation_case`.`id`)"));
+            })
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            // ->leftJoin("user_involved_in_agreement", "user_involved_in_agreement.userPlanid", "=", "mediation_case.id")
+            ->where("mediation_case.confirm_status", "=", $role)
+            ->where("mediation_case.bulk_flag", "=", $bulk);
+
+            //var_dump($sql->toSql());
+           
+        
+            $cases = $sql->get();
+            return $cases;
+
+    }
+
+    static function getCase_original($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id = "", $bulk)
     {
         if ($batch_id != "") {
             $sql = MedCase::with('user_involed')->where("mediation_case.batch_id", $batch_id);
