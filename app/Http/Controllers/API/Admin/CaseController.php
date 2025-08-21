@@ -104,11 +104,15 @@ class CaseController extends Controller
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
-                $data[$key]['created_at'] = $values->created_at;
                 $data[$key]['confirm_status'] = $values->confirm_status;
-                $Claimant=InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail')->where('user_involved_in_agreement.isClaimant', 1)->where(['userPlanid' => $values->id])->get();
+                $data[$key]['case_status'] = $values->case_status;
+                $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['mediator_name'] = $values->mediator_name;
+                $data[$key]['mediator_id'] = $values->mediator_id;
+                $data[$key]['mediator_status'] = $values->mediator_status;
+                $data[$key]['batch_name'] = $values->batch_name;
 
-                            // Claimants
+            // Claimants
             $claimants = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
                                     ->where('user_involved_in_agreement.isClaimant', 1)
                                     ->where('userPlanid', $id)
@@ -133,7 +137,7 @@ class CaseController extends Controller
         $casedata['pagination']['total_page']=$casesongoing->lastPage();
 
         $result['success'] = true;
-        $result['message'] = "User registered successfully.";
+        $result['message'] = "Ongoing cases fetched successfully.";
         $result['data'] = $casedata;
         return response()->json($result, 200);
     }
