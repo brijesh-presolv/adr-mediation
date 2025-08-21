@@ -994,4 +994,48 @@ class MedCase extends Model
         return $cases;
     }
     // sub user new request listing //
+
+    static function getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
+    {
+        $query = MedCase::with('user_involed')
+            ->select(
+                "mediation_case.id",
+                "mediation_case.batch_id",
+                "mediation_case.ref_id",
+                "mediation_case.created_at",
+                "mediation_case.confirm_status",
+                "mediation_case.bulk_flag",
+                "mediation_case.sub_user_id",
+                "consent_disclosures.updated_at as update",
+                "consent_disclosures.created_at as create",
+                "batch.batch_name"
+            )
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->where("mediation_case.confirm_status", $role)
+            ->where("mediation_case.bulk_flag", $bulk);
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where("mediation_case.ref_id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%");
+            });
+        }
+
+        // Sorting
+        if ($columnName == "case.caseid") {
+            $query->orderBy('mediation_case.id', $sortOrder);
+        } elseif ($columnName == "date") {
+            $query->orderBy('mediation_case.created_at', $sortOrder);
+        } elseif ($columnName == "party") {
+            $query->with(['user_involed' => function ($t) use ($sortOrder) {
+                $t->orderBy('name', $sortOrder);
+            }]);
+        } else {
+            $query->orderBy('mediation_case.id', 'DESC');
+        }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
 }

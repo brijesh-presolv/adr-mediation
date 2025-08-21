@@ -84,13 +84,13 @@ Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\Whatsa
  Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     Route::post('/admin/dashboard', [App\Http\Controllers\API\Admin\AdminController::class, 'dashboard']);
-
-    // New request case api route
+   // Route::post('/admin/cases/ongoing', [App\Http\Controllers\API\Admin\CaseController::class, 'ongoing']);
    
 
  });
 
  Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
+ Route::post('/admin/cases/ongoing', [App\Http\Controllers\API\Admin\CaseController::class, 'ongoing']);
 
   Route::get('/admin/cases/newreq', [App\Http\Controllers\API\Admin\CaseController::class, 'newreq']);
 

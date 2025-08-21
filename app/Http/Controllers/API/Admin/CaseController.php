@@ -79,4 +79,63 @@ class CaseController extends Controller
         return response()->json($arraydata, 500);
     }
 
+
+    public function ongoing(Request $request){
+
+        $start   = $request->input('iDisplayStart', 0);    // offset
+        $length  = $request->input('iDisplayLength', 10);  // limit
+        $search  = $request->input('sSearch', '');
+        $batch_id = $request->input('batch_id', null);
+        $sortOrder = $request->input('SortOrder', 'desc'); // asc or desc
+        $columnName = $request->input('columnName', ''); 
+        
+
+        $role = 2; // admin
+        $bulk = 0;
+        $casesongoing = MedCase::getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
+        $data = array();
+        if(count($casesongoing) > 0) {
+
+            foreach ($casesongoing as $key => $values) {
+
+                $id = $values->id;
+                $keyInc = $key + 1;
+                $data[$key]['id'] = $id;
+                $data[$key]['keyInc'] = $keyInc;
+                $data[$key]['batch_id'] = $values->batch_id;
+                $data[$key]['ref_id'] = $values->ref_id;
+                $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['confirm_status'] = $values->confirm_status;
+                $Claimant=InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail')->where('user_involved_in_agreement.isClaimant', 1)->where(['userPlanid' => $values->id])->get();
+
+                            // Claimants
+            $claimants = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
+                                    ->where('user_involved_in_agreement.isClaimant', 1)
+                                    ->where('userPlanid', $id)
+                                    ->get();
+            // Respondents
+            $respondents = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
+                                        ->where('user_involved_in_agreement.isClaimant', 0)
+                                        ->where('userPlanid', $id)
+                                        ->get();
+            $data[$key]['claimants']  = $claimants;
+            $data[$key]['respondents'] = $respondents;
+
+            }
+        }
+
+
+
+        $casedata['cases']=$data;
+        $casedata['pagination']['total_count']=$casesongoing->total();
+        $casedata['pagination']['current_page']=$casesongoing->currentPage();
+        $casedata['pagination']['per_page']=$casesongoing->perPage();
+        $casedata['pagination']['total_page']=$casesongoing->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "User registered successfully.";
+        $result['data'] = $casedata;
+        return response()->json($result, 200);
+    }
+
 }
