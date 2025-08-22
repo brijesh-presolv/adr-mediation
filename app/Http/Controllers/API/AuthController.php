@@ -47,6 +47,55 @@ class AuthController  extends Controller
                 $result['data'] = $data;
                 return response()->json($result, 200);
             }
+        }else{
+
+                $result['success'] = false;
+                $result['message'] = "Invalid request";
+                $result['error'] = "Invalid request";
+                return response()->json($result, 400);
+        }
+
+    }
+
+    public function gentoken(Request $request)
+    {
+
+        if ($request->cookie('auth_token')) {
+
+            $token = $request->cookie('auth_token');
+            $JWT_KEY = env('JWT_KEY');
+            $jwtdata = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+
+            if (!isset($jwtdata->data->userid) || !isset($jwtdata->data->role)) {
+
+                $result['success'] = false;
+                $result['message'] = "Invalid request";
+                $result['error'] = "Invalid request";
+                return response()->json($result, 400);
+                
+
+            }else{
+
+                $userdata['userid'] = $jwtdata->data->userid;
+                $userdata['role'] = $jwtdata->data->role;
+                $userdata['email'] = $jwtdata->data->email;
+                $userdata['name'] = $jwtdata->data->name;
+
+                $token = Token::createToken($userdata); 
+                $data['token']=$token;
+
+                $result['success'] = true;
+                $result['message'] = "New token generated.";
+                $result['data'] = $data;
+                return response()->json($result, 200);
+            }
+        }else{
+
+                $result['success'] = false;
+                $result['message'] = "Invalid request";
+                $result['error'] = "Invalid request";
+                return response()->json($result, 400);
+
         }
 
     }
