@@ -41,7 +41,8 @@ public $successStatus = 200;
      * @return \Illuminate\Http\Response 
      */ 
     public function login(Request $request){ 
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+        //if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+        if(Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])){ 
             $user = Auth::user(); 
             
             $data['userid'] = $user->id;
