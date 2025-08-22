@@ -87,7 +87,18 @@ class AuthController  extends Controller
                 $result['success'] = true;
                 $result['message'] = "New token generated.";
                 $result['data'] = $data;
-                return response()->json($result, 200);
+                return response()->json($result, 200)
+                                    ->cookie(
+                                        'auth_token',           // cookie name
+                                        $result['token'],       // cookie value
+                                        15,                     // minutes
+                                        '/',
+                                        null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
+                                        true,                   // secure = true (required for cross-site cookies on HTTPS)
+                                        true,                   // httpOnly
+                                        false,                  // raw
+                                        'None'                  // SameSite=None (allow cross-site)
+                                    );
             }
         }else{
 
