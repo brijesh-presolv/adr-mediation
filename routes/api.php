@@ -75,9 +75,10 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     Route::post('/admin/dashboard', [App\Http\Controllers\API\Admin\AdminController::class, 'dashboard']);
     Route::post('/admin/cases/ongoing', [App\Http\Controllers\API\Admin\CaseController::class, 'ongoing']);
+    Route::get('/admin/cases/newreq', [App\Http\Controllers\API\Admin\CaseController::class, 'newreq']);
    
 });
 
-  Route::get('/admin/cases/newreq', [App\Http\Controllers\API\Admin\CaseController::class, 'newreq']);
+
 
 /************************ UK Version API Section : END ****************************************************/
