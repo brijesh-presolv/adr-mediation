@@ -64,6 +64,7 @@ Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\Whatsa
 
 Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
 Route::post('/register', [App\Http\Controllers\API\UserController::class, 'register']);
+Route::post('/logout', [App\Http\Controllers\API\UserController::class, 'logout']);
 
 Route::get('/gentoken', [App\Http\Controllers\API\AuthController::class, 'gentoken']);
 Route::middleware(['apiauth'])->group(function () {
@@ -80,7 +81,8 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
    
 });
 
-Route::post('/admin/cases/upload-files', [App\Http\Controllers\Admin\CaseController::class, 'storeMultiFile']);
+Route::post('/admin/cases/viewsupporting', [App\Http\Controllers\API\Admin\UploadController::class, 'viewSupporting']);
+Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
 
   
 

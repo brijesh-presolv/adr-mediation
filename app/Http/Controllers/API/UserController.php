@@ -31,6 +31,7 @@ use App\Http\Controllers\API\PaymentController;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cookie;
 
 class UserController extends Controller 
 {
@@ -144,6 +145,18 @@ public $successStatus = 200;
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
+    }
+
+    public function logout(Request $request)
+    {
+
+        $cookie = Cookie::forget('auth_token');
+
+        $result['success'] = true;
+        $result['message'] = "User registered successfully.";
+        $result['data'] = $data;
+        return response()->json($result, 200)->withCookie($cookie);
+
     }
 
 }

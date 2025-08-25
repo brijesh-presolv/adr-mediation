@@ -18,285 +18,162 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\InvoledUser;
 use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
+use App\Models\Mediators_mediation_cases_status;
+use App\Http\Helpers\Common_function;
+use App\Models\SupportingDocument;
+use App\Models\ConsentDisclosures;
+use App\Models\InvitationFiles;
+use App\Http\Helpers\SendGrid;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class UploadController extends Controller 
 {
 
+    public function viewSupporting(Request $request)
+    {
+        $caseid = $request->input('caseId'); 
+       // print_r($caseid);die(); 
+        $managefilesData = DB::table('manage_files')
+                            ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
+                            ->where('manage_files.case_id', $caseid)
+                            ->get();
+
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')
+                                ->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')
+                                ->where("userPlanId", $caseid)->get();
+        $party_names =[];
+        foreach ($involedUser as $inv) {
+
+            if ($inv->organization != null) {
+                $party_names[] = $inv->organization;
+            } else {
+                $party_names[] = $inv->name;
+            }
+        }
+
+        $data=array();
+        foreach ($managefilesData as $key => $value) {
+
+            if (file_exists("storage/app/" . $value->file_name)) {
+                $local_storage=1;
+            } else {
+                $local_storage=0;
+            }
+            $file_name= $value->file_name;
+
+            $id = $value->id;
+            $data[$key]['id'] = $id;
+            $data[$key]['caseid'] = $value->case_id;
+            $data[$key]['file_name'] = $value->file_name;
+            $data[$key]['access'] = $value->access;
+            $data[$key]['mediator_access'] = $value->mediator_access;
+            $data[$key]['username'] = $value->username;
+            $data[$key]['created_at'] = $value->created_at;
+        }
+
+        $casedata['party_names']=$party_names;
+        $casedata['docsdata']=$data;
+
+        $result['success'] = true;
+        $result['message'] = "New cases fetched successfully.";
+        $result['data'] = $casedata;
+        return response()->json($result, 200);
+    }
+
     public function storeMultiFile(Request $request)
     {
-
-        $validator = Validator::make($request->all(), [
-            'files.*'     => 'required',
-            'files.*' => 'mimes:pdf',
-        ]);
-
-        if ($validator->fails()) {
-
-            $result['success'] = false;
-            $result['message'] = "Validation failed";
-            $result['error'] = $validator->errors();
-            return response()->json($result, 422);
-        }
-
-
-        $inv_id = "";
-        if ($request->has('docs_party_ids')) {
-            $inv_id = $request->docs_party_ids;
-        } else {
-            $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
-            foreach ($inv as $v) {
-                if ($inv_id == "") {
-                    $inv_id = $v->id;
-                } else {
-                    $inv_id = $inv_id . "," . $v->id;
-                }
+        try {
+            // **Authenticate User via JWT**
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized: Missing token'], 401);
             }
-        }
-        $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
-            ->where("mediators_mediation_cases_status.status", "=", 1)
-            ->first();
-        if (isset($request->log_id) && isset($request->allcids)) {
-            if ($request->log_id == "null" && $request->allcids != "") {
-                $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
-                $log = BulkLog::create([
-                    "selected_ids" => $params['allcids'],
-                    "uploaded_by" => Auth::user()->id,
-                    "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
-                    "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
-                    "updated_at" => date('Y-m-d H:i:s'),
-                ]);
-                $log_id = $log->id;
-                if ($request->shareMediator == 1) {
-                    Common_function::MedNotification($_POST['allcids'], "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, null);
-                } else {
-                    Common_function::MedNotification($_POST['allcids'], "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, null);
-                }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            // **Validate Input**
+            $validator = Validator::make($request->all(), [
+                'caseId'  => 'required|integer',
+                'files'   => 'required',
+                'files.*' => 'mimes:pdf|max:10240', // Each file must be PDF, max 10MB
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors'  => $validator->errors()
+                ], 422);
             }
-        } else {
+
+            $caseId = $request->caseId;
+            $inv_id = "";
+            if ($request->has('docs_party_ids')) {
+                $inv_id = $request->docs_party_ids;
+            } else {
+                $inv = InvoledUser::select('id')->where('userPlanId', $caseId)->pluck('id')->toArray();
+                $inv_id = implode(",", $inv);
+            }
+
+            $mediatorNoti = DB::table('mediators_mediation_cases_status')
+                ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
+                ->where('mediators_mediation_cases_status.mediation_case_id', $caseId)
+                ->where('mediators_mediation_cases_status.status', 1)
+                ->select('users.id', 'users.email', 'users.username', 'users.mobile_number')
+                ->first();
+
             if ($request->shareMediator == 1) {
-                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
             } else {
-                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", Auth::user()->id, null, $inv_id);
-            }
-        }
-
-        if ($request->TotalFiles > 0) {
-
-            $insert = array();
-            $insert_manage = "";
-
-            $previous_file_count = DB::table('manage_files')->where("case_id", "=", $request->caseId)->count();
-            if($previous_file_count > 0){
-                $f_count = $previous_file_count + 1;
-            } else {
-                $f_count = 1;
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", $userId, null, $inv_id);
             }
 
-            for ($x = 0; $x < $request->TotalFiles; $x++) {
-                   
-                if ($request->hasFile('files' . $x)) {
-                    $file = $request->file('files' . $x);
-                    $filename = "supportingdoc".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+            $uploadedFiles = [];
+            $previousCount = DB::table('manage_files')->where('case_id', $caseId)->count();
+            $fileIndex = $previousCount + 1;
 
-                    if(strpos($file->getClientOriginalName(), $request->caseId) !== false){
-                        $savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
-                        $finalFilePath = $savePath . '/' . $filename;
-                        Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
-                        $insert[$x]['file_name'] = $filename;
-                        $insert[$x]['access'] = $inv_id;
-                        $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 1;
-                        $insert[$x]['uploaded_by'] = Auth::user()->id;
-                        $insert[$x]['case_id'] = $request->caseId;
-                    } 
-                }
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    if ($file->isValid()) {
+                        $filename = "supportingdoc{$fileIndex}_M" . sprintf('%06d', $caseId) . "." . $file->getClientOriginalExtension();
+                        $savePath = "mediation_documents/mediation/{$caseId}/supportingDocument/{$filename}";
 
-                $f_count++;
-            }
-            if(!empty($insert)){
-                $insert_manage = DB::table('manage_files')->insert($insert);
-            }
-            
-            if (isset($insert_manage) && $insert_manage != "") {
+                        Storage::disk('s3')->put($savePath, file_get_contents($file));
 
-                if(isset($request->allcids)) {
-                    $is_bulk = 1;
-                } else {
-                    $is_bulk = 0;
-                }
-                $this->send_upload_file_party($request->caseId, $insert, $is_bulk);
+                        $uploadedFiles[] = [
+                            'file_name'       => $filename,
+                            'access'          => $inv_id,
+                            'mediator_access' => $request->shareMediator ?? 1,
+                            'uploaded_by'     => $userId,
+                            'case_id'         => $caseId,
+                            'created_at'      => now(),
+                            'updated_at'      => now()
+                        ];
 
-                if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
-
-                    $success_log = BulkLog::find($request->log_id);
-
-                    if ($success_log->inserted_row == null) {
-                        $success_log->inserted_row = $request->caseId;
-                        $success_log->save();
-                    } else {
-                        if (isset($_POST['insertRow'])) {
-
-                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
-                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
-                            $success_log->save();
-                        }
+                        $fileIndex++;
                     }
-
-                    //return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
-
-                    $data['log_id'] = $_POST['log_id'];
-                    $data['caseId'] = $request->caseId;
-
-                    $result['success'] = true;
-                    $result['message'] = "User registered successfully.";
-                    $result['data'] = $data;
-                    return response()->json($result, 201);
-
-                } else if (isset($log_id)) {
-                    $success_log = BulkLog::find($log_id);
-
-                    if ($success_log->inserted_row == null) {
-                        $success_log->inserted_row = $request->caseId;
-                        $success_log->save();
-                    } else {
-                        if (isset($_POST['insertRow'])) {
-
-                            $insert_row = $_POST['insertRow'] . "," . $request->caseId;
-                            // dd(json_encode(explode(',', $insert_row)));
-                            $success_log->inserted_row = json_encode(explode(',', $insert_row));
-                            $success_log->save();
-                        }
-                    }
-                    //return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->caseId]);
-
-                    $data['log_id'] = $log_id;
-                    $data['caseid'] = $request->caseId;
-
-                    $result['success'] = true;
-                    $result['message'] = "User registered successfully.";
-                    $result['data'] = $data;
-                    return response()->json($result, 200);
-                } else {
-                    //return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
-                    
-                    $data['caseid'] = $request->caseId;
-
-                    $result['success'] = true;
-                    $result['message'] = "User registered successfully.";
-                    $result['data'] = $data;
-                    return response()->json($result, 200);
-                }
-            } else {
-
-                
-                if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
-                    $faild_log = BulkLog::find($_POST['log_id']);
-                    if ($faild_log->failed_row == null) {
-                        $faild_log->failed_row = $request->caseId;
-                        $faild_log->save();
-                    } else {
-                        if (isset($_POST['faildRow'])) {
-
-                            $faild_row = $_POST['faildRow'] . "," . $request->caseId;
-                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
-                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
-                            $faild_log->save();
-                        }
-                    }
-                    //return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
-
-                    $data['log_id'] = $_POST['log_id'];
-                    $data['caseid'] = $request->caseId;
-
-                    $result['success'] = false;
-                    $result['message'] = " Upoading failed.";
-                    $result['error'] = "Docs not uploaded.";
-                    $result['data'] = $data;
-                    return response()->json($result, 200);
-
-                } else if (isset($log_id)) {
-                    $faild_log = BulkLog::find($log_id);
-                    if ($faild_log->failed_row == null) {
-                        $faild_log->failed_row = $request->caseId;
-                        $faild_log->save();
-                    } else {
-                        if (isset($_POST['faildRow'])) {
-
-                            $faild_row = $_POST['faildRow'] . "," . $request->caseId;
-                            // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
-                            $faild_log->failed_row = json_encode(explode(',', $faild_row));
-                            $faild_log->save();
-                        }
-                    }
-                    //return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->caseId]);
-
-                    $data['log_id'] = $log_id;
-                    $data['caseid'] = $request->caseId;
-
-                    $result['success'] = false;
-                    $result['message'] = " Upoading failed.";
-                    $result['error'] = "Docs not uploaded.";
-                    $result['data'] = $data;
-                } else {
-                    //return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
-
-                    $data['caseid'] = $request->caseId;
-
-                    $result['success'] = false;
-                    $result['message'] = " Upoading failed.";
-                    $result['error'] = "Docs not uploaded.";
-                    $result['data'] = $data;
                 }
             }
-        } else {
-            if (isset($_POST['log_id']) && $_POST['log_id'] != "null") {
-                $faild_log = BulkLog::find($_POST['log_id']);
-                if ($faild_log->failed_row == null) {
-                    $faild_log->failed_row = $request->caseId;
-                    $faild_log->save();
-                } else {
-                    if (isset($_POST['faildRow'])) {
 
-                        $faild_row = $_POST['faildRow'] . "," . $request->caseId;
-                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
-                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
-                        $faild_log->save();
-                    }
-                }
-                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
-            } else if (isset($log_id)) {
-                $faild_log = BulkLog::find($log_id);
-                if ($faild_log->failed_row == null) {
-                    $faild_log->failed_row = $request->caseId;
-                    $faild_log->save();
-                } else {
-                    if (isset($_POST['faildRow'])) {
+            if (!empty($uploadedFiles)) {
+                DB::table('manage_files')->insert($uploadedFiles);
 
-                        $faild_row = $_POST['faildRow'] . "," . $request->caseId;
-                        // $faild_log->failed_row = $faild_log->failed_row + "," + $request->id;
-                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
-                        $faild_log->save();
-                    }
-                }
-                //return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->caseId]);
-
-                    $data['log_id'] = $log_id;
-                    $data['caseid'] = $request->caseId;
-
-                    $result['success'] = false;
-                    $result['message'] = " Upoading failed.";
-                    $result['error'] = "Docs not uploaded.";
-                    $result['data'] = $data;
-            } else {
-                //return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
-
-                    $data['caseid'] = $request->caseId;
-
-                    $result['success'] = false;
-                    $result['message'] = " Upoading failed.";
-                    $result['error'] = "Docs not uploaded.";
-                    $result['data'] = $data;
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Files uploaded successfully',
+                    'caseId'  => $caseId,
+                    'files'   => $uploadedFiles
+                ], 200);
             }
+
+            return response()->json(['success' => false, 'message' => 'No valid files found'], 400);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
