@@ -19,6 +19,7 @@ use App\Models\InvoledUser;
 use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
 use App\Models\Mediators_mediation_cases_status;
+use App\Models\InvitationFiles;
 
 
 class CaseController extends Controller 
@@ -274,6 +275,77 @@ class CaseController extends Controller
 
             }
         }
+    }
+
+
+    public function viewCaseDetails(Request $request){
+
+        $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where('mediation_case.id', $request->caseid)
+            ->first();
+        
+        $party_details = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where(['user_involved_in_agreement.userPlanid' => $case->id])->get();
+
+        $claimants = array();
+        $respondents = array();
+        foreach($party_details as $key => $party) {
+            if($party->isClaimant == 0){
+                $claimants['name'] = $party->name;
+                $claimants['email'] = $party->userEmail;
+                $claimants['phone'] = $party->userPhone;
+
+                if($party->address1 != null){
+                   $claimants['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
+                } else if($party->fulladdress) {
+                    $claimants['address'] = $party->fulladdress;
+                } else {
+                    $claimants['address'] = $party->useraddress . ' ' . $party->useraddress1 . ' ' . $party->usercity . ', ' . $party->userpincode . ', ' . $party->userstate . ' ' . $party->usercountry;
+                }
+
+            }
+            
+            if($party->isClaimant != 0){
+                $respondents[$key]['name'] = $party->name;
+                $respondents[$key]['email'] = $party->userEmail;
+                $respondents[$key]['phone'] = $party->userPhone;
+
+                 if($party->address1 != null){
+                   $respondents[$key]['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
+                } else if($party->fulladdress) {
+                    $respondents[$key]['address'] = $party->fulladdress;
+                }
+            }
+        }
+
+        $case->claimants = $claimants;
+        $case->respondents = $respondents;
+
+        $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->get();
+
+        $case->appointment = InvitationFiles::where(['case_id' => $case->id])->where('file_name_mediator_appointment', '!=', null)->orderByDesc('id')->limit(1)->first();
+
+        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', 'users.username')
+            ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
+            ->where('manage_files.case_id', $case->id)
+            ->get();
+        $case->restructureFile = DB::table('restructure_data')->select('restructure_data.*')
+            ->where('restructure_data.caseid', $case->id)
+            ->first();
+
+
+          
+        $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
+
+
+        $result['success'] = true;
+        $result['message'] = "Case details fetched successfully.";
+        $result['data'] = $case;
+        return response()->json($result, 200);
+        
     }
 
 }
