@@ -153,7 +153,7 @@ public $successStatus = 200;
         $cookie = Cookie::forget('auth_token');
 
         $result['success'] = true;
-        $result['message'] = "User registered successfully.";
+        $result['message'] = "User logged out successfully.";
         $result['data'] = $data;
         return response()->json($result, 200)->withCookie($cookie);
 
