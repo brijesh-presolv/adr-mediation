@@ -162,18 +162,26 @@ class UploadController extends Controller
             if (!empty($uploadedFiles)) {
                 DB::table('manage_files')->insert($uploadedFiles);
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Files uploaded successfully',
-                    'caseId'  => $caseId,
-                    'files'   => $uploadedFiles
-                ], 200);
+                $data['caseid']=$caseId;
+
+                $result['success'] = true;
+                $result['message'] = "Files uploaded successfully.";
+                $result['data'] = $data;
+                return response()->json($result, 200);
+
             }
 
-            return response()->json(['success' => false, 'message' => 'No valid files found'], 400);
+            $result['success'] = false;
+            $result['message'] = "Files not uploaded";
+            $result['error'] = "No valid files found";
+            return response()->json($result, 400);
 
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+
+            $result['success'] = false;
+            $result['message'] = "Files not uploaded";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
         }
     }
 

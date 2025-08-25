@@ -101,12 +101,12 @@ public $successStatus = 200;
                 return response()->json($result, 422);
             }
 
-            if ($request->input('actype') == 1) {
+            if ($request->input('actype') == 0) {
                 $role = 0;
-            } else if ($request->input('actype') == 2) {
+            } else if ($request->input('actype') == 1) {
                 $role = 1;
             }else{
-                $role = 1;
+                $role = 0;
             }
 
             if($request->input('is_agree') == 1) {
