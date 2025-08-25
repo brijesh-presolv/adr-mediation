@@ -81,14 +81,16 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     // Case approve api
     Route::get('/admin/cases/mediator-listing', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorList']);
-
     Route::post('/admin/cases/case-approve', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorAssign']);
 
-   
+   // Case details api
+   Route::post('/admin/cases/view-case-details', [App\Http\Controllers\API\Admin\CaseController::class, 'viewCaseDetails']);
 });
 
 Route::post('/admin/cases/viewsupporting', [App\Http\Controllers\API\Admin\UploadController::class, 'viewSupporting']);
 Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
+
+
 
 
 
