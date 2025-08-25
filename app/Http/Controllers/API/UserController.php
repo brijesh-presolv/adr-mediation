@@ -155,7 +155,6 @@ public $successStatus = 200;
 
         $result['success'] = true;
         $result['message'] = "User logged out successfully.";
-        $result['data'] = $data;
         return response()->json($result, 200)->withCookie($cookie);
 
     }
