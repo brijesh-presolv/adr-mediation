@@ -110,14 +110,15 @@ class UploadController extends Controller
             }
 
             $caseId = $request->caseId;
-            $inv_id = "";
-            if ($request->has('docs_party_ids')) {
-                $inv_id = $request->docs_party_ids;
-            } else {
-                $inv = InvoledUser::select('id')->where('userPlanId', $caseId)->pluck('id')->toArray();
-                $inv_id = implode(",", $inv);
-            }
-
+           $inv_id = "";
+        if ($request->has('docs_party_ids')) {
+            $inv_id = is_array($request->docs_party_ids)
+                ? implode(",", $request->docs_party_ids)
+                : $request->docs_party_ids;
+        } else {
+            $inv = InvoledUser::select('id')->where('userPlanId', $caseId)->pluck('id')->toArray();
+            $inv_id = implode(",", $inv);
+        }
             $mediatorNoti = DB::table('mediators_mediation_cases_status')
                 ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
                 ->where('mediators_mediation_cases_status.mediation_case_id', $caseId)
