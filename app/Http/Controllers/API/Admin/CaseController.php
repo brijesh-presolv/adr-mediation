@@ -347,4 +347,216 @@ class CaseController extends Controller
         
     }
 
+
+    public function fetchCase(Request $request) {
+        $med = MedCase::find($request->input('caseid'));
+        if (!$med) {
+            return abort(404);
+        }
+        //$usr = User::find($med->userid);
+        $response = '';
+
+        //fetch all involved users
+        $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get();
+       
+        $claimants = array();
+        $respondents = array();
+        foreach($InvoledUser as $key => $party) {
+            if($party->isClaimant == 0){
+                $claimants[$key]['name'] = $party->name;
+                $claimants[$key]['email'] = $party->userEmail;
+                $claimants[$key]['phone'] = $party->userPhone;
+
+                if($party->address1 != null){
+                   $claimants[$key]['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
+                } else if($party->fulladdress) {
+                    $claimants[$key]['address'] = $party->fulladdress;
+                } else {
+                    $claimants[$key]['address'] = $party->useraddress . ' ' . $party->useraddress1 . ' ' . $party->usercity . ', ' . $party->userpincode . ', ' . $party->userstate . ' ' . $party->usercountry;
+                }
+            }
+
+            if($party->isClaimant != 0){
+                $respondents[$key]['name'] = $party->name;
+                $respondents[$key]['email'] = $party->userEmail;
+                $respondents[$key]['phone'] = $party->userPhone;
+
+                 if($party->address1 != null){
+                   $respondents[$key]['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
+                } else if($party->fulladdress) {
+                    $respondents[$key]['address'] = $party->fulladdress;
+                }
+            }
+        }
+
+        $data['case'] = $med;
+        $data['claimants'] = $claimants;
+        $data['respondents'] = $respondents;
+
+        $result['success'] = true;
+        $result['message'] = "Case details by id fetched successfully.";
+        $result['data'] = $data;
+        return response()->json($result, 200);
+    }
+
+
+    public function caseUpdate(Request $request){
+        //udpate mediation case
+        $med = MedCase::find($request->input('caseid'));
+        $med->proposedSolution = $request->input('proposedSolution');
+        $med->issue = $request->input('issue');
+
+        $ref = $request->input('application');
+        $med->ref_id = isset($ref) ? $ref : $med->ref_id;
+        $med->updated_at = date("Y-m-d H:i:s");
+        $med->save();
+
+        //if user profile update
+        $usr = User::find($med->userid);
+        $usr->address = $request->input('useraddress');
+        $usr->address1 = $request->input('useraddress1');
+        $usr->city = $request->input('usercity');
+        $usr->pincode = $request->input('userpincode');
+        $usr->state = $request->input('userstate');
+        $usr->country = $request->input('usercountry');
+        $usr->save();
+
+        // update initiating party
+        $inv = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $med->id, 'userId' => $usr->id])->first();
+        if ($inv) {
+            $inv->address1 = $usr->address;
+            if ($usr->address1 == '') {
+                $usr->address1 = 'null';
+            }
+            $inv->address2 = $usr->address1;
+            $inv->city = $usr->city;
+            $inv->pincode = $usr->pincode;
+            $inv->state = $usr->state;
+            $inv->country = $usr->country;
+            $inv->updated_at = date('Y-m-d H:s:i');
+            $inv->save();
+        }
+
+        $pone = $inv;
+
+
+        //update responding party
+
+
+        $respond = 0;
+
+        if(isset($request->email) && count($request->email) ) {
+        for ($i = 0; $i < count($request->email); $i++) {
+
+            $invid = $request->input('invid')[$i];
+
+            if ($invid != '') {
+
+                $inv = InvoledUser::find($invid);
+            } else {
+                $inv = new InvoledUser();
+            }
+
+
+
+            //$inv->userId=;
+            // if ($inv->userEmail != $r['email'][$i] || $inv->userPhone != $r['phone'][$i]) {
+
+            //     $inv->joinCode = $this->joinCode();
+            // }
+            if (isset($request->input('selected_party')[$i]) && $request->input('selected_party')[$i] == 0 ) {
+                $inv->isClaimant = 0;
+                $inv->joinCode = null;
+            } else {
+                if ($inv->userEmail != $request->input('email')[$i] || $inv->userPhone != $request->input('phone')[$i]) {
+
+                    $inv->joinCode = $this->joinCode();
+                }
+                if ($inv->userId == 0) {
+                    $inv->joinCode = $this->joinCode();
+                } else {
+                    $inv->joinCode = null;
+                }
+                $inv->isClaimant = $respond + 1;
+                $respond++;
+            }
+
+            $inv->userPlanId = $med->id;
+
+            if ($inv->userEmail != $request->input('email')[$i]) {
+
+                $inv->userEmail = $request->input('email')[$i];
+
+                // $invitation = $this->invitation_mediate($id);
+
+                // $invmodel = new InvitationFiles();
+                // $invmodel->case_id = $request->id;
+                // $invmodel->file_name = $invitation;
+                // $invmodel->save();
+
+
+                // $code = $inv->joinCode;
+                // $s = SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
+            }
+
+            if ($inv->userPhone != $request->input('phone')[$i]) {
+                $inv->userPhone = $request->input('phone')[$i];
+            }
+
+            $inv->name = $request->input('name')[$i]; 
+            if (isset($request->input('add1')[$i])) {
+                $inv->address1 = $request->input('add1')[$i];
+
+                if ($request->input('add2')[$i] == '') {
+                    $request->input('add2')[$i] = 'null';
+                }
+                $inv->address2 = $request->input('add2')[$i];
+                $inv->city = $request->input('city')[$i];
+                $inv->pincode = $request->input('pincode')[$i];
+                $inv->state = $request->input('state')[$i];
+                $inv->country = $request->input('country')[$i];
+            } elseif (isset($request->input('fulladdress')[$i])) {
+                $inv->fulladdress = $request->input('fulladdress')[$i];
+            }
+
+
+            $inv->created_at = date('Y-m-d H:s:i');
+            $inv->updated_at = date('Y-m-d H:s:i');
+
+
+            $inv->save();
+
+            // $s = SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
+        }
+        }
+        //remove involed
+
+        // if ($request->input('rminv') != '') {
+
+        //     foreach (explode(',', $request->input('rminv')) as $key => $value) {
+
+        //         InvoledUser::find($value)->delete();
+        //     }
+        // }
+
+        $result['success'] = true;
+        $result['message'] = "Case data updated successfully.";
+        $result['data'] = $request->input('caseid');
+        return response()->json($result, 200);
+
+    }
+
+    public function joinCode()
+    {
+
+        $characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        $string = '';
+        $max = strlen($characters) - 1;
+        for ($i = 0; $i < 8; $i++) {
+            $string .= $characters[mt_rand(0, $max)];
+        }
+
+        return $string;
+    }
+
 }

@@ -90,7 +90,8 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 Route::post('/admin/cases/viewsupporting', [App\Http\Controllers\API\Admin\UploadController::class, 'viewSupporting']);
 Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
 
-
+Route::post('/admin/cases/case-edit', [App\Http\Controllers\API\Admin\CaseController::class, 'caseUpdate']);
+Route::post('/admin/cases/fetch-casedata', [App\Http\Controllers\API\Admin\CaseController::class, 'fetchCase']);
 
 
 
