@@ -116,11 +116,73 @@ class CaseController extends Controller
 
         $role = 2; // admin
         $bulk = 0;
-        $casesongoing = MedCase::getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
+        $casesData = MedCase::getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
         $data = array();
-        if(count($casesongoing) > 0) {
+        if(count($casesData) > 0) {
 
-            foreach ($casesongoing as $key => $values) {
+            foreach ($casesData as $key => $values) {
+
+                $id = $values->id;
+                $keyInc = $key + 1;
+                $data[$key]['id'] = $id;
+                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['keyInc'] = $keyInc;
+                $data[$key]['batch_id'] = $values->batch_id;
+                $data[$key]['ref_id'] = $values->ref_id;
+                $data[$key]['confirm_status'] = $values->confirm_status;
+                $data[$key]['case_status'] = $values->case_status;
+                $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['mediator_name'] = $values->mediator_name;
+                $data[$key]['mediator_id'] = $values->mediator_id;
+                $data[$key]['mediator_status'] = $values->mediator_status;
+                $data[$key]['batch_name'] = $values->batch_name;
+
+            // Claimants
+            $claimants = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
+                                    ->where('user_involved_in_agreement.isClaimant', 1)
+                                    ->where('userPlanid', $id)
+                                    ->get();
+            // Respondents
+            $respondents = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
+                                        ->where('user_involved_in_agreement.isClaimant', 0)
+                                        ->where('userPlanid', $id)
+                                        ->get();
+            $data[$key]['claimants']  = $claimants;
+            $data[$key]['respondents'] = $respondents;
+
+            }
+        }
+
+
+        $casedata['cases']=$data;
+        $casedata['pagination']['total_count']=$casesData->total();
+        $casedata['pagination']['current_page']=$casesData->currentPage();
+        $casedata['pagination']['per_page']=$casesData->perPage();
+        $casedata['pagination']['total_page']=$casesData->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Cases fetched successfully.";
+        $result['data'] = $casedata;
+        return response()->json($result, 200);
+    }
+
+    public function closed(Request $request){
+
+        $start   = $request->input('iDisplayStart', 0);    // offset
+        $length  = $request->input('iDisplayLength', 10);  // limit
+        $search  = $request->input('sSearch', '');
+        $batch_id = $request->input('batch_id', null);
+        $sortOrder = $request->input('SortOrder', 'desc'); // asc or desc
+        $columnName = $request->input('columnName', ''); 
+        
+
+        $role = 2; // admin
+        $bulk = 0;
+        $casesData = MedCase::getClosedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
+        $data = array();
+        if(count($casesData) > 0) {
+
+            foreach ($casesData as $key => $values) {
 
                 $id = $values->id;
                 $keyInc = $key + 1;
@@ -156,13 +218,76 @@ class CaseController extends Controller
 
 
         $casedata['cases']=$data;
-        $casedata['pagination']['total_count']=$casesongoing->total();
-        $casedata['pagination']['current_page']=$casesongoing->currentPage();
-        $casedata['pagination']['per_page']=$casesongoing->perPage();
-        $casedata['pagination']['total_page']=$casesongoing->lastPage();
+        $casedata['pagination']['total_count']=$casesData->total();
+        $casedata['pagination']['current_page']=$casesData->currentPage();
+        $casedata['pagination']['per_page']=$casesData->perPage();
+        $casedata['pagination']['total_page']=$casesData->lastPage();
 
         $result['success'] = true;
-        $result['message'] = "Ongoing cases fetched successfully.";
+        $result['message'] = "Cases fetched successfully.";
+        $result['data'] = $casedata;
+        return response()->json($result, 200);
+    }
+
+    public function rejected(Request $request){
+
+        $start   = $request->input('iDisplayStart', 0);    // offset
+        $length  = $request->input('iDisplayLength', 10);  // limit
+        $search  = $request->input('sSearch', '');
+        $batch_id = $request->input('batch_id', null);
+        $sortOrder = $request->input('SortOrder', 'desc'); // asc or desc
+        $columnName = $request->input('columnName', ''); 
+        
+
+        $role = 2; // admin
+        $bulk = 0;
+        $casesData = MedCase::getRejectedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
+        $data = array();
+        if(count($casesData) > 0) {
+
+            foreach ($casesData as $key => $values) {
+
+                $id = $values->id;
+                $keyInc = $key + 1;
+                $data[$key]['id'] = $id;
+                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['keyInc'] = $keyInc;
+                $data[$key]['batch_id'] = $values->batch_id;
+                $data[$key]['ref_id'] = $values->ref_id;
+                $data[$key]['confirm_status'] = $values->confirm_status;
+                $data[$key]['case_status'] = $values->case_status;
+                $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['mediator_name'] = $values->mediator_name;
+                $data[$key]['mediator_id'] = $values->mediator_id;
+                $data[$key]['mediator_status'] = $values->mediator_status;
+                $data[$key]['batch_name'] = $values->batch_name;
+
+            // Claimants
+            $claimants = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
+                                    ->where('user_involved_in_agreement.isClaimant', 1)
+                                    ->where('userPlanid', $id)
+                                    ->get();
+            // Respondents
+            $respondents = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
+                                        ->where('user_involved_in_agreement.isClaimant', 0)
+                                        ->where('userPlanid', $id)
+                                        ->get();
+            $data[$key]['claimants']  = $claimants;
+            $data[$key]['respondents'] = $respondents;
+
+            }
+        }
+
+
+
+        $casedata['cases']=$data;
+        $casedata['pagination']['total_count']=$casesData->total();
+        $casedata['pagination']['current_page']=$casesData->currentPage();
+        $casedata['pagination']['per_page']=$casesData->perPage();
+        $casedata['pagination']['total_page']=$casesData->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Cases fetched successfully.";
         $result['data'] = $casedata;
         return response()->json($result, 200);
     }
