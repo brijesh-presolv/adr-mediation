@@ -95,6 +95,9 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/cases/case-edit', [App\Http\Controllers\API\Admin\CaseController::class, 'caseUpdate']);
     Route::post('/admin/cases/fetch-casedata', [App\Http\Controllers\API\Admin\CaseController::class, 'fetchCase']);
 
+    // Case reject api
+    Route::post('/admin/cases/case-reject', [App\Http\Controllers\API\Admin\CaseController::class, 'caseReject']);
+    
     Route::post('/admin/case/add-session', [App\Http\Controllers\API\Admin\CaseController::class, 'addSession']);
 });
 

@@ -489,201 +489,295 @@ class CaseController extends Controller
 
 
     public function fetchCase(Request $request) {
-        $med = MedCase::find($request->input('caseid'));
-        if (!$med) {
-            return abort(404);
-        }
-        //$usr = User::find($med->userid);
-        $response = '';
+        try{
+            $token = $request->cookie('auth_token');
+            if (!$token) {
 
-        //fetch all involved users
-        $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get();
-       
-        $claimants = array();
-        $respondents = array();
-        foreach($InvoledUser as $key => $party) {
-            if($party->isClaimant == 0){
-                $claimants[$key]['name'] = $party->name;
-                $claimants[$key]['email'] = $party->userEmail;
-                $claimants[$key]['phone'] = $party->userPhone;
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
 
-                if($party->address1 != null){
-                   $claimants[$key]['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
-                } else if($party->fulladdress) {
-                    $claimants[$key]['address'] = $party->fulladdress;
-                } else {
-                    $claimants[$key]['address'] = $party->useraddress . ' ' . $party->useraddress1 . ' ' . $party->usercity . ', ' . $party->userpincode . ', ' . $party->userstate . ' ' . $party->usercountry;
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'required|integer'
+            ]);
+
+            //Inputs
+            $caseid = $request->input('caseid');
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+
+            $med = MedCase::find($caseid);
+            if (!$med) {
+                return abort(404);
+            }
+            //$usr = User::find($med->userid);
+            $response = '';
+
+            //fetch all involved users
+            $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get();
+        
+            $claimants = array();
+            $respondents = array();
+            foreach($InvoledUser as $key => $party) {
+                if($party->isClaimant == 0){
+                    $claimants[$key]['name'] = $party->name;
+                    $claimants[$key]['email'] = $party->userEmail;
+                    $claimants[$key]['phone'] = $party->userPhone;
+
+                    if($party->address1 != null){
+                    $claimants[$key]['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
+                    } else if($party->fulladdress) {
+                        $claimants[$key]['address'] = $party->fulladdress;
+                    } else {
+                        $claimants[$key]['address'] = $party->useraddress . ' ' . $party->useraddress1 . ' ' . $party->usercity . ', ' . $party->userpincode . ', ' . $party->userstate . ' ' . $party->usercountry;
+                    }
+                }
+
+                if($party->isClaimant != 0){
+                    $respondents[$key]['name'] = $party->name;
+                    $respondents[$key]['email'] = $party->userEmail;
+                    $respondents[$key]['phone'] = $party->userPhone;
+
+                    if($party->address1 != null){
+                    $respondents[$key]['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
+                    } else if($party->fulladdress) {
+                        $respondents[$key]['address'] = $party->fulladdress;
+                    }
                 }
             }
 
-            if($party->isClaimant != 0){
-                $respondents[$key]['name'] = $party->name;
-                $respondents[$key]['email'] = $party->userEmail;
-                $respondents[$key]['phone'] = $party->userPhone;
+            $data['case'] = $med;
+            $data['claimants'] = $claimants;
+            $data['respondents'] = $respondents;
 
-                 if($party->address1 != null){
-                   $respondents[$key]['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
-                } else if($party->fulladdress) {
-                    $respondents[$key]['address'] = $party->fulladdress;
-                }
-            }
+            $result['success'] = true;
+            $result['message'] = "Case details by id fetched successfully.";
+            $result['data'] = $data;
+            return response()->json($result, 200);
+        }catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Fetching case data failded";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
         }
-
-        $data['case'] = $med;
-        $data['claimants'] = $claimants;
-        $data['respondents'] = $respondents;
-
-        $result['success'] = true;
-        $result['message'] = "Case details by id fetched successfully.";
-        $result['data'] = $data;
-        return response()->json($result, 200);
     }
 
 
     public function caseUpdate(Request $request){
-        //udpate mediation case
-        $med = MedCase::find($request->input('caseid'));
-        $med->proposedSolution = $request->input('proposedSolution');
-        $med->issue = $request->input('issue');
+        try{
+            $token = $request->cookie('auth_token');
+            if (!$token) {
 
-        $ref = $request->input('application');
-        $med->ref_id = isset($ref) ? $ref : $med->ref_id;
-        $med->updated_at = date("Y-m-d H:i:s");
-        $med->save();
-
-        //if user profile update
-        $usr = User::find($med->userid);
-        $usr->address = $request->input('useraddress');
-        $usr->address1 = $request->input('useraddress1');
-        $usr->city = $request->input('usercity');
-        $usr->pincode = $request->input('userpincode');
-        $usr->state = $request->input('userstate');
-        $usr->country = $request->input('usercountry');
-        $usr->save();
-
-        // update initiating party
-        $inv = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $med->id, 'userId' => $usr->id])->first();
-        if ($inv) {
-            $inv->address1 = $usr->address;
-            if ($usr->address1 == '') {
-                $usr->address1 = 'null';
-            }
-            $inv->address2 = $usr->address1;
-            $inv->city = $usr->city;
-            $inv->pincode = $usr->pincode;
-            $inv->state = $usr->state;
-            $inv->country = $usr->country;
-            $inv->updated_at = date('Y-m-d H:s:i');
-            $inv->save();
-        }
-
-        $pone = $inv;
-
-
-        //update responding party
-
-
-        $respond = 0;
-
-        if(isset($request->email) && count($request->email) ) {
-        for ($i = 0; $i < count($request->email); $i++) {
-
-            $invid = $request->input('invid')[$i];
-
-            if ($invid != '') {
-
-                $inv = InvoledUser::find($invid);
-            } else {
-                $inv = new InvoledUser();
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
             }
 
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'required|integer',
+                'proposedSolution' => 'string|max:255',
+                'issue' => 'string|max:255',
+                'application' => 'string|max:255',
+                'useraddress' => 'string|max:255',
+                'useraddress1' => 'string|max:255',
+                'usercity' => 'string|max:255',
+                'userpincode' => 'integer',
+                'userstate' => 'string|max:255',
+                'usercountry' => 'string|max:255',
+            ]);
+
+            //Inputs
+            $caseid = $request->input('caseid');
+            $proposedSolution = $request->input('proposedSolution');
+            $issue = $request->input('issue');
+            $application = $request->input('application');
+            $useraddress = $request->input('useraddress');
+            $useraddress1 = $request->input('useraddress1');
+            $usecity = $request->input('usercity');
+            $userpincode = $request->input('userpincode');
+            $userstate = $request->input('userstate');
+            $usercountry = $request->input('usercountry');
+           
 
 
-            //$inv->userId=;
-            // if ($inv->userEmail != $r['email'][$i] || $inv->userPhone != $r['phone'][$i]) {
+            if ($validator->fails()) {
 
-            //     $inv->joinCode = $this->joinCode();
-            // }
-            if (isset($request->input('selected_party')[$i]) && $request->input('selected_party')[$i] == 0 ) {
-                $inv->isClaimant = 0;
-                $inv->joinCode = null;
-            } else {
-                if ($inv->userEmail != $request->input('email')[$i] || $inv->userPhone != $request->input('phone')[$i]) {
+                $errors = $validator->errors()->all();
 
-                    $inv->joinCode = $this->joinCode();
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            //udpate mediation case
+            $med = MedCase::find($caseid);
+            $med->proposedSolution = $proposedSolution;
+            $med->issue = $issue;
+
+            $med->ref_id = isset($application) ? $application : $med->ref_id;
+            $med->updated_at = date("Y-m-d H:i:s");
+            $med->save();
+
+            //if user profile update
+            $usr = User::find($med->userid);
+            $usr->address = $useraddress;
+            $usr->address1 = $useraddress1;
+            $usr->city = $usercity;
+            $usr->pincode = $userpincode;
+            $usr->state = $userstate;
+            $usr->country = $usercountry;
+            $usr->save();
+
+            // update initiating party
+            $inv = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $med->id, 'userId' => $usr->id])->first();
+            if ($inv) {
+                $inv->address1 = $usr->address;
+                if ($usr->address1 == '') {
+                    $usr->address1 = 'null';
                 }
-                if ($inv->userId == 0) {
-                    $inv->joinCode = $this->joinCode();
+                $inv->address2 = $usr->address1;
+                $inv->city = $usr->city;
+                $inv->pincode = $usr->pincode;
+                $inv->state = $usr->state;
+                $inv->country = $usr->country;
+                $inv->updated_at = date('Y-m-d H:s:i');
+                $inv->save();
+            }
+
+            $pone = $inv;
+
+
+            //update responding party
+
+
+            $respond = 0;
+
+            if(isset($request->email) && count($request->email) ) {
+            for ($i = 0; $i < count($request->email); $i++) {
+
+                $invid = $request->input('invid')[$i];
+
+                if ($invid != '') {
+
+                    $inv = InvoledUser::find($invid);
                 } else {
-                    $inv->joinCode = null;
+                    $inv = new InvoledUser();
                 }
-                $inv->isClaimant = $respond + 1;
-                $respond++;
-            }
-
-            $inv->userPlanId = $med->id;
-
-            if ($inv->userEmail != $request->input('email')[$i]) {
-
-                $inv->userEmail = $request->input('email')[$i];
-
-                // $invitation = $this->invitation_mediate($id);
-
-                // $invmodel = new InvitationFiles();
-                // $invmodel->case_id = $request->id;
-                // $invmodel->file_name = $invitation;
-                // $invmodel->save();
 
 
-                // $code = $inv->joinCode;
+
+                //$inv->userId=;
+                // if ($inv->userEmail != $r['email'][$i] || $inv->userPhone != $r['phone'][$i]) {
+
+                //     $inv->joinCode = $this->joinCode();
+                // }
+                if (isset($request->input('selected_party')[$i]) && $request->input('selected_party')[$i] == 0 ) {
+                    $inv->isClaimant = 0;
+                    $inv->joinCode = null;
+                } else {
+                    if ($inv->userEmail != $request->input('email')[$i] || $inv->userPhone != $request->input('phone')[$i]) {
+
+                        $inv->joinCode = $this->joinCode();
+                    }
+                    if ($inv->userId == 0) {
+                        $inv->joinCode = $this->joinCode();
+                    } else {
+                        $inv->joinCode = null;
+                    }
+                    $inv->isClaimant = $respond + 1;
+                    $respond++;
+                }
+
+                $inv->userPlanId = $med->id;
+
+                if ($inv->userEmail != $request->input('email')[$i]) {
+
+                    $inv->userEmail = $request->input('email')[$i];
+
+                    // $invitation = $this->invitation_mediate($id);
+
+                    // $invmodel = new InvitationFiles();
+                    // $invmodel->case_id = $request->id;
+                    // $invmodel->file_name = $invitation;
+                    // $invmodel->save();
+
+
+                    // $code = $inv->joinCode;
+                    // $s = SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
+                }
+
+                if ($inv->userPhone != $request->input('phone')[$i]) {
+                    $inv->userPhone = $request->input('phone')[$i];
+                }
+
+                $inv->name = $request->input('name')[$i]; 
+                if (isset($request->input('add1')[$i])) {
+                    $inv->address1 = $request->input('add1')[$i];
+
+                    if ($request->input('add2')[$i] == '') {
+                        $request->input('add2')[$i] = 'null';
+                    }
+                    $inv->address2 = $request->input('add2')[$i];
+                    $inv->city = $request->input('city')[$i];
+                    $inv->pincode = $request->input('pincode')[$i];
+                    $inv->state = $request->input('state')[$i];
+                    $inv->country = $request->input('country')[$i];
+                } elseif (isset($request->input('fulladdress')[$i])) {
+                    $inv->fulladdress = $request->input('fulladdress')[$i];
+                }
+
+
+                $inv->created_at = date('Y-m-d H:s:i');
+                $inv->updated_at = date('Y-m-d H:s:i');
+
+
+                $inv->save();
+
                 // $s = SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
             }
-
-            if ($inv->userPhone != $request->input('phone')[$i]) {
-                $inv->userPhone = $request->input('phone')[$i];
             }
+            //remove involed
 
-            $inv->name = $request->input('name')[$i]; 
-            if (isset($request->input('add1')[$i])) {
-                $inv->address1 = $request->input('add1')[$i];
+            // if ($request->input('rminv') != '') {
 
-                if ($request->input('add2')[$i] == '') {
-                    $request->input('add2')[$i] = 'null';
-                }
-                $inv->address2 = $request->input('add2')[$i];
-                $inv->city = $request->input('city')[$i];
-                $inv->pincode = $request->input('pincode')[$i];
-                $inv->state = $request->input('state')[$i];
-                $inv->country = $request->input('country')[$i];
-            } elseif (isset($request->input('fulladdress')[$i])) {
-                $inv->fulladdress = $request->input('fulladdress')[$i];
-            }
+            //     foreach (explode(',', $request->input('rminv')) as $key => $value) {
 
+            //         InvoledUser::find($value)->delete();
+            //     }
+            // }
 
-            $inv->created_at = date('Y-m-d H:s:i');
-            $inv->updated_at = date('Y-m-d H:s:i');
+            $result['success'] = true;
+            $result['message'] = "Case data updated successfully.";
+            $result['data'] = $request->input('caseid');
+            return response()->json($result, 200);
+        }  catch (Exception $e) {
 
-
-            $inv->save();
-
-            // $s = SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
+            $result['success'] = false;
+            $result['message'] = "Case updation failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
         }
-        }
-        //remove involed
-
-        // if ($request->input('rminv') != '') {
-
-        //     foreach (explode(',', $request->input('rminv')) as $key => $value) {
-
-        //         InvoledUser::find($value)->delete();
-        //     }
-        // }
-
-        $result['success'] = true;
-        $result['message'] = "Case data updated successfully.";
-        $result['data'] = $request->input('caseid');
-        return response()->json($result, 200);
-
     }
 
     public function joinCode()
@@ -698,6 +792,91 @@ class CaseController extends Controller
 
         return $string;
     }
+
+
+    public function caseReject(Request $request) {
+        try{
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid'             => 'required|integer',
+                'userid'=> 'required|integer'
+            ]);
+
+            //Inputs
+            $caseid = $request->input('caseid');
+            $userid = $request->input('userid');
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseid)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
+            foreach ($inv as $v) {
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+            Common_function::MedNotification($caseid, "REJECTED_ADM", $userid, isset($mediator) ? $mediator->id : null, $inv_id);
+        
+        
+            $user = MedCase::find($caseid);
+            $user->confirm_status = 3;
+            $user->case_status = 3;
+
+            if ($user->save()) {
+                $mediation_status_log = new Mediation_status_log;
+                $mediation_status_log->user_id = $request->input('userid');
+                $mediation_status_log->mediation_case_id = $request->input('caseid');
+                $mediation_status_log->status = 3;
+                $mediation_status_log->description = "Request Reject";
+                $mediation_status_log->save();
+
+                // Email notification
+                //$this->sned_reject($request->input('caseid'));
+
+                $data['caseid'] = $user->id;
+                
+            }
+
+            $result['success'] = true;
+            $result['message'] = "Case rejected successfully.";
+            $result['data'] = $data;
+            return response()->json($result, 200);
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case rejection failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
 
     public function addSession(Request $request)
     {
