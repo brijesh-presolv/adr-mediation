@@ -84,7 +84,7 @@ class UploadController extends Controller
     public function storeMultiFile(Request $request)
     {
         try {
-            // **Authenticate User via JWT**
+
             $token = $request->cookie('auth_token');
             if (!$token) {
                 return response()->json(['success' => false, 'message' => 'Unauthorized: Missing token'], 401);
