@@ -13,6 +13,7 @@ use App\Models\ManageSession;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Helpers\Token;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Helpers\Common_function;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Models\InvoledUser;
@@ -20,7 +21,19 @@ use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
 use App\Models\Mediators_mediation_cases_status;
 use App\Models\InvitationFiles;
-use App\Http\Helpers\Common_function;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use App\Models\BulkLog;
+use App\Models\EmailTrack;
+use App\Models\Notification;
+use App\Models\SendWhatsappChoice;
+use App\Http\Helpers\SendGrid;
+use App\Http\Traits\UploadTrait;
+use PDF;
+use DateTime;
+use DateTimeZone;
+use Carbon\Carbon;
+use App\Http\Helpers\Zoom;
 
 
 class CaseController extends Controller 
@@ -602,6 +615,321 @@ class CaseController extends Controller
         $result['message'] = "Case rejected successfully.";
         $result['data'] = $data;
         return response()->json($result, 200);
+    }
+
+    
+    public function addSession(Request $request)
+    {
+
+        try {
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseId'             => 'required|integer',
+                'sessionDate'        => 'required|date_format:d/m/Y|after_or_equal:today',
+                'sessionTime'        => 'required|date_format:H:i',
+                'zoom_choice'        => 'required|string|in:directly_zoom,custom_zoom,other',
+                'zoomId'             => 'nullable|string|max:255',
+                'note'               => 'nullable|string|max:500',
+                'session_party_ids'  => 'required|array|min:1',
+                'session_party_ids.*'=> 'required|integer'
+            ]);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            $caseId = $request->input('caseId');
+            $zoom_choice = $request->input('zoom_choice');
+            $sessionTime = $request->input('sessionTime');
+            $sessionDate = $request->input('sessionDate');
+            $note = $request->input('note');
+            $zoomId = $request->input('zoomId');
+            $session_party_ids= $request->input('session_party_ids');
+
+
+            if($request->input('zoom_choice') == "directly_zoom" || $request->input('zoom_choice') == "directly_zoom") {
+
+                $time_zoom = date("H:i:s", strtotime($sessionTime));
+                $end_time = date("H:i:s", strtotime($sessionTime) + 60*60);
+                $date1 = str_replace('/', '-', $sessionDate);  
+                $date = date('Y-m-d', strtotime($date1));
+                $total = $date.' '.$time_zoom;
+                $end_total = $date.' '.$end_time;
+                $date_format_api =  date("Y-m-d\TH:i:s", strtotime($total));
+                $end_date_format_api =  date("Y-m-d\TH:i:s", strtotime($end_total));
+                
+                $create_zoom_meeting_response = Zoom::createZoomMeeting($caseId, $note, $date_format_api, $end_date_format_api);
+                $create_zoom_meeting = json_decode($create_zoom_meeting_response, true);
+                //print_r($create_zoom_meeting);die();
+                // Get zoom api invitation : START //
+                $zoom_invitation_response = Zoom::zoomInvitation($create_zoom_meeting['id']);
+                $zoom_invitation = json_decode($zoom_invitation_response, true);
+
+                /**** Get Zoom URL from invitation ********/
+                $zoom_string = $zoom_invitation['invitation'];
+                preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $zoom_string, $zoom_match);
+                /**** Get Zoom URL from invitation ********/
+                
+                $created_zoom_link = $zoom_match[0][0];
+                $created_zoom_id = $create_zoom_meeting['id'];
+                $inserted_zoom_choice = "direct";
+
+            } else {
+
+                $created_zoom_link = ""; 
+                $created_zoom_id = $zoomId;
+                $inserted_zoom_choice = "manual";
+            }
+
+            $time = date("g:i A", strtotime($sessionTime));
+            $display_date_time = str_replace('/', '-', $sessionDate) . " " . $time;
+            
+            $d = [
+                'event' => 'SESS_SCHE',
+                'case_id' => $caseId,
+            ];
+            $medcase = MedCase::find($caseId);
+
+            if (isset($session_party_ids)) {
+
+                $dataToInsert = [
+                    'case_id' => $caseId,
+                    'session_date' => $sessionDate . "/" . $time,
+                    'note' => $note,
+                    'zoom_id' => $created_zoom_id,
+                    'zoom_link' => $created_zoom_link,
+                    'zoom_link_choice' => $inserted_zoom_choice,
+                    'session_party_ids' => json_encode($session_party_ids),
+                    'scheduled_by' => $userId,
+                    'participant_whtsapp' => 0
+                ];
+                $insertData = DB::table('manage_session')->insert($dataToInsert);
+
+                if ($insertData) {
+
+                    $inv_id = "";
+                    foreach ($session_party_ids as $party_id) {
+
+                        $party = InvoledUser::where("userPlanId", $caseId)->where("id", $party_id)->first();
+                    
+                        if ($inv_id == "") {
+                            $inv_id = $party->id;
+                        } else {
+                            $inv_id = $inv_id . "," . $party->id;
+                        }
+
+                       
+
+                        if($zoom_choice == "manually_zoom") {
+
+                            if($zoom_choice == "manually_zoom"){
+                                $is_send = $this->sned_session($zoomId, $caseId, $party->userEmail, $party->name, $sessionDate . "/" . $time, $party->userPhone, "Party");
+                            }
+                        
+                        } else if($zoom_choice == "directly_zoom") {
+
+                            if($zoom_choice == "directly_zoom" && $party->isClaimant != 0){
+
+                                if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                                    $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $caseId, $party->userEmail, $party->name, $sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                                } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                                    $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $caseId, $party->userEmail, $party->name, $sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                                }
+
+                            }elseif($zoom_choice == "directly_zoom"){
+
+                                $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            }
+                        
+                        }
+                    }
+
+                    $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                        ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
+                        ->where("mediators_mediation_cases_status.status", "=", 1)
+                        ->first();
+                    Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+                    if ($mediatorNoti) {
+
+                        $id = "M" . sprintf("%06d", $caseId);
+
+                        if($zoom_choice == "manually_zoom") {
+                            if($medcase->stop_bulk_session_med == 0) {
+                                $is_send = $this->sned_session($zoomId, $caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
+                            }
+                        } else if($zoom_choice == "directly_zoom") {
+                            if($medcase->stop_bulk_session_med == 0) {
+                                $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
+                            }
+                        }
+                    }
+
+
+                    $data['caseid'] = $caseId;
+
+                    $result['success'] = true;
+                    $result['message'] = "Zoom Meeting created successfully.";
+                    $result['data'] = $data;
+                    return response()->json($result, 200);
+
+                } else {
+
+                    $result['success'] = false;
+                    $result['message'] = "Zoom Meeting Creataion failed.";
+                    $result['error'] = "Zoom Meeting Creataion failed.";
+                    return response()->json($result, 200);
+                }
+            } else {
+
+                $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+                $inv_id = "";
+                $inv = InvoledUser::select('id')->where('userPlanId', $caseId)->get();
+                foreach ($inv as $v) {
+                    if ($inv_id == "") {
+                        $inv_id = $v->id;
+                    } else {
+                        $inv_id = $inv_id . "," . $v->id;
+                    }
+                }
+
+                Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+              
+                $allParty = InvoledUser::where("userPlanId", $caseId)->get();
+                $party_ids = array();
+                $party_ids_bulk = array();
+                foreach ($allParty as $party) {
+
+                        $party_ids[] = $party->id; 
+                }
+            
+                $dataToInsert = [
+                    'case_id' => $caseId,
+                    'session_date' => $sessionDate . "/" . $time,
+                    'note' => $note,
+                    'zoom_id' => $created_zoom_id,
+                    'zoom_link' => $created_zoom_link,
+                    'zoom_link_choice' => $inserted_zoom_choice,
+                    'session_party_ids' => (!empty($party_ids_bulk)) ? json_encode($party_ids_bulk) : json_encode($party_ids),
+                    'scheduled_by' => $userId,
+                    'participant_whtsapp' => 0
+                ];
+                $manage_session = DB::table('manage_session')->insert($dataToInsert);
+                if ($manage_session) {
+                    $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                        ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
+                        ->where("mediators_mediation_cases_status.status", "=", 1)
+                        ->first();
+                    if ($mediator) {
+                        $id = "M" . sprintf("%06d", $caseId);
+
+                        if(!isset($request->fsData['zoom_choice'])){
+
+                            if($medcase->stop_bulk_session_med == 0) {
+
+                                SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+                            
+                            }
+                        }
+                    }
+                    foreach ($allParty as $party) {
+
+                        if($zoom_choice == "manually_zoom") {
+
+                            if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                                $is_send = $this->sned_session($zoomId, $caseId, $party->userEmail, $party->name, $sessionDate, $party->userPhone, "Party");
+                            } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                                $is_send = $this->sned_session($zoomId, $caseId, $party->userEmail, $party->name, $sessionDate, $party->userPhone, "Party");
+                            }
+
+                        } else if($zoom_choice == "directly_zoom") {
+
+                        if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                        } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                        }
+                        
+                        }
+                    }
+                    
+                    $data['caseid'] = $caseId;
+
+                    $result['success'] = true;
+                    $result['message'] = "Zoom Meeting created successfully.";
+                    $result['data'] = $data;
+                    return response()->json($result, 200);
+        
+                } else {
+
+                    $data['caseid'] = $caseId;
+
+                    $result['success'] = false;
+                    $result['message'] = "Zoom Meeting Creataion failed.";
+                    $result['error'] = "Zoom Meeting Creataion failed.";
+                    return response()->json($result, 200);
+                }
+            }
+
+            return true;
+
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Zoom meeting creation failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone, $userType){
+
+        $mid = "M" . sprintf("%06d", $id);
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $id,
+        ];
+        if ($email_id != "") {
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
+        }
+        
+        return true;
+    }
+
+    public function sned_session_invitation($url, $id, $email_id, $email_name, $date, $userPhone, $invitation, $userType)
+    {
+        $mid = "M" . sprintf("%06d", $id);
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $id,
+        ];
+        if ($email_id != "") {
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, "-zoom_invitation_link-" => $invitation], $email_name);
+        }
+
+        return true;
     }
 
 }

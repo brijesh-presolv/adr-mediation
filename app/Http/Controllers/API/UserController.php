@@ -95,8 +95,10 @@ public $successStatus = 200;
 
             if ($validator->fails()) {
 
+                $errors = $validator->errors()->all(); 
+
                 $result['success'] = false;
-                $result['message'] = "Validation failed";
+                $result['message'] = $implode(', ', $errors);
                 $result['error'] = $validator->errors();
                 return response()->json($result, 422);
             }
