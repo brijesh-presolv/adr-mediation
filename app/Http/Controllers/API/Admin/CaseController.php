@@ -20,6 +20,7 @@ use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
 use App\Models\Mediators_mediation_cases_status;
 use App\Models\InvitationFiles;
+use App\Http\Helpers\Common_function;
 
 
 class CaseController extends Controller 
@@ -558,6 +559,49 @@ class CaseController extends Controller
         }
 
         return $string;
+    }
+
+
+    public function caseReject(Request $request) {
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->input('caseid'))
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $inv_id = "";
+        $inv = InvoledUser::select('id')->where('userPlanId', $request->input('caseid'))->get();
+        foreach ($inv as $v) {
+            if ($inv_id == "") {
+                $inv_id = $v->id;
+            } else {
+                $inv_id = $inv_id . "," . $v->id;
+            }
+        }
+        Common_function::MedNotification($request->input('caseid'), "REJECTED_ADM", $request->input('userid'), isset($mediator) ? $mediator->id : null, $inv_id);
+    
+    
+        $user = MedCase::find($request->input('caseid'));
+        $user->confirm_status = 3;
+        $user->case_status = 3;
+
+        if ($user->save()) {
+            $mediation_status_log = new Mediation_status_log;
+            $mediation_status_log->user_id = $request->input('userid');
+            $mediation_status_log->mediation_case_id = $request->input('caseid');
+            $mediation_status_log->status = 3;
+            $mediation_status_log->description = "Request Reject";
+            $mediation_status_log->save();
+
+            // Email notification
+            //$this->sned_reject($request->input('caseid'));
+
+            $data['caseid'] = $user->id;
+            
+        }
+
+        $result['success'] = true;
+        $result['message'] = "Case rejected successfully.";
+        $result['data'] = $data;
+        return response()->json($result, 200);
     }
 
 }
