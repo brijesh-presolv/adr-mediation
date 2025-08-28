@@ -1029,61 +1029,56 @@ class MedCase extends Model
 
     static function getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
     {
-        $sql = MedCase::with(['claimants', 'respondents'])
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+                            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+                            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with('user_involed')
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
                 "mediation_case.ref_id",
-                "mediation_case.created_at",
                 "mediation_case.confirm_status",
+                "mediation_case.case_status",
                 "mediation_case.bulk_flag",
-                "mediation_case.sub_user_id",
-                DB::raw("CONCAT(users.first_name,' ',users.last_name,' - ',users.organization) as mediator_username"),
+                "mediation_case.created_at",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
                 "mediators_mediation_cases_status.mediator_id as mediator_id",
                 "mediators_mediation_cases_status.status as mediator_status",
-                "mediators_mediation_cases_status.created_at as admin_approve",
-                "consent_disclosures.updated_at as update",
-                "consent_disclosures.created_at as create"
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
             )
-            ->leftJoin("mediators_mediation_cases_status", function ($join) {
-                $join->on("mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id");
-                $join->where("mediators_mediation_cases_status.id", "=", DB::raw("(SELECT MAX(m2.id) FROM mediators_mediation_cases_status AS m2 WHERE m2.mediation_case_id = mediation_case.id)"));
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
             })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
             ->where("mediation_case.confirm_status", 1)
             ->where("mediation_case.bulk_flag", $bulk);
 
-        if (!empty($batch_id)) {
-            $sql->where("mediation_case.batch_id", $batch_id);
-        }
-
         if (!empty($search)) {
-            $sql->where(function ($q) use ($search) {
-                $q->where('mediation_case.ref_id', 'like', "%{$search}%")
-                ->orWhere('batch.batch_name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where("mediation_case.ref_id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%");
             });
         }
 
         // Sorting
         if ($columnName == "case.caseid") {
-            $sql->orderBy('mediation_case.id', $sortOrder);
+            $query->orderBy('mediation_case.id', $sortOrder);
         } elseif ($columnName == "date") {
-            $sql->orderBy('mediation_case.created_at', $sortOrder);
+            $query->orderBy('mediation_case.created_at', $sortOrder);
         } elseif ($columnName == "party") {
-            $sql->orderBy(
-                InvoledUser::select('name')
-                    ->whereColumn('userPlanId', 'mediation_case.id')
-                    ->where('isClaimant', 1)
-                    ->limit(1),
-                $sortOrder
-            );
+            $query->with(['user_involed' => function ($t) use ($sortOrder) {
+                $t->orderBy('name', $sortOrder);
+            }]);
         } else {
-            $sql->orderBy('mediation_case.id', 'DESC');
+            $query->orderBy('mediation_case.id', 'DESC');
         }
 
-        return $sql->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
     }
 
     static function getOgoingCaseApi2($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
