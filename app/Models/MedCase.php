@@ -1079,7 +1079,7 @@ class MedCase extends Model
                 $sql->orderBy('mediation_case.id', 'DESC');
             }
 
-            return $sql->get();
+            return $sql->paginate($length, ['*'], 'page', floor($start / $length) + 1);
     }
 
     static function getClosedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
