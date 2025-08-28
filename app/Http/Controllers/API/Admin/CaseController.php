@@ -199,18 +199,9 @@ class CaseController extends Controller
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
 
-            // Claimants
-            $claimants = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
-                                    ->where('user_involved_in_agreement.isClaimant', 1)
-                                    ->where('userPlanid', $id)
-                                    ->get();
-            // Respondents
-            $respondents = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
-                                        ->where('user_involved_in_agreement.isClaimant', 0)
-                                        ->where('userPlanid', $id)
-                                        ->get();
-            $data[$key]['claimants']  = $claimants;
-            $data[$key]['respondents'] = $respondents;
+
+            $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
+            $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
 
             }
         }
@@ -262,18 +253,8 @@ class CaseController extends Controller
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
 
-            // Claimants
-            $claimants = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
-                                    ->where('user_involved_in_agreement.isClaimant', 1)
-                                    ->where('userPlanid', $id)
-                                    ->get();
-            // Respondents
-            $respondents = InvoledUser::select('user_involved_in_agreement.name', 'user_involved_in_agreement.userEmail as email')
-                                        ->where('user_involved_in_agreement.isClaimant', 0)
-                                        ->where('userPlanid', $id)
-                                        ->get();
-            $data[$key]['claimants']  = $claimants;
-            $data[$key]['respondents'] = $respondents;
+            $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
+            $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
 
             }
         }
