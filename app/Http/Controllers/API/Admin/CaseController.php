@@ -117,6 +117,8 @@ class CaseController extends Controller
         $role = 2; // admin
         $bulk = 0;
         $casesData = MedCase::getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
+
+       // print_r($casesData);die();
         $data = array();
         if(count($casesData) > 0) {
 
@@ -147,8 +149,8 @@ class CaseController extends Controller
                                         ->where('user_involved_in_agreement.isClaimant', 0)
                                         ->where('userPlanid', $id)
                                         ->get(); */
-            $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
-            $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
+           $data[$key]['claimants'] = array_filter(explode(',', $values->claimants_names ?? ''));
+           $data[$key]['respondents'] = array_filter(explode(',', $values->respondents_names ?? ''));
 
             }
         }
