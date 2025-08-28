@@ -81,9 +81,6 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/cases/closed', [App\Http\Controllers\API\Admin\CaseController::class, 'closed']);
     Route::post('/admin/cases/rejected', [App\Http\Controllers\API\Admin\CaseController::class, 'rejected']);
 
-    Route::post('/admin/cases/viewsupporting', [App\Http\Controllers\API\Admin\UploadController::class, 'viewSupporting']);
-    Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
-
     // Case approve api
     Route::get('/admin/cases/mediator-listing', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorList']);
     Route::post('/admin/cases/case-approve', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorAssign']);
@@ -99,6 +96,12 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/cases/case-reject', [App\Http\Controllers\API\Admin\CaseController::class, 'caseReject']);
     
     Route::post('/admin/case/add-session', [App\Http\Controllers\API\Admin\CaseController::class, 'addSession']);
+    Route::post('/admin/cases/consentdisclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'getConsentDisclosures']);
+    Route::post('/admin/cases/download-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'downloadDisclosures']);
+
+    Route::post('/admin/cases/viewsupporting', [App\Http\Controllers\API\Admin\UploadController::class, 'viewSupporting']);
+    Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
+
 });
 
 
