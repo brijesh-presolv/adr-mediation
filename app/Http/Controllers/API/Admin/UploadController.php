@@ -186,4 +186,81 @@ class UploadController extends Controller
         }
     }
 
+    public function documentUpload(Request $request)
+    {
+
+        try {
+
+            $validator = Validator::make($request->all(), [
+                'caseId' => 'required|integer',
+                'fileupload' => 'required|file|mimes:pdf,zip,rar|max:20480'
+            ]);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            $caseId = $request->input('caseId');
+            $selectDocument = $request->file('fileupload');
+            $errormsg = '';
+
+            $med = MedCase::find($caseId);
+
+            if (!$med) {
+
+                $result['success'] = false;
+                $result['message'] = "Case not found";
+                $result['error'] = "Files not uploaded";
+                return response()->json($result, 400);
+            }
+
+            $ext = pathinfo($selectDocument->getClientOriginalName(), PATHINFO_EXTENSION);
+
+            if ($ext != 'pdf' && $ext != 'zip' && $ext != 'rar') {
+
+                $errormsg .= 'Please upload pdf, rar and zip file';
+
+                $result['success'] = false;
+                $result['message'] = $errormsg;
+                $result['error'] = "Files not uploaded";
+                return response()->json($result, 400);
+
+            } else {
+
+                $filename = 'supporting_document' . $med->id . time() . '.' . $selectDocument->getClientOriginalExtension();
+                $savePath = 'mediation_documents/mediation/' . $med->id . '/user/supportingDocument';
+                $finalFilePath = $savePath . '/' . $filename;
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($selectDocument));
+                $med->documentPath = $filename;
+                $med->save();
+
+                $data['caseid']=$caseId;
+
+                $result['success'] = true;
+                $result['message'] = "Files uploaded successfully.";
+                $result['data'] = $data;
+                return response()->json($result, 200);
+            }
+
+        $result['success'] = false;
+        $result['message'] = "Files not uploaded";
+        $result['error'] = "Files not uploaded";
+        return response()->json($result, 400);
+
+
+        } catch (\Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Files not uploaded";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
 }
