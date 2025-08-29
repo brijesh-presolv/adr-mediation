@@ -65,6 +65,7 @@ class CaseController extends Controller
                 $id = $values->id;
                 $keyInc = $key + 1;
                 $data[$key]['id'] = $id;
+                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
