@@ -1173,4 +1173,59 @@ class CaseController extends Controller
         return true;
     }
 
+    public function showMomSession(Request $request) {
+        $if_check = DB::table('session_mom')->where('case_id', $request['caseid'])->where('session_id', $request['id'])->first();
+        // echo "<pre>";print_R($if_check);
+        // dd($if_check);
+        $ip_array = array();
+        $rp_array = array();
+        if(empty($if_check)){
+            $partyArray = InvoledUser::where('userPlanId', $request['caseid'])->get();
+            
+           
+            foreach($partyArray as $party){
+                if($party['isClaimant'] === 0){
+                    if(!in_array($party['name'], $ip_array)){
+                        array_push($ip_array, $party['name']);
+                    }
+                } else if($party['isClaimant'] > 0){
+                
+                    if(!in_array($party['name'], $rp_array)){
+                        array_push($rp_array, $party['name']);
+                    }
+                } 
+
+                
+                
+            }
+            
+            $data['ip_name'] = $ip_array;
+            $data['rp_name'] = $rp_array;
+            $data['minutes'] = "";
+            $data['next'] = "";
+
+            $data['selected_id'] = "";
+            
+        } else {
+            $data['ip_name'] = $if_check->ip_name;
+            $data['rp_name'] = $if_check->rp_name;
+            $data['minutes'] = $if_check->minutes;
+            $data['next'] = $if_check->next_steps;
+
+            $data['selected_id'] = $if_check->share_with_party_ids;
+        }
+
+         $mediator = Mediators_mediation_cases_status::select("first_name", "last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request['caseid'])
+            ->first();
+
+            $data['mediator'] = $mediator['first_name'] .' '. $mediator['last_name'];
+
+             $data['party_array'] = InvoledUser::select('id', 'name')->where('userPlanId', $request['caseid'])->get();
+
+            
+        
+            return json_encode($data);
+    }
+
 }
