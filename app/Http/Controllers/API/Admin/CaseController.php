@@ -1294,4 +1294,107 @@ class CaseController extends Controller
             return response()->json($result, 500);
         }
     }
+
+    public function getMeetingSession(Request $request)
+    {
+
+        $token = $request->cookie('auth_token');
+        if (!$token) {
+
+            $result['success'] = false;
+            $result['message'] = 'Unauthorized: Missing token';
+            $result['error'] = 'Unauthorized: Missing token';
+            return response()->json($result, 401);
+        }
+
+        $JWT_KEY = env('JWT_KEY');
+        $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+        $userId = $jwtData->data->userid;
+
+        $validator = Validator::make($request->all(), [
+            'caseId'             => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $caseId = $request->input('caseId');
+
+        $sessionData = DB::table('manage_session')->where('case_id', $caseId)->get();
+        $sn = 1;
+        $dataArray = array();
+        $data = array();
+        $delete_reason="";
+        $zoom_link_choice="";
+
+        foreach ($sessionData as $key => $values) {
+
+            if (!is_null($values->session_party_ids)) {
+                $dataArray = json_decode($values->session_party_ids);
+            }
+
+            $user = array();
+            foreach ($dataArray as $d) {
+
+                $dd = InvoledUser::where('id', $d)->where('userPlanId', $caseId)->first();
+                
+                if (isset($dd)) {
+                    if ($dd->name != null) {
+                        $user[] = $dd->name;
+                    }
+                } else {
+                    $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                    if (isset($dd)) {
+                        if ($dd->name != null) {
+                            $user[] = $dd->name;
+                        }
+                    }
+                }
+            }
+
+            if ($values->is_deleted == 0) {
+
+                if ($jwtData->data->role == 2) {
+                    
+                    $zoom_link_choice= $values->zoom_link_choice;
+            
+                } else if ($jwtData->data->role == 1) {
+
+                    if ($jwtData->data->id == $values->scheduled_by) {
+
+                        $zoom_link_choice=$values->zoom_link_choice;
+
+                    } else {
+                     
+                    }
+                }
+            } else {
+
+               $delete_reason= $values->delete_reason;
+            }
+
+            $id = $values->id;
+            $data[$key]['id'] = $id;
+            $data[$key]['caseid'] ='M' . sprintf('%06d', $values->case_id);
+            $data[$key]['created_at'] = $values->created_at;
+            $data[$key]['session_date'] = $values->session_date;
+            $data[$key]['zoom_id'] = $values->zoom_id;
+            $data[$key]['note'] = $values->note;
+            $data[$key]['meeting_users'] = implode($user);
+            $data[$key]['zoom_link_choice'] = $zoom_link_choice;
+            $data[$key]['delete_reason'] = $delete_reason;
+        }
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $data;
+        return response()->json($result, 200);
+    }
 }
