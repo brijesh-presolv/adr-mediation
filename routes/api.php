@@ -104,6 +104,9 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
     Route::post('/admin/cases/uploaddocument', [App\Http\Controllers\API\Admin\UploadController::class, 'documentUpload']);
 
+
+    Route::post('admin/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
+
 });
 
 
