@@ -1285,6 +1285,7 @@ class CaseController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
+            $userId = 2;
 
             $validator = Validator::make($request->all(), [
                 'caseid' => 'integer',
@@ -1305,7 +1306,7 @@ class CaseController extends Controller
             $minutes = $request->input('minutes');
             $next_steps = $request->input('next_steps');
             $mediator = $request->input('mediator');
-            $session_party_ids  = $request->input('docs_party_ids');
+            $session_party_ids  = $request->input('session_party_ids');
 
 
             if ($validator->fails()) {

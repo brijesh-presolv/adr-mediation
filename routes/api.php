@@ -97,14 +97,16 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     // Case reject api
     Route::post('/admin/cases/case-reject', [App\Http\Controllers\API\Admin\CaseController::class, 'caseReject']);
+
+    // MOM api
+    Route::post('/admin/cases/get-mom-data', [App\Http\Controllers\API\Admin\CaseController::class, 'showMomSession']);
+    Route::post('/admin/cases/mom-data-submit', [App\Http\Controllers\API\Admin\CaseController::class, 'momDataSubmit']);
     
     Route::post('/admin/case/add-session', [App\Http\Controllers\API\Admin\CaseController::class, 'addSession']);
 });
 
 
-// MOM api
- Route::post('/admin/cases/get-mom-data', [App\Http\Controllers\API\Admin\CaseController::class, 'showMomSession']);
- Route::post('/admin/cases/mom-data-submit', [App\Http\Controllers\API\Admin\CaseController::class, 'momDataSubmit']);
+
 
 
 
