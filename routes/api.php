@@ -103,7 +103,8 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
 
 // MOM api
- Route::post('/admin/case/get-mom-data', [App\Http\Controllers\API\Admin\CaseController::class, 'showMomSession']);
+ Route::post('/admin/cases/get-mom-data', [App\Http\Controllers\API\Admin\CaseController::class, 'showMomSession']);
+ Route::post('/admin/cases/mom-data-submit', [App\Http\Controllers\API\Admin\CaseController::class, 'momDataSubmit']);
 
 
 
