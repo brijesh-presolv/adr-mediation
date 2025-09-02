@@ -139,7 +139,7 @@ class DownloadDocument extends Controller {
             }, 200, [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'inline; filename="' . basename($request->urlpath) . '"',
-                'Content-Length' => $object['ContentLength'],
+                'Content-Length' => $stream['ContentLength'],
             ]);
 
         } catch (Exception $e) {
