@@ -127,16 +127,21 @@ class DownloadDocument extends Controller {
                 'Bucket' => env('AWS_BUCKET'),
                 'Key'    => $filenametostore
             ]);
+         
+            
 
+            $body = $stream['Body']; // This is a GuzzleHttp\Psr7\Stream
 
-            return response()->stream(function () use ($stream) {
-                    fpassthru($stream);
-                    fclose($stream);
-                }, 200, [
-                    'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => 'inline; filename="' . basename($request->urlpath) . '"',
-                    'Content-Length' => $stream['ContentLength'],
-                ]);
+            return response()->stream(function () use ($body) {
+                while (!$body->eof()) {
+                    echo $body->read(1024); // read in chunks
+                }
+            }, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . basename($request->urlpath) . '"',
+                'Content-Length' => $object['ContentLength'],
+            ]);
+
         } catch (Exception $e) {
 
             $result['success'] = false;
