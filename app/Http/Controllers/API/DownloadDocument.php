@@ -98,28 +98,37 @@ class DownloadDocument extends Controller {
                 return response()->json($result, 422);
             }
 
-            if (isset($request->parentFolder)) {
+            if(isset($request->fullurl)) {
 
-                    $filenametostore = 'documents/arbitration/' . $request->caseId . '/' . $request->parentFolder . '/' . $request->urlpath;
+                $path = parse_url($request->fullurl);
+                $filenametostore = ltrim($path['path'], '/');
+                $request->urlpath = basename($request->fullurl);
+                
+            }else if (isset($request->parentFolder)) {
 
-                    if (!Storage::disk('s3')->exists($filenametostore)) {
+                $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->parentFolder . '/' . $request->urlpath;
 
-                        $filenametostore = 'documents/arbitration/' . $request->caseId . '/' . $request->parentFolder . '/' . $request->urlpath;
-                    }else{
-
-                        $result['success'] = false;
-                        $result['message'] = "File not found";
-                        $result['error'] =  "File Fetching failed.";
-                        return response()->json($result, 404);
-
-                    }
-               
-            } else {
-
-                $filenametostore = 'documents/arbitration/' . $request->caseId . '/' . $request->urlpath;
                 if (!Storage::disk('s3')->exists($filenametostore)) {
 
-                    $filenametostore = 'documents/arbitration/' . $request->caseId . '/' . $request->urlpath;
+                    $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->parentFolder . '/' . $request->urlpath;
+
+                }else{
+
+                    $result['success'] = false;
+                    $result['message'] = "File not found";
+                    $result['error'] =  "File Fetching failed.";
+                    return response()->json($result, 404);
+
+                }
+
+                
+            } else {
+
+                $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->urlpath;
+
+                if (!Storage::disk('s3')->exists($filenametostore)) {
+
+                    $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->urlpath;
 
                 }else{
 
@@ -130,7 +139,7 @@ class DownloadDocument extends Controller {
                 }
             }
 
-             $filename = $request->urlpath;
+            $filename = $request->urlpath;
 
             //updated code for preview
             $stream = Storage::disk('s3')->readStream($filenametostore);
