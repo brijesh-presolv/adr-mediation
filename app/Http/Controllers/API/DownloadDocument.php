@@ -134,7 +134,7 @@ class DownloadDocument extends Controller {
                     fpassthru($stream);
                     fclose($stream);
                 }, 200, [
-                    'Content-Type' =>  $stream['ContentType'],
+                    'Content-Type' => 'application/pdf',
                     'Content-Disposition' => 'inline; filename="' . basename($filename) . '"',
                     'Content-Length' => $stream['ContentLength'],
                 ]);
