@@ -128,6 +128,8 @@ class DownloadDocument extends Controller {
                 'Key'    => $filenametostore
             ]);
 
+            $filename=$request->urlpath;
+
             return response()->stream(function () use ($stream) {
                     fpassthru($stream);
                     fclose($stream);
@@ -137,7 +139,7 @@ class DownloadDocument extends Controller {
                     'Content-Length' => $stream['ContentLength'],
                 ]);
         } catch (Exception $e) {
-            
+
             $result['success'] = false;
             $result['message'] = "File Fetching failed.";
             $result['error'] = $e->getMessage();
