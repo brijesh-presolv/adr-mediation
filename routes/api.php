@@ -110,6 +110,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
 
     Route::post('admin/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
+    Route::post('admin/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
 
 });
 

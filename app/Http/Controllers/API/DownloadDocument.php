@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class DownloadDocument extends Controller {
 
@@ -12,6 +13,20 @@ class DownloadDocument extends Controller {
     {
 
         try {
+
+            $validator = Validator::make($request->all(), [
+                'caseId'     => 'required'
+            ]);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all(); 
+
+                $result['success'] = false;
+                $result['message'] = $implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
             
             if(isset($request->fullurl)) {
 
@@ -62,6 +77,78 @@ class DownloadDocument extends Controller {
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
          
+        }
+    }
+
+    public function previewSecure(Request $request)
+    {
+        try {
+
+            $validator = Validator::make($request->all(), [
+                'caseId'     => 'required'
+            ]);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all(); 
+
+                $result['success'] = false;
+                $result['message'] = $implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            if (isset($request->parentFolder)) {
+
+                    $filenametostore = 'documents/arbitration/' . $request->caseId . '/' . $request->parentFolder . '/' . $request->urlpath;
+
+                    if (!Storage::disk('s3')->exists($filenametostore)) {
+
+                        $filenametostore = 'documents/arbitration/' . $request->caseId . '/' . $request->parentFolder . '/' . $request->urlpath;
+                    }else{
+
+                        $result['success'] = false;
+                        $result['message'] = "File not found";
+                        $result['error'] =  "File Fetching failed.";
+                        return response()->json($result, 404);
+
+                    }
+               
+            } else {
+
+                $filenametostore = 'documents/arbitration/' . $request->caseId . '/' . $request->urlpath;
+                if (!Storage::disk('s3')->exists($filenametostore)) {
+
+                    $filenametostore = 'documents/arbitration/' . $request->caseId . '/' . $request->urlpath;
+
+                }else{
+
+                    $result['success'] = false;
+                    $result['message'] = "File not found";
+                    $result['error'] =  "File Fetching failed.";
+                    return response()->json($result, 404);
+                }
+            }
+
+             $filename = $request->urlpath;
+
+            //updated code for preview
+            $stream = Storage::disk('s3')->readStream($filenametostore);
+            $size = Storage::disk('s3')->size($filenametostore);
+
+            return response()->stream(function () use ($stream) {
+                    fpassthru($stream);
+                    fclose($stream);
+                }, 200, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="' . basename($filename) . '"',
+                    'Content-Length' => $size,
+                ]);
+        } catch (Exception $e) {
+            $result['success'] = false;
+            $result['message'] = "File Fetching failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
         }
     }
 }
