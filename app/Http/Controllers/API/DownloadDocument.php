@@ -128,14 +128,13 @@ class DownloadDocument extends Controller {
                 'Key'    => $filenametostore
             ]);
 
-            $filename=$request->urlpath;
 
             return response()->stream(function () use ($stream) {
                     fpassthru($stream);
                     fclose($stream);
                 }, 200, [
                     'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => 'inline; filename="' . basename($filename) . '"',
+                    'Content-Disposition' => 'inline; filename="' . basename($request->urlpath) . '"',
                     'Content-Length' => $stream['ContentLength'],
                 ]);
         } catch (Exception $e) {
