@@ -103,47 +103,30 @@ class DownloadDocument extends Controller {
                 $path = parse_url($request->fullurl);
                 $filenametostore = ltrim($path['path'], '/');
                 $request->urlpath = basename($request->fullurl);
-                
-            }else if (isset($request->parentFolder)) {
+            }
+            else if (isset($request->parentFolder)) {
 
                 $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->parentFolder . '/' . $request->urlpath;
-
-                if (!Storage::disk('s3')->exists($filenametostore)) {
-
-                    $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->parentFolder . '/' . $request->urlpath;
-
-                }else{
-
-                    $result['success'] = false;
-                    $result['message'] = "File not found";
-                    $result['error'] =  "File Fetching failed.";
-                    return response()->json($result, 404);
-
-                }
-
-                
             } else {
-
                 $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->urlpath;
-
-                if (!Storage::disk('s3')->exists($filenametostore)) {
-
-                    $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->urlpath;
-
-                }else{
-
-                    $result['success'] = false;
-                    $result['message'] = "File not found";
-                    $result['error'] =  "File Fetching failed.";
-                    return response()->json($result, 404);
-                }
             }
 
-            $filename = $request->urlpath;
+            $s3Client = Storage::cloud()->getAdapter()->getClient();
 
-            //updated code for preview
-            $stream = Storage::disk('s3')->readStream($filenametostore);
-            $size = Storage::disk('s3')->size($filenametostore);
+            $objectExists = $s3Client->doesObjectExist(env('AWS_BUCKET'), $filenametostore);
+
+            if (!$objectExists) {
+
+                $result['success'] = false;
+                $result['message'] = "File not found";
+                $result['error'] =  "File Fetching failed.";
+                return response()->json($result, 404);
+            }
+
+            $stream = $s3Client->getObject([
+                'Bucket' => env('AWS_BUCKET'),
+                'Key'    => $filenametostore
+            ]);
 
             return response()->stream(function () use ($stream) {
                     fpassthru($stream);
@@ -151,9 +134,10 @@ class DownloadDocument extends Controller {
                 }, 200, [
                     'Content-Type' => 'application/pdf',
                     'Content-Disposition' => 'inline; filename="' . basename($filename) . '"',
-                    'Content-Length' => $size,
+                    'Content-Length' => $stream['ContentLength'],
                 ]);
         } catch (Exception $e) {
+            
             $result['success'] = false;
             $result['message'] = "File Fetching failed.";
             $result['error'] = $e->getMessage();
