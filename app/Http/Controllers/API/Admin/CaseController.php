@@ -281,13 +281,13 @@ class CaseController extends Controller
             $userId = $jwtData->data->userid;
 
             $validator = Validator::make($request->all(), [
-                'caseid' => 'required|integer',
+                'caseId' => 'required|integer',
                 'mediator_id' => 'required|integer',
                 'discussion_text' => 'string|max:255'
             ]);
 
             //Inputs
-            $caseid = $request->input('caseid');
+            $caseid = $request->input('caseId');
             $mediator_id = $request->input('mediator_id');
             $discussion_text = $request->input('discussion_text');
 
