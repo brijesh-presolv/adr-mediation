@@ -101,9 +101,9 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     
     Route::post('/admin/case/add-session', [App\Http\Controllers\API\Admin\CaseController::class, 'addSession']);
     Route::post('/admin/cases/meeting-sessions', [App\Http\Controllers\API\Admin\CaseController::class, 'getMeetingSession']);
-    Route::post('case/edit-session', [App\Http\Controllers\API\Admin\CaseController::class, 'SendforEditSession']);
-    Route::post('case/update-session', [App\Http\Controllers\API\Admin\CaseController::class, 'UpdateSession']);
-    Route::post('case/delete-session', [App\Http\Controllers\API\Admin\CaseController::class, 'deleteSession']);
+    Route::post('/admin/cases/edit-session', [App\Http\Controllers\API\Admin\CaseController::class, 'SendforEditSession']);
+    Route::post('/admin/cases/update-session', [App\Http\Controllers\API\Admin\CaseController::class, 'UpdateSession']);
+    Route::post('/admin/cases/delete-session', [App\Http\Controllers\API\Admin\CaseController::class, 'deleteSession']);
 
     Route::post('/admin/cases/consentdisclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'getConsentDisclosures']);
     Route::post('/admin/cases/download-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'downloadDisclosures']);
@@ -115,6 +115,10 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     Route::post('admin/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
     Route::post('admin/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
+
+    Route::post('/admin/users/user-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'userApprove']);
+    Route::post('/admin/users/user-newreq', [App\Http\Controllers\API\Admin\UsersController::class, 'userNewreq']);
+    Route::post('/admin/users/user-unapprove', [App\Http\Controllers\API\Admin\UsersController::class, 'userUnapprove']);
 
 });
 

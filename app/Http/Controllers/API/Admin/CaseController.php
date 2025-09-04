@@ -1669,17 +1669,17 @@ class CaseController extends Controller
 
             $data['caseid'] = $caseId;
 
-            $result['success'] = true;
-            $result['message'] = "Zoom Meeting created successfully.";
-            $result['data'] = $data;
-            return response()->json($result, 200);
+            $resultdata['success'] = true;
+            $resultdata['message'] = "Zoom Session updated successfully.";
+            $resultdata['data'] = $data;
+            return response()->json($resultdata, 200);
 
         } catch (Exception $e) {
 
-            $result['success'] = false;
-            $result['message'] = "Session updation failed.";
-            $result['error'] = $e->getMessage();
-            return response()->json($result, 500);
+            $resultdata['success'] = false;
+            $resultdata['message'] = "Session updation failed.";
+            $resultdata['error'] = $e->getMessage();
+            return response()->json($resultdata, 500);
         }
     }
 
@@ -1779,7 +1779,7 @@ class CaseController extends Controller
                     }
                 }
 
-                $data['caseid'] = $caseId;
+                $data['SessId'] = $id;
 
                 $result['success'] = true;
                 $result['message'] = "Zoom Meeting deleted successfully.";
@@ -1790,7 +1790,7 @@ class CaseController extends Controller
 
                 $result['success'] = false;
                 $result['message'] = "Session updation failed.";
-                $result['error'] = $e->getMessage();
+                $result['error'] = "Session updation failed.";
                 return response()->json($result, 500);
             }
 
