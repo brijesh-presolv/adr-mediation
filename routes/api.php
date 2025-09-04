@@ -101,6 +101,9 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     // Case track api
     Route::post('admin/cases/case-track', [App\Http\Controllers\API\Admin\CaseController::class, 'caseTrack']);
+
+    // Mediator edit api
+    Route::post('/admin/cases/mediator-edit', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorEdit']);
     
     Route::post('/admin/case/add-session', [App\Http\Controllers\API\Admin\CaseController::class, 'addSession']);
     Route::post('/admin/cases/meeting-sessions', [App\Http\Controllers\API\Admin\CaseController::class, 'getMeetingSession']);
@@ -126,7 +129,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 });
 
 
-
+ 
 
 
 

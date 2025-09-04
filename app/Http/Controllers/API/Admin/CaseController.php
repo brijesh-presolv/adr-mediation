@@ -2143,7 +2143,121 @@ class CaseController extends Controller
         } catch (Exception $e) {
 
             $result['success'] = false;
-            $result['message'] = "Case updation failed.";
+            $result['message'] = "Case track not loaded.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+    public function mediatorEdit(Request $request) {
+        try{
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            //$userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'required|integer',
+                'mediator_id' => 'required|integer'
+            ]);
+
+            //Inputs
+            $caseid = $request->input('caseid');
+            $mediator_id = $request->input('mediator_id');
+            
+
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+
+
+
+            if ($mediator_id != null) {
+                $inv = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+                    ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+                    ->where(['user_involved_in_agreement.userPlanid' => $caseid])->get();
+
+                $mid = "M" . sprintf("%06d", $caseid);
+
+                if ($inv[0]->address1 != null || $inv[0]->useraddress != null) {
+                    $medcase = MedCase::find($caseid);
+
+                    $data = Mediators_mediation_cases_status::where("mediation_case_id", "=", $caseid)
+                        ->where(function ($q) {
+                            $q->where("status", "=", 0)
+                                ->orWhere("status", "=", 1);
+                        })
+                        ->count();
+                    if ($data == 0) {
+                        Mediators_mediation_cases_status::create([
+                            'mediator_id' => $mediator_id,
+                            'mediation_case_id' => $caseid,
+                            'status' => 0,
+                            'user_type' => 1,
+                        ]);
+                    } else {
+                        $MedCaseStatus = Mediators_mediation_cases_status::where(function ($q) {
+                            $q->where("status", "=", 0)
+                                ->orWhere("status", "=", 1);
+                        })
+                            ->where("mediation_case_id", "=", $caseid)
+                            ->first();
+                        $MedCaseStatus->mediator_id = $mediator_id;
+                        $MedCaseStatus->status = 0;
+                        $MedCaseStatus->save();
+                    }
+
+                    //generate pdf
+
+                    /*
+                    
+                    $invitation = $this->mediator_appointment($request->id, $request->midater);
+                    
+                    
+                    $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+
+                    if (!isset($invmodel)) {
+                        $invmodel = new InvitationFiles();
+                    }
+                    $invmodel->case_id = $request->id;
+                    $invmodel->file_name_mediator_appointment = $invitation;
+                    $invmodel->save();
+
+                    if ($medcase->bulk_flag == 0 && $medcase->stop_itm_med == 0) {
+                        $this->send_mediatorAdd($request->id, $request->midater);
+                    }
+
+                    */
+
+                    $final['mediator_id'] = $mediator_id;
+                    $result['success'] = true;
+                    $result['message'] = "Mediator changed successfully.";
+                    $result['data'] = $final;
+                    
+                     return response()->json($result, 200);
+
+                }
+            }
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Mediator change failed.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
