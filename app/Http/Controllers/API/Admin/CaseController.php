@@ -343,27 +343,27 @@ class CaseController extends Controller
                         $MedCaseStatus->save();
                     }
 
-                    //generate pdf
+                    // generate pdf : start //
 
-                    /*
-                    
-                    $invitation = $this->mediator_appointment($request->id, $request->midater);
                     
                     
-                    $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+                    $invitation = $this->mediator_appointment($caseid, $mediator_id);
+                    
+                    
+                    $invmodel = InvitationFiles::where('case_id', $caseid)->orderByDesc('id')->limit(1)->first();
 
                     if (!isset($invmodel)) {
                         $invmodel = new InvitationFiles();
                     }
-                    $invmodel->case_id = $request->id;
+                    $invmodel->case_id = $caseid;
                     $invmodel->file_name_mediator_appointment = $invitation;
                     $invmodel->save();
 
                     if ($medcase->bulk_flag == 0 && $medcase->stop_itm_med == 0) {
-                        $this->send_mediatorAdd($request->id, $request->midater);
+                        $this->send_mediatorAdd($caseid, $mediator_id);
                     }
-
-                    */
+                    
+                    // generate pdf : end //
 
                     $finaldata['mediator_id'] = $mediator_id;
                     $result['success'] = true;
@@ -1899,12 +1899,12 @@ class CaseController extends Controller
             $templateData['next'] = $next_steps; 
             $templateData['med'] = $mediator; 
             
-           // $invitation = $this->session_mom_template($templateData);
-           $invitation = "";
+            $invitation = $this->session_mom_template($templateData);
+           //$invitation = "";
 
 
-            //$preview = $this->tempMOM($templateData);
-            $preview = "";
+            $preview = $this->tempMOM($templateData);
+            //$preview = "";
         
 
 
@@ -2223,27 +2223,28 @@ class CaseController extends Controller
                         $MedCaseStatus->save();
                     }
 
-                    //generate pdf
+                    //generate pdf : start//
 
-                    /*
-                    
-                    $invitation = $this->mediator_appointment($request->id, $request->midater);
                     
                     
-                    $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+                    $invitation = $this->mediator_appointment($request->id, $mediator_id);
+                    
+                    
+                    $invmodel = InvitationFiles::where('case_id', $caseid)->orderByDesc('id')->limit(1)->first();
 
                     if (!isset($invmodel)) {
                         $invmodel = new InvitationFiles();
                     }
-                    $invmodel->case_id = $request->id;
+                    $invmodel->case_id = $caseid;
                     $invmodel->file_name_mediator_appointment = $invitation;
                     $invmodel->save();
 
                     if ($medcase->bulk_flag == 0 && $medcase->stop_itm_med == 0) {
-                        $this->send_mediatorAdd($request->id, $request->midater);
+                        $this->send_mediatorAdd($caseid, $mediator_id);
                     }
 
-                    */
+                    
+                    //generate pdf : end//
 
                     $final['mediator_id'] = $mediator_id;
                     $result['success'] = true;
@@ -2261,6 +2262,25 @@ class CaseController extends Controller
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
+    }
+
+
+    public function mediator_appointment($id, $medid)
+    {
+        $data["mediator"] = User::find($medid);
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry', 'users.vua as uservua')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
+        $pdf = PDF::loadView('pdf.mediator_appointment_letter', $data);
+        $name = Common_function::changeidprefix("",$id, "S","_assignment.pdf");
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $name;
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        return $name;
     }
 
 }
