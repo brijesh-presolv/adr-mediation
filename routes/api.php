@@ -125,6 +125,12 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/user-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'userApprove']);
     Route::post('/admin/users/user-newreq', [App\Http\Controllers\API\Admin\UsersController::class, 'userNewreq']);
     Route::post('/admin/users/user-unapprove', [App\Http\Controllers\API\Admin\UsersController::class, 'userUnapprove']);
+    Route::post('/admin/users/update', [App\Http\Controllers\API\API\Admin\UsersController::class, 'update']);
+    Route::post('/admin/users/user-delete', [App\Http\Controllers\API\Admin\UsersController::class, 'deleteUser']);
+    Route::post('/admin/users/changeRole', [App\Http\Controllers\API\Admin\UsersController::class, 'ChangeRole']);
+    Route::post('/admin/users/status-change-active', [App\Http\Controllers\API\Admin\UsersController::class, 'statusChange']);
+    Route::post('/admin/users/status-change-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'statusChangeApprove']);
+    Route::post('/admin/users/add-notes', [App\Http\Controllers\API\Admin\UsersController::class, 'addNotes']);
 
 });
 
