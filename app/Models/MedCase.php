@@ -78,10 +78,15 @@ class MedCase extends Model
             ->where("mediation_case.bulk_flag", $bulk);
 
            
-             if (!empty($search)) {
+        if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where("mediation_case.ref_id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%");
+                ->orWhere("mediation_case.id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
+                ->orWhereHas('user_involed', function ($sub) use ($search) {
+                    $sub->where("name", "like", "%{$search}%");
+                });
             });
         }
 
@@ -1076,7 +1081,12 @@ class MedCase extends Model
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where("mediation_case.ref_id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%");
+                ->orWhere("mediation_case.id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
+                ->orWhereHas('user_involed', function ($sub) use ($search) {
+                    $sub->where("name", "like", "%{$search}%");
+                });
             });
         }
 
@@ -1131,6 +1141,7 @@ class MedCase extends Model
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where("mediation_case.ref_id", "like", "%{$search}%")
+                ->orWhere("batch.id", "like", "%{$search}%")
                 ->orWhere("batch.batch_name", "like", "%{$search}%");
             });
         }
@@ -1187,7 +1198,12 @@ class MedCase extends Model
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where("mediation_case.ref_id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%");
+                ->orWhere("mediation_case.id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
+                ->orWhereHas('user_involed', function ($sub) use ($search) {
+                    $sub->where("name", "like", "%{$search}%");
+                });
             });
         }
 
@@ -1242,7 +1258,12 @@ class MedCase extends Model
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->where("mediation_case.ref_id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%");
+                ->orWhere("mediation_case.id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
+                ->orWhereHas('user_involed', function ($sub) use ($search) {
+                    $sub->where("name", "like", "%{$search}%");
+                });
             });
         }
 
