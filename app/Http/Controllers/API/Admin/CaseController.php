@@ -291,8 +291,6 @@ class CaseController extends Controller
             $caseid = $request->input('caseid');
             $mediator_id = $request->input('mediator_id');
             $discussion_text = $request->input('discussion_text');
-            $userId = 2;
-
 
             if ($validator->fails()) {
 
