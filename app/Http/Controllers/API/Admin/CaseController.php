@@ -39,6 +39,7 @@ use App\Http\Helpers\Zoom;
 
 class CaseController extends Controller 
 {
+    use UploadTrait;
 
     public function newreq(Request $request){
 
@@ -291,7 +292,6 @@ class CaseController extends Controller
             $mediator_id = $request->input('mediator_id');
             $discussion_text = $request->input('discussion_text');
 
-
             if ($validator->fails()) {
 
                 $errors = $validator->errors()->all();
@@ -343,27 +343,27 @@ class CaseController extends Controller
                         $MedCaseStatus->save();
                     }
 
-                    //generate pdf
+                    // generate pdf : start //
 
-                    /*
-                    
-                    $invitation = $this->mediator_appointment($request->id, $request->midater);
                     
                     
-                    $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+                    $invitation = $this->mediator_appointment($caseid, $mediator_id);
+                    
+                    
+                    $invmodel = InvitationFiles::where('case_id', $caseid)->orderByDesc('id')->limit(1)->first();
 
                     if (!isset($invmodel)) {
                         $invmodel = new InvitationFiles();
                     }
-                    $invmodel->case_id = $request->id;
+                    $invmodel->case_id = $caseid;
                     $invmodel->file_name_mediator_appointment = $invitation;
                     $invmodel->save();
 
                     if ($medcase->bulk_flag == 0 && $medcase->stop_itm_med == 0) {
-                        $this->send_mediatorAdd($request->id, $request->midater);
+                        $this->send_mediatorAdd($caseid, $mediator_id);
                     }
-
-                    */
+                    
+                    // generate pdf : end //
 
                     $finaldata['mediator_id'] = $mediator_id;
                     $result['success'] = true;
@@ -419,7 +419,7 @@ class CaseController extends Controller
         } catch (Exception $e) {
 
             $result['success'] = false;
-            $result['message'] = "Case updation failed.";
+            $result['message'] = "Case approval failed.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
@@ -867,7 +867,7 @@ class CaseController extends Controller
                 $mediation_status_log->save();
 
                 // Email notification
-                //$this->sned_reject($request->input('caseid'));
+                $this->sned_reject($request->input('caseid'));
 
                 $data['caseid'] = $user->id;
                 
@@ -1804,7 +1804,7 @@ class CaseController extends Controller
     }
 
     public function momDataSubmit(Request $request) {
-        try {
+       try {
             $token = $request->cookie('auth_token');
             if (!$token) {
 
@@ -1817,7 +1817,7 @@ class CaseController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
-            $userId = 2;
+             //$userId = 2;
 
             $validator = Validator::make($request->all(), [
                 'caseid' => 'integer',
@@ -1899,12 +1899,12 @@ class CaseController extends Controller
             $templateData['next'] = $next_steps; 
             $templateData['med'] = $mediator; 
             
-           // $invitation = $this->session_mom_template($templateData);
-           $invitation = "";
+            $invitation = $this->session_mom_template($templateData);
+           //$invitation = "";
 
 
-            //$preview = $this->tempMOM($templateData);
-            $preview = "";
+            $preview = $this->tempMOM($templateData);
+           // $preview = "";
         
 
 
@@ -1931,7 +1931,7 @@ class CaseController extends Controller
 
                 DB::table('session_mom')->where('session_id', $sessionid)->update(['share_with_party_ids' => implode(',',$session_party_ids)]);
 
-                //$this->send_upload_file_party_mom($sessionid, $notification_array);
+                $this->send_upload_file_party_mom($sessionid, $notification_array);
             }
 
                 $data['caseid'] = $caseid;
@@ -1981,9 +1981,16 @@ class CaseController extends Controller
         $itm_date = InvitationFiles::select("created_at")->where(['case_id' => $data['caseid']])->orderByDesc('id')->get();
 
        
+        //xecho "<pre>";print_R($itm_date);exit;
 
-         $cdate = new DateTime($itm_date[0]->created_at);
-         $data['itm_date'] = $cdate->format('d-m-Y'); 
+        if(!empty($itm_date) && count($itm_date) > 0) {
+            $cdate = new DateTime($itm_date[0]->created_at);
+            $data['itm_date'] = $cdate->format('d-m-Y'); 
+        } else {
+            $data['itm_date'] = "";
+        }
+
+        
 
         
     
@@ -2019,7 +2026,7 @@ class CaseController extends Controller
 
         $data['session_mom'] = DB::table('session_mom')->where('session_id', $data['sessid'])->first();
         $session_data = DB::table('manage_session')->select('session_date')->where('id', $data['sessid'])->first();
-        //echo "<prE>session==>";print_R($session_data);
+        //echo "<prE>session==>";print_R($session_data);exit;
         $session_date = explode('/', $session_data->session_date);
 
         $data['session_date'] = $session_date[0] .'-'.$session_date[1].'-'.$session_date[2];
@@ -2030,10 +2037,12 @@ class CaseController extends Controller
 
         $itm_date = InvitationFiles::select("created_at")->where(['case_id' => $data['caseid']])->orderByDesc('id')->get();
 
-       
-
-         $cdate = new DateTime($itm_date[0]->created_at);
-         $data['itm_date'] = $cdate->format('d-m-Y'); 
+        if(!empty($itm_date) && count($itm_date) > 0) {
+            $cdate = new DateTime($itm_date[0]->created_at);
+            $data['itm_date'] = $cdate->format('d-m-Y'); 
+        } else {
+            $data['itm_date'] = 0;     
+        }
 
 
         return response()->json([
@@ -2223,27 +2232,28 @@ class CaseController extends Controller
                         $MedCaseStatus->save();
                     }
 
-                    //generate pdf
+                    //generate pdf : start//
 
-                    /*
-                    
-                    $invitation = $this->mediator_appointment($request->id, $request->midater);
                     
                     
-                    $invmodel = InvitationFiles::where('case_id', $request->id)->orderByDesc('id')->limit(1)->first();
+                    $invitation = $this->mediator_appointment($request->id, $mediator_id);
+                    
+                    
+                    $invmodel = InvitationFiles::where('case_id', $caseid)->orderByDesc('id')->limit(1)->first();
 
                     if (!isset($invmodel)) {
                         $invmodel = new InvitationFiles();
                     }
-                    $invmodel->case_id = $request->id;
+                    $invmodel->case_id = $caseid;
                     $invmodel->file_name_mediator_appointment = $invitation;
                     $invmodel->save();
 
                     if ($medcase->bulk_flag == 0 && $medcase->stop_itm_med == 0) {
-                        $this->send_mediatorAdd($request->id, $request->midater);
+                        $this->send_mediatorAdd($caseid, $mediator_id);
                     }
 
-                    */
+                    
+                    //generate pdf : end//
 
                     $final['mediator_id'] = $mediator_id;
                     $result['success'] = true;
@@ -2260,6 +2270,59 @@ class CaseController extends Controller
             $result['message'] = "Mediator change failed.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
+        }
+    }
+
+
+    public function mediator_appointment($id, $medid)
+    {
+        $data["mediator"] = User::find($medid);
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
+        $pdf = PDF::loadView('pdf.mediator_appointment_letter', $data);
+        $name = Common_function::changeidprefix("",$id, "S","_assignment.pdf");
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $name;
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        return $name;
+    }
+
+
+    public function sned_reject($id)
+    {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+       
+        $initiating_party = "";
+        $d = [
+            'event' => 'REJECTED_ADM',
+            'case_id' => $id,
+        ];
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+
+
+                
+                /**** SMS Notification ****/
+                // $smsvar = ['--caseid--'];
+                // $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                // $varjsonSms = ['caseid' => Common_function::changeidprefix("",$id)];
+                
+                // Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'SM8', 'ADMIN_CASE_REJ', 'SM8_admin_rejecting_case');
+                
+                /**** SMS Notification ****/
+                
+                
+                
+                $party_name = $inv->name;
+                $id = Common_function::changeidprefix("",$id);
+                SendGrid::send($d, $inv->userEmail, env('L8_CASE_REJECTED', ''), ["-caseid-" => $id, "-responding-" => $party_name], $inv->name);
+            
+            }
         }
     }
 
