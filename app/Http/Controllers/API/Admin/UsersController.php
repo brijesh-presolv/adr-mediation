@@ -30,7 +30,7 @@ class UsersController extends Controller
         $columnName = $request->input('columnName', ''); 
         $role=0;
 
-        $users = User::getUserApprove($start, $length, $search, $columnName, $sortOrder);
+        $users = User::getUserApprove($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -54,7 +54,7 @@ class UsersController extends Controller
         $columnName = $request->input('columnName', ''); 
         $role=0;
 
-        $users = User::getUserNewReq($start, $length, $search, $columnName, $sortOrder);
+        $users = User::getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -68,7 +68,7 @@ class UsersController extends Controller
         return response()->json($result, 200);
     }
 
-    public function userUnapprove(Request $request)
+    public function userRejected(Request $request)
     {
         $users = User::where("role", "=", 0)->where('is_deleted', 1)->orderBy('id', 'DESC')->get();
 
@@ -79,7 +79,81 @@ class UsersController extends Controller
         $columnName = $request->input('columnName', ''); 
         $role=0;
 
-        $users = User::getUserUnapprove($start, $length, $search, $columnName, $sortOrder);
+        $users = User::getUserRejected($role, $start, $length, $search, $columnName, $sortOrder);
+
+        $resultData['users']=$users;
+        $resultData['pagination']['total_count']=$users->total();
+        $resultData['pagination']['current_page']=$users->currentPage();
+        $resultData['pagination']['per_page']=$users->perPage();
+        $resultData['pagination']['total_page']=$users->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+
+    }
+
+    public function mediatorApprove(Request $request)
+    {
+
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10); 
+        $search  = $request->input('sSearch', '');
+        $sortOrder = $request->input('SortOrder', 'desc');
+        $columnName = $request->input('columnName', ''); 
+        $role=1;
+
+        $users = User::getUserApprove($role, $start, $length, $search, $columnName, $sortOrder);
+
+        $resultData['users']=$users;
+        $resultData['pagination']['total_count']=$users->total();
+        $resultData['pagination']['current_page']=$users->currentPage();
+        $resultData['pagination']['per_page']=$users->perPage();
+        $resultData['pagination']['total_page']=$users->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+
+    public function mediatorNewreq(Request $request)
+    {
+        
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10); 
+        $search  = $request->input('sSearch', '');
+        $sortOrder = $request->input('SortOrder', 'desc');
+        $columnName = $request->input('columnName', ''); 
+        $role=1;
+
+        $users = User::getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder);
+
+        $resultData['users']=$users;
+        $resultData['pagination']['total_count']=$users->total();
+        $resultData['pagination']['current_page']=$users->currentPage();
+        $resultData['pagination']['per_page']=$users->perPage();
+        $resultData['pagination']['total_page']=$users->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+
+    public function mediatorRejected(Request $request)
+    {
+        $users = User::where("role", "=", 0)->where('is_deleted', 1)->orderBy('id', 'DESC')->get();
+
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10); 
+        $search  = $request->input('sSearch', '');
+        $sortOrder = $request->input('SortOrder', 'desc');
+        $columnName = $request->input('columnName', ''); 
+        $role=1;
+
+        $users = User::getUserRejected($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();

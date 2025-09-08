@@ -65,10 +65,10 @@ class User extends Authenticatable
     }
     // Get User Data : END //
 
-    static function getUserApprove($start, $length, $search, $columnName, $sortOrder)
+    static function getUserApprove($role, $start, $length, $search, $columnName, $sortOrder)
     {
 
-        $query = User::select('*')->where("role", "=", 0)
+        $query = User::select('*')->where("role", "=", $role)
                     ->where('status', 1)
                     ->where('is_deleted', 0);
 
@@ -101,10 +101,10 @@ class User extends Authenticatable
         return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
     }
 
-    static function getUserNewReq($start, $length, $search, $columnName, $sortOrder)
+    static function getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder)
     {
 
-        $query = User::select('*')->where("role", "=", 0)
+        $query = User::select('*')->where("role", "=", $role)
                     ->where('status', 0)
                     ->where('is_deleted', 0);
 
@@ -137,11 +137,11 @@ class User extends Authenticatable
         return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
     }
 
-    static function getUserUnapprove($start, $length, $search, $columnName, $sortOrder)
+    static function getUserRejected($role, $start, $length, $search, $columnName, $sortOrder)
     {
 
-        $query = User::select('*')->where("role", "=", 0)
-                    ->where('is_deleted', 1);
+        $query = User::select('*')->where("role", "=", $role)
+                    ->where('status', 0);
 
                 if (!empty($search)) {
 
