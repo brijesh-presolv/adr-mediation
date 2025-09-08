@@ -1822,11 +1822,11 @@ class CaseController extends Controller
             $validator = Validator::make($request->all(), [
                 'caseid' => 'integer',
                 'sessionid' => 'integer',
-                'ip_name' => 'text',
-                'rp_name' => 'text',
+                'ip_name' => 'string',
+                'rp_name' => 'string',
                 'minutes' => 'integer',
-                'next_steps' => 'text',
-                'mediator' => 'text',
+                'next_steps' => 'string',
+                'mediator' => 'string|max:255',
                 'session_party_ids'  => 'array',
             ]);
 
