@@ -1,0 +1,502 @@
+<?php
+
+namespace App\Http\Controllers\API\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Mediation_Details;
+use App\Models\AreaOfSpecialization;
+use App\Http\Helpers\SendGrid;
+use Illuminate\Support\Facades\Storage;
+use DB;
+use Session;
+use Illuminate\Support\Facades\Validator;
+
+class UsersController extends Controller
+{
+
+    public function __construct()
+    {
+    }
+
+    public function userApprove(Request $request)
+    {
+
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10); 
+        $search  = $request->input('sSearch', '');
+        $sortOrder = $request->input('SortOrder', 'desc');
+        $columnName = $request->input('columnName', ''); 
+        $role=0;
+
+        $users = User::getUserApprove($role, $start, $length, $search, $columnName, $sortOrder);
+
+        $resultData['users']=$users;
+        $resultData['pagination']['total_count']=$users->total();
+        $resultData['pagination']['current_page']=$users->currentPage();
+        $resultData['pagination']['per_page']=$users->perPage();
+        $resultData['pagination']['total_page']=$users->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+
+    public function userNewreq(Request $request)
+    {
+        
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10); 
+        $search  = $request->input('sSearch', '');
+        $sortOrder = $request->input('SortOrder', 'desc');
+        $columnName = $request->input('columnName', ''); 
+        $role=0;
+
+        $users = User::getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder);
+
+        $resultData['users']=$users;
+        $resultData['pagination']['total_count']=$users->total();
+        $resultData['pagination']['current_page']=$users->currentPage();
+        $resultData['pagination']['per_page']=$users->perPage();
+        $resultData['pagination']['total_page']=$users->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+
+    public function userRejected(Request $request)
+    {
+        $users = User::where("role", "=", 0)->where('is_deleted', 1)->orderBy('id', 'DESC')->get();
+
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10); 
+        $search  = $request->input('sSearch', '');
+        $sortOrder = $request->input('SortOrder', 'desc');
+        $columnName = $request->input('columnName', ''); 
+        $role=0;
+
+        $users = User::getUserRejected($role, $start, $length, $search, $columnName, $sortOrder);
+
+        $resultData['users']=$users;
+        $resultData['pagination']['total_count']=$users->total();
+        $resultData['pagination']['current_page']=$users->currentPage();
+        $resultData['pagination']['per_page']=$users->perPage();
+        $resultData['pagination']['total_page']=$users->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+
+    }
+
+    public function mediatorApprove(Request $request)
+    {
+
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10); 
+        $search  = $request->input('sSearch', '');
+        $sortOrder = $request->input('SortOrder', 'desc');
+        $columnName = $request->input('columnName', ''); 
+        $role=1;
+
+        $users = User::getUserApprove($role, $start, $length, $search, $columnName, $sortOrder);
+
+        $resultData['users']=$users;
+        $resultData['pagination']['total_count']=$users->total();
+        $resultData['pagination']['current_page']=$users->currentPage();
+        $resultData['pagination']['per_page']=$users->perPage();
+        $resultData['pagination']['total_page']=$users->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+
+    public function mediatorNewreq(Request $request)
+    {
+        
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10); 
+        $search  = $request->input('sSearch', '');
+        $sortOrder = $request->input('SortOrder', 'desc');
+        $columnName = $request->input('columnName', ''); 
+        $role=1;
+
+        $users = User::getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder);
+
+        $resultData['users']=$users;
+        $resultData['pagination']['total_count']=$users->total();
+        $resultData['pagination']['current_page']=$users->currentPage();
+        $resultData['pagination']['per_page']=$users->perPage();
+        $resultData['pagination']['total_page']=$users->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+
+    public function mediatorRejected(Request $request)
+    {
+        $users = User::where("role", "=", 0)->where('is_deleted', 1)->orderBy('id', 'DESC')->get();
+
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10); 
+        $search  = $request->input('sSearch', '');
+        $sortOrder = $request->input('SortOrder', 'desc');
+        $columnName = $request->input('columnName', ''); 
+        $role=1;
+
+        $users = User::getUserRejected($role, $start, $length, $search, $columnName, $sortOrder);
+
+        $resultData['users']=$users;
+        $resultData['pagination']['total_count']=$users->total();
+        $resultData['pagination']['current_page']=$users->currentPage();
+        $resultData['pagination']['per_page']=$users->perPage();
+        $resultData['pagination']['total_page']=$users->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+
+    }
+
+    public function update(Request $request)
+    {
+
+         $validator = Validator::make($request->all(), [
+            'id'   => 'required',
+            'first_name'   => 'required|string|max:100',
+            'last_name'    => 'required|string|max:100',
+            'email'        => 'required|email|unique:users,email,' . $request->id,
+            //'username'     => 'required|string|max:100|unique:users,username,' . $request->id,
+            'mobile_number'=> 'required|string|max:15|unique:users,mobile_number,' . $request->id,
+            'organization' => 'nullable|string|max:255',
+            'country_code' => 'nullable|string|max:10',
+            'address'      => 'nullable|string|max:255',
+            'address1'     => 'nullable|string|max:255',
+            'pincode'      => 'nullable|string|max:20',
+            'city'         => 'nullable|string|max:100',
+            'state'        => 'nullable|string|max:100',
+            'country'      => 'nullable|string|max:100',
+            'signature'    => 'nullable|mimes:jpg,jpeg,png|max:4048',  
+            'profilePic'   => 'nullable|mimes:jpg,jpeg,png|max:4048',
+        ]);
+
+        if ($validator->fails()) {
+
+                $errors = $validator->errors()->all(); 
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+        }
+        $user_id=$request->input('id');
+
+        $user = User::find($request->input('id'));
+        $user->first_name = ucfirst($request->input('first_name'));
+        $user->last_name = ucfirst($request->input('last_name'));
+        $user->email = $request->input('email');
+        //$user->username = $request->input('username')
+        $user->mobile_number = $request->input('mobile_number');
+        $user->organization = $request->input('organization');
+        $user->country_code = $request->input('country_code');
+        $user->address = $request->input('address');
+        $user->address1 = $request->input('address1');
+        $user->pincode = $request->input('pincode');
+        $user->city = $request->input('city');
+        $user->state = $request->input('state');
+        $user->country = $request->input('country');
+
+        if (isset($request->status)) {
+
+            $user->isDone = $request->input('status');
+        }
+
+        if ($request->hasFile('signature')) {
+            
+            $msg = "";
+            $content = file_get_contents($request->signature);
+            if (preg_match('/\/JS|\/JavaScript|\/OpenAction/', $content)) {
+
+                $msg = "PDF file contains restricted data , please check and re-upload.";
+                $result['success'] = false;
+                $result['message'] = $msg;
+                $result['error'] = "Profile not updated";
+                return response()->json($result, 200);
+
+            }
+
+            if ($user->role == 0) {
+                if ($user->signature_photo != null) {
+
+                    $oldFilePath = 'mediation/user/' . $request->input('id') . '/signature/' . $user->signature_photo;
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
+                $extension = $request->file('signature')->getClientOriginalExtension();
+                $name = 'User_Signature' . sprintf('%06d', $request->input('id')) . time() . '.' . $extension;
+                $finalFilePath='mediation/user/' . $request->input('id') . '/signature/' . $name;
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature));
+
+            } else {
+
+                if ($user->signature_photo != null) {
+
+                   $oldFilePath = 'mediation/mediator/' . $request->input('id') . '/signature/' . $user->signature_photo;
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
+
+                $extension = $request->file('signature')->getClientOriginalExtension();
+                $name = 'Mediator_Signature' . sprintf('%06d', $request->input('id')) . time() . '.' . $extension;
+                $finalFilePath='mediation/mediator/' . $request->input('id') . '/signature/' . $name;
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature));
+
+            }
+        }
+        if ($request->hasFile('profilePic')) {
+
+            if ($user->profile_pic != null) {
+                
+                   $oldFilePath = 'mediation/mediator/' . $request->input('id') . '/profile/' . $user->signature_photo;
+                    Storage::disk('s3')->delete($oldFilePath);
+            }
+            $extension = $request->file('profilePic')->getClientOriginalExtension();
+            $profilename = 'Mediator_Profile_Pic' . sprintf('%06d', $request->input('id')) . time() . '.' . $extension;
+            $finalFilePath='mediation/mediator/' . $request->input('id') . '/profile/' . $profilename;
+            $s = Storage::disk('s3')->put($finalFilePath, file_get_contents($request->profilePic));
+        }
+        if (isset($name)) {
+            $user->signature_photo = $name;
+        }
+        if (isset($profilename)) {
+            $user->profile_pic = $profilename;
+        }
+
+        $user->save();
+
+        if ($user->role == 1) {
+
+            $isMedi = Mediation_Details::where("user_id", "=", $request->input('id'))->first();
+            if (empty($isMedi)) {
+                $mediation_details = new Mediation_Details();
+            } else {
+                $mediation_details = $isMedi;
+            }
+            $mediation_details->user_id = $request->input('id');
+            $mediation_details->area_of_specialization = json_encode($request->input('area_of_specialization'));
+            $mediation_details->no_of_arbitrations = $request->input('no_of_arbitrations');
+            $mediation_details->linked_in_profile_link = $request->input('linked_in_profile_link');
+            $mediation_details->experience = $request->input('experience');
+            $mediation_details->is_accept1 = $request->input('is_accept1');
+            $mediation_details->is_accept2 = $request->input('is_accept2');
+            $mediation_details->is_accept3 = $request->input('is_accept3');
+            $mediation_details->filed1 = $request->input('field1');
+            $mediation_details->filed2 = $request->input('field2');
+            $mediation_details->filed3 = $request->input('field3');
+            $mediation_details->save();
+        }
+
+        $resultData['user_id'] = $user_id;
+        $result['success'] = true;
+        $result['message'] = "profile updated successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+
+    public function deleteUser(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'user_id'   => 'required'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $user_id=$request->input('user_id');
+
+        $user = User::find($user_id);
+        $user->is_deleted = 1;
+        $user->save();
+
+        $resultData['user_id'] = $user_id;
+
+        $result['success'] = true;
+        $result['message'] = "User deleted successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+
+    public function ChangeRole(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'user_id'   => 'required',
+            'role'   => 'required'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $user_id= $request->input('user_id');
+
+        $user = User::find($user_id);
+        $user->role = $request->input('role');
+        if ($user->save()) {
+
+            $resultData['user_id'] = $user_id;
+
+            $result['success'] = true;
+            $result['message'] = "User role changed successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+        } else {
+
+            $result['success'] = false;
+            $result['message'] = "User role not changed";
+            $result['error'] = "User role not changed";
+            return response()->json($result, 422);
+        };
+    }
+
+    public function statusChangeApprove(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id'   => 'required',
+            'status' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $user_id=$request->input('user_id');
+        $status=$request->input('status');
+
+        $user = User::find($user_id);
+        $user->status = $status;
+        $d = [
+            'event' => 'APPROVE',
+            'userid' => $user_id,
+        ];
+        if ($user->role == 0 && $status == 1) {
+            $err = SendGrid::send($d, $user->email, env('L23_USER_ACCOUNT_ACTIVATION', ''));
+        } else if ($status == 1) {
+            SendGrid::send($d, $user->email, env('L24_MEDIATOR_ACCOUNT_ACTIVATION', ''));
+        }
+        $user->save();
+
+        $resultData['user_id'] = $user_id;
+
+        $result['success'] = true;
+        $result['message'] = "User approved status changed successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+
+    public function statusChange(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'user_id'   => 'required',
+            'status' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $user_id=$request->input('user_id');
+        $status=$request->input('status');
+
+        $user = User::find($user_id);
+        $user->isActive = $status;
+        $user->save();
+
+        $resultData['user_id'] = $user_id;
+
+        $result['success'] = true;
+        $result['message'] = "User Active status updated successfully.";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
+    }
+    public function addNotes(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'user_id'   => 'required',
+            'notes' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $user_id=$request->input('user_id');
+        $notes=$request->input('notes');
+
+
+        $is_update = User::where('id', $user_id)->update(['notes' => $notes]);
+
+        
+
+        if($is_update){
+
+            $resultData['user_id'] = $user_id;
+
+            $result['success'] = true;
+            $result['message'] = "Notes added successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+        }else{
+
+            $result['success'] = false;
+            $result['message'] = "Notes not added";
+            $result['error'] = "Notes not added";
+            return response()->json($result, 422);
+        }
+       
+    }
+    
+}

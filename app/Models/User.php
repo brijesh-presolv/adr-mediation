@@ -64,4 +64,111 @@ class User extends Authenticatable
         return $details[0];
     }
     // Get User Data : END //
+
+    static function getUserApprove($role, $start, $length, $search, $columnName, $sortOrder)
+    {
+
+        $query = User::select('*')->where("role", "=", $role)
+                    ->where('status', 1)
+                    ->where('is_deleted', 0);
+
+                if (!empty($search)) {
+
+                    $query->where(function ($q) use ($search) {
+                        $q->where("first_name", "like", "%{$search}%")
+                        ->orWhere("last_name", "like", "%{$search}%")
+                        ->orWhere("email", "like", "%{$search}%")
+                        ->orWhere("mobile_number", "like", "%{$search}%");
+                    });
+                }
+
+                if ($columnName == "id") {
+                    $query->orderBy('id', $sortOrder);
+                } elseif ($columnName == "date") {
+                    $query->orderBy('created_at', $sortOrder);
+                } elseif ($columnName == "full_name") {
+                    $query->orderByRaw("CONCAT(first_name, ' ', last_name) {$sortOrder}");
+                }elseif ($columnName == "full_name") {
+                     $quer->orderBy('email', $sortOrder);
+                }elseif ($columnName == "full_name") {
+                     $query->orderBy('mobile_number', $sortOrder);
+                }
+                 else {
+
+                    $query->orderBy('id', 'DESC');
+                }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
+    static function getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder)
+    {
+
+        $query = User::select('*')->where("role", "=", $role)
+                    ->where('status', 0)
+                    ->where('is_deleted', 0);
+
+                if (!empty($search)) {
+
+                    $query->where(function ($q) use ($search) {
+                        $q->where("first_name", "like", "%{$search}%")
+                        ->orWhere("last_name", "like", "%{$search}%")
+                        ->orWhere("email", "like", "%{$search}%")
+                        ->orWhere("mobile_number", "like", "%{$search}%");
+                    });
+                }
+
+                if ($columnName == "id") {
+                    $query->orderBy('id', $sortOrder);
+                } elseif ($columnName == "date") {
+                    $query->orderBy('created_at', $sortOrder);
+                } elseif ($columnName == "full_name") {
+                    $query->orderByRaw("CONCAT(first_name, ' ', last_name) {$sortOrder}");
+                }elseif ($columnName == "full_name") {
+                     $quer->orderBy('email', $sortOrder);
+                }elseif ($columnName == "full_name") {
+                     $query->orderBy('mobile_number', $sortOrder);
+                }
+                 else {
+
+                    $query->orderBy('id', 'DESC');
+                }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
+    static function getUserRejected($role, $start, $length, $search, $columnName, $sortOrder)
+    {
+
+        $query = User::select('*')->where("role", "=", $role)
+                    ->where('status', 0);
+
+                if (!empty($search)) {
+
+                    $query->where(function ($q) use ($search) {
+                        $q->where("first_name", "like", "%{$search}%")
+                        ->orWhere("last_name", "like", "%{$search}%")
+                        ->orWhere("email", "like", "%{$search}%")
+                        ->orWhere("mobile_number", "like", "%{$search}%");
+                    });
+                }
+
+                if ($columnName == "id") {
+                    $query->orderBy('id', $sortOrder);
+                } elseif ($columnName == "date") {
+                    $query->orderBy('created_at', $sortOrder);
+                } elseif ($columnName == "full_name") {
+                    $query->orderByRaw("CONCAT(first_name, ' ', last_name) {$sortOrder}");
+                }elseif ($columnName == "full_name") {
+                     $quer->orderBy('email', $sortOrder);
+                }elseif ($columnName == "full_name") {
+                     $query->orderBy('mobile_number', $sortOrder);
+                }
+                 else {
+
+                    $query->orderBy('id', 'DESC');
+                }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
 }

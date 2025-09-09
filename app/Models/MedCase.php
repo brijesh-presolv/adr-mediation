@@ -45,6 +45,68 @@ class MedCase extends Model
         return $this->hasMany(DocumentSettlement::class, 'mediation_case_id', 'id');
     }
 
+
+    static function getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder){
+
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+                            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+                            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with('user_involed')
+            ->select(
+                "mediation_case.id",
+                "mediation_case.batch_id",
+                "mediation_case.ref_id",
+                "mediation_case.confirm_status",
+                "mediation_case.case_status",
+                "mediation_case.bulk_flag",
+                "mediation_case.created_at",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                "mediators_mediation_cases_status.mediator_id as mediator_id",
+                "mediators_mediation_cases_status.status as mediator_status",
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
+            )
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
+            })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->where("mediation_case.confirm_status", 0)
+            ->where("mediation_case.bulk_flag", $bulk);
+
+           
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where("mediation_case.ref_id", "like", "%{$search}%")
+                ->orWhere("mediation_case.id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
+                ->orWhereHas('user_involed', function ($sub) use ($search) {
+                    $sub->where("name", "like", "%{$search}%");
+                });
+            });
+        }
+
+        // Sorting
+        if ($columnName == "case.caseid") {
+            $query->orderBy('mediation_case.id', $sortOrder);
+        } elseif ($columnName == "date") {
+            $query->orderBy('mediation_case.created_at', $sortOrder);
+        } elseif ($columnName == "party") {
+            $query->with(['user_involed' => function ($t) use ($sortOrder) {
+                $t->orderBy('name', $sortOrder);
+            }]);
+        } else {
+            $query->orderBy('mediation_case.id', 'DESC');
+        }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+         
+    }
+
     static function getCase($searchValue, $columnName, $columnSortOrder, $draw, $row, $rowperpage, $role, $batch_id = "", $bulk)
     {
         if ($batch_id != "") {
@@ -970,4 +1032,255 @@ class MedCase extends Model
         return $cases;
     }
     // sub user new request listing //
+
+    public function claimants()
+    {
+        return $this->hasMany(InvoledUser::class, 'userPlanId', 'id')
+                    ->where('isClaimant', 0)
+                    ->select('userPlanId', 'name', 'userEmail');
+    }
+
+    public function respondents()
+    {
+        return $this->hasMany(InvoledUser::class, 'userPlanId', 'id')
+                    ->where('isClaimant', 1)
+                    ->select('userPlanId', 'name', 'userEmail');
+    }
+
+    static function getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
+    {
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+                            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+                            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with('user_involed')
+            ->select(
+                "mediation_case.id",
+                "mediation_case.batch_id",
+                "mediation_case.ref_id",
+                "mediation_case.confirm_status",
+                "mediation_case.case_status",
+                "mediation_case.bulk_flag",
+                "mediation_case.created_at",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                "mediators_mediation_cases_status.mediator_id as mediator_id",
+                "mediators_mediation_cases_status.status as mediator_status",
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
+            )
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
+            })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->where("mediation_case.confirm_status", 1)
+            ->where("mediation_case.bulk_flag", $bulk);
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where("mediation_case.ref_id", "like", "%{$search}%")
+                ->orWhere("mediation_case.id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
+                ->orWhereHas('user_involed', function ($sub) use ($search) {
+                    $sub->where("name", "like", "%{$search}%");
+                });
+            });
+        }
+
+        // Sorting
+        if ($columnName == "case.caseid") {
+            $query->orderBy('mediation_case.id', $sortOrder);
+        } elseif ($columnName == "date") {
+            $query->orderBy('mediation_case.created_at', $sortOrder);
+        } elseif ($columnName == "party") {
+            $query->with(['user_involed' => function ($t) use ($sortOrder) {
+                $t->orderBy('name', $sortOrder);
+            }]);
+        } else {
+            $query->orderBy('mediation_case.id', 'DESC');
+        }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
+    static function getOgoingCaseApi2($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
+    {
+
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+                            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+                            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with('user_involed')
+            ->select(
+                "mediation_case.id",
+                "mediation_case.batch_id",
+                "mediation_case.ref_id",
+                "mediation_case.confirm_status",
+                "mediation_case.case_status",
+                "mediation_case.bulk_flag",
+                "mediation_case.created_at",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                "mediators_mediation_cases_status.mediator_id as mediator_id",
+                "mediators_mediation_cases_status.status as mediator_status",
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
+            )
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
+            })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->where("mediation_case.confirm_status", 1)
+            ->where("mediation_case.bulk_flag", $bulk);
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where("mediation_case.ref_id", "like", "%{$search}%")
+                ->orWhere("batch.id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%");
+            });
+        }
+
+        // Sorting
+        if ($columnName == "case.caseid") {
+            $query->orderBy('mediation_case.id', $sortOrder);
+        } elseif ($columnName == "date") {
+            $query->orderBy('mediation_case.created_at', $sortOrder);
+        } elseif ($columnName == "party") {
+            $query->with(['user_involed' => function ($t) use ($sortOrder) {
+                $t->orderBy('name', $sortOrder);
+            }]);
+        } else {
+            $query->orderBy('mediation_case.id', 'DESC');
+        }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
+
+    static function getClosedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
+    {
+
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+                            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+                            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with('user_involed')
+            ->select(
+                "mediation_case.id",
+                "mediation_case.batch_id",
+                "mediation_case.ref_id",
+                "mediation_case.confirm_status",
+                "mediation_case.case_status",
+                "mediation_case.bulk_flag",
+                "mediation_case.created_at",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                "mediators_mediation_cases_status.mediator_id as mediator_id",
+                "mediators_mediation_cases_status.status as mediator_status",
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
+            )
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
+            })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->where("mediation_case.confirm_status", 2)
+            ->where("mediation_case.bulk_flag", $bulk);
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where("mediation_case.ref_id", "like", "%{$search}%")
+                ->orWhere("mediation_case.id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
+                ->orWhereHas('user_involed', function ($sub) use ($search) {
+                    $sub->where("name", "like", "%{$search}%");
+                });
+            });
+        }
+
+        // Sorting
+        if ($columnName == "case.caseid") {
+            $query->orderBy('mediation_case.id', $sortOrder);
+        } elseif ($columnName == "date") {
+            $query->orderBy('mediation_case.created_at', $sortOrder);
+        } elseif ($columnName == "party") {
+            $query->with(['user_involed' => function ($t) use ($sortOrder) {
+                $t->orderBy('name', $sortOrder);
+            }]);
+        } else {
+            $query->orderBy('mediation_case.id', 'DESC');
+        }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
+    static function getRejectedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
+    {
+
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+                            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+                            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with('user_involed')
+            ->select(
+                "mediation_case.id",
+                "mediation_case.batch_id",
+                "mediation_case.ref_id",
+                "mediation_case.confirm_status",
+                "mediation_case.case_status",
+                "mediation_case.bulk_flag",
+                "mediation_case.created_at",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                "mediators_mediation_cases_status.mediator_id as mediator_id",
+                "mediators_mediation_cases_status.status as mediator_status",
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
+            )
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
+            })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->where("mediation_case.confirm_status", 3)
+            ->where("mediation_case.bulk_flag", $bulk);
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where("mediation_case.ref_id", "like", "%{$search}%")
+                ->orWhere("mediation_case.id", "like", "%{$search}%")
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
+                ->orWhereHas('user_involed', function ($sub) use ($search) {
+                    $sub->where("name", "like", "%{$search}%");
+                });
+            });
+        }
+
+        // Sorting
+        if ($columnName == "case.caseid") {
+            $query->orderBy('mediation_case.id', $sortOrder);
+        } elseif ($columnName == "date") {
+            $query->orderBy('mediation_case.created_at', $sortOrder);
+        } elseif ($columnName == "party") {
+            $query->with(['user_involed' => function ($t) use ($sortOrder) {
+                $t->orderBy('name', $sortOrder);
+            }]);
+        } else {
+            $query->orderBy('mediation_case.id', 'DESC');
+        }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
 }

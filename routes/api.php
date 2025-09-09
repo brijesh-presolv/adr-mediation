@@ -56,3 +56,92 @@ Route::get('whresmovetos3', [App\Http\Controllers\Webhook\WhatsappWebhookControl
 Route::get('whatsapp_webhook_incoming_log', [App\Http\Controllers\Webhook\WhatsappWebhookController::class, 'WhatsappLog']);
 
 //Route::post('medwhatsappbotlog', [App\Http\Controllers\WhatsappBot\WhatsappBotController::class, 'medwhatsappbotlog']);
+
+
+
+
+/************************ UK Version API Section : START **************************************************/
+
+Route::post('/login', [App\Http\Controllers\API\UserController::class, 'login']);
+Route::post('/register', [App\Http\Controllers\API\UserController::class, 'register']);
+Route::post('/logout', [App\Http\Controllers\API\UserController::class, 'logout']);
+
+Route::get('/gentoken', [App\Http\Controllers\API\AuthController::class, 'gentoken']);
+Route::middleware(['apiauth'])->group(function () {
+
+    Route::get('/authcheck', [App\Http\Controllers\API\AuthController::class, 'checkAuth']);
+});
+
+ // Admin API Routes
+Route::middleware(['apiauth', 'apiadmin'])->group(function () {
+
+    Route::post('/admin/dashboard', [App\Http\Controllers\API\Admin\AdminController::class, 'dashboard']);
+    Route::post('/admin/cases/ongoing', [App\Http\Controllers\API\Admin\CaseController::class, 'ongoing']);
+    Route::post('/admin/cases/newreq', [App\Http\Controllers\API\Admin\CaseController::class, 'newreq']);
+    Route::post('/admin/cases/closed', [App\Http\Controllers\API\Admin\CaseController::class, 'closed']);
+    Route::post('/admin/cases/rejected', [App\Http\Controllers\API\Admin\CaseController::class, 'rejected']);
+
+    // Case approve api
+    Route::get('/admin/cases/mediator-listing', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorList']);
+    Route::post('/admin/cases/case-approve', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorAssign']);
+
+   // Case details api
+    Route::post('/admin/cases/view-case-details', [App\Http\Controllers\API\Admin\CaseController::class, 'viewCaseDetails']);
+
+   // Case update api
+    Route::post('/admin/cases/case-edit', [App\Http\Controllers\API\Admin\CaseController::class, 'caseUpdate']);
+    Route::post('/admin/cases/fetch-casedata', [App\Http\Controllers\API\Admin\CaseController::class, 'fetchCase']);
+
+    // Case reject api
+    Route::post('/admin/cases/case-reject', [App\Http\Controllers\API\Admin\CaseController::class, 'caseReject']);
+
+    // MOM api
+    Route::post('/admin/cases/get-mom-data', [App\Http\Controllers\API\Admin\CaseController::class, 'showMomSession']);
+    Route::post('/admin/cases/mom-data-submit', [App\Http\Controllers\API\Admin\CaseController::class, 'momDataSubmit']);
+
+    // Case track api
+    Route::post('admin/cases/case-track', [App\Http\Controllers\API\Admin\CaseController::class, 'caseTrack']);
+
+    // Mediator edit api
+    Route::post('/admin/cases/mediator-edit', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorEdit']);
+    
+    Route::post('/admin/case/add-session', [App\Http\Controllers\API\Admin\CaseController::class, 'addSession']);
+    Route::post('/admin/cases/meeting-sessions', [App\Http\Controllers\API\Admin\CaseController::class, 'getMeetingSession']);
+    Route::post('/admin/cases/edit-session', [App\Http\Controllers\API\Admin\CaseController::class, 'SendforEditSession']);
+    Route::post('/admin/cases/update-session', [App\Http\Controllers\API\Admin\CaseController::class, 'UpdateSession']);
+    Route::post('/admin/cases/delete-session', [App\Http\Controllers\API\Admin\CaseController::class, 'deleteSession']);
+
+    Route::post('/admin/cases/consentdisclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'getConsentDisclosures']);
+    Route::post('/admin/cases/download-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'downloadDisclosures']);
+
+    Route::post('/admin/cases/viewsupporting', [App\Http\Controllers\API\Admin\UploadController::class, 'viewSupporting']);
+    Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
+    Route::post('/admin/cases/uploaddocument', [App\Http\Controllers\API\Admin\UploadController::class, 'documentUpload']);
+
+
+    Route::post('admin/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
+    Route::post('admin/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
+
+    Route::post('/admin/users/user-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'userApprove']);
+    Route::post('/admin/users/user-newreq', [App\Http\Controllers\API\Admin\UsersController::class, 'userNewreq']);
+    Route::post('/admin/users/user-rejected', [App\Http\Controllers\API\Admin\UsersController::class, 'userRejected']);
+    Route::post('/admin/users/update', [App\Http\Controllers\API\API\Admin\UsersController::class, 'update']);
+    Route::post('/admin/users/user-delete', [App\Http\Controllers\API\Admin\UsersController::class, 'deleteUser']);
+    Route::post('/admin/users/changeRole', [App\Http\Controllers\API\Admin\UsersController::class, 'ChangeRole']);
+    Route::post('/admin/users/status-change-active', [App\Http\Controllers\API\Admin\UsersController::class, 'statusChange']);
+    Route::post('/admin/users/status-change-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'statusChangeApprove']);
+    Route::post('/admin/users/add-notes', [App\Http\Controllers\API\Admin\UsersController::class, 'addNotes']);
+
+    Route::post('/admin/users/mediator-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorApprove']);
+    Route::post('/admin/users/mediator-newreq', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorNewreq']);
+    Route::post('/admin/users/mediator-rejected', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorRejected']);
+
+});
+
+
+ 
+
+
+
+
+/************************ UK Version API Section : END ****************************************************/
