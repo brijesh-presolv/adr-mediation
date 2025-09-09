@@ -90,7 +90,7 @@ class AuthController  extends Controller
                 return response()->json($result, 200)
                                     ->cookie(
                                         'auth_token',           // cookie name
-                                        $result['token'],       // cookie value
+                                        $token,       // cookie value
                                         15,                     // minutes
                                         '/',
                                         null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
