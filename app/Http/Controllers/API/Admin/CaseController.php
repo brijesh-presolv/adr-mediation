@@ -1589,7 +1589,8 @@ class CaseController extends Controller
             }
 
             $id = $request->input('SessId');
-            $caseId = $request->input('caseId');
+            $CaseId = $request->input('caseId');
+            //print_r($CaseId);die();
             $zoomChoice = $request->input('zoomChoice');
             $sessionTime = $request->input('sessionTime');
             $sessionDate = $request->input('sessionDate');
@@ -1667,7 +1668,7 @@ class CaseController extends Controller
                 }
             }
 
-            $data['caseid'] = $caseId;
+            $data['caseid'] = $CaseId;
 
             $resultdata['success'] = true;
             $resultdata['message'] = "Zoom Session updated successfully.";
