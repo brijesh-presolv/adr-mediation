@@ -138,6 +138,15 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
 });
 
+ // User API Routes
+Route::middleware(['apiauth', 'apiuser'])->group(function () {
+
+    Route::post('/user/cases/newreq', [App\Http\Controllers\API\User\CaseController::class, 'newreq']);
+    Route::post('/user/cases/ongoing', [App\Http\Controllers\API\User\CaseController::class, 'ongoing']);
+    Route::post('/user/cases/closed', [App\Http\Controllers\API\User\CaseController::class, 'closed']);
+
+});
+
 
  
 

@@ -1311,9 +1311,10 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
             ->where("mediation_case.confirm_status", 0)
             ->where("mediation_case.bulk_flag", $bulk);
+            //->where("user_involved_in_agreement.userId", $userId); 
 
             $query->where(function($query) use ($userId) {
                 $query->where('user_involved_in_agreement.userId', $userId);
@@ -1377,7 +1378,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
             ->where("mediation_case.confirm_status", 1)
             ->where("mediation_case.bulk_flag", $bulk);
 
@@ -1443,8 +1444,8 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->leftJoin('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-            ->where("mediation_case.confirm_status", 1)
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->where("mediation_case.confirm_status", 3)
             ->where("mediation_case.bulk_flag", $bulk);
 
             $query->where(function($query) use ($userId) {

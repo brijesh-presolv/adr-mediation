@@ -43,10 +43,23 @@ class CaseController extends Controller
 
     public function newreq(Request $request){
 
+        $token = $request->cookie('auth_token');
+        if (!$token) {
+
+            $result['success'] = false;
+            $result['message'] = 'Unauthorized: Missing token';
+            $result['error'] = 'Unauthorized: Missing token';
+            return response()->json($result, 401);
+        }
+
+        $JWT_KEY = env('JWT_KEY');
+        $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+        $userId = $jwtData->data->userid;
+
         $start   = $request->input('iDisplayStart', 0);    // offset
         $length  = $request->input('iDisplayLength', 10);  // limit
         $search  = $request->input('search', '');
-        //$batch_id = $request->input('batch_id', null);
+        $batch_id = $request->input('batch_id', null);
         $sortOrder = $request->input('SortOrder', 'desc'); // asc or desc
         $columnName = $request->input('columnName', ''); 
         
@@ -54,7 +67,7 @@ class CaseController extends Controller
         $role = 0; // user
         $bulk = 0;
 
-        $cases = MedCase::getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder);
+        $cases = MedCase::getNewReqCaseUserApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id, $userId);
 
         //dd($cases);
 
@@ -164,6 +177,19 @@ class CaseController extends Controller
 
     public function closed(Request $request){
 
+        $token = $request->cookie('auth_token');
+        if (!$token) {
+
+            $result['success'] = false;
+            $result['message'] = 'Unauthorized: Missing token';
+            $result['error'] = 'Unauthorized: Missing token';
+            return response()->json($result, 401);
+        }
+
+        $JWT_KEY = env('JWT_KEY');
+        $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+        $userId = $jwtData->data->userid;
+
         $start   = $request->input('iDisplayStart', 0);    // offset
         $length  = $request->input('iDisplayLength', 10);  // limit
         $search  = $request->input('search', '');
@@ -174,7 +200,7 @@ class CaseController extends Controller
 
         $role = 0; // user
         $bulk = 0;
-        $casesData = MedCase::getClosedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
+        $casesData = MedCase::getClosedCaseUserApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id, $userId);
         $data = array();
         if(count($casesData) > 0) {
 
