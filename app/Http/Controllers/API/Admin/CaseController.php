@@ -1571,7 +1571,7 @@ class CaseController extends Controller
                 'caseId'             => 'required|integer',
                 'sessionDate'        => 'required|date_format:d/m/Y|after_or_equal:today',
                 'sessionTime'        => 'required|date_format:H:i',
-                'zoomChoice'        => 'required|string|in:directly_zoom,custom_zoom,other',
+                'zoomChoice'        => 'required|string|in:directly_zoom,manually_zoom,other',
                 'zoomId'             => 'nullable|string|max:255',
                 'note'               => 'nullable|string|max:500',
                 'session_party_ids'  => 'required|array|min:1',
@@ -1589,7 +1589,8 @@ class CaseController extends Controller
             }
 
             $id = $request->input('SessId');
-            $caseId = $request->input('caseId');
+            $CaseId = $request->input('caseId');
+            //print_r($CaseId);die();
             $zoomChoice = $request->input('zoomChoice');
             $sessionTime = $request->input('sessionTime');
             $sessionDate = $request->input('sessionDate');
@@ -1599,7 +1600,7 @@ class CaseController extends Controller
             $zoomLink = $request->input('zoomLink');
 
             /********* Zoom Time Format ******************/
-            if($request->input('zoomChoice') == "direct") {
+            if($request->input('zoomChoice') == "directly_zoom") {
 
                 $time_zoom = date("H:i:s", strtotime($sessionTime));
                 $end_time = date("H:i:s", strtotime($sessionTime) + 60*60);
@@ -1639,7 +1640,7 @@ class CaseController extends Controller
 
                     $party = InvoledUser::where("userPlanId", $result->case_id)->where("id", $party_id)->first();
 
-                    if($zoomChoice == "manual") {
+                    if($zoomChoice == "manually_zoom") {
                         $this->sned_session($zoomId, $result->case_id, $party->userEmail, $party->name, $display_date_time, $party->userPhone, "Party");
                     } else {
                         $this->sned_session_invitation($zoomId, $result->case_id, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $zoomLink, "Party");
@@ -1657,9 +1658,9 @@ class CaseController extends Controller
 
                 if ($mediator) {
 
-                    if($zoomChoice == "manual") {
+                    if($zoomChoice == "manually_zoom") {
                         $is_send = $this->sned_session($zoomId, $CaseId, $mediator->email, $mediator->username, $display_date_time, $mediator->mobile_number, "Mediator");
-                    } else if($zoomChoice == "direct") {
+                    } else if($zoomChoice == "directly_zoom") {
                     /**** Zoom Invitation ************/
                         $is_send = $this->sned_session_invitation($zoomId, $CaseId, $mediator->email, $mediator->username, $display_date_time, $mediator->mobile_number, $zoomLink, "Mediator");
                     /**** Zoom Invitation ************/
@@ -1667,7 +1668,7 @@ class CaseController extends Controller
                 }
             }
 
-            $data['caseid'] = $caseId;
+            $data['caseid'] = $CaseId;
 
             $resultdata['success'] = true;
             $resultdata['message'] = "Zoom Session updated successfully.";
