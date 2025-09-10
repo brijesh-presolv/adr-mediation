@@ -51,7 +51,7 @@ class CaseController extends Controller
         $columnName = $request->input('columnName', ''); 
         
 
-        $role = 2; // admin
+        $role = 0; // user
         $bulk = 0;
 
         $cases = MedCase::getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder);
@@ -120,7 +120,7 @@ class CaseController extends Controller
         $columnName = $request->input('columnName', ''); 
         
 
-        $role = 2; // admin
+        $role = 0; // user
         $bulk = 0;
         $casesData = MedCase::getOgoingCaseUserApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id, $userId);
         $data = array();
@@ -172,7 +172,7 @@ class CaseController extends Controller
         $columnName = $request->input('columnName', ''); 
         
 
-        $role = 2; // admin
+        $role = 0; // user
         $bulk = 0;
         $casesData = MedCase::getClosedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
         $data = array();
