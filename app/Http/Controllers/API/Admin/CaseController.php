@@ -820,13 +820,12 @@ class CaseController extends Controller
             $userId = $jwtData->data->userid;
 
             $validator = Validator::make($request->all(), [
-                'caseid'             => 'required|integer',
-                'userid'=> 'required|integer'
+                'caseid'             => 'required|integer'
             ]);
 
             //Inputs
             $caseid = $request->input('caseid');
-            $userid = $request->input('userid');
+            //$userid = $request->input('userid');
 
             if ($validator->fails()) {
 
@@ -851,7 +850,7 @@ class CaseController extends Controller
                     $inv_id = $inv_id . "," . $v->id;
                 }
             }
-            Common_function::MedNotification($caseid, "REJECTED_ADM", $userid, isset($mediator) ? $mediator->id : null, $inv_id);
+            Common_function::MedNotification($caseid, "REJECTED_ADM", $userId, isset($mediator) ? $mediator->id : null, $inv_id);
         
         
             $user = MedCase::find($caseid);
@@ -860,7 +859,7 @@ class CaseController extends Controller
 
             if ($user->save()) {
                 $mediation_status_log = new Mediation_status_log;
-                $mediation_status_log->user_id = $request->input('userid');
+                $mediation_status_log->user_id = $userId;
                 $mediation_status_log->mediation_case_id = $request->input('caseid');
                 $mediation_status_log->status = 3;
                 $mediation_status_log->description = "Request Reject";
@@ -1509,6 +1508,7 @@ class CaseController extends Controller
             $data[$key]['created_at'] = $values->created_at;
             $data[$key]['session_date'] = $values->session_date;
             $data[$key]['zoom_id'] = $values->zoom_id;
+            $data[$key]['zoom_link'] = $values->zoom_link;
             $data[$key]['note'] = $values->note;
             $data[$key]['meeting_users'] = implode($user);
             $data[$key]['zoom_link_choice'] = $zoom_link_choice;
@@ -2326,5 +2326,64 @@ class CaseController extends Controller
             }
         }
     }
+
+    public function viewSettelment(Request $request)
+    {
+
+        $token = $request->cookie('auth_token');
+        if (!$token) {
+
+            $result['success'] = false;
+            $result['message'] = 'Unauthorized: Missing token';
+            $result['error'] = 'Unauthorized: Missing token';
+            return response()->json($result, 401);
+        }
+
+        $JWT_KEY = env('JWT_KEY');
+        $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+        $userId = $jwtData->data->userid;
+
+        $validator = Validator::make($request->all(), [
+            'caseId'             => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $caseId = $request->input('caseId');
+
+        $sessionData = DB::table('document_settlements')
+            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+            ->where('document_settlements.mediation_case_id', $caseId)
+            ->get();
+
+        $data = array();
+        if(count($sessionData) > 0) {
+
+            foreach ($sessionData as $key => $values) {
+                
+                    $id = $values->id;
+                    $keyInc = $key + 1;
+                    $data[$key]['id'] = $id;
+                    $data[$key]['file_path'] = $values->file_path;
+                    $data[$key]['caseId'] = $caseId;
+                    $data[$key]['username'] = $values->username;
+                    $data[$key]['userId'] = $userId;
+            }
+        }
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $data;
+        return response()->json($result, 200);
+    }
+
 
 }

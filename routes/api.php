@@ -117,6 +117,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/cases/viewsupporting', [App\Http\Controllers\API\Admin\UploadController::class, 'viewSupporting']);
     Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
     Route::post('/admin/cases/uploaddocument', [App\Http\Controllers\API\Admin\UploadController::class, 'documentUpload']);
+    Route::post('/admin/cases/view-settelment', [App\Http\Controllers\API\Admin\CaseController::class, 'viewSettelment']);
 
 
     Route::post('admin/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
@@ -135,6 +136,15 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/mediator-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorApprove']);
     Route::post('/admin/users/mediator-newreq', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorNewreq']);
     Route::post('/admin/users/mediator-rejected', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorRejected']);
+
+});
+
+ // User API Routes
+Route::middleware(['apiauth', 'apiuser'])->group(function () {
+
+    Route::post('/user/cases/newreq', [App\Http\Controllers\API\User\CaseController::class, 'newreq']);
+    Route::post('/user/cases/ongoing', [App\Http\Controllers\API\User\CaseController::class, 'ongoing']);
+    Route::post('/user/cases/closed', [App\Http\Controllers\API\User\CaseController::class, 'closed']);
 
 });
 
