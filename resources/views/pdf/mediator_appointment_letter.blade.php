@@ -2,9 +2,14 @@
 
 use App\Models\User;
 
-$meddate = new DateTime($case->crated_at);
 
-$meddate = $meddate->format('d-m-Y');
+if(isset($case->crated_at) && $case->crated_at != ""){
+    $meddate = new DateTime($case->crated_at);
+    $meddate = $meddate->format('d-m-Y');
+} else {
+    $meddate = "";
+}
+
 
 ?>
 
