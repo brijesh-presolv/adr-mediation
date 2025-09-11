@@ -104,6 +104,9 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     // Mediator edit api
     Route::post('/admin/cases/mediator-edit', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorEdit']);
+
+    // Ongoing listing - close case api
+    Route::post('/admin/cases/close-case', [App\Http\Controllers\API\Admin\CaseController::class, 'closeCaseStatus']);
     
     Route::post('/admin/case/add-session', [App\Http\Controllers\API\Admin\CaseController::class, 'addSession']);
     Route::post('/admin/cases/meeting-sessions', [App\Http\Controllers\API\Admin\CaseController::class, 'getMeetingSession']);

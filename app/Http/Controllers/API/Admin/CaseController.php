@@ -2327,4 +2327,305 @@ class CaseController extends Controller
         }
     }
 
+
+    public function closeCaseStatus(Request $request) {
+        try{
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'required|integer',
+                'status' => 'required|integer',
+                'comment' => 'required|string'
+            ]);
+
+            //Inputs
+            $caseid = $request->input('caseid');
+            $status = $request->input('status');
+            $comment = $request->input('comment');
+            //$userId = 2;
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+
+            if ($status != null && $comment != null) {
+                $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseid)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+                $inv_id = "";
+                $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
+                foreach ($inv as $v) {
+                    if ($inv_id == "") {
+                        $inv_id = $v->id;
+                    } else {
+                        $inv_id = $inv_id . "," . $v->id;
+                    }
+                }
+
+
+                if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
+                    // if (Auth::user()->role == 1) {
+                    //     Common_function::MedNotification($request->case_id, "WDRN_BY_MED", Auth::user()->id, Auth::user()->id, null);
+                    // } else {
+                        Common_function::MedNotification($caseid, "WDRN_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                    //}
+                } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
+                    // if (Auth::user()->role == 1) {
+                    //     Common_function::MedNotification($request->case_id, "RES_BY_MED", Auth::user()->id, Auth::user()->id, null);
+                    // } else {
+                        Common_function::MedNotification($caseid, "RES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                    //}
+                } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
+                    // if (Auth::user()->role == 1) {
+                    //     Common_function::MedNotification($request->case_id, "UNRES_BY_MED", Auth::user()->id, Auth::user()->id, null);
+                    // } else {
+                        Common_function::MedNotification($caseid, "UNRES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                    //}
+                }
+
+
+                $user = MedCase::find($caseid);
+                $user->confirm_status = 2;
+                $user->case_status = $status;
+                $user->withdraw = ($comment != null) ? $comment : "";
+
+                if ($user->save()) {
+
+                    // dd($user->bulk_flag);
+                    $mediation_status_log = new Mediation_status_log;
+                    $mediation_status_log->user_id = $userId;
+                    $mediation_status_log->mediation_case_id = $caseid;
+                    $mediation_status_log->status = ($status != null) ? $status : "";
+
+
+                    if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
+                        $mediation_status_log->description = "Request Withdrawn";
+                        //if ($user->bulk_flag != 1) {
+                            $this->sned_withdrawal($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                        //}
+                    } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
+                        $mediation_status_log->description = "Request Resolved";
+                        //if ($user->bulk_flag != 1) {
+                            $this->sned_resolved($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                        //}
+                    } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
+                        $mediation_status_log->description = "Request Unresolved";
+                        //if ($user->bulk_flag != 1) {
+                            $this->sned_unresolved($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                        //}
+                    }
+                    $mediation_status_log->save();
+
+
+                    $final['caseid'] = $caseid;
+                    $final['status'] = $status;
+
+                    if($status == 5) {
+                        $s_text = "Withdrawn";
+                    } else if($status == 6) {
+                        $s_text = "Resolved";  
+                    } else if ($status == 7) {
+                        $s_text = "Unresolved"; 
+                    }
+                    $final['status_text'] = $s_text;
+                    $final['comment'] = $comment;
+
+
+                    $result['success'] = true;
+                    $result['message'] = "Case closed successfully.";
+                    $result['data'] = $final;
+                    return response()->json($result, 200);
+                    
+                }
+
+            }
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case closing process is failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+
+    public function sned_withdrawal($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
+    {
+
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+
+        
+        //echo "<pre>";print_R($is_bulk);exit;
+        // $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "M" . sprintf("%06d", $id);
+
+        $initiating_party = "";
+        $initiating_phone = [];
+        $responding_party = "";
+        $initiating_email = "";
+        $responding_email = [];
+        $responding_phone = [];
+        $d1 = [
+            'event' => 'WDRN_PARTY',
+            'case_id' => $id,
+        ];
+        $d2 = [
+            'event' => 'WDRN_OTHER_PARTY',
+            'case_id' => $id,
+        ];
+        $d3 = [
+            'event' => 'WDRN_MED',
+            'case_id' => $id,
+        ];
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
+                $initiating_phone[] = $inv->userPhone;
+                $initiating_email = $inv->userEmail;
+
+                if($stop_close_ip == 0){
+
+                    SendGrid::send($d1, $inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
+                }
+            } else {
+                if ($inv->name != "") {
+                    $responding_party = $inv->name;
+                }
+                $responding_email[] = $inv->userEmail;
+                $responding_phone[] = $inv->userPhone;
+            }
+        }
+
+        if (isset($responding_email)) {
+            foreach ($responding_email as $email) {
+                if ($email != "") {
+                    if($stop_close_rp == 0){
+
+                        SendGrid::send($d2, $email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                    }
+                }
+            }
+        }
+
+        
+        if ($mediator) {
+
+            if($stop_close_med == 0){
+
+                SendGrid::send($d3, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
+
+            
+        }
+        return true;
+    }
+
+
+    public function sned_resolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
+    {
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "M" . sprintf("%06d", $id);
+        $initiating_party = "";
+        $d = [
+            'event' => 'RESO_ADM',
+            'case_id' => $id,
+        ];
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
+            }
+            if ($inv->userEmail != "") {
+                if($stop_close_ip == 0) {
+
+                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                }
+            }
+        }
+        if ($mediator) {
+            if($stop_close_med == 0){
+                
+                SendGrid::send($d, $mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
+        }
+        return true;
+    }
+
+
+
+    public function sned_unresolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
+    {
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+
+        $mid = "M" . sprintf("%06d", $id);
+        $initiating_party = "";
+        $d = [
+            'event' => 'UNRESO_ADM',
+            'case_id' => $id,
+        ];
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
+            }
+            if ($inv->userEmail != "") {
+                if($stop_close_ip == 0) {
+
+                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                }
+            }
+        }
+        if ($mediator) {
+            if($stop_close_med == 0){
+
+                SendGrid::send($d, $mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
+        }
+        return true;
+    }
+
 }
