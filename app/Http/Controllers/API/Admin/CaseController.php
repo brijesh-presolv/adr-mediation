@@ -2526,4 +2526,19 @@ class CaseController extends Controller
         return true;
     }
 
+
+    public function send_mediatorAdd($id, $mediator_id)
+    {
+        $user = User::where("id", $mediator_id)->first();
+        $mid = "M" . sprintf("%06d", $id);
+
+        $d = [
+            'event' => 'MEDI_ADD_ADM',
+            'case_id' => $id,
+        ];
+        SendGrid::send($d, $user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $mid], $user->name);
+
+        return true;
+    }
+
 }
