@@ -2385,5 +2385,145 @@ class CaseController extends Controller
         return response()->json($result, 200);
     }
 
+    public function settlementUpload(Request $request)
+    {
+
+        try {
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+
+            $validator = Validator::make($request->all(), [
+                    'caseId' => 'required|integer',
+                    'Settelmentfiles' => 'required',
+                    'Settelmentfiles.*' => 'mimes:csv,txt,xlx,xls,pdf',
+                ]);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            $caseId = $request->input('caseId');
+            $Settelmentfiles = $request->file('Settelmentfiles');
+
+            $insert = [];
+
+            if ($request->hasFile('Settelmentfiles')) {
+
+                foreach ($request->file('Settelmentfiles') as $file) {
+                    
+                    $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME)
+                        . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
+
+                    $savePath = "mediation_documents/mediation/{$caseId}/settelmentDocument";
+                    $finalFilePath = $savePath . '/' . $filename;
+
+                    Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
+
+                    $insert[] = [
+                        'file_path'        => $filename,
+                        'uploaded_by'      => $userId,
+                        'mediation_case_id'=> $caseId,
+                        'created_at'      => now(),
+                    ];
+                }
+
+                DB::table('document_settlements')->insert($insert);
+                
+                $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+                $inv_id = "";
+                $inv = InvoledUser::select('id')->where('userPlanId', $caseId)->get();
+                foreach ($inv as $v) {
+                    if ($inv_id == "") {
+                        $inv_id = $v->id;
+                    } else {
+                        $inv_id = $inv_id . "," . $v->id;
+                    }
+                }
+                Common_function::MedNotification($caseId, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+                $this->send_settlement_agreement_party($caseId, $insert);
+
+                $resultData['caseid']=$caseId;
+
+                $result['success'] = true;
+                $result['message'] = "Files uploaded successfully.";
+                $result['data'] = $resultData;
+                return response()->json($result, 200);
+
+            } else {
+
+                    $result['success'] = false;
+                    $result['message'] = "Files not uploaded";
+                    $result['error'] = "No valid files found";
+                    return response()->json($result, 400);
+            }
+
+        }  catch (\Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Files not uploaded";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+    public function send_settlement_agreement_party($id, $files)
+    {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "M" . sprintf("%06d", $id);
+        $sendEamils = array();
+        $filesE = array();
+        $d = [
+            'event' => 'SEND_SETT_AGRE',
+            'case_id' => $id,
+        ];
+        foreach ($files as $f) {
+            $filesE[] = 'mediation_documents/mediation/' . $id . '/settelmentDocument/' . $f["file_path"];
+        }
+        foreach ($involedUser as $inv) {
+            if ($inv->userEmail != "") {
+                $sendEamils[] = $inv->userEmail;
+            }
+        }
+        if ($mediator) {
+            $d1 = [
+                'event' => 'SEND_SETT_AGRE_MED',
+                'case_id' => $id,
+            ];
+            SendGrid::send($d1, $mediator->email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+
+        }
+
+        foreach ($sendEamils as $email) {
+            SendGrid::send($d, $email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        }
+
+        return true;
+    }
 
 }
