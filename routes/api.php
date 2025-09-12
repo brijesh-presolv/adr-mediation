@@ -150,7 +150,14 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::post('/user/cases/ongoing', [App\Http\Controllers\API\User\CaseController::class, 'ongoing']);
     Route::post('/user/cases/closed', [App\Http\Controllers\API\User\CaseController::class, 'closed']);
 
+    // User profile update api
+    Route::get('/user/show-profile', [App\Http\Controllers\API\User\ProfileController::class, 'getProfileData']);
+    Route::post('/user/edit-profile-data', [App\Http\Controllers\API\User\ProfileController::class, 'editProfileData']);
+
 });
+
+
+
 
 
  
