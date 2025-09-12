@@ -113,6 +113,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/cases/edit-session', [App\Http\Controllers\API\Admin\CaseController::class, 'SendforEditSession']);
     Route::post('/admin/cases/update-session', [App\Http\Controllers\API\Admin\CaseController::class, 'UpdateSession']);
     Route::post('/admin/cases/delete-session', [App\Http\Controllers\API\Admin\CaseController::class, 'deleteSession']);
+    Route::post('admin/cases/download-session-details', [App\Http\Controllers\API\Admin\CaseController::class, 'sessionPdf']);
 
     Route::post('/admin/cases/consentdisclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'getConsentDisclosures']);
     Route::post('/admin/cases/download-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'downloadDisclosures']);
