@@ -1053,7 +1053,9 @@ class MedCase extends Model
                             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
                             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with('user_involed')
+        $query = MedCase::with([
+                'claimants:id,userPlanId,name',
+                'respondents:id,userPlanId,name'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1067,7 +1069,7 @@ class MedCase extends Model
                 "mediators_mediation_cases_status.status as mediator_status",
                 "consent_disclosures.created_at as disclosures_created_at",
                 "batch.batch_name"
-            )
+                )
             ->leftJoinSub($latestStatus, "latest_status", function ($join) {
                 $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
             })
@@ -1075,8 +1077,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->where("mediation_case.confirm_status", 1)
-            ->where("mediation_case.bulk_flag", $bulk);
+            ->where("mediation_case.confirm_status", 1);
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
@@ -1095,10 +1096,6 @@ class MedCase extends Model
             $query->orderBy('mediation_case.id', $sortOrder);
         } elseif ($columnName == "date") {
             $query->orderBy('mediation_case.created_at', $sortOrder);
-        } elseif ($columnName == "party") {
-            $query->with(['user_involed' => function ($t) use ($sortOrder) {
-                $t->orderBy('name', $sortOrder);
-            }]);
         } else {
             $query->orderBy('mediation_case.id', 'DESC');
         }
@@ -1142,7 +1139,13 @@ class MedCase extends Model
             $query->where(function ($q) use ($search) {
                 $q->where("mediation_case.ref_id", "like", "%{$search}%")
                 ->orWhere("batch.id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%");
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhereHas('claimants', function ($sub) use ($search) {
+                  $sub->where("name", "like", "%{$search}%");
+              })
+              ->orWhereHas('respondents', function ($sub) use ($search) {
+                  $sub->where("name", "like", "%{$search}%");
+              });
             });
         }
 
