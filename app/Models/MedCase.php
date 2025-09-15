@@ -1139,7 +1139,13 @@ class MedCase extends Model
             $query->where(function ($q) use ($search) {
                 $q->where("mediation_case.ref_id", "like", "%{$search}%")
                 ->orWhere("batch.id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%");
+                ->orWhere("batch.batch_name", "like", "%{$search}%")
+                ->orWhereHas('claimants', function ($sub) use ($search) {
+                  $sub->where("name", "like", "%{$search}%");
+              })
+              ->orWhereHas('respondents', function ($sub) use ($search) {
+                  $sub->where("name", "like", "%{$search}%");
+              });
             });
         }
 
