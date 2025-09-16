@@ -1085,7 +1085,10 @@ class MedCase extends Model
                 ->orWhere("mediation_case.id", "like", "%{$search}%")
                 ->orWhere("batch.batch_name", "like", "%{$search}%")
                 ->orWhere("mediation_case.created_at", "like", "%{$search}%")
-                ->orWhereHas('user_involed', function ($sub) use ($search) {
+                 ->orWhereHas('claimants', function ($sub) use ($search) {
+                    $sub->where("name", "like", "%{$search}%");
+                })
+                ->orWhereHas('respondents', function ($sub) use ($search) {
                     $sub->where("name", "like", "%{$search}%");
                 });
             });
