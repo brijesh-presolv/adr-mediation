@@ -1136,8 +1136,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->where("mediation_case.confirm_status", 2)
-            ->where("mediation_case.bulk_flag", $bulk);
+            ->where("mediation_case.confirm_status", 2);
 
         if (!empty($search)) {
             $search = ltrim($search, "M0");
@@ -1196,8 +1195,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->where("mediation_case.confirm_status", 3)
-            ->where("mediation_case.bulk_flag", $bulk);
+            ->where("mediation_case.confirm_status", 3);
 
         if (!empty($search)) {
 
@@ -1256,26 +1254,23 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-            ->where("mediation_case.confirm_status", 0)
-            ->where("mediation_case.bulk_flag", $bulk);
-            //->where("user_involved_in_agreement.userId", $userId); 
-
-            $query->where(function($query) use ($userId) {
-                $query->where('user_involved_in_agreement.userId', $userId);
-            });
+            ->where("mediation_case.confirm_status", 0); 
 
         if (!empty($search)) {
+
             $search = ltrim($search, "M0");
-            $query->where(function ($q) use ($search) {
-                $q->where("mediation_case.ref_id", "like", "%{$search}%")
-                ->orWhere("mediation_case.id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%")
-                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
-                ->orWhereHas('user_involed', function ($sub) use ($search) {
-                    $sub->where("name", "like", "%{$search}%");
+            if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
+                $search = (new DateTime($search))->format('Y-m-d');
+                $query->whereDate('mediation_case.created_at', $search);
+            } elseif (is_numeric($search)) {
+                $query->where('mediation_case.id', 'LIKE', "%{$search}%");
+            } else {
+                $query->where(function ($q) use ($search) {
+                    $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
+                    ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
+                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
                 });
-            });
+            }
         }
 
         // Sorting
@@ -1323,25 +1318,23 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-            ->where("mediation_case.confirm_status", 1)
-            ->where("mediation_case.bulk_flag", $bulk);
-
-            $query->where(function($query) use ($userId) {
-                $query->where('user_involved_in_agreement.userId', $userId);
-            });
+            ->where("mediation_case.confirm_status", 1);
 
         if (!empty($search)) {
+
             $search = ltrim($search, "M0");
-            $query->where(function ($q) use ($search) {
-                $q->where("mediation_case.ref_id", "like", "%{$search}%")
-                ->orWhere("mediation_case.id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%")
-                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
-                ->orWhereHas('user_involed', function ($sub) use ($search) {
-                    $sub->where("name", "like", "%{$search}%");
+            if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
+                $search = (new DateTime($search))->format('Y-m-d');
+                $query->whereDate('mediation_case.created_at', $search);
+            } elseif (is_numeric($search)) {
+                $query->where('mediation_case.id', 'LIKE', "%{$search}%");
+            } else {
+                $query->where(function ($q) use ($search) {
+                    $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
+                    ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
+                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
                 });
-            });
+            }
         }
 
         // Sorting
@@ -1389,25 +1382,23 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-            ->where("mediation_case.confirm_status", 3)
-            ->where("mediation_case.bulk_flag", $bulk);
-
-            $query->where(function($query) use ($userId) {
-                $query->where('user_involved_in_agreement.userId', $userId);
-            });
+            ->where("mediation_case.confirm_status", 3);
 
         if (!empty($search)) {
+
             $search = ltrim($search, "M0");
-            $query->where(function ($q) use ($search) {
-                $q->where("mediation_case.ref_id", "like", "%{$search}%")
-                ->orWhere("mediation_case.id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%")
-                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
-                ->orWhereHas('user_involed', function ($sub) use ($search) {
-                    $sub->where("name", "like", "%{$search}%");
+            if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
+                $search = (new DateTime($search))->format('Y-m-d');
+                $query->whereDate('mediation_case.created_at', $search);
+            } elseif (is_numeric($search)) {
+                $query->where('mediation_case.id', 'LIKE', "%{$search}%");
+            } else {
+                $query->where(function ($q) use ($search) {
+                    $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
+                    ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
+                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
                 });
-            });
+            }
         }
 
         // Sorting
@@ -1415,10 +1406,6 @@ class MedCase extends Model
             $query->orderBy('mediation_case.id', $sortOrder);
         } elseif ($columnName == "date") {
             $query->orderBy('mediation_case.created_at', $sortOrder);
-        } elseif ($columnName == "party") {
-            $query->with(['user_involed' => function ($t) use ($sortOrder) {
-                $t->orderBy('name', $sortOrder);
-            }]);
         } else {
             $query->orderBy('mediation_case.id', 'DESC');
         }
