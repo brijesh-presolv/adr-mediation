@@ -77,9 +77,8 @@ class CaseController extends Controller
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-
-                $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
-                $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
+                $data[$key]['claimants']  = $values->claimants->values();
+                $data[$key]['respondents'] =  $values->respondents->values();
         }
         }
 
@@ -129,7 +128,6 @@ class CaseController extends Controller
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-
                 $data[$key]['claimants']  = $values->claimants->values();
                 $data[$key]['respondents'] =  $values->respondents->values();
 
@@ -181,10 +179,8 @@ class CaseController extends Controller
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-
-
-            $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
-            $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
+                $data[$key]['claimants']  = $values->claimants->values();
+                $data[$key]['respondents'] =  $values->respondents->values();
 
             }
         }
@@ -235,9 +231,8 @@ class CaseController extends Controller
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-
-            $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
-            $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
+                $data[$key]['claimants']  = $values->claimants->values();
+                $data[$key]['respondents'] =  $values->respondents->values();
 
             }
         }
