@@ -1092,20 +1092,12 @@ class MedCase extends Model
                 ->where(function ($q) use ($search) {
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
-                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%")
-                    ->orWhereExists(function ($sub) use ($search) {
-                        $sub->select(DB::raw(1))
-                            ->from('user_involved_in_agreement as uia1')
-                            ->whereRaw('uia1.userPlanId = mediation_case.id')
-                            ->where('uia1.isClaimant', 1)
-                            ->where('uia1.name', 'LIKE', "%{$search}%");
-                    })
-                    ->orWhereExists(function ($sub) use ($search) {
-                        $sub->select(DB::raw(1))
-                            ->from('user_involved_in_agreement as uia2')
-                            ->whereRaw('uia2.userPlanId = mediation_case.id')
-                            ->where('uia2.isClaimant', 0)
-                            ->where('uia2.name', 'LIKE', "%{$search}%");
+                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
+                    $q->orWhereHas('claimants', function ($cq) use ($search) {
+                        $cq->where('name', 'LIKE', "%{$search}%");
+                    });
+                    $q->orWhereHas('respondents', function ($rq) use ($search) {
+                        $rq->where('name', 'LIKE', "%{$search}%");
                     });
                 });
             }
