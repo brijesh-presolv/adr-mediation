@@ -1088,10 +1088,25 @@ class MedCase extends Model
             } elseif (is_numeric($search)) {
                 $query->where('mediation_case.id', 'LIKE', "%{$search}%");
             } else {
-                $query->where(function ($q) use ($search) {
+                $query
+                ->where(function ($q) use ($search) {
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
-                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
+                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%")
+                    ->orWhereExists(function ($sub) use ($search) {
+                        $sub->select(DB::raw(1))
+                            ->from('user_involved_in_agreement as uia1')
+                            ->whereRaw('uia1.userPlanId = mediation_case.id')
+                            ->where('uia1.isClaimant', 1)
+                            ->where('uia1.name', 'LIKE', "%{$search}%");
+                    })
+                    ->orWhereExists(function ($sub) use ($search) {
+                        $sub->select(DB::raw(1))
+                            ->from('user_involved_in_agreement as uia2')
+                            ->whereRaw('uia2.userPlanId = mediation_case.id')
+                            ->where('uia2.isClaimant', 0)
+                            ->where('uia2.name', 'LIKE', "%{$search}%");
+                    });
                 });
             }
         }
