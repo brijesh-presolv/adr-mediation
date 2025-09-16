@@ -110,7 +110,7 @@ class CaseController extends Controller
         $role = 2; // admin
         $bulk = 0;
         $casesData = MedCase::getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
-       // print_r($casesData);die();
+    // print_r($casesData);die();
         $data = array();
         if(count($casesData) > 0) {
             foreach ($casesData as $key => $values) {
