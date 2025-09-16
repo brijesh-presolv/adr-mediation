@@ -48,7 +48,7 @@ class MedCase extends Model
 
     static function getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder){
 
-        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+       $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
@@ -74,8 +74,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->where("mediation_case.confirm_status", 0)
-            ->where("mediation_case.bulk_flag", $bulk);
+            ->where("mediation_case.confirm_status", 0);
 
            
         if (!empty($search)) {
