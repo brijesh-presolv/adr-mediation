@@ -79,15 +79,20 @@ class MedCase extends Model
 
            
         if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where("mediation_case.ref_id", "like", "%{$search}%")
-                ->orWhere("mediation_case.id", "like", "%{$search}%")
-                ->orWhere("batch.batch_name", "like", "%{$search}%")
-                ->orWhere("mediation_case.created_at", "like", "%{$search}%")
-                ->orWhereHas('user_involed', function ($sub) use ($search) {
-                    $sub->where("name", "like", "%{$search}%");
+
+            $search = ltrim($search, "M0");
+            if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
+                $search = (new DateTime($search))->format('Y-m-d');
+                $query->whereDate('mediation_case.created_at', $search);
+            } elseif (is_numeric($search)) {
+                $query->where('mediation_case.id', 'LIKE', "%{$search}%");
+            } else {
+                $query->where(function ($q) use ($search) {
+                    $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
+                    ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
+                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
                 });
-            });
+            }
         }
 
         // Sorting
@@ -95,10 +100,6 @@ class MedCase extends Model
             $query->orderBy('mediation_case.id', $sortOrder);
         } elseif ($columnName == "date") {
             $query->orderBy('mediation_case.created_at', $sortOrder);
-        } elseif ($columnName == "party") {
-            $query->with(['user_involed' => function ($t) use ($sortOrder) {
-                $t->orderBy('name', $sortOrder);
-            }]);
         } else {
             $query->orderBy('mediation_case.id', 'DESC');
         }
