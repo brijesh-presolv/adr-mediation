@@ -155,8 +155,10 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::get('/user/show-profile', [App\Http\Controllers\API\User\ProfileController::class, 'getProfileData']);
     Route::post('/user/edit-profile-data', [App\Http\Controllers\API\User\ProfileController::class, 'editProfileData']);
 
-});
+    // Case register api
+    Route::post('/user/new-case', [App\Http\Controllers\API\User\MediationController::class, 'newCase']);
 
+});
 
 
 
