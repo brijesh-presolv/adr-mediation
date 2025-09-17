@@ -465,7 +465,7 @@ class UsersController extends Controller
 
         }else{
 
-            $message="User has been rejected successfully.";
+            $message="User has been deactivated successfully.";
         }
 
         $resultData['user_id'] = $user_id;
