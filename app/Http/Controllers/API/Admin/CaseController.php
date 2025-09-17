@@ -35,7 +35,6 @@ use DateTime;
 use DateTimeZone;
 use Carbon\Carbon;
 use App\Http\Helpers\Zoom;
-use Illuminate\Support\Facades\Cache;
 
 
 class CaseController extends Controller 
@@ -148,65 +147,59 @@ class CaseController extends Controller
         return response()->json($result, 200);
     }
 
-public function closed(Request $request)
-{
+    public function closed(Request $request){
+
         $start   = $request->input('iDisplayStart', 0);    // offset
         $length  = $request->input('iDisplayLength', 10);  // limit
         $search  = $request->input('search', '');
         $batch_id = $request->input('batch_id', null);
         $sortOrder = $request->input('SortOrder', 'desc'); // asc or desc
         $columnName = $request->input('columnName', ''); 
-    
-    $role = 2;
-    $bulk = 0;
+        
 
-    // ✅ Cache total count for 5 min
-    $cacheKey = "closed_cases_total_" . md5($role.$bulk.$search.$batch_id);
-    $total = Cache::remember($cacheKey, 300, function () use ($role, $bulk, $search, $batch_id) {
-        return MedCase::where("confirm_status", 2)
-            ->when($batch_id, function ($q) use ($batch_id) {
-                $q->where("batch_id", $batch_id);
-            })
-            ->count();
-    });
+        $role = 2; // admin
+        $bulk = 0;
+        $casesData = MedCase::getClosedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id);
 
-    // ✅ Fetch only current page data (with offset + limit applied inside)
-    $casesData = MedCase::getClosedCaseApi(
-        $role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id
-    );
+        $data = array();
+        if(count($casesData) > 0) {
 
-    $data = [];
-    foreach ($casesData as $key => $values) {
-        $id = $values->id;
-        $keyInc = $key + 1;
-        $data[$key]['id'] = $id;
-        $data[$key]['caseid'] = 'M' . sprintf('%06d', $values->id);
-        $data[$key]['keyInc'] = $keyInc;
-        $data[$key]['batch_id'] = $values->batch_id;
-        $data[$key]['ref_id'] = $values->ref_id;
-        $data[$key]['confirm_status'] = $values->confirm_status;
-        $data[$key]['case_status'] = $values->case_status;
-        $data[$key]['created_at'] = $values->created_at;
-        $data[$key]['mediator_name'] = $values->mediator_name;
-        $data[$key]['mediator_id'] = $values->mediator_id;
-        $data[$key]['mediator_status'] = $values->mediator_status;
-        $data[$key]['batch_name'] = $values->batch_name;
-        $data[$key]['claimants'] = $values->claimants->values();
-        $data[$key]['respondents'] = $values->respondents->values();
+            foreach ($casesData as $key => $values) {
+
+                $id = $values->id;
+                $keyInc = $key + 1;
+                $data[$key]['id'] = $id;
+                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['keyInc'] = $keyInc;
+                $data[$key]['batch_id'] = $values->batch_id;
+                $data[$key]['ref_id'] = $values->ref_id;
+                $data[$key]['confirm_status'] = $values->confirm_status;
+                $data[$key]['case_status'] = $values->case_status;
+                $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['mediator_name'] = $values->mediator_name;
+                $data[$key]['mediator_id'] = $values->mediator_id;
+                $data[$key]['mediator_status'] = $values->mediator_status;
+                $data[$key]['batch_name'] = $values->batch_name;
+                $data[$key]['claimants']  = $values->claimants->values();
+                $data[$key]['respondents'] =  $values->respondents->values();
+
+            }
+        }
+
+
+
+        $casedata['cases']=$data;
+        $casedata['pagination']['total_count']=$casesData->total();
+        $casedata['pagination']['current_page']=$casesData->currentPage();
+        $casedata['pagination']['per_page']=$casesData->perPage();
+        $casedata['pagination']['total_page']=$casesData->lastPage();
+
+        $result['success'] = true;
+        $result['message'] = "Cases fetched successfully.";
+        $result['data'] = $casedata;
+        return response()->json($result, 200);
     }
 
-    $casedata['cases'] = $data;
-    $casedata['pagination']['total_count'] = $total;
-    $casedata['pagination']['current_page'] = floor($start / $length) + 1;
-    $casedata['pagination']['per_page'] = $length;
-    $casedata['pagination']['total_page'] = ceil($total / $length);
-
-    $result['success'] = true;
-    $result['message'] = "Cases fetched successfully.";
-    $result['data'] = $casedata;
-
-    return response()->json($result, 200);
-}
     public function rejected(Request $request){
 
         $start   = $request->input('iDisplayStart', 0);    // offset
