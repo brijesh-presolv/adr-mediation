@@ -376,8 +376,8 @@ class UsersController extends Controller
         } else {
 
             $result['success'] = false;
-            $result['message'] = "User role not changed";
-            $result['error'] = "User role not changed";
+            $result['message'] = "Failed to change user role. Please try again.";
+            $result['error']   = "User role update failed";
             return response()->json($result, 422);
         };
     }
@@ -415,10 +415,20 @@ class UsersController extends Controller
         }
         $user->save();
 
+
+        if($status==1){
+
+            $message="User has been approved successfully.";
+
+        }else{
+
+            $message="User has been rejected successfully.";
+        }
+
         $resultData['user_id'] = $user_id;
 
         $result['success'] = true;
-        $result['message'] = "User approved status changed successfully.";
+        $result['message'] = $message;
         $result['data'] = $resultData;
         return response()->json($result, 200);
     }
@@ -448,10 +458,20 @@ class UsersController extends Controller
         $user->isActive = $status;
         $user->save();
 
+
+        if($status==1){
+
+            $message="User has been activated successfully.";
+
+        }else{
+
+            $message="User has been deactivated successfully.";
+        }
+
         $resultData['user_id'] = $user_id;
 
         $result['success'] = true;
-        $result['message'] = "User Active status updated successfully.";
+        $result['message'] = $message;
         $result['data'] = $resultData;
         return response()->json($result, 200);
     }
@@ -492,8 +512,8 @@ class UsersController extends Controller
         }else{
 
             $result['success'] = false;
-            $result['message'] = "Notes not added";
-            $result['error'] = "Notes not added";
+            $result['message'] = "Failed to add notes. Please try again.";
+            $result['error'] = "Failed to add notes. Please try again.";
             return response()->json($result, 422);
         }
        
