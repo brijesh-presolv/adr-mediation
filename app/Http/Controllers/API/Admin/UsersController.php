@@ -512,8 +512,8 @@ class UsersController extends Controller
         }else{
 
             $result['success'] = false;
-            $result['message'] = "Notes not added";
-            $result['error'] = "Notes not added";
+            $result['message'] = "Failed to add notes. Please try again.";
+            $result['error'] = "Failed to add notes. Please try again.";
             return response()->json($result, 422);
         }
        
