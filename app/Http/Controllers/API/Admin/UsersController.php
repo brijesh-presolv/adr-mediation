@@ -376,8 +376,8 @@ class UsersController extends Controller
         } else {
 
             $result['success'] = false;
-            $result['message'] = "User role not changed";
-            $result['error'] = "User role not changed";
+            $result['message'] = "Failed to change user role. Please try again.";
+            $result['error']   = "User role update failed";
             return response()->json($result, 422);
         };
     }
