@@ -415,10 +415,20 @@ class UsersController extends Controller
         }
         $user->save();
 
+
+        if($status==1){
+
+            $message="User has been approved successfully.";
+
+        }else{
+
+            $message="User has been rejected successfully.";
+        }
+
         $resultData['user_id'] = $user_id;
 
         $result['success'] = true;
-        $result['message'] = "User approved status changed successfully.";
+        $result['message'] = $message;
         $result['data'] = $resultData;
         return response()->json($result, 200);
     }
@@ -448,10 +458,20 @@ class UsersController extends Controller
         $user->isActive = $status;
         $user->save();
 
+
+        if($status==1){
+
+            $message="User has been activated successfully.";
+
+        }else{
+
+            $message="User has been rejected successfully.";
+        }
+
         $resultData['user_id'] = $user_id;
 
         $result['success'] = true;
-        $result['message'] = "User Active status updated successfully.";
+        $result['message'] = $message;
         $result['data'] = $resultData;
         return response()->json($result, 200);
     }
