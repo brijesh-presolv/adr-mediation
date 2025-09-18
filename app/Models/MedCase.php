@@ -1089,8 +1089,8 @@ class MedCase extends Model
             } elseif (is_numeric($search)) {
                 $query->where('mediation_case.id', 'LIKE', "%{$search}%");
             } else {
-                $query
-                ->where(function ($q) use ($search) {
+
+                $query->where(function ($q) use ($search) {
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
@@ -1148,6 +1148,7 @@ class MedCase extends Model
             ->where("mediation_case.bulk_flag", "=", $bulk);
 
         if (!empty($search)) {
+
             $search = ltrim($search, "M0");
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 $search = (new DateTime($search))->format('Y-m-d');
@@ -1155,19 +1156,19 @@ class MedCase extends Model
             } elseif (is_numeric($search)) {
                 $query->where('mediation_case.id', 'LIKE', "%{$search}%");
             } else {
+
                 $query->where(function ($q) use ($search) {
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
+                    $q->orWhereHas('claimants', function ($cq) use ($search) {
+                        $cq->where('name', 'LIKE', "%{$search}%");
+                    });
+                    $q->orWhereHas('respondents', function ($rq) use ($search) {
+                        $rq->where('name', 'LIKE', "%{$search}%");
+                    });
                 });
             }
-
-                $query->orWhereHas('claimants', function($c) use ($search) {
-                    $c->where('name', 'LIKE', "%$search%");
-                });
-                $query->orWhereHas('respondents', function($r) use ($search) {
-                    $r->where('name', 'LIKE', "%$search%");
-                });
         }
 
         // Sorting
@@ -1227,6 +1228,12 @@ class MedCase extends Model
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
+                    $q->orWhereHas('claimants', function ($cq) use ($search) {
+                        $cq->where('name', 'LIKE', "%{$search}%");
+                    });
+                    $q->orWhereHas('respondents', function ($rq) use ($search) {
+                        $rq->where('name', 'LIKE', "%{$search}%");
+                    });
                 });
             }
         }
@@ -1287,6 +1294,12 @@ class MedCase extends Model
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
+                    $q->orWhereHas('claimants', function ($cq) use ($search) {
+                        $cq->where('name', 'LIKE', "%{$search}%");
+                    });
+                    $q->orWhereHas('respondents', function ($rq) use ($search) {
+                        $rq->where('name', 'LIKE', "%{$search}%");
+                    });
                 });
             }
         }
@@ -1352,6 +1365,12 @@ class MedCase extends Model
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
+                    $q->orWhereHas('claimants', function ($cq) use ($search) {
+                        $cq->where('name', 'LIKE', "%{$search}%");
+                    });
+                    $q->orWhereHas('respondents', function ($rq) use ($search) {
+                        $rq->where('name', 'LIKE', "%{$search}%");
+                    });
                 });
             }
         }
@@ -1417,6 +1436,12 @@ class MedCase extends Model
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
+                    $q->orWhereHas('claimants', function ($cq) use ($search) {
+                        $cq->where('name', 'LIKE', "%{$search}%");
+                    });
+                    $q->orWhereHas('respondents', function ($rq) use ($search) {
+                        $rq->where('name', 'LIKE', "%{$search}%");
+                    });
                 });
             }
         }
