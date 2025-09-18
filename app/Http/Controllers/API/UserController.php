@@ -87,7 +87,7 @@ public $successStatus = 200;
                 'first_name'     => 'required|string|max:255',
                 'last_name'     => 'required|string|max:255',
                 'email'    => 'required|string|email|unique:users',
-                'password' => 'required|string|min:6',
+                'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/',
                 'mobile_number' => 'required|digits:10',
                 'is_agree' => 'required',
                 'actype' => 'required',
@@ -98,10 +98,12 @@ public $successStatus = 200;
                 $errors = $validator->errors()->all(); 
 
                 $result['success'] = false;
-                $result['message'] = $implode(', ', $errors);
+                $result['message'] = implode(', ', $errors);
                 $result['error'] = $validator->errors();
                 return response()->json($result, 422);
             }
+
+            echo "1"; die();
 
             if ($request->input('actype') == 0) {
                 $role = 0;
