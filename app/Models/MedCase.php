@@ -1159,6 +1159,13 @@ class MedCase extends Model
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
                 });
             }
+
+                $query->orWhereHas('claimants', function($c) use ($search) {
+                    $c->where('name', 'LIKE', "%$search%");
+                });
+                $query->orWhereHas('respondents', function($r) use ($search) {
+                    $r->where('name', 'LIKE', "%$search%");
+                });
         }
 
         // Sorting
