@@ -109,7 +109,7 @@ class CaseController extends Controller
         $role = 2; // admin
         $bulk = 0;
         $casesData = MedCase::getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
-    // print_r($casesData);die();
+      // print_r($casesData);die();
         $data = array();
         if(count($casesData) > 0) {
             foreach ($casesData as $key => $values) {
@@ -128,8 +128,8 @@ class CaseController extends Controller
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-                $data[$key]['claimants']  = $values->claimants->values();
-                $data[$key]['respondents'] =  $values->respondents->values();
+                $data[$key]['claimants']  = $values->claimants;
+                $data[$key]['respondents'] =  $values->respondents;
 
             }
         }

@@ -1056,12 +1056,11 @@ class MedCase extends Model
 
     static function getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
     {
-        
         $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants', 'respondents'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail', 'respondents:id,userPlanId,name,userEmail'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1070,7 +1069,8 @@ class MedCase extends Model
                 "mediation_case.case_status",
                 "mediation_case.bulk_flag",
                 "mediation_case.created_at",
-                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                "users.first_name",
+                "users.last_name",
                 "mediators_mediation_cases_status.mediator_id as mediator_id",
                 "mediators_mediation_cases_status.status as mediator_status",
                 "consent_disclosures.created_at as disclosures_created_at",
@@ -1084,33 +1084,41 @@ class MedCase extends Model
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
             ->where("mediation_case.confirm_status", 1)
-            ->where("mediation_case.bulk_flag", "=", $bulk);
+            ->where("mediation_case.bulk_flag", $bulk);
 
-        // --- Search ---
+        if ($batch_id) {
+            $query->where("mediation_case.batch_id", $batch_id);
+        }
+
         if (!empty($search)) {
-
             $search = ltrim($search, "M0");
-            if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
-                $search = (new DateTime($search))->format('Y-m-d');
-                $query->whereDate('mediation_case.created_at', $search);
-            } elseif (is_numeric($search)) {
-                $query->where('mediation_case.id', 'LIKE', "%{$search}%");
-            } else {
 
+            if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
+                // date search
+                $searchDate = (new DateTime($search))->format('Y-m-d');
+                $query->whereDate('mediation_case.created_at', $searchDate);
+
+            } elseif (is_numeric($search)) {
+                // case id search
+                $query->where('mediation_case.id', 'LIKE', "%{$search}%");
+
+            } else {
+                // generic text search across multiple tables
                 $query->where(function ($q) use ($search) {
-                    $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
+                    $q->where('users.first_name', 'LIKE', "%{$search}%")
+                    ->orWhere('users.last_name', 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
-                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
-                    $q->orWhereHas('claimants', function ($cq) use ($search) {
-                        $cq->where('name', 'LIKE', "%{$search}%");
-                    });
-                    $q->orWhereHas('respondents', function ($rq) use ($search) {
-                        $rq->where('name', 'LIKE', "%{$search}%");
+                    ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%")
+                    ->orWhereExists(function ($sub) use ($search) {
+                        $sub->select(DB::raw(1))
+                            ->from('user_involved_in_agreement')
+                            ->whereRaw('user_involved_in_agreement.userPlanId = mediation_case.id')
+                            ->where('user_involved_in_agreement.name', 'LIKE', "%{$search}%");
                     });
                 });
             }
         }
-        // Sorting
+
         if ($columnName == "case.caseid") {
             $query->orderBy('mediation_case.id', $sortOrder);
         } elseif ($columnName == "date") {
@@ -1120,6 +1128,7 @@ class MedCase extends Model
         }
 
         return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    
     }
 
     static function getClosedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
