@@ -85,10 +85,10 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::get('/admin/cases/mediator-listing', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorList']);
     Route::post('/admin/cases/case-approve', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorAssign']);
 
-   // Case details api
+    // Case details api
     Route::post('/admin/cases/view-case-details', [App\Http\Controllers\API\Admin\CaseController::class, 'viewCaseDetails']);
 
-   // Case update api
+    // Case update api
     Route::post('/admin/cases/case-edit', [App\Http\Controllers\API\Admin\CaseController::class, 'caseUpdate']);
     Route::post('/admin/cases/fetch-casedata', [App\Http\Controllers\API\Admin\CaseController::class, 'fetchCase']);
 
@@ -143,7 +143,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/mediator-rejected', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorRejected']);
 
 });
-
+ 
  // User API Routes
 Route::middleware(['apiauth', 'apiuser'])->group(function () {
 

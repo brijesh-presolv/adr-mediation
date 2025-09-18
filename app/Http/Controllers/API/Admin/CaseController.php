@@ -109,7 +109,7 @@ class CaseController extends Controller
         $role = 2; // admin
         $bulk = 0;
         $casesData = MedCase::getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
-    // print_r($casesData);die();
+      // print_r($casesData);die();
         $data = array();
         if(count($casesData) > 0) {
             foreach ($casesData as $key => $values) {
@@ -128,8 +128,8 @@ class CaseController extends Controller
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-                $data[$key]['claimants']  = $values->claimants->values();
-                $data[$key]['respondents'] =  $values->respondents->values();
+                $data[$key]['claimants']  = $values->claimants;
+                $data[$key]['respondents'] =  $values->respondents;
 
             }
         }
@@ -436,34 +436,49 @@ class CaseController extends Controller
 
         $claimants = array();
         $respondents = array();
-        foreach($party_details as $key => $party) {
-            if($party->isClaimant == 0){
-                $claimants['name'] = $party->name;
-                $claimants['email'] = $party->userEmail;
-                $claimants['phone'] = $party->userPhone;
 
-                if($party->address1 != null){
-                   $claimants['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
-                } else if($party->fulladdress) {
-                    $claimants['address'] = $party->fulladdress;
-                } else {
-                    $claimants['address'] = $party->useraddress . ' ' . $party->useraddress1 . ' ' . $party->usercity . ', ' . $party->userpincode . ', ' . $party->userstate . ' ' . $party->usercountry;
-                }
+        $ckey = 1;
+        $rkey = 1;
+
+        foreach($party_details as $key => $party) {
+
+            if($party->isClaimant == 0){
+
+                $claimants[$ckey++] = [
+                    "name"=> $party->name,
+                    "email"=> $party->userEmail,
+                    "phone"=> $party->userPhone,
+                    "address"=> $party->address1,
+                    "address2"=> $party->address2,
+                    "city"=> $party->city,
+                    "pincode"=> $party->pincode,
+                    "state"=> $party->state,
+                    "country"=> $party->country,
+                ];
 
             }
+
+            
             
             if($party->isClaimant != 0){
-                $respondents[$key]['name'] = $party->name;
-                $respondents[$key]['email'] = $party->userEmail;
-                $respondents[$key]['phone'] = $party->userPhone;
 
-                 if($party->address1 != null){
-                   $respondents[$key]['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
-                } else if($party->fulladdress) {
-                    $respondents[$key]['address'] = $party->fulladdress;
-                }
+                $respondents[$rkey++] = [
+                    "name"=> $party->name,
+                    "email"=> $party->userEmail,
+                    "phone"=> $party->userPhone,
+                    "address"=> $party->address1,
+                    "address2"=> $party->address2,
+                    "city"=> $party->city,
+                    "pincode"=> $party->pincode,
+                    "state"=> $party->state,
+                    "country"=> $party->country,
+                ];
             }
+
+           
         }
+        
+       
 
         $case->claimants = $claimants;
         $case->respondents = $respondents;
