@@ -160,6 +160,9 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
 
 });
 
+// User otp api
+Route::post('/otp-verify', [App\Http\Controllers\API\UserController::class, 'otpVerify']);
+
 
 
 

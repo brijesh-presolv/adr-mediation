@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\SendGrid;
+use App\Http\Helpers\SendGrid as Email;
 use App\Http\Helpers\Whatsapp;
 use App\Models\InvoledUser;
 use App\Models\MedCase;
@@ -45,6 +46,19 @@ public $successStatus = 200;
         //if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
         if(Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])){ 
             $user = Auth::user(); 
+
+
+            // for user checking if user is approved 
+            if (!Auth::user()->isActive) {
+                Auth::logout();
+                $this->logout();
+                
+                $result['success'] = false;
+                $result['message'] = "Your user account is under Admin review.";
+                $result['error'] = $e->getMessage();
+                return response()->json($result, 500);
+            }
+            // for user checking if user is approved 
             
             $data['userid'] = $user->id;
             $data['role'] = $user->role;
@@ -160,6 +174,55 @@ public $successStatus = 200;
         $result['success'] = true;
         $result['message'] = "User logged out successfully.";
         return response()->json($result, 200)->withCookie($cookie);
+
+    }
+
+
+    public function otpVerify(Request $request) {
+        //Inputs
+        $otp = $request->input('otp');
+        $userId = $request->input('userid');
+
+        $usr = User::find($userId);
+
+        if ($otp == $usr->emailotp || $otp == $usr->smsotp) {
+
+            $usr->emailotp = null;
+            $usr->smsotp = null;
+            $d = [
+                'event' => 'VARIFY_EMAIL',
+                'userid' => $userId,
+            ];
+
+            if ($usr->save()) {
+
+                if ($usr->role == '1') {
+
+                    $type = 'Mediator';
+
+                    Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
+
+                }
+                $type = 'User';
+
+                Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
+
+
+                $data['userid'] = $usr->id;
+                $result['success'] = "true";
+                $result['message'] = "OTP verified successfully.";
+                $result['data'] = $data;
+
+                return response()->json($result, 200);
+            }
+        } else {
+                $data['userid'] = $usr->id;
+                $result['success'] = "true";
+                $result['message'] = "OTP verification failed.";
+                $result['data'] = $data;
+
+                return response()->json($result, 500);
+        }
 
     }
 
