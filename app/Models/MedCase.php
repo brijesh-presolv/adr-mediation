@@ -1156,11 +1156,12 @@ class MedCase extends Model
 
         if (!empty($search)) {
 
-            $search = ltrim($search, "M0");
+            //$search = ltrim($search, "M0");
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 $search = (new DateTime($search))->format('Y-m-d');
                 $query->whereDate('mediation_case.created_at', $search);
             } elseif (is_numeric($search)) {
+                //echo $search;die();
                 $query->where('mediation_case.id', 'LIKE', "%{$search}%");
             } else {
 
@@ -1168,12 +1169,12 @@ class MedCase extends Model
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
-                    $q->orWhereHas('claimants', function ($cq) use ($search) {
+                    /* $q->orWhereHas('claimants', function ($cq) use ($search) {
                         $cq->where('name', 'LIKE', "%{$search}%");
                     });
                     $q->orWhereHas('respondents', function ($rq) use ($search) {
                         $rq->where('name', 'LIKE', "%{$search}%");
-                    });
+                    }); */
                 });
             }
         }
