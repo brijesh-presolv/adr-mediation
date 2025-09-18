@@ -91,6 +91,12 @@ class MedCase extends Model
                     $q->where(DB::raw('concat(users.first_name," ",users.last_name)'), 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%");
+                    $q->orWhereHas('claimants', function ($cq) use ($search) {
+                        $cq->where('name', 'LIKE', "%{$search}%");
+                    });
+                    $q->orWhereHas('respondents', function ($rq) use ($search) {
+                        $rq->where('name', 'LIKE', "%{$search}%");
+                    });
                 });
             }
         }
