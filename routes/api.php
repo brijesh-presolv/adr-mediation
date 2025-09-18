@@ -158,6 +158,9 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     // Case register api
     Route::post('/user/new-case', [App\Http\Controllers\API\User\MediationController::class, 'newCase']);
 
+    // User notification api
+    Route::get('/user/notifications', [App\Http\Controllers\API\User\MediationController::class, 'getNotifications']);
+
 });
 
 // User otp api
