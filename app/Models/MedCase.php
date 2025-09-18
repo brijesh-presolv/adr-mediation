@@ -46,7 +46,7 @@ class MedCase extends Model
     }
 
 
-    static function getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder){
+    static function getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id){
 
         $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
