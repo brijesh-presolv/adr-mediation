@@ -1152,8 +1152,8 @@ class CaseController extends Controller
                     $data['caseid'] = $caseId;
 
                     $result['success'] = false;
-                    $result['message'] = "Zoom Meeting Creataion failed.";
-                    $result['error'] = "Zoom Meeting Creataion failed.";
+                    $result['message'] = "Zoom meeting creation failed. Please try again.";
+                    $result['error']   = "Unable to create Zoom meeting.";
                     return response()->json($result, 200);
                 }
             }
@@ -1163,7 +1163,7 @@ class CaseController extends Controller
         } catch (Exception $e) {
 
             $result['success'] = false;
-            $result['message'] = "Zoom meeting creation failed.";
+            $result['message'] = "Zoom meeting creation failed. Please try again.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }

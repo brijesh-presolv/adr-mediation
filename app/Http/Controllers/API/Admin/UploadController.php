@@ -87,7 +87,11 @@ class UploadController extends Controller
 
             $token = $request->cookie('auth_token');
             if (!$token) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized: Missing token'], 401);
+                
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
             }
 
             $JWT_KEY = env('JWT_KEY');
@@ -102,11 +106,13 @@ class UploadController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors'  => $validator->errors()
-                ], 422);
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
             }
 
             $caseId = $request->caseId;
@@ -173,14 +179,14 @@ class UploadController extends Controller
             }
 
             $result['success'] = false;
-            $result['message'] = "Files not uploaded";
-            $result['error'] = "No valid files found";
+            $result['message'] = "Files could not be uploaded.";
+            $result['error']   = "No valid files found.";
             return response()->json($result, 400);
 
         } catch (\Exception $e) {
 
             $result['success'] = false;
-            $result['message'] = "Files not uploaded";
+            $result['message'] = "Files could not be uploaded. Please try again.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
@@ -215,8 +221,8 @@ class UploadController extends Controller
             if (!$med) {
 
                 $result['success'] = false;
-                $result['message'] = "Case not found";
-                $result['error'] = "Files not uploaded";
+                $result['message'] = "Case details not found. Please try again.";
+                $result['error']   = "File upload failed.";
                 return response()->json($result, 400);
             }
 
@@ -249,15 +255,15 @@ class UploadController extends Controller
             }
 
         $result['success'] = false;
-        $result['message'] = "Files not uploaded";
-        $result['error'] = "Files not uploaded";
+        $result['message'] = "Files could not be uploaded. Please try again.";
+        $result['error']   = "File upload failed";
         return response()->json($result, 400);
 
 
         } catch (\Exception $e) {
 
             $result['success'] = false;
-            $result['message'] = "Files not uploaded";
+            $result['message'] = "Files could not be uploaded. Please try again.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
