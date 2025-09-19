@@ -75,8 +75,7 @@ class User extends Authenticatable
                 if (!empty($search)) {
 
                     $query->where(function ($q) use ($search) {
-                        $q->where("first_name", "like", "%{$search}%")
-                        ->orWhere("last_name", "like", "%{$search}%")
+                        $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
                         ->orWhere("mobile_number", "like", "%{$search}%");
                     });
@@ -111,8 +110,7 @@ class User extends Authenticatable
                 if (!empty($search)) {
 
                     $query->where(function ($q) use ($search) {
-                        $q->where("first_name", "like", "%{$search}%")
-                        ->orWhere("last_name", "like", "%{$search}%")
+                        $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
                         ->orWhere("mobile_number", "like", "%{$search}%");
                     });
@@ -146,8 +144,7 @@ class User extends Authenticatable
                 if (!empty($search)) {
 
                     $query->where(function ($q) use ($search) {
-                        $q->where("first_name", "like", "%{$search}%")
-                        ->orWhere("last_name", "like", "%{$search}%")
+                        $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
                         ->orWhere("mobile_number", "like", "%{$search}%");
                     });
