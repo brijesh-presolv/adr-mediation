@@ -46,7 +46,7 @@ class CaseController extends Controller
         $start   = $request->input('iDisplayStart', 0);    // offset
         $length  = $request->input('iDisplayLength', 10);  // limit
         $search  = $request->input('search', '');
-        $batch_id = $request->input('batch_id', null);
+        //$batch_id = $request->input('batch_id', null);
         $sortOrder = $request->input('SortOrder', 'desc'); // asc or desc
         $columnName = $request->input('columnName', ''); 
         
@@ -54,7 +54,7 @@ class CaseController extends Controller
         $role = 2; // admin
         $bulk = 0;
 
-        $cases = MedCase::getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id);
+        $cases = MedCase::getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder);
 
         //dd($cases);
 
@@ -2441,7 +2441,7 @@ class CaseController extends Controller
                 foreach ($request->file('Settelmentfiles') as $file) {
                     
                     $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME)
-                        . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
+                        . "_date_" . date("YmdHis") . "." . $file->extension();
 
                     $savePath = "mediation_documents/mediation/{$caseId}/settelmentDocument";
                     $finalFilePath = $savePath . '/' . $filename;
