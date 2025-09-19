@@ -300,4 +300,14 @@ class MediationController extends Controller
 
         return $string;
     }
+
+
+    public function getNotifications() {
+        $data = Notification::userNotification();
+        
+        $result['success'] = true;
+        $result['message'] = "User notifications fetched successfully.";
+        $result['data'] = $data;
+        return response()->json($result, 200);
+    }
 }

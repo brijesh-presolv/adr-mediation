@@ -146,7 +146,9 @@ class UploadController extends Controller
             if ($request->hasFile('files')) {
                 foreach ($request->file('files') as $file) {
                     if ($file->isValid()) {
-                        $filename = "supportingdoc{$fileIndex}_M" . sprintf('%06d', $caseId) . "." . $file->getClientOriginalExtension();
+
+                        $originalFileName = $file->getClientOriginalName();
+                        $filename = $originalFileName. "_supportingdoc{$fileIndex}_M" . sprintf('%06d', $caseId) . "." . $file->getClientOriginalExtension();
                         $savePath = "mediation_documents/mediation/{$caseId}/supportingDocument/{$filename}";
 
                         Storage::disk('s3')->put($savePath, file_get_contents($file));
@@ -227,6 +229,7 @@ class UploadController extends Controller
             }
 
             $ext = pathinfo($selectDocument->getClientOriginalName(), PATHINFO_EXTENSION);
+            $originalFileName = $selectDocument->getClientOriginalName();
 
             if ($ext != 'pdf' && $ext != 'zip' && $ext != 'rar') {
 
@@ -239,7 +242,7 @@ class UploadController extends Controller
 
             } else {
 
-                $filename = 'supporting_document' . $med->id . time() . '.' . $selectDocument->getClientOriginalExtension();
+                $filename = $originalFileName . '_supporting_document_' . $med->id . date("YmdHis") . '.' . $selectDocument->getClientOriginalExtension();
                 $savePath = 'mediation_documents/mediation/' . $med->id . '/user/supportingDocument';
                 $finalFilePath = $savePath . '/' . $filename;
                 Storage::disk('s3')->put($finalFilePath, file_get_contents($selectDocument));
