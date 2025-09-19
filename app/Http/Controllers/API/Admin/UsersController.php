@@ -25,7 +25,7 @@ class UsersController extends Controller
 
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=0;
@@ -49,7 +49,7 @@ class UsersController extends Controller
         
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=0;
@@ -74,7 +74,7 @@ class UsersController extends Controller
 
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=0;
@@ -99,7 +99,7 @@ class UsersController extends Controller
 
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=1;
@@ -123,7 +123,7 @@ class UsersController extends Controller
         
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=1;
@@ -148,7 +148,7 @@ class UsersController extends Controller
 
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=1;
