@@ -26,6 +26,12 @@ class Zoom
     public static function generateAuthToken() {
         $curl = curl_init();
 
+        $client_id = env('ZOOM_API_KEY');
+        $client_secret = env('ZOOM_API_SECRET');
+
+
+        $basic_Zoom_Auth =base64_encode("{$client_id}:{$client_secret}");
+
         curl_setopt_array($curl, array(
         CURLOPT_URL => 'https://zoom.us/oauth/token?grant_type=account_credentials&account_id='.env('ZOOM_OAUTH_ACCOUNT_ID'),
         CURLOPT_RETURNTRANSFER => true,
@@ -36,13 +42,12 @@ class Zoom
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'POST',
         CURLOPT_HTTPHEADER => array(
-            'Authorization: Basic ZzVCSEtQaVJydW5JUUtyRHFubjZnOmI4VGcyNDE1a0hmZ2o3bFhzZzUxeG42ZkFBUjg3RUtx',
+            'Authorization: Basic '.$basic_Zoom_Auth,
             //'Cookie: TS01f92dc5=019f2012cab8ac3a8d11c6a71c9fc04c07c1327b114284b1b8ec203c0263e10d9a320016a7c65c8e09400d50ecc6e4cf81161012c8; TS01fdc528=019f2012cab8ac3a8d11c6a71c9fc04c07c1327b114284b1b8ec203c0263e10d9a320016a7c65c8e09400d50ecc6e4cf81161012c8; __cf_bm=kqUg8c0CldB4lb.j8qWQpaA6ULDvmO85saYytCtzmws-1697113968-0-ATt+SPMOwEH7DawLzRbfUjJ1LcYJCURxAm+anfz91Dn7UNO48vxNwpVpe8cXK1UDMIiwli8K42hLWWc9viTlpyY=; _zm_chtaid=217; _zm_csp_script_nonce=UO_o_hEASHGJ6J2LUMrNig; _zm_ctaid=QwDW2FgzSkepzmmd6HK3iQ.1697110165187.5ed1c18f8f05c0a583711d73b0b8e052; _zm_currency=USD; _zm_mtk_guid=3c1112b8f4074e5bb93b7baec09669f3; _zm_page_auth=us02_c_FfRk9NCiS3GB__nj4R0mgA; _zm_ssid=us02_c_88rplQ0cR_OIa6693LFFbg; _zm_visitor_guid=3c1112b8f4074e5bb93b7baec09669f3; cred=5C662D8C7E06D6B1612CDFE81097A933'
         ),
         ));
 
         $response = curl_exec($curl);
-
         curl_close($curl);
 
         $final_response = json_decode($response);
@@ -58,7 +63,7 @@ class Zoom
         $zoom_token =  self::generateAuthToken(); // Oauth token
         /*****************************/
         $curl = curl_init(); 
-        $c_url = env('ZOOM_API_URL').'users/info@presolv360.com/meetings';
+        $c_url = env('ZOOM_API_URL').'users/'.env('Zoom_Account_User').'/meetings';
         curl_setopt_array($curl, array(
             CURLOPT_URL => $c_url,
             CURLOPT_RETURNTRANSFER => true,
@@ -84,7 +89,7 @@ class Zoom
                         "type": 1,
                         "weekly_days": "1"
                     },
-                    "schedule_for": "info@presolv360.com",
+                    "schedule_for": "ukmediation@presolv360.com",
                     "settings": {
                         "additional_data_center_regions": [
                         "TY"
@@ -107,7 +112,7 @@ class Zoom
                         "authentication_domains": "",
                         "authentication_exception":  [
                         {
-                            "email": "info@presolv360.com",
+                            "email": "ukmediation@presolv360.com",
                             "name": "Mediation Team"
                         }
                         ],
@@ -131,16 +136,13 @@ class Zoom
                         "email_notification": true,
                         "encryption_type": "enhanced_encryption",
                         "focus_mode": true,
-                        "global_dial_in_countries": [
-                        "US"
-                        ],
                         "host_video": false,
                         "join_before_host": false,
                         "language_interpretation": {
                         "enable": true,
                         "interpreters": [
                             {
-                            "email": "info@presolv360.com",
+                            "email": "ukmediation@presolv360.com",
                             "languages": "US,FR"
                             }
                         ]
@@ -166,7 +168,7 @@ class Zoom
                     },
                     "start_time": "'.$date_format_api.'",
                     "template_id": "Dv4YdINdTk+Z5RToadh5ug==",
-                    "timezone": "Asia/Calcutta",
+                    "timezone": "Europe/London",
                     "topic": "Mediation Session Created for Case - M'.sprintf("%06d", $case_id).'",
                     "tracking_fields": [
                         {
@@ -241,7 +243,7 @@ class Zoom
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'PATCH',
         CURLOPT_POSTFIELDS =>'{
-        "schedule_for": "info@presolv360.com",
+        "schedule_for": "ukmediation@presolv360.com",
         "agenda": "'.$note.'",
         "duration": 60,
         "password": "123456",
@@ -276,7 +278,7 @@ class Zoom
             "authentication_domains": "",
             "authentication_exception": [
             {
-                "email": "info@presolv360.com",
+                "email": "ukmediation@presolv360.com",
                 "name": "Mediation Team",
                 "join_url": ""
             }
@@ -308,9 +310,6 @@ class Zoom
             "email_notification": true,
             "encryption_type": "enhanced_encryption",
             "focus_mode": true,
-            "global_dial_in_countries": [
-            "US"
-            ],
             "global_dial_in_numbers": [
             {
                 
@@ -322,7 +321,7 @@ class Zoom
             "enable": true,
             "interpreters": [
                 {
-                "email": "info@presolv360.com",
+                "email": "ukmediation@presolv360.com",
                 "languages": "US,FR"
                 }
             ]
@@ -347,7 +346,7 @@ class Zoom
         },
         "start_time": "'.$date_format_api.'",
         "template_id": "5Cj3ceXoStO6TGOVvIOVPA==",
-        "timezone": "Asia/Calcutta",
+        "timezone": "Europe/London",
         "topic": "Mediation Session Meeting Updated for Case - M'.sprintf("%06d", $case_id).'",
         "tracking_fields": [
             {
