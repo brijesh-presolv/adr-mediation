@@ -75,24 +75,27 @@ class CaseController extends Controller
         $data = array();
         if(count($cases) > 0) {
         foreach ($cases as $key => $values) {
-            
-                $id = $values->id;
-                $keyInc = $key + 1;
-                $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
-                $data[$key]['keyInc'] = $keyInc;
-                $data[$key]['batch_id'] = $values->batch_id;
-                $data[$key]['ref_id'] = $values->ref_id;
-                $data[$key]['confirm_status'] = $values->confirm_status;
-                $data[$key]['case_status'] = $values->case_status;
-                $data[$key]['created_at'] = $values->created_at;
-                $data[$key]['mediator_name'] = $values->mediator_name;
-                $data[$key]['mediator_id'] = $values->mediator_id;
-                $data[$key]['mediator_status'] = $values->mediator_status;
-                $data[$key]['batch_name'] = $values->batch_name;
 
-                $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
-                $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
+            $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
+            $id = $values->id;
+            $keyInc = $key + 1;
+
+            $data[$key]['id'] = $id;
+            $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+            $data[$key]['keyInc'] = $keyInc;
+            $data[$key]['batch_id'] = $values->batch_id;
+            $data[$key]['ref_id'] = $values->ref_id;
+            $data[$key]['confirm_status'] = $values->confirm_status;
+            $data[$key]['case_status'] = $values->case_status;
+            $data[$key]['created_at'] = $values->created_at;
+            $data[$key]['admin_approved_date'] = $admin_approved_date;
+            $data[$key]['mediator_name'] = $values->mediator_name;
+            $data[$key]['mediator_id'] = $values->mediator_id;
+            $data[$key]['mediator_status'] = $values->mediator_status;
+            $data[$key]['batch_name'] = $values->batch_name;
+
+            $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
+            $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
         }
         }
 
@@ -141,8 +144,10 @@ class CaseController extends Controller
 
             foreach ($casesData as $key => $values) {
 
+                $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
                 $id = $values->id;
                 $keyInc = $key + 1;
+
                 $data[$key]['id'] = $id;
                 $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
@@ -151,6 +156,7 @@ class CaseController extends Controller
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
                 $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
@@ -206,8 +212,10 @@ class CaseController extends Controller
 
             foreach ($casesData as $key => $values) {
 
+                $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
                 $id = $values->id;
                 $keyInc = $key + 1;
+
                 $data[$key]['id'] = $id;
                 $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
@@ -216,6 +224,7 @@ class CaseController extends Controller
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
                 $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
