@@ -178,16 +178,15 @@ class UsersController extends Controller
             'email'        => 'required|email|unique:users,email,' . $request->id,
             //'username'     => 'required|string|max:100|unique:users,username,' . $request->id,
             'mobile_number'=> 'required|string|max:15|unique:users,mobile_number,' . $request->id,
-            'organization' => 'nullable|string|max:255',
-            'country_code' => 'nullable|string|max:10',
+           // 'organization' => 'nullable|string|max:255',
+            //'country_code' => 'nullable|string|max:10',
             'address'      => 'nullable|string|max:255',
-            'address1'     => 'nullable|string|max:255',
+           // 'address1'     => 'nullable|string|max:255',
             'pincode'      => 'nullable|string|max:20',
             'city'         => 'nullable|string|max:100',
             'state'        => 'nullable|string|max:100',
             'country'      => 'nullable|string|max:100',
-            'signature'    => 'nullable|mimes:jpg,jpeg,png|max:4048',  
-            'profilePic'   => 'nullable|mimes:jpg,jpeg,png|max:4048',
+            //'signature'    => 'nullable|mimes:jpg,jpeg,png|max:4048',  
         ]);
 
         if ($validator->fails()) {
