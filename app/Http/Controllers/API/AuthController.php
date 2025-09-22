@@ -91,7 +91,7 @@ class AuthController  extends Controller
                                     ->cookie(
                                         'auth_token',           // cookie name
                                         $token,       // cookie value
-                                        360,                     // minutes
+                                        60 * 24,                     // minutes
                                         '/',
                                         null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
                                         true,                   // secure = true (required for cross-site cookies on HTTPS)
