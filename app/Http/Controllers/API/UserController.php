@@ -74,7 +74,7 @@ public $successStatus = 200;
                                 ->cookie(
                                         'auth_token',           // cookie name
                                         $result['token'],       // cookie value
-                                        360,                     // minutes
+                                        60 * 24,                     // minutes
                                         '/',
                                         null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
                                         true,                   // secure = true (required for cross-site cookies on HTTPS)
@@ -222,6 +222,47 @@ public $successStatus = 200;
                 $result['data'] = $data;
 
                 return response()->json($result, 500);
+        }
+
+    }
+
+
+    public function forgotPassword(Request $request) {
+
+        //Inputs
+        $email = $request->input('email');
+        $usr = User::where(['email' => $email])->first();
+
+        if ($usr) {
+            if ($usr->role == 0) {
+                $type = 'User';
+            } else {
+                $type = 'Mediator';
+            }
+
+            $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            $pwd = substr(str_shuffle($chars), 0, 8);
+
+            $usr->password = Hash::make($pwd);
+
+            $usr->save();
+            $d = [
+                'event' => 'FORGOT_PASSWORD',
+                'userid' => $usr->id,
+            ];
+
+            Email::send($d, $usr->email, env('EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
+
+            $result['success'] = true;
+            $result['message'] = "New password sent on email.";
+            $result['data'] = $email;
+            return response()->json($result, 200);
+
+        } else {
+            $result['success'] = false;
+            $result['message'] = "No user found with this email ID.";
+            $result['data'] = $email;
+            return response()->json($result, 500);
         }
 
     }
