@@ -131,7 +131,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/user-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'userApprove']);
     Route::post('/admin/users/user-newreq', [App\Http\Controllers\API\Admin\UsersController::class, 'userNewreq']);
     Route::post('/admin/users/user-rejected', [App\Http\Controllers\API\Admin\UsersController::class, 'userRejected']);
-    Route::post('/admin/users/update', [App\Http\Controllers\API\API\Admin\UsersController::class, 'update']);
+    Route::post('/admin/users/update', [App\Http\Controllers\API\Admin\UsersController::class, 'update']);
     Route::post('/admin/users/user-delete', [App\Http\Controllers\API\Admin\UsersController::class, 'deleteUser']);
     Route::post('/admin/users/changeRole', [App\Http\Controllers\API\Admin\UsersController::class, 'ChangeRole']);
     Route::post('/admin/users/status-change-active', [App\Http\Controllers\API\Admin\UsersController::class, 'statusChange']);
@@ -155,14 +155,13 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     // User profile update api
     Route::get('/user/show-profile', [App\Http\Controllers\API\User\ProfileController::class, 'getProfileData']);
     Route::post('/user/edit-profile-data', [App\Http\Controllers\API\User\ProfileController::class, 'editProfileData']);
+    Route::get('/user/change-password', [App\Http\Controllers\API\User\ProfileController::class, 'changePassword']);
 
     // Case register api
     Route::post('/user/new-case', [App\Http\Controllers\API\User\MediationController::class, 'newCase']);
 
     // User notification api
     Route::get('/user/notifications', [App\Http\Controllers\API\User\MediationController::class, 'getNotifications']);
-
-    Route::get('/user/change-password', [App\Http\Controllers\API\User\MediationController::class, 'changePassword']);
 
 });
 
