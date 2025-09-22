@@ -46,7 +46,7 @@ class CaseController extends Controller
         $start   = $request->input('iDisplayStart', 0);    // offset
         $length  = $request->input('iDisplayLength', 10);  // limit
         $search  = $request->input('search', '');
-        //$batch_id = $request->input('batch_id', null);
+        $batch_id = $request->input('batch_id', null);
         $sortOrder = $request->input('SortOrder', 'desc'); // asc or desc
         $columnName = $request->input('columnName', ''); 
         
