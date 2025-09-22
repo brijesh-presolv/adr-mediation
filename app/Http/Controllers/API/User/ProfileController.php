@@ -236,4 +236,64 @@ class ProfileController extends Controller
         }
     }
 
+    public function changePassword(Request $request)
+    {
+
+        try{
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required|string|min:6',
+                'password'     => 'required|string|min:8|confirmed', 
+                // Laravel automatically checks new_password == password_confirmation
+            ]);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            $user = User::find($userId);
+
+            if (!Hash::check($request->current_password, $user->password)) {
+
+                $result['success'] = false;
+                $result['message'] = "Current password is incorrect.";
+                $result['error'] = "Current password is incorrect.";
+                return response()->json($result, 422);
+            }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+            $result['success'] = false;
+            $result['message'] = "Password changed successfully.";
+            return response()->json($result, 422);
+
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Fetching case data failded";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
 }

@@ -162,6 +162,8 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     // User notification api
     Route::get('/user/notifications', [App\Http\Controllers\API\User\MediationController::class, 'getNotifications']);
 
+    Route::get('/user/change-password', [App\Http\Controllers\API\User\MediationController::class, 'changePassword']);
+
 });
 
 // User otp api
