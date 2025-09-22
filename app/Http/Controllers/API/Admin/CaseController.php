@@ -54,7 +54,7 @@ class CaseController extends Controller
         $role = 2; // admin
         $bulk = 0;
 
-        $cases = MedCase::getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder);
+        $cases = MedCase::getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id);
 
         //dd($cases);
 
