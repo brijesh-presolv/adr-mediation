@@ -168,6 +168,8 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
 // User otp api
 Route::post('/otp-verify', [App\Http\Controllers\API\UserController::class, 'otpVerify']);
 
+// Forgot password api
+Route::post('/forgot-pwd', [App\Http\Controllers\API\UserController::class, 'forgotPassword']);
 
 
 
