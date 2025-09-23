@@ -2562,6 +2562,7 @@ class CaseController extends Controller
 
     public function closeCaseStatus(Request $request) {
         try{
+
             $token = $request->cookie('auth_token');
             if (!$token) {
 
@@ -2578,8 +2579,18 @@ class CaseController extends Controller
             $validator = Validator::make($request->all(), [
                 'caseid' => 'required|integer',
                 'status' => 'required|integer',
-                'comment' => 'required|string'
+                //'comment' => 'required|string'
             ]);
+
+            if(Mediation_status_log::STATUS_WITHDRAWN  != $request->input('status')){
+
+                $validator = Validator::make($request->all(), [
+                        'caseid' => 'required|integer',
+                        'status' => 'required|integer',
+                        'Settelmentfiles' => 'required',
+                        'Settelmentfiles.*' => 'mimes:csv,txt,xlx,xls,pdf',
+                    ]);
+            }
 
             //Inputs
             $caseid = $request->input('caseid');
@@ -2596,13 +2607,23 @@ class CaseController extends Controller
                 $result['error'] = $validator->errors();
                 return response()->json($result, 422);
             }
+          
 
+            if ($status != null) {
 
-            if ($status != null && $comment != null) {
                 $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
                     ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseid)
                     ->where("mediators_mediation_cases_status.status", "=", 1)
                     ->first();
+
+                if(empty($mediator) && $status != Mediation_status_log::STATUS_WITHDRAWN){
+
+                    $result['success'] = false;
+                    $result['message'] = "Case not accepted by mediator";
+                    $result['error'] = "Case not accepted by mediator";
+                    return response()->json($result, 400);
+                }
+
                 $inv_id = "";
                 $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
                 foreach ($inv as $v) {
@@ -2612,7 +2633,6 @@ class CaseController extends Controller
                         $inv_id = $inv_id . "," . $v->id;
                     }
                 }
-
 
                 if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
                     // if (Auth::user()->role == 1) {
@@ -2634,6 +2654,60 @@ class CaseController extends Controller
                     //}
                 }
 
+                if(Mediation_status_log::STATUS_WITHDRAWN  != $status){
+
+                    if ($request->hasFile('Settelmentfiles')) {
+
+                        $Settelmentfiles = $request->file('Settelmentfiles');
+                        //print_r($Settelmentfiles);die();
+                        $insert = [];
+
+                        foreach ($request->file('Settelmentfiles') as $file) {
+                            
+                            $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME)
+                                . "_date_" . date("YmdHis") . "." . $file->extension();
+
+                            $savePath = "mediation_documents/mediation/{$caseid}/settelmentDocument";
+                            $finalFilePath = $savePath . '/' . $filename;
+
+                            Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
+
+                            $insert[] = [
+                                'file_path'        => $filename,
+                                'uploaded_by'      => $userId,
+                                'mediation_case_id'=> $caseid,
+                                'created_at'      => now(),
+                            ];
+                        }
+
+                        DB::table('document_settlements')->insert($insert);
+                        
+                        $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseid)
+                            ->where("mediators_mediation_cases_status.status", "=", 1)
+                            ->first();
+                        $inv_id = "";
+                        $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
+                        foreach ($inv as $v) {
+                            if ($inv_id == "") {
+                                $inv_id = $v->id;
+                            } else {
+                                $inv_id = $inv_id . "," . $v->id;
+                            }
+                        }
+                        Common_function::MedNotification($caseid, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+                        $this->send_settlement_agreement_party($caseid, $insert);
+
+                    } else {
+
+                            $result['success'] = false;
+                            $result['message'] = "Settlement file field is required";
+                            $result['error'] = "No valid files found";
+                            return response()->json($result, 400);
+                    }
+
+                }
 
                 $user = MedCase::find($caseid);
                 $user->confirm_status = 2;

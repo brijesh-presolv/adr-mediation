@@ -16,4 +16,5 @@ class Mediation_status_log extends Model
     const STATUS_WITHDRAWN= 5;
     const STATUS_RESOLVED= 6;
     const STATUS_UNRESOLVED= 7;
+    const STATUS_PARTIALLY_RESOLVED= 8;
 }
