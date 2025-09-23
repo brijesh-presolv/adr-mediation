@@ -163,7 +163,10 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     // User notification api
     Route::get('/user/notifications', [App\Http\Controllers\API\User\MediationController::class, 'getNotifications']);
 
+    // User track api
+    Route::post('/user/case-track', [App\Http\Controllers\API\User\MediationController::class, 'caseTrack']);
 });
+ 
 
 // User otp api
 Route::post('/otp-verify', [App\Http\Controllers\API\UserController::class, 'otpVerify']);
