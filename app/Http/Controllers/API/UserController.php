@@ -55,7 +55,7 @@ public $successStatus = 200;
                 
                 $result['success'] = false;
                 $result['message'] = "Your user account is under Admin review.";
-                $result['error'] = $e->getMessage();
+                $result['error'] = "Your user account is under Admin review.";
                 return response()->json($result, 500);
             }
             // for user checking if user is approved 
@@ -74,7 +74,7 @@ public $successStatus = 200;
                                 ->cookie(
                                         'auth_token',           // cookie name
                                         $result['token'],       // cookie value
-                                        60 * 24,                     // minutes
+                                        (60 * 24),                     // minutes
                                         '/',
                                         null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
                                         true,                   // secure = true (required for cross-site cookies on HTTPS)
