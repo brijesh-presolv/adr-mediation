@@ -139,7 +139,7 @@ class User extends Authenticatable
     {
 
         $query = User::select('*')->where("role", "=", $role)
-                    ->where('status', 0);
+                    ->where('is_deleted', 1);
 
                 if (!empty($search)) {
 

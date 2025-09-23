@@ -70,7 +70,6 @@ class UsersController extends Controller
 
     public function userRejected(Request $request)
     {
-        $users = User::where("role", "=", 0)->where('is_deleted', 1)->orderBy('id', 'DESC')->get();
 
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
