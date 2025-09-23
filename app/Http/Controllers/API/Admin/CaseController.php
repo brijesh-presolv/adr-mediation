@@ -35,6 +35,7 @@ use DateTime;
 use DateTimeZone;
 use Carbon\Carbon;
 use App\Http\Helpers\Zoom;
+use Illuminate\Support\Facades\File;
 
 
 class CaseController extends Controller 
@@ -1426,7 +1427,7 @@ class CaseController extends Controller
         $caseId = $request->input('caseId');
 
         $data = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
-            ->where("id", "=", $id)
+            ->where("consent_disclosures.id", "=", $id)
             ->first();
         if (isset($data)) {
             if ($data->file_name != null) {
