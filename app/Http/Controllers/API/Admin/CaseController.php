@@ -41,6 +41,36 @@ class CaseController extends Controller
 {
     use UploadTrait;
 
+    public function casesCount(Request $request){
+
+        $role = 2; // admin
+        $bulk = 0;
+        
+        $total_newreq_case = MedCase::where("mediation_case.confirm_status", 0)
+                            ->where("mediation_case.bulk_flag", $bulk)
+                            ->count();
+        $total_ongoing_case = MedCase::where("mediation_case.confirm_status", 1)
+                            ->where("mediation_case.bulk_flag", $bulk)
+                            ->count();
+        $total_closed_case = MedCase::where("mediation_case.confirm_status", 2)
+                            ->where("mediation_case.bulk_flag", $bulk)
+                            ->count();
+        $total_rejected_case = MedCase::where("mediation_case.confirm_status", 3)
+                            ->where("mediation_case.bulk_flag", $bulk)
+                            ->count();
+
+        $casedata['cases']['total_newreq_case']=$total_newreq_case;
+        $casedata['cases']['total_ongoing_case']=$total_ongoing_case;
+        $casedata['cases']['total_closed_case']=$total_closed_case;
+        $casedata['cases']['total_rejected_case']=$total_rejected_case;
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $casedata;
+        return response()->json($result, 200);
+
+    }
+
     public function newreq(Request $request){
 
         $start   = $request->input('iDisplayStart', 0);    // offset
