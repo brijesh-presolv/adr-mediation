@@ -2696,12 +2696,13 @@ class CaseController extends Controller
                         foreach ($request->file('Settelmentfiles') as $file) {
                             
                             $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME)
-                                . "_date_" . date("YmdHis") . "." . $file->extension();
+                                . "_date_" . date("YmdHis") . "." . $file->getClientOriginalExtension();
 
-                            $savePath = "mediation_documents/mediation/{$caseid}/settelmentDocument";
-                            $finalFilePath = $savePath . '/' . $filename;
+                            //$savePath = "mediation_documents/mediation/{$caseid}/settelmentDocument";
+                            //$finalFilePath = $savePath . '/' . $filename;
+                            $savePath = "mediation_documents/mediation/{$caseid}/settelmentDocument/{$filename}";
 
-                            Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
+                            Storage::disk('s3')->put($savePath, file_get_contents($file));
 
                             $insert[] = [
                                 'file_path'        => $filename,
