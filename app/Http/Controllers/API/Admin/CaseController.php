@@ -1467,7 +1467,7 @@ class CaseController extends Controller
         }
     }
 
-        public function previewDisclosures(Request $request)
+    public function previewDisclosures(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
@@ -1513,6 +1513,8 @@ class CaseController extends Controller
                     'Bucket' => env('AWS_BUCKET'),
                     'Key'    => $filenametostore
                 ]);
+
+                $body = $stream['Body'];
 
                 /* return response($stream['Body'], 200)->withHeaders([
                     'Content-Type'        => $stream['ContentType'],
