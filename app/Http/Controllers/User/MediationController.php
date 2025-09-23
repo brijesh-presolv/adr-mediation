@@ -76,9 +76,9 @@ class MediationController extends Controller
             // 'docs_party_ids' => 'required',
         ]);
 
-        if ($validatedData->fails()) {
-            return response()->json(['errors' => $validatedData->errors()]);
-        }
+        // if ($validatedData->fails()) {
+        //     return response()->json(['errors' => $validatedData->errors()]);
+        // }
 
 
         $inuser = InvoledUser::where('userId', Auth::user()->id)->where('userPlanId', $request->caseId)->first();
