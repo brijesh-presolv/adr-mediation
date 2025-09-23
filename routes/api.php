@@ -80,7 +80,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/cases/newreq', [App\Http\Controllers\API\Admin\CaseController::class, 'newreq']);
     Route::post('/admin/cases/closed', [App\Http\Controllers\API\Admin\CaseController::class, 'closed']);
     Route::post('/admin/cases/rejected', [App\Http\Controllers\API\Admin\CaseController::class, 'rejected']);
-
+    Route::get('/admin/cases/cases-count', [App\Http\Controllers\API\Admin\CaseController::class, 'casesCount']);
     // Case approve api
     Route::get('/admin/cases/mediator-listing', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorList']);
     Route::post('/admin/cases/case-approve', [App\Http\Controllers\API\Admin\CaseController::class, 'mediatorAssign']);
