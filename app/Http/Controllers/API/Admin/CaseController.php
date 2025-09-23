@@ -1506,8 +1506,19 @@ class CaseController extends Controller
                     'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
                 ]);
             } else {
+                
                 $filenametostore = 'mediation_documents/mediation/' . $id . '/' . $data->file_name;
                 $s3Client = Storage::cloud()->getAdapter()->getClient();
+
+                $objectExists = $s3Client->doesObjectExist(env('AWS_BUCKET'), $filenametostore);
+
+            if (!$objectExists) {
+
+                $result['success'] = false;
+                $result['message'] = "File not found";
+                $result['error'] =  "File Fetching failed.";
+                return response()->json($result, 404);
+            }
 
                 $stream = $s3Client->getObject([
                     'Bucket' => env('AWS_BUCKET'),
