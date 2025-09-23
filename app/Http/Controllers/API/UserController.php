@@ -68,13 +68,13 @@ public $successStatus = 200;
             $result['message'] = "User has logged in successfully.";
             $result['data'] = $data;
             $result['token'] = Token::createToken($data); 
-            $result['expiry_token'] = 900;
+            $result['expiry_token'] = 86400;
 
             return response()->json($result, $this->successStatus)
                                 ->cookie(
                                         'auth_token',           // cookie name
                                         $result['token'],       // cookie value
-                                        (60 * 24),                     // minutes
+                                        (60 * 60 * 24),         // minutes
                                         '/',
                                         null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
                                         true,                   // secure = true (required for cross-site cookies on HTTPS)
