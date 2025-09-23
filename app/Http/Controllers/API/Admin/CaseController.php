@@ -1467,6 +1467,79 @@ class CaseController extends Controller
         }
     }
 
+        public function previewDisclosures(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id'             => 'required|integer',
+            'caseId'             => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $id = $request->input('id');
+        $caseId = $request->input('caseId');
+
+        $data = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
+            ->where("consent_disclosures.id", "=", $id)
+            ->first();
+        if (isset($data)) {
+            if ($data->file_name != null) {
+                $dis_file_name = $data->file_name;
+                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+            } else {
+                $dis_file_name = "M" . sprintf("%06d", $id) . "_party.pdf";
+                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+            }
+            // dd($exist_file);
+            if (File::exists($exist_file)) {
+                $pdf = file_get_contents($exist_file);
+                return response($pdf, 200, [
+                    'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
+                ]);
+            } else {
+                $filenametostore = 'mediation_documents/mediation/' . $id . '/' . $data->file_name;
+                $s3Client = Storage::cloud()->getAdapter()->getClient();
+
+                $stream = $s3Client->getObject([
+                    'Bucket' => env('AWS_BUCKET'),
+                    'Key'    => $filenametostore
+                ]);
+
+                /* return response($stream['Body'], 200)->withHeaders([
+                    'Content-Type'        => $stream['ContentType'],
+                    'Content-Length'      => $stream['ContentLength'],
+                    'Content-Disposition' => 'attachment; filename="' . $data->file_name . '"'
+                ]); */
+
+                 return response()->stream(function () use ($body) {
+                    while (!$body->eof()) {
+                        echo $body->read(1024); // read in chunks
+                    }
+                }, 200, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="' . basename($data->file_name) . '"',
+                    'Content-Length' => $stream['ContentLength'],
+                ]);
+            }
+        } else {
+
+            $result['success'] = false;
+            $result['message'] = "File Not available.";
+            $result['error'] = "File Not available.";
+            return response()->json($result, 500);
+        }
+    }
+    
+
     public function getMeetingSession(Request $request)
     {
 

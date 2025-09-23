@@ -310,4 +310,51 @@ class MediationController extends Controller
         $result['data'] = $data;
         return response()->json($result, 200);
     }
+
+
+    public function caseTrack(Request $request) {
+        try {
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            //$userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'required|integer'
+            ]);
+
+            //Input
+            $caseid = $request->input('caseid');
+
+            $email = EmailTrack::getByCaseId($caseid);
+
+            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseid)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+
+            $data['caseid'] = $caseid;
+            $data['email'] = $email;
+            $data['mediator'] = $mediator;
+
+            $result['success'] = true;
+            $result['message'] = "Track loaded successfully.";
+            $result['data'] = $data;
+            return response()->json($result, 200);
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case track not loaded.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
 }
