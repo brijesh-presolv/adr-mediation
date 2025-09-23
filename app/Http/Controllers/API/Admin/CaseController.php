@@ -1404,7 +1404,7 @@ class CaseController extends Controller
         }
     }
 
-    public function downloadDisclosures($id)
+    public function downloadDisclosures(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
