@@ -2286,7 +2286,7 @@ class CaseController extends Controller
 
                     
                     
-                    $invitation = $this->mediator_appointment($request->id, $mediator_id);
+                    $invitation = $this->mediator_appointment($caseid, $mediator_id);
                     
                     
                     $invmodel = InvitationFiles::where('case_id', $caseid)->orderByDesc('id')->limit(1)->first();
