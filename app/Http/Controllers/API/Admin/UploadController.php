@@ -199,6 +199,19 @@ class UploadController extends Controller
 
         try {
 
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+                
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
             $validator = Validator::make($request->all(), [
                 'caseId' => 'required|integer',
                 'fileupload' => 'required|file|mimes:pdf,zip,rar|max:20480'
