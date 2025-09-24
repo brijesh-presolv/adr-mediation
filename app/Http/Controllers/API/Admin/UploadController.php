@@ -199,6 +199,19 @@ class UploadController extends Controller
 
         try {
 
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+                
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
             $validator = Validator::make($request->all(), [
                 'caseId' => 'required|integer',
                 'fileupload' => 'required|file|mimes:pdf,zip,rar|max:20480'
@@ -243,11 +256,35 @@ class UploadController extends Controller
             } else {
 
                 $filename = $originalFileName . '_supporting_document_' . $med->id . date("YmdHis") . '.' . $selectDocument->getClientOriginalExtension();
-                $savePath = 'mediation_documents/mediation/' . $med->id . '/user/supportingDocument';
+                $savePath = 'mediation_documents/mediation/' . $med->id . '/supportingDocument';
                 $finalFilePath = $savePath . '/' . $filename;
+
                 Storage::disk('s3')->put($finalFilePath, file_get_contents($selectDocument));
                 $med->documentPath = $filename;
                 $med->save();
+
+                $inv_id = "";
+                
+                if ($request->has('docs_party_ids')) {
+                    $inv_id = is_array($request->docs_party_ids)
+                        ? implode(",", $request->docs_party_ids)
+                        : $request->docs_party_ids;
+                } else {
+                    $inv = InvoledUser::select('id')->where('userPlanId', $caseId)->pluck('id')->toArray();
+                    $inv_id = implode(",", $inv);
+                }
+
+                $uploadedFiles[] = [
+                    'file_name'       => $filename,
+                    'access'          => $inv_id,
+                    'mediator_access' => 0,
+                    'uploaded_by'     => $userId,
+                    'case_id'         => $caseId,
+                    'created_at'      => now(),
+                    'updated_at'      => now()
+                ];
+
+                DB::table('manage_files')->insert($uploadedFiles);
 
                 $data['caseid']=$caseId;
 
