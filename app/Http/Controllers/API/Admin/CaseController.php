@@ -21,6 +21,7 @@ use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
 use App\Models\Mediators_mediation_cases_status;
 use App\Models\InvitationFiles;
+use App\Models\Reminder;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use App\Models\BulkLog;
@@ -444,14 +445,30 @@ class CaseController extends Controller
                         $mediation_status_log->description = "Request Confirm";
                         $mediation_status_log->save();
 
-                        // $reminder = new Reminder;
-                        // $reminder->case_Id = $request->id;
-                        // $reminder->save();
+                        $reminder = new Reminder;
+                        $reminder->case_Id = $caseid;
+                        $reminder->save();
 
-                        $finaldata['discussion'] = $discussion_text;
-                        $finaldata['caseid'] = $caseid;
-                        $result['data'] = $finaldata;
-                        return response()->json($result, 200);
+                        // generate pdf
+                        $itm_invitation = $this->invitation_mediate($caseid);
+
+                        $invmodel = InvitationFiles::where('case_id', $caseid)->orderByDesc('id')->limit(1)->first();
+                        if (!isset($invmodel)) {
+                            // dd("if");
+                            $invmodel = new InvitationFiles();
+                        }
+                        $invmodel->case_id = $caseid;
+                        $invmodel->file_name = $itm_invitation;
+                        // $invmodel->save();
+                        //send invitation
+                        $invmodel->save();
+
+                        if ($this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med)) {
+                            $finaldata['discussion'] = $discussion_text;
+                            $finaldata['caseid'] = $caseid;
+                            $result['data'] = $finaldata;
+                            return response()->json($result, 200);
+                        }
 
                 }
             }
@@ -3240,6 +3257,151 @@ class CaseController extends Controller
 
 
 
+    }
+
+
+    public function sned_invitation($id, $invitation, $bulk_flag = 0, $stop_ip = 0, $stop_rp = 0, $stop_med = 0)
+    {
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+
+
+        $finalFilePath = 'mediation_documents/mediation/' . $id . '/' . $invitation;
+        $whatsappSend = Storage::disk('s3')->url($finalFilePath);
+
+        $initiating_party = "";
+        $initiating_phone = [];
+        $initiating_email = [];
+        $responding_party = "";
+        $ini_userPlanId = "";
+        $responding_email = [];
+        $responding_phone = [];
+        $d1 = [
+            'event' => 'ACPTARB_ADM_INI',
+            'case_id' => $id,
+        ];
+        $d2 = [
+            'event' => 'ACPTARB_ADM_RES',
+            'case_id' => $id,
+        ];
+
+
+
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $id,
+        ];
+        // $zoom_date_temp = "22/08/2025/11:00AM-2:00PM";
+        // $zoom_link_temp = "https://us02web.zoom.us/j/89286992358?pwd=Ugw7A4IFnBL5a4DP3E94e14Xg7mFv4.1";
+
+
+        // $mid = "M" . sprintf("%06d", $id);
+        // $responding_phone = "";
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($initiating_party == "") {
+                    if ($inv->organization != null) {
+                        $initiating_party = $inv->organization;
+                    } else {
+                        $initiating_party = $inv->name;
+                    }
+                }
+                $ini_userPlanId = $inv->userPlanId;
+                $initiating_phone[] = $inv->userPhone;
+                $initiating_email[] = $inv->userEmail;
+            } else if ($inv->isOnboarded == 0) {
+                $code = $inv->joinCode;
+                if ($inv->name != "") {
+                    if ($responding_party == "") {
+                        $responding_party = $inv->name;
+                    }
+                }
+                $responding_phone[] = $inv->userPhone;
+                $responding_party_name[] = $inv->name;
+                if ($inv->userEmail != "" && $stop_rp == 0) {
+                    SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
+                }
+                
+                //***************** */ L10 session email go ******************//
+                if ($bulk_flag == 1) {
+                    if ($inv->userEmail != "") {
+                        SendGrid::send($d, $inv->userEmail, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
+                    }
+                }
+                //***************** */ L10 session email go ******************//
+            }
+
+        }
+        
+
+
+        if ($bulk_flag == 0) {
+            if ($responding_party != "") {
+
+                foreach ($initiating_email as $ini_email) {
+                    if($stop_ip == 0) {
+                        SendGrid::send($d1, $ini_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
+                    }
+
+                }
+
+
+               
+            }
+        }
+
+        return true;
+    }
+
+
+    public function invitation_mediate($id)
+    {
+        
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
+        'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)
+            ->where("mediation_case.id", "=", $id)->get();
+
+         //dd($data["case"]);
+
+        // Added for icici bank ITM layout //
+        if($data["case"]->batch_id == 63){
+            $pdf = PDF::loadView('pdf.invitation_mediation_icici', $data);
+        } else {
+
+
+            if($data['case']->bulk_flag == 1){
+                $pdf = PDF::loadView('pdf.invitation_mediation_all', $data, [], [
+                    'title' => 'ITM' . ' ' . $id,
+                    'showWatermarkImage' => true, 
+                    'wialpha' => 0.1, 
+                    'wisize' => 'F', 
+                    'wipos' => 'F', 
+                    'mode' => 'utf-8',
+                    'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                    'autoLangToFont' => true,
+                    'autoScriptToLang' => true
+                ]);
+            } else {
+                $pdf = PDF::loadView('pdf.invitation_mediation', $data); 
+            }
+            
+        }
+       // dd($data);
+       
+        $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
+        
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $name;
+        
+       //$local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+       //return $local_store;
+
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        return $name;
     }
 
 }
