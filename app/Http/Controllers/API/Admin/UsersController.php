@@ -534,8 +534,8 @@ class UsersController extends Controller
         }else{
 
             $result['success'] = false;
-            $result['message'] = "Failed to add notes. Please try again.";
-            $result['error'] = "Failed to add notes. Please try again.";
+            $result['message'] = "User data not found.";
+            $result['error'] = "User data not found.";
             return response()->json($result, 422);
         }
 
