@@ -1652,6 +1652,7 @@ class CaseController extends Controller
             $data[$key]['caseid'] ='M' . sprintf('%06d', $values->case_id);
             $data[$key]['created_at'] = $values->created_at;
             $data[$key]['session_date'] = $values->session_date;
+            $data[$key]['zoom_link'] = $values->zoom_link;
             $data[$key]['zoom_id'] = $values->zoom_id;
             $data[$key]['note'] = $values->note;
             $data[$key]['meeting_users'] = implode($user);
