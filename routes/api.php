@@ -138,6 +138,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/status-change-active', [App\Http\Controllers\API\Admin\UsersController::class, 'statusChange']);
     Route::post('/admin/users/status-change-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'statusChangeApprove']);
     Route::post('/admin/users/add-notes', [App\Http\Controllers\API\Admin\UsersController::class, 'addNotes']);
+    Route::get('/admin/users/getuserdata/{id}', [App\Http\Controllers\API\Admin\UsersController::class, 'getuserdata']);
 
     Route::post('/admin/users/mediator-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorApprove']);
     Route::post('/admin/users/mediator-newreq', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorNewreq']);

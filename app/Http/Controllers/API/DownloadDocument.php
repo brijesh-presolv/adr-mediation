@@ -93,7 +93,7 @@ class DownloadDocument extends Controller {
                 $errors = $validator->errors()->all(); 
 
                 $result['success'] = false;
-                $result['message'] = $implode(', ', $errors);
+                $result['message'] = implode(', ', $errors);
                 $result['error'] = $validator->errors();
                 return response()->json($result, 422);
             }
@@ -110,6 +110,8 @@ class DownloadDocument extends Controller {
             } else {
                 $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->urlpath;
             }
+
+            print_r($filenametostore);die();
 
             $s3Client = Storage::cloud()->getAdapter()->getClient();
 

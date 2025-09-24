@@ -1431,7 +1431,7 @@ class CaseController extends Controller
             ->first();
         if (isset($data)) {
 
-            $filenametostore = 'mediation_documents/mediation/' . $id . '/' . $data->file_name;
+            $filenametostore = 'mediation_documents/mediation/' . $caseId . '/' . $data->file_name;
             $s3Client = Storage::cloud()->getAdapter()->getClient();
 
             $objectExists = $s3Client->doesObjectExist(env('AWS_BUCKET'), $filenametostore);
@@ -1484,12 +1484,27 @@ class CaseController extends Controller
         $id = $request->input('id');
         $caseId = $request->input('caseId');
 
-        $data = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
-            ->where("consent_disclosures.id", "=", $id)
-            ->first();
+        $data = ConsentDisclosures::select('consent_disclosures.*')->where(".id", "=", $id)->first();
+          //  print_r($data);die();
+
         if (isset($data)) {
 
-            $filenametostore = 'mediation_documents/mediation/' . $id . '/' . $data->file_name;
+          if ($data->file_name != null) {
+                $dis_file_name = $data->file_name;
+                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+            } else {
+                $dis_file_name = "M" . sprintf("%06d", $caseId) . "_party.pdf";
+                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+            }
+            // dd($exist_file);
+            if (File::exists($exist_file)) {
+                $pdf = file_get_contents($exist_file);
+                return response($pdf, 200, [
+                    'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
+                ]);
+            } else {
+
+            $filenametostore = 'mediation_documents/mediation/' . $caseId . '/' . $data->file_name;
             $s3Client = Storage::cloud()->getAdapter()->getClient();
 
             $objectExists = $s3Client->doesObjectExist(env('AWS_BUCKET'), $filenametostore);
@@ -1518,12 +1533,13 @@ class CaseController extends Controller
                 'Content-Disposition' => 'inline; filename="' . basename($data->file_name) . '"',
                 'Content-Length' => $stream['ContentLength'],
             ]);
+        }
 
         } else {
 
             $result['success'] = false;
-            $result['message'] = "File Not available.";
-            $result['error'] = "File Not available.";
+            $result['message'] = "Disclosures data Not available.";
+            $result['error'] = "Disclosures data Not available.";
             return response()->json($result, 500);
         }
     }
