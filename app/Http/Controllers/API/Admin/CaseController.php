@@ -484,7 +484,7 @@ class CaseController extends Controller
 
     public function viewCaseDetails(Request $request){
 
-        $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+        $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", DB::raw("CONCAT(users.first_name,' ', users.last_name) as mfullname"))
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where('mediation_case.id', $request->caseid)
@@ -555,7 +555,10 @@ class CaseController extends Controller
             ->where('restructure_data.caseid', $case->id)
             ->first();
 
-
+        $case->settlement_document = DB::table('document_settlements')
+            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+            ->where('document_settlements.mediation_case_id', $case->id)
+            ->get();
           
         $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
 
