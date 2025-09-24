@@ -516,5 +516,29 @@ class UsersController extends Controller
         }
        
     }
+
+    public function getuserdata($id, Request $request)
+    {
+        $user = User::find($id);
+        if(!empty($user)){
+
+
+            $resultData['user'] = $user;
+
+            $result['success'] = true;
+            $result['message'] = "Data fetch successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+
+        }else{
+
+            $result['success'] = false;
+            $result['message'] = "Failed to add notes. Please try again.";
+            $result['error'] = "Failed to add notes. Please try again.";
+            return response()->json($result, 422);
+        }
+
+    }
     
 }
