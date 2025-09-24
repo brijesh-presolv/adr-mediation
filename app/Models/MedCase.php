@@ -52,7 +52,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail', 'respondents:id,userPlanId,name,userEmail'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1056,14 +1056,14 @@ class MedCase extends Model
     {
         return $this->hasMany(InvoledUser::class, 'userPlanId', 'id')
                     ->where('isClaimant', 0)
-                    ->select('userPlanId', 'name', 'userEmail');
+                    ->select('userPlanId', 'name', 'userEmail', 'isOnboarded');
     }
 
     public function respondents()
     {
         return $this->hasMany(InvoledUser::class, 'userPlanId', 'id')
                     ->where('isClaimant', 1)
-                    ->select('userPlanId', 'name', 'userEmail');
+                    ->select('userPlanId', 'name', 'userEmail', 'isOnboarded');
     }
 
     static function getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
@@ -1072,7 +1072,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail', 'respondents:id,userPlanId,name,userEmail'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1152,7 +1152,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail', 'respondents:id,userPlanId,name,userEmail'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1242,7 +1242,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail', 'respondents:id,userPlanId,name,userEmail'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1320,7 +1320,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail', 'respondents:id,userPlanId,name,userEmail'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1403,7 +1403,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail', 'respondents:id,userPlanId,name,userEmail'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1486,7 +1486,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail', 'respondents:id,userPlanId,name,userEmail'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
