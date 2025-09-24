@@ -111,8 +111,6 @@ class DownloadDocument extends Controller {
                 $filenametostore = 'mediation_documents/mediation/' . $request->caseId . '/' . $request->urlpath;
             }
 
-            print_r($filenametostore);die();
-
             $s3Client = Storage::cloud()->getAdapter()->getClient();
 
             $objectExists = $s3Client->doesObjectExist(env('AWS_BUCKET'), $filenametostore);
