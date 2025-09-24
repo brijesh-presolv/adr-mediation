@@ -249,6 +249,29 @@ class UploadController extends Controller
                 $med->documentPath = $filename;
                 $med->save();
 
+                $inv_id = "";
+                
+                if ($request->has('docs_party_ids')) {
+                    $inv_id = is_array($request->docs_party_ids)
+                        ? implode(",", $request->docs_party_ids)
+                        : $request->docs_party_ids;
+                } else {
+                    $inv = InvoledUser::select('id')->where('userPlanId', $caseId)->pluck('id')->toArray();
+                    $inv_id = implode(",", $inv);
+                }
+
+                $uploadedFiles[] = [
+                    'file_name'       => $filename,
+                    'access'          => $inv_id,
+                    'mediator_access' => 0,
+                    'uploaded_by'     => $userId,
+                    'case_id'         => $caseId,
+                    'created_at'      => now(),
+                    'updated_at'      => now()
+                ];
+
+                DB::table('manage_files')->insert($uploadedFiles);
+
                 $data['caseid']=$caseId;
 
                 $result['success'] = true;
