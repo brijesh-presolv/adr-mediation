@@ -975,7 +975,7 @@ class CaseController extends Controller
                 'caseId'             => 'required|integer',
                 'sessionDate'        => 'required|date_format:d/m/Y|after_or_equal:today',
                 'sessionTime'        => 'required|date_format:H:i',
-                'zoom_choice'        => 'required|string|in:directly_zoom,custom_zoom,other',
+                'zoom_choice'        => 'required|string|in:directly_zoom,manually_zoom,other',
                 'zoomId'             => 'nullable|string|max:255',
                 'note'               => 'nullable|string|max:500',
                 'session_party_ids'  => 'required|array|min:1',
@@ -1652,6 +1652,7 @@ class CaseController extends Controller
             $data[$key]['caseid'] ='M' . sprintf('%06d', $values->case_id);
             $data[$key]['created_at'] = $values->created_at;
             $data[$key]['session_date'] = $values->session_date;
+            $data[$key]['zoom_link'] = $values->zoom_link;
             $data[$key]['zoom_id'] = $values->zoom_id;
             $data[$key]['note'] = $values->note;
             $data[$key]['meeting_users'] = implode($user);
