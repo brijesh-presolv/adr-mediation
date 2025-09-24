@@ -256,8 +256,9 @@ class UploadController extends Controller
             } else {
 
                 $filename = $originalFileName . '_supporting_document_' . $med->id . date("YmdHis") . '.' . $selectDocument->getClientOriginalExtension();
-                $savePath = 'mediation_documents/mediation/' . $med->id . '/user/supportingDocument';
+                $savePath = 'mediation_documents/mediation/' . $med->id . '/supportingDocument';
                 $finalFilePath = $savePath . '/' . $filename;
+
                 Storage::disk('s3')->put($finalFilePath, file_get_contents($selectDocument));
                 $med->documentPath = $filename;
                 $med->save();
