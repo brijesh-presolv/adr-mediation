@@ -975,7 +975,7 @@ class CaseController extends Controller
                 'caseId'             => 'required|integer',
                 'sessionDate'        => 'required|date_format:d/m/Y|after_or_equal:today',
                 'sessionTime'        => 'required|date_format:H:i',
-                'zoom_choice'        => 'required|string|in:directly_zoom,custom_zoom,other',
+                'zoom_choice'        => 'required|string|in:directly_zoom,manually_zoom,other',
                 'zoomId'             => 'nullable|string|max:255',
                 'note'               => 'nullable|string|max:500',
                 'session_party_ids'  => 'required|array|min:1',
