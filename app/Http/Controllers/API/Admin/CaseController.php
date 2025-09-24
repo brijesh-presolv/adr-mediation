@@ -560,7 +560,7 @@ class CaseController extends Controller
             ->where('document_settlements.mediation_case_id', $case->id)
             ->get();
           
-        $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
+        $case->mom = DB::table('session_mom')->select('case_id', 'session_id', 'file_name', 'share_with_party_ids')->where('case_id', $case->id)->get();
 
 
         $result['success'] = true;
