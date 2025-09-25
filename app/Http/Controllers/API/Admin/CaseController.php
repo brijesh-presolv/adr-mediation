@@ -1606,6 +1606,8 @@ class CaseController extends Controller
 
         foreach ($sessionData as $key => $values) {
 
+            $delete_reason="";
+
             if (!is_null($values->session_party_ids)) {
                 $dataArray = json_decode($values->session_party_ids);
             }
@@ -1660,6 +1662,7 @@ class CaseController extends Controller
             $data[$key]['note'] = $values->note;
             $data[$key]['meeting_users'] = implode($user);
             $data[$key]['zoom_link_choice'] = $zoom_link_choice;
+            $data[$key]['is_deleted'] = $values->is_deleted;
             $data[$key]['delete_reason'] = $delete_reason;
         }
 
