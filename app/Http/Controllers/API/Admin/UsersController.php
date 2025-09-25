@@ -103,7 +103,7 @@ class UsersController extends Controller
         $columnName = $request->input('columnName', ''); 
         $role=1;
 
-        $users = User::getUserApprove($role, $start, $length, $search, $columnName, $sortOrder);
+        $users = User::getMediatorsApprove($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -127,7 +127,7 @@ class UsersController extends Controller
         $columnName = $request->input('columnName', ''); 
         $role=1;
 
-        $users = User::getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder);
+        $users = User::getMediatorsNewReq($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -152,7 +152,7 @@ class UsersController extends Controller
         $columnName = $request->input('columnName', ''); 
         $role=1;
 
-        $users = User::getUserRejected($role, $start, $length, $search, $columnName, $sortOrder);
+        $users = User::getMediatorsRejected($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
