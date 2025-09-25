@@ -1661,7 +1661,7 @@ class CaseController extends Controller
             $data[$key]['zoom_id'] = $values->zoom_id;
             $data[$key]['note'] = $values->note;
             $data[$key]['meeting_users'] = implode($user);
-            $data[$key]['zoom_link_choice'] = $zoom_link_choice;
+            $data[$key]['zoom_link_choice'] = $values->zoom_link_choice;
             $data[$key]['is_deleted'] = $values->is_deleted;
             $data[$key]['delete_reason'] = $delete_reason;
         }
