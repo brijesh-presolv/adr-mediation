@@ -169,6 +169,7 @@ class UploadController extends Controller
             }
 
             if (!empty($uploadedFiles)) {
+                
                 DB::table('manage_files')->insert($uploadedFiles);
 
                 $data['caseid']=$caseId;
@@ -284,14 +285,23 @@ class UploadController extends Controller
                     'updated_at'      => now()
                 ];
 
-                DB::table('manage_files')->insert($uploadedFiles);
+                $insertdata=DB::table('manage_files')->insert($uploadedFiles);
+                if($insertdata){
 
-                $data['caseid']=$caseId;
+                    $data['caseid']=$caseId;
+                    $result['success'] = true;
+                    $result['message'] = "Files uploaded successfully.";
+                    $result['data'] = $data;
+                    return response()->json($result, 200);
 
-                $result['success'] = true;
-                $result['message'] = "Files uploaded successfully.";
-                $result['data'] = $data;
-                return response()->json($result, 200);
+                }else{
+
+                    $result['success'] = false;
+                    $result['message'] = "Files could not be uploaded. Please try again.";
+                    $result['error']   = "File upload failed";
+                    return response()->json($result, 400);
+
+                }
             }
 
         $result['success'] = false;
