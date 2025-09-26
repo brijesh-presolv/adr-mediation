@@ -145,6 +145,10 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/mediator-rejected', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorRejected']);
 
 });
+
+    Route::get('/admin/show-profile', [App\Http\Controllers\API\Admin\ProfileController::class, 'getProfileData']);
+    Route::post('/admin/edit-profile-data', [App\Http\Controllers\API\Admin\ProfileController::class, 'editProfileData']);
+    Route::post('/admin/change-password', [App\Http\Controllers\API\Admin\ProfileController::class, 'changePassword']);
  
  // User API Routes
 Route::middleware(['apiauth', 'apiuser'])->group(function () {
