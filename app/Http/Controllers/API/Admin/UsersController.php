@@ -540,5 +540,32 @@ class UsersController extends Controller
         }
 
     }
+
+     public function getMediatordata($id, Request $request)
+    {
+        $user = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language')
+                    ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+                    ->where("users.id", "=", $id)
+                    ->first();
+        if(!empty($user)){
+
+
+            $resultData['user'] = $user;
+
+            $result['success'] = true;
+            $result['message'] = "Data fetch successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+
+        }else{
+
+            $result['success'] = false;
+            $result['message'] = "Mediator data not found.";
+            $result['error'] = "Mediator data not found.";
+            return response()->json($result, 422);
+        }
+
+    }
     
 }
