@@ -1679,10 +1679,6 @@ class MedCase extends Model
             ->where("mediation_case.bulk_flag", $bulk)
             ->where("mediators_mediation_cases_status.mediator_id", $userId);
 
-            $query->where(function($query) use ($userId) {
-                $query->where('user_involved_in_agreement.userId', $userId);
-            });
-
         if ($batch_id) {
             $query->where("mediation_case.batch_id", $batch_id);
         }
