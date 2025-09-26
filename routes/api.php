@@ -125,7 +125,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     Route::post('/admin/cases/consentdisclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'getConsentDisclosures']);
     Route::post('/admin/cases/download-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'downloadDisclosures']);
-        Route::post('admin/cases/preview-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'previewDisclosures']);
+    Route::post('admin/cases/preview-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'previewDisclosures']);
 
     Route::post('/admin/cases/viewsupporting', [App\Http\Controllers\API\Admin\UploadController::class, 'viewSupporting']);
     Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
@@ -178,6 +178,15 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
 
     // User track api
     Route::post('/user/case-track', [App\Http\Controllers\API\User\MediationController::class, 'caseTrack']);
+});
+
+Route::middleware(['apiauth', 'apimediator'])->group(function () {
+
+    Route::post('/mediator/cases/newreq', [App\Http\Controllers\API\Mediator\CaseController::class, 'newreq']);
+    Route::post('/mediator/cases/ongoing', [App\Http\Controllers\API\Mediator\CaseController::class, 'ongoing']);
+    Route::post('/mediator/cases/closed', [App\Http\Controllers\API\Mediator\CaseController::class, 'closed']);
+    Route::post('/mediator/cases/rejected', [App\Http\Controllers\API\mediator\CaseController::class, 'rejected']);
+    Route::post('/mediator/cases/uploaddocument', [App\Http\Controllers\API\Mediator\UploadController::class, 'documentUpload']);
 });
  
 

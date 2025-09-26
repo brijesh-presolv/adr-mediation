@@ -68,6 +68,7 @@ class Kernel extends HttpKernel {
         'apiauth' => \App\Http\Middleware\apiauth::class,
         'apiadmin' => \App\Http\Middleware\admin::class,
         'apiuser' => \App\Http\Middleware\user::class,
+        'apimediator' => \App\Http\Middleware\mediator::class,
     ];
 
 }
