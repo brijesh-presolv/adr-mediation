@@ -3158,7 +3158,8 @@ class CaseController extends Controller
                     'city' => $claimants_array['ccity'][$ckey],
                     'pincode' => $claimants_array['cpincode'][$ckey],
                     'state' => $claimants_array['cstate'][$ckey],
-                    'country' => $claimants_array['ccountry'][$ckey]
+                    'country' => $claimants_array['ccountry'][$ckey],
+                    'isClaimant' => 0
                 ];
                 $add_claimant = DB::table('user_involved_in_agreement')->where('userEmail', $claimant_data)->update($dataToInsert);
                 // /$involedUser->save($dataToInsert);
@@ -3185,6 +3186,7 @@ class CaseController extends Controller
                 $add_claimant->pincode = $claimants_array['cpincode'][$ckey];
                 $add_claimant->state = $claimants_array['cstate'][$ckey];
                 $add_claimant->country = $claimants_array['ccountry'][$ckey];
+                $add_claimant->isClaimant = 0;
                 // $dataToInsert = [
                 //     'userEmail' => $claimant_data,
                 //     'userPhone' => $claimants_array['cphones'][$ckey] ,

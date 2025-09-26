@@ -107,6 +107,14 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     // Ongoing listing - close case api
     Route::post('/admin/cases/close-case', [App\Http\Controllers\API\Admin\CaseController::class, 'closeCaseStatus']);
+
+    // Get notifications api
+    Route::get('/admin/notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getNotifications']);
+
+    // Profile update api
+    Route::get('/admin/show-profile', [App\Http\Controllers\API\Admin\ProfileController::class, 'getProfileData']);
+    Route::post('/admin/edit-profile-data', [App\Http\Controllers\API\Admin\ProfileController::class, 'editProfileData']);
+    Route::post('/admin/change-password', [App\Http\Controllers\API\Admin\ProfileController::class, 'changePassword']);
     
     Route::post('/admin/case/add-session', [App\Http\Controllers\API\Admin\CaseController::class, 'addSession']);
     Route::post('/admin/cases/meeting-sessions', [App\Http\Controllers\API\Admin\CaseController::class, 'getMeetingSession']);
@@ -146,6 +154,8 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::get('/admin/users/getmediatordata/{id}', [App\Http\Controllers\API\Admin\UsersController::class, 'getMediatordata']);
 
 });
+
+    
  
  // User API Routes
 Route::middleware(['apiauth', 'apiuser'])->group(function () {
