@@ -117,7 +117,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
     Route::post('/admin/cases/consentdisclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'getConsentDisclosures']);
     Route::post('/admin/cases/download-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'downloadDisclosures']);
-        Route::post('admin/cases/preview-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'previewDisclosures']);
+    Route::post('admin/cases/preview-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'previewDisclosures']);
 
     Route::post('/admin/cases/viewsupporting', [App\Http\Controllers\API\Admin\UploadController::class, 'viewSupporting']);
     Route::post('/admin/cases/upload-files', [App\Http\Controllers\API\Admin\UploadController::class, 'storeMultiFile']);
