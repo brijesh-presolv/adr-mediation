@@ -169,6 +169,15 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     // User track api
     Route::post('/user/case-track', [App\Http\Controllers\API\User\MediationController::class, 'caseTrack']);
 });
+
+Route::middleware(['apiauth', 'apimediator'])->group(function () {
+
+    Route::post('/mediator/cases/newreq', [App\Http\Controllers\API\Mediator\CaseController::class, 'newreq']);
+    Route::post('/mediator/cases/ongoing', [App\Http\Controllers\API\Mediator\CaseController::class, 'ongoing']);
+    Route::post('/mediator/cases/closed', [App\Http\Controllers\API\Mediator\CaseController::class, 'closed']);
+    Route::post('/mediator/cases/rejected', [App\Http\Controllers\API\mediator\CaseController::class, 'rejected']);
+    Route::post('/mediator/cases/uploaddocument', [App\Http\Controllers\API\Mediator\UploadController::class, 'documentUpload']);
+});
  
 
 // User otp api
