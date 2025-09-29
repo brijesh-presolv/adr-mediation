@@ -33,7 +33,6 @@ class UploadController extends Controller
     public function viewSupporting(Request $request)
     {
         $caseid = $request->input('caseId'); 
-       // print_r($caseid);die(); 
         $managefilesData = DB::table('manage_files')
                             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
                             ->where('manage_files.case_id', $caseid)
@@ -169,7 +168,7 @@ class UploadController extends Controller
             }
 
             if (!empty($uploadedFiles)) {
-                
+
                 DB::table('manage_files')->insert($uploadedFiles);
 
                 $data['caseid']=$caseId;
