@@ -188,7 +188,16 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/ongoing', [App\Http\Controllers\API\Mediator\CaseController::class, 'ongoing']);
     Route::post('/mediator/cases/closed', [App\Http\Controllers\API\Mediator\CaseController::class, 'closed']);
     Route::post('/mediator/cases/rejected', [App\Http\Controllers\API\Mediator\CaseController::class, 'rejected']);
+
+    Route::post('/mediator/cases/upload-files', [App\Http\Controllers\API\Mediator\UploadController::class, 'storeMultiFile']);
     Route::post('/mediator/cases/uploaddocument', [App\Http\Controllers\API\Mediator\UploadController::class, 'documentUpload']);
+    Route::post('/mediator/cases/settlement-upload', [App\Http\Controllers\API\Mediator\CaseController::class, 'settlementUpload']);
+
+    Route::post('/mediator/case/add-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'addSession']);
+    Route::post('/mediator/cases/meeting-sessions', [App\Http\Controllers\API\Mediator\CaseController::class, 'getMeetingSession']);
+    Route::post('/mediator/cases/update-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'UpdateSession']);
+    Route::post('/mediator/cases/delete-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'deleteSession']);
+
 });
  
 

@@ -80,7 +80,7 @@ class CaseController extends Controller
             $keyInc = $key + 1;
 
             $data[$key]['id'] = $id;
-            $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+            $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
             $data[$key]['keyInc'] = $keyInc;
             $data[$key]['batch_id'] = $values->batch_id;
             $data[$key]['ref_id'] = $values->ref_id;
@@ -146,7 +146,7 @@ class CaseController extends Controller
                 $keyInc = $key + 1;
 
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
@@ -212,7 +212,7 @@ class CaseController extends Controller
                 $keyInc = $key + 1;
 
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
@@ -281,7 +281,7 @@ class CaseController extends Controller
                 $keyInc = $key + 1;
 
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
@@ -310,5 +310,622 @@ class CaseController extends Controller
         $result['data'] = $casedata;
         return response()->json($result, 200);
     }
+
+        public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone, $userType){
+
+        $mid = "M" . sprintf("%06d", $id);
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $id,
+        ];
+        if ($email_id != "") {
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
+        }
+        
+        return true;
+    }
+
+    public function sned_session_invitation($url, $id, $email_id, $email_name, $date, $userPhone, $invitation, $userType)
+    {
+        $mid = "M" . sprintf("%06d", $id);
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $id,
+        ];
+        if ($email_id != "") {
+            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, "-zoom_invitation_link-" => $invitation], $email_name);
+        }
+
+        return true;
+    }
+
+    public function getMeetingSession(Request $request)
+    {
+        $token = $request->cookie('auth_token');
+        if (!$token) {
+
+            $result['success'] = false;
+            $result['message'] = 'Unauthorized: Missing token';
+            $result['error'] = 'Unauthorized: Missing token';
+            return response()->json($result, 401);
+        }
+
+        $JWT_KEY = env('JWT_KEY');
+        $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+        $userId = $jwtData->data->userid;
+
+        $validator = Validator::make($request->all(), [
+            'caseId'             => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $caseId = $request->input('caseId');
+
+        $sessionData = DB::table('manage_session')->where('case_id', $caseId)->get();
+        $sn = 1;
+        $dataArray = array();
+        $data = array();
+        $delete_reason="";
+        $zoom_link_choice="";
+
+        foreach ($sessionData as $key => $values) {
+
+            $delete_reason="";
+
+            if (!is_null($values->session_party_ids)) {
+                $dataArray = json_decode($values->session_party_ids);
+            }
+
+            $user = array();
+            foreach ($dataArray as $d) {
+
+                $dd = InvoledUser::where('id', $d)->where('userPlanId', $caseId)->first();
+                
+                if (isset($dd)) {
+                    if ($dd->name != null) {
+                        $user[] = $dd->name;
+                    }
+                } else {
+                    $dd = InvoledUser::where('userId', $d)->where('userPlanId', $request->caseid)->first();
+                    if (isset($dd)) {
+                        if ($dd->name != null) {
+                            $user[] = $dd->name;
+                        }
+                    }
+                }
+            }
+
+            if ($values->is_deleted == 0) {
+
+                if ($jwtData->data->role == 2) {
+                    
+                    $zoom_link_choice= $values->zoom_link_choice;
+            
+                } else if ($jwtData->data->role == 1) {
+
+                    if ($jwtData->data->id == $values->scheduled_by) {
+
+                        $zoom_link_choice=$values->zoom_link_choice;
+
+                    } else {
+                     
+                    }
+                }
+            } else {
+
+               $delete_reason= $values->delete_reason;
+            }
+
+            $id = $values->id;
+            $data[$key]['id'] = $id;
+            $data[$key]['caseid'] ='M' . sprintf('%06d', $values->case_id);
+            $data[$key]['created_at'] = $values->created_at;
+            $data[$key]['session_date'] = $values->session_date;
+            $data[$key]['zoom_link'] = $values->zoom_link;
+            $data[$key]['zoom_id'] = $values->zoom_id;
+            $data[$key]['note'] = $values->note;
+            $data[$key]['meeting_users'] = implode($user);
+            $data[$key]['zoom_link_choice'] = $values->zoom_link_choice;
+            $data[$key]['is_deleted'] = $values->is_deleted;
+            $data[$key]['delete_reason'] = $delete_reason;
+        }
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $data;
+        return response()->json($result, 200);
+    }
+
+    public function UpdateSession(Request $request)
+    {
+        
+        try {
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'SessId'             => 'required|integer',
+                'caseId'             => 'required|integer',
+                'sessionDate'        => 'required|date_format:d/m/Y|after_or_equal:today',
+                'sessionTime'        => 'required|date_format:H:i',
+                'zoomChoice'        => 'required|string|in:directly_zoom,manually_zoom,other',
+                'zoomId'             => 'nullable|string|max:255',
+                'note'               => 'nullable|string|max:500',
+                'session_party_ids'  => 'required|array|min:1',
+                'session_party_ids.*'=> 'required|integer'
+            ]);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            $id = $request->input('SessId');
+            $CaseId = $request->input('caseId');
+            //print_r($CaseId);die();
+            $zoomChoice = $request->input('zoomChoice');
+            $sessionTime = $request->input('sessionTime');
+            $sessionDate = $request->input('sessionDate');
+            $note = $request->input('note');
+            $zoomId = $request->input('zoomId');
+            $session_party_ids= $request->input('session_party_ids');
+            $zoomLink = $request->input('zoomLink');
+
+            /********* Zoom Time Format ******************/
+            if($request->input('zoomChoice') == "directly_zoom") {
+
+                $time_zoom = date("H:i:s", strtotime($sessionTime));
+                $end_time = date("H:i:s", strtotime($sessionTime) + 60*60);
+                $date1 = str_replace('/', '-', $sessionDate);  
+
+                $date = date('Y-m-d', strtotime($date1));
+                $total = $date.' '.$time_zoom;
+                $end_total = $date.' '.$end_time;
+                $date_format_api =  date("Y-m-d\TH:i:s", strtotime($total));
+                $end_date_format_api =  date("Y-m-d\TH:i:s", strtotime($end_total));
+
+                $update_zoom_meeting_response = Zoom::updateZoomMeeting($zoomId, $CaseId, $date_format_api, $end_date_format_api, $request->note);
+                
+                $update_zoom_meeting = json_decode($update_zoom_meeting_response, true);
+
+                if($update_zoom_meeting == '') {
+
+                    $zoom_invitation_response = Zoom::zoomInvitation($zoomId);
+                    $zoom_invitation = json_decode($zoom_invitation_response, true);
+                }
+
+            } else {
+
+            }
+
+            $time = date("g:i A", strtotime($sessionTime));
+            $display_date_time = str_replace('/', '-', $sessionDate) . " " . $time;
+            $result = ManageSession::find($id);
+            $result->session_date = $sessionDate . "/" . $time;
+            $result->note = $note;
+            $result->zoom_id = $zoomId;
+            $result->session_party_ids = json_encode($session_party_ids);
+
+            if ($result->save()) {
+
+                foreach ($session_party_ids as $party_id) {
+
+                    $party = InvoledUser::where("userPlanId", $result->case_id)->where("id", $party_id)->first();
+
+                    if($zoomChoice == "manually_zoom") {
+                        $this->sned_session($zoomId, $result->case_id, $party->userEmail, $party->name, $display_date_time, $party->userPhone, "Party");
+                    } else {
+                        $this->sned_session_invitation($zoomId, $result->case_id, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $zoomLink, "Party");
+                    }
+                        
+                }
+                $d = [
+                    'event' => 'SESS_SCHE',
+                    'case_id' => $result->case_id,
+                ];
+                $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $result->case_id)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+
+                if ($mediator) {
+
+                    if($zoomChoice == "manually_zoom") {
+                        $is_send = $this->sned_session($zoomId, $CaseId, $mediator->email, $mediator->username, $display_date_time, $mediator->mobile_number, "Mediator");
+                    } else if($zoomChoice == "directly_zoom") {
+                    /**** Zoom Invitation ************/
+                        $is_send = $this->sned_session_invitation($zoomId, $CaseId, $mediator->email, $mediator->username, $display_date_time, $mediator->mobile_number, $zoomLink, "Mediator");
+                    /**** Zoom Invitation ************/
+                    }
+                }
+            }
+
+            $data['caseid'] = $CaseId;
+
+            $resultdata['success'] = true;
+            $resultdata['message'] = "Zoom Session updated successfully.";
+            $resultdata['data'] = $data;
+            return response()->json($resultdata, 200);
+
+        } catch (Exception $e) {
+
+            $resultdata['success'] = false;
+            $resultdata['message'] = "Session updation failed.";
+            $resultdata['error'] = $e->getMessage();
+            return response()->json($resultdata, 500);
+        }
+    }
+
+    public function deleteSession(Request $request)
+    {
+
+        try {
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'SessId'             => 'required|integer',
+                'reason'        => 'required'
+            ]);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+
+            $id = $request->input('SessId');
+            $reason = $request->input('reason');
+
+            $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+
+            $deleted = ManageSession::find($id);
+            $deleted->is_deleted = 1;
+            $deleted->delete_reason = $reason;
+
+            $date_time = explode('/', $deleted->session_date);
+            $display_date_time = $date_time[0].'-'.$date_time[1].'-'.$date_time[2].' '.$date_time[3];
+
+            /**** Zoom Delete *******/
+            if($request->delZoomChoice == "direct"){
+                $delete_zoom_meeting_response = Zoom::deleteZoomMeeting($deleted->zoom_id);
+                $delete_zoom_meeting = json_decode($delete_zoom_meeting_response, true);
+            }
+            /**** Zoom Delete *******/
+        
+            if ($deleted->save()) {
+
+                $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $deleted->case_id)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+                $caseid = "M" . sprintf("%06d", $deleted->case_id);
+                $d1 = [
+                    'event' => 'SESS_CEN_PARTY',
+                    'case_id' => $deleted->case_id,
+                ];
+                if (!is_null($deleted->session_party_ids)) {
+                    $dataArray = json_decode($deleted->session_party_ids);
+                }
+                // $userPhone = array();
+
+                if (isset($dataArray)) {
+                    foreach ($dataArray as $d) {
+                        $dd = InvoledUser::where('id', $d)->where('userPlanId', $deleted->case_id)->first();
+                        if (isset($dd)) {
+                            if ($dd->userEmail != null) {
+                                SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
+                            }
+                        } else {
+                            $dd = InvoledUser::where('userId', $d)->where('userPlanId', $deleted->case_id)->first();
+                            if (isset($dd)) {
+                                if ($dd->userEmail != null) {
+                                    SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
+                                }
+                            }
+                        }
+                    }
+                }
+                $d2 = [
+                    'event' => 'SESS_CEN',
+                    'case_id' => $deleted->case_id,
+                ];
+                if (isset($mediator)) {
+                    if ($mediator->email != "") {
+                        SendGrid::send($d2, $mediator->email, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Mediator"], $mediator->username);
+                    }
+                }
+
+                $data['SessId'] = $id;
+
+                $result['success'] = true;
+                $result['message'] = "Zoom Meeting deleted successfully.";
+                $result['data'] = $data;
+                return response()->json($result, 200);
+
+            } else {
+
+                $result['success'] = false;
+                $result['message'] = "Session updation failed.";
+                $result['error'] = "Session updation failed.";
+                return response()->json($result, 500);
+            }
+
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Session updation failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+        public function closeCaseStatus(Request $request) {
+
+        try{
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'required|integer',
+                'status' => 'required|integer',
+                //'comment' => 'required|string'
+            ]);
+
+            if(Mediation_status_log::STATUS_WITHDRAWN  != $request->input('status')){
+
+                $validator = Validator::make($request->all(), [
+                        'caseid' => 'required|integer',
+                        'status' => 'required|integer',
+                        'Settelmentfiles' => 'required',
+                        'Settelmentfiles.*' => 'mimes:csv,txt,xlx,xls,pdf',
+                    ]);
+            }
+
+            //Inputs
+            $caseid = $request->input('caseid');
+            $status = $request->input('status');
+            $comment = $request->input('comment');
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+          
+            if ($status != null) {
+
+                $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseid)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+
+                if(empty($mediator) && $status != Mediation_status_log::STATUS_WITHDRAWN){
+
+                    $result['success'] = false;
+                    $result['message'] = "Case not accepted by mediator";
+                    $result['error'] = "Case not accepted by mediator";
+                    return response()->json($result, 400);
+                }
+
+                $inv_id = "";
+                $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
+                foreach ($inv as $v) {
+                    if ($inv_id == "") {
+                        $inv_id = $v->id;
+                    } else {
+                        $inv_id = $inv_id . "," . $v->id;
+                    }
+                }
+
+                if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
+
+                        Common_function::MedNotification($caseid, "WDRN_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                   
+                } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
+
+                        Common_function::MedNotification($caseid, "RES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                   
+                } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
+
+                        Common_function::MedNotification($caseid, "UNRES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                }
+
+                if(Mediation_status_log::STATUS_WITHDRAWN  != $status){
+
+                    if ($request->hasFile('Settelmentfiles')) {
+
+                        $Settelmentfiles = $request->file('Settelmentfiles');
+                        $insert = [];
+
+                        foreach ($request->file('Settelmentfiles') as $file) {
+                            
+                            $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME)
+                                . "_date_" . date("YmdHis") . "." . $file->getClientOriginalExtension();
+
+                            $savePath = "mediation_documents/mediation/{$caseid}/settelmentDocument/{$filename}";
+
+                            Storage::disk('s3')->put($savePath, file_get_contents($file));
+
+                            $insert[] = [
+                                'file_path'        => $filename,
+                                'uploaded_by'      => $userId,
+                                'mediation_case_id'=> $caseid,
+                                'created_at'      => now(),
+                            ];
+                        }
+
+                        DB::table('document_settlements')->insert($insert);
+                        
+                        $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseid)
+                            ->where("mediators_mediation_cases_status.status", "=", 1)
+                            ->first();
+                        $inv_id = "";
+                        $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
+                        foreach ($inv as $v) {
+                            if ($inv_id == "") {
+                                $inv_id = $v->id;
+                            } else {
+                                $inv_id = $inv_id . "," . $v->id;
+                            }
+                        }
+                        Common_function::MedNotification($caseid, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+                        $this->send_settlement_agreement_party($caseid, $insert);
+
+                    } else {
+
+                            $result['success'] = false;
+                            $result['message'] = "Settlement file field is required";
+                            $result['error'] = "No valid files found";
+                            return response()->json($result, 400);
+                    }
+
+                }
+
+                $user = MedCase::find($caseid);
+                $user->confirm_status = 2;
+                $user->case_status = $status;
+                $user->withdraw = ($comment != null) ? $comment : "";
+
+                if ($user->save()) {
+
+                    $mediation_status_log = new Mediation_status_log;
+                    $mediation_status_log->user_id = $userId;
+                    $mediation_status_log->mediation_case_id = $caseid;
+                    $mediation_status_log->status = ($status != null) ? $status : "";
+
+                    if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
+                        $mediation_status_log->description = "Request Withdrawn";
+                            $this->sned_withdrawal($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                    } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
+                        $mediation_status_log->description = "Request Resolved";
+                            $this->sned_resolved($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+
+                    } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
+                        $mediation_status_log->description = "Request Unresolved";
+                            $this->sned_unresolved($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                    }
+                    $mediation_status_log->save();
+
+
+                    $final['caseid'] = $caseid;
+                    $final['status'] = $status;
+
+                    if($status == 5) {
+                        $s_text = "Withdrawn";
+                    } else if($status == 6) {
+                        $s_text = "Resolved";  
+                    } else if ($status == 7) {
+                        $s_text = "Unresolved"; 
+                    }
+                    $final['status_text'] = $s_text;
+                    $final['comment'] = $comment;
+
+
+                    $result['success'] = true;
+                    $result['message'] = "Case closed successfully.";
+                    $result['data'] = $final;
+                    return response()->json($result, 200);
+                }
+
+            }
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case closing process is failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+    public function sessionPdf(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+                'caseId' => 'required|integer',
+            ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $caseId = $request->input('caseId');
+
+        $data["case"] = MedCase::find($caseId);
+        $data["party"] = InvoledUser::where("userPlanId", "=", $caseId)->get();
+        $data["mediator"] = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.first_name", "users.last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $data['caseId'] = $caseId;
+        $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
+        $pdf = PDF::loadView('pdf.view_session', $data);
+        return $pdf->download('session_M' . sprintf('%06d', $caseId) . '.pdf');
+
+    }
+
 
 }
