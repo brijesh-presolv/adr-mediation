@@ -147,7 +147,7 @@ class UploadController extends Controller
                     if ($file->isValid()) {
 
                         $originalFileName = $file->getClientOriginalName();
-                        $filename = $originalFileName. "_supportingdoc{$fileIndex}_M" . sprintf('%06d', $caseId) . "." . $file->getClientOriginalExtension();
+                        $filename = $originalFileName. "_supportingdoc{$fileIndex}_CID" . sprintf('%06d', $caseId) . "." . $file->getClientOriginalExtension();
                         $savePath = "mediation_documents/mediation/{$caseId}/supportingDocument/{$filename}";
 
                         Storage::disk('s3')->put($savePath, file_get_contents($file));

@@ -427,7 +427,7 @@ class CaseController extends Controller
 
             $id = $values->id;
             $data[$key]['id'] = $id;
-            $data[$key]['caseid'] ='M' . sprintf('%06d', $values->case_id);
+            $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->case_id);
             $data[$key]['created_at'] = $values->created_at;
             $data[$key]['session_date'] = $values->session_date;
             $data[$key]['zoom_link'] = $values->zoom_link;
@@ -923,7 +923,7 @@ class CaseController extends Controller
         $data['caseId'] = $caseId;
         $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
         $pdf = PDF::loadView('pdf.view_session', $data);
-        return $pdf->download('session_M' . sprintf('%06d', $caseId) . '.pdf');
+        return $pdf->download('session_CID' . sprintf('%06d', $caseId) . '.pdf');
 
     }
 
