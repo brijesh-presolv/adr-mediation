@@ -1654,7 +1654,7 @@ class CaseController extends Controller
 
             $id = $values->id;
             $data[$key]['id'] = $id;
-            $data[$key]['caseid'] ='M' . sprintf('%06d', $values->case_id);
+            $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->case_id);
             $data[$key]['created_at'] = $values->created_at;
             $data[$key]['session_date'] = $values->session_date;
             $data[$key]['zoom_link'] = $values->zoom_link;
@@ -2148,7 +2148,7 @@ class CaseController extends Controller
     
         $pdf = PDF::loadView('pdf.session_mom', $data);
         
-        $name = 'Minutes_of_the_Meeting_M'. sprintf('%06d', $data['caseid']) . '.pdf';
+        $name = 'Minutes_of_the_Meeting_CID'. sprintf('%06d', $data['caseid']) . '.pdf';
         
         $savePath = 'mediation_documents/mediation/' . $data['caseid'];
         $finalFilePath = $savePath . '/' . $name;
@@ -2435,7 +2435,7 @@ class CaseController extends Controller
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
             ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.mediator_appointment_letter', $data);
-        $name = Common_function::changeidprefix("",$id, "S","_assignment.pdf");
+        $name = Common_function::changeidprefix("",$id, "CID","_assignment.pdf");
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
@@ -3095,7 +3095,7 @@ class CaseController extends Controller
         $data['caseId'] = $caseId;
         $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
         $pdf = PDF::loadView('pdf.view_session', $data);
-        return $pdf->download('session_M' . sprintf('%06d', $caseId) . '.pdf');
+        return $pdf->download('session_CID' . sprintf('%06d', $caseId) . '.pdf');
 
     }
 
@@ -3401,7 +3401,7 @@ class CaseController extends Controller
         }
        // dd($data);
        
-        $name = 'Invitation_mediate_M' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
+        $name = 'Invitation_mediate_CID' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
         
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;

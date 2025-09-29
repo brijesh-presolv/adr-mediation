@@ -279,7 +279,7 @@ class MediationController extends Controller
             ->where("userPlanId", "=", $id)->where('isClaimant', 0)->first();
         $data["res"] = InvoledUser::where("userPlanId", "=", $id)->where('isClaimant', '<>', 0)->first();
         $pdf = PDF::loadView('pdf.request_letter', $data);
-        $name = 'request_letter_M' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
+        $name = 'request_letter_CID' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
