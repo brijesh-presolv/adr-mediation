@@ -176,7 +176,7 @@ class UsersController extends Controller
             'last_name'    => 'required|string|max:100',
             'email'        => 'required|email|unique:users,email,' . $request->id,
             //'username'     => 'required|string|max:100|unique:users,username,' . $request->id,
-            'mobile_number'=> 'required|string|max:15|unique:users,mobile_number,' . $request->id,
+            'mobile_number'=> 'required|string|max:10',
            // 'organization' => 'nullable|string|max:255',
             //'country_code' => 'nullable|string|max:10',
             'address'      => 'nullable|string|max:255',
