@@ -117,7 +117,6 @@ public $successStatus = 200;
                 return response()->json($result, 422);
             }
 
-            echo "1"; die();
 
             if ($request->input('actype') == 0) {
                 $role = 0;
@@ -151,6 +150,7 @@ public $successStatus = 200;
             ]);
 
             $data['userid'] = $user->id;
+            $data['eotp'] = $user->emailotp;
 
             $result['success'] = true;
             $result['message'] = "User registered successfully.";
