@@ -299,6 +299,8 @@ class UsersController extends Controller
             $mediation_details->filed1 = $request->input('field1');
             $mediation_details->filed2 = $request->input('field2');
             $mediation_details->filed3 = $request->input('field3');
+            $mediation_details->category = $request->input('category');
+            $mediation_details->spoken_language = $request->input('spoken_language');
             $mediation_details->save();
         }
 
