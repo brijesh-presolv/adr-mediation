@@ -51,7 +51,9 @@ public $successStatus = 200;
 
                 Auth::logout();
                 $this->logout($request);
-                
+
+                $data['userid'] = $user->id;
+                $data['role'] = $user->role;
                 $data['isEverified'] = 0;
                 $result['success'] = false;
                 $result['message'] = "Please completed your email verification.";
