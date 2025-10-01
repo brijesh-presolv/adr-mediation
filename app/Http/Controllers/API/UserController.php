@@ -225,12 +225,36 @@ public $successStatus = 200;
                 Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
 
 
-                $data['userid'] = $usr->id;
+                //$data['userid'] = $usr->id;
+                //$result['success'] = "true";
+                //$result['message'] = "OTP verified successfully.";
+               // $result['data'] = $data;
+
+                //return response()->json($result, 200);
+
+                $data['userid'] = $user->id;
+                $data['role'] = $user->role;
+                $data['email'] = $user->email;
+                $data['name'] = $user->first_name;
+                $data['isEverified'] = 1;
                 $result['success'] = "true";
                 $result['message'] = "OTP verified successfully.";
                 $result['data'] = $data;
+                $result['token'] = Token::createToken($data); 
+                //$result['expiry_token'] = 86400;
 
-                return response()->json($result, 200);
+                return response()->json($result, $this->successStatus)
+                                    ->cookie(
+                                            'auth_token',           // cookie name
+                                            $result['token'],       // cookie value
+                                            (60 * 60 * 24),         // minutes
+                                            '/',
+                                            null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
+                                            true,                   // secure = true (required for cross-site cookies on HTTPS)
+                                            true,                   // httpOnly
+                                            false,                  // raw
+                                            'None'                  // SameSite=None (allow cross-site)
+                                        ); 
             }
         } else {
                 $data['userid'] = $usr->id;
