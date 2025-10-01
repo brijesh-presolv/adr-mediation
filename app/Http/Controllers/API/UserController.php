@@ -47,11 +47,24 @@ public $successStatus = 200;
         if(Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])){ 
             $user = Auth::user(); 
 
+            if (!empty(Auth::user()->emailotp)) {
+
+                Auth::logout();
+                $this->logout($request);
+                
+                $data['isEverified'] = 0;
+                $result['success'] = false;
+                $result['message'] = "Please completed your email verification.";
+                $result['error'] = "Your email is not verified";
+                $result['data'] = $data;
+                return response()->json($result, 500);
+            }
+
 
             // for user checking if user is approved 
             if (!Auth::user()->isActive) {
                 Auth::logout();
-                $this->logout();
+                $this->logout($request);
                 
                 $result['success'] = false;
                 $result['message'] = "Your user account is under Admin review.";
@@ -64,11 +77,12 @@ public $successStatus = 200;
             $data['role'] = $user->role;
             $data['email'] = $user->email;
             $data['name'] = $user->first_name;
+            $data['isEverified'] = 1;
             $result['success'] = "true";
             $result['message'] = "User has logged in successfully.";
             $result['data'] = $data;
             $result['token'] = Token::createToken($data); 
-            $result['expiry_token'] = 86400;
+            //$result['expiry_token'] = 86400;
 
             return response()->json($result, $this->successStatus)
                                 ->cookie(
@@ -189,6 +203,7 @@ public $successStatus = 200;
 
             $usr->emailotp = null;
             $usr->smsotp = null;
+            $usr->email_verified_at = date("Y-m-d H:i:s");
             $d = [
                 'event' => 'VARIFY_EMAIL',
                 'userid' => $userId,
