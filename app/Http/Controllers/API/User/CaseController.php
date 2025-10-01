@@ -41,6 +41,39 @@ class CaseController extends Controller
 {
     use UploadTrait;
 
+    public function __construct(Request $request)
+    {
+
+        $token = $request->cookie('auth_token');
+
+        if (!$token) {
+
+            $result['success'] = false;
+            $result['message'] = 'Unauthorized: Missing token';
+            $result['error'] = 'Unauthorized: Missing token';
+            return response()->json($result, 401);
+        }
+
+        $JWT_KEY = env('JWT_KEY');
+        $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+        $userId = $jwtData->data->userid;
+        $user = User::find($userId);
+
+        if (empty($user->address) || empty($user->city) || empty($user->pincode) || empty($user->country)) {
+
+            $data['userid'] = $user->id;
+            $data['role'] = $user->role;
+            $data['isprofilecompleted'] = 0;
+
+            abort(response()->json([
+                'success' => false,
+                'message' => 'Please complete your profile to access this feature.',
+                'data' => $data
+            ], 403));
+        }
+
+    }
+
     public function newreq(Request $request){
 
         $token = $request->cookie('auth_token');

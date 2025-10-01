@@ -195,6 +195,20 @@ public $successStatus = 200;
 
 
     public function otpVerify(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'otp'     => 'required'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
         //Inputs
         $otp = $request->input('otp');
         $userId = $request->input('userid');
@@ -225,36 +239,39 @@ public $successStatus = 200;
                 Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
 
 
-                //$data['userid'] = $usr->id;
-                //$result['success'] = "true";
-                //$result['message'] = "OTP verified successfully.";
-               // $result['data'] = $data;
+                if ($usr->isActive == 1 && $usr->status == 1) {
 
-                //return response()->json($result, 200);
+                    $data['userid'] = $user->id;
+                    $data['role'] = $user->role;
+                    $data['email'] = $user->email;
+                    $data['name'] = $user->first_name;
+                    $data['isEverified'] = 1;
+                    $result['success'] = "true";
+                    $result['message'] = "OTP verified successfully.";
+                    $result['data'] = $data;
+                    $result['token'] = Token::createToken($data); 
 
-                $data['userid'] = $user->id;
-                $data['role'] = $user->role;
-                $data['email'] = $user->email;
-                $data['name'] = $user->first_name;
-                $data['isEverified'] = 1;
-                $result['success'] = "true";
-                $result['message'] = "OTP verified successfully.";
-                $result['data'] = $data;
-                $result['token'] = Token::createToken($data); 
-                //$result['expiry_token'] = 86400;
+                    return response()->json($result, $this->successStatus)
+                                        ->cookie(
+                                                'auth_token',     
+                                                $result['token'],  
+                                                (60 * 60 * 24), 
+                                                '/',
+                                                null,
+                                                true,
+                                                true,
+                                                false, 
+                                                'None'              
+                                            ); 
+                }else{
 
-                return response()->json($result, $this->successStatus)
-                                    ->cookie(
-                                            'auth_token',           // cookie name
-                                            $result['token'],       // cookie value
-                                            (60 * 60 * 24),         // minutes
-                                            '/',
-                                            null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
-                                            true,                   // secure = true (required for cross-site cookies on HTTPS)
-                                            true,                   // httpOnly
-                                            false,                  // raw
-                                            'None'                  // SameSite=None (allow cross-site)
-                                        ); 
+                    $data['userid'] = $usr->id;
+                    $result['success'] = "true";
+                    $result['message'] = "Email OTP verified successfully, Please wait for admin approval.";
+                    $result['data'] = $data;
+
+                    return response()->json($result, 200);
+                }
             }
         } else {
                 $data['userid'] = $usr->id;
