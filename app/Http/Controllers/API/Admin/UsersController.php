@@ -219,10 +219,10 @@ class UsersController extends Controller
             $user->isDone = $request->input('status');
         }
 
-        if ($request->hasFile('signature')) {
+        if ($request->hasFile('signature_photo')) {
             
             $msg = "";
-            $content = file_get_contents($request->signature);
+            $content = file_get_contents($request->signature_photo);
             if (preg_match('/\/JS|\/JavaScript|\/OpenAction/', $content)) {
 
                 $msg = "PDF file contains restricted data , please check and re-upload.";
@@ -239,12 +239,20 @@ class UsersController extends Controller
                     $oldFilePath = 'mediation/user/' . $request->input('id') . '/signature/' . $user->signature_photo;
                     Storage::disk('s3')->delete($oldFilePath);
                 }
-                $extension = $request->file('signature')->getClientOriginalExtension();
+                $extension = $request->file('signature_photo')->getClientOriginalExtension();
                 $name = 'User_Signature' . sprintf('%06d', $request->input('id')) . time() . '.' . $extension;
                 $finalFilePath='mediation/user/' . $request->input('id') . '/signature/' . $name;
-                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature));
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature_photo));
 
             } else {
+
+                if(empty($request->signature_photo) && $user->signature_photo == null){
+
+                    $result['success'] = false;
+                    $result['message'] = "Mediator signature required";
+                    $result['error'] = "Mediator signature required";
+                    return response()->json($result, 422);
+                }
 
                 if ($user->signature_photo != null) {
 
@@ -252,10 +260,10 @@ class UsersController extends Controller
                     Storage::disk('s3')->delete($oldFilePath);
                 }
 
-                $extension = $request->file('signature')->getClientOriginalExtension();
+                $extension = $request->file('signature_photo')->getClientOriginalExtension();
                 $name = 'Mediator_Signature' . sprintf('%06d', $request->input('id')) . time() . '.' . $extension;
                 $finalFilePath='mediation/mediator/' . $request->input('id') . '/signature/' . $name;
-                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature));
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature_photo));
 
             }
         }
