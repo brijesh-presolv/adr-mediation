@@ -267,7 +267,7 @@ public $successStatus = 200;
                 }else{
 
                     $data['userid'] = $usr->id;
-                    $data['isEverified'] = 0;
+                    $data['isEverified'] = 1;
                     $result['success'] = "true";
                     $result['message'] = "Email OTP verified successfully, Please wait for admin approval.";
                     $result['data'] = $data;
