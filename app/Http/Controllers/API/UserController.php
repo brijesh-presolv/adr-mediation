@@ -54,6 +54,7 @@ public $successStatus = 200;
 
                 $data['userid'] = $user->id;
                 $data['role'] = $user->role;
+                $data['eotp'] = $user->emailotp;
                 $data['isEverified'] = 0;
                 $result['success'] = false;
                 $result['message'] = "Please completed your email verification.";
