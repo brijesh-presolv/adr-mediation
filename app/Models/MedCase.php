@@ -86,7 +86,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1105,7 +1105,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1185,7 +1185,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1275,7 +1275,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1358,7 +1358,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1441,7 +1441,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1524,7 +1524,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1596,7 +1596,7 @@ class MedCase extends Model
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
             ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
-            ->where("mediation_case.confirm_status", 2)
+            ->where("mediation_case.confirm_status", 3)
             ->where("mediation_case.bulk_flag", $bulk);
 
             $query->where(function($query) use ($userId) {
@@ -1608,7 +1608,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1689,7 +1689,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1770,7 +1770,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1851,7 +1851,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search
@@ -1930,7 +1930,7 @@ class MedCase extends Model
         }
 
         if (!empty($search)) {
-            $search = ltrim($search, "M0");
+            $search = ltrim($search, "CID0");
 
             if (empty(date_parse($search)['errors']) && date_parse($search)['month']) {
                 // date search

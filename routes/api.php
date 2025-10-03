@@ -197,6 +197,8 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/update-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'UpdateSession']);
     Route::post('/mediator/cases/delete-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'deleteSession']);
 
+    Route::post('/mediator/cases/close-case', [App\Http\Controllers\API\Mediator\CaseController::class, 'closeCaseStatus']);
+
 });
  
 
