@@ -3310,9 +3310,23 @@ class CaseController extends Controller
             $med->updated_at = date("Y-m-d H:i:s");
             $med->save();
 
+
+            $usr = User::find($med->userid);
          
 
             foreach($inputData['claimants'] as $ckey => $claimant_data) {
+
+                if($usr->id > 0) {
+                    $usr->address = $claimant_data['address1'];
+                    $usr->address1 = $claimant_data['address2'];
+                    $usr->city = $claimant_data['city'];
+                    $usr->pincode = $claimant_data['pincode'];
+                    $usr->state = $claimant_data['state'];
+                    $usr->country = $claimant_data['country'];
+                    $usr->save();
+                }
+
+                
                 $involedUser = InvoledUser::where(['userPlanId' => $med->id, 'userEmail' => $claimant_data['email']])->get()->toArray();
                 
                 if(!empty($involedUser)) {
