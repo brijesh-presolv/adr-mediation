@@ -179,7 +179,10 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
 
     // User track api
     Route::post('/user/case-track', [App\Http\Controllers\API\User\MediationController::class, 'caseTrack']);
+
+    // User join code api
 });
+Route::post('/user/join', [App\Http\Controllers\API\User\MediationController::class, 'caseJoin']);
  
 
 Route::middleware(['apiauth', 'apimediator'])->group(function () {
