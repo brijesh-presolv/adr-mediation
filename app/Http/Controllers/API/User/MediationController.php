@@ -29,6 +29,7 @@ use App\Http\Helpers\SendGrid;
 use App\Http\Traits\UploadTrait;
 use App\Rules\MatchOldPassword;
 use App\Http\Helpers\SendGrid as Email;
+use App\Models\Mediators_mediation_cases_status;
 
 use PDF;
 use DateTime;
@@ -536,6 +537,120 @@ class MediationController extends Controller
 
             $result['success'] = false;
             $result['message'] = "Case track not loaded.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+    public function caseJoin(Request $request) {
+        try {
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+
+            
+            $userId = $jwtData->data->userid;
+
+            $code = $request->input('joincode');
+
+            // $email = Auth::user()->email;
+            // $phone = Auth::user()->mobile_number;
+            $email = $jwtdata->data->email;
+
+            $phone = $jwtdata->data->phone;
+            $name = $jwtdata->data->name;
+
+
+            $InvoledUser = InvoledUser::where(['joincode' => $code])->where(function ($q) use ($email, $phone) {
+                $q->orWhere('userEmail', $email)->orWhere('userPhone', $phone);
+            })->first();
+
+            
+            if (!$InvoledUser) {
+                $result['success'] = false;
+                $result['message'] = "Invalid data.";
+                $result['error'] = 'Invalid data.';
+                return response()->json($result, 500);
+            }
+
+            $case = MedCase::where(['id' => $InvoledUser->userPlanId, 'confirm_status' => 1])->first();
+
+            if (!$case) {
+                $result['success'] = false;
+                $result['message'] = "No cases found with these data.";
+                $result['error'] = "No cases found with these data.";
+                return response()->json($result, 500);
+            }
+
+            $InvoledUser->joincode = null;
+            $InvoledUser->isOnboarded = '1';
+            $InvoledUser->onboardedDate = now();
+            $InvoledUser->userid = $userId;
+            //$InvoledUser->userid = 0;
+            if ($InvoledUser->name == null) {
+                //$InvoledUser->name = Auth::user()->first_name . ' ' . Auth::user()->last_name;
+                $InvoledUser->name = $name;
+            }
+            if ($InvoledUser->userEmail == null) {
+                // /$InvoledUser->userEmail = Auth::user()->email;
+                $InvoledUser->userEmail = $email;
+            }
+            if ($InvoledUser->userPhone == null) {
+                // /$InvoledUser->userPhone = Auth::user()->mobile_number;
+                $InvoledUser->userPhone = $phone;
+            }
+
+             $d = [
+                'event' => 'ONBOAR_USER',
+                'case_id' => $InvoledUser->userPlanId,
+            ];
+            if ($InvoledUser->save()) {
+                $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $InvoledUser->userPlanId)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+                $inv_id = "";
+                $inv = InvoledUser::select('id')->where('userPlanId', $InvoledUser->userPlanId)->get();
+                foreach ($inv as $v) {
+                    if ($inv_id == "") {
+                        $inv_id = $v->id;
+                    } else {
+                        $inv_id = $inv_id . "," . $v->id;
+                    }
+                }
+
+                Common_function::MedNotification($InvoledUser->userPlanId, "ONBOAR_USER", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+                //fetch init parry
+                $mid = "M" . sprintf("%06d", $InvoledUser->userPlanId);
+
+                $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $InvoledUser->userPlanId])->first();
+
+                $party_name = $InvoledUser->name;
+
+                $e = Email::send($d, $InvoledUserP1->userEmail, env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''), ['-caseid-' => $mid, '-name-' => $party_name], $InvoledUserP1->name);
+                
+                $data['code'] = $code;
+                $data['case'] = $case;
+
+                $result['success'] = true;
+                $result['message'] = "Join code is correct.";
+                $result['data'] = $data;
+                return response()->json($result, 200);
+            }
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case updation process is failed.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }

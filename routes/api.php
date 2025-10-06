@@ -152,6 +152,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/mediator-newreq', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorNewreq']);
     Route::post('/admin/users/mediator-rejected', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorRejected']);
     Route::get('/admin/users/getmediatordata/{id}', [App\Http\Controllers\API\Admin\UsersController::class, 'getMediatordata']);
+    Route::get('/admin/users/area-specialization', [App\Http\Controllers\API\Admin\UsersController::class, 'getAreaOfSpecialization']);
 
 });
  
@@ -179,7 +180,11 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
 
     // User track api
     Route::post('/user/case-track', [App\Http\Controllers\API\User\MediationController::class, 'caseTrack']);
+
+    // User join code api
+    Route::post('/user/join', [App\Http\Controllers\API\User\MediationController::class, 'caseJoin']);
 });
+
  
 
 Route::middleware(['apiauth', 'apimediator'])->group(function () {
