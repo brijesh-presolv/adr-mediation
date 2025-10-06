@@ -309,6 +309,7 @@ class UsersController extends Controller
             $mediation_details->filed3 = $request->input('field3');
             $mediation_details->category = $request->input('category');
             $mediation_details->spoken_language = $request->input('spoken_language');
+            $mediation_details->years_of_experience = $request->input('years_of_experience');
             $mediation_details->save();
         }
 
@@ -551,9 +552,9 @@ class UsersController extends Controller
 
     }
 
-     public function getMediatordata($id, Request $request)
+    public function getMediatordata($id, Request $request)
     {
-        $user = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language')
+        $user = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')
                     ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
                     ->where("users.id", "=", $id)
                     ->first();
