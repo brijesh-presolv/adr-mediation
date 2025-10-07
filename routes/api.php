@@ -182,9 +182,12 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
 
     // User join code api
     Route::post('/user/join', [App\Http\Controllers\API\User\MediationController::class, 'caseJoin']);
+
+    // User case details view api
+    Route::post('/user/view-case-details', [App\Http\Controllers\API\User\MediationController::class, 'viewCaseDetails']);
 });
 
- 
+  
 
 Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
