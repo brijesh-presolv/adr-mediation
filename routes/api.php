@@ -208,8 +208,12 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
     Route::post('/mediator/cases/close-case', [App\Http\Controllers\API\Mediator\CaseController::class, 'closeCaseStatus']);
 
+    // Update mediator profile data api
+    Route::get('/mediator/show-profile', [App\Http\Controllers\API\Mediator\ProfileController::class, 'getProfileData']);
+    Route::post('/mediator/edit-profile-data', [App\Http\Controllers\API\Mediator\ProfileController::class, 'editProfileData']);
+    Route::get('/mediator/change-password', [App\Http\Controllers\API\Mediator\ProfileController::class, 'changePassword']);
 });
- 
+
 
 // User otp api
 Route::post('/otp-verify', [App\Http\Controllers\API\UserController::class, 'otpVerify']);
