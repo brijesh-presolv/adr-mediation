@@ -3,7 +3,7 @@
 namespace App\Http\Helpers;
 
 use App\Models\EmailQue;
-use App\Models\EmailTrack;
+use App\Models\EmailDirectSend;
 use Illuminate\Support\Facades\Storage;
 use PharIo\Manifest\Email;
 
@@ -180,5 +180,152 @@ class SendGrid
             }
         }
         return false;
+    }
+
+    public static function directEmailSend($d, $to, $templateId, $subs = NULL, $toName = NULL, $file = NULL) {
+
+
+        $apiKey = env('SENDGRID_API_KEY');
+        $emailSender= env('SENDGRId_SENDER');
+        $emailSenderName= env('SENDGRId_SENDER_NAME');
+        $emailReply= env('SENDGRId_SETREPLYTo');
+        $all_email = array();
+        $all_email[] = $to;
+
+
+        $arr_e['to'] = trim($to);
+        $arr_e['template_id'] = $templateId;
+        $arr_e['subject'] = '';
+        $arr_e['email_variables'] = json_encode($subs);
+        $arr_e['attachment'] = '';
+
+        if (is_array($file)) {
+
+            foreach ($file as $av) {
+                $arr_e['attachment'] .= parse_url($av)['path'] . ',';
+            }
+
+        } else {
+            $arr_e['attachment'] = parse_url($file)['path'];
+        }
+
+        $arr_e['event'] = $d['event'];
+
+        if(isset($d['case_id'])) {
+
+            $arr_e['case_id'] = $d['case_id'];
+        } else {
+            $arr_e['user_id'] = $d['userid'];
+        }
+
+        $directsendid=EmailDirectSend::insertGetId($arr_e);
+
+
+        $email = new \SendGrid\Mail\Mail();
+        $email->setFrom($emailSender, $emailSenderName);
+        if (is_array($to)) {
+
+           foreach ($to as $t) {
+                 $email->addTo($t);
+            }
+        } else {
+            $email->addTo($to, $toName);
+        }
+        $email->setTemplateId($templateId);
+
+
+
+        if (!empty($file)) {
+
+             //attachment
+            if (is_array($file)) {
+
+                foreach ($file as $ff) {
+
+                    $data = Storage::disk('s3')->get($ff);
+                    $attachment = new \SendGrid\Mail\Attachment();
+
+                    $file_encoded = base64_encode($data);
+                    $filename = basename($ff);
+                    $attachment->setType("application/pdf");
+                    $attachment->setContent($file_encoded);
+                    $attachment->setDisposition("attachment");
+                    $attachment->setFilename($filename);
+                    $email->addAttachment($attachment);
+                }
+
+            } else {
+
+                 $data = Storage::disk('s3')->get($file);
+
+                 $attachment = new \SendGrid\Mail\Attachment();
+
+                $file_encoded = base64_encode($data);
+                $filename = basename($file);
+                $attachment->setType("application/pdf");
+                $attachment->setContent($file_encoded);
+                $attachment->setDisposition("attachment");
+                 $attachment->setFilename($filename);
+
+
+
+                $email->addAttachment(
+                    $attachment
+                 );
+             }
+        }
+
+        if ($subs != null) {
+
+           foreach ($subs as $key => $value) {
+                $email->addSubstitution($key, $value);
+            }
+        }
+        $sendgrid = new \SendGrid($apiKey);
+
+        $directemailsend=EmailDirectSend::find($directsendid);
+
+         try {
+
+            $response = $sendgrid->send($email);
+
+            $status = $response->statusCode();
+            $headers = $response->headers();
+            $body = $response->body();
+
+            $sendid = @reset(preg_grep('/^X-Message-Id:\s.*/', $headers));
+
+            if ($sendid) {
+
+                $idr = explode(':', $sendid);
+
+                if (isset($idr[1]) and count($d) > 0) {
+
+                    $datarr = ['sg_message_id' => trim($idr[1]), 'event' => $d['event'], 'userid' => $d['userid'],  'email' => $to, 'status' => trim($status), 'created_at' => date('Y-m-d H:i:s')];
+                    
+                    $directemailsend->sg_message_id = trim($idr[1]);
+                    $directemailsend->status = trim($status);
+                    $directemailsend->response = $body;
+                    $directemailsend->is_sent = 1;
+                    $directemailsend->updated_at = date('Y-m-d H:i:s');
+                    $directemailsend->save();
+
+                    return true;
+                }
+            }
+
+         } catch (Exception $e) {
+            
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+
+            $directemailsend->response = $body;
+            $directemailsend->status = trim($status);
+            $directemailsend->is_sent = 0;
+            $directemailsend->updated_at = date('Y-m-d H:i:s');
+            $directemailsend->save();
+            
+         }
+
+        return $response;
     }
 }

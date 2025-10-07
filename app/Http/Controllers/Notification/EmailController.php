@@ -93,7 +93,7 @@ class EmailController
 
              $response = '';
         $email = new \SendGrid\Mail\Mail();
-        $email->setFrom('admin@presolv360.com', 'Presolv360');
+        $email->setFrom('ukmediation@presolv360.com', 'Presolv360');
         $email->addTo($to, 'User');
          
         $email->setTemplateId($tempid);
