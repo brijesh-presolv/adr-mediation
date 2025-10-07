@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\SendGrid;
 use App\Http\Helpers\SendGrid as Email;
 use App\Http\Helpers\Whatsapp;
+use App\Http\Helpers\Common_function;
 use App\Models\InvoledUser;
 use App\Models\MedCase;
 use App\Models\Reminder;
@@ -165,6 +166,38 @@ public $successStatus = 200;
                 'is_agree' => $is_agree
 
             ]);
+
+
+            $d = [
+                'event' => 'VARIFY_EMAIL',
+                'userid' => $user->id,
+            ];
+
+            if ($user->role == '0') {
+
+                $findInvCase = InvoledUser::where(['userEmail' => $user->email, 'joinCode' => null, 'isClaimant' => 0])->get();
+
+                if(isset($findInvCase)) {
+
+                    foreach($findInvCase as $value) {
+
+                        if($value->userId == null) {
+                            $value->userId = $user->id;
+                            $value->save();
+                        }
+                    }
+                }
+
+                Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id);
+
+                $email = SendGrid::directEmailSend($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
+
+            } else if ($user->role == '1') {
+
+                Common_function::MedNotification(null, "MED_REGI", null, null, null, $user->id);
+
+                $email = SendGrid::directEmailSend($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
+            }
 
             $data['userid'] = $user->id;
             $data['eotp'] = $user->emailotp;

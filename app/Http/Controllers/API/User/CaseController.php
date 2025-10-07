@@ -101,10 +101,6 @@ class CaseController extends Controller
         $bulk = 0;
 
         $cases = MedCase::getNewReqCaseUserApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id, $userId);
-
-        //dd($cases);
-
-       // $arraydata = array();
         $data = array();
         if(count($cases) > 0) {
         foreach ($cases as $key => $values) {

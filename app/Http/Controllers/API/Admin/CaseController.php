@@ -144,7 +144,6 @@ class CaseController extends Controller
         $role = 2; // admin
         $bulk = 0;
         $casesData = MedCase::getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
-      // print_r($casesData);die();
         $data = array();
         if(count($casesData) > 0) {
             foreach ($casesData as $key => $values) {
@@ -3384,7 +3383,7 @@ class CaseController extends Controller
                         'country' => isset($resp_data['country']) ? $resp_data['country'] : "",
                         'isClaimant' => $respUser['isClaimant']
                     ];
-                    $add_resp = DB::table('user_involved_in_agreement')->where('userEmail', $resp_data)->update($dataToRespInsert);
+                    $add_resp = DB::table('user_involved_in_agreement')->where('id', $respUser['id'])->update($dataToRespInsert);
                 
                 } else {
                     $add_resp = new InvoledUser();

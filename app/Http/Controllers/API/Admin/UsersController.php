@@ -175,17 +175,12 @@ class UsersController extends Controller
             'first_name'   => 'required|string|max:100',
             'last_name'    => 'required|string|max:100',
             'email'        => 'required|email|unique:users,email,' . $request->id,
-            //'username'     => 'required|string|max:100|unique:users,username,' . $request->id,
             'mobile_number'=> 'required|string|max:10',
-           // 'organization' => 'nullable|string|max:255',
-            //'country_code' => 'nullable|string|max:10',
             'address'      => 'nullable|string|max:255',
-           // 'address1'     => 'nullable|string|max:255',
             'pincode'      => 'nullable|string|max:20',
             'city'         => 'nullable|string|max:100',
             'state'        => 'nullable|string|max:100',
-            'country'      => 'nullable|string|max:100',
-            //'signature'    => 'nullable|mimes:jpg,jpeg,png|max:4048',  
+            'country'      => 'nullable|string|max:100',  
         ]);
 
         if ($validator->fails()) {
@@ -203,7 +198,6 @@ class UsersController extends Controller
         $user->first_name = ucfirst($request->input('first_name'));
         $user->last_name = ucfirst($request->input('last_name'));
         $user->email = $request->input('email');
-        //$user->username = $request->input('username')
         $user->mobile_number = $request->input('mobile_number');
         $user->organization = $request->input('organization');
         $user->country_code = $request->input('country_code');
