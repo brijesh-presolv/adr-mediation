@@ -68,9 +68,6 @@ class CaseController extends Controller
 
         $cases = MedCase::getNewReqCaseMediatorApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id, $userId);
 
-        //dd($cases);
-
-       // $arraydata = array();
         $data = array();
         if(count($cases) > 0) {
         foreach ($cases as $key => $values) {
@@ -372,7 +369,6 @@ class CaseController extends Controller
                 
                 $create_zoom_meeting_response = Zoom::createZoomMeeting($caseId, $note, $date_format_api, $end_date_format_api);
                 $create_zoom_meeting = json_decode($create_zoom_meeting_response, true);
-                //print_r($create_zoom_meeting);die();
                 // Get zoom api invitation : START //
                 $zoom_invitation_response = Zoom::zoomInvitation($create_zoom_meeting['id']);
                 $zoom_invitation = json_decode($zoom_invitation_response, true);
