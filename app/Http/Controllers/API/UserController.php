@@ -242,10 +242,10 @@ public $successStatus = 200;
 
                 if ($usr->isActive == 1 && $usr->status == 1) {
 
-                    $data['userid'] = $user->id;
-                    $data['role'] = $user->role;
-                    $data['email'] = $user->email;
-                    $data['name'] = $user->first_name;
+                    $data['userid'] = $usr->id;
+                    $data['role'] = $usr->role;
+                    $data['email'] = $usr->email;
+                    $data['name'] = $usr->first_name;
                     $data['isEverified'] = 1;
                     $result['success'] = "true";
                     $result['message'] = "OTP verified successfully.";
