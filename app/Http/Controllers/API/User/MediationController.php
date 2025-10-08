@@ -70,10 +70,6 @@ class MediationController extends Controller
             $inputData['respondants']= $request->input('respondants.*');
 
             $validator = Validator::make($request->all(), [
-                'category' => 'required',
-                'amount' => 'required',
-                'issue' => 'text',
-                'proposedsolution' => 'text',
                 'claimants.*.email' => 'unique',
                 'respondants.*.email' => 'unique'
             ]);
