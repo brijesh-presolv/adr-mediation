@@ -58,6 +58,7 @@ class MediationController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
+           
             // Inputs
             //$userId = 50;
             $category = $request->input('category');
@@ -65,8 +66,8 @@ class MediationController extends Controller
             $issue = $request->input('issue');
             $proposedsolution = $request->input('proposedsolution');
             $application = $request->input('application');
-            $isIPAccept1 = $request->input('isIPAccept1');
-            $isIPAccept2 = $request->input('isIPAccept2');
+            $isAccept1 = $request->input('isAccept1');
+            $isAccept2 = $request->input('isAccept2');
             
             $inputData['claimants']= $request->input('claimants.*');
             $inputData['respondants']= $request->input('respondants.*');
@@ -74,8 +75,8 @@ class MediationController extends Controller
             $validator = Validator::make($request->all(), [
                 // 'claimants.*.email' => 'unique:users,email',
                 // 'respondants.*.email' => 'unique:users,email',
-                'isIPAccept1' => 'required',
-                'isIPAccept2' => 'required'
+                'isAccept1' => 'required',
+                'isAccept2' => 'required'
             ]);
 
 
@@ -104,9 +105,6 @@ class MediationController extends Controller
             $med->confirm_status = 0;
             $med->bulk_flag = 0;
 
-            $med->isIPAccept1 = 1;
-            $med->isIPAccept2 = 1;
-
             $med->created_at = date('Y-m-d H:i:s');
 
             $med->updated_at = date('Y-m-d H:i:s');
@@ -115,6 +113,12 @@ class MediationController extends Controller
 
 
             $usr = User::find($userId);
+
+            // Update consent field
+            DB::table('user_involved_in_agreement')
+            ->where(['userPlanId' => $med->id, 'userEmail' => $usr->email, 'userId' => $userId])
+            ->update(['isAccept1' => 1, 'isAccept2' => 1]);
+            // Update consent field
 
 
             foreach($inputData['claimants'] as $ckey => $claimant_data) {
@@ -134,9 +138,9 @@ class MediationController extends Controller
                 
                 if(!empty($involedUser)) {
                     $dataToInsert = [
-                        'name' => isset($claimant_data['name']) ? $claimant_data['name'] : "",
-                        'userEmail' => isset($claimant_data['email']) ? $claimant_data['email'] : "",
-                        'userPhone' => isset($claimant_data['phone']) ? $claimant_data['phone'] : "",
+                       // 'name' => isset($claimant_data['name']) ? $claimant_data['name'] : "",
+                       // 'userEmail' => isset($claimant_data['email']) ? $claimant_data['email'] : "",
+                        //'userPhone' => isset($claimant_data['phone']) ? $claimant_data['phone'] : "",
                         'userPlanId' => $med->id,
                         'address1' => isset($claimant_data['address1']) ? $claimant_data['address1'] : "",
                         'address2' => isset($claimant_data['address2']) ? $claimant_data['address2'] : "",
@@ -150,6 +154,7 @@ class MediationController extends Controller
                     
                 } else {
                         $add_claimant = new InvoledUser();
+                        $add_claimant->userId = $userId;
                         $add_claimant->userEmail = isset($claimant_data['email']) ? $claimant_data['email'] : "";
                         $add_claimant->name = isset($claimant_data['name']) ? $claimant_data['name'] : "";
                         $add_claimant->userPhone = isset($claimant_data['phone']) ? $claimant_data['phone'] : "";
@@ -192,8 +197,11 @@ class MediationController extends Controller
                     $add_resp = DB::table('user_involved_in_agreement')->where('id', $respUser['id'])->update($dataToRespInsert);
                 
                 } else {
+                    $findUser = User::where(['email'=> $resp_data['email'], 'role' => 0])->first();
+
                     $add_resp = new InvoledUser();
                     $add_resp->name = isset($resp_data['name']) ? $resp_data['name'] : "";
+                    $add_resp->userId=isset($findUser->id) ? $findUser->id : 0;
                     $add_resp->userEmail = isset($resp_data['email']) ? $resp_data['email'] : "";
                     $add_resp->userPhone = isset($resp_data['phone']) ? $resp_data['phone'] : "";
                     $add_resp->userPlanId = $med->id;
@@ -581,14 +589,17 @@ class MediationController extends Controller
             
             $userId = $jwtData->data->userid;
 
+            $usr = User::find($userId);
+
             $code = $request->input('joincode');
 
             // $email = Auth::user()->email;
             // $phone = Auth::user()->mobile_number;
-            $email = $jwtData->data->email;
+            $email = $usr->email;
 
-            $phone = $jwtData->data->phone;
-            $name = $jwtData->data->name;
+            $phone = $usr->mobile_number;
+            $first_name = $usr->first_name;
+            $last_name = $usr->last_name;
 
 
             $InvoledUser = InvoledUser::where(['joincode' => $code])->where(function ($q) use ($email, $phone) {
@@ -616,10 +627,14 @@ class MediationController extends Controller
             $InvoledUser->isOnboarded = '1';
             $InvoledUser->onboardedDate = now();
             $InvoledUser->userid = $userId;
-            //$InvoledUser->userid = 0;
+
+            // Update consent field
+            $InvoledUser->isAccept1 = 1;
+            $InvoledUser->isAccept2 = 1;
+            // Update consent field
+            
             if ($InvoledUser->name == null) {
-                //$InvoledUser->name = Auth::user()->first_name . ' ' . Auth::user()->last_name;
-                $InvoledUser->name = $name;
+                $InvoledUser->name = $first_name . ' ' . $last_name;
             }
             if ($InvoledUser->userEmail == null) {
                 // /$InvoledUser->userEmail = Auth::user()->email;
@@ -760,5 +775,53 @@ class MediationController extends Controller
         $result['message'] = "Case details fetched successfully.";
         $result['data'] = $case;
         return response()->json($result, 200);
+    }
+
+
+    public function getIPData(Request $request) {
+        try {
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+
+            
+            $userId = $jwtData->data->userid;
+            
+            $usr = User::find($userId);
+
+            $data['userid'] = $userId;
+            $data['first_name'] = $usr->first_name;
+            $data['last_name'] = $usr->last_name;
+            $data['name'] = $usr->first_name .' '.$usr->last_name;
+            $data['email'] = $usr->email;
+            $data['phone'] = $usr->mobile_number;
+            $data['address'] = $usr->address;
+            $data['address1'] = $usr->address1;
+            $data['city'] = $usr->city;
+            $data['pincode'] = $usr->pincode;
+            $data['state'] = $usr->state;
+            $data['country'] = $usr->country;
+
+            $result['success'] = true;
+            $result['message'] = "Logged in user data fetched successfully.";
+            $result['data'] = $data;
+            return response()->json($result, 200);
+
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Logged in user data not found.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
     }
 }

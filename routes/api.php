@@ -177,6 +177,7 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::get('/user/change-password', [App\Http\Controllers\API\User\ProfileController::class, 'changePassword']);
 
     // Case register api
+    Route::get('/user/get-ip-data', [App\Http\Controllers\API\User\MediationController::class, 'getIPData']);
     Route::post('/user/new-case', [App\Http\Controllers\API\User\MediationController::class, 'newCase']);
 
     // User notification api
