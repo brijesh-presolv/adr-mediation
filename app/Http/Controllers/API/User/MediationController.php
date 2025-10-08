@@ -65,13 +65,17 @@ class MediationController extends Controller
             $issue = $request->input('issue');
             $proposedsolution = $request->input('proposedsolution');
             $application = $request->input('application');
+            $isIPAccept1 = $request->input('isIPAccept1');
+            $isIPAccept2 = $request->input('isIPAccept2');
             
             $inputData['claimants']= $request->input('claimants.*');
             $inputData['respondants']= $request->input('respondants.*');
 
             $validator = Validator::make($request->all(), [
-                'claimants.*.email' => 'unique',
-                'respondants.*.email' => 'unique'
+                // 'claimants.*.email' => 'unique:users,email',
+                // 'respondants.*.email' => 'unique:users,email',
+                'isIPAccept1' => 'required',
+                'isIPAccept2' => 'required'
             ]);
 
 
@@ -99,7 +103,9 @@ class MediationController extends Controller
             $med->proposedSolution = $proposedsolution;
             $med->confirm_status = 0;
             $med->bulk_flag = 0;
-            $med->ref_id = $application;
+
+            $med->isIPAccept1 = 1;
+            $med->isIPAccept2 = 1;
 
             $med->created_at = date('Y-m-d H:i:s');
 
@@ -128,9 +134,9 @@ class MediationController extends Controller
                 
                 if(!empty($involedUser)) {
                     $dataToInsert = [
-                        // 'name' => isset($claimant_data['name']) ? $claimant_data['name'] : "",
-                        // 'userEmail' => isset($claimant_data['email']) ? $claimant_data['email'] : "",
-                        // 'userPhone' => isset($claimant_data['phone']) ? $claimant_data['phone'] : "",
+                        'name' => isset($claimant_data['name']) ? $claimant_data['name'] : "",
+                        'userEmail' => isset($claimant_data['email']) ? $claimant_data['email'] : "",
+                        'userPhone' => isset($claimant_data['phone']) ? $claimant_data['phone'] : "",
                         'userPlanId' => $med->id,
                         'address1' => isset($claimant_data['address1']) ? $claimant_data['address1'] : "",
                         'address2' => isset($claimant_data['address2']) ? $claimant_data['address2'] : "",
@@ -238,7 +244,6 @@ class MediationController extends Controller
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
-        
     }
 
     public function newCaseOriginal(Request $request) {
@@ -580,10 +585,10 @@ class MediationController extends Controller
 
             // $email = Auth::user()->email;
             // $phone = Auth::user()->mobile_number;
-            $email = $jwtdata->data->email;
+            $email = $jwtData->data->email;
 
-            $phone = $jwtdata->data->phone;
-            $name = $jwtdata->data->name;
+            $phone = $jwtData->data->phone;
+            $name = $jwtData->data->name;
 
 
             $InvoledUser = InvoledUser::where(['joincode' => $code])->where(function ($q) use ($email, $phone) {
