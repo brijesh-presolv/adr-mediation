@@ -585,10 +585,10 @@ class MediationController extends Controller
 
             // $email = Auth::user()->email;
             // $phone = Auth::user()->mobile_number;
-            $email = $jwtdata->data->email;
+            $email = $jwtData->data->email;
 
-            $phone = $jwtdata->data->phone;
-            $name = $jwtdata->data->name;
+            $phone = $jwtData->data->phone;
+            $name = $jwtData->data->name;
 
 
             $InvoledUser = InvoledUser::where(['joincode' => $code])->where(function ($q) use ($email, $phone) {
