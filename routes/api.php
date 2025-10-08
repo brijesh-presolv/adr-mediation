@@ -70,6 +70,8 @@ Route::get('/gentoken', [App\Http\Controllers\API\AuthController::class, 'gentok
 Route::middleware(['apiauth'])->group(function () {
 
     Route::get('/authcheck', [App\Http\Controllers\API\AuthController::class, 'checkAuth']);
+    Route::post('/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
+    Route::post('/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
 });
 
  // Admin API Routes
@@ -166,6 +168,8 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::post('/user/cases/uploaddocument', [App\Http\Controllers\API\User\UploadController::class, 'documentUpload']);
 
     Route::post('/user/cases/meeting-sessions', [App\Http\Controllers\API\User\CaseController::class, 'getMeetingSession']);
+    Route::post('user/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
+    Route::post('user/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
 
     // User profile update api
     Route::get('/user/show-profile', [App\Http\Controllers\API\User\ProfileController::class, 'getProfileData']);
