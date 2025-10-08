@@ -44,9 +44,22 @@ class MediationController extends Controller
 
     // Case register api
     public function newCase(Request $request) {
+        try {
 
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
             // Inputs
-            $userId = 50;
+            //$userId = 50;
             $category = $request->input('category');
             $amount = $request->input('amount');
             $issue = $request->input('issue');
@@ -59,8 +72,8 @@ class MediationController extends Controller
             $validator = Validator::make($request->all(), [
                 'category' => 'required',
                 'amount' => 'required',
-                'issue' => 'string',
-                'proposedsolution' => 'string',
+                'issue' => 'text',
+                'proposedsolution' => 'text',
                 'claimants.*.email' => 'unique',
                 'respondants.*.email' => 'unique'
             ]);
@@ -174,7 +187,7 @@ class MediationController extends Controller
                         'country' => isset($resp_data['country']) ? $resp_data['country'] : "",
                         'isClaimant' => $respUser['isClaimant']
                     ];
-                    $add_resp = DB::table('user_involved_in_agreement')->where('userEmail', $resp_data)->update($dataToRespInsert);
+                    $add_resp = DB::table('user_involved_in_agreement')->where('id', $respUser['id'])->update($dataToRespInsert);
                 
                 } else {
                     $add_resp = new InvoledUser();
@@ -222,6 +235,13 @@ class MediationController extends Controller
             $result['message'] = "Case registered successfully.";
             $result['data'] = $data;
             return response()->json($result, 200);
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case updation process is failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
         
     }
 
