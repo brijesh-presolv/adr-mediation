@@ -114,7 +114,7 @@ class MediationController extends Controller
             // Update consent field
             DB::table('user_involved_in_agreement')
             ->where(['userPlanId' => $med->id, 'userEmail' => $usr->email, 'userId' => $userId])
-            ->update(['isAccept1' => 1, 'isAccept2' => 1]);
+            ->update(['isAccept1' => $isAccept1, 'isAccept2' => $isAccept2]);
             // Update consent field
 
 
