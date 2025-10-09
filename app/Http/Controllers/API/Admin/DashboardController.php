@@ -47,7 +47,6 @@ class DashboardController extends Controller
 
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-            //$userId = $jwtData->data->userid;
 
             $view = Notification::where('view', 0)->get();
             foreach ($view as $item) {
@@ -68,43 +67,4 @@ class DashboardController extends Controller
         }
     }
 
-    // public function itmNotification(){
-    //     $batchName = Batch::get();
-    //     return view('admin.case.itmnotification', compact("batchName"));
-    // }
-
-    // public function closeCaseNotification(){
-    //     $batchName = Batch::get();
-    //     return view('admin.case.closecasenotification', compact("batchName"));
-    // }
-
-    // public function sessionScheduleNotification(){
-    //     $batchName = Batch::get();
-    //     return view('admin.case.sessionschedulenotification', compact("batchName"));
-    // }
-
-    // public function bulkUploadNotification(){
-    //     $batchName = Batch::get();
-    //     return view('admin.case.bulkuploadnotification', compact("batchName"));
-    // }
-
-    // public function selectplatform(){
-    //     return view('admin.case.selectplatform'); 
-    // }
-
-
-    // // check vapt file content
-    // public function checkPdfContent(Request $request){
-    // //   / dd($request->all());
-    //     $file = $request['signature'];
-        
-    //     $content = file_get_contents($file);
-    //     if (preg_match('/\/JS|\/JavaScript|\/OpenAction|XSS/', $content)) {
-    //         $msg = "File contains restricted data , please check and re-upload.<br>";
-    //         return json_encode(['code' => 200, 'response' => 'err', 'msg' => $msg]);
-    //     } else {
-    //         return json_encode(['code' => 200, 'response' => 'success']);
-    //     }
-    // }
-    // check vapt file content
 }

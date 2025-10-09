@@ -56,11 +56,7 @@ class DownloadDocument extends Controller {
                 'Key'    => $filenametostore
             ]);
 
-            /* $data['docsFile']=$stream['Body'];
-
-            $result['success'] = true;
-            $result['message'] = "Data fetched successfully.";
-            $result['data'] = $data; */
+            
             return response($stream['Body'], 200)->withHeaders([
                 'Content-Type'        => $stream['ContentType'],
                 'Content-Length'      => $stream['ContentLength'],
