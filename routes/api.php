@@ -224,6 +224,9 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::get('/mediator/change-password', [App\Http\Controllers\API\Mediator\ProfileController::class, 'changePassword']);
 
     Route::get('/mediator/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
+
+    // Mediator notification api
+    Route::get('/mediator/notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotifications']);
 });
 
 
