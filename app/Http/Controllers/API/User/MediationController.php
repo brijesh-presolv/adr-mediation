@@ -351,6 +351,8 @@ class MediationController extends Controller
             $usr = User::find($userId);
 
             $code = $request->input('joincode');
+            $isAccept1 = $request->input('isAccept1');
+            $isAccept2 = $request->input('isAccept2');
 
             
             $email = $usr->email;
@@ -387,8 +389,8 @@ class MediationController extends Controller
             $InvoledUser->userid = $userId;
 
             // Update consent field
-            $InvoledUser->isAccept1 = 1;
-            $InvoledUser->isAccept2 = 1;
+            $InvoledUser->isAccept1 = $isAccept1;
+            $InvoledUser->isAccept2 = $isAccept2;
             // Update consent field
             
             if ($InvoledUser->name == null) {
