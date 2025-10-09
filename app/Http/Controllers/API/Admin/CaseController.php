@@ -507,6 +507,7 @@ class CaseController extends Controller
                     "pincode"=> $party->pincode,
                     "state"=> $party->state,
                     "country"=> $party->country,
+                    "joincode"=> $party->joinCode
                 ];
 
             }
@@ -523,6 +524,7 @@ class CaseController extends Controller
                     "pincode"=> $party->pincode,
                     "state"=> $party->state,
                     "country"=> $party->country,
+                    "joincode"=> $party->joinCode
                 ];
             }
         }
