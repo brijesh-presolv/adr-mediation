@@ -33,9 +33,12 @@ class HomeController extends Controller
             
             $languages = DB::table('languages')->orderBy('name')->get();
 
+
+            $resultData['languages'] = $languages;
+
             $result['success'] = true;
             $result['message'] = "Data fetched successfully.";
-            $result['data'] = $languages;
+            $result['data'] = $resultData;
             return response()->json($result, 200);
 
         } catch (Exception $e) {
