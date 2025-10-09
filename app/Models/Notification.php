@@ -64,4 +64,15 @@ class Notification extends Model {
         return $result;
     }
 
+    public static function mediatornotificationDataAPI($userId)
+    {
+
+         $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
+                    ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->where('mednotification.mediator_id', $userId)
+                    ->orderBy('mednotification.id', 'DESC')->get();
+
+        return $result;
+    }
+
 }
