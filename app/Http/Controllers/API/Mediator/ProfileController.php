@@ -110,7 +110,6 @@ class ProfileController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
-            //$userId = 264;
 
             // Inputs
             $first_name = $request->input('first_name');

@@ -100,9 +100,7 @@ class ProfileController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
-            //$userId = 50;
-            //$userpass = "Password9";
-
+            
             // Inputs
             $first_name = $request->input('first_name');
             $last_name = $request->input('last_name');
@@ -119,58 +117,6 @@ class ProfileController extends Controller
             $signature_photo = $request->file('signature_photo');
             $new_password = $request->input('new_password');
 
-
-            /*
-            if ($request->input('an') == 'cp') {
-                $validator = Validator::make($request->all(), [
-                            'current_password' => [
-                                'required', function ($attribute, $value, $fail) {
-                                    if (!Hash::check($value, "Password99")) {
-                                        $fail('Old Password didn\'t match');
-                                    }
-                                },
-                            ],
-                ]);
-
-            if ($validator->fails()) {
-
-                $errors = $validator->errors()->all();
-
-                $result['success'] = false;
-                $result['message'] = implode(', ', $errors);
-                $result['error'] = $validator->errors();
-                return response()->json($result, 422);
-            }
-
-                // $validator = Validator::make($request->all(), [
-                //     'current_password' => ['required', new MatchOldPassword],
-                //     'new_password' => 'required',
-                //     'new_confirm_password' => ['same:new_password', 'required']
-                // ]);
-                //  $request->validate(
-                //     [new MatchOldPassword
-                //         'current_password' => ['required', new MatchOldPassword],
-                //         'new_password' => ['required'],
-                //         'new_confirm_password' => ['same:new_password', 'required'],
-                //     ],
-                //     // [
-                //     //     'current_password.required' => 'Enter Current Password*',
-                //     //     'new_password.required' => 'Enter new Password*',
-                //     //     'new_confirm_password.required' => 'Enter Confirm Password*',
-                //     //     'new_confirm_password.same' => 'New password is not matched with confirm password please re-enter*',
-                //     //     //'signature' => 'nullable|mimes:jpg,jpeg,png|max:4048',  // 2MB size limit
-                //     // ],
-                // );
-
-                User::find($userId)->update(['password' => Hash::make($new_password)]);
-                $pdata['userId'] = $userId;
-                $presult['success'] = true;
-                $presult['message'] = "Password changed successfully.";
-                $presult['data'] = $pdata;
-                return response()->json($presult, 200);
-            }
-
-            */
         
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required',
