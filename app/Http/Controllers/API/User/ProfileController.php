@@ -40,7 +40,9 @@ class ProfileController extends Controller
     use UploadTrait;
 
     public function getProfileData(Request $request){
+
         try{
+            
             $token = $request->cookie('auth_token');
             if (!$token) {
 

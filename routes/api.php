@@ -155,6 +155,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/mediator-rejected', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorRejected']);
     Route::get('/admin/users/getmediatordata/{id}', [App\Http\Controllers\API\Admin\UsersController::class, 'getMediatordata']);
     Route::get('/admin/users/area-specialization', [App\Http\Controllers\API\Admin\UsersController::class, 'getAreaOfSpecialization']);
+    Route::get('/admin/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 
 });
  
@@ -191,6 +192,8 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
 
     // User case details view api
     Route::post('/user/view-case-details', [App\Http\Controllers\API\User\MediationController::class, 'viewCaseDetails']);
+
+    Route::get('/user/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
   
@@ -219,6 +222,8 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::get('/mediator/show-profile', [App\Http\Controllers\API\Mediator\ProfileController::class, 'getProfileData']);
     Route::post('/mediator/edit-profile-data', [App\Http\Controllers\API\Mediator\ProfileController::class, 'editProfileData']);
     Route::get('/mediator/change-password', [App\Http\Controllers\API\Mediator\ProfileController::class, 'changePassword']);
+
+    Route::get('/mediator/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
 
