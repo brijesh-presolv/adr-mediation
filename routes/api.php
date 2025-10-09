@@ -155,6 +155,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/mediator-rejected', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorRejected']);
     Route::get('/admin/users/getmediatordata/{id}', [App\Http\Controllers\API\Admin\UsersController::class, 'getMediatordata']);
     Route::get('/admin/users/area-specialization', [App\Http\Controllers\API\Admin\UsersController::class, 'getAreaOfSpecialization']);
+    Route::get('/admin/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 
 });
  
@@ -191,6 +192,8 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
 
     // User case details view api
     Route::post('/user/view-case-details', [App\Http\Controllers\API\User\MediationController::class, 'viewCaseDetails']);
+
+    Route::get('/user/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
   
@@ -204,8 +207,10 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
     Route::post('/mediator/cases/upload-files', [App\Http\Controllers\API\Mediator\UploadController::class, 'storeMultiFile']);
     Route::post('/mediator/cases/uploaddocument', [App\Http\Controllers\API\Mediator\UploadController::class, 'documentUpload']);
-    Route::post('/mediator/cases/settlement-upload', [App\Http\Controllers\API\Mediator\CaseController::class, 'settlementUpload']);
+    Route::post('/mediator/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
+    Route::post('/mediator/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
 
+    Route::post('/mediator/cases/settlement-upload', [App\Http\Controllers\API\Mediator\CaseController::class, 'settlementUpload']);
     Route::post('/mediator/case/add-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'addSession']);
     Route::post('/mediator/cases/meeting-sessions', [App\Http\Controllers\API\Mediator\CaseController::class, 'getMeetingSession']);
     Route::post('/mediator/cases/update-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'UpdateSession']);
@@ -217,6 +222,8 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::get('/mediator/show-profile', [App\Http\Controllers\API\Mediator\ProfileController::class, 'getProfileData']);
     Route::post('/mediator/edit-profile-data', [App\Http\Controllers\API\Mediator\ProfileController::class, 'editProfileData']);
     Route::get('/mediator/change-password', [App\Http\Controllers\API\Mediator\ProfileController::class, 'changePassword']);
+
+    Route::get('/mediator/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
 
