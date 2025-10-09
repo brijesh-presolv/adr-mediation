@@ -323,7 +323,6 @@ class CaseController extends Controller
             $validator = Validator::make($request->all(), [
                 'caseid' => 'required|integer',
                 'mediator_id' => 'required|integer',
-                'discussion_text' => 'string|max:255'
             ]);
 
             //Inputs
