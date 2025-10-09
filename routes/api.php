@@ -204,8 +204,10 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
     Route::post('/mediator/cases/upload-files', [App\Http\Controllers\API\Mediator\UploadController::class, 'storeMultiFile']);
     Route::post('/mediator/cases/uploaddocument', [App\Http\Controllers\API\Mediator\UploadController::class, 'documentUpload']);
-    Route::post('/mediator/cases/settlement-upload', [App\Http\Controllers\API\Mediator\CaseController::class, 'settlementUpload']);
+    Route::post('/mediator/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
+    Route::post('/mediator/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
 
+    Route::post('/mediator/cases/settlement-upload', [App\Http\Controllers\API\Mediator\CaseController::class, 'settlementUpload']);
     Route::post('/mediator/case/add-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'addSession']);
     Route::post('/mediator/cases/meeting-sessions', [App\Http\Controllers\API\Mediator\CaseController::class, 'getMeetingSession']);
     Route::post('/mediator/cases/update-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'UpdateSession']);
