@@ -60,7 +60,6 @@ class MediationController extends Controller
             $userId = $jwtData->data->userid;
            
             // Inputs
-            //$userId = 50;
             $category = $request->input('category');
             $amount = $request->input('amount');
             $issue = $request->input('issue');
@@ -73,8 +72,6 @@ class MediationController extends Controller
             $inputData['respondants']= $request->input('respondants.*');
 
             $validator = Validator::make($request->all(), [
-                // 'claimants.*.email' => 'unique:users,email',
-                // 'respondants.*.email' => 'unique:users,email',
                 'isAccept1' => 'required',
                 'isAccept2' => 'required'
             ]);
@@ -138,9 +135,6 @@ class MediationController extends Controller
                 
                 if(!empty($involedUser)) {
                     $dataToInsert = [
-                       // 'name' => isset($claimant_data['name']) ? $claimant_data['name'] : "",
-                       // 'userEmail' => isset($claimant_data['email']) ? $claimant_data['email'] : "",
-                        //'userPhone' => isset($claimant_data['phone']) ? $claimant_data['phone'] : "",
                         'userPlanId' => $med->id,
                         'address1' => isset($claimant_data['address1']) ? $claimant_data['address1'] : "",
                         'address2' => isset($claimant_data['address2']) ? $claimant_data['address2'] : "",
@@ -182,9 +176,6 @@ class MediationController extends Controller
                 
                 if(!empty($respUser)) {
                     $dataToRespInsert = [
-                        // 'name' => isset($resp_data['name']) ? $resp_data['name'] : "",
-                        // 'userEmail' => $resp_data,
-                        // 'userPhone' => $resp_array['rphones'][$rkey],
                         'userPlanId' => $med->id,
                         'address1' => isset($resp_data['address1']) ? $resp_data['address1'] : "",
                         'address2' => isset($resp_data['address2']) ? $resp_data['address2'] : "",
@@ -254,238 +245,8 @@ class MediationController extends Controller
         }
     }
 
-    public function newCaseOriginal(Request $request) {
-        try{
-            $token = $request->cookie('auth_token');
-            if (!$token) {
-
-                $result['success'] = false;
-                $result['message'] = 'Unauthorized: Missing token';
-                $result['error'] = 'Unauthorized: Missing token';
-                return response()->json($result, 401);
-            }
-
-            $JWT_KEY = env('JWT_KEY');
-            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-            $userId = $jwtData->data->userid;
-
-            // Inputs
-            //$userId = 50;
-            $category = $request->input('category');
-            $noofparties = $request->input('noofparties');
-            $amount = $request->input('amount');
-            $issue = $request->input('issue');
-            $proposedsolution = $request->input('proposedsolution');
-            $refid = $request->input('refid');
-            $useradd = $request->input('useradd');
-            $useradd1 = $request->input('useradd1');
-            $usercity = $request->input('usercity');
-            $userpincode = $request->input('userpincode');
-            $userstate = $request->input('userstate');
-            $usercountry = $request->input('usercountry');
-            $email = $request->input('email');
-            $phone = $request->input('phone');
-            $name = $request->input('name');
-            $fulladd = $request->input('fulladd');
-
-            $validator = Validator::make($request->all(), [
-                'category' => 'required',
-                'noofparties' => 'required',
-                'amount' => 'required',
-                'issue' => 'string',
-                'proposedsolution' => 'string',
-                'useradd' => 'string',
-                'useradd1' => 'string',
-                'usercity' => 'string',
-                'userpincode' => 'string',
-                'userstate' => 'string',
-                'usercountry' => 'string',
-                'email' => 'array',
-                'phone' => 'array',
-                'name' => 'array',
-                'fulladd' => 'array'
-            ]);
-
-
-            if ($validator->fails()) {
-
-                $errors = $validator->errors()->all();
-
-                $result['success'] = false;
-                $result['message'] = implode(', ', $errors);
-                $result['error'] = $validator->errors();
-                return response()->json($result, 422);
-            }
-
-
-
-            $med = new MedCase();
-
-            $med->userid = $userId;
-
-            $med->disputeCategory = $category;
-
-            $med->noOfParties = $noofparties;
-
-            $med->amount = $amount;
-
-            $med->confirm_status = 0;
-
-            $med->created_at = date('Y-m-d H:i:s');
-
-            $med->updated_at = date('Y-m-d H:i:s');
-
-            $med->save();
-
-            
-
-            //fetch all involved users
-
-            $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->where('isClaimant', '<>', '0')->get()->toArray();
-
-
-            if ($InvoledUser == null) {
-
-                $med->issue = $issue;
-                $med->proposedSolution = $proposedsolution;
-                $med->confirm_status = 0;
-                $med->bulk_flag = 0;
-                $med->ref_id = $refid;
-                $med->save();
-
-            }
-
-            $usr = User::find($userId);
-
-            //if (Auth::user()->address == '') {
-                $usr->address = $useradd;
-                $usr->address1 = $useradd1;
-                $usr->city = $usercity;
-                $usr->pincode = $userpincode;
-                $usr->state = $userstate;
-                $usr->country = $usercountry;
-                $usr->save();
-            //}
-
-
-            $inv = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $usr->id])->first();
-
-            if (!$inv) {
-
-                $inv = new InvoledUser();
-                $inv->userId = $usr->id;
-                $inv->userPlanId = $med->id;
-                $inv->userEmail = $usr->email;
-                $inv->userPhone = $usr->mobile_number;
-                $inv->name = ucfirst($usr->first_name) . ' ' . ucfirst($usr->last_name);
-                $inv->address1 = $usr->address;
-
-                if ($usr->address1 == '') {
-                    $usr->address1 = '';
-                }
-                $inv->address2 = $usr->address1;
-                $inv->city = $usr->city;
-                $inv->pincode = $usr->pincode;
-                $inv->state = $usr->state;
-                $inv->country = $usr->country;
-                $inv->isClaimant = '0';
-                $inv->isOnboarded = '1';
-
-
-
-
-                $inv->created_at = date('Y-m-d H:s:i');
-                $inv->updated_at = date('Y-m-d H:s:i');
-
-
-                $inv->save();
-            }
-
-
-            //add responding party
-
-
-            $respond = 0;
-
-            for ($i = 0; $i < count($email); $i++) {
-
-                if ($noofparties[$i] == 0) {
-
-                    $findUser = User::where(['email'=> $email[$i], 'role' => 0])->first();
-
-                    $inv = new InvoledUser();
-                    $inv->userId=isset($findUser->id) ? $findUser->id : 0;
-                    $inv->userPlanId = $med->id;
-                    $inv->userEmail = $email[$i];
-                    $inv->userPhone = $phone[$i];
-                    $inv->name = $name[$i];
-                   
-                    $inv->fulladdress = $fulladd[$i];
-                    $inv->isClaimant = '0';
-                    $inv->isOnboarded = '1';
-                    $inv->created_at = date('Y-m-d H:s:i');
-                    $inv->updated_at = date('Y-m-d H:s:i');
-                    $inv->save();
-                } else {
-                    $inv = new InvoledUser();
-                    $inv->userPlanId = $med->id;
-                    $inv->userEmail = $email[$i];
-                    $inv->userPhone = $phone[$i];
-                    $inv->name = $name[$i];
-                    $inv->joinCode = $this->joinCode();
-                    $inv->fulladdress = $fulladd[$i];
-                    $inv->isClaimant = $respond + 1;
-
-                    $inv->created_at = date('Y-m-d H:s:i');
-                    $inv->updated_at = date('Y-m-d H:s:i');
-
-                    $inv->save();
-                    $respond++;
-                }
-            }
-
-
-            $letter = $this->requestLetter($med->id);
-            $med->request_letter = $letter;
-            $med->save();
-            $d = [
-                'event' => 'SUBMIT_FORM',
-                'case_id' => $med->id,
-            ];
-
-            $cid = "M" . sprintf("%06d", $med->id);
-            $inv_id = "";
-            $inv = InvoledUser::select('id')->where('userPlanId', $med->id)->get();
-            foreach ($inv as $v) {
-                if ($inv_id == "") {
-                    $inv_id = $v->id;
-                } else {
-                    $inv_id = $inv_id . "," . $v->id;
-                }
-            }
-            Common_function::MedNotification($med->id, "SUBMIT_FORM", $userId, null, $inv_id);
-
-            $e = Email::send($d, $usr->email, env('EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
-
-            $data['caseid'] = $med->id;
-            $result['success'] = true;
-            $result['message'] = "Case raised successfully.";
-            $result['data'] = $data;
-            return response()->json($result, 200);
-        } catch (Exception $e) {
-
-            $result['success'] = false;
-            $result['message'] = "New case registration failded";
-            $result['error'] = $e->getMessage();
-            return response()->json($result, 500);
-        }
-    }
-
-
-
     public function requestLetter($id)
     {
-        // $data["mediator"] = User::find($medid);
         $data["case"] = MedCase::where("id", "=", $id)->first();
         $data["ini"] = InvoledUser::select('user_involved_in_agreement.*', 'usr.organization', 'usr.signature_photo')
             ->leftJoin('users as usr', DB::raw('usr.id'), '=', DB::raw('user_involved_in_agreement.userId'))
@@ -495,7 +256,6 @@ class MediationController extends Controller
         $name = 'request_letter_CID' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
@@ -538,7 +298,6 @@ class MediationController extends Controller
 
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-            //$userId = $jwtData->data->userid;
 
             $validator = Validator::make($request->all(), [
                 'caseid' => 'required|integer'
@@ -593,8 +352,7 @@ class MediationController extends Controller
 
             $code = $request->input('joincode');
 
-            // $email = Auth::user()->email;
-            // $phone = Auth::user()->mobile_number;
+            
             $email = $usr->email;
 
             $phone = $usr->mobile_number;
@@ -609,8 +367,8 @@ class MediationController extends Controller
             
             if (!$InvoledUser) {
                 $result['success'] = false;
-                $result['message'] = "Invalid data.";
-                $result['error'] = 'Invalid data.';
+                $result['message'] = "No user found with given data.";
+                $result['error'] = 'No user found with given data';
                 return response()->json($result, 500);
             }
 
@@ -637,11 +395,9 @@ class MediationController extends Controller
                 $InvoledUser->name = $first_name . ' ' . $last_name;
             }
             if ($InvoledUser->userEmail == null) {
-                // /$InvoledUser->userEmail = Auth::user()->email;
                 $InvoledUser->userEmail = $email;
             }
             if ($InvoledUser->userPhone == null) {
-                // /$InvoledUser->userPhone = Auth::user()->mobile_number;
                 $InvoledUser->userPhone = $phone;
             }
 

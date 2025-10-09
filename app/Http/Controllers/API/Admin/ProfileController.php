@@ -53,7 +53,6 @@ class ProfileController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
-            //$userId = 2;
 
             
             $profileData = User::select('*')->where('id', $userId)->first();
@@ -93,7 +92,6 @@ class ProfileController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
-            //$userId = 2;
 
             // Inputs
             $first_name = $request->input('first_name');
@@ -163,8 +161,6 @@ class ProfileController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
-
-            //$userId = 2;
 
             $validator = Validator::make($request->all(), [
                 'current_password' => 'required|string|min:6',
