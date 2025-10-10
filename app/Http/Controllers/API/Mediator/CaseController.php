@@ -1315,6 +1315,13 @@ class CaseController extends Controller
 
                 Common_function::MedNotification($caseid, "SEND_APPO_MED", $userId, $userId, $inv_id);
             } else {
+
+                $resultData['caseid']=$caseid;
+
+                $result['success'] = false;
+                $result['message'] = "Status value is wrong";
+                $result['error'] = "Status value is wrong";
+                return response()->json($result, 500);
                 
             }
 
@@ -1356,7 +1363,7 @@ class CaseController extends Controller
             $insertdata= DB::table('mediators_mediation_cases_status')
                 ->where('mediator_id', $userId)
                 ->where('mediation_case_id', $caseid)
-                ->update(['status' => $request->status, 'updated_at' => now()]);
+                ->update(['status' => $status, 'updated_at' => now()]);
 
             if ($insertdata) {
 
@@ -1379,7 +1386,7 @@ class CaseController extends Controller
         } catch (Exception $e) {
 
             $result['success'] = false;
-            $result['message'] = "Case closing process is failed.";
+            $result['message'] = "Case not accepted, Please try gain";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
