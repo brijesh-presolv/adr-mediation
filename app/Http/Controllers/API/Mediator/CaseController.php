@@ -1502,6 +1502,7 @@ class CaseController extends Controller
             }
         }
         foreach ($involedUser as $inv) {
+
             if ($inv->userEmail != "") {
                 if($case_type == 1 && $inv->isClaimant != 0){
                     SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
@@ -1509,78 +1510,6 @@ class CaseController extends Controller
                     SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
                 }
                 
-            }
-            
-            /**** SMS Notification ****/
-            if($data["case"]->bulk_flag == 1){
-                if($inv->isClaimant != 0) {
-                    $smsvar = ['--caseid--'];
-                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
-                    $varjsonSms = ['caseid' => $mid];
-                    
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
-                
-                }
-            } else {
-                $smsvar = ['--caseid--'];
-                $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
-                $varjsonSms = ['caseid' => $mid];
-                
-                Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
-            
-            }
-            /**** SMS Notification ****/
-            if ($inv->userPhone != null) {
-                if(($case_type == 1 && $inv->isClaimant != 0) || ($case_type == 0)){
-
-
-                   
-                     
-
-
-                $varjson = ['caseid' => $mid];
-                $var = ['-cid-'];
-                $var1 = [$mid];
-                $content1 = WaTemplate::getcontent('mediator_appointment');
-                $content = str_replace($var, $var1, $content1);
-                $dwa1 = [
-                    'caseid' => $id,
-                    'contact' =>   $inv->userPhone,
-                    'content' => ['text' => $content],
-                    'event' => 'SEND_APPO_MED',
-                    'varjson' => $varjson,
-                    'haptik_tmp' => 'l18_mediator_appointment'
-                ];
-                $access = Whatsapp::sendWamessage($dwa1);
-                $varjson_file = ['caseid' => $mid];
-                $var_file = ['-caseid-'];
-                $var1_file = [$mid];
-
-                $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
-                
-                $content1_file = WaTemplate::getcontent($pdf_template_name);
-                $content_file = str_replace($var_file, $var1_file, $content1_file);
-                $dwa2 = [
-                    'caseid' => $id,
-                    'contact' =>  $inv->userPhone,
-                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
-                    'event' => 'SEND_APPO_MED',
-                    'varjson' => $varjson_file,
-                    'haptik_tmp' => $pdf_template_name
-
-                ];
-                $access = Whatsapp::sendWamessage($dwa2);
-            } else {
-                /**** SMS Notification ****/
-                //if($data["case"]->bulk_flag == 0){
-                    $smsvar = ['--caseid--'];
-                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
-                    $varjsonSms = ['caseid' => $mid];
-                    
-                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
-                    // }
-                    /**** SMS Notification ****/ 
-                }
             }
         }
 
