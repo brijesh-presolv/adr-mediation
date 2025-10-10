@@ -1890,7 +1890,7 @@ class MedCase extends Model
         return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
     }
 
-    static function getRejectedCaseMediatorApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id)
+    static function getRejectedCaseMediatorApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id, $userId)
     {
 
         $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")

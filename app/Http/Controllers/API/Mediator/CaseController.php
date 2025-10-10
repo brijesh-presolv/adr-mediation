@@ -266,7 +266,7 @@ class CaseController extends Controller
         $columnName = $request->input('columnName', ''); 
         
         $bulk = 0;
-        $casesData = MedCase::getClosedCaseMediatorApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id, $userId);
+        $casesData = MedCase::getRejectedCaseMediatorApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id, $userId);
 
         $data = array();
         if(count($casesData) > 0) {
