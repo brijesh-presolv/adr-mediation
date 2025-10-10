@@ -172,7 +172,7 @@ class User extends Authenticatable
     static function getMediatorsApprove($role, $start, $length, $search, $columnName, $sortOrder)
     {
 
-        $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language')
+        $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')
                     ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
                     ->where("role", "=", $role)
                     ->where('status', 1)
@@ -209,7 +209,7 @@ class User extends Authenticatable
     static function getMediatorsNewReq($role, $start, $length, $search, $columnName, $sortOrder)
     {
 
-        $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language')->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+        $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
                     ->where("role", "=", $role)
                     ->where('status', 0)
                     ->where('is_deleted', 0);
@@ -245,7 +245,7 @@ class User extends Authenticatable
     static function getMediatorsRejected($role, $start, $length, $search, $columnName, $sortOrder)
     {
 
-        $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language')->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+        $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
         ->where("role", "=", $role)
                     ->where('is_deleted', 1);
 
