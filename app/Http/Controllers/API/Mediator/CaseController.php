@@ -1178,6 +1178,44 @@ class CaseController extends Controller
         }
     }
 
+    public function send_settlement_agreement_party($id, $files)
+    {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "M" . sprintf("%06d", $id);
+        $sendEamils = array();
+        $filesE = array();
+        $d = [
+            'event' => 'SEND_SETT_AGRE',
+            'case_id' => $id,
+        ];
+        foreach ($files as $f) {
+            $filesE[] = 'mediation_documents/mediation/' . $id . '/settelmentDocument/' . $f["file_path"];
+        }
+        foreach ($involedUser as $inv) {
+            if ($inv->userEmail != "") {
+                $sendEamils[] = $inv->userEmail;
+            }
+        }
+        if ($mediator) {
+            $d1 = [
+                'event' => 'SEND_SETT_AGRE_MED',
+                'case_id' => $id,
+            ];
+            SendGrid::send($d1, $mediator->email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+
+        }
+
+        foreach ($sendEamils as $email) {
+            SendGrid::send($d, $email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        }
+
+        return true;
+    }
+
     public function sessionPdf(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1209,5 +1247,344 @@ class CaseController extends Controller
 
     }
 
+    public function caseAccept(Request $request)
+    {
+        try{
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'required|integer',
+                'status' => 'required|integer',
+                'consent1' => 'required',
+                'consent2' => 'required',
+                'consent3' => 'required',
+                'consent4' => 'required',
+                'consent5' => 'required',
+                'particulars1' => 'required',
+                'particulars2' => 'required',
+                'particulars3' => 'required',
+            ], [
+                'consent1.required' => 'consent 1 is required.',
+                'consent2.required' => 'consent 2 is required.',
+                'consent3.required' => 'consent 3 is required.',
+                'consent4.required' => 'consent 4 is required.',
+                'consent5.required' => 'consent 5 is required.',
+                'particulars1.required' => 'Experience is required.',
+                'particulars2.required' => 'Disclosur 1 is required.',
+                'particulars3.required' => 'Disclosur 2 is required.',
+            ]);
+
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            $caseid = $request->input('caseid');
+            $status = $request->input('status');
+
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
+            foreach ($inv as $v) {
+
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+
+            if ($status == 1) {
+
+                Common_function::MedNotification($caseid, "SEND_APPO_MED", $userId, $userId, $inv_id);
+            } else {
+                
+            }
+
+            $consentDisclosures = ConsentDisclosures::where("mediation_case_id", "=", $caseid)->first();
+
+            if (empty($consentDisclosures)) {
+
+                $consentDisclosures = new ConsentDisclosures();
+                $consentDisclosures->mediation_case_id = $caseid;
+                $consentDisclosures->mediator_id = $userId;
+                $consentDisclosures->consent1 = $request->input('consent1');
+                $consentDisclosures->consent2 = $request->input('consent2');
+                $consentDisclosures->consent3 = $request->input('consent3');
+                $consentDisclosures->consent4 = $request->input('consent4');
+                $consentDisclosures->consent5 = $request->input('consent5');
+                $consentDisclosures->particulars1 = $request->input('particulars1');
+                $consentDisclosures->particulars2 = $request->input('particulars2');
+                $consentDisclosures->particulars3 = $request->input('particulars3');
+
+            } else {
+
+                $consentDisclosures->mediation_case_id = $caseid;
+                $consentDisclosures->mediator_id = $userId;
+                $consentDisclosures->consent1 = $request->input('consent1');
+                $consentDisclosures->consent2 = $request->input('consent1');
+                $consentDisclosures->consent3 = $request->input('consent1');
+                $consentDisclosures->consent4 = $request->input('consent1');
+                $consentDisclosures->consent5 = $request->input('consent1');
+                $consentDisclosures->particulars1 = $request->input('particulars1');
+                $consentDisclosures->particulars2 = $request->input('particulars2');
+                $consentDisclosures->particulars3 = $request->input('particulars3');
+            }
+            $consentDisclosures->save();
+
+            $case_type = 0; // individual
+            
+            $this->send_attechment_party($caseid, $case_type);
+
+            $insertdata= DB::table('mediators_mediation_cases_status')
+                ->where('mediator_id', $userId)
+                ->where('mediation_case_id', $caseid)
+                ->update(['status' => $request->status, 'updated_at' => now()]);
+
+            if ($insertdata) {
+
+                $resultData['caseid']=$caseid;
+
+                $result['success'] = true;
+                $result['message'] = "Case accepted successfully.";
+                $result['data'] = $resultData;
+                return response()->json($result, 200);
+                
+            } else {
+
+                $resultData['caseid']=$caseid;
+
+                $result['success'] = false;
+                $result['message'] = "Case not accepted, Please try gain";
+                $result['error'] = "Something went wrong";
+                return response()->json($result, 500);
+            }
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case closing process is failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+    public function caseReject(Request $request)
+    {
+        try{
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'required|integer',
+                'status' => 'required|integer',
+            ]);
+
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            $caseid = $request->input('caseid');
+            $status = $request->input('status');
+
+            $inv_id = "";
+            $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
+            foreach ($inv as $v) {
+
+                if ($inv_id == "") {
+                    $inv_id = $v->id;
+                } else {
+                    $inv_id = $inv_id . "," . $v->id;
+                }
+            }
+
+            Common_function::MedNotification($caseid, "REJECTED_MED", Auth::user()->id, Auth::user()->id, $inv_id);
+        
+            $insertdata = DB::table('mediators_mediation_cases_status')
+                ->where('mediator_id', Auth::user()->id)
+                ->where('mediation_case_id', $caseid)
+                ->update(['status' => $status, 'updated_at' => now()]);
+
+            if ($insertdata) {
+
+                    $resultData['caseid']=$caseid;
+                    $result['success'] = true;
+                    $result['message'] = "Case rejected successfully.";
+                    $result['data'] = $resultData;
+                    return response()->json($result, 200);
+                
+            } else {
+
+                $resultData['caseid']=$caseid;
+
+                $result['success'] = false;
+                $result['message'] = "Case not accepted, Please try gain";
+                $result['error'] = "Something went wrong";
+                return response()->json($result, 500);
+            }
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case closing process is failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+    public function send_attechment_party($id, $case_type)
+    {
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        $data["consent_disclosures"] = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
+            ->where("mediation_case_id", "=", $id)
+            ->first();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            // ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        if (empty($data["case"]) || empty($data["party"]) || empty($data["consent_disclosures"])) {
+            return abort(404);
+        }
+        $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
+        $file_name = "M" . sprintf("%06d", $id) . "_party.pdf";
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $file_name, $pdf->output());
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $file_name;
+        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        $data["consent_disclosures"]->file_name = $file_name;
+        $data["consent_disclosures"]->save();
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mid = "M" . sprintf("%06d", $id);
+        $d = [
+            'event' => 'SEND_APPO_MED',
+            'case_id' => $id,
+        ];
+        $whatsappSend = Storage::disk('s3')->url($finalFilePath);
+        // dd($uploadS3);
+        if ($mediator) {
+            if($case_type == 0){
+                SendGrid::send($d, $mediator->email, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
+            }
+        }
+        foreach ($involedUser as $inv) {
+            if ($inv->userEmail != "") {
+                if($case_type == 1 && $inv->isClaimant != 0){
+                    SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
+                } elseif($case_type == 0){
+                    SendGrid::send($d, $inv->userEmail, env('L18_MEDIATOR_ACCEPTANCE_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $finalFilePath);
+                }
+                
+            }
+            
+            /**** SMS Notification ****/
+            if($data["case"]->bulk_flag == 1){
+                if($inv->isClaimant != 0) {
+                    $smsvar = ['--caseid--'];
+                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                    $varjsonSms = ['caseid' => $mid];
+                    
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
+                
+                }
+            } else {
+                $smsvar = ['--caseid--'];
+                $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                $varjsonSms = ['caseid' => $mid];
+                
+                Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
+            
+            }
+            /**** SMS Notification ****/
+            if ($inv->userPhone != null) {
+                if(($case_type == 1 && $inv->isClaimant != 0) || ($case_type == 0)){
+
+
+                   
+                     
+
+
+                $varjson = ['caseid' => $mid];
+                $var = ['-cid-'];
+                $var1 = [$mid];
+                $content1 = WaTemplate::getcontent('mediator_appointment');
+                $content = str_replace($var, $var1, $content1);
+                $dwa1 = [
+                    'caseid' => $id,
+                    'contact' =>   $inv->userPhone,
+                    'content' => ['text' => $content],
+                    'event' => 'SEND_APPO_MED',
+                    'varjson' => $varjson,
+                    'haptik_tmp' => 'l18_mediator_appointment'
+                ];
+                $access = Whatsapp::sendWamessage($dwa1);
+                $varjson_file = ['caseid' => $mid];
+                $var_file = ['-caseid-'];
+                $var1_file = [$mid];
+
+                $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
+                
+                $content1_file = WaTemplate::getcontent($pdf_template_name);
+                $content_file = str_replace($var_file, $var1_file, $content1_file);
+                $dwa2 = [
+                    'caseid' => $id,
+                    'contact' =>  $inv->userPhone,
+                    'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                    'event' => 'SEND_APPO_MED',
+                    'varjson' => $varjson_file,
+                    'haptik_tmp' => $pdf_template_name
+
+                ];
+                $access = Whatsapp::sendWamessage($dwa2);
+            } else {
+                /**** SMS Notification ****/
+                //if($data["case"]->bulk_flag == 0){
+                    $smsvar = ['--caseid--'];
+                    $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
+                    $varjsonSms = ['caseid' => $mid];
+                    
+                    Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'MEDL18', 'SEND_APPO_MED_SMS', 'L18_Med_medaccept_sms');
+                    // }
+                    /**** SMS Notification ****/ 
+                }
+            }
+        }
+
+        return true;
+    }
 
 }

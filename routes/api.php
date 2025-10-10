@@ -72,6 +72,7 @@ Route::middleware(['apiauth'])->group(function () {
     Route::get('/authcheck', [App\Http\Controllers\API\AuthController::class, 'checkAuth']);
     Route::post('/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
     Route::post('/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
+    Route::get('/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
  // Admin API Routes
@@ -209,9 +210,11 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/uploaddocument', [App\Http\Controllers\API\Mediator\UploadController::class, 'documentUpload']);
     Route::post('/mediator/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
     Route::post('/mediator/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
-
+   
+    Route::post('/mediator/cases/case-accept', [App\Http\Controllers\API\Mediator\CaseController::class, 'caseAccept']);
+    Route::post('/mediator/cases/case-reject', [App\Http\Controllers\API\Mediator\CaseController::class, 'caseReject']);
     Route::post('/mediator/cases/settlement-upload', [App\Http\Controllers\API\Mediator\CaseController::class, 'settlementUpload']);
-    Route::post('/mediator/case/add-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'addSession']);
+    Route::post('/mediator/cases/add-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'addSession']);
     Route::post('/mediator/cases/meeting-sessions', [App\Http\Controllers\API\Mediator\CaseController::class, 'getMeetingSession']);
     Route::post('/mediator/cases/update-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'UpdateSession']);
     Route::post('/mediator/cases/delete-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'deleteSession']);
