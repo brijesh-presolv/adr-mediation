@@ -1320,7 +1320,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded', 'user_involed:id,userPlanId,name,userEmail,isOnboarded'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1345,7 +1345,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            //->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
             ->where("mediation_case.confirm_status", 0)
             ->where("mediation_case.bulk_flag", $bulk);
 
@@ -1376,8 +1376,11 @@ class MedCase extends Model
                     ->orWhere('users.last_name', 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%")
-                    ->orWhereHas('user_involed', function ($sub) use ($search) {
-                      $sub->where('name', 'LIKE', "%{$search}%");
+                    ->orWhereExists(function ($sub) use ($search) {
+                        $sub->select(DB::raw(1))
+                            ->from('user_involved_in_agreement')
+                            ->whereRaw('user_involved_in_agreement.userPlanId = mediation_case.id')
+                            ->where('user_involved_in_agreement.name', 'LIKE', "%{$search}%");
                     });
                 });
             }
@@ -1400,7 +1403,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded', 'user_involed:id,userPlanId,name,userEmail,isOnboarded'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1425,7 +1428,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            //->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
             ->where("mediation_case.confirm_status", 1)
             ->where("mediation_case.bulk_flag", $bulk);
 
@@ -1456,8 +1459,11 @@ class MedCase extends Model
                     ->orWhere('users.last_name', 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%")
-                    ->orWhereHas('user_involed', function ($sub) use ($search) {
-                      $sub->where('name', 'LIKE', "%{$search}%");
+                    ->orWhereExists(function ($sub) use ($search) {
+                        $sub->select(DB::raw(1))
+                            ->from('user_involved_in_agreement')
+                            ->whereRaw('user_involved_in_agreement.userPlanId = mediation_case.id')
+                            ->where('user_involved_in_agreement.name', 'LIKE', "%{$search}%");
                     });
                 });
             }
@@ -1480,7 +1486,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded', 'user_involed:id,userPlanId,name,userEmail,isOnboarded'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1505,7 +1511,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            //->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
             ->where("mediation_case.confirm_status", 2)
             ->where("mediation_case.bulk_flag", $bulk);
 
@@ -1536,8 +1542,11 @@ class MedCase extends Model
                     ->orWhere('users.last_name', 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%")
-                    ->orWhereHas('user_involed', function ($sub) use ($search) {
-                      $sub->where('name', 'LIKE', "%{$search}%");
+                    ->orWhereExists(function ($sub) use ($search) {
+                        $sub->select(DB::raw(1))
+                            ->from('user_involved_in_agreement')
+                            ->whereRaw('user_involved_in_agreement.userPlanId = mediation_case.id')
+                            ->where('user_involved_in_agreement.name', 'LIKE', "%{$search}%");
                     });
                 });
             }
@@ -1561,7 +1570,7 @@ class MedCase extends Model
             ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
             ->groupBy("mmcs1.mediation_case_id");
 
-        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded', 'user_involed:id,userPlanId,name,userEmail,isOnboarded'])
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
             ->select(
                 "mediation_case.id",
                 "mediation_case.batch_id",
@@ -1586,7 +1595,7 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            //->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
             ->where("mediation_case.confirm_status", 3)
             ->where("mediation_case.bulk_flag", $bulk);
 
@@ -1617,8 +1626,11 @@ class MedCase extends Model
                     ->orWhere('users.last_name', 'LIKE', "%{$search}%")
                     ->orWhere('batch.batch_name', 'LIKE', "%{$search}%")
                     ->orWhere('mediation_case.ref_id', 'LIKE', "%{$search}%")
-                    ->orWhereHas('user_involed', function ($sub) use ($search) {
-                      $sub->where('name', 'LIKE', "%{$search}%");
+                    ->orWhereExists(function ($sub) use ($search) {
+                        $sub->select(DB::raw(1))
+                            ->from('user_involved_in_agreement')
+                            ->whereRaw('user_involved_in_agreement.userPlanId = mediation_case.id')
+                            ->where('user_involved_in_agreement.name', 'LIKE', "%{$search}%");
                     });
                 });
             }
