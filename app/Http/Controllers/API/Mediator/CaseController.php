@@ -1439,10 +1439,10 @@ class CaseController extends Controller
                 }
             }
 
-            Common_function::MedNotification($caseid, "REJECTED_MED", Auth::user()->id, Auth::user()->id, $inv_id);
+            Common_function::MedNotification($caseid, "REJECTED_MED", $userId, $userId, $inv_id);
         
             $insertdata = DB::table('mediators_mediation_cases_status')
-                ->where('mediator_id', Auth::user()->id)
+                ->where('mediator_id', $userId)
                 ->where('mediation_case_id', $caseid)
                 ->update(['status' => $status, 'updated_at' => now()]);
 
