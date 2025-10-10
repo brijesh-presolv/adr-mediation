@@ -1353,6 +1353,7 @@ class CaseController extends Controller
                 $consentDisclosures->particulars1 = $request->input('particulars1');
                 $consentDisclosures->particulars2 = $request->input('particulars2');
                 $consentDisclosures->particulars3 = $request->input('particulars3');
+                $consentDisclosures->updated_at = now();
             }
             $consentDisclosures->save();
 
@@ -1381,6 +1382,7 @@ class CaseController extends Controller
                 $result['success'] = false;
                 $result['message'] = "Case not accepted, Please try gain";
                 $result['error'] = "Something went wrong";
+                $result['data'] = $resultData;
                 return response()->json($result, 500);
             }
         } catch (Exception $e) {
