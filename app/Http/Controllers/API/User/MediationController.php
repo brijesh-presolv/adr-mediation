@@ -172,7 +172,7 @@ class MediationController extends Controller
             foreach($inputData['respondants'] as $rkey => $resp_data) {
                 $respUser = InvoledUser::where(['userPlanId' => $med->id, 'userEmail' => $resp_data['email']])->orderByDesc('id')->limit(1)->first();
                 
-                $isClaimant_count = InvoledUser::select('isClaimant')->where('isClaimant', '!=', 0)->orderBy('isClaimant', 'desc')->first()->toArray();
+                $isClaimant_count = InvoledUser::select('isClaimant')->where('isClaimant', '!=', 0)->where('userPlanId', $med->id)->orderBy('isClaimant', 'desc')->first()->toArray();
                 
                 if(!empty($respUser)) {
                     $dataToRespInsert = [
