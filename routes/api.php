@@ -175,7 +175,7 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     // User profile update api
     Route::get('/user/show-profile', [App\Http\Controllers\API\User\ProfileController::class, 'getProfileData']);
     Route::post('/user/edit-profile-data', [App\Http\Controllers\API\User\ProfileController::class, 'editProfileData']);
-    Route::get('/user/change-password', [App\Http\Controllers\API\User\ProfileController::class, 'changePassword']);
+    Route::post('/user/change-password', [App\Http\Controllers\API\User\ProfileController::class, 'changePassword']);
 
     // Case register api
     Route::get('/user/get-ip-data', [App\Http\Controllers\API\User\MediationController::class, 'getIPData']);
