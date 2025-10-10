@@ -1480,7 +1480,7 @@ class CaseController extends Controller
             return abort(404);
         }
         $pdf = PDF::loadView('pdf.consent_and_disclosures', $data);
-        $file_name = "M" . sprintf("%06d", $id) . "_party.pdf";
+        $file_name = "CID" . sprintf("%06d", $id) . "_party.pdf";
         // Storage::put('public/mediation/' . $data["case"]->id . '/' . $file_name, $pdf->output());
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $file_name;
@@ -1489,7 +1489,7 @@ class CaseController extends Controller
         $data["consent_disclosures"]->file_name = $file_name;
         $data["consent_disclosures"]->save();
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
-        $mid = "M" . sprintf("%06d", $id);
+        $mid = "CID" . sprintf("%06d", $id);
         $d = [
             'event' => 'SEND_APPO_MED',
             'case_id' => $id,
