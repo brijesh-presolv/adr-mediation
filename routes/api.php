@@ -230,6 +230,9 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
     // Mediator notification api
     Route::get('/mediator/notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotifications']);
+
+    // Mediator case details view api
+    Route::post('/mediator/view-case-details', [App\Http\Controllers\API\Mediator\DashboardController::class, 'viewCaseDetails']);
 });
 
 
