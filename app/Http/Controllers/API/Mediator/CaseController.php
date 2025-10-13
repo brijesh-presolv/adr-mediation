@@ -1525,4 +1525,202 @@ class CaseController extends Controller
         return true;
     }
 
+    public function getConsentDisclosures(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'caseId'             => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $caseId = $request->input('caseId');
+
+        $casesData = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
+            ->where("mediation_case_id", "=", $caseId)
+            ->get();
+
+        $data = array();
+        if(count($casesData) > 0) {
+
+            foreach ($casesData as $key => $values) {
+
+                if ($values->file_name != null) {
+                    $dis_file_name = $values->file_name;
+                    $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+                } else {
+                    $dis_file_name = "M" . sprintf("%06d", $caseId) . "_party.pdf";
+                    $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+                }
+
+                $id = $values->id;
+                $data[$key]['id'] = $id;
+                $data[$key]['caseid'] = $values->mediation_case_id;
+                $data[$key]['file_name'] = $dis_file_name;
+                $data[$key]['name'] = $values->first_name." ".$values->last_name;
+                $data[$key]['created_at'] = $values->created_at;
+
+            }
+
+            $result['success'] = true;
+            $result['message'] = "Data fetched successfully.";
+            $result['data'] = $data;
+             return response()->json($result, 200);
+
+        } else {
+            
+            $result['success'] = false;
+            $result['message'] = "File Not available.";
+            $result['error'] = "File Not available.";
+             return response()->json($result, 500);
+        }
+    }
+
+        public function downloadDisclosures(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id'             => 'required|integer',
+            'caseId'             => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $id = $request->input('id');
+        $caseId = $request->input('caseId');
+
+        $data = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
+            ->where("consent_disclosures.id", "=", $id)
+            ->first();
+        if (isset($data)) {
+
+            $filenametostore = 'mediation_documents/mediation/' . $caseId . '/' . $data->file_name;
+            $s3Client = Storage::cloud()->getAdapter()->getClient();
+
+            $objectExists = $s3Client->doesObjectExist(env('AWS_BUCKET'), $filenametostore);
+
+            if (!$objectExists) {
+
+                $result['success'] = false;
+                $result['message'] = "File not found";
+                $result['error'] =  "File Fetching failed.";
+                return response()->json($result, 404);
+            }
+
+            $stream = $s3Client->getObject([
+                'Bucket' => env('AWS_BUCKET'),
+                'Key'    => $filenametostore
+            ]);
+
+            return response($stream['Body'], 200)->withHeaders([
+                'Content-Type'        => $stream['ContentType'],
+                'Content-Length'      => $stream['ContentLength'],
+                'Content-Disposition' => 'attachment; filename="' . $data->file_name . '"'
+            ]);
+        } else {
+
+            $result['success'] = false;
+            $result['message'] = "File Not available.";
+            $result['error'] = "File Not available.";
+            return response()->json($result, 500);
+        }
+    }
+
+    public function previewDisclosures(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id'             => 'required|integer',
+            'caseId'             => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $id = $request->input('id');
+        $caseId = $request->input('caseId');
+
+        $data = ConsentDisclosures::select('consent_disclosures.*')->where(".id", "=", $id)->first();
+        
+        if (isset($data)) {
+
+          if ($data->file_name != null) {
+                $dis_file_name = $data->file_name;
+                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+            } else {
+                $dis_file_name = "M" . sprintf("%06d", $caseId) . "_party.pdf";
+                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+            }
+            
+            if (File::exists($exist_file)) {
+                $pdf = file_get_contents($exist_file);
+                return response($pdf, 200, [
+                    'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
+                ]);
+            } else {
+
+            $filenametostore = 'mediation_documents/mediation/' . $caseId . '/' . $data->file_name;
+            $s3Client = Storage::cloud()->getAdapter()->getClient();
+
+            $objectExists = $s3Client->doesObjectExist(env('AWS_BUCKET'), $filenametostore);
+
+            if (!$objectExists) {
+
+                $result['success'] = false;
+                $result['message'] = "File not found";
+                $result['error'] =  "File Fetching failed.";
+                return response()->json($result, 404);
+            }
+
+            $stream = $s3Client->getObject([
+                'Bucket' => env('AWS_BUCKET'),
+                'Key'    => $filenametostore
+            ]);
+
+            $body = $stream['Body'];
+
+            return response()->stream(function () use ($body) {
+                while (!$body->eof()) {
+                    echo $body->read(1024); // read in chunks
+                }
+            }, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . basename($data->file_name) . '"',
+                'Content-Length' => $stream['ContentLength'],
+            ]);
+        }
+
+        } else {
+
+            $result['success'] = false;
+            $result['message'] = "Disclosures data Not available.";
+            $result['error'] = "Disclosures data Not available.";
+            return response()->json($result, 500);
+        }
+    }
+    
+
 }
