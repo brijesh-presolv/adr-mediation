@@ -44,21 +44,20 @@ class MediationController extends Controller
 
     // Case register api
     public function newCase(Request $request) {
-        // try {
+        try {
 
-        //     $token = $request->cookie('auth_token');
-        //     if (!$token) {
+            $token = $request->cookie('auth_token');
+            if (!$token) {
 
-        //         $result['success'] = false;
-        //         $result['message'] = 'Unauthorized: Missing token';
-        //         $result['error'] = 'Unauthorized: Missing token';
-        //         return response()->json($result, 401);
-        //     }
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
 
-        //     $JWT_KEY = env('JWT_KEY');
-        //     $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-        //    $userId = $jwtData->data->userid;
-        $userId = 50;
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
            
             // Inputs
             $category = $request->input('category');
@@ -72,21 +71,21 @@ class MediationController extends Controller
             $inputData['claimants']= $request->input('claimants.*');
             $inputData['respondants']= $request->input('respondants.*');
 
-            // $validator = Validator::make($request->all(), [
-            //     'isAccept1' => 'required',
-            //     'isAccept2' => 'required'
-            // ]);
+            $validator = Validator::make($request->all(), [
+                'isAccept1' => 'required',
+                'isAccept2' => 'required'
+            ]);
 
 
-            // if ($validator->fails()) {
+            if ($validator->fails()) {
 
-            //     $errors = $validator->errors()->all();
+                $errors = $validator->errors()->all();
 
-            //     $result['success'] = false;
-            //     $result['message'] = implode(', ', $errors);
-            //     $result['error'] = $validator->errors();
-            //     return response()->json($result, 422);
-            // }
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
 
 
 
@@ -237,13 +236,13 @@ class MediationController extends Controller
             $result['message'] = "Case registered successfully.";
             $result['data'] = $data;
             return response()->json($result, 200);
-        // } catch (Exception $e) {
+        } catch (Exception $e) {
 
-        //     $result['success'] = false;
-        //     $result['message'] = "Case updation process is failed.";
-        //     $result['error'] = $e->getMessage();
-        //     return response()->json($result, 500);
-        // }
+            $result['success'] = false;
+            $result['message'] = "Case updation process is failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
     }
 
     public function requestLetter($id)
