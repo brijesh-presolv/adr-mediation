@@ -1838,8 +1838,7 @@ class MedCase extends Model
             //->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
             ->where("mediation_case.confirm_status", 2)
             ->where("mediation_case.bulk_flag", $bulk)
-            ->where("mediators_mediation_cases_status.mediator_id", $userId)
-            ->groupBy('user_involved_in_agreement.userPlanId');
+            ->where("mediators_mediation_cases_status.mediator_id", $userId);
 
 
         if ($batch_id) {
@@ -1916,8 +1915,7 @@ class MedCase extends Model
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
             ->where("mediators_mediation_cases_status.mediator_id", $userId)
-            ->where("mediators_mediation_cases_status.status", 2)
-            ->groupBy('user_involved_in_agreement.userPlanId');
+            ->where("mediators_mediation_cases_status.status", 2);
 
         if ($batch_id) {
             $query->where("mediation_case.batch_id", $batch_id);
