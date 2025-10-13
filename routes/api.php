@@ -219,6 +219,10 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/update-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'UpdateSession']);
     Route::post('/mediator/cases/delete-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'deleteSession']);
 
+    Route::post('/mediator/cases/consentdisclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'getConsentDisclosures']);
+    Route::post('/mediator/cases/download-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'downloadDisclosures']);
+    Route::post('mediator/cases/preview-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'previewDisclosures']);
+
     Route::post('/mediator/cases/close-case', [App\Http\Controllers\API\Mediator\CaseController::class, 'closeCaseStatus']);
 
     // Update mediator profile data api
@@ -230,9 +234,6 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
     // Mediator notification api
     Route::get('/mediator/notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotifications']);
-
-    // Mediator case details view api
-    Route::post('/mediator/view-case-details', [App\Http\Controllers\API\Mediator\DashboardController::class, 'viewCaseDetails']);
 });
 
 
