@@ -694,7 +694,7 @@ class CaseController extends Controller
             
                 } else if ($jwtData->data->role == 1) {
 
-                    if ($jwtData->data->id == $values->scheduled_by) {
+                    if ($jwtData->data->userid == $values->scheduled_by) {
 
                         $zoom_link_choice=$values->zoom_link_choice;
 
