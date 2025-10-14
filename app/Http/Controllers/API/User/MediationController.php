@@ -172,7 +172,7 @@ class MediationController extends Controller
             foreach($inputData['respondants'] as $rkey => $resp_data) {
                 $respUser = InvoledUser::where(['userPlanId' => $med->id, 'userEmail' => $resp_data['email']])->orderByDesc('id')->limit(1)->first();
                 
-                $isClaimant_count = InvoledUser::select('isClaimant')->where('isClaimant', '!=', 0)->where('userPlanId', $med->id)->orderBy('isClaimant', 'desc')->first()->toArray();
+               // $isClaimant_count = InvoledUser::select('isClaimant')->where('isClaimant', '!=', 0)->where('userPlanId', $med->id)->orderBy('isClaimant', 'desc')->first();
                 
                 if(!empty($respUser)) {
                     $dataToRespInsert = [
@@ -202,7 +202,7 @@ class MediationController extends Controller
                     $add_resp->pincode = isset($resp_data['pincode']) ? $resp_data['pincode'] : "";
                     $add_resp->state = isset($resp_data['state']) ? $resp_data['state'] : "";
                     $add_resp->country = isset($resp_data['country']) ? $resp_data['country'] : "";
-                    $add_resp->isClaimant = $isClaimant_count['isClaimant'] + 1;
+                    $add_resp->isClaimant = $rkey + 1;
                     $add_resp->joinCode = $this->joinCode();
                     $add_resp->save();
                 }
