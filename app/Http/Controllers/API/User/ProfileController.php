@@ -231,7 +231,7 @@ class ProfileController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-            $result['success'] = false;
+            $result['success'] = true;
             $result['message'] = "Password changed successfully.";
             return response()->json($result, 422);
 
