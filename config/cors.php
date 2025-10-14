@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://testing.ukmediation.presolv360.com', 'https://testmed.presolv360.com', 'http://localhost:3000', 'http://localhost'],
+    'allowed_origins' => ['https://ukmediation.presolv360.com', 'http://ukmediation.presolv360.com', 'https://testing.ukmediation.presolv360.com', 'https://testmed.presolv360.com', 'http://localhost:3000', 'http://localhost'],
 
     'allowed_origins_patterns' => [],
 
