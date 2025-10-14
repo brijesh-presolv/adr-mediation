@@ -344,7 +344,7 @@ public $successStatus = 200;
                 'userid' => $usr->id,
             ];
 
-            Email::send($d, $usr->email, env('EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
+            Email::directEmailSend($d, $usr->email, env('EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
 
             $result['success'] = true;
             $result['message'] = "New password sent on email.";
