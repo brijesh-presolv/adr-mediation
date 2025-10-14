@@ -50,4 +50,29 @@ class HomeController extends Controller
         }
     }
 
+    public function getAreaOfSpecialization(Request $request)
+    {
+
+        $area_of_specialization = DB::table('area_of_specialization')->get();
+        if(!empty($area_of_specialization)){
+
+
+            $resultData['area_of_specialization'] = $area_of_specialization;
+
+            $result['success'] = true;
+            $result['message'] = "Data fetch successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+
+        }else{
+
+            $result['success'] = false;
+            $result['message'] = "data not found.";
+            $result['error'] = "data not found.";
+            return response()->json($result, 422);
+        }
+
+    }
+
 }
