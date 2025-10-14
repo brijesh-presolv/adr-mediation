@@ -198,8 +198,6 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::get('/user/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
-  
-
 Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
     Route::post('/mediator/cases/newreq', [App\Http\Controllers\API\Mediator\CaseController::class, 'newreq']);
