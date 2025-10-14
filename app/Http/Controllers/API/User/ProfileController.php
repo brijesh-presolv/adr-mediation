@@ -233,7 +233,7 @@ class ProfileController extends Controller
 
             $result['success'] = true;
             $result['message'] = "Password changed successfully.";
-            return response()->json($result, 422);
+            return response()->json($result, 200);
 
         } catch (Exception $e) {
 
