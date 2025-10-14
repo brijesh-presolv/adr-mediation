@@ -73,6 +73,7 @@ Route::middleware(['apiauth'])->group(function () {
     Route::post('/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
     Route::post('/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
     Route::get('/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
+    Route::get('/area-specialization', [App\Http\Controllers\API\HomeController::class, 'getAreaOfSpecialization']);
 });
 
  // Admin API Routes
