@@ -13,7 +13,7 @@ class Cors
         //return $next($request);
 
         $origin = $request->headers->get('Origin');
-        $allowed_domains = ['https://testing.ukmediation.presolv360.com', 'https://testmed.presolv360.com', 'http://localhost:3000', 'http://localhost'];
+        $allowed_domains = ['https://ukmediation.presolv360.com', 'https://apiukmediation.presolv360.com', 'https://testing.ukmediation.presolv360.com', 'https://testmed.presolv360.com', 'http://localhost:3000', 'http://localhost'];
         
         $response = $next($request);
         if ($origin && in_array($origin, $allowed_domains)) {

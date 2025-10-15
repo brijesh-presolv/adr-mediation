@@ -56,11 +56,7 @@ class DownloadDocument extends Controller {
                 'Key'    => $filenametostore
             ]);
 
-            /* $data['docsFile']=$stream['Body'];
-
-            $result['success'] = true;
-            $result['message'] = "Data fetched successfully.";
-            $result['data'] = $data; */
+            
             return response($stream['Body'], 200)->withHeaders([
                 'Content-Type'        => $stream['ContentType'],
                 'Content-Length'      => $stream['ContentLength'],
@@ -93,7 +89,7 @@ class DownloadDocument extends Controller {
                 $errors = $validator->errors()->all(); 
 
                 $result['success'] = false;
-                $result['message'] = $implode(', ', $errors);
+                $result['message'] = implode(', ', $errors);
                 $result['error'] = $validator->errors();
                 return response()->json($result, 422);
             }

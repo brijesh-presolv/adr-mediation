@@ -4,7 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\SendGrid;
+use App\Http\Helpers\SendGrid as Email;
 use App\Http\Helpers\Whatsapp;
+use App\Http\Helpers\Common_function;
 use App\Models\InvoledUser;
 use App\Models\MedCase;
 use App\Models\Reminder;
@@ -45,22 +47,52 @@ public $successStatus = 200;
         //if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
         if(Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])){ 
             $user = Auth::user(); 
+
+            if (!empty(Auth::user()->emailotp)) {
+
+                Auth::logout();
+                $this->logout($request);
+
+                $data['userid'] = $user->id;
+                $data['role'] = $user->role;
+                $data['eotp'] = $user->emailotp;
+                $data['isEverified'] = 0;
+                $result['success'] = false;
+                $result['message'] = "Please completed your email verification.";
+                $result['error'] = "Your email is not verified";
+                $result['data'] = $data;
+                return response()->json($result, 500);
+            }
+
+
+            // for user checking if user is approved 
+            if (!Auth::user()->isActive) {
+                Auth::logout();
+                $this->logout($request);
+                
+                $result['success'] = false;
+                $result['message'] = "Your user account is under Admin review.";
+                $result['error'] = "Your user account is under Admin review.";
+                return response()->json($result, 500);
+            }
+            // for user checking if user is approved 
             
             $data['userid'] = $user->id;
             $data['role'] = $user->role;
             $data['email'] = $user->email;
             $data['name'] = $user->first_name;
+            $data['isEverified'] = 1;
             $result['success'] = "true";
             $result['message'] = "User has logged in successfully.";
             $result['data'] = $data;
             $result['token'] = Token::createToken($data); 
-            $result['expiry_token'] = 900;
+            //$result['expiry_token'] = 86400;
 
             return response()->json($result, $this->successStatus)
                                 ->cookie(
                                         'auth_token',           // cookie name
                                         $result['token'],       // cookie value
-                                        15,                     // minutes
+                                        (60 * 60 * 24),         // minutes
                                         '/',
                                         null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
                                         true,                   // secure = true (required for cross-site cookies on HTTPS)
@@ -87,7 +119,7 @@ public $successStatus = 200;
                 'first_name'     => 'required|string|max:255',
                 'last_name'     => 'required|string|max:255',
                 'email'    => 'required|string|email|unique:users',
-                'password' => 'required|string|min:6',
+                'password' => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/',
                 'mobile_number' => 'required|digits:10',
                 'is_agree' => 'required',
                 'actype' => 'required',
@@ -98,10 +130,11 @@ public $successStatus = 200;
                 $errors = $validator->errors()->all(); 
 
                 $result['success'] = false;
-                $result['message'] = $implode(', ', $errors);
+                $result['message'] = implode(', ', $errors);
                 $result['error'] = $validator->errors();
                 return response()->json($result, 422);
             }
+
 
             if ($request->input('actype') == 0) {
                 $role = 0;
@@ -122,7 +155,7 @@ public $successStatus = 200;
             $user = User::create([
                 'first_name' => $request->input('first_name'),
                 'last_name' =>  $request->input('last_name'),
-                'username' => $request->input('username'),
+                'username' => $request->input('email'),
                 'mobile_number' =>  $request->input('mobile_number'),
                 'organization' => $request->input('organization'),
                 'email' => $request->input('email'),
@@ -134,7 +167,40 @@ public $successStatus = 200;
 
             ]);
 
+
+            $d = [
+                'event' => 'VARIFY_EMAIL',
+                'userid' => $user->id,
+            ];
+
+            if ($user->role == '0') {
+
+                $findInvCase = InvoledUser::where(['userEmail' => $user->email, 'joinCode' => null, 'isClaimant' => 0])->get();
+
+                if(isset($findInvCase)) {
+
+                    foreach($findInvCase as $value) {
+
+                        if($value->userId == null) {
+                            $value->userId = $user->id;
+                            $value->save();
+                        }
+                    }
+                }
+
+                Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id);
+
+                $email = SendGrid::directEmailSend($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
+
+            } else if ($user->role == '1') {
+
+                Common_function::MedNotification(null, "MED_REGI", null, null, null, $user->id);
+
+                $email = SendGrid::directEmailSend($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
+            }
+
             $data['userid'] = $user->id;
+            //$data['eotp'] = $user->emailotp;
 
             $result['success'] = true;
             $result['message'] = "User registered successfully.";
@@ -158,6 +224,139 @@ public $successStatus = 200;
         $result['success'] = true;
         $result['message'] = "User logged out successfully.";
         return response()->json($result, 200)->withCookie($cookie);
+
+    }
+
+
+    public function otpVerify(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'otp'     => 'required'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+        //Inputs
+        $otp = $request->input('otp');
+        $userId = $request->input('userid');
+
+        $usr = User::find($userId);
+
+        if ($otp == $usr->emailotp || $otp == $usr->smsotp) {
+
+            $usr->emailotp = null;
+            $usr->smsotp = null;
+            $usr->email_verified_at = date("Y-m-d H:i:s");
+            $d = [
+                'event' => 'VARIFY_EMAIL',
+                'userid' => $userId,
+            ];
+
+            if ($usr->save()) {
+
+                if ($usr->role == '1') {
+
+                    $type = 'Mediator';
+
+                    Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
+
+                }
+                $type = 'User';
+
+                Email::send($d, $usr->email, env('EMAIL1_OF_VERIFY', ''), ['-type-' => $type], $usr->first_name . ' ' . $usr->last_name);
+
+
+                if ($usr->isActive == 1 && $usr->status == 1) {
+
+                    $data['userid'] = $usr->id;
+                    $data['role'] = $usr->role;
+                    $data['email'] = $usr->email;
+                    $data['name'] = $usr->first_name;
+                    $data['isEverified'] = 1;
+                    $result['success'] = "true";
+                    $result['message'] = "OTP verified successfully.";
+                    $result['data'] = $data;
+                    $result['token'] = Token::createToken($data); 
+
+                    return response()->json($result, $this->successStatus)
+                                        ->cookie(
+                                                'auth_token',     
+                                                $result['token'],  
+                                                (60 * 60 * 24), 
+                                                '/',
+                                                null,
+                                                true,
+                                                true,
+                                                false, 
+                                                'None'              
+                                            ); 
+                }else{
+
+                    $data['userid'] = $usr->id;
+                    $data['isEverified'] = 1;
+                    $result['success'] = "true";
+                    $result['message'] = "Email OTP verified successfully, Please wait for admin approval.";
+                    $result['data'] = $data;
+
+                    return response()->json($result, 200);
+                }
+            }
+        } else {
+                $data['userid'] = $usr->id;
+                $result['success'] = "true";
+                $result['message'] = "OTP verification failed.";
+                $result['data'] = $data;
+
+                return response()->json($result, 500);
+        }
+
+    }
+
+
+    public function forgotPassword(Request $request) {
+
+        //Inputs
+        $email = $request->input('email');
+        $usr = User::where(['email' => $email])->first();
+
+        if ($usr) {
+            if ($usr->role == 0) {
+                $type = 'User';
+            } else {
+                $type = 'Mediator';
+            }
+
+            $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            $pwd = substr(str_shuffle($chars), 0, 8);
+
+            $usr->password = Hash::make($pwd);
+
+            $usr->save();
+            $d = [
+                'event' => 'FORGOT_PASSWORD',
+                'userid' => $usr->id,
+            ];
+
+            Email::directEmailSend($d, $usr->email, env('EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
+
+            $result['success'] = true;
+            $result['message'] = "New password sent on email.";
+            $result['data'] = $email;
+            return response()->json($result, 200);
+
+        } else {
+            $result['success'] = false;
+            $result['message'] = "No user found with this email ID.";
+            $result['data'] = $email;
+            return response()->json($result, 500);
+        }
 
     }
 

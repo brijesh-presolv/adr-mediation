@@ -25,7 +25,7 @@ class UsersController extends Controller
 
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=0;
@@ -49,7 +49,7 @@ class UsersController extends Controller
         
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=0;
@@ -70,11 +70,10 @@ class UsersController extends Controller
 
     public function userRejected(Request $request)
     {
-        $users = User::where("role", "=", 0)->where('is_deleted', 1)->orderBy('id', 'DESC')->get();
 
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=0;
@@ -99,12 +98,12 @@ class UsersController extends Controller
 
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=1;
 
-        $users = User::getUserApprove($role, $start, $length, $search, $columnName, $sortOrder);
+        $users = User::getMediatorsApprove($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -123,12 +122,12 @@ class UsersController extends Controller
         
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=1;
 
-        $users = User::getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder);
+        $users = User::getMediatorsNewReq($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -148,12 +147,12 @@ class UsersController extends Controller
 
         $start   = $request->input('iDisplayStart', 0);   
         $length  = $request->input('iDisplayLength', 10); 
-        $search  = $request->input('sSearch', '');
+        $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
         $role=1;
 
-        $users = User::getUserRejected($role, $start, $length, $search, $columnName, $sortOrder);
+        $users = User::getMediatorsRejected($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -176,18 +175,12 @@ class UsersController extends Controller
             'first_name'   => 'required|string|max:100',
             'last_name'    => 'required|string|max:100',
             'email'        => 'required|email|unique:users,email,' . $request->id,
-            //'username'     => 'required|string|max:100|unique:users,username,' . $request->id,
-            'mobile_number'=> 'required|string|max:15|unique:users,mobile_number,' . $request->id,
-            'organization' => 'nullable|string|max:255',
-            'country_code' => 'nullable|string|max:10',
+            'mobile_number'=> 'required|string|max:10',
             'address'      => 'nullable|string|max:255',
-            'address1'     => 'nullable|string|max:255',
             'pincode'      => 'nullable|string|max:20',
             'city'         => 'nullable|string|max:100',
             'state'        => 'nullable|string|max:100',
-            'country'      => 'nullable|string|max:100',
-            'signature'    => 'nullable|mimes:jpg,jpeg,png|max:4048',  
-            'profilePic'   => 'nullable|mimes:jpg,jpeg,png|max:4048',
+            'country'      => 'nullable|string|max:100',  
         ]);
 
         if ($validator->fails()) {
@@ -205,7 +198,6 @@ class UsersController extends Controller
         $user->first_name = ucfirst($request->input('first_name'));
         $user->last_name = ucfirst($request->input('last_name'));
         $user->email = $request->input('email');
-        //$user->username = $request->input('username')
         $user->mobile_number = $request->input('mobile_number');
         $user->organization = $request->input('organization');
         $user->country_code = $request->input('country_code');
@@ -221,10 +213,10 @@ class UsersController extends Controller
             $user->isDone = $request->input('status');
         }
 
-        if ($request->hasFile('signature')) {
+        if ($request->hasFile('signature_photo')) {
             
             $msg = "";
-            $content = file_get_contents($request->signature);
+            $content = file_get_contents($request->signature_photo);
             if (preg_match('/\/JS|\/JavaScript|\/OpenAction/', $content)) {
 
                 $msg = "PDF file contains restricted data , please check and re-upload.";
@@ -241,12 +233,20 @@ class UsersController extends Controller
                     $oldFilePath = 'mediation/user/' . $request->input('id') . '/signature/' . $user->signature_photo;
                     Storage::disk('s3')->delete($oldFilePath);
                 }
-                $extension = $request->file('signature')->getClientOriginalExtension();
+                $extension = $request->file('signature_photo')->getClientOriginalExtension();
                 $name = 'User_Signature' . sprintf('%06d', $request->input('id')) . time() . '.' . $extension;
                 $finalFilePath='mediation/user/' . $request->input('id') . '/signature/' . $name;
-                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature));
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature_photo));
 
             } else {
+
+                if(empty($request->signature_photo) && $user->signature_photo == null){
+
+                    $result['success'] = false;
+                    $result['message'] = "Mediator signature required";
+                    $result['error'] = "Mediator signature required";
+                    return response()->json($result, 422);
+                }
 
                 if ($user->signature_photo != null) {
 
@@ -254,10 +254,10 @@ class UsersController extends Controller
                     Storage::disk('s3')->delete($oldFilePath);
                 }
 
-                $extension = $request->file('signature')->getClientOriginalExtension();
+                $extension = $request->file('signature_photo')->getClientOriginalExtension();
                 $name = 'Mediator_Signature' . sprintf('%06d', $request->input('id')) . time() . '.' . $extension;
                 $finalFilePath='mediation/mediator/' . $request->input('id') . '/signature/' . $name;
-                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature));
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($request->signature_photo));
 
             }
         }
@@ -301,6 +301,9 @@ class UsersController extends Controller
             $mediation_details->filed1 = $request->input('field1');
             $mediation_details->filed2 = $request->input('field2');
             $mediation_details->filed3 = $request->input('field3');
+            $mediation_details->category = $request->input('category');
+            $mediation_details->spoken_language = $request->input('spoken_language');
+            $mediation_details->years_of_experience = $request->input('years_of_experience');
             $mediation_details->save();
         }
 
@@ -376,8 +379,8 @@ class UsersController extends Controller
         } else {
 
             $result['success'] = false;
-            $result['message'] = "User role not changed";
-            $result['error'] = "User role not changed";
+            $result['message'] = "Failed to change user role. Please try again.";
+            $result['error']   = "User role update failed";
             return response()->json($result, 422);
         };
     }
@@ -415,10 +418,20 @@ class UsersController extends Controller
         }
         $user->save();
 
+
+        if($status==1){
+
+            $message="User has been approved successfully.";
+
+        }else{
+
+            $message="User has been rejected successfully.";
+        }
+
         $resultData['user_id'] = $user_id;
 
         $result['success'] = true;
-        $result['message'] = "User approved status changed successfully.";
+        $result['message'] = $message;
         $result['data'] = $resultData;
         return response()->json($result, 200);
     }
@@ -448,10 +461,20 @@ class UsersController extends Controller
         $user->isActive = $status;
         $user->save();
 
+
+        if($status==1){
+
+            $message="User has been activated successfully.";
+
+        }else{
+
+            $message="User has been deactivated successfully.";
+        }
+
         $resultData['user_id'] = $user_id;
 
         $result['success'] = true;
-        $result['message'] = "User Active status updated successfully.";
+        $result['message'] = $message;
         $result['data'] = $resultData;
         return response()->json($result, 200);
     }
@@ -492,11 +515,87 @@ class UsersController extends Controller
         }else{
 
             $result['success'] = false;
-            $result['message'] = "Notes not added";
-            $result['error'] = "Notes not added";
+            $result['message'] = "Failed to add notes. Please try again.";
+            $result['error'] = "Failed to add notes. Please try again.";
             return response()->json($result, 422);
         }
        
+    }
+
+    public function getuserdata($id, Request $request)
+    {
+        $user = User::find($id);
+        if(!empty($user)){
+
+
+            $resultData['user'] = $user;
+
+            $result['success'] = true;
+            $result['message'] = "Data fetch successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+
+        }else{
+
+            $result['success'] = false;
+            $result['message'] = "User data not found.";
+            $result['error'] = "User data not found.";
+            return response()->json($result, 422);
+        }
+
+    }
+
+    public function getMediatordata($id, Request $request)
+    {
+        $user = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')
+                    ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+                    ->where("users.id", "=", $id)
+                    ->first();
+        if(!empty($user)){
+
+
+            $resultData['user'] = $user;
+
+            $result['success'] = true;
+            $result['message'] = "Data fetch successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+
+        }else{
+
+            $result['success'] = false;
+            $result['message'] = "Mediator data not found.";
+            $result['error'] = "Mediator data not found.";
+            return response()->json($result, 422);
+        }
+
+    }
+
+    public function getAreaOfSpecialization(Request $request)
+    {
+
+        $area_of_specialization = DB::table('area_of_specialization')->get();
+        if(!empty($area_of_specialization)){
+
+
+            $resultData['area_of_specialization'] = $area_of_specialization;
+
+            $result['success'] = true;
+            $result['message'] = "Data fetch successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+
+        }else{
+
+            $result['success'] = false;
+            $result['message'] = "data not found.";
+            $result['error'] = "data not found.";
+            return response()->json($result, 422);
+        }
+
     }
     
 }

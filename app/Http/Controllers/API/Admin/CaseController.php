@@ -21,6 +21,7 @@ use App\Models\Mediation_status_log;
 use App\Models\Mediation_case_comment;
 use App\Models\Mediators_mediation_cases_status;
 use App\Models\InvitationFiles;
+use App\Models\Reminder;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use App\Models\BulkLog;
@@ -35,18 +36,49 @@ use DateTime;
 use DateTimeZone;
 use Carbon\Carbon;
 use App\Http\Helpers\Zoom;
+use Illuminate\Support\Facades\File;
 
 
 class CaseController extends Controller 
 {
     use UploadTrait;
 
+    public function casesCount(Request $request){
+
+        $role = 2; // admin
+        $bulk = 0;
+        
+        $total_newreq_case = MedCase::where("mediation_case.confirm_status", 0)
+                            ->where("mediation_case.bulk_flag", $bulk)
+                            ->count();
+        $total_ongoing_case = MedCase::where("mediation_case.confirm_status", 1)
+                            ->where("mediation_case.bulk_flag", $bulk)
+                            ->count();
+        $total_closed_case = MedCase::where("mediation_case.confirm_status", 2)
+                            ->where("mediation_case.bulk_flag", $bulk)
+                            ->count();
+        $total_rejected_case = MedCase::where("mediation_case.confirm_status", 3)
+                            ->where("mediation_case.bulk_flag", $bulk)
+                            ->count();
+
+        $casedata['cases']['total_newreq_case']=$total_newreq_case;
+        $casedata['cases']['total_ongoing_case']=$total_ongoing_case;
+        $casedata['cases']['total_closed_case']=$total_closed_case;
+        $casedata['cases']['total_rejected_case']=$total_rejected_case;
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $casedata;
+        return response()->json($result, 200);
+
+    }
+
     public function newreq(Request $request){
 
         $start   = $request->input('iDisplayStart', 0);    // offset
         $length  = $request->input('iDisplayLength', 10);  // limit
         $search  = $request->input('search', '');
-        //$batch_id = $request->input('batch_id', null);
+        $batch_id = $request->input('batch_id', null);
         $sortOrder = $request->input('SortOrder', 'desc'); // asc or desc
         $columnName = $request->input('columnName', ''); 
         
@@ -54,32 +86,31 @@ class CaseController extends Controller
         $role = 2; // admin
         $bulk = 0;
 
-        $cases = MedCase::getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder);
-
-        //dd($cases);
-
-       // $arraydata = array();
+        $cases = MedCase::getCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id);
+        
         $data = array();
         if(count($cases) > 0) {
         foreach ($cases as $key => $values) {
-            
+
+                $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
                 $id = $values->id;
                 $keyInc = $key + 1;
+
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
                 $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-
-                $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
-                $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
+                $data[$key]['claimants']  = $values->claimants->values();
+                $data[$key]['respondents'] =  $values->respondents->values();
         }
         }
 
@@ -112,26 +143,27 @@ class CaseController extends Controller
         $casesData = MedCase::getOgoingCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
         $data = array();
         if(count($casesData) > 0) {
-
             foreach ($casesData as $key => $values) {
 
+                $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
                 $id = $values->id;
                 $keyInc = $key + 1;
+
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
                 $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-
-                $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
-                $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
+                $data[$key]['claimants']  = $values->claimants;
+                $data[$key]['respondents'] =  $values->respondents;
 
             }
         }
@@ -161,30 +193,32 @@ class CaseController extends Controller
 
         $role = 2; // admin
         $bulk = 0;
-        $casesData = MedCase::getClosedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder , $batch_id);
+        $casesData = MedCase::getClosedCaseApi($role, $bulk, $start, $length, $search, $columnName, $sortOrder, $batch_id);
+
         $data = array();
         if(count($casesData) > 0) {
 
             foreach ($casesData as $key => $values) {
 
+                $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
                 $id = $values->id;
                 $keyInc = $key + 1;
+
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
                 $data[$key]['created_at'] = $values->created_at;
+                 $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-
-
-            $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
-            $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
+                $data[$key]['claimants']  = $values->claimants->values();
+                $data[$key]['respondents'] =  $values->respondents->values();
 
             }
         }
@@ -221,23 +255,25 @@ class CaseController extends Controller
 
             foreach ($casesData as $key => $values) {
 
+                $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
                 $id = $values->id;
                 $keyInc = $key + 1;
+
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='M' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
                 $data[$key]['created_at'] = $values->created_at;
+                 $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
                 $data[$key]['mediator_status'] = $values->mediator_status;
                 $data[$key]['batch_name'] = $values->batch_name;
-
-            $data[$key]['claimants']  = $values->user_involed->where('isClaimant', 0)->values();
-            $data[$key]['respondents'] =  $values->user_involed->where('isClaimant', 1)->values();
+                $data[$key]['claimants']  = $values->claimants->values();
+                $data[$key]['respondents'] =  $values->respondents->values();
 
             }
         }
@@ -284,7 +320,6 @@ class CaseController extends Controller
             $validator = Validator::make($request->all(), [
                 'caseid' => 'required|integer',
                 'mediator_id' => 'required|integer',
-                'discussion_text' => 'string|max:255'
             ]);
 
             //Inputs
@@ -301,8 +336,6 @@ class CaseController extends Controller
                 $result['error'] = $validator->errors();
                 return response()->json($result, 422);
             }
-
-
 
 
             if ($mediator_id != null) {
@@ -405,14 +438,29 @@ class CaseController extends Controller
                         $mediation_status_log->description = "Request Confirm";
                         $mediation_status_log->save();
 
-                        // $reminder = new Reminder;
-                        // $reminder->case_Id = $request->id;
-                        // $reminder->save();
+                        $reminder = new Reminder;
+                        $reminder->case_Id = $caseid;
+                        $reminder->save();
 
-                        $finaldata['discussion'] = $discussion_text;
-                        $finaldata['caseid'] = $caseid;
-                        $result['data'] = $finaldata;
-                        return response()->json($result, 200);
+                        // generate pdf
+                        $itm_invitation = $this->invitation_mediate($caseid);
+
+                        $invmodel = InvitationFiles::where('case_id', $caseid)->orderByDesc('id')->limit(1)->first();
+                        if (!isset($invmodel)) {
+                            $invmodel = new InvitationFiles();
+                        }
+                        $invmodel->case_id = $caseid;
+                        $invmodel->file_name = $itm_invitation;
+                        
+                        //send invitation
+                        $invmodel->save();
+
+                        if ($this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med)) {
+                            $finaldata['discussion'] = $discussion_text;
+                            $finaldata['caseid'] = $caseid;
+                            $result['data'] = $finaldata;
+                            return response()->json($result, 200);
+                        }
 
                 }
             }
@@ -428,7 +476,7 @@ class CaseController extends Controller
 
     public function viewCaseDetails(Request $request){
 
-        $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status")
+        $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", DB::raw("CONCAT(users.first_name,' ', users.last_name) as mfullname"))
             ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where('mediation_case.id', $request->caseid)
@@ -440,32 +488,43 @@ class CaseController extends Controller
 
         $claimants = array();
         $respondents = array();
-        foreach($party_details as $key => $party) {
-            if($party->isClaimant == 0){
-                $claimants['name'] = $party->name;
-                $claimants['email'] = $party->userEmail;
-                $claimants['phone'] = $party->userPhone;
 
-                if($party->address1 != null){
-                   $claimants['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
-                } else if($party->fulladdress) {
-                    $claimants['address'] = $party->fulladdress;
-                } else {
-                    $claimants['address'] = $party->useraddress . ' ' . $party->useraddress1 . ' ' . $party->usercity . ', ' . $party->userpincode . ', ' . $party->userstate . ' ' . $party->usercountry;
-                }
+        $ckey = 1;
+        $rkey = 1;
+
+        foreach($party_details as $key => $party) {
+
+            if($party->isClaimant == 0){
+
+                $claimants[$ckey++] = [
+                    "name"=> $party->name,
+                    "email"=> $party->userEmail,
+                    "phone"=> $party->userPhone,
+                    "address"=> $party->address1,
+                    "address2"=> $party->address2,
+                    "city"=> $party->city,
+                    "pincode"=> $party->pincode,
+                    "state"=> $party->state,
+                    "country"=> $party->country,
+                    "joincode"=> $party->joinCode
+                ];
 
             }
             
             if($party->isClaimant != 0){
-                $respondents[$key]['name'] = $party->name;
-                $respondents[$key]['email'] = $party->userEmail;
-                $respondents[$key]['phone'] = $party->userPhone;
 
-                 if($party->address1 != null){
-                   $respondents[$key]['address'] = $party->address1 . ' ' . $party->address2 . ' ' . $party->city . ', ' . $party->pincode . ', ' . $party->state . ' ' . $party->country;
-                } else if($party->fulladdress) {
-                    $respondents[$key]['address'] = $party->fulladdress;
-                }
+                $respondents[$rkey++] = [
+                    "name"=> $party->name,
+                    "email"=> $party->userEmail,
+                    "phone"=> $party->userPhone,
+                    "address"=> $party->address1,
+                    "address2"=> $party->address2,
+                    "city"=> $party->city,
+                    "pincode"=> $party->pincode,
+                    "state"=> $party->state,
+                    "country"=> $party->country,
+                    "joincode"=> $party->joinCode
+                ];
             }
         }
 
@@ -476,7 +535,7 @@ class CaseController extends Controller
 
         $case->appointment = InvitationFiles::where(['case_id' => $case->id])->where('file_name_mediator_appointment', '!=', null)->orderByDesc('id')->limit(1)->first();
 
-        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', 'users.username')
+        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
             ->where('manage_files.case_id', $case->id)
             ->get();
@@ -484,9 +543,12 @@ class CaseController extends Controller
             ->where('restructure_data.caseid', $case->id)
             ->first();
 
-
+        $case->settlement_document = DB::table('document_settlements')->select('document_settlements.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
+            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+            ->where('document_settlements.mediation_case_id', $case->id)
+            ->get();
           
-        $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
+        $case->mom = DB::table('session_mom')->select('case_id', 'session_id', 'file_name', 'share_with_party_ids')->where('case_id', $case->id)->get();
 
 
         $result['success'] = true;
@@ -533,8 +595,7 @@ class CaseController extends Controller
             if (!$med) {
                 return abort(404);
             }
-            //$usr = User::find($med->userid);
-            $response = '';
+           $response = '';
 
             //fetch all involved users
             $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get();
@@ -585,209 +646,7 @@ class CaseController extends Controller
             return response()->json($result, 500);
         }
     }
-
-
-    public function caseUpdate(Request $request){
-        try{
-            $token = $request->cookie('auth_token');
-            if (!$token) {
-
-                $result['success'] = false;
-                $result['message'] = 'Unauthorized: Missing token';
-                $result['error'] = 'Unauthorized: Missing token';
-                return response()->json($result, 401);
-            }
-
-            $JWT_KEY = env('JWT_KEY');
-            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-            $userId = $jwtData->data->userid;
-
-            $validator = Validator::make($request->all(), [
-                'caseid' => 'required|integer',
-                'proposedSolution' => 'string|max:255',
-                'issue' => 'string|max:255',
-                'application' => 'string|max:255',
-                'useraddress' => 'string|max:255',
-                'useraddress1' => 'string|max:255',
-                'usercity' => 'string|max:255',
-                'userpincode' => 'integer',
-                'userstate' => 'string|max:255',
-                'usercountry' => 'string|max:255',
-            ]);
-
-            //Inputs
-            $caseid = $request->input('caseid');
-            $proposedSolution = $request->input('proposedSolution');
-            $issue = $request->input('issue');
-            $application = $request->input('application');
-            $useraddress = $request->input('useraddress');
-            $useraddress1 = $request->input('useraddress1');
-            $usecity = $request->input('usercity');
-            $userpincode = $request->input('userpincode');
-            $userstate = $request->input('userstate');
-            $usercountry = $request->input('usercountry');
-           
-
-
-            if ($validator->fails()) {
-
-                $errors = $validator->errors()->all();
-
-                $result['success'] = false;
-                $result['message'] = implode(', ', $errors);
-                $result['error'] = $validator->errors();
-                return response()->json($result, 422);
-            }
-
-            //udpate mediation case
-            $med = MedCase::find($caseid);
-            $med->proposedSolution = $proposedSolution;
-            $med->issue = $issue;
-
-            $med->ref_id = isset($application) ? $application : $med->ref_id;
-            $med->updated_at = date("Y-m-d H:i:s");
-            $med->save();
-
-            //if user profile update
-            $usr = User::find($med->userid);
-            $usr->address = $useraddress;
-            $usr->address1 = $useraddress1;
-            $usr->city = $usercity;
-            $usr->pincode = $userpincode;
-            $usr->state = $userstate;
-            $usr->country = $usercountry;
-            $usr->save();
-
-            // update initiating party
-            $inv = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where(['userPlanid' => $med->id, 'userId' => $usr->id])->first();
-            if ($inv) {
-                $inv->address1 = $usr->address;
-                if ($usr->address1 == '') {
-                    $usr->address1 = 'null';
-                }
-                $inv->address2 = $usr->address1;
-                $inv->city = $usr->city;
-                $inv->pincode = $usr->pincode;
-                $inv->state = $usr->state;
-                $inv->country = $usr->country;
-                $inv->updated_at = date('Y-m-d H:s:i');
-                $inv->save();
-            }
-
-            $pone = $inv;
-
-
-            //update responding party
-
-
-            $respond = 0;
-
-            if(isset($request->email) && count($request->email) ) {
-            for ($i = 0; $i < count($request->email); $i++) {
-
-                $invid = $request->input('invid')[$i];
-
-                if ($invid != '') {
-
-                    $inv = InvoledUser::find($invid);
-                } else {
-                    $inv = new InvoledUser();
-                }
-
-
-
-                //$inv->userId=;
-                // if ($inv->userEmail != $r['email'][$i] || $inv->userPhone != $r['phone'][$i]) {
-
-                //     $inv->joinCode = $this->joinCode();
-                // }
-                if (isset($request->input('selected_party')[$i]) && $request->input('selected_party')[$i] == 0 ) {
-                    $inv->isClaimant = 0;
-                    $inv->joinCode = null;
-                } else {
-                    if ($inv->userEmail != $request->input('email')[$i] || $inv->userPhone != $request->input('phone')[$i]) {
-
-                        $inv->joinCode = $this->joinCode();
-                    }
-                    if ($inv->userId == 0) {
-                        $inv->joinCode = $this->joinCode();
-                    } else {
-                        $inv->joinCode = null;
-                    }
-                    $inv->isClaimant = $respond + 1;
-                    $respond++;
-                }
-
-                $inv->userPlanId = $med->id;
-
-                if ($inv->userEmail != $request->input('email')[$i]) {
-
-                    $inv->userEmail = $request->input('email')[$i];
-
-                    // $invitation = $this->invitation_mediate($id);
-
-                    // $invmodel = new InvitationFiles();
-                    // $invmodel->case_id = $request->id;
-                    // $invmodel->file_name = $invitation;
-                    // $invmodel->save();
-
-
-                    // $code = $inv->joinCode;
-                    // $s = SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
-                }
-
-                if ($inv->userPhone != $request->input('phone')[$i]) {
-                    $inv->userPhone = $request->input('phone')[$i];
-                }
-
-                $inv->name = $request->input('name')[$i]; 
-                if (isset($request->input('add1')[$i])) {
-                    $inv->address1 = $request->input('add1')[$i];
-
-                    if ($request->input('add2')[$i] == '') {
-                        $request->input('add2')[$i] = 'null';
-                    }
-                    $inv->address2 = $request->input('add2')[$i];
-                    $inv->city = $request->input('city')[$i];
-                    $inv->pincode = $request->input('pincode')[$i];
-                    $inv->state = $request->input('state')[$i];
-                    $inv->country = $request->input('country')[$i];
-                } elseif (isset($request->input('fulladdress')[$i])) {
-                    $inv->fulladdress = $request->input('fulladdress')[$i];
-                }
-
-
-                $inv->created_at = date('Y-m-d H:s:i');
-                $inv->updated_at = date('Y-m-d H:s:i');
-
-
-                $inv->save();
-
-                // $s = SendGrid::send($d, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $med->id), "-link-" => $inv->joinCode, "-initiating-" => $pone->name], $inv->name, url("/storage/app/public/mediation/" . $med->id . "/" . $invitation));
-            }
-            }
-            //remove involed
-
-            // if ($request->input('rminv') != '') {
-
-            //     foreach (explode(',', $request->input('rminv')) as $key => $value) {
-
-            //         InvoledUser::find($value)->delete();
-            //     }
-            // }
-
-            $result['success'] = true;
-            $result['message'] = "Case data updated successfully.";
-            $result['data'] = $request->input('caseid');
-            return response()->json($result, 200);
-        }  catch (Exception $e) {
-
-            $result['success'] = false;
-            $result['message'] = "Case updation failed.";
-            $result['error'] = $e->getMessage();
-            return response()->json($result, 500);
-        }
-    }
+   
 
     public function joinCode()
     {
@@ -909,7 +768,7 @@ class CaseController extends Controller
                 'caseId'             => 'required|integer',
                 'sessionDate'        => 'required|date_format:d/m/Y|after_or_equal:today',
                 'sessionTime'        => 'required|date_format:H:i',
-                'zoom_choice'        => 'required|string|in:directly_zoom,custom_zoom,other',
+                'zoom_choice'        => 'required|string|in:directly_zoom,manually_zoom,other',
                 'zoomId'             => 'nullable|string|max:255',
                 'note'               => 'nullable|string|max:500',
                 'session_party_ids'  => 'required|array|min:1',
@@ -1156,8 +1015,8 @@ class CaseController extends Controller
                     $data['caseid'] = $caseId;
 
                     $result['success'] = false;
-                    $result['message'] = "Zoom Meeting Creataion failed.";
-                    $result['error'] = "Zoom Meeting Creataion failed.";
+                    $result['message'] = "Zoom meeting creation failed. Please try again.";
+                    $result['error']   = "Unable to create Zoom meeting.";
                     return response()->json($result, 200);
                 }
             }
@@ -1167,7 +1026,7 @@ class CaseController extends Controller
         } catch (Exception $e) {
 
             $result['success'] = false;
-            $result['message'] = "Zoom meeting creation failed.";
+            $result['message'] = "Zoom meeting creation failed. Please try again.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
@@ -1356,7 +1215,7 @@ class CaseController extends Controller
         }
     }
 
-    public function downloadDisclosures($id)
+    public function downloadDisclosures(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
@@ -1378,37 +1237,33 @@ class CaseController extends Controller
         $caseId = $request->input('caseId');
 
         $data = ConsentDisclosures::select('consent_disclosures.*', 'users.first_name', 'users.last_name', 'users.email', 'users.username', 'users.mobile_number', 'users.organization', 'users.signature_photo', 'users.id as medId')->join("users", "consent_disclosures.mediator_id", "=", "users.id")
-            ->where("id", "=", $id)
+            ->where("consent_disclosures.id", "=", $id)
             ->first();
         if (isset($data)) {
-            if ($data->file_name != null) {
-                $dis_file_name = $data->file_name;
-                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
-            } else {
-                $dis_file_name = "M" . sprintf("%06d", $id) . "_party.pdf";
-                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
-            }
-            // dd($exist_file);
-            if (File::exists($exist_file)) {
-                $pdf = file_get_contents($exist_file);
-                return response($pdf, 200, [
-                    'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
-                ]);
-            } else {
-                $filenametostore = 'mediation_documents/mediation/' . $id . '/' . $data->file_name;
-                $s3Client = Storage::cloud()->getAdapter()->getClient();
 
-                $stream = $s3Client->getObject([
-                    'Bucket' => env('AWS_BUCKET'),
-                    'Key'    => $filenametostore
-                ]);
+            $filenametostore = 'mediation_documents/mediation/' . $caseId . '/' . $data->file_name;
+            $s3Client = Storage::cloud()->getAdapter()->getClient();
 
-                return response($stream['Body'], 200)->withHeaders([
-                    'Content-Type'        => $stream['ContentType'],
-                    'Content-Length'      => $stream['ContentLength'],
-                    'Content-Disposition' => 'attachment; filename="' . $data->file_name . '"'
-                ]);
+            $objectExists = $s3Client->doesObjectExist(env('AWS_BUCKET'), $filenametostore);
+
+            if (!$objectExists) {
+
+                $result['success'] = false;
+                $result['message'] = "File not found";
+                $result['error'] =  "File Fetching failed.";
+                return response()->json($result, 404);
             }
+
+            $stream = $s3Client->getObject([
+                'Bucket' => env('AWS_BUCKET'),
+                'Key'    => $filenametostore
+            ]);
+
+            return response($stream['Body'], 200)->withHeaders([
+                'Content-Type'        => $stream['ContentType'],
+                'Content-Length'      => $stream['ContentLength'],
+                'Content-Disposition' => 'attachment; filename="' . $data->file_name . '"'
+            ]);
         } else {
 
             $result['success'] = false;
@@ -1417,6 +1272,87 @@ class CaseController extends Controller
             return response()->json($result, 500);
         }
     }
+
+    public function previewDisclosures(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id'             => 'required|integer',
+            'caseId'             => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $id = $request->input('id');
+        $caseId = $request->input('caseId');
+
+        $data = ConsentDisclosures::select('consent_disclosures.*')->where(".id", "=", $id)->first();
+        
+        if (isset($data)) {
+
+          if ($data->file_name != null) {
+                $dis_file_name = $data->file_name;
+                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+            } else {
+                $dis_file_name = "M" . sprintf("%06d", $caseId) . "_party.pdf";
+                $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
+            }
+            
+            if (File::exists($exist_file)) {
+                $pdf = file_get_contents($exist_file);
+                return response($pdf, 200, [
+                    'Content-Disposition' => 'attachment; filename="' . "consent_and_disclosures_" . $dis_file_name . '"',
+                ]);
+            } else {
+
+            $filenametostore = 'mediation_documents/mediation/' . $caseId . '/' . $data->file_name;
+            $s3Client = Storage::cloud()->getAdapter()->getClient();
+
+            $objectExists = $s3Client->doesObjectExist(env('AWS_BUCKET'), $filenametostore);
+
+            if (!$objectExists) {
+
+                $result['success'] = false;
+                $result['message'] = "File not found";
+                $result['error'] =  "File Fetching failed.";
+                return response()->json($result, 404);
+            }
+
+            $stream = $s3Client->getObject([
+                'Bucket' => env('AWS_BUCKET'),
+                'Key'    => $filenametostore
+            ]);
+
+            $body = $stream['Body'];
+
+            return response()->stream(function () use ($body) {
+                while (!$body->eof()) {
+                    echo $body->read(1024); // read in chunks
+                }
+            }, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . basename($data->file_name) . '"',
+                'Content-Length' => $stream['ContentLength'],
+            ]);
+        }
+
+        } else {
+
+            $result['success'] = false;
+            $result['message'] = "Disclosures data Not available.";
+            $result['error'] = "Disclosures data Not available.";
+            return response()->json($result, 500);
+        }
+    }
+    
 
     public function getMeetingSession(Request $request)
     {
@@ -1458,6 +1394,8 @@ class CaseController extends Controller
         $zoom_link_choice="";
 
         foreach ($sessionData as $key => $values) {
+
+            $delete_reason="";
 
             if (!is_null($values->session_party_ids)) {
                 $dataArray = json_decode($values->session_party_ids);
@@ -1505,13 +1443,15 @@ class CaseController extends Controller
 
             $id = $values->id;
             $data[$key]['id'] = $id;
-            $data[$key]['caseid'] ='M' . sprintf('%06d', $values->case_id);
+            $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->case_id);
             $data[$key]['created_at'] = $values->created_at;
             $data[$key]['session_date'] = $values->session_date;
+            $data[$key]['zoom_link'] = $values->zoom_link;
             $data[$key]['zoom_id'] = $values->zoom_id;
             $data[$key]['note'] = $values->note;
             $data[$key]['meeting_users'] = implode($user);
-            $data[$key]['zoom_link_choice'] = $zoom_link_choice;
+            $data[$key]['zoom_link_choice'] = $values->zoom_link_choice;
+            $data[$key]['is_deleted'] = $values->is_deleted;
             $data[$key]['delete_reason'] = $delete_reason;
         }
 
@@ -1571,7 +1511,7 @@ class CaseController extends Controller
                 'caseId'             => 'required|integer',
                 'sessionDate'        => 'required|date_format:d/m/Y|after_or_equal:today',
                 'sessionTime'        => 'required|date_format:H:i',
-                'zoomChoice'        => 'required|string|in:directly_zoom,custom_zoom,other',
+                'zoomChoice'        => 'required|string|in:directly_zoom,manually_zoom,other',
                 'zoomId'             => 'nullable|string|max:255',
                 'note'               => 'nullable|string|max:500',
                 'session_party_ids'  => 'required|array|min:1',
@@ -1589,7 +1529,8 @@ class CaseController extends Controller
             }
 
             $id = $request->input('SessId');
-            $caseId = $request->input('caseId');
+            $CaseId = $request->input('caseId');
+            
             $zoomChoice = $request->input('zoomChoice');
             $sessionTime = $request->input('sessionTime');
             $sessionDate = $request->input('sessionDate');
@@ -1599,7 +1540,7 @@ class CaseController extends Controller
             $zoomLink = $request->input('zoomLink');
 
             /********* Zoom Time Format ******************/
-            if($request->input('zoomChoice') == "direct") {
+            if($request->input('zoomChoice') == "directly_zoom") {
 
                 $time_zoom = date("H:i:s", strtotime($sessionTime));
                 $end_time = date("H:i:s", strtotime($sessionTime) + 60*60);
@@ -1639,7 +1580,7 @@ class CaseController extends Controller
 
                     $party = InvoledUser::where("userPlanId", $result->case_id)->where("id", $party_id)->first();
 
-                    if($zoomChoice == "manual") {
+                    if($zoomChoice == "manually_zoom") {
                         $this->sned_session($zoomId, $result->case_id, $party->userEmail, $party->name, $display_date_time, $party->userPhone, "Party");
                     } else {
                         $this->sned_session_invitation($zoomId, $result->case_id, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $zoomLink, "Party");
@@ -1657,9 +1598,9 @@ class CaseController extends Controller
 
                 if ($mediator) {
 
-                    if($zoomChoice == "manual") {
+                    if($zoomChoice == "manually_zoom") {
                         $is_send = $this->sned_session($zoomId, $CaseId, $mediator->email, $mediator->username, $display_date_time, $mediator->mobile_number, "Mediator");
-                    } else if($zoomChoice == "direct") {
+                    } else if($zoomChoice == "directly_zoom") {
                     /**** Zoom Invitation ************/
                         $is_send = $this->sned_session_invitation($zoomId, $CaseId, $mediator->email, $mediator->username, $display_date_time, $mediator->mobile_number, $zoomLink, "Mediator");
                     /**** Zoom Invitation ************/
@@ -1667,7 +1608,7 @@ class CaseController extends Controller
                 }
             }
 
-            $data['caseid'] = $caseId;
+            $data['caseid'] = $CaseId;
 
             $resultdata['success'] = true;
             $resultdata['message'] = "Zoom Session updated successfully.";
@@ -1750,7 +1691,7 @@ class CaseController extends Controller
                 if (!is_null($deleted->session_party_ids)) {
                     $dataArray = json_decode($deleted->session_party_ids);
                 }
-                // $userPhone = array();
+                
 
                 if (isset($dataArray)) {
                     foreach ($dataArray as $d) {
@@ -1817,7 +1758,7 @@ class CaseController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
-             //$userId = 2;
+            
 
             $validator = Validator::make($request->all(), [
                 'caseid' => 'integer',
@@ -1890,7 +1831,7 @@ class CaseController extends Controller
             // generate pdf
 
             $templateData = array();
-           // $templateData['sn'] = $request->MomSn; 
+            
             $templateData['sessid'] = $sessionid; 
             $templateData['caseid'] = $caseid; 
             $templateData['ip'] = $ip_name; 
@@ -1900,21 +1841,14 @@ class CaseController extends Controller
             $templateData['med'] = $mediator; 
             
             $invitation = $this->session_mom_template($templateData);
-           //$invitation = "";
-
 
             $preview = $this->tempMOM($templateData);
-           // $preview = "";
-        
 
 
             // save file in session mom table 
             DB::table('session_mom')->where('session_id', $sessionid)->update(['file_name' => $invitation]);
             // save file in session mom table 
 
-
-
-            
             
             if(isset($operationdata)) {
 
@@ -1945,7 +1879,6 @@ class CaseController extends Controller
                 $result['data'] = $data;
                 return response()->json($result, 200);
 
-               // return json_encode(['code' => 200, 'response' => 'success', 'file' => $invitation, 'path' => storage_path(), 'preview' => $preview]);
             }
         } catch (Exception $e) {
 
@@ -1969,7 +1902,7 @@ class CaseController extends Controller
 
         $data['session_mom'] = DB::table('session_mom')->where('session_id', $data['sessid'])->first();
         $session_data = DB::table('manage_session')->select('session_date')->where('id', $data['sessid'])->first();
-        //echo "<prE>session==>";print_R($session_data);
+        
         $session_date = explode('/', $session_data->session_date);
 
         $data['session_date'] = $session_date[0] .'-'.$session_date[1].'-'.$session_date[2];
@@ -1980,35 +1913,24 @@ class CaseController extends Controller
 
         $itm_date = InvitationFiles::select("created_at")->where(['case_id' => $data['caseid']])->orderByDesc('id')->get();
 
-       
-        //xecho "<pre>";print_R($itm_date);exit;
-
         if(!empty($itm_date) && count($itm_date) > 0) {
             $cdate = new DateTime($itm_date[0]->created_at);
             $data['itm_date'] = $cdate->format('d-m-Y'); 
         } else {
             $data['itm_date'] = "";
         }
-
-        
-
         
     
         $pdf = PDF::loadView('pdf.session_mom', $data);
         
-        $name = 'Minutes_of_the_Meeting_M'. sprintf('%06d', $data['caseid']) . '.pdf';
+        $name = 'Minutes_of_the_Meeting_CID'. sprintf('%06d', $data['caseid']) . '.pdf';
         
         $savePath = 'mediation_documents/mediation/' . $data['caseid'];
         $finalFilePath = $savePath . '/' . $name;
-       // $momSend = Storage::disk('s3')->url($finalFilePath);
 
-       //$s3_local = Storage::disk('local')->writeStream('public/mediation/' . $data['caseid'] . '/' . $name, Storage::disk('s3')->readStream('mediation_documents/mediation/' . $data['caseid'] . '/' . $name));
-       $local_store = Storage::disk('local')->put('public/mediation/' . $data['caseid'] . '/' .  $name, $pdf->output());
-        // echo $finalFilePath;
-        // echo $momSend;
-        // exit;
-        
-       $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        $local_store = Storage::disk('local')->put('public/mediation/' . $data['caseid'] . '/' .  $name, $pdf->output());
+       
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
 
       
         return $name;
@@ -2026,7 +1948,7 @@ class CaseController extends Controller
 
         $data['session_mom'] = DB::table('session_mom')->where('session_id', $data['sessid'])->first();
         $session_data = DB::table('manage_session')->select('session_date')->where('id', $data['sessid'])->first();
-        //echo "<prE>session==>";print_R($session_data);exit;
+        
         $session_date = explode('/', $session_data->session_date);
 
         $data['session_date'] = $session_date[0] .'-'.$session_date[1].'-'.$session_date[2];
@@ -2055,7 +1977,6 @@ class CaseController extends Controller
 
     public function send_upload_file_party_mom($id, $files)
     {
-        //dd($files);
         $involedUser = InvoledUser::where("userPlanId", $id)->get();
         $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
@@ -2063,22 +1984,16 @@ class CaseController extends Controller
             ->first();
         $mid = "M" . sprintf("%06d", $id);
         $sendEamils = array();
-        //$filesE = array();
-        // $access = array();
 
         $d = [
             'event' => 'SEND_ADDI_DOC',
             'case_id' => $id,
         ];
-       // foreach ($files as $f) {
-            // $filesE[] = url("storage/app/" . $f["file_name"]);
+       
             $filesE = 'mediation_documents/mediation/' . $id  .'/'. $files["file_name"];
 
-            //$access = explode(',', $files["access"]);
             $access = $files["access"];
             $mediatorAccess = $files["mediator_access"];
-        //}
-       
         
         if (!empty($sendEamils)) {
             foreach ($sendEamils as $email) {
@@ -2103,8 +2018,7 @@ class CaseController extends Controller
 
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-            //$userId = $jwtData->data->userid;
-
+            
             $validator = Validator::make($request->all(), [
                 'caseid' => 'required|integer'
             ]);
@@ -2133,14 +2047,7 @@ class CaseController extends Controller
                 ->where("mediators_mediation_cases_status.status", "=", 1)
                 ->first();
 
-            // if(Auth::user()->role == 2) {
-            //     return view('admin.case.track', compact("whatsapp", "id", "mediator", "email", "courierCsv", "sms"));
-            // } else if(Auth::user()->role == 3) {
-            //     return view('user.mtrack', compact("whatsapp", "id", "mediator", "email", "courierCsv", "sms"));
-            // } else if(Auth::user()->role == 0) {
-            //     return view('user.track', compact("whatsapp", "id", "mediator", "email", "courierCsv", "sms"));
-            // }
-
+            
             $data['caseid'] = $caseid;
             $data['email'] = $email;
             $data['mediator'] = $mediator;
@@ -2171,8 +2078,6 @@ class CaseController extends Controller
 
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-            //$userId = $jwtData->data->userid;
-
             $validator = Validator::make($request->all(), [
                 'caseid' => 'required|integer',
                 'mediator_id' => 'required|integer'
@@ -2181,8 +2086,6 @@ class CaseController extends Controller
             //Inputs
             $caseid = $request->input('caseid');
             $mediator_id = $request->input('mediator_id');
-            
-
 
             if ($validator->fails()) {
 
@@ -2193,8 +2096,6 @@ class CaseController extends Controller
                 $result['error'] = $validator->errors();
                 return response()->json($result, 422);
             }
-
-
 
 
             if ($mediator_id != null) {
@@ -2236,7 +2137,7 @@ class CaseController extends Controller
 
                     
                     
-                    $invitation = $this->mediator_appointment($request->id, $mediator_id);
+                    $invitation = $this->mediator_appointment($caseid, $mediator_id);
                     
                     
                     $invmodel = InvitationFiles::where('case_id', $caseid)->orderByDesc('id')->limit(1)->first();
@@ -2278,16 +2179,16 @@ class CaseController extends Controller
     {
         $data["mediator"] = User::find($medid);
         $data["case"] = MedCase::where("id", "=", $id)->first();
-        // $data["party"] = InvoledUser::where("userPlanId", "=", $id)->get();
+        
         $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
             ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
         $pdf = PDF::loadView('pdf.mediator_appointment_letter', $data);
-        $name = Common_function::changeidprefix("",$id, "S","_assignment.pdf");
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        $name = Common_function::changeidprefix("",$id, "CID","_assignment.pdf");
+        
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
-        // Storage::put('public/mediation/' . $data["case"]->id . '/' . $name, $pdf->output());
+        
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
     }
@@ -2304,19 +2205,6 @@ class CaseController extends Controller
         ];
         foreach ($involedUser as $inv) {
             if ($inv->isClaimant == 0) {
-
-
-                
-                /**** SMS Notification ****/
-                // $smsvar = ['--caseid--'];
-                // $smsvar1 = [Common_function::getsixdigitid('sc', $id)];
-                // $varjsonSms = ['caseid' => Common_function::changeidprefix("",$id)];
-                
-                // Common_function::sendsmsNotification($id, $inv->userPhone, $varjsonSms, $smsvar, $smsvar1, 'SM8', 'ADMIN_CASE_REJ', 'SM8_admin_rejecting_case');
-                
-                /**** SMS Notification ****/
-                
-                
                 
                 $party_name = $inv->name;
                 $id = Common_function::changeidprefix("",$id);
@@ -2324,6 +2212,948 @@ class CaseController extends Controller
             
             }
         }
+    }
+
+    public function viewSettelment(Request $request)
+    {
+
+        $token = $request->cookie('auth_token');
+        if (!$token) {
+
+            $result['success'] = false;
+            $result['message'] = 'Unauthorized: Missing token';
+            $result['error'] = 'Unauthorized: Missing token';
+            return response()->json($result, 401);
+        }
+
+        $JWT_KEY = env('JWT_KEY');
+        $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+        $userId = $jwtData->data->userid;
+
+        $validator = Validator::make($request->all(), [
+            'caseId'             => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $caseId = $request->input('caseId');
+
+        $sessionData = DB::table('document_settlements')
+            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+            ->where('document_settlements.mediation_case_id', $caseId)
+            ->get();
+
+        $data = array();
+        if(count($sessionData) > 0) {
+
+            foreach ($sessionData as $key => $values) {
+                
+                    $id = $values->id;
+                    $keyInc = $key + 1;
+                    $data[$key]['id'] = $id;
+                    $data[$key]['file_path'] = $values->file_path;
+                    $data[$key]['caseId'] = $caseId;
+                    $data[$key]['username'] = $values->username;
+                    $data[$key]['userId'] = $userId;
+            }
+        }
+
+        $result['success'] = true;
+        $result['message'] = "Data fetched successfully.";
+        $result['data'] = $data;
+        return response()->json($result, 200);
+    }
+
+    public function settlementUpload(Request $request)
+    {
+
+        try {
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+
+            $validator = Validator::make($request->all(), [
+                    'caseId' => 'required|integer',
+                    'Settelmentfiles' => 'required',
+                    'Settelmentfiles.*' => 'mimes:csv,txt,xlx,xls,pdf',
+                ]);
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+            $caseId = $request->input('caseId');
+            $Settelmentfiles = $request->file('Settelmentfiles');
+
+            $insert = [];
+
+            if ($request->hasFile('Settelmentfiles')) {
+
+                foreach ($request->file('Settelmentfiles') as $file) {
+                    
+                    $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME)
+                        . "_date_" . date("YmdHis") . "." . $file->extension();
+
+                    $savePath = "mediation_documents/mediation/{$caseId}/settelmentDocument";
+                    $finalFilePath = $savePath . '/' . $filename;
+
+                    Storage::disk('s3')->put($finalFilePath, file_get_contents($file));
+
+                    $insert[] = [
+                        'file_path'        => $filename,
+                        'uploaded_by'      => $userId,
+                        'mediation_case_id'=> $caseId,
+                        'created_at'      => now(),
+                    ];
+                }
+
+                DB::table('document_settlements')->insert($insert);
+                
+                $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+                $inv_id = "";
+                $inv = InvoledUser::select('id')->where('userPlanId', $caseId)->get();
+                foreach ($inv as $v) {
+                    if ($inv_id == "") {
+                        $inv_id = $v->id;
+                    } else {
+                        $inv_id = $inv_id . "," . $v->id;
+                    }
+                }
+                Common_function::MedNotification($caseId, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+                $this->send_settlement_agreement_party($caseId, $insert);
+
+                $resultData['caseid']=$caseId;
+
+                $result['success'] = true;
+                $result['message'] = "Files uploaded successfully.";
+                $result['data'] = $resultData;
+                return response()->json($result, 200);
+
+            } else {
+
+                    $result['success'] = false;
+                    $result['message'] = "Files not uploaded";
+                    $result['error'] = "No valid files found";
+                    return response()->json($result, 400);
+            }
+
+        }  catch (\Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Files not uploaded";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+    public function send_settlement_agreement_party($id, $files)
+    {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "M" . sprintf("%06d", $id);
+        $sendEamils = array();
+        $filesE = array();
+        $d = [
+            'event' => 'SEND_SETT_AGRE',
+            'case_id' => $id,
+        ];
+        foreach ($files as $f) {
+            $filesE[] = 'mediation_documents/mediation/' . $id . '/settelmentDocument/' . $f["file_path"];
+        }
+        foreach ($involedUser as $inv) {
+            if ($inv->userEmail != "") {
+                $sendEamils[] = $inv->userEmail;
+            }
+        }
+        if ($mediator) {
+            $d1 = [
+                'event' => 'SEND_SETT_AGRE_MED',
+                'case_id' => $id,
+            ];
+            SendGrid::send($d1, $mediator->email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+
+        }
+
+        foreach ($sendEamils as $email) {
+            SendGrid::send($d, $email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+        }
+
+        return true;
+    }
+
+
+    public function send_mediatorAdd($id, $mediator_id)
+    {
+        $user = User::where("id", $mediator_id)->first();
+        $mid = "M" . sprintf("%06d", $id);
+
+        $d = [
+            'event' => 'MEDI_ADD_ADM',
+            'case_id' => $id,
+        ];
+        SendGrid::send($d, $user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $mid], $user->name);
+
+        return true;
+    }
+
+
+    public function closeCaseStatus(Request $request) {
+        try{
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'required|integer',
+                'status' => 'required|integer'
+            ]);
+
+            if(Mediation_status_log::STATUS_WITHDRAWN  != $request->input('status')){
+
+                $validator = Validator::make($request->all(), [
+                        'caseid' => 'required|integer',
+                        'status' => 'required|integer',
+                        'Settelmentfiles' => 'required',
+                        'Settelmentfiles.*' => 'mimes:csv,txt,xlx,xls,pdf',
+                    ]);
+            }
+
+            //Inputs
+            $caseid = $request->input('caseid');
+            $status = $request->input('status');
+            $comment = $request->input('comment');
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+          
+
+            if ($status != null) {
+
+                $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                    ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseid)
+                    ->where("mediators_mediation_cases_status.status", "=", 1)
+                    ->first();
+
+                if(empty($mediator) && $status != Mediation_status_log::STATUS_WITHDRAWN){
+
+                    $result['success'] = false;
+                    $result['message'] = "Case not accepted by mediator";
+                    $result['error'] = "Case not accepted by mediator";
+                    return response()->json($result, 400);
+                }
+
+                $inv_id = "";
+                $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
+                foreach ($inv as $v) {
+                    if ($inv_id == "") {
+                        $inv_id = $v->id;
+                    } else {
+                        $inv_id = $inv_id . "," . $v->id;
+                    }
+                }
+
+                if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
+                    
+                        Common_function::MedNotification($caseid, "WDRN_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                    
+                } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
+                    
+                        Common_function::MedNotification($caseid, "RES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                    
+                } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
+                    
+                        Common_function::MedNotification($caseid, "UNRES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                    
+                } else if (Mediation_status_log::STATUS_PARTIALLY_RESOLVED == $status) {
+                    
+                        Common_function::MedNotification($caseid, "PAR_RES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                    
+                }
+
+                if(Mediation_status_log::STATUS_WITHDRAWN  != $status){
+
+                    if ($request->hasFile('Settelmentfiles')) {
+
+                        $Settelmentfiles = $request->file('Settelmentfiles');
+                        
+                        $insert = [];
+
+                        foreach ($request->file('Settelmentfiles') as $file) {
+                            
+                            $filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME)
+                                . "_date_" . date("YmdHis") . "." . $file->getClientOriginalExtension();
+
+                            
+                            $savePath = "mediation_documents/mediation/{$caseid}/settelmentDocument/{$filename}";
+
+                            Storage::disk('s3')->put($savePath, file_get_contents($file));
+
+                            $insert[] = [
+                                'file_path'        => $filename,
+                                'uploaded_by'      => $userId,
+                                'mediation_case_id'=> $caseid,
+                                'created_at'      => now(),
+                            ];
+                        }
+
+                        DB::table('document_settlements')->insert($insert);
+                        
+                        $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseid)
+                            ->where("mediators_mediation_cases_status.status", "=", 1)
+                            ->first();
+                        $inv_id = "";
+                        $inv = InvoledUser::select('id')->where('userPlanId', $caseid)->get();
+                        foreach ($inv as $v) {
+                            if ($inv_id == "") {
+                                $inv_id = $v->id;
+                            } else {
+                                $inv_id = $inv_id . "," . $v->id;
+                            }
+                        }
+                        Common_function::MedNotification($caseid, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+                        $this->send_settlement_agreement_party($caseid, $insert);
+
+                    } else {
+
+                            $result['success'] = false;
+                            $result['message'] = "Settlement file field is required";
+                            $result['error'] = "No valid files found";
+                            return response()->json($result, 400);
+                    }
+
+                }
+
+                $user = MedCase::find($caseid);
+                $user->confirm_status = 2;
+                $user->case_status = $status;
+                $user->withdraw = ($comment != null) ? $comment : "";
+
+                if ($user->save()) {
+
+                    
+                    $mediation_status_log = new Mediation_status_log;
+                    $mediation_status_log->user_id = $userId;
+                    $mediation_status_log->mediation_case_id = $caseid;
+                    $mediation_status_log->status = ($status != null) ? $status : "";
+
+
+                    if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
+                        $mediation_status_log->description = "Request Withdrawn";
+                        
+                            $this->sned_withdrawal($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                        
+                    } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
+                        $mediation_status_log->description = "Request Resolved";
+                        
+                            $this->sned_resolved($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                        
+                    } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
+                        $mediation_status_log->description = "Request Unresolved";
+                        
+                            $this->sned_unresolved($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                        
+                    } else if (Mediation_status_log::STATUS_PARTIALLY_RESOLVED == $status) {
+
+                        $mediation_status_log->description = "Request Partially Resolved";
+                        
+                        $this->sned_par_resolved($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                        
+                    }
+                    $mediation_status_log->save();
+
+
+                    $final['caseid'] = $caseid;
+                    $final['status'] = $status;
+
+                    $s_text="";
+                    if($status == 5) {
+                        $s_text = "Withdrawn";
+                    } else if($status == 6) {
+                        $s_text = "Resolved";  
+                    } else if ($status == 7) {
+                        $s_text = "Unresolved"; 
+                    } else if ($status == 8) {
+                        $s_text = "Partially Resolved"; 
+                    }
+                    $final['status_text'] = $s_text;
+                    $final['comment'] = $comment;
+
+
+                    $result['success'] = true;
+                    $result['message'] = "Case closed successfully.";
+                    $result['data'] = $final;
+                    return response()->json($result, 200);
+                    
+                }
+
+            }
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case closing process is failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+
+    public function sned_withdrawal($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
+    {
+
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+        
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "M" . sprintf("%06d", $id);
+
+        $initiating_party = "";
+        $initiating_phone = [];
+        $responding_party = "";
+        $initiating_email = "";
+        $responding_email = [];
+        $responding_phone = [];
+        $d1 = [
+            'event' => 'WDRN_PARTY',
+            'case_id' => $id,
+        ];
+        $d2 = [
+            'event' => 'WDRN_OTHER_PARTY',
+            'case_id' => $id,
+        ];
+        $d3 = [
+            'event' => 'WDRN_MED',
+            'case_id' => $id,
+        ];
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
+                $initiating_phone[] = $inv->userPhone;
+                $initiating_email = $inv->userEmail;
+
+                if($stop_close_ip == 0){
+
+                    SendGrid::send($d1, $inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
+                }
+            } else {
+                if ($inv->name != "") {
+                    $responding_party = $inv->name;
+                }
+                $responding_email[] = $inv->userEmail;
+                $responding_phone[] = $inv->userPhone;
+            }
+        }
+
+        if (isset($responding_email)) {
+            foreach ($responding_email as $email) {
+                if ($email != "") {
+                    if($stop_close_rp == 0){
+
+                        SendGrid::send($d2, $email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                    }
+                }
+            }
+        }
+
+        
+        if ($mediator) {
+
+            if($stop_close_med == 0){
+
+                SendGrid::send($d3, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
+
+            
+        }
+        return true;
+    }
+
+
+    public function sned_resolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
+    {
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "CID" . sprintf("%06d", $id);
+        $initiating_party = "";
+        $d = [
+            'event' => 'RESO_ADM',
+            'case_id' => $id,
+        ];
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
+            }
+            if ($inv->userEmail != "") {
+                if($stop_close_ip == 0) {
+
+                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                }
+            }
+        }
+        if ($mediator) {
+            if($stop_close_med == 0){
+                
+                SendGrid::send($d, $mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
+        }
+        return true;
+    }
+
+    public function sned_par_resolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
+    {
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "CID" . sprintf("%06d", $id);
+        $initiating_party = "";
+        $d = [
+            'event' => 'PAR_RES_BY_ADMIN',
+            'case_id' => $id,
+        ];
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
+            }
+            if ($inv->userEmail != "") {
+                if($stop_close_ip == 0) {
+
+                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                }
+            }
+        }
+        if ($mediator) {
+            if($stop_close_med == 0){
+                
+                SendGrid::send($d, $mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
+        }
+        return true;
+    }
+
+
+    public function sned_unresolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
+    {
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+
+        $mid = "M" . sprintf("%06d", $id);
+        $initiating_party = "";
+        $d = [
+            'event' => 'UNRESO_ADM',
+            'case_id' => $id,
+        ];
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
+            }
+            if ($inv->userEmail != "") {
+                if($stop_close_ip == 0) {
+
+                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                }
+            }
+        }
+        if ($mediator) {
+            if($stop_close_med == 0){
+
+                SendGrid::send($d, $mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
+        }
+        return true;
+    }
+
+    public function sessionPdf(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+                'caseId' => 'required|integer',
+            ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $caseId = $request->input('caseId');
+
+        $data["case"] = MedCase::find($caseId);
+        $data["party"] = InvoledUser::where("userPlanId", "=", $caseId)->get();
+        $data["mediator"] = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.first_name", "users.last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $data['caseId'] = $caseId;
+        $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
+        $pdf = PDF::loadView('pdf.view_session', $data);
+        return $pdf->download('session_CID' . sprintf('%06d', $caseId) . '.pdf');
+
+    }
+
+    /**************** Case Edit  *************************************/
+    
+    public function caseUpdate(Request $request) {
+        try {
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+
+            $validator = Validator::make($request->all(), [
+                'claimants.*.email' => 'unique',
+                'respondants.*.email' => 'unique'
+            ]);
+
+            // Inputs
+
+            $caseid = $request->input('caseid');
+            $proposedSolution = $request->input('proposedSolution');
+            $issue = $request->input('issue');
+            $application = $request->input('application');
+            $inputData['claimants']= $request->input('claimants.*');
+            $inputData['respondants']= $request->input('respondants.*');
+
+    
+
+            //udpate mediation case
+            $med = MedCase::find($caseid);
+            $med->proposedSolution = $proposedSolution;
+            $med->issue = $issue;
+
+            $med->ref_id = isset($application) ? $application : $med->ref_id;
+            $med->updated_at = date("Y-m-d H:i:s");
+            $med->save();
+
+
+            $usr = User::find($med->userid);
+         
+
+            foreach($inputData['claimants'] as $ckey => $claimant_data) {
+
+                if($usr->id > 0) {
+                    $usr->address = $claimant_data['address1'];
+                    $usr->address1 = $claimant_data['address2'];
+                    $usr->city = $claimant_data['city'];
+                    $usr->pincode = $claimant_data['pincode'];
+                    $usr->state = $claimant_data['state'];
+                    $usr->country = $claimant_data['country'];
+                    $usr->save();
+                }
+
+                
+                $involedUser = InvoledUser::where(['userPlanId' => $med->id, 'userEmail' => $claimant_data['email']])->get()->toArray();
+                
+                if(!empty($involedUser)) {
+                    $dataToInsert = [
+                        'userPlanId' => $med->id,
+                        'address1' => isset($claimant_data['address1']) ? $claimant_data['address1'] : "",
+                        'address2' => isset($claimant_data['address2']) ? $claimant_data['address2'] : "",
+                        'city' => isset($claimant_data['city']) ? $claimant_data['city'] : "",
+                        'pincode' => isset($claimant_data['pincode']) ? $claimant_data['pincode'] : "",
+                        'state' => isset($claimant_data['state']) ? $claimant_data['state'] : "",
+                        'country' => isset($claimant_data['country']) ? $claimant_data['country'] : "",
+                        'isClaimant' => 0
+                    ];
+                    $add_claimant = DB::table('user_involved_in_agreement')->where('id', $involedUser[0]['id'])->update($dataToInsert);
+                    
+                } else {
+                        $add_claimant = new InvoledUser();
+                        $add_claimant->userEmail = isset($claimant_data['email']) ? $claimant_data['email'] : "";
+                        $add_claimant->name = isset($claimant_data['name']) ? $claimant_data['name'] : "";
+                        $add_claimant->userPhone = isset($claimant_data['phone']) ? $claimant_data['phone'] : "";
+                        $add_claimant->userPlanId = $med->id;
+                        $add_claimant->address1 = isset($claimant_data['address1']) ? $claimant_data['address1'] : "";
+                        $add_claimant->address2 = isset($claimant_data['address2']) ? $claimant_data['address2'] : "";
+                        $add_claimant->city = isset($claimant_data['city']) ? $claimant_data['city'] : "";
+                        $add_claimant->pincode = isset($claimant_data['pincode']) ? $claimant_data['pincode'] : "";
+                        $add_claimant->state = isset($claimant_data['state']) ? $claimant_data['state'] : "";
+                        $add_claimant->country = isset($claimant_data['country']) ? $claimant_data['country'] : "";
+                        $add_claimant->isClaimant = 0;
+                        $add_claimant->save();
+                }
+                
+                
+            }
+
+      
+            foreach($inputData['respondants'] as $rkey => $resp_data) {
+                $respUser = InvoledUser::where(['userPlanId' => $med->id, 'userEmail' => $resp_data['email']])->orderByDesc('id')->limit(1)->first();
+                
+                $isClaimant_count = InvoledUser::select('isClaimant')->where('isClaimant', '!=', 0)->orderBy('isClaimant', 'desc')->first()->toArray();
+                
+                if(!empty($respUser)) {
+                    $dataToRespInsert = [
+                       'userPlanId' => $med->id,
+                        'address1' => isset($resp_data['address1']) ? $resp_data['address1'] : "",
+                        'address2' => isset($resp_data['address2']) ? $resp_data['address2'] : "",
+                        'city' => isset($resp_data['city']) ? $resp_data['city'] : "",
+                        'pincode' => isset($resp_data['city']) ? $resp_data['city'] : "",
+                        'state' => isset($resp_data['state']) ? $resp_data['state'] : "",
+                        'country' => isset($resp_data['country']) ? $resp_data['country'] : "",
+                        'isClaimant' => $respUser['isClaimant']
+                    ];
+                    $add_resp = DB::table('user_involved_in_agreement')->where('id', $respUser['id'])->update($dataToRespInsert);
+                
+                } else {
+                    $add_resp = new InvoledUser();
+                    $add_resp->name = isset($resp_data['name']) ? $resp_data['name'] : "";
+                    $add_resp->userEmail = isset($resp_data['email']) ? $resp_data['email'] : "";
+                    $add_resp->userPhone = isset($resp_data['phone']) ? $resp_data['phone'] : "";
+                    $add_resp->userPlanId = $med->id;
+                    $add_resp->address1 = isset($resp_data['address1']) ? $resp_data['address1'] : "";
+                    $add_resp->address2 = isset($resp_data['address2']) ? $resp_data['address2'] : "";
+                    $add_resp->city = isset($resp_data['city']) ? $resp_data['city'] : "";
+                    $add_resp->pincode = isset($resp_data['pincode']) ? $resp_data['pincode'] : "";
+                    $add_resp->state = isset($resp_data['state']) ? $resp_data['state'] : "";
+                    $add_resp->country = isset($resp_data['country']) ? $resp_data['country'] : "";
+                    $add_resp->isClaimant = $isClaimant_count['isClaimant'] + 1;
+                    $add_resp->joinCode = $this->joinCode();
+                    $add_resp->save();
+                }
+            }
+
+
+            $result['success'] = true;
+            $result['message'] = "Case data updated successfully.";
+            $result['data'] = $caseid;
+            return response()->json($result, 200);
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Case updation process is failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+
+    }
+    /**************** Case Edit  *************************************/
+
+
+    public function sned_invitation($id, $invitation, $bulk_flag = 0, $stop_ip = 0, $stop_rp = 0, $stop_med = 0)
+    {
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+
+
+        $finalFilePath = 'mediation_documents/mediation/' . $id . '/' . $invitation;
+        $whatsappSend = Storage::disk('s3')->url($finalFilePath);
+
+        $initiating_party = "";
+        $initiating_phone = [];
+        $initiating_email = [];
+        $responding_party = "";
+        $ini_userPlanId = "";
+        $responding_email = [];
+        $responding_phone = [];
+        $d1 = [
+            'event' => 'ACPTARB_ADM_INI',
+            'case_id' => $id,
+        ];
+        $d2 = [
+            'event' => 'ACPTARB_ADM_RES',
+            'case_id' => $id,
+        ];
+
+
+
+        $d = [
+            'event' => 'SESS_SCHE',
+            'case_id' => $id,
+        ];
+        
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($initiating_party == "") {
+                    if ($inv->organization != null) {
+                        $initiating_party = $inv->organization;
+                    } else {
+                        $initiating_party = $inv->name;
+                    }
+                }
+                $ini_userPlanId = $inv->userPlanId;
+                $initiating_phone[] = $inv->userPhone;
+                $initiating_email[] = $inv->userEmail;
+            } else if ($inv->isOnboarded == 0) {
+                $code = $inv->joinCode;
+                if ($inv->name != "") {
+                    if ($responding_party == "") {
+                        $responding_party = $inv->name;
+                    }
+                }
+                $responding_phone[] = $inv->userPhone;
+                $responding_party_name[] = $inv->name;
+                if ($inv->userEmail != "" && $stop_rp == 0) {
+                    SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
+                }
+                
+                //***************** */ L10 session email go ******************//
+                if ($bulk_flag == 1) {
+                    if ($inv->userEmail != "") {
+                        SendGrid::send($d, $inv->userEmail, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
+                    }
+                }
+                //***************** */ L10 session email go ******************//
+            }
+
+        }
+        
+
+
+        if ($bulk_flag == 0) {
+            if ($responding_party != "") {
+
+                foreach ($initiating_email as $ini_email) {
+                    if($stop_ip == 0) {
+                        SendGrid::send($d1, $ini_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
+                    }
+
+                }
+
+
+               
+            }
+        }
+
+        return true;
+    }
+
+
+    public function invitation_mediate($id)
+    {
+        
+        $data["case"] = MedCase::where("id", "=", $id)->first();
+        
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
+        'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $id)
+            ->where("mediation_case.id", "=", $id)->get();
+
+         
+
+        // Added for icici bank ITM layout //
+        if($data["case"]->batch_id == 63){
+            $pdf = PDF::loadView('pdf.invitation_mediation_icici', $data);
+        } else {
+
+
+            if($data['case']->bulk_flag == 1){
+                $pdf = PDF::loadView('pdf.invitation_mediation_all', $data, [], [
+                    'title' => 'ITM' . ' ' . $id,
+                    'showWatermarkImage' => true, 
+                    'wialpha' => 0.1, 
+                    'wisize' => 'F', 
+                    'wipos' => 'F', 
+                    'mode' => 'utf-8',
+                    'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                    'autoLangToFont' => true,
+                    'autoScriptToLang' => true
+                ]);
+            } else {
+                $pdf = PDF::loadView('pdf.invitation_mediation', $data); 
+            }
+            
+        }
+       
+       
+        $name = 'Invitation_mediate_CID' . sprintf('%06d', $data["case"]->id) . '.pdf'; /********** file name 30 character */
+        
+        $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
+        $finalFilePath = $savePath . '/' . $name;
+        
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+        return $name;
     }
 
 }

@@ -75,8 +75,7 @@ class User extends Authenticatable
                 if (!empty($search)) {
 
                     $query->where(function ($q) use ($search) {
-                        $q->where("first_name", "like", "%{$search}%")
-                        ->orWhere("last_name", "like", "%{$search}%")
+                        $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
                         ->orWhere("mobile_number", "like", "%{$search}%");
                     });
@@ -111,8 +110,7 @@ class User extends Authenticatable
                 if (!empty($search)) {
 
                     $query->where(function ($q) use ($search) {
-                        $q->where("first_name", "like", "%{$search}%")
-                        ->orWhere("last_name", "like", "%{$search}%")
+                        $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
                         ->orWhere("mobile_number", "like", "%{$search}%");
                     });
@@ -141,13 +139,120 @@ class User extends Authenticatable
     {
 
         $query = User::select('*')->where("role", "=", $role)
-                    ->where('status', 0);
+                    ->where('is_deleted', 1);
 
                 if (!empty($search)) {
 
                     $query->where(function ($q) use ($search) {
-                        $q->where("first_name", "like", "%{$search}%")
-                        ->orWhere("last_name", "like", "%{$search}%")
+                        $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
+                        ->orWhere("email", "like", "%{$search}%")
+                        ->orWhere("mobile_number", "like", "%{$search}%");
+                    });
+                }
+
+                if ($columnName == "id") {
+                    $query->orderBy('id', $sortOrder);
+                } elseif ($columnName == "date") {
+                    $query->orderBy('created_at', $sortOrder);
+                } elseif ($columnName == "full_name") {
+                    $query->orderByRaw("CONCAT(first_name, ' ', last_name) {$sortOrder}");
+                }elseif ($columnName == "full_name") {
+                     $quer->orderBy('email', $sortOrder);
+                }elseif ($columnName == "full_name") {
+                     $query->orderBy('mobile_number', $sortOrder);
+                }
+                 else {
+
+                    $query->orderBy('id', 'DESC');
+                }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
+    static function getMediatorsApprove($role, $start, $length, $search, $columnName, $sortOrder)
+    {
+
+        $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')
+                    ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+                    ->where("role", "=", $role)
+                    ->where('status', 1)
+                    ->where('is_deleted', 0);
+
+                if (!empty($search)) {
+
+                    $query->where(function ($q) use ($search) {
+                        $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
+                        ->orWhere("email", "like", "%{$search}%")
+                        ->orWhere("mobile_number", "like", "%{$search}%");
+                    });
+                }
+
+                if ($columnName == "id") {
+                    $query->orderBy('id', $sortOrder);
+                } elseif ($columnName == "date") {
+                    $query->orderBy('created_at', $sortOrder);
+                } elseif ($columnName == "full_name") {
+                    $query->orderByRaw("CONCAT(first_name, ' ', last_name) {$sortOrder}");
+                }elseif ($columnName == "full_name") {
+                     $quer->orderBy('email', $sortOrder);
+                }elseif ($columnName == "full_name") {
+                     $query->orderBy('mobile_number', $sortOrder);
+                }
+                 else {
+
+                    $query->orderBy('id', 'DESC');
+                }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
+    static function getMediatorsNewReq($role, $start, $length, $search, $columnName, $sortOrder)
+    {
+
+        $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+                    ->where("role", "=", $role)
+                    ->where('status', 0)
+                    ->where('is_deleted', 0);
+
+                if (!empty($search)) {
+
+                    $query->where(function ($q) use ($search) {
+                        $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
+                        ->orWhere("email", "like", "%{$search}%")
+                        ->orWhere("mobile_number", "like", "%{$search}%");
+                    });
+                }
+
+                if ($columnName == "id") {
+                    $query->orderBy('id', $sortOrder);
+                } elseif ($columnName == "date") {
+                    $query->orderBy('created_at', $sortOrder);
+                } elseif ($columnName == "full_name") {
+                    $query->orderByRaw("CONCAT(first_name, ' ', last_name) {$sortOrder}");
+                }elseif ($columnName == "full_name") {
+                     $quer->orderBy('email', $sortOrder);
+                }elseif ($columnName == "full_name") {
+                     $query->orderBy('mobile_number', $sortOrder);
+                }
+                 else {
+
+                    $query->orderBy('id', 'DESC');
+                }
+
+        return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+    }
+
+    static function getMediatorsRejected($role, $start, $length, $search, $columnName, $sortOrder)
+    {
+
+        $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
+        ->where("role", "=", $role)
+                    ->where('is_deleted', 1);
+
+                if (!empty($search)) {
+
+                    $query->where(function ($q) use ($search) {
+                        $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
                         ->orWhere("mobile_number", "like", "%{$search}%");
                     });

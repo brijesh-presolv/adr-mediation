@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Admin;
+namespace App\Http\Controllers\API\Mediator;
 
 use App\Http\Controllers\Controller;
 use App\Models\MedCase;
@@ -29,57 +29,6 @@ use Firebase\JWT\Key;
 
 class UploadController extends Controller 
 {
-
-    public function viewSupporting(Request $request)
-    {
-        $caseid = $request->input('caseId'); 
-        $managefilesData = DB::table('manage_files')
-                            ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
-                            ->where('manage_files.case_id', $caseid)
-                            ->get();
-
-        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')
-                                ->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')
-                                ->where("userPlanId", $caseid)->get();
-        $party_names =[];
-        foreach ($involedUser as $inv) {
-
-            if ($inv->organization != null) {
-                $party_names[] = $inv->organization;
-            } else {
-                $party_names[] = $inv->name;
-            }
-        }
-
-        $data=array();
-        foreach ($managefilesData as $key => $value) {
-
-            if (file_exists("storage/app/" . $value->file_name)) {
-                $local_storage=1;
-            } else {
-                $local_storage=0;
-            }
-            $file_name= $value->file_name;
-
-            $id = $value->id;
-            $data[$key]['id'] = $id;
-            $data[$key]['caseid'] = $value->case_id;
-            $data[$key]['file_name'] = $value->file_name;
-            $data[$key]['access'] = $value->access;
-            $data[$key]['mediator_access'] = $value->mediator_access;
-            $data[$key]['username'] = $value->username;
-            $data[$key]['created_at'] = $value->created_at;
-        }
-
-        $casedata['party_names']=$party_names;
-        $casedata['docsdata']=$data;
-
-        $result['success'] = true;
-        $result['message'] = "New cases fetched successfully.";
-        $result['data'] = $casedata;
-        return response()->json($result, 200);
-    }
-
     public function storeMultiFile(Request $request)
     {
         try {
@@ -147,7 +96,7 @@ class UploadController extends Controller
                     if ($file->isValid()) {
 
                         $originalFileName = $file->getClientOriginalName();
-                        $filename = $originalFileName. "_supportingdoc{$fileIndex}_CID" . sprintf('%06d', $caseId) . "." . $file->getClientOriginalExtension();
+                        $filename = $originalFileName. "_supportingdoc{$fileIndex}_M" . sprintf('%06d', $caseId) . "." . $file->getClientOriginalExtension();
                         $savePath = "mediation_documents/mediation/{$caseId}/supportingDocument/{$filename}";
 
                         Storage::disk('s3')->put($savePath, file_get_contents($file));

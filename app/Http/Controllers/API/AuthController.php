@@ -36,10 +36,15 @@ class AuthController  extends Controller
 
             }else{
 
+                 
+                $isProfileCompleted = $this->checkProfile($jwtdata->data->userid) ? 1 : 0;
+
+
                 $data['userid'] = $jwtdata->data->userid;
                 $data['role'] = $jwtdata->data->role;
                 $data['email'] = $jwtdata->data->email;
                 $data['name'] = $jwtdata->data->name;
+                $data['isProfileCompleted'] = $isProfileCompleted;
 
 
                 $result['success'] = true;
@@ -91,7 +96,7 @@ class AuthController  extends Controller
                                     ->cookie(
                                         'auth_token',           // cookie name
                                         $token,       // cookie value
-                                        15,                     // minutes
+                                        (60 * 60 * 24),                     // minutes
                                         '/',
                                         null,                   // domain (or '.yourdomain.com' if frontend + backend share domain)
                                         true,                   // secure = true (required for cross-site cookies on HTTPS)
@@ -109,6 +114,20 @@ class AuthController  extends Controller
 
         }
 
+    }
+
+    public function checkProfile($userid){
+
+        $user=User::find($userid);
+
+        if (empty($user->address) || empty($user->city) || empty($user->pincode) || empty($user->country) || empty($user->mobile_number)) {
+
+            return false;
+
+        }else{
+
+            return true;
+        }
     }
 
 }
