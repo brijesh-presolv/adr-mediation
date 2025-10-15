@@ -561,7 +561,7 @@ class MediationController extends Controller
 
         $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->get();
 
-        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', 'users.username')
+        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
             ->where('manage_files.case_id', $case->id)
             ->get();
