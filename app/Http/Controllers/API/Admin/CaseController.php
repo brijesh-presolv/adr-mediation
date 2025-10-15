@@ -535,7 +535,7 @@ class CaseController extends Controller
 
         $case->appointment = InvitationFiles::where(['case_id' => $case->id])->where('file_name_mediator_appointment', '!=', null)->orderByDesc('id')->limit(1)->first();
 
-        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', 'users.username')
+        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
             ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
             ->where('manage_files.case_id', $case->id)
             ->get();
@@ -543,7 +543,7 @@ class CaseController extends Controller
             ->where('restructure_data.caseid', $case->id)
             ->first();
 
-        $case->settlement_document = DB::table('document_settlements')
+        $case->settlement_document = DB::table('document_settlements')->select('document_settlements.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
             ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
             ->where('document_settlements.mediation_case_id', $case->id)
             ->get();
