@@ -200,7 +200,7 @@ public $successStatus = 200;
             }
 
             $data['userid'] = $user->id;
-            $data['eotp'] = $user->emailotp;
+            //$data['eotp'] = $user->emailotp;
 
             $result['success'] = true;
             $result['message'] = "User registered successfully.";
