@@ -217,6 +217,9 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/meeting-sessions', [App\Http\Controllers\API\Mediator\CaseController::class, 'getMeetingSession']);
     Route::post('/mediator/cases/update-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'UpdateSession']);
     Route::post('/mediator/cases/delete-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'deleteSession']);
+    // MOM api
+    Route::post('/mediator/cases/get-mom-data', [App\Http\Controllers\API\Mediator\CaseController::class, 'showMomSession']);
+    Route::post('/mediator/cases/mom-data-submit', [App\Http\Controllers\API\Mediator\CaseController::class, 'momDataSubmit']);
 
     Route::post('/mediator/cases/consentdisclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'getConsentDisclosures']);
     Route::post('/mediator/cases/download-disclosures', [App\Http\Controllers\API\Admin\CaseController::class, 'downloadDisclosures']);

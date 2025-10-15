@@ -1721,6 +1721,268 @@ class CaseController extends Controller
             return response()->json($result, 500);
         }
     }
+
+    public function momDataSubmit(Request $request) {
+
+       try {
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
+            
+
+            $validator = Validator::make($request->all(), [
+                'caseid' => 'integer',
+                'sessionid' => 'integer',
+                'ip_name' => 'string',
+                'rp_name' => 'string',
+                'minutes' => 'integer',
+                'next_steps' => 'string',
+                'mediator' => 'string|max:255',
+                'session_party_ids'  => 'array',
+            ]);
+
+            //Inputs
+            $caseid = $request->input('caseid');
+            $sessionid = $request->input('sessionid');
+            $ip_name = $request->input('ip_name');
+            $rp_name = $request->input('rp_name');
+            $minutes = $request->input('minutes');
+            $next_steps = $request->input('next_steps');
+            $mediator = $request->input('mediator');
+            $session_party_ids  = $request->input('session_party_ids');
+
+
+            if ($validator->fails()) {
+
+                $errors = $validator->errors()->all();
+
+                $result['success'] = false;
+                $result['message'] = implode(', ', $errors);
+                $result['error'] = $validator->errors();
+                return response()->json($result, 422);
+            }
+
+
+            $if_check = DB::table('session_mom')->where('case_id', $caseid)->where('session_id', $sessionid)->first();
+            
+            if(empty($if_check)){
+
+            
+                    $dataToInsert = [
+                        'case_id' => $caseid,
+                        'session_id' => $sessionid,
+                        'ip_name' => $ip_name,
+                        'rp_name' => $rp_name,
+                        'minutes' => $minutes,
+                        'next_steps' => $next_steps,
+                        'mediator' => $mediator
+                    ];
+                    $operationdata = DB::table('session_mom')->insert($dataToInsert);
+
+
+                    
+
+            } else {
+                $dataToUpdate = [
+                    'id' => $if_check->id,
+                    'case_id' => $caseid,
+                    'session_id' => $sessionid,
+                    'ip_name' => $ip_name,
+                    'rp_name' => $rp_name,
+                    'minutes' => $minutes,
+                    'next_steps' => $next_steps,
+                    'mediator' => $mediator
+                ];
+                
+
+                $operationdata = DB::table('session_mom')->where('id', $if_check->id)->update($dataToUpdate);
+            }
+
+            // generate pdf
+
+            $templateData = array();
+            
+            $templateData['sessid'] = $sessionid; 
+            $templateData['caseid'] = $caseid; 
+            $templateData['ip'] = $ip_name; 
+            $templateData['rp'] = $rp_name; 
+            $templateData['minutes'] = $minutes; 
+            $templateData['next'] = $next_steps; 
+            $templateData['med'] = $mediator; 
+            
+            $invitation = $this->session_mom_template($templateData);
+
+            $preview = $this->tempMOM($templateData);
+
+
+            // save file in session mom table 
+            DB::table('session_mom')->where('session_id', $sessionid)->update(['file_name' => $invitation]);
+            // save file in session mom table 
+
+            
+            if(isset($operationdata)) {
+
+                // Send notification to party //
+            
+            if(!empty($session_party_ids)){
+            $notification_array = array();
+            $notification_array['file_name'] = $invitation;
+            $notification_array['access'] = $session_party_ids;
+            $notification_array['mediator_access'] = 1;
+            $notification_array['uploaded_by'] = $userId;
+            $notification_array['case_id'] = $caseid;
+
+
+                DB::table('session_mom')->where('session_id', $sessionid)->update(['share_with_party_ids' => implode(',',$session_party_ids)]);
+
+                $this->send_upload_file_party_mom($sessionid, $notification_array);
+            }
+
+                $data['caseid'] = $caseid;
+                $data['sessionid'] = $sessionid;
+                $data['file'] = $invitation;
+                $data['preview'] = $preview;
+               
+
+                $result['success'] = true;
+                $result['message'] = "Minutes of Meeting added successfully.";
+                $result['data'] = $data;
+                return response()->json($result, 200);
+
+            }
+        } catch (Exception $e) {
+
+            $result['success'] = false;
+            $result['message'] = "Data submission failded";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
+
+    public function session_mom_template($data)
+    {
+        $data["case"] = MedCase::select('id', 'discussion', 'otherRespondentDetails')->where("id", "=", $data['caseid'])->first();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
+        'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $data['caseid'])
+            ->where("mediation_case.id", "=", $data['caseid'])->get();
+
+        $data['session_mom'] = DB::table('session_mom')->where('session_id', $data['sessid'])->first();
+        $session_data = DB::table('manage_session')->select('session_date')->where('id', $data['sessid'])->first();
+        
+        $session_date = explode('/', $session_data->session_date);
+
+        $data['session_date'] = $session_date[0] .'-'.$session_date[1].'-'.$session_date[2];
+        $data['session_time'] = $session_date[3];
+
+       
+        $data['mediator'] = $data['med'];
+
+        $itm_date = InvitationFiles::select("created_at")->where(['case_id' => $data['caseid']])->orderByDesc('id')->get();
+
+        if(!empty($itm_date) && count($itm_date) > 0) {
+            $cdate = new DateTime($itm_date[0]->created_at);
+            $data['itm_date'] = $cdate->format('d-m-Y'); 
+        } else {
+            $data['itm_date'] = "";
+        }
+        
+    
+        $pdf = PDF::loadView('pdf.session_mom', $data);
+        
+        $name = 'Minutes_of_the_Meeting_CID'. sprintf('%06d', $data['caseid']) . '.pdf';
+        
+        $savePath = 'mediation_documents/mediation/' . $data['caseid'];
+        $finalFilePath = $savePath . '/' . $name;
+
+        $local_store = Storage::disk('local')->put('public/mediation/' . $data['caseid'] . '/' .  $name, $pdf->output());
+       
+        $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
+
+      
+        return $name;
+    }
+
+
+    public function tempMOM($data){
+        
+        $data["case"] = MedCase::select('id', 'discussion', 'otherRespondentDetails')->where("id", "=", $data['caseid'])->first();
+        $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 
+        'users.country as usercountry', 'mediation_case.poc_name as userpname', 'mediation_case.poc_email as userpemail', 'mediation_case.poc_contact as userpcontact')
+            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
+            ->leftJoin("mediation_case", "mediation_case.id", "=", "user_involved_in_agreement.userPlanId")
+            ->where("user_involved_in_agreement.userPlanId", "=", $data['caseid'])
+            ->where("mediation_case.id", "=", $data['caseid'])->get();
+
+        $data['session_mom'] = DB::table('session_mom')->where('session_id', $data['sessid'])->first();
+        $session_data = DB::table('manage_session')->select('session_date')->where('id', $data['sessid'])->first();
+        
+        $session_date = explode('/', $session_data->session_date);
+
+        $data['session_date'] = $session_date[0] .'-'.$session_date[1].'-'.$session_date[2];
+        $data['session_time'] = $session_date[3];
+
+       
+        $data['mediator'] = $data['med'];
+
+        $itm_date = InvitationFiles::select("created_at")->where(['case_id' => $data['caseid']])->orderByDesc('id')->get();
+
+        if(!empty($itm_date) && count($itm_date) > 0) {
+            $cdate = new DateTime($itm_date[0]->created_at);
+            $data['itm_date'] = $cdate->format('d-m-Y'); 
+        } else {
+            $data['itm_date'] = 0;     
+        }
+
+
+        return response()->json([
+            "html" => view('pdf.session_mom', $data)->render(),
+        ]);
+    }
+
+
+
+
+    public function send_upload_file_party_mom($id, $files)
+    {
+        $involedUser = InvoledUser::where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "CID" . sprintf("%06d", $id);
+        $sendEamils = array();
+
+        $d = [
+            'event' => 'SEND_ADDI_DOC',
+            'case_id' => $id,
+        ];
+       
+            $filesE = 'mediation_documents/mediation/' . $id  .'/'. $files["file_name"];
+
+            $access = $files["access"];
+            $mediatorAccess = $files["mediator_access"];
+        
+        if (!empty($sendEamils)) {
+            foreach ($sendEamils as $email) {
+                SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
+            }
+        }
+
+        return true;
+    }
     
 
 }

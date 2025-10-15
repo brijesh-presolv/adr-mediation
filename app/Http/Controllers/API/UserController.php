@@ -155,7 +155,7 @@ public $successStatus = 200;
             $user = User::create([
                 'first_name' => $request->input('first_name'),
                 'last_name' =>  $request->input('last_name'),
-                'username' => $request->input('username'),
+                'username' => $request->input('email'),
                 'mobile_number' =>  $request->input('mobile_number'),
                 'organization' => $request->input('organization'),
                 'email' => $request->input('email'),
@@ -200,7 +200,7 @@ public $successStatus = 200;
             }
 
             $data['userid'] = $user->id;
-            $data['eotp'] = $user->emailotp;
+            //$data['eotp'] = $user->emailotp;
 
             $result['success'] = true;
             $result['message'] = "User registered successfully.";
