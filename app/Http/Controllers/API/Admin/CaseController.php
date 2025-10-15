@@ -2513,6 +2513,10 @@ class CaseController extends Controller
                     
                         Common_function::MedNotification($caseid, "UNRES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
                     
+                } else if (Mediation_status_log::STATUS_PARTIALLY_RESOLVED == $status) {
+                    
+                        Common_function::MedNotification($caseid, "PAR_RES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                    
                 }
 
                 if(Mediation_status_log::STATUS_WITHDRAWN  != $status){
@@ -2599,6 +2603,12 @@ class CaseController extends Controller
                         
                             $this->sned_unresolved($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
                         
+                    } else if (Mediation_status_log::STATUS_PARTIALLY_RESOLVED == $status) {
+
+                        $mediation_status_log->description = "Request Partially Resolved";
+                        
+                        $this->sned_par_resolved($caseid, $user->stop_close_ip, $user->stop_close_rp, $user->stop_close_med);
+                        
                     }
                     $mediation_status_log->save();
 
@@ -2606,12 +2616,15 @@ class CaseController extends Controller
                     $final['caseid'] = $caseid;
                     $final['status'] = $status;
 
+                    $s_text="";
                     if($status == 5) {
                         $s_text = "Withdrawn";
                     } else if($status == 6) {
                         $s_text = "Resolved";  
                     } else if ($status == 7) {
                         $s_text = "Unresolved"; 
+                    } else if ($status == 8) {
+                        $s_text = "Partially Resolved"; 
                     }
                     $final['status_text'] = $s_text;
                     $final['comment'] = $comment;
@@ -2721,7 +2734,7 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-        $mid = "M" . sprintf("%06d", $id);
+        $mid = "CID" . sprintf("%06d", $id);
         $initiating_party = "";
         $d = [
             'event' => 'RESO_ADM',
@@ -2751,6 +2764,43 @@ class CaseController extends Controller
         return true;
     }
 
+    public function sned_par_resolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
+    {
+        $is_bulk = MedCase::select('bulk_flag')->where('id', $id)->first();
+        $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
+        $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $mid = "CID" . sprintf("%06d", $id);
+        $initiating_party = "";
+        $d = [
+            'event' => 'PAR_RES_BY_ADMIN',
+            'case_id' => $id,
+        ];
+        foreach ($involedUser as $inv) {
+            if ($inv->isClaimant == 0) {
+                if ($inv->organization != null) {
+                    $initiating_party = $inv->organization;
+                } else {
+                    $initiating_party = $inv->name;
+                }
+            }
+            if ($inv->userEmail != "") {
+                if($stop_close_ip == 0) {
+
+                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                }
+            }
+        }
+        if ($mediator) {
+            if($stop_close_med == 0){
+                
+                SendGrid::send($d, $mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+            }
+        }
+        return true;
+    }
 
 
     public function sned_unresolved($id, $stop_close_ip = 0, $stop_close_rp = 0, $stop_close_med = 0)
