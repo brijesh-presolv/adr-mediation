@@ -130,17 +130,17 @@ class MediationController extends Controller
             $claimant_duplicates = [];
             $resp_duplicates = [];
 
-
+            
 
             foreach($inputData['claimants'] as $ckey => $claimant_data) {
 
                 array_push($claimant_duplicates, $claimant_data['email']);
                 if ($this->hasDuplicateEmails($claimant_duplicates)) {
                     
-                    $result['success'] = true;
+                    $result['success'] = false;
                     $result['message'] = "Email is already used. Please enter new email id.";
                     $result['email'] = $claimant_data['email'];
-                    return response()->json($result, 200);
+                    return response()->json($result, 500);
                 } else {
                         if($usr->id > 0) {
                             $usr->address = $claimant_data['address1'];
@@ -197,12 +197,21 @@ class MediationController extends Controller
                // $isClaimant_count = InvoledUser::select('isClaimant')->where('isClaimant', '!=', 0)->where('userPlanId', $med->id)->orderBy('isClaimant', 'desc')->first();
                 
                 array_push($resp_duplicates, $resp_data['email']);
+                array_push($claimant_duplicates, $resp_data['email']);
+
+                
+                
                 if ($this->hasDuplicateEmails($resp_duplicates)) {
                     
-                    $result['success'] = true;
+                    $result['success'] = false;
                     $result['message'] = "Email is already used. Please enter new email id.";
                     $result['email'] = $resp_data['email'];
-                    return response()->json($result, 200);
+                    return response()->json($result, 500);
+                } else if($this->hasDuplicateEmails($claimant_duplicates)) {
+                    $result['success'] = false;
+                    $result['message'] = "Email is already used. Please enter new email id.";
+                    $result['email'] = $resp_data['email'];
+                    return response()->json($result, 500);
                 } else {
                     if(!empty($respUser)) {
                         $dataToRespInsert = [
@@ -239,7 +248,7 @@ class MediationController extends Controller
                 }
             }
 
-
+           
             $letter = $this->requestLetter($med->id);
             $med->request_letter = $letter;
             $med->save();
