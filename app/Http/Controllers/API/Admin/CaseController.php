@@ -2922,53 +2922,66 @@ class CaseController extends Controller
 
 
             $usr = User::find($med->userid);
+
+            $claimant_duplicates = [];
+            $resp_duplicates = [];
          
 
             foreach($inputData['claimants'] as $ckey => $claimant_data) {
 
-                if($usr->id > 0) {
-                    $usr->address = $claimant_data['address1'];
-                    $usr->address1 = $claimant_data['address2'];
-                    $usr->city = $claimant_data['city'];
-                    $usr->pincode = $claimant_data['pincode'];
-                    $usr->state = $claimant_data['state'];
-                    $usr->country = $claimant_data['country'];
-                    $usr->save();
-                }
+                array_push($claimant_duplicates, $claimant_data['email']);
+
+                    if ($this->hasDuplicateEmails($claimant_duplicates)) {
+                        
+                        $result['success'] = false;
+                        $result['message'] = "Email is already used. Please enter new email id.";
+                        $result['email'] = $claimant_data['email'];
+                        return response()->json($result, 500);
+                    } else {
+
+                        if($usr->id > 0) {
+                            $usr->address = $claimant_data['address1'];
+                            $usr->address1 = $claimant_data['address2'];
+                            $usr->city = $claimant_data['city'];
+                            $usr->pincode = $claimant_data['pincode'];
+                            $usr->state = $claimant_data['state'];
+                            $usr->country = $claimant_data['country'];
+                            $usr->save();
+                        }
 
                 
-                $involedUser = InvoledUser::where(['userPlanId' => $med->id, 'userEmail' => $claimant_data['email']])->get()->toArray();
+                        $involedUser = InvoledUser::where(['userPlanId' => $med->id, 'userEmail' => $claimant_data['email']])->get()->toArray();
                 
-                if(!empty($involedUser)) {
-                    $dataToInsert = [
-                        'userPlanId' => $med->id,
-                        'address1' => isset($claimant_data['address1']) ? $claimant_data['address1'] : "",
-                        'address2' => isset($claimant_data['address2']) ? $claimant_data['address2'] : "",
-                        'city' => isset($claimant_data['city']) ? $claimant_data['city'] : "",
-                        'pincode' => isset($claimant_data['pincode']) ? $claimant_data['pincode'] : "",
-                        'state' => isset($claimant_data['state']) ? $claimant_data['state'] : "",
-                        'country' => isset($claimant_data['country']) ? $claimant_data['country'] : "",
-                        'isClaimant' => 0
-                    ];
-                    $add_claimant = DB::table('user_involved_in_agreement')->where('id', $involedUser[0]['id'])->update($dataToInsert);
-                    
-                } else {
-                        $add_claimant = new InvoledUser();
-                        $add_claimant->userEmail = isset($claimant_data['email']) ? $claimant_data['email'] : "";
-                        $add_claimant->name = isset($claimant_data['name']) ? $claimant_data['name'] : "";
-                        $add_claimant->userPhone = isset($claimant_data['phone']) ? $claimant_data['phone'] : "";
-                        $add_claimant->userPlanId = $med->id;
-                        $add_claimant->address1 = isset($claimant_data['address1']) ? $claimant_data['address1'] : "";
-                        $add_claimant->address2 = isset($claimant_data['address2']) ? $claimant_data['address2'] : "";
-                        $add_claimant->city = isset($claimant_data['city']) ? $claimant_data['city'] : "";
-                        $add_claimant->pincode = isset($claimant_data['pincode']) ? $claimant_data['pincode'] : "";
-                        $add_claimant->state = isset($claimant_data['state']) ? $claimant_data['state'] : "";
-                        $add_claimant->country = isset($claimant_data['country']) ? $claimant_data['country'] : "";
-                        $add_claimant->isClaimant = 0;
-                        $add_claimant->save();
-                }
+                        if(!empty($involedUser)) {
+                            $dataToInsert = [
+                                'userPlanId' => $med->id,
+                                'address1' => isset($claimant_data['address1']) ? $claimant_data['address1'] : "",
+                                'address2' => isset($claimant_data['address2']) ? $claimant_data['address2'] : "",
+                                'city' => isset($claimant_data['city']) ? $claimant_data['city'] : "",
+                                'pincode' => isset($claimant_data['pincode']) ? $claimant_data['pincode'] : "",
+                                'state' => isset($claimant_data['state']) ? $claimant_data['state'] : "",
+                                'country' => isset($claimant_data['country']) ? $claimant_data['country'] : "",
+                                'isClaimant' => 0
+                            ];
+                            $add_claimant = DB::table('user_involved_in_agreement')->where('id', $involedUser[0]['id'])->update($dataToInsert);
+                            
+                        } else {
+                                $add_claimant = new InvoledUser();
+                                $add_claimant->userEmail = isset($claimant_data['email']) ? $claimant_data['email'] : "";
+                                $add_claimant->name = isset($claimant_data['name']) ? $claimant_data['name'] : "";
+                                $add_claimant->userPhone = isset($claimant_data['phone']) ? $claimant_data['phone'] : "";
+                                $add_claimant->userPlanId = $med->id;
+                                $add_claimant->address1 = isset($claimant_data['address1']) ? $claimant_data['address1'] : "";
+                                $add_claimant->address2 = isset($claimant_data['address2']) ? $claimant_data['address2'] : "";
+                                $add_claimant->city = isset($claimant_data['city']) ? $claimant_data['city'] : "";
+                                $add_claimant->pincode = isset($claimant_data['pincode']) ? $claimant_data['pincode'] : "";
+                                $add_claimant->state = isset($claimant_data['state']) ? $claimant_data['state'] : "";
+                                $add_claimant->country = isset($claimant_data['country']) ? $claimant_data['country'] : "";
+                                $add_claimant->isClaimant = 0;
+                                $add_claimant->save();
+                        }
                 
-                
+                    }
             }
 
       
@@ -2977,34 +2990,51 @@ class CaseController extends Controller
                 
                 $isClaimant_count = InvoledUser::select('isClaimant')->where('isClaimant', '!=', 0)->orderBy('isClaimant', 'desc')->first()->toArray();
                 
-                if(!empty($respUser)) {
-                    $dataToRespInsert = [
-                       'userPlanId' => $med->id,
-                        'address1' => isset($resp_data['address1']) ? $resp_data['address1'] : "",
-                        'address2' => isset($resp_data['address2']) ? $resp_data['address2'] : "",
-                        'city' => isset($resp_data['city']) ? $resp_data['city'] : "",
-                        'pincode' => isset($resp_data['city']) ? $resp_data['city'] : "",
-                        'state' => isset($resp_data['state']) ? $resp_data['state'] : "",
-                        'country' => isset($resp_data['country']) ? $resp_data['country'] : "",
-                        'isClaimant' => $respUser['isClaimant']
-                    ];
-                    $add_resp = DB::table('user_involved_in_agreement')->where('id', $respUser['id'])->update($dataToRespInsert);
-                
+                array_push($resp_duplicates, $resp_data['email']);
+                array_push($claimant_duplicates, $resp_data['email']);
+
+                if ($this->hasDuplicateEmails($resp_duplicates)) {
+                    
+                    $result['success'] = false;
+                    $result['message'] = "Email is already used. Please enter new email id.";
+                    $result['email'] = $resp_data['email'];
+                    return response()->json($result, 500);
+                } else if($this->hasDuplicateEmails($claimant_duplicates)) {
+                    $result['success'] = false;
+                    $result['message'] = "Email is already used. Please enter new email id.";
+                    $result['email'] = $resp_data['email'];
+                    return response()->json($result, 500);
                 } else {
-                    $add_resp = new InvoledUser();
-                    $add_resp->name = isset($resp_data['name']) ? $resp_data['name'] : "";
-                    $add_resp->userEmail = isset($resp_data['email']) ? $resp_data['email'] : "";
-                    $add_resp->userPhone = isset($resp_data['phone']) ? $resp_data['phone'] : "";
-                    $add_resp->userPlanId = $med->id;
-                    $add_resp->address1 = isset($resp_data['address1']) ? $resp_data['address1'] : "";
-                    $add_resp->address2 = isset($resp_data['address2']) ? $resp_data['address2'] : "";
-                    $add_resp->city = isset($resp_data['city']) ? $resp_data['city'] : "";
-                    $add_resp->pincode = isset($resp_data['pincode']) ? $resp_data['pincode'] : "";
-                    $add_resp->state = isset($resp_data['state']) ? $resp_data['state'] : "";
-                    $add_resp->country = isset($resp_data['country']) ? $resp_data['country'] : "";
-                    $add_resp->isClaimant = $isClaimant_count['isClaimant'] + 1;
-                    $add_resp->joinCode = $this->joinCode();
-                    $add_resp->save();
+
+                    if(!empty($respUser)) {
+                        $dataToRespInsert = [
+                        'userPlanId' => $med->id,
+                            'address1' => isset($resp_data['address1']) ? $resp_data['address1'] : "",
+                            'address2' => isset($resp_data['address2']) ? $resp_data['address2'] : "",
+                            'city' => isset($resp_data['city']) ? $resp_data['city'] : "",
+                            'pincode' => isset($resp_data['city']) ? $resp_data['city'] : "",
+                            'state' => isset($resp_data['state']) ? $resp_data['state'] : "",
+                            'country' => isset($resp_data['country']) ? $resp_data['country'] : "",
+                            'isClaimant' => $respUser['isClaimant']
+                        ];
+                        $add_resp = DB::table('user_involved_in_agreement')->where('id', $respUser['id'])->update($dataToRespInsert);
+                    
+                    } else {
+                        $add_resp = new InvoledUser();
+                        $add_resp->name = isset($resp_data['name']) ? $resp_data['name'] : "";
+                        $add_resp->userEmail = isset($resp_data['email']) ? $resp_data['email'] : "";
+                        $add_resp->userPhone = isset($resp_data['phone']) ? $resp_data['phone'] : "";
+                        $add_resp->userPlanId = $med->id;
+                        $add_resp->address1 = isset($resp_data['address1']) ? $resp_data['address1'] : "";
+                        $add_resp->address2 = isset($resp_data['address2']) ? $resp_data['address2'] : "";
+                        $add_resp->city = isset($resp_data['city']) ? $resp_data['city'] : "";
+                        $add_resp->pincode = isset($resp_data['pincode']) ? $resp_data['pincode'] : "";
+                        $add_resp->state = isset($resp_data['state']) ? $resp_data['state'] : "";
+                        $add_resp->country = isset($resp_data['country']) ? $resp_data['country'] : "";
+                        $add_resp->isClaimant = $isClaimant_count['isClaimant'] + 1;
+                        $add_resp->joinCode = $this->joinCode();
+                        $add_resp->save();
+                    }
                 }
             }
 
@@ -3159,6 +3189,22 @@ class CaseController extends Controller
         
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
+    }
+
+    public function hasDuplicateEmails(array $emailArray): bool
+    {
+        $seenEmails = [];
+        foreach ($emailArray as $email) {
+            // Convert email to lowercase for case-insensitive comparison
+            $lowercaseEmail = strtolower($email); 
+            if (isset($seenEmails[$lowercaseEmail])) {
+                // Duplicate found
+                return true; 
+            }
+            $seenEmails[$lowercaseEmail] = true;
+        }
+        // No duplicates found
+        return false; 
     }
 
 }
