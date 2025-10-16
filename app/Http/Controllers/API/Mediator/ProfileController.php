@@ -74,15 +74,15 @@ class ProfileController extends Controller
             $finaldata['country'] = $profileData->country;
             $finaldata['signature'] = $profileData->signature_photo;
 
-            $finaldata['area_of_specialization'] = $userProfileData['area_of_specialization'];
+            $finaldata['area_of_specialization'] = json_decode($userProfileData['area_of_specialization']);
             $finaldata['no_of_arbitrations'] = $userProfileData['no_of_arbitrations'];
             $finaldata['linked_in_profile_link'] = $userProfileData['linked_in_profile_link'];
-            $finaldata['biography'] = $userProfileData['experience'];
+            $finaldata['biography'] = $userProfileData['biography'];
             $finaldata['terms_condition1'] = $userProfileData['is_accept1'];
             $finaldata['terms_condition2'] = $userProfileData['is_accept2'];
             $finaldata['terms_condition3'] = $userProfileData['is_accept3'];
-            $finaldata['years_of_experience'] = $userProfileData['years_of_experience'];
-            $finaldata['spoken_language'] = $userProfileData['spoken_language'];
+            $finaldata['years_of_experience'] = $userProfileData['experience'];
+            $finaldata['spoken_language'] = json_decode($userProfileData['spoken_language']);
 
             $result['success'] = true;
             $result['message'] = "Mediator profile data fetched successfully.";
@@ -131,7 +131,9 @@ class ProfileController extends Controller
             $area_of_specialization = $request->input('area_of_specialization');
             $no_of_arbitrations = $request->input('no_of_arbitrations');
             $linked_in_profile_link = $request->input('linked_in_profile_link');
-            $biography = $request->input('biography');
+            $experience = $request->input('biography');
+            $years_of_experience = $request->input('years_of_experience');
+            $language = $request->input('spoken_language');
             $is_accept1 = $request->input('is_accept1');
             $is_accept2 = $request->input('is_accept2');
             $is_accept3 = $request->input('is_accept3');
@@ -141,7 +143,9 @@ class ProfileController extends Controller
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'mobile_number' => 'required',
-                'email' => ['email', 'required', 'unique:users,email,'.$userId]
+                'email' => ['email', 'required', 'unique:users,email,'.$userId],
+                'area_of_specialization' => 'array',
+                'spoken_language' => 'array'
             ]);
 
 
@@ -201,7 +205,9 @@ class ProfileController extends Controller
                 $mediation_details->area_of_specialization = $area_of_specialization;
                 $mediation_details->no_of_arbitrations = $no_of_arbitrations;
                 $mediation_details->linked_in_profile_link = $linked_in_profile_link;
-                $mediation_details->experience = $biography;
+                $mediation_details->experience = $experience;
+                $mediation_details->years_of_experience = $years_of_experience;
+                $mediation_details->spoken_language = $language;
                 $mediation_details->is_accept1 = $is_accept1;
                 $mediation_details->is_accept2 = $is_accept2;
                 $mediation_details->is_accept3 = $is_accept3;

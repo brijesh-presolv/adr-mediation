@@ -548,7 +548,10 @@ class CaseController extends Controller
             ->where('document_settlements.mediation_case_id', $case->id)
             ->get();
           
-        $case->mom = DB::table('session_mom')->select('case_id', 'session_id', 'file_name', 'share_with_party_ids')->where('case_id', $case->id)->get();
+        $case->mom = DB::table('session_mom')->select('case_id', 'session_id', 'file_name', 'share_with_party_ids', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
+            ->join('users', 'users.id', '=', 'session_mom.uploaded_by')
+            ->where('case_id', $case->id)
+            ->get();
 
 
         $result['success'] = true;
@@ -1761,11 +1764,11 @@ class CaseController extends Controller
             
 
             $validator = Validator::make($request->all(), [
-                'caseid' => 'integer',
-                'sessionid' => 'integer',
+                'caseid' => 'required|integer',
+                'sessionid' => 'required|integer',
                 'ip_name' => 'string',
                 'rp_name' => 'string',
-                'minutes' => 'integer',
+                'minutes' => 'required|string',
                 'next_steps' => 'string',
                 'mediator' => 'string|max:255',
                 'session_party_ids'  => 'array',
@@ -1805,7 +1808,8 @@ class CaseController extends Controller
                         'rp_name' => $rp_name,
                         'minutes' => $minutes,
                         'next_steps' => $next_steps,
-                        'mediator' => $mediator
+                        'mediator' => $mediator,
+                        'uploaded_by' => $userId
                     ];
                     $operationdata = DB::table('session_mom')->insert($dataToInsert);
 
@@ -1821,7 +1825,8 @@ class CaseController extends Controller
                     'rp_name' => $rp_name,
                     'minutes' => $minutes,
                     'next_steps' => $next_steps,
-                    'mediator' => $mediator
+                    'mediator' => $mediator,
+                    'uploaded_by' => $userId
                 ];
                 
 
