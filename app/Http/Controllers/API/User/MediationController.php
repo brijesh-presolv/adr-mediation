@@ -574,7 +574,12 @@ class MediationController extends Controller
             ->get();
 
 
-        $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
+        //$case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
+
+        $case->mom = DB::table('session_mom')->select('file_name', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
+            ->join('users', 'users.id', '=', 'session_mom.uploaded_by')
+            ->where('case_id', $case->id)
+            ->get();
 
         $result['success'] = true;
         $result['message'] = "Case details fetched successfully.";

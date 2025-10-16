@@ -33,7 +33,7 @@ class DashboardController extends Controller
      */
    
 
-    public function getNotifications()
+    public function getNotifications(Request $request)
     {
         try{
             $token = $request->cookie('auth_token');
