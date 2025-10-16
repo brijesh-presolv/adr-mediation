@@ -128,6 +128,11 @@ class DashboardController extends Controller
             ->where('manage_files.case_id', $case->id)
             ->get();
 
+        $case->settlement_document = DB::table('document_settlements')->select('document_settlements.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
+            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
+            ->where('document_settlements.mediation_case_id', $case->id)
+            ->get();
+
         $case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
 
 
