@@ -293,7 +293,7 @@ class UsersController extends Controller
                 $mediation_details = $isMedi;
             }
             $mediation_details->user_id = $request->input('id');
-            $mediation_details->area_of_specialization = json_encode($request->input('area_of_specialization'));
+            $mediation_details->area_of_specialization = $request->input('area_of_specialization');
             $mediation_details->no_of_arbitrations = $request->input('no_of_arbitrations');
             $mediation_details->linked_in_profile_link = $request->input('linked_in_profile_link');
             $mediation_details->experience = $request->input('experience');
