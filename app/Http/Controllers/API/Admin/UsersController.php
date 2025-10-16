@@ -180,9 +180,7 @@ class UsersController extends Controller
             'pincode'      => 'nullable|string|max:20',
             'city'         => 'nullable|string|max:100',
             'state'        => 'nullable|string|max:100',
-            'country'      => 'nullable|string|max:100',  
-            'area_of_specialization' => 'nullable|array',
-            'spoken_language' => 'nullable|array',
+            'country'      => 'nullable|string|max:100',
         ]);
 
         if ($validator->fails()) {
