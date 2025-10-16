@@ -131,8 +131,8 @@ class ProfileController extends Controller
             $area_of_specialization = $request->input('area_of_specialization');
             $no_of_arbitrations = $request->input('no_of_arbitrations');
             $linked_in_profile_link = $request->input('linked_in_profile_link');
-            $biography = $request->input('biography');
-            $experience = $request->input('years_of_experience');
+            $experience = $request->input('biography');
+            $years_of_experience = $request->input('years_of_experience');
             $language = $request->input('spoken_language');
             $is_accept1 = $request->input('is_accept1');
             $is_accept2 = $request->input('is_accept2');
@@ -143,7 +143,9 @@ class ProfileController extends Controller
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'mobile_number' => 'required',
-                'email' => ['email', 'required', 'unique:users,email,'.$userId]
+                'email' => ['email', 'required', 'unique:users,email,'.$userId],
+                'area_of_specialization' => 'array',
+                'spoken_language' => 'array'
             ]);
 
 
@@ -203,8 +205,8 @@ class ProfileController extends Controller
                 $mediation_details->area_of_specialization = $area_of_specialization;
                 $mediation_details->no_of_arbitrations = $no_of_arbitrations;
                 $mediation_details->linked_in_profile_link = $linked_in_profile_link;
-                $mediation_details->biography = $biography;
                 $mediation_details->experience = $experience;
+                $mediation_details->years_of_experience = $years_of_experience;
                 $mediation_details->spoken_language = $language;
                 $mediation_details->is_accept1 = $is_accept1;
                 $mediation_details->is_accept2 = $is_accept2;

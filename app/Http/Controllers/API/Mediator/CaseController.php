@@ -1990,7 +1990,8 @@ class CaseController extends Controller
                         'rp_name' => $rp_name,
                         'minutes' => $minutes,
                         'next_steps' => $next_steps,
-                        'mediator' => $mediator
+                        'mediator' => $mediator,
+                        'uploaded_by' => $userId
                     ];
                     $operationdata = DB::table('session_mom')->insert($dataToInsert);
 
@@ -2006,7 +2007,8 @@ class CaseController extends Controller
                     'rp_name' => $rp_name,
                     'minutes' => $minutes,
                     'next_steps' => $next_steps,
-                    'mediator' => $mediator
+                    'mediator' => $mediator,
+                    'uploaded_by' => $userId
                 ];
                 
 
