@@ -74,7 +74,7 @@ class ProfileController extends Controller
             $finaldata['country'] = $profileData->country;
             $finaldata['signature'] = $profileData->signature_photo;
 
-            $finaldata['area_of_specialization'] = $userProfileData['area_of_specialization'];
+            $finaldata['area_of_specialization'] = json_decode($userProfileData['area_of_specialization']);
             $finaldata['no_of_arbitrations'] = $userProfileData['no_of_arbitrations'];
             $finaldata['linked_in_profile_link'] = $userProfileData['linked_in_profile_link'];
             $finaldata['biography'] = $userProfileData['biography'];
@@ -82,7 +82,7 @@ class ProfileController extends Controller
             $finaldata['terms_condition2'] = $userProfileData['is_accept2'];
             $finaldata['terms_condition3'] = $userProfileData['is_accept3'];
             $finaldata['years_of_experience'] = $userProfileData['experience'];
-            $finaldata['spoken_language'] = $userProfileData['spoken_language'];
+            $finaldata['spoken_language'] = json_decode($userProfileData['spoken_language']);
 
             $result['success'] = true;
             $result['message'] = "Mediator profile data fetched successfully.";

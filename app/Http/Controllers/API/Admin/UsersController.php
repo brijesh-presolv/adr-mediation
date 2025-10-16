@@ -181,6 +181,8 @@ class UsersController extends Controller
             'city'         => 'nullable|string|max:100',
             'state'        => 'nullable|string|max:100',
             'country'      => 'nullable|string|max:100',  
+            'area_of_specialization' => 'nullable|array',
+            'spoken_language' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
@@ -301,7 +303,7 @@ class UsersController extends Controller
             $mediation_details->filed1 = $request->input('field1');
             $mediation_details->filed2 = $request->input('field2');
             $mediation_details->filed3 = $request->input('field3');
-            $mediation_details->category = $request->input('category');
+            //$mediation_details->category = $request->input('category');
             $mediation_details->spoken_language = $request->input('spoken_language');
             $mediation_details->years_of_experience = $request->input('years_of_experience');
             $mediation_details->save();
