@@ -334,7 +334,26 @@ public $successStatus = 200;
             }
 
             $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            $pwd = substr(str_shuffle($chars), 0, 8);
+            //$pwd = substr(str_shuffle($chars), 0, 8);
+
+            $length = 8;
+            $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+            $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $numbers = '0123456789';
+            $special = '@$!%*?&';
+            
+            $password = '';
+            $password .= $lowercase[random_int(0, strlen($lowercase) - 1)]; 
+            $password .= $uppercase[random_int(0, strlen($uppercase) - 1)]; 
+            $password .= $numbers[random_int(0, strlen($numbers) - 1)];
+            $password .= $special[random_int(0, strlen($special) - 1)];
+            
+            $allCharacters = $lowercase . $uppercase . $numbers . $special;
+            for ($i = 4; $i < $length; $i++) {
+                $password .= $allCharacters[random_int(0, strlen($allCharacters) - 1)];
+            }
+            
+            $pwd = str_shuffle($password);
 
             $usr->password = Hash::make($pwd);
 
