@@ -554,6 +554,7 @@ class UsersController extends Controller
                     ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
                     ->where("users.id", "=", $id)
                     ->first();
+                    
         if(!empty($user)){
 
 
@@ -572,18 +573,18 @@ class UsersController extends Controller
             $finaldata['country'] = $user->country;
             $finaldata['signature'] = $user->signature_photo;
 
-            $finaldata['area_of_specialization'] = json_decode($user['area_of_specialization']);
-            $finaldata['no_of_arbitrations'] = $user['no_of_arbitrations'];
-            $finaldata['linked_in_profile_link'] = $user['linked_in_profile_link'];
-            $finaldata['experience'] = $user['experience'];
-            $finaldata['terms_condition1'] = $user['is_accept1'];
-            $finaldata['terms_condition2'] = $user['is_accept2'];
-            $finaldata['terms_condition3'] = $user['is_accept3'];
-            $finaldata['years_of_experience'] = $user['experience'];
-            $finaldata['spoken_language'] = json_decode($user['spoken_language']);
+            $finaldata['area_of_specialization'] = json_decode($user->area_of_specialization, true);
+            $finaldata['no_of_arbitrations'] = $user->no_of_arbitrations;
+            $finaldata['linked_in_profile_link'] = $user->linked_in_profile_link;
+            $finaldata['experience'] = $user->experience;
+            $finaldata['terms_condition1'] = $user->is_accept1;
+            $finaldata['terms_condition2'] = $user->is_accept2;
+            $finaldata['terms_condition3'] = $user->is_accept3;
+            $finaldata['years_of_experience'] = $user->experience;
+            $finaldata['spoken_language'] = json_decode($user->spoken_language);
 
 
-            $resultData['user'] = $user;
+            $resultData['user'] = $finaldata;
 
             $result['success'] = true;
             $result['message'] = "Data fetch successfully.";
