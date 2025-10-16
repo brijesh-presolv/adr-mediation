@@ -170,8 +170,6 @@ class UsersController extends Controller
     public function update(Request $request)
     {
 
-         print_r($request->input('area_of_specialization'));die();
-
          $validator = Validator::make($request->all(), [
             'id'   => 'required',
             'first_name'   => 'required|string|max:100',
