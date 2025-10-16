@@ -295,6 +295,7 @@ class UsersController extends Controller
 
             $area_of_specialization = $request->input('area_of_specialization');
             $years_of_experience = $request->input('years_of_experience');
+            $spoken_language = $request->input('spoken_language');
 
             $isMedi = Mediation_Details::where("user_id", "=", $request->input('id'))->first();
             if (empty($isMedi)) {
@@ -314,7 +315,7 @@ class UsersController extends Controller
             $mediation_details->filed2 = $request->input('field2');
             $mediation_details->filed3 = $request->input('field3');
             //$mediation_details->category = $request->input('category');
-            $mediation_details->spoken_language = $request->input('spoken_language');
+            $mediation_details->spoken_language = $spoken_language;
             $mediation_details->years_of_experience = $years_of_experience;
             $mediation_details->save();
         }
