@@ -170,6 +170,8 @@ class UsersController extends Controller
     public function update(Request $request)
     {
 
+         print_r($request->input('area_of_specialization'));die();
+
          $validator = Validator::make($request->all(), [
             'id'   => 'required',
             'first_name'   => 'required|string|max:100',
@@ -194,9 +196,18 @@ class UsersController extends Controller
         }
         $user_id=$request->input('id');
 
-        $user = User::find($request->input('id'));
-        $user->first_name = ucfirst($request->input('first_name'));
-        $user->last_name = ucfirst($request->input('last_name'));
+        $user = User::find($user_id);
+        if(empty($user)){
+
+            $result['success'] = false;
+            $result['message'] = "User data not found";
+            $result['error'] = "User data not found";
+            return response()->json($result, 404);
+
+        }
+    
+        $user->first_name = $request->input('first_name');
+        $user->last_name = $request->input('last_name');
         $user->email = $request->input('email');
         $user->mobile_number = $request->input('mobile_number');
         $user->organization = $request->input('organization');
