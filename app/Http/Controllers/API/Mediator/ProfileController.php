@@ -77,7 +77,7 @@ class ProfileController extends Controller
             $finaldata['area_of_specialization'] = json_decode($userProfileData['area_of_specialization']);
             $finaldata['no_of_arbitrations'] = $userProfileData['no_of_arbitrations'];
             $finaldata['linked_in_profile_link'] = $userProfileData['linked_in_profile_link'];
-            $finaldata['biography'] = $userProfileData['experience'];
+            $finaldata['experience'] = $userProfileData['experience'];
             $finaldata['terms_condition1'] = $userProfileData['is_accept1'];
             $finaldata['terms_condition2'] = $userProfileData['is_accept2'];
             $finaldata['terms_condition3'] = $userProfileData['is_accept3'];
