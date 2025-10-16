@@ -1062,7 +1062,7 @@ class MedCase extends Model
     public function respondents()
     {
         return $this->hasMany(InvoledUser::class, 'userPlanId', 'id')
-                    ->where('isClaimant', 1)
+                    ->where('isClaimant', "!=", 0)
                     ->select('userPlanId', 'name', 'userEmail', 'isOnboarded');
     }
 
