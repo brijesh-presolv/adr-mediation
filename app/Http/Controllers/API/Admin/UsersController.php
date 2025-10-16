@@ -293,6 +293,10 @@ class UsersController extends Controller
 
         if ($user->role == 1) {
 
+            $area_of_specialization = $request->input('area_of_specialization');
+            $years_of_experience = $request->input('years_of_experience');
+            $spoken_language = $request->input('spoken_language');
+
             $isMedi = Mediation_Details::where("user_id", "=", $request->input('id'))->first();
             if (empty($isMedi)) {
                 $mediation_details = new Mediation_Details();
@@ -300,7 +304,7 @@ class UsersController extends Controller
                 $mediation_details = $isMedi;
             }
             $mediation_details->user_id = $request->input('id');
-            $mediation_details->area_of_specialization = $request->input('area_of_specialization');
+            $mediation_details->area_of_specialization = $area_of_specialization;
             $mediation_details->no_of_arbitrations = $request->input('no_of_arbitrations');
             $mediation_details->linked_in_profile_link = $request->input('linked_in_profile_link');
             $mediation_details->experience = $request->input('experience');
@@ -311,8 +315,8 @@ class UsersController extends Controller
             $mediation_details->filed2 = $request->input('field2');
             $mediation_details->filed3 = $request->input('field3');
             //$mediation_details->category = $request->input('category');
-            $mediation_details->spoken_language = $request->input('spoken_language');
-            $mediation_details->years_of_experience = $request->input('years_of_experience');
+            $mediation_details->spoken_language = $spoken_language;
+            $mediation_details->years_of_experience = $years_of_experience;
             $mediation_details->save();
         }
 
