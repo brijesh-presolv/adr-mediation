@@ -557,6 +557,32 @@ class UsersController extends Controller
         if(!empty($user)){
 
 
+            $finaldata['userid'] = $id;
+            $finaldata['first_name'] = $user->first_name;
+            $finaldata['last_name'] = $user->last_name;
+            $finaldata['email'] = $user->email;
+            $finaldata['username'] = $user->username;
+            $finaldata['mobile_number'] = $user->mobile_number;
+            $finaldata['organization'] = $user->organization;
+            $finaldata['address1'] = $user->address;
+            $finaldata['address2'] = $user->address1;
+            $finaldata['city'] = $user->city;
+            $finaldata['pincode'] = $user->pincode;
+            $finaldata['state'] = $user->state;
+            $finaldata['country'] = $user->country;
+            $finaldata['signature'] = $user->signature_photo;
+
+            $finaldata['area_of_specialization'] = json_decode($user['area_of_specialization']);
+            $finaldata['no_of_arbitrations'] = $user['no_of_arbitrations'];
+            $finaldata['linked_in_profile_link'] = $user['linked_in_profile_link'];
+            $finaldata['experience'] = $user['experience'];
+            $finaldata['terms_condition1'] = $user['is_accept1'];
+            $finaldata['terms_condition2'] = $user['is_accept2'];
+            $finaldata['terms_condition3'] = $user['is_accept3'];
+            $finaldata['years_of_experience'] = $user['experience'];
+            $finaldata['spoken_language'] = json_decode($user['spoken_language']);
+
+
             $resultData['user'] = $user;
 
             $result['success'] = true;
