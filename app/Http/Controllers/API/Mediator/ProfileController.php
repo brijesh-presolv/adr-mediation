@@ -131,7 +131,7 @@ class ProfileController extends Controller
             $area_of_specialization = $request->input('area_of_specialization');
             $no_of_arbitrations = $request->input('no_of_arbitrations');
             $linked_in_profile_link = $request->input('linked_in_profile_link');
-            $experience = $request->input('biography');
+            $experience = $request->input('experience');
             $years_of_experience = $request->input('years_of_experience');
             $language = $request->input('spoken_language');
             $is_accept1 = $request->input('is_accept1');
