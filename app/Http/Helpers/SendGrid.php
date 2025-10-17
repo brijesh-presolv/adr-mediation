@@ -6,6 +6,7 @@ use App\Models\EmailQue;
 use App\Models\EmailDirectSend;
 use Illuminate\Support\Facades\Storage;
 use PharIo\Manifest\Email;
+use Illuminate\Support\Facades\Log;
 
 class SendGrid
 {
@@ -223,12 +224,16 @@ class SendGrid
                     $directemailsend->updated_at = date('Y-m-d H:i:s');
                     $directemailsend->save();
 
+                    Log::info('SendGrid: Email sent', ['to' => $to, 'sg_message_id' => $sgMessageId]);
+
                     return true;
                 }
             }
 
          } catch (Exception $e) {
-            
+
+
+            Log::error('SendGrid: Email send failed', ['to' => $to, 'message' => $e->getMessage(),'body' => $body ?? null, ]);
             echo 'Caught exception: ' . $e->getMessage() . "\n";
 
             $directemailsend->response = $body;
