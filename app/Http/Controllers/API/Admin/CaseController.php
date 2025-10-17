@@ -294,7 +294,7 @@ class CaseController extends Controller
 
 
     public function mediatorList() {
-        $users = User::select('id as mediator_id', DB::raw("CONCAT(users.first_name,' ',users.last_name, ' - ', users.organization) as mediator_name"),)->where("role", "=", 1)->get();
+        $users = User::select('id as mediator_id', DB::raw("CONCAT(users.first_name,' ',users.last_name, ' - ', users.organization) as mediator_name"),)->where("role", "=", 1)->where("status", "=", 1)->where("isActive", "=", 1)->where("is_deleted", "=", 0)->get();
         $result['success'] = true;
         $result['message'] = "Mediators fetched successfully.";
         $result['data'] = $users;
