@@ -133,7 +133,7 @@ class ProfileController extends Controller
             $linked_in_profile_link = $request->input('linked_in_profile_link');
             $experience = $request->input('experience');
             $years_of_experience = $request->input('years_of_experience');
-            $language = $request->input('spoken_language');
+            $spoken_language = $request->input('spoken_language');
             $is_accept1 = $request->input('is_accept1');
             $is_accept2 = $request->input('is_accept2');
             $is_accept3 = $request->input('is_accept3');
@@ -202,15 +202,16 @@ class ProfileController extends Controller
                     $mediation_details = $isMedi;
                 }
                 $mediation_details->user_id = $userId;
-                $mediation_details->area_of_specialization = json_decode($area_of_specialization, true);
                 $mediation_details->no_of_arbitrations = $no_of_arbitrations;
                 $mediation_details->linked_in_profile_link = $linked_in_profile_link;
                 $mediation_details->experience = $experience;
                 $mediation_details->years_of_experience = $years_of_experience;
-                $mediation_details->spoken_language = json_decode($language);
                 $mediation_details->is_accept1 = $is_accept1;
                 $mediation_details->is_accept2 = $is_accept2;
                 $mediation_details->is_accept3 = $is_accept3;
+
+                $mediation_details->area_of_specialization = is_array($area_of_specialization) ? $area_of_specialization : json_decode($area_of_specialization ?? '[]', true);
+                $mediation_details->spoken_language = is_array($spoken_language) ? $spoken_language : json_decode($spoken_language ?? '[]', true);
                 $mediation_details->save();
 
 
