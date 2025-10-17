@@ -210,8 +210,13 @@ class ProfileController extends Controller
                 $mediation_details->is_accept2 = $is_accept2;
                 $mediation_details->is_accept3 = $is_accept3;
 
-                $mediation_details->area_of_specialization = is_array($area_of_specialization) ? $area_of_specialization : json_decode($area_of_specialization ?? '[]', true);
-                $mediation_details->spoken_language = is_array($spoken_language) ? $spoken_language : json_decode($spoken_language ?? '[]', true);
+                $mediation_details->area_of_specialization = is_array($area_of_specialization) 
+                    ? json_encode($area_of_specialization) 
+                    : json_encode($area_of_specialization ? [$area_of_specialization] : []);
+
+                $mediation_details->spoken_language = is_array($spoken_language) 
+                    ? json_encode($spoken_language) 
+                    : json_encode($spoken_language ? [$spoken_language] : []);
                 $mediation_details->save();
 
 
