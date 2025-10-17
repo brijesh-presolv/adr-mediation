@@ -215,6 +215,8 @@ class SendGrid
 
                 if (isset($idr[1]) and count($d) > 0) {
 
+                    $sgMessageId=trim($idr[1]);
+
                     $datarr = ['sg_message_id' => trim($idr[1]), 'event' => $d['event'], 'userid' => $d['userid'],  'email' => $to, 'status' => trim($status), 'created_at' => date('Y-m-d H:i:s')];
                     
                     $directemailsend->sg_message_id = trim($idr[1]);
