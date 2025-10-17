@@ -99,9 +99,9 @@ class SendGrid
 
 
         $apiKey = env('SENDGRID_API_KEY');
-        $emailSender= env('SENDGRId_SENDER');
-        $emailSenderName= env('SENDGRId_SENDER_NAME');
-        $emailReply= env('SENDGRId_SETREPLYTo');
+        $emailSender= env('SENDGRID_SENDER');
+        $emailSenderName= env('SENDGRID_SENDER_NAME');
+        $emailReply= env('SENDGRID_SETREPLYTo');
         $all_email = array();
         $all_email[] = $to;
 
