@@ -134,8 +134,6 @@ class SendGrid
 
         $directsendid=EmailDirectSend::insertGetId($arr_e);
 
-        Log::info('SendGrid: Email data inserted');
-
 
         $email = new \SendGrid\Mail\Mail();
         $email->setFrom($emailSender, $emailSenderName);
@@ -156,8 +154,6 @@ class SendGrid
              //attachment
             if (is_array($file)) {
 
-                Log::info('SendGrid: Email data inserted line file array');
-
                 foreach ($file as $ff) {
 
                     $data = Storage::disk('s3')->get($ff);
@@ -174,7 +170,6 @@ class SendGrid
 
             } else {
 
-                Log::info('SendGrid: Email data inserted line file s3');
 
                  $data = Storage::disk('s3')->get($file);
 
