@@ -202,12 +202,12 @@ class ProfileController extends Controller
                     $mediation_details = $isMedi;
                 }
                 $mediation_details->user_id = $userId;
-                $mediation_details->area_of_specialization = $area_of_specialization;
+                $mediation_details->area_of_specialization = json_decode($area_of_specialization, true);
                 $mediation_details->no_of_arbitrations = $no_of_arbitrations;
                 $mediation_details->linked_in_profile_link = $linked_in_profile_link;
                 $mediation_details->experience = $experience;
                 $mediation_details->years_of_experience = $years_of_experience;
-                $mediation_details->spoken_language = $language;
+                $mediation_details->spoken_language = json_decode($language);
                 $mediation_details->is_accept1 = $is_accept1;
                 $mediation_details->is_accept2 = $is_accept2;
                 $mediation_details->is_accept3 = $is_accept3;
