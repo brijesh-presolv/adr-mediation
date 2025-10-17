@@ -134,6 +134,8 @@ class SendGrid
 
         $directsendid=EmailDirectSend::insertGetId($arr_e);
 
+        Log::info('SendGrid: Email data inserted');
+
 
         $email = new \SendGrid\Mail\Mail();
         $email->setFrom($emailSender, $emailSenderName);
@@ -147,12 +149,14 @@ class SendGrid
         }
         $email->setTemplateId($templateId);
 
-
+             Log::info('SendGrid: Email data inserted line 2');
 
         if (!empty($file)) {
 
              //attachment
             if (is_array($file)) {
+
+                Log::info('SendGrid: Email data inserted line file array');
 
                 foreach ($file as $ff) {
 
@@ -169,6 +173,8 @@ class SendGrid
                 }
 
             } else {
+
+                Log::info('SendGrid: Email data inserted line file s3');
 
                  $data = Storage::disk('s3')->get($file);
 
@@ -206,6 +212,8 @@ class SendGrid
             $status = $response->statusCode();
             $headers = $response->headers();
             $body = $response->body();
+
+            Log::info('SendGrid: Email sent', ['status' => $status, 'body' => $body]);
 
             $sendid = @reset(preg_grep('/^X-Message-Id:\s.*/', $headers));
 
