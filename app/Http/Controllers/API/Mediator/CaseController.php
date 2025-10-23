@@ -456,7 +456,7 @@ class CaseController extends Controller
                         ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
                         ->where("mediators_mediation_cases_status.status", "=", 1)
                         ->first();
-                    Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+                    Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 3);
 
                     if ($mediatorNoti) {
 
@@ -504,7 +504,7 @@ class CaseController extends Controller
                     }
                 }
 
-                Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+                Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 3);
               
                 $allParty = InvoledUser::where("userPlanId", $caseId)->get();
                 $party_ids = array();
@@ -1058,18 +1058,18 @@ class CaseController extends Controller
 
                 if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
 
-                        Common_function::MedNotification($caseid, "WDRN_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null);
+                        Common_function::MedNotification($caseid, "WDRN_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null, null, 1);
                    
                 } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
 
-                        Common_function::MedNotification($caseid, "RES_BY_MED", $userId, isset($mediator) ? $mediator->id : null, null);
+                        Common_function::MedNotification($caseid, "RES_BY_MED", $userId, isset($mediator) ? $mediator->id : null, null, null, 1);
                    
                 } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
 
-                        Common_function::MedNotification($caseid, "UNRES_BY_MED", $userId, isset($mediator) ? $mediator->id : null, null);
+                        Common_function::MedNotification($caseid, "UNRES_BY_MED", $userId, isset($mediator) ? $mediator->id : null, null, null, 1);
                 } else if (Mediation_status_log::STATUS_PARTIALLY_RESOLVED == $status) {
                     
-                        Common_function::MedNotification($caseid, "PAR_RES_BY_MED", $userId, isset($mediator) ? $mediator->id : null, null);
+                        Common_function::MedNotification($caseid, "PAR_RES_BY_MED", $userId, isset($mediator) ? $mediator->id : null, null, null, 1);
                     
                 }
 
@@ -1112,7 +1112,7 @@ class CaseController extends Controller
                                 $inv_id = $inv_id . "," . $v->id;
                             }
                         }
-                        Common_function::MedNotification($caseid, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+                        Common_function::MedNotification($caseid, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 1);
 
                         $this->send_settlement_agreement_party($caseid, $insert);
 
@@ -1519,7 +1519,7 @@ class CaseController extends Controller
 
             if ($status == 1) {
 
-                Common_function::MedNotification($caseid, "SEND_APPO_MED", $userId, $userId, $inv_id);
+                Common_function::MedNotification($caseid, "SEND_APPO_MED", $userId, $userId, $inv_id, null, 1);
             } else {
 
                 $resultData['caseid']=$caseid;
@@ -1647,7 +1647,7 @@ class CaseController extends Controller
                 }
             }
 
-            Common_function::MedNotification($caseid, "REJECTED_MED", $userId, $userId, $inv_id);
+            Common_function::MedNotification($caseid, "REJECTED_MED", $userId, $userId, $inv_id, null, 1);
         
             $insertdata = DB::table('mediators_mediation_cases_status')
                 ->where('mediator_id', $userId)
