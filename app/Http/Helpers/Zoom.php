@@ -28,9 +28,16 @@ class Zoom
 
         $client_id = env('ZOOM_API_KEY');
         $client_secret = env('ZOOM_API_SECRET');
+        $server_name = $_SERVER['SERVER_NAME']; // or use env('APP_ENV')
+        if ($server_name === 'mediation.presolv360.com') {
 
+            $basic_Zoom_Auth="ZzVCSEtQaVJydW5JUUtyRHFubjZnOmI4VGcyNDE1a0hmZ2o3bFhzZzUxeG42ZkFBUjg3RUtx";
+        }else {
 
-        $basic_Zoom_Auth =base64_encode("{$client_id}:{$client_secret}");
+            $basic_Zoom_Auth =base64_encode("{$client_id}:{$client_secret}");     
+        }
+
+        
 
         curl_setopt_array($curl, array(
         CURLOPT_URL => 'https://zoom.us/oauth/token?grant_type=account_credentials&account_id='.env('ZOOM_OAUTH_ACCOUNT_ID'),
