@@ -11,6 +11,11 @@ class Notification extends Model {
 
     use HasFactory;
 
+    const CATEGORY_CASE_UPDATES= 1;
+    const CATEGORY_DOCUMENTS= 2;
+    const CATEGORY_SESSION= 3;
+    const CATEGORY_NEW_Account= 4;
+
     protected $table = 'mednotification';
 
     /**
