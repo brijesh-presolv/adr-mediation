@@ -590,7 +590,7 @@ class UsersController extends Controller
             $finaldata['terms_condition1'] = $user->is_accept1;
             $finaldata['terms_condition2'] = $user->is_accept2;
             $finaldata['terms_condition3'] = $user->is_accept3;
-            $finaldata['years_of_experience'] = $user->experience;
+            $finaldata['years_of_experience'] = $user->years_of_experience;
             $finaldata['spoken_language'] = json_decode($user->spoken_language);
 
 
