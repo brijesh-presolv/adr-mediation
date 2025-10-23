@@ -180,7 +180,7 @@ class UsersController extends Controller
             'pincode'      => 'nullable|string|max:20',
             'city'         => 'nullable|string|max:100',
             'state'        => 'nullable|string|max:100',
-            'country'      => 'nullable|string|max:100',  
+            'country'      => 'nullable|string|max:100',
         ]);
 
         if ($validator->fails()) {
@@ -194,9 +194,18 @@ class UsersController extends Controller
         }
         $user_id=$request->input('id');
 
-        $user = User::find($request->input('id'));
-        $user->first_name = ucfirst($request->input('first_name'));
-        $user->last_name = ucfirst($request->input('last_name'));
+        $user = User::find($user_id);
+        if(empty($user)){
+
+            $result['success'] = false;
+            $result['message'] = "User data not found";
+            $result['error'] = "User data not found";
+            return response()->json($result, 404);
+
+        }
+    
+        $user->first_name = $request->input('first_name');
+        $user->last_name = $request->input('last_name');
         $user->email = $request->input('email');
         $user->mobile_number = $request->input('mobile_number');
         $user->organization = $request->input('organization');
@@ -284,6 +293,10 @@ class UsersController extends Controller
 
         if ($user->role == 1) {
 
+            $area_of_specialization = json_encode($request->input('area_of_specialization'));
+            $years_of_experience = $request->input('years_of_experience');
+            $spoken_language = json_encode($request->input('spoken_language'));
+
             $isMedi = Mediation_Details::where("user_id", "=", $request->input('id'))->first();
             if (empty($isMedi)) {
                 $mediation_details = new Mediation_Details();
@@ -291,7 +304,7 @@ class UsersController extends Controller
                 $mediation_details = $isMedi;
             }
             $mediation_details->user_id = $request->input('id');
-            $mediation_details->area_of_specialization = json_encode($request->input('area_of_specialization'));
+            $mediation_details->area_of_specialization = $area_of_specialization;
             $mediation_details->no_of_arbitrations = $request->input('no_of_arbitrations');
             $mediation_details->linked_in_profile_link = $request->input('linked_in_profile_link');
             $mediation_details->experience = $request->input('experience');
@@ -301,9 +314,8 @@ class UsersController extends Controller
             $mediation_details->filed1 = $request->input('field1');
             $mediation_details->filed2 = $request->input('field2');
             $mediation_details->filed3 = $request->input('field3');
-            $mediation_details->category = $request->input('category');
-            $mediation_details->spoken_language = $request->input('spoken_language');
-            $mediation_details->years_of_experience = $request->input('years_of_experience');
+            $mediation_details->spoken_language = $spoken_language;
+            $mediation_details->years_of_experience = $years_of_experience;
             $mediation_details->save();
         }
 
@@ -552,10 +564,37 @@ class UsersController extends Controller
                     ->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
                     ->where("users.id", "=", $id)
                     ->first();
+                    
         if(!empty($user)){
 
 
-            $resultData['user'] = $user;
+            $finaldata['userid'] = $id;
+            $finaldata['first_name'] = $user->first_name;
+            $finaldata['last_name'] = $user->last_name;
+            $finaldata['email'] = $user->email;
+            $finaldata['username'] = $user->username;
+            $finaldata['mobile_number'] = $user->mobile_number;
+            $finaldata['organization'] = $user->organization;
+            $finaldata['address1'] = $user->address;
+            $finaldata['address2'] = $user->address1;
+            $finaldata['city'] = $user->city;
+            $finaldata['pincode'] = $user->pincode;
+            $finaldata['state'] = $user->state;
+            $finaldata['country'] = $user->country;
+            $finaldata['signature'] = $user->signature_photo;
+
+            $finaldata['area_of_specialization'] = json_decode($user->area_of_specialization, true);
+            $finaldata['no_of_arbitrations'] = $user->no_of_arbitrations;
+            $finaldata['linked_in_profile_link'] = $user->linked_in_profile_link;
+            $finaldata['experience'] = $user->experience;
+            $finaldata['terms_condition1'] = $user->is_accept1;
+            $finaldata['terms_condition2'] = $user->is_accept2;
+            $finaldata['terms_condition3'] = $user->is_accept3;
+            $finaldata['years_of_experience'] = $user->experience;
+            $finaldata['spoken_language'] = json_decode($user->spoken_language);
+
+
+            $resultData['user'] = $finaldata;
 
             $result['success'] = true;
             $result['message'] = "Data fetch successfully.";

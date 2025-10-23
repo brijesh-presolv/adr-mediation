@@ -62,6 +62,10 @@ class Zoom
         //$zoom_token =  self::generateZoomToken(); // token
         $zoom_token =  self::generateAuthToken(); // Oauth token
         /*****************************/
+
+        $Zoom_Account_User=env('Zoom_Account_User');
+        $Zoom_mail=env('Zoom_mail');
+
         $curl = curl_init(); 
         $c_url = env('ZOOM_API_URL').'users/'.env('Zoom_Account_User').'/meetings';
         curl_setopt_array($curl, array(
@@ -89,7 +93,7 @@ class Zoom
                         "type": 1,
                         "weekly_days": "1"
                     },
-                    "schedule_for": "ukmediation@presolv360.com",
+                    "schedule_for": "'.$Zoom_mail.'",
                     "settings": {
                         "additional_data_center_regions": [
                         "TY"
@@ -112,7 +116,7 @@ class Zoom
                         "authentication_domains": "",
                         "authentication_exception":  [
                         {
-                            "email": "ukmediation@presolv360.com",
+                            "email": "'.$Zoom_mail.'",
                             "name": "Mediation Team"
                         }
                         ],
@@ -142,7 +146,7 @@ class Zoom
                         "enable": true,
                         "interpreters": [
                             {
-                            "email": "ukmediation@presolv360.com",
+                            "email": "'.$Zoom_mail.'",
                             "languages": "US,FR"
                             }
                         ]
@@ -231,6 +235,9 @@ class Zoom
        // $zoom_token =  self::generateZoomToken(); // token
        $zoom_token =  self::generateAuthToken(); // Oauth token
         /*************************************/
+        $Zoom_Account_User=env('Zoom_Account_User');
+        $Zoom_mail=env('Zoom_mail');
+
         $curl = curl_init();
         $c_url = env('ZOOM_API_URL').'meetings/'.$zoom_id;
         curl_setopt_array($curl, array(
@@ -243,7 +250,7 @@ class Zoom
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'PATCH',
         CURLOPT_POSTFIELDS =>'{
-        "schedule_for": "ukmediation@presolv360.com",
+        "schedule_for": "'.$Zoom_mail.'",
         "agenda": "'.$note.'",
         "duration": 60,
         "password": "123456",
@@ -278,7 +285,7 @@ class Zoom
             "authentication_domains": "",
             "authentication_exception": [
             {
-                "email": "ukmediation@presolv360.com",
+                "email": "'.$Zoom_mail.'",
                 "name": "Mediation Team",
                 "join_url": ""
             }
@@ -321,7 +328,7 @@ class Zoom
             "enable": true,
             "interpreters": [
                 {
-                "email": "ukmediation@presolv360.com",
+                "email": "'.$Zoom_mail.'",
                 "languages": "US,FR"
                 }
             ]

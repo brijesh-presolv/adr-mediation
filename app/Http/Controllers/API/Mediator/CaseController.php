@@ -1946,11 +1946,11 @@ class CaseController extends Controller
             
 
             $validator = Validator::make($request->all(), [
-                'caseid' => 'integer',
-                'sessionid' => 'integer',
+                'caseid' => 'required|integer',
+                'sessionid' => 'required|integer',
                 'ip_name' => 'string',
                 'rp_name' => 'string',
-                'minutes' => 'integer',
+                'minutes' => 'required|string',
                 'next_steps' => 'string',
                 'mediator' => 'string|max:255',
                 'session_party_ids'  => 'array',
@@ -1990,7 +1990,8 @@ class CaseController extends Controller
                         'rp_name' => $rp_name,
                         'minutes' => $minutes,
                         'next_steps' => $next_steps,
-                        'mediator' => $mediator
+                        'mediator' => $mediator,
+                        'uploaded_by' => $userId
                     ];
                     $operationdata = DB::table('session_mom')->insert($dataToInsert);
 
@@ -2006,7 +2007,8 @@ class CaseController extends Controller
                     'rp_name' => $rp_name,
                     'minutes' => $minutes,
                     'next_steps' => $next_steps,
-                    'mediator' => $mediator
+                    'mediator' => $mediator,
+                    'uploaded_by' => $userId
                 ];
                 
 

@@ -6,6 +6,7 @@ use App\Models\EmailQue;
 use App\Models\EmailDirectSend;
 use Illuminate\Support\Facades\Storage;
 use PharIo\Manifest\Email;
+use Illuminate\Support\Facades\Log;
 
 class SendGrid
 {
@@ -99,9 +100,9 @@ class SendGrid
 
 
         $apiKey = env('SENDGRID_API_KEY');
-        $emailSender= env('SENDGRId_SENDER');
-        $emailSenderName= env('SENDGRId_SENDER_NAME');
-        $emailReply= env('SENDGRId_SETREPLYTo');
+        $emailSender= env('SENDGRID_SENDER');
+        $emailSenderName= env('SENDGRID_SENDER_NAME');
+        $emailReply= env('SENDGRID_SETREPLYTo');
         $all_email = array();
         $all_email[] = $to;
 
@@ -146,7 +147,7 @@ class SendGrid
         }
         $email->setTemplateId($templateId);
 
-
+             Log::info('SendGrid: Email data inserted line 2');
 
         if (!empty($file)) {
 
@@ -168,6 +169,7 @@ class SendGrid
                 }
 
             } else {
+
 
                  $data = Storage::disk('s3')->get($file);
 
@@ -206,6 +208,8 @@ class SendGrid
             $headers = $response->headers();
             $body = $response->body();
 
+            Log::info('SendGrid: Email sent', ['status' => $status, 'body' => $body]);
+
             $sendid = @reset(preg_grep('/^X-Message-Id:\s.*/', $headers));
 
             if ($sendid) {
@@ -213,6 +217,8 @@ class SendGrid
                 $idr = explode(':', $sendid);
 
                 if (isset($idr[1]) and count($d) > 0) {
+
+                    $sgMessageId=trim($idr[1]);
 
                     $datarr = ['sg_message_id' => trim($idr[1]), 'event' => $d['event'], 'userid' => $d['userid'],  'email' => $to, 'status' => trim($status), 'created_at' => date('Y-m-d H:i:s')];
                     
@@ -223,12 +229,16 @@ class SendGrid
                     $directemailsend->updated_at = date('Y-m-d H:i:s');
                     $directemailsend->save();
 
+                    Log::info('SendGrid: Email sent', ['to' => $to, 'sg_message_id' => $sgMessageId]);
+
                     return true;
                 }
             }
 
          } catch (Exception $e) {
-            
+
+
+            Log::error('SendGrid: Email send failed', ['to' => $to, 'message' => $e->getMessage(),'body' => $body ?? null, ]);
             echo 'Caught exception: ' . $e->getMessage() . "\n";
 
             $directemailsend->response = $body;
