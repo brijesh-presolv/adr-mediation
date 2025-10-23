@@ -184,7 +184,7 @@ class Common_function
         return '';
     }
 
-    public static function MedNotification($caseid, $event, $uploaded_by, $medId = null, $userId = null, $reg_id = null)
+    public static function MedNotification($caseid, $event, $uploaded_by, $medId = null, $userId = null, $reg_id = null, $category = null)
     {
         if ($event == "COMM_ADM_PRIVATE" || $event == "COMM_MED_PRIVATE") {
             $data = [
@@ -194,6 +194,7 @@ class Common_function
                 'mediator_id' => $medId,
                 'user_id' => $userId,
                 'view_user' => 2,
+                'category' => $category,
             ];
         } else {
             $data = [
@@ -203,6 +204,7 @@ class Common_function
                 'mediator_id' => $medId,
                 'user_id' => $userId,
                 'reg_id' => $reg_id,
+                'category' => $category,
             ];
         }
 
