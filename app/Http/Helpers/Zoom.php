@@ -34,7 +34,7 @@ class Zoom
             $basic_Zoom_Auth="ZzVCSEtQaVJydW5JUUtyRHFubjZnOmI4VGcyNDE1a0hmZ2o3bFhzZzUxeG42ZkFBUjg3RUtx";
         }else {
 
-            $basic_Zoom_Auth =base64_encode("{$client_id}:{$client_secret}");     
+            $basic_Zoom_Auth=base64_encode("{$client_id}:{$client_secret}");     
         }
 
         
