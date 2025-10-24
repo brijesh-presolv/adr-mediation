@@ -79,7 +79,12 @@ Route::middleware(['apiauth'])->group(function () {
  // Admin API Routes
 Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
+    // Dashboard apis
     Route::post('/admin/dashboard', [App\Http\Controllers\API\Admin\AdminController::class, 'dashboard']);
+
+    // Dashboard total counts api
+
+
     Route::post('/admin/cases/ongoing', [App\Http\Controllers\API\Admin\CaseController::class, 'ongoing']);
     Route::post('/admin/cases/newreq', [App\Http\Controllers\API\Admin\CaseController::class, 'newreq']);
     Route::post('/admin/cases/closed', [App\Http\Controllers\API\Admin\CaseController::class, 'closed']);
@@ -160,6 +165,14 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::get('/admin/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 
 });
+
+Route::get('/admin/dashboard/total-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'totalCaseCount']);
+Route::get('/admin/dashboard/new-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'newCaseCount']);
+Route::get('/admin/dashboard/ongoing-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'ongoingCaseCount']);
+Route::get('/admin/dashboard/resolved-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'resolvedCaseCount']);
+Route::get('/admin/dashboard/unresolved-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'unresolvedCaseCount']);
+Route::get('/admin/dashboard/rejected-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'rejectedCaseCount']);
+Route::get('/admin/dashboard/withdrawn-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'withdrawnCaseCount']);
  
  // User API Routes
 Route::middleware(['apiauth', 'apiuser'])->group(function () {
