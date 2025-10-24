@@ -171,6 +171,7 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::post('/user/cases/uploaddocument', [App\Http\Controllers\API\User\UploadController::class, 'documentUpload']);
 
     Route::post('/user/cases/meeting-sessions', [App\Http\Controllers\API\User\CaseController::class, 'getMeetingSession']);
+    Route::post('/user/cases/download-session-details', [App\Http\Controllers\API\User\CaseController::class, 'sessionPdf']);
     Route::post('user/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
     Route::post('user/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
 
@@ -217,6 +218,7 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/meeting-sessions', [App\Http\Controllers\API\Mediator\CaseController::class, 'getMeetingSession']);
     Route::post('/mediator/cases/update-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'UpdateSession']);
     Route::post('/mediator/cases/delete-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'deleteSession']);
+    Route::post('/mediator/cases/download-session-details', [App\Http\Controllers\API\Mediator\CaseController::class, 'sessionPdf']);
     // MOM api
     Route::post('/mediator/cases/get-mom-data', [App\Http\Controllers\API\Mediator\CaseController::class, 'showMomSession']);
     Route::post('/mediator/cases/mom-data-submit', [App\Http\Controllers\API\Mediator\CaseController::class, 'momDataSubmit']);

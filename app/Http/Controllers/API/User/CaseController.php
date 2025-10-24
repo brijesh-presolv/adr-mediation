@@ -454,5 +454,36 @@ class CaseController extends Controller
         return response()->json($result, 200);
     }
 
+    public function sessionPdf(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+                'caseId' => 'required|integer',
+            ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all();
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $caseId = $request->input('caseId');
+
+        $data["case"] = MedCase::find($caseId);
+        $data["party"] = InvoledUser::where("userPlanId", "=", $caseId)->get();
+        $data["mediator"] = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.first_name", "users.last_name")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $data['caseId'] = $caseId;
+        $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
+        $pdf = PDF::loadView('pdf.view_session', $data);
+        return $pdf->download('session_CID' . sprintf('%06d', $caseId) . '.pdf');
+
+    }
+
 
 }
