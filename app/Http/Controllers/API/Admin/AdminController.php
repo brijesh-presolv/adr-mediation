@@ -15,6 +15,8 @@ use App\Http\Helpers\Token;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\InvoledUser;
+use Carbon\Carbon;
 
 class AdminController extends Controller 
 {
@@ -92,6 +94,176 @@ class AdminController extends Controller
         $result['success'] = true;
         $result['message'] = "Withdrawn case count fetched successfully.";
         $result['data'] = $withdrawnCount;
+        return response()->json($result, 200);
+    }
+
+    public function totalUserCount() {
+        $allUserCount = 0;
+        $allUserCount = User::where("role", 0)->count();
+
+        $result['success'] = true;
+        $result['message'] = "Total user count fetched successfully.";
+        $result['data'] = $allUserCount;
+        return response()->json($result, 200);
+    }
+
+    public function approvedUserCount() {
+        $approveUsersCount = 0;
+        $approveUsersCount = User::whereIn("role", [0])->where("status", 1)->where("is_deleted", 0)->count();
+
+        $result['success'] = true;
+        $result['message'] = "Total approved user count fetched successfully.";
+        $result['data'] = $approveUsersCount;
+        return response()->json($result, 200);
+    }
+
+    public function unapprovedUserCount() {
+        $unapproveUsersCount = 0;
+        $unapproveUsersCount = User::whereIn("role", [0])->where("status", 0)->where("is_deleted", 0)->count();
+
+        $result['success'] = true;
+        $result['message'] = "Total unapproved user count fetched successfully.";
+        $result['data'] = $unapproveUsersCount;
+        return response()->json($result, 200);
+    }
+
+    public function totalMediatorCount() {
+        $allMediatorCount = 0;
+        $allMediatorCount = User::where("role", 1)->count();
+
+        $result['success'] = true;
+        $result['message'] = "Total mediator count fetched successfully.";
+        $result['data'] = $allMediatorCount;
+        return response()->json($result, 200);
+    }
+
+    public function approvedMediatorCount() {
+        $approveMediatorCount = 0;
+        $approveMediatorCount = User::whereIn("role", [1])->where("status", 1)->where("is_deleted", 0)->count();
+
+        $result['success'] = true;
+        $result['message'] = "Total approved mediator count fetched successfully.";
+        $result['data'] = $approveMediatorCount;
+        return response()->json($result, 200);
+    }
+
+    public function unapprovedMediatorCount() {
+        $unapproveMediatorCount = 0;
+        $unapproveMediatorCount = User::whereIn("role", [1])->where("status", 0)->where("is_deleted", 0)->count();
+
+        $result['success'] = true;
+        $result['message'] = "Total unapproved mediator count fetched successfully.";
+        $result['data'] = $unapproveMediatorCount;
+        return response()->json($result, 200);
+    }
+
+    public function getLatestNotifications() {
+        $data = Notification::notificatioLatestData();
+
+        $result['success'] = true;
+        $result['message'] = "Latest notifications fetched successfully.";
+        $result['data'] = $data;
+        return response()->json($result, 200);
+    }
+
+    public function getUpcomingSessions() {
+        $today_date = Carbon::today();
+        //echo $today_date;exit;
+        //$today_date = $today_date->format('d/m/Y');
+        $sessionData = DB::table('manage_session')
+        ->select('manage_session.*',DB::raw("STR_TO_DATE(session_date, '%d/%m/%Y') as date_formatt"))
+        //->orderby('id', 'DESC')->take(15)->get();
+        ->orderby('date_formatt', 'ASC')->get();
+        $dataArray = array();
+
+        $finalArray = array();
+
+       // echo "<pre>";print_R($sessionData);exit;
+
+        foreach ($sessionData as $value) {
+
+             if(!is_null($value->date_formatt)){
+                if($value->date_formatt > $today_date){
+                    if (!is_null($value->session_party_ids)) {
+                        $dataArray = json_decode($value->session_party_ids);
+                    }
+                    $ip_user = array();
+                    $rp_user = array();
+               
+                        $dd_data = InvoledUser::where('userPlanId', $value->case_id)->get();
+                        foreach($dd_data as $dd){
+                            if (isset($dd)) {
+                                if ($dd->name != null) {
+
+                                    if($dd->isClaimant == 0){
+                                        $ip_user[] = $dd->name;
+                                    } else {
+                                        $rp_user[] = $dd->name;
+                                    }
+                                    
+                                }
+                            }
+                        }
+                        
+
+                    $mediator = DB::table('mediators_mediation_cases_status')->select('mediators_mediation_cases_status.mediator_id', 'users.first_name', 'users.last_name')
+                    ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
+                    ->where('mediators_mediation_cases_status.mediation_case_id', $value->case_id)
+                    ->first();
+
+                    if($mediator){
+                        $m_name = $mediator->first_name .' '.$mediator->last_name;
+                    }else{
+                        $m_name = "-";
+                    }
+        
+                    if(isset($value->zoom_link) && $value->zoom_link != null){
+                        $zoom_link = $value->zoom_link;
+                    } else {
+                        $zoom_link = "-";
+                    }
+
+                    $finalArray['caseid'] = $value->case_id;
+                    $finalArray['claimant'] = $ip_user;
+                    $finalArray['respondant'] = $rp_user;
+                    $finalArray['mediator'] = $m_name;
+                    $finalArray['session'] = $value->session_date;
+
+                    if($value->zoom_link_choice == "manual"){
+                        $finalArray['zoom_id'] = $value->zoom_id;
+                        $finalArray['zoom_link'] = "";
+                    } else {
+                        $finalArray['zoom_id'] = "";
+                        $finalArray['zoom_link'] = $zoom_link;
+                    }
+                
+                    // echo "<tr>";
+                    // echo "<td>" . $sn . "</td>";
+                    // echo "<td>M0" . $value->case_id . "</td>";
+                    // echo "<td>" . implode("<br>", $ip_user) ."</td>";
+                    // echo "<td>" . implode("<br>", $rp_user) ."</td>";
+                    // echo "<td>" . $m_name . "</td>";
+                    // echo "<td>" . $value->session_date . "</td>";
+
+                    // if($value->zoom_link_choice == "manual"){
+                    //     echo "<td>" . $value->zoom_id . "</td>";
+                    // } else {
+                    //     echo "<td>" . $zoom_link . "</td>";
+                    // }
+                    
+                    // echo "</tr>";
+                    
+
+                   // $sn++;
+                }
+
+                
+            }
+        }
+
+        $result['success'] = true;
+        $result['message'] = "Latest notifications fetched successfully.";
+        $result['data'] = $finalArray;
         return response()->json($result, 200);
     }
 }
