@@ -80,4 +80,15 @@ class Notification extends Model {
         return $result;
     }
 
+    public static function notificatioLatestData()
+    {
+
+         $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription' ,'users.email')
+                    ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->leftJoin('users', DB::raw('users.id'), '=', DB::raw('mednotification.reg_id'))
+                    ->orderBy('mednotification.id', 'DESC')->limit(5)->get();
+
+        return $result;
+    }
+
 }
