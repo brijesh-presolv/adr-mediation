@@ -13,6 +13,8 @@ use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class DashboardController extends Controller
 {
@@ -54,10 +56,11 @@ class DashboardController extends Controller
                 $item->save();
             }
             $data = Notification::notificationData();
+            $resultData['notifications']=$data;
 
             $result['success'] = true;
             $result['message'] = "Notifications fetched successfully.";
-            $result['data'] = $data;
+            $result['data'] = $resultData;
             return response()->json($result, 200);
         } catch (Exception $e) {
             $result['success'] = false;

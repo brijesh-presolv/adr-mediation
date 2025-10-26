@@ -11,6 +11,11 @@ class Notification extends Model {
 
     use HasFactory;
 
+    const CATEGORY_CASE_UPDATES= 1;
+    const CATEGORY_DOCUMENTS= 2;
+    const CATEGORY_SESSION= 3;
+    const CATEGORY_NEW_Account= 4;
+
     protected $table = 'mednotification';
 
     /**
@@ -71,6 +76,17 @@ class Notification extends Model {
                     ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
                     ->where('mednotification.mediator_id', $userId)
                     ->orderBy('mednotification.id', 'DESC')->get();
+
+        return $result;
+    }
+
+    public static function notificatioLatestData()
+    {
+
+         $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription' ,'users.email')
+                    ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->leftJoin('users', DB::raw('users.id'), '=', DB::raw('mednotification.reg_id'))
+                    ->orderBy('mednotification.id', 'DESC')->limit(5)->get();
 
         return $result;
     }

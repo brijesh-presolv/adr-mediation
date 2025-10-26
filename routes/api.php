@@ -79,7 +79,31 @@ Route::middleware(['apiauth'])->group(function () {
  // Admin API Routes
 Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 
+    // Dashboard apis
     Route::post('/admin/dashboard', [App\Http\Controllers\API\Admin\AdminController::class, 'dashboard']);
+
+    // Dashboard total counts api
+    Route::get('/admin/dashboard/total-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'totalCaseCount']);
+    Route::get('/admin/dashboard/new-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'newCaseCount']);
+    Route::get('/admin/dashboard/ongoing-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'ongoingCaseCount']);
+    Route::get('/admin/dashboard/resolved-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'resolvedCaseCount']);
+    Route::get('/admin/dashboard/unresolved-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'unresolvedCaseCount']);
+    Route::get('/admin/dashboard/rejected-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'rejectedCaseCount']);
+    Route::get('/admin/dashboard/withdrawn-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'withdrawnCaseCount']);
+
+    Route::get('/admin/dashboard/total-users', [App\Http\Controllers\API\Admin\AdminController::class, 'totalUserCount']);
+    Route::get('/admin/dashboard/approved-users', [App\Http\Controllers\API\Admin\AdminController::class, 'approvedUserCount']);
+    Route::get('/admin/dashboard/unapproved-users', [App\Http\Controllers\API\Admin\AdminController::class, 'unapprovedUserCount']);
+
+    Route::get('/admin/dashboard/total-mediators', [App\Http\Controllers\API\Admin\AdminController::class, 'totalMediatorCount']);
+    Route::get('/admin/dashboard/approved-mediators', [App\Http\Controllers\API\Admin\AdminController::class, 'approvedMediatorCount']);
+    Route::get('/admin/dashboard/unapproved-mediators', [App\Http\Controllers\API\Admin\AdminController::class, 'unapprovedMediatorCount']);
+    
+
+    Route::get('/admin/dashboard/notifications-latest', [App\Http\Controllers\API\Admin\AdminController::class, 'getLatestNotifications']);
+    Route::get('/admin/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\Admin\AdminController::class, 'getUpcomingSessions']);
+
+
     Route::post('/admin/cases/ongoing', [App\Http\Controllers\API\Admin\CaseController::class, 'ongoing']);
     Route::post('/admin/cases/newreq', [App\Http\Controllers\API\Admin\CaseController::class, 'newreq']);
     Route::post('/admin/cases/closed', [App\Http\Controllers\API\Admin\CaseController::class, 'closed']);
@@ -160,7 +184,8 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::get('/admin/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 
 });
- 
+
+
  // User API Routes
 Route::middleware(['apiauth', 'apiuser'])->group(function () {
 
@@ -171,6 +196,7 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::post('/user/cases/uploaddocument', [App\Http\Controllers\API\User\UploadController::class, 'documentUpload']);
 
     Route::post('/user/cases/meeting-sessions', [App\Http\Controllers\API\User\CaseController::class, 'getMeetingSession']);
+    Route::post('/user/cases/download-session-details', [App\Http\Controllers\API\User\CaseController::class, 'sessionPdf']);
     Route::post('user/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
     Route::post('user/preview-document', [App\Http\Controllers\API\DownloadDocument::class, 'previewSecure']);
 
@@ -217,6 +243,7 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/meeting-sessions', [App\Http\Controllers\API\Mediator\CaseController::class, 'getMeetingSession']);
     Route::post('/mediator/cases/update-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'UpdateSession']);
     Route::post('/mediator/cases/delete-session', [App\Http\Controllers\API\Mediator\CaseController::class, 'deleteSession']);
+    Route::post('/mediator/cases/download-session-details', [App\Http\Controllers\API\Mediator\CaseController::class, 'sessionPdf']);
     // MOM api
     Route::post('/mediator/cases/get-mom-data', [App\Http\Controllers\API\Mediator\CaseController::class, 'showMomSession']);
     Route::post('/mediator/cases/mom-data-submit', [App\Http\Controllers\API\Mediator\CaseController::class, 'momDataSubmit']);
