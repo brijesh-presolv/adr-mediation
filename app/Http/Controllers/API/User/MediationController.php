@@ -402,7 +402,7 @@ class MediationController extends Controller
             $last_name = $usr->last_name;
 
 
-            $InvoledUser = InvoledUser::where(['joincode' => $code])->where(function ($q) use ($email, $phone) {
+            $InvoledUser = InvoledUser::where(['joinCode' => $code])->where(function ($q) use ($email, $phone) {
                 $q->orWhere('userEmail', $email)->orWhere('userPhone', $phone);
             })->first();
 
