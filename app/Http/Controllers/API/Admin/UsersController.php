@@ -76,6 +76,7 @@ class UsersController extends Controller
         $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
+        $category  = $request->input('category', '');
         $role=0;
 
         $users = User::getUserRejected($role, $start, $length, $search, $columnName, $sortOrder);
@@ -125,9 +126,10 @@ class UsersController extends Controller
         $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
+        $category  = $request->input('category', '');
         $role=1;
 
-        $users = User::getMediatorsNewReq($role, $start, $length, $search, $columnName, $sortOrder);
+        $users = User::getMediatorsNewReq($role, $start, $length, $search, $columnName, $sortOrder, $category);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -150,6 +152,7 @@ class UsersController extends Controller
         $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
+        $category  = $request->input('category', '');
         $role=1;
 
         $users = User::getMediatorsRejected($role, $start, $length, $search, $columnName, $sortOrder);
@@ -630,8 +633,33 @@ class UsersController extends Controller
         }else{
 
             $result['success'] = false;
-            $result['message'] = "data not found.";
-            $result['error'] = "data not found.";
+            $result['message'] = "Data not found.";
+            $result['error'] = "Data not found.";
+            return response()->json($result, 422);
+        }
+
+    }
+
+    public function getMediatorCategory(Request $request)
+    {
+
+        $mediator_category = DB::table('mediator_category')->get();
+        if(!empty($mediator_category)){
+
+
+            $resultData['mediator_category'] = $mediator_category;
+
+            $result['success'] = true;
+            $result['message'] = "Data fetch successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+
+        }else{
+
+            $result['success'] = false;
+            $result['message'] = "Data not found.";
+            $result['error'] = "Data not found.";
             return response()->json($result, 422);
         }
 
