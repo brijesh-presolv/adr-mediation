@@ -169,7 +169,7 @@ class User extends Authenticatable
         return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
     }
 
-    static function getMediatorsApprove($role, $start, $length, $search, $columnName, $sortOrder)
+    static function getMediatorsApprove($role, $start, $length, $search, $columnName, $sortOrder, $category)
     {
 
         $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')
@@ -183,7 +183,8 @@ class User extends Authenticatable
                     $query->where(function ($q) use ($search) {
                         $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
-                        ->orWhere("mobile_number", "like", "%{$search}%");
+                        ->orWhere("mobile_number", "like", "%{$search}%")
+                        ->orWhere("mediation_details.no_of_arbitrations", "like", "%{$category}%");
                     });
                 }
 
@@ -206,7 +207,7 @@ class User extends Authenticatable
         return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
     }
 
-    static function getMediatorsNewReq($role, $start, $length, $search, $columnName, $sortOrder)
+    static function getMediatorsNewReq($role, $start, $length, $search, $columnName, $sortOrder, $category)
     {
 
         $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
@@ -219,7 +220,8 @@ class User extends Authenticatable
                     $query->where(function ($q) use ($search) {
                         $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
-                        ->orWhere("mobile_number", "like", "%{$search}%");
+                        ->orWhere("mobile_number", "like", "%{$search}%")
+                        ->orWhere("mediation_details.no_of_arbitrations", "like", "%{$category}%");
                     });
                 }
 
@@ -242,7 +244,7 @@ class User extends Authenticatable
         return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
     }
 
-    static function getMediatorsRejected($role, $start, $length, $search, $columnName, $sortOrder)
+    static function getMediatorsRejected($role, $start, $length, $search, $columnName, $sortOrder, $category)
     {
 
         $query = User::select('users.*', 'mediation_details.user_id', 'mediation_details.area_of_specialization', 'mediation_details.no_of_arbitrations', 'mediation_details.linked_in_profile_link', 'mediation_details.experience', 'mediation_details.is_accept1', 'mediation_details.is_accept2', 'mediation_details.is_accept3', 'mediation_details.filed1', 'mediation_details.filed2', 'mediation_details.filed3', 'mediation_details.category', 'mediation_details.spoken_language', 'mediation_details.years_of_experience')->leftJoin("mediation_details", "mediation_details.user_id", "=", "users.id")
@@ -254,7 +256,8 @@ class User extends Authenticatable
                     $query->where(function ($q) use ($search) {
                         $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
-                        ->orWhere("mobile_number", "like", "%{$search}%");
+                        ->orWhere("mobile_number", "like", "%{$search}%")
+                        ->orWhere("mediation_details.no_of_arbitrations", "like", "%{$category}%");
                     });
                 }
 

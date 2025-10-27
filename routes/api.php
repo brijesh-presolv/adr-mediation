@@ -175,6 +175,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/users/status-change-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'statusChangeApprove']);
     Route::post('/admin/users/add-notes', [App\Http\Controllers\API\Admin\UsersController::class, 'addNotes']);
     Route::get('/admin/users/getuserdata/{id}', [App\Http\Controllers\API\Admin\UsersController::class, 'getuserdata']);
+    Route::get('/admin/users/mediator-category', [App\Http\Controllers\API\Admin\UsersController::class, 'getMediatorCategory']);
 
     Route::post('/admin/users/mediator-approve', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorApprove']);
     Route::post('/admin/users/mediator-newreq', [App\Http\Controllers\API\Admin\UsersController::class, 'mediatorNewreq']);
@@ -258,6 +259,7 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::get('/mediator/show-profile', [App\Http\Controllers\API\Mediator\ProfileController::class, 'getProfileData']);
     Route::post('/mediator/edit-profile-data', [App\Http\Controllers\API\Mediator\ProfileController::class, 'editProfileData']);
     Route::get('/mediator/change-password', [App\Http\Controllers\API\Mediator\ProfileController::class, 'changePassword']);
+    Route::get('/mediator/mediator-category', [App\Http\Controllers\API\Mediator\ProfileController::class, 'getMediatorCategory']);
 
     Route::get('/mediator/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 
