@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Helpers\Token;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Hash;
 use App\Models\InvoledUser;
 use Carbon\Carbon;
@@ -204,7 +205,7 @@ class AdminController extends Controller
         }
 
         $result['success'] = true;
-        $result['message'] = "Latest notifications fetched successfully.";
+        $result['message'] = "Upcoming sessions are fetched successfully.";
         $result['data'] = $finalArray;
         return response()->json($result, 200);
     }
