@@ -82,27 +82,12 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     // Dashboard apis
     Route::post('/admin/dashboard', [App\Http\Controllers\API\Admin\AdminController::class, 'dashboard']);
 
-    // Dashboard total counts api
-    Route::get('/admin/dashboard/total-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'totalCaseCount']);
-    Route::get('/admin/dashboard/new-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'newCaseCount']);
-    Route::get('/admin/dashboard/ongoing-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'ongoingCaseCount']);
-    Route::get('/admin/dashboard/resolved-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'resolvedCaseCount']);
-    Route::get('/admin/dashboard/unresolved-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'unresolvedCaseCount']);
-    Route::get('/admin/dashboard/rejected-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'rejectedCaseCount']);
-    Route::get('/admin/dashboard/withdrawn-cases', [App\Http\Controllers\API\Admin\AdminController::class, 'withdrawnCaseCount']);
-
-    Route::get('/admin/dashboard/total-users', [App\Http\Controllers\API\Admin\AdminController::class, 'totalUserCount']);
-    Route::get('/admin/dashboard/approved-users', [App\Http\Controllers\API\Admin\AdminController::class, 'approvedUserCount']);
-    Route::get('/admin/dashboard/unapproved-users', [App\Http\Controllers\API\Admin\AdminController::class, 'unapprovedUserCount']);
-
-    Route::get('/admin/dashboard/total-mediators', [App\Http\Controllers\API\Admin\AdminController::class, 'totalMediatorCount']);
-    Route::get('/admin/dashboard/approved-mediators', [App\Http\Controllers\API\Admin\AdminController::class, 'approvedMediatorCount']);
-    Route::get('/admin/dashboard/unapproved-mediators', [App\Http\Controllers\API\Admin\AdminController::class, 'unapprovedMediatorCount']);
-    
-
+    // Dashboard total counts api : start //
+    Route::get('/admin/dashboard/get-case-counts', [App\Http\Controllers\API\Admin\AdminController::class, 'allCaseCounts']);
+    Route::get('/admin/dashboard/get-user-counts', [App\Http\Controllers\API\Admin\AdminController::class, 'allUserCounts']);
     Route::get('/admin/dashboard/notifications-latest', [App\Http\Controllers\API\Admin\AdminController::class, 'getLatestNotifications']);
     Route::get('/admin/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\Admin\AdminController::class, 'getUpcomingSessions']);
-
+    // Dashboard total counts api : end //
 
     Route::post('/admin/cases/ongoing', [App\Http\Controllers\API\Admin\CaseController::class, 'ongoing']);
     Route::post('/admin/cases/newreq', [App\Http\Controllers\API\Admin\CaseController::class, 'newreq']);
