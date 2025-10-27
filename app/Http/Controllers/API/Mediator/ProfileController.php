@@ -296,4 +296,29 @@ class ProfileController extends Controller
         }
     }
 
+    public function getMediatorCategory(Request $request)
+    {
+
+        $mediator_category = DB::table('mediator_category')->get();
+        if(!empty($mediator_category)){
+
+
+            $resultData['mediator_category'] = $mediator_category;
+
+            $result['success'] = true;
+            $result['message'] = "Data fetch successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+
+
+        }else{
+
+            $result['success'] = false;
+            $result['message'] = "Data not found.";
+            $result['error'] = "Data not found.";
+            return response()->json($result, 422);
+        }
+
+    }
+
 }
