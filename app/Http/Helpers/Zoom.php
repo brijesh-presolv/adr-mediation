@@ -72,6 +72,7 @@ class Zoom
 
         $Zoom_Account_User=env('Zoom_Account_User');
         $Zoom_mail=env('Zoom_mail');
+        $zoom_timezone=env('ZOOM_TIMEZONE');
 
         $curl = curl_init(); 
         $c_url = env('ZOOM_API_URL').'users/'.env('Zoom_Account_User').'/meetings';
@@ -179,7 +180,7 @@ class Zoom
                     },
                     "start_time": "'.$date_format_api.'",
                     "template_id": "Dv4YdINdTk+Z5RToadh5ug==",
-                    "timezone": "Europe/London",
+                    "timezone": "'.$zoom_timezone.'",
                     "topic": "Mediation Session Created for Case - M'.sprintf("%06d", $case_id).'",
                     "tracking_fields": [
                         {
@@ -360,7 +361,7 @@ class Zoom
         },
         "start_time": "'.$date_format_api.'",
         "template_id": "5Cj3ceXoStO6TGOVvIOVPA==",
-        "timezone": "Europe/London",
+        "timezone": "'.$zoom_timezone.'",
         "topic": "Mediation Session Meeting Updated for Case - M'.sprintf("%06d", $case_id).'",
         "tracking_fields": [
             {
