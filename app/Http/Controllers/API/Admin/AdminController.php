@@ -111,22 +111,31 @@ class AdminController extends Controller
 
     public function getUpcomingSessions() {
         $today_date = Carbon::today();
-        //echo $today_date;exit;
+       
         //$today_date = $today_date->format('d/m/Y');
         $sessionData = DB::table('manage_session')
-        ->select('manage_session.*',DB::raw("STR_TO_DATE(session_date, '%d/%m/%Y') as date_formatt"))
+        ->select('manage_session.*',
+        DB::raw("STR_TO_DATE(session_date, '%d/%m/%Y') as date_formatt")
+        )
+        
         //->orderby('id', 'DESC')->take(15)->get();
         ->orderby('date_formatt', 'ASC')->get();
         $dataArray = array();
 
         $finalArray = array();
 
-       // echo "<pre>";print_R($sessionData);exit;
-
-        foreach ($sessionData as $value) {
+        // / echo $today_date;exit;
+         //echo "<pre>";print_r($sessionData);exit;
+       //
+      
+        $sn = 1;
+        foreach ($sessionData as $key => $value) {
 
              if(!is_null($value->date_formatt)){
+
+                   
                 if($value->date_formatt > $today_date){
+
                     if (!is_null($value->session_party_ids)) {
                         $dataArray = json_decode($value->session_party_ids);
                     }
@@ -166,47 +175,46 @@ class AdminController extends Controller
                         $zoom_link = "-";
                     }
 
-                    $finalArray['caseid'] = $value->case_id;
-                    $finalArray['claimant'] = $ip_user;
-                    $finalArray['respondant'] = $rp_user;
-                    $finalArray['mediator'] = $m_name;
-                    $finalArray['session'] = $value->session_date;
+                   // echo "<pre>";print_r($value);
+
+                   
+
+                    $finalArray[$sn]['caseid'] = $value->case_id;
+                    $finalArray[$sn]['claimant'] = $ip_user;
+                    $finalArray[$sn]['respondant'] = $rp_user;
+                    $finalArray[$sn]['mediator'] = $m_name;
+
+                    $myDate = explode("/", $value->session_date);
+                    $finalDate = $myDate[0].'/'.$myDate[1].'/'.$myDate[2];
+                    $datee = Carbon::createFromFormat('d/m/Y', $finalDate)->format('d-M-Y');
+                    //echo "<pre>";print_r($date);exit;
+
+                    $finalArray[$sn]['session'] = $datee .' '.$myDate[3];
+                    
 
                     if($value->zoom_link_choice == "manual"){
-                        $finalArray['zoom_id'] = $value->zoom_id;
-                        $finalArray['zoom_link'] = "";
+                        $finalArray[$sn]['zoom_id'] = $value->zoom_id;
+                        $finalArray[$sn]['zoom_link'] = "";
                     } else {
-                        $finalArray['zoom_id'] = "";
-                        $finalArray['zoom_link'] = $zoom_link;
+                        $finalArray[$sn]['zoom_id'] = "";
+                        $finalArray[$sn]['zoom_link'] = $zoom_link;
                     }
                 
-                    // echo "<tr>";
-                    // echo "<td>" . $sn . "</td>";
-                    // echo "<td>M0" . $value->case_id . "</td>";
-                    // echo "<td>" . implode("<br>", $ip_user) ."</td>";
-                    // echo "<td>" . implode("<br>", $rp_user) ."</td>";
-                    // echo "<td>" . $m_name . "</td>";
-                    // echo "<td>" . $value->session_date . "</td>";
-
-                    // if($value->zoom_link_choice == "manual"){
-                    //     echo "<td>" . $value->zoom_id . "</td>";
-                    // } else {
-                    //     echo "<td>" . $zoom_link . "</td>";
-                    // }
-                    
-                    // echo "</tr>";
-                    
-
-                   // $sn++;
+                   
+                    $sn++;
                 }
 
                 
             }
+
+
         }
 
+        $data['cases'] = $finalArray;
+       
         $result['success'] = true;
         $result['message'] = "Upcoming sessions are fetched successfully.";
-        $result['data'] = $finalArray;
+        $result['data'] = $data;
         return response()->json($result, 200);
     }
 }
