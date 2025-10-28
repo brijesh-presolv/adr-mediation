@@ -44,7 +44,7 @@ public $successStatus = 200;
      * @return \Illuminate\Http\Response 
      */ 
     public function login(Request $request){ 
-        //if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+
         if(Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])){ 
             $user = Auth::user(); 
 
@@ -86,7 +86,6 @@ public $successStatus = 200;
             $result['message'] = "User has logged in successfully.";
             $result['data'] = $data;
             $result['token'] = Token::createToken($data); 
-            //$result['expiry_token'] = 86400;
 
             return response()->json($result, $this->successStatus)
                                 ->cookie(
@@ -104,8 +103,8 @@ public $successStatus = 200;
         else{ 
 
             $result['success'] = false;
-            $result['message'] = "Unauthorized request.";
-            $result['error'] = "Unauthorized";
+            $result['message'] = "Email or password is incorrect.";
+            $result['error'] = "Authentication failed";
             return response()->json($result, 401);
         } 
     }
