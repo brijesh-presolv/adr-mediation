@@ -28,10 +28,9 @@ class UsersController extends Controller
         $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
-        $category  = $request->input('category', '');
         $role=0;
 
-        $users = User::getUserApprove($role, $start, $length, $search, $columnName, $sortOrder, $category);
+        $users = User::getUserApprove($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -53,10 +52,9 @@ class UsersController extends Controller
         $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
-        $category  = $request->input('category', '');
         $role=0;
 
-        $users = User::getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder, $category);
+        $users = User::getUserNewReq($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -78,10 +76,9 @@ class UsersController extends Controller
         $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
-        $category  = $request->input('category', '');
         $role=0;
 
-        $users = User::getUserRejected($role, $start, $length, $search, $columnName, $sortOrder, $category);
+        $users = User::getUserRejected($role, $start, $length, $search, $columnName, $sortOrder);
 
         $resultData['users']=$users;
         $resultData['pagination']['total_count']=$users->total();
@@ -104,6 +101,7 @@ class UsersController extends Controller
         $search  = $request->input('search', '');
         $sortOrder = $request->input('SortOrder', 'desc');
         $columnName = $request->input('columnName', ''); 
+        $category  = $request->input('category', '');
         $role=1;
 
         $users = User::getMediatorsApprove($role, $start, $length, $search, $columnName, $sortOrder, $category);
