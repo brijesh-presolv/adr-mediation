@@ -419,11 +419,11 @@ class DashboardController extends Controller
             $resultData['notifications']['sessionUpdates']=count($noficationSessionUpdates);
             $resultData['notifications']['accountUpdates']=count($noficationSessionUpdates);
 
-            $resultData['notifications']['allUnread']=count($notificationAll);
-            $resultData['notifications']['caseUpdatesUnread']=count($noficationCaseUpdates);
-            $resultData['notifications']['docsUpdatesUnread']=count($noficationSessionUpdates);
-            $resultData['notifications']['sessionUpdatesUnread']=count($noficationSessionUpdates);
-            $resultData['notifications']['accountUpdatesUnread']=count($noficationSessionUpdates);
+            $resultData['notifications']['allUnread']=count($notificationAllUnread);
+            $resultData['notifications']['caseUpdatesUnread']=count($noficationCaseUpdatesUnread);
+            $resultData['notifications']['docsUpdatesUnread']=count($noficationDocsUpdatesUnread);
+            $resultData['notifications']['sessionUpdatesUnread']=count($noficationSessionUpdatesUnread);
+            $resultData['notifications']['accountUpdatesUnread']=count($noficationAccountUpdatesUnread);
 
             $result['success'] = true;
             $result['message'] = "Notifications fetched successfully.";
