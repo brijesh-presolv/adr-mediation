@@ -127,6 +127,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::get('/admin/document-updates-notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getDocsNotifications']);
     Route::get('/admin/session-updates-notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getSessionNotifications']);
     Route::get('/admin/account-updates-notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getAccountsNotifications']);
+    Route::get('/admin/notifications-counts', [App\Http\Controllers\API\Admin\DashboardController::class, 'getNotificationsCounts']);
 
     // Profile update api
     Route::get('/admin/show-profile', [App\Http\Controllers\API\Admin\ProfileController::class, 'getProfileData']);
@@ -205,6 +206,7 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::get('/user/document-updates-notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getDocsNotifications']);
     Route::get('/user/session-updates-notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getSessionNotifications']);
     Route::get('/user/account-updates-notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getAccountsNotifications']);
+    Route::get('/user/notifications-counts', [App\Http\Controllers\API\User\DashboardController::class, 'getNotificationsCounts']);
 
     // User track api
     Route::post('/user/case-track', [App\Http\Controllers\API\User\MediationController::class, 'caseTrack']);
@@ -262,6 +264,7 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::get('/mediator/document-updates-notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getDocsNotifications']);
     Route::get('/mediator/session-updates-notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getSessionNotifications']);
     Route::get('/mediator/account-updates-notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getAccountsNotifications']);
+    Route::get('/mediator/notifications-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotificationsCounts']);
 
     // Mediator case details view api
     Route::post('/mediator/view-case-details', [App\Http\Controllers\API\Mediator\DashboardController::class, 'viewCaseDetails']);

@@ -124,10 +124,6 @@ class AdminController extends Controller
 
         $finalArray = array();
 
-        // / echo $today_date;exit;
-         //echo "<pre>";print_r($sessionData);exit;
-       //
-      
         $sn = 1;
         foreach ($sessionData as $key => $value) {
 
@@ -175,33 +171,47 @@ class AdminController extends Controller
                         $zoom_link = "-";
                     }
 
-                   // echo "<pre>";print_r($value);
+                   
 
                    
 
-                    $finalArray[$sn]['caseid'] = $value->case_id;
-                    $finalArray[$sn]['claimant'] = $ip_user;
-                    $finalArray[$sn]['respondant'] = $rp_user;
-                    $finalArray[$sn]['mediator'] = $m_name;
+                    // $finalArray[$sn]['caseid'] = $value->case_id;
+                    // $finalArray[$sn]['claimant'] = $ip_user;
+                    // $finalArray[$sn]['respondant'] = $rp_user;
+                    // $finalArray[$sn]['mediator'] = $m_name;
 
                     $myDate = explode("/", $value->session_date);
                     $finalDate = $myDate[0].'/'.$myDate[1].'/'.$myDate[2];
                     $datee = Carbon::createFromFormat('d/m/Y', $finalDate)->format('d-M-Y');
-                    //echo "<pre>";print_r($date);exit;
-
-                    $finalArray[$sn]['session'] = $datee .' '.$myDate[3];
+                    
+                    //$finalArray[$sn]['session'] = $datee .' '.$myDate[3];
                     
 
                     if($value->zoom_link_choice == "manual"){
-                        $finalArray[$sn]['zoom_id'] = $value->zoom_id;
-                        $finalArray[$sn]['zoom_link'] = "";
+                        $zoom_id = $value->zoom_id;
+                        $zoom_link_final = "";
+                        // $finalArray[$sn]['zoom_id'] = $value->zoom_id;
+                        // $finalArray[$sn]['zoom_link'] = "";
                     } else {
-                        $finalArray[$sn]['zoom_id'] = "";
-                        $finalArray[$sn]['zoom_link'] = $zoom_link;
+                        $zoom_id = "";
+                        $zoom_link_final = $zoom_link;
+                        // $finalArray[$sn]['zoom_id'] = "";
+                        // $finalArray[$sn]['zoom_link'] = $zoom_link;
                     }
+
+
+                    $finalArray[$sn++] = [
+                        'caseid' => $value->case_id,
+                        'claimant' => $ip_user,
+                        'respondant' => $rp_user,
+                        'mediator' => $m_name,
+                        'session' => $datee .' '.$myDate[3],
+                        'zoom_id' => $zoom_id,
+                        'zoom_link' => $zoom_link_final
+                    ];
                 
                    
-                    $sn++;
+                    //$sn++;
                 }
 
                 
