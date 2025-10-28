@@ -380,98 +380,62 @@ class DashboardController extends Controller
         }
     }
 
-    public function viewCaseDetails(Request $request) {
-        //Input
-        $caseid = $request->input('caseid');
+        public function getNotificationsCounts(Request $request)
+    {
+        try{
 
-        $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", DB::raw("CONCAT(users.first_name,' ', users.last_name) as mfullname"))
-            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->where('mediation_case.id', '=', $caseid)
-            ->first();
+            $token = $request->cookie('auth_token');
+            if (!$token) {
 
-        $party_details = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
-            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
-            ->where(['user_involved_in_agreement.userPlanid' => $case->id])->get();
-
-            // Party details //
-        $claimants = array();
-        $respondents = array();
-
-        $ckey = 1;
-        $rkey = 1;
-
-        foreach($party_details as $key => $party) {
-
-            if($party->isClaimant == 0){
-
-                $claimants[$ckey++] = [
-                    "name"=> $party->name,
-                    "email"=> $party->userEmail,
-                    "phone"=> $party->userPhone,
-                    "address"=> $party->address1,
-                    "address2"=> $party->address2,
-                    "city"=> $party->city,
-                    "pincode"=> $party->pincode,
-                    "state"=> $party->state,
-                    "country"=> $party->country,
-                ];
-
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
             }
 
-            
-            
-            if($party->isClaimant != 0){
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
 
-                $respondents[$rkey++] = [
-                    "name"=> $party->name,
-                    "email"=> $party->userEmail,
-                    "phone"=> $party->userPhone,
-                    "address"=> $party->address1,
-                    "address2"=> $party->address2,
-                    "city"=> $party->city,
-                    "pincode"=> $party->pincode,
-                    "state"=> $party->state,
-                    "country"=> $party->country,
-                ];
+            $view = Notification::where('view', 0)->get();
+            foreach ($view as $item) {
+                $item->view = 1;
+                $item->save();
             }
+            $notificationAll = Notification::usernotificationAPI($userId);
+            $noficationCaseUpdates = Notification::mediatornotificationbyctgry($userId, 1);
+            $noficationDocsUpdates = Notification::mediatornotificationbyctgry($userId, 2);
+            $noficationSessionUpdates = Notification::mediatornotificationbyctgry($userId, 3);
+            $noficationAccountUpdates = Notification::mediatornotificationbyctgry($userId, 4);
 
-           
+            $notificationAllUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('isRead', "=", 0)->get();
+            $noficationCaseUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 1)->where('isRead', "=", 0)->get();
+            $noficationDocsUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 2)->where('isRead', "=", 0)->get();
+            $noficationSessionUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 3)->where('isRead', "=", 0)->get();
+            $noficationAccountUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 4)->where('isRead', "=", 0)->get();
+
+            $resultData['notifications']['all']=count($notificationAll);
+            $resultData['notifications']['caseUpdates']=count($noficationCaseUpdates);
+            $resultData['notifications']['docsUpdates']=count($noficationSessionUpdates);
+            $resultData['notifications']['sessionUpdates']=count($noficationSessionUpdates);
+            $resultData['notifications']['accountUpdates']=count($noficationSessionUpdates);
+
+            $resultData['notifications']['allUnread']=count($notificationAll);
+            $resultData['notifications']['caseUpdatesUnread']=count($noficationCaseUpdates);
+            $resultData['notifications']['docsUpdatesUnread']=count($noficationSessionUpdates);
+            $resultData['notifications']['sessionUpdatesUnread']=count($noficationSessionUpdates);
+            $resultData['notifications']['accountUpdatesUnread']=count($noficationSessionUpdates);
+
+            $result['success'] = true;
+            $result['message'] = "Notifications fetched successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+        } catch (Exception $e) {
+            $result['success'] = false;
+            $result['message'] = "Notifications loading failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
         }
-        
-       
-
-        $case->claimants = $claimants;
-        $case->respondents = $respondents;
-        // Party details //
-
-        $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->get();
-
-        $case->appointment = InvitationFiles::where(['case_id' => $case->id])->where('file_name_mediator_appointment', '!=', null)->orderByDesc('id')->limit(1)->first();
-
-        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
-            ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
-            ->where('manage_files.case_id', $case->id)
-            ->get();
-
-        $case->settlement_document = DB::table('document_settlements')->select('document_settlements.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
-            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
-            ->where('document_settlements.mediation_case_id', $case->id)
-            ->get();
-
-        //$case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
-
-        $case->mom = DB::table('session_mom')->select('file_name', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
-            ->join('users', 'users.id', '=', 'session_mom.uploaded_by')
-            ->where('case_id', $case->id)
-            ->get();
-
-
-        $result['success'] = true;
-        $result['message'] = "Case details fetched successfully.";
-        $result['data'] = $case;
-        return response()->json($result, 200);
-
     }
    
 }

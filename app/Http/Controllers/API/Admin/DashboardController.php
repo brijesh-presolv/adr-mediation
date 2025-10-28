@@ -380,4 +380,61 @@ class DashboardController extends Controller
         }
     }
 
+    public function getNotificationsCounts(Request $request)
+    {
+        try{
+
+            $token = $request->cookie('auth_token');
+            if (!$token) {
+
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
+
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+
+            $view = Notification::where('view', 0)->get();
+            foreach ($view as $item) {
+                $item->view = 1;
+                $item->save();
+            }
+            $notificationAll = Notification::notificationData();
+            $noficationCaseUpdates = Notification::notificationDatabyctgry(1);
+            $noficationDocsUpdates = Notification::notificationDatabyctgry(2);
+            $noficationSessionUpdates = Notification::notificationDatabyctgry(3);
+            $noficationAccountUpdates = Notification::notificationDatabyctgry(4);
+
+            $notificationAllUnread = Notification::select('id')->where('isRead', "=", 0)->get();
+            $noficationCaseUpdatesUnread = Notification::select('id')->where('category', "=", 1)->where('isRead', "=", 0)->get();
+            $noficationDocsUpdatesUnread = Notification::select('id')->where('category', "=", 2)->where('isRead', "=", 0)->get();
+            $noficationSessionUpdatesUnread = Notification::select('id')->where('category', "=", 3)->where('isRead', "=", 0)->get();
+            $noficationAccountUpdatesUnread = Notification::select('id')->where('category', "=", 4)->where('isRead', "=", 0)->get();
+
+            $resultData['notifications']['all']=count($notificationAll);
+            $resultData['notifications']['caseUpdates']=count($noficationCaseUpdates);
+            $resultData['notifications']['docsUpdates']=count($noficationSessionUpdates);
+            $resultData['notifications']['sessionUpdates']=count($noficationSessionUpdates);
+            $resultData['notifications']['accountUpdates']=count($noficationSessionUpdates);
+
+            $resultData['notifications']['allUnread']=count($notificationAll);
+            $resultData['notifications']['caseUpdatesUnread']=count($noficationCaseUpdates);
+            $resultData['notifications']['docsUpdatesUnread']=count($noficationSessionUpdates);
+            $resultData['notifications']['sessionUpdatesUnread']=count($noficationSessionUpdates);
+            $resultData['notifications']['accountUpdatesUnread']=count($noficationSessionUpdates);
+
+            $result['success'] = true;
+            $result['message'] = "Notifications fetched successfully.";
+            $result['data'] = $resultData;
+            return response()->json($result, 200);
+        } catch (Exception $e) {
+            $result['success'] = false;
+            $result['message'] = "Notifications loading failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
+    }
+
 }
