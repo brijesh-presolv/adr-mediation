@@ -550,10 +550,9 @@ class DashboardController extends Controller
         ->select('manage_session.*','mediators_mediation_cases_status.mediator_id', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
         ->join('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
         ->where('mediators_mediation_cases_status.mediator_id', $userId)
-        ->orderby('date_format', 'ASC')->take(15)->get();
+        ->orderby('date_format', 'ASC')->get();
 
-        echo $today_date;
-        echo "<pre>";print_R($sessionData);exit;
+        
 
         $dataArray = array();
         $finalArray = array();
@@ -625,7 +624,7 @@ class DashboardController extends Controller
                 }
             }
 
-            $data['cases'] = $finalArray;
+            $data = $finalArray;
        
             $result['success'] = true;
             $result['message'] = "Upcoming sessions are fetched successfully.";
