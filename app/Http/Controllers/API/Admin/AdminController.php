@@ -29,7 +29,7 @@ class AdminController extends Controller
     }
 
 
-    public function allCaseCounts() {
+    public function allCaseCounts(Request $request) {
         try{
             $token = $request->cookie('auth_token');
             if (!$token) {
@@ -82,7 +82,7 @@ class AdminController extends Controller
     }
 
 
-    public function allUserCounts() {
+    public function allUserCounts(Request $request) {
         try{
             $token = $request->cookie('auth_token');
             if (!$token) {
@@ -131,7 +131,7 @@ class AdminController extends Controller
     }
     
 
-    public function getLatestNotifications() {
+    public function getLatestNotifications(Request $request) {
         try{
             $token = $request->cookie('auth_token');
             if (!$token) {
@@ -175,7 +175,7 @@ class AdminController extends Controller
         }
     }
 
-    public function getUpcomingSessions() {
+    public function getUpcomingSessions(Request $request) {
         try{
             $token = $request->cookie('auth_token');
             if (!$token) {
