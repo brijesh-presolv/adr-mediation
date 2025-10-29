@@ -33,7 +33,8 @@ class Notification extends Model {
         'userip',
         'view',
         'view_mediator',
-        'view_user'
+        'view_user',
+        'category'   
     ];
 
     public static function notificationData()

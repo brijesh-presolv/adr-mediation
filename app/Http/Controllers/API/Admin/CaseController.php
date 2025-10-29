@@ -714,7 +714,7 @@ class CaseController extends Controller
                     $inv_id = $inv_id . "," . $v->id;
                 }
             }
-            Common_function::MedNotification($caseid, "REJECTED_ADM", $userid, isset($mediator) ? $mediator->id : null, $inv_id, 1);
+            Common_function::MedNotification($caseid, "REJECTED_ADM", $userid, isset($mediator) ? $mediator->id : null, $inv_id, null, 1);
         
         
             $user = MedCase::find($caseid);
