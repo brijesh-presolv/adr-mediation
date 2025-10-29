@@ -535,20 +535,19 @@ class DashboardController extends Controller
 
     // Dashboard functions : start //
     public function allCaseCounts(Request $request) {
-        // try{
-        //     $token = $request->cookie('auth_token');
-        //     if (!$token) {
+        try{
+            $token = $request->cookie('auth_token');
+            if (!$token) {
 
-        //         $result['success'] = false;
-        //         $result['message'] = 'Unauthorized: Missing token';
-        //         $result['error'] = 'Unauthorized: Missing token';
-        //         return response()->json($result, 401);
-        //     }
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
 
-        //     $JWT_KEY = env('JWT_KEY');
-        //     $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-        //    $userId = $jwtData->data->userid;
-        $userId = 264;
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
 
             $allCasesCount = 0;
             $allCasesCount = Mediators_mediation_cases_status::where('mediator_id', $userId)->count(); 
@@ -578,43 +577,43 @@ class DashboardController extends Controller
             $result['message'] = "All case counts are fetched successfully.";
             $result['data'] = $resultArray;
             return response()->json($result, 200);
-        // } catch (Exception $e) {
+        } catch (Exception $e) {
 
-        //     $result['success'] = false;
-        //     $result['message'] = "Case counts process failed.";
-        //     $result['error'] = $e->getMessage();
-        //     return response()->json($result, 500);
-        // }
+            $result['success'] = false;
+            $result['message'] = "Case counts process failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
     }
 
 
     public function getUpcomingSessions(Request $request) {
-       //try{
-        //     $token = $request->cookie('auth_token');
-        //     if (!$token) {
+       try{
+            $token = $request->cookie('auth_token');
+            if (!$token) {
 
-        //         $result['success'] = false;
-        //         $result['message'] = 'Unauthorized: Missing token';
-        //         $result['error'] = 'Unauthorized: Missing token';
-        //         return response()->json($result, 401);
-        //     }
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
 
-        //     $JWT_KEY = env('JWT_KEY');
-        //     $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-        //    $userId = $jwtData->data->userid; 
-        $userId = 264;
-        $today_date = Carbon::today();
-        $sessionData = DB::table('manage_session')
-        ->select('manage_session.*','mediators_mediation_cases_status.mediator_id', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
-        ->join('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
-        ->where('mediators_mediation_cases_status.mediator_id', $userId)
-        ->orderby('date_format', 'ASC')->get();
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+           $userId = $jwtData->data->userid; 
+        
+            $today_date = Carbon::today();
+            $sessionData = DB::table('manage_session')
+            ->select('manage_session.*','mediators_mediation_cases_status.mediator_id', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
+            ->join('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
+            ->where('mediators_mediation_cases_status.mediator_id', $userId)
+            ->orderby('date_format', 'ASC')->get();
 
         
 
-        $dataArray = array();
-        $finalArray = array();
-        $sn = 1;
+            $dataArray = array();
+            $finalArray = array();
+            $sn = 1;
 
             foreach ($sessionData as $value) {
                 if( $value->date_format > $today_date ){
@@ -693,13 +692,13 @@ class DashboardController extends Controller
 
 
 
-        // } catch (Exception $e) {
+        } catch (Exception $e) {
 
-        //     $result['success'] = false;
-        //     $result['message'] = "Case counts process failed.";
-        //     $result['error'] = $e->getMessage();
-        //     return response()->json($result, 500);
-        // }
+            $result['success'] = false;
+            $result['message'] = "Case counts process failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
     }
     // Dashboard functions : end //
    
