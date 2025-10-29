@@ -37,6 +37,7 @@ use DateTimeZone;
 use Carbon\Carbon;
 use App\Http\Helpers\Zoom;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 
 class CaseController extends Controller 
@@ -2873,12 +2874,13 @@ class CaseController extends Controller
             ->first();
         $data['caseId'] = $caseId;
         $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
+        Log::info('Session Data Count:', ['count' => $data["sessionData"]->count(), 'case_id' => $caseId]);
         if ($data["sessionData"]->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No session data available.',
-                'error'   => 'No session data available.'
-            ], 404);
+
+            $result['success'] = false;
+            $result['message'] = 'No session data available.';
+            $result['error'] = 'No session data available.';
+            return response()->json($result, 404);
         }
         $pdf = PDF::loadView('pdf.view_session', $data);
 
