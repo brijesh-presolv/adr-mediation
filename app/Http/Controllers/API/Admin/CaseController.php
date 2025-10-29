@@ -2874,9 +2874,10 @@ class CaseController extends Controller
         $data['caseId'] = $caseId;
         $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
         $pdf = PDF::loadView('pdf.view_session', $data);
-        return $pdf->download('session_CID' . sprintf('%06d', $caseId) . '.pdf')
+
+        return response($pdf->output(), 200)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="session.pdf"')
+                ->header('Content-Disposition', 'attachment; filename="session_CID'.sprintf('%06d', $caseId).'.pdf"')
                 ->header('Access-Control-Allow-Origin', '*')
                 ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
                 ->header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization');
