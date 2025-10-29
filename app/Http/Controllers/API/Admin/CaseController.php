@@ -2873,12 +2873,12 @@ class CaseController extends Controller
             ->first();
         $data['caseId'] = $caseId;
         $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
-        if(count($data["sessionData"]) == 0){
-
-            $result['success'] = false;
-            $result['message'] = "No session data available.";
-            $result['error'] = "No session data available.";
-            return response()->json($result, 500);
+        if ($data["sessionData"]->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No session data available.',
+                'error'   => 'No session data available.'
+            ], 404);
         }
         $pdf = PDF::loadView('pdf.view_session', $data);
 
