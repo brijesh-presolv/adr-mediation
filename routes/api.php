@@ -225,6 +225,10 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/closed', [App\Http\Controllers\API\Mediator\CaseController::class, 'closed']);
     Route::post('/mediator/cases/rejected', [App\Http\Controllers\API\Mediator\CaseController::class, 'rejected']);
 
+    // Dashboard total counts api : start //
+    Route::get('/mediator/dashboard/get-case-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'allCaseCounts']);
+    // Dashboard total counts api : end //
+
     Route::post('/mediator/cases/upload-files', [App\Http\Controllers\API\Mediator\UploadController::class, 'storeMultiFile']);
     Route::post('/mediator/cases/uploaddocument', [App\Http\Controllers\API\Mediator\UploadController::class, 'documentUpload']);
     Route::post('/mediator/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
@@ -266,6 +270,9 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     // Mediator case details view api
     Route::post('/mediator/view-case-details', [App\Http\Controllers\API\Mediator\DashboardController::class, 'viewCaseDetails']);
 });
+
+
+
 
 
 // User otp api

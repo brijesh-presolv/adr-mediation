@@ -473,5 +473,45 @@ class DashboardController extends Controller
         return response()->json($result, 200);
 
     }
+
+
+    // Dashboard functions : start //
+    public function allCaseCounts(Request $request) {
+        // try{
+        //     $token = $request->cookie('auth_token');
+        //     if (!$token) {
+
+        //         $result['success'] = false;
+        //         $result['message'] = 'Unauthorized: Missing token';
+        //         $result['error'] = 'Unauthorized: Missing token';
+        //         return response()->json($result, 401);
+        //     }
+
+        //     $JWT_KEY = env('JWT_KEY');
+        //     $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+        //    $userId = $jwtData->data->userid;
+        $userId = 264;
+
+            $allCasesCount = 0;
+            $allCasesCount = Mediators_mediation_cases_status::where('mediator_id', $userId)->count(); 
+
+            $allActiveCasesCount = 0;
+            $allActiveCasesCount = 0;
+
+            $resultArray['totalCaseCount'] = $allCasesCount;
+
+            $result['success'] = true;
+            $result['message'] = "All case counts are fetched successfully.";
+            $result['data'] = $resultArray;
+            return response()->json($result, 200);
+        // } catch (Exception $e) {
+
+        //     $result['success'] = false;
+        //     $result['message'] = "Case counts process failed.";
+        //     $result['error'] = $e->getMessage();
+        //     return response()->json($result, 500);
+        // }
+    }
+    // Dashboard functions : end //
    
 }
