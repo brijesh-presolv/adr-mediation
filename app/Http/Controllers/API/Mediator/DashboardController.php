@@ -496,14 +496,146 @@ class DashboardController extends Controller
             $allCasesCount = Mediators_mediation_cases_status::where('mediator_id', $userId)->count(); 
 
             $allActiveCasesCount = 0;
-            $allActiveCasesCount = 0;
+            $allActiveCasesCount = Mediators_mediation_cases_status::where('mediator_id', $userId)->where('status', 1)->count();
+            
+            $successRate = 0;
+            $resolvedCases = Mediators_mediation_cases_status::where('mediator_id', $userId)
+                ->leftJoin("mediation_case", "mediation_case.id", "=", "Mediators_mediation_cases_status.mediation_case_id")
+                    ->whereIn('mediation_case.case_status', [6, 8])->count();
+            $totalCases = Mediators_mediation_cases_status::where('mediator_id', $userId)
+                ->leftJoin("mediation_case", "mediation_case.id", "=", "Mediators_mediation_cases_status.mediation_case_id")
+                ->whereIn('mediation_case.case_status', [5, 6, 7, 8])->count();
+
+            $successRate = ($resolvedCases /$totalCases ) * 100;
+
+            $closedCasesCount = 0;
+            $closedCasesCount = $totalCases;
 
             $resultArray['totalCaseCount'] = $allCasesCount;
+            $resultArray['activeCaseCount'] = $allActiveCasesCount;
+            $resultArray['successRate'] = $successRate;
+            $resultArray['closedCasesCount'] = $closedCasesCount;
 
             $result['success'] = true;
             $result['message'] = "All case counts are fetched successfully.";
             $result['data'] = $resultArray;
             return response()->json($result, 200);
+        // } catch (Exception $e) {
+
+        //     $result['success'] = false;
+        //     $result['message'] = "Case counts process failed.";
+        //     $result['error'] = $e->getMessage();
+        //     return response()->json($result, 500);
+        // }
+    }
+
+
+    public function getUpcomingSessions(Request $request) {
+       //try{
+        //     $token = $request->cookie('auth_token');
+        //     if (!$token) {
+
+        //         $result['success'] = false;
+        //         $result['message'] = 'Unauthorized: Missing token';
+        //         $result['error'] = 'Unauthorized: Missing token';
+        //         return response()->json($result, 401);
+        //     }
+
+        //     $JWT_KEY = env('JWT_KEY');
+        //     $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+        //    $userId = $jwtData->data->userid; 
+        $userId = 264;
+        $today_date = Carbon::today();
+        $sessionData = DB::table('manage_session')
+        ->select('manage_session.*','mediators_mediation_cases_status.mediator_id', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
+        ->join('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
+        ->where('mediators_mediation_cases_status.mediator_id', $userId)
+        ->orderby('date_format', 'ASC')->take(15)->get();
+
+        echo $today_date;
+        echo "<pre>";print_R($sessionData);exit;
+
+        $dataArray = array();
+        $finalArray = array();
+        $sn = 1;
+
+            foreach ($sessionData as $value) {
+                if( $value->date_format > $today_date ){
+                    
+                
+                    if (!is_null($value->session_party_ids)) {
+                        $dataArray = json_decode($value->session_party_ids);
+                    }
+                    $ip_user = array();
+                    $rp_user = array();
+                    $dd_data = InvoledUser::where('userPlanId', $value->case_id)->get();
+                        foreach($dd_data as $dd){
+                            if (isset($dd)) {
+                                if ($dd->name != null) {
+
+                                    if($dd->isClaimant == 0){
+                                        $ip_user[] = $dd->name;
+                                    } else {
+                                        $rp_user[] = $dd->name;
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    
+
+                    $mediator = DB::table('mediators_mediation_cases_status')->select('mediators_mediation_cases_status.mediator_id', 'users.first_name', 'users.last_name')
+                    ->join('users', 'users.id', '=', 'mediators_mediation_cases_status.mediator_id')
+                    ->where('mediators_mediation_cases_status.mediation_case_id', $value->case_id)
+                    ->first();
+
+                    if($mediator){
+                        $m_name = $mediator->first_name .' '.$mediator->last_name;
+                    }else{
+                        $m_name = "-";
+                    }
+        
+                    if(isset($value->zoom_link) && $value->zoom_link != null){
+                        $zoom_link = $value->zoom_link;
+                    } else {
+                        $zoom_link = "-";
+                    }
+
+                    $myDate = explode("/", $value->session_date);
+                    $finalDate = $myDate[0].'/'.$myDate[1].'/'.$myDate[2];
+                    $datee = Carbon::createFromFormat('d/m/Y', $finalDate)->format('d-M-Y');
+
+                    if($value->zoom_link_choice == "manual"){
+                        $zoom_id = $value->zoom_id;
+                        $zoom_link_final = "";
+                    } else {
+                        $zoom_id = "";
+                        $zoom_link_final = $zoom_link;
+                    }
+
+                    $finalArray[$sn++] = [
+                        'caseid' => $value->case_id,
+                        'claimant' => $ip_user,
+                        'respondant' => $rp_user,
+                        'mediator' => $m_name,
+                        'session' => $datee .' '.$myDate[3],
+                        'zoom_id' => $zoom_id,
+                        'zoom_link' => $zoom_link_final
+                    ];
+                }
+            }
+
+            $data['cases'] = $finalArray;
+       
+            $result['success'] = true;
+            $result['message'] = "Upcoming sessions are fetched successfully.";
+            $result['data'] = $data;
+            return response()->json($result, 200);
+
+
+
+
+
         // } catch (Exception $e) {
 
         //     $result['success'] = false;

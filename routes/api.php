@@ -226,7 +226,8 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/rejected', [App\Http\Controllers\API\Mediator\CaseController::class, 'rejected']);
 
     // Dashboard total counts api : start //
-    Route::get('/mediator/dashboard/get-case-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'allCaseCounts']);
+    //Route::post('/mediator/dashboard/get-case-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'allCaseCounts']);
+    //Route::post('/mediator/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getUpcomingSessions']);
     // Dashboard total counts api : end //
 
     Route::post('/mediator/cases/upload-files', [App\Http\Controllers\API\Mediator\UploadController::class, 'storeMultiFile']);
@@ -273,8 +274,8 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
 
 
-
-
+Route::post('/mediator/dashboard/get-case-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'allCaseCounts']);
+Route::post('/mediator/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getUpcomingSessions']);
 // User otp api
 Route::post('/otp-verify', [App\Http\Controllers\API\UserController::class, 'otpVerify']);
 
