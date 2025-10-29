@@ -2876,11 +2876,8 @@ class CaseController extends Controller
         $pdf = PDF::loadView('pdf.view_session', $data);
 
         return response($pdf->output(), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="session_CID'.sprintf('%06d', $caseId).'.pdf"')
-                ->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-                ->header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization');
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="session_CID'.sprintf('%06d', $caseId).'.pdf"');
 
     }
 
