@@ -96,7 +96,7 @@ $ldate = $lastdate->format('d-m-Y');
 
     <h2 class="text-center">Session Scheduling Details</h2>
 
-    <h4 class="text-center">Case Id : M{{sprintf('%06d', $caseId)}}</h4>
+    <h4 class="text-center">Case Id : CID{{sprintf('%06d', $caseId)}}</h4>
     <?php 
     use App\Models\User;
      $inparty = User::find($party[0]->userId); ?>
