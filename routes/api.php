@@ -122,11 +122,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/cases/close-case', [App\Http\Controllers\API\Admin\CaseController::class, 'closeCaseStatus']);
 
     // Get notifications api
-    Route::get('/admin/notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getNotifications']);
-    Route::get('/admin/case-updates-notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getCaseNotifications']);
-    Route::get('/admin/document-updates-notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getDocsNotifications']);
-    Route::get('/admin/session-updates-notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getSessionNotifications']);
-    Route::get('/admin/account-updates-notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getAccountsNotifications']);
+    Route::post('/admin/notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getNotifications']);
     Route::get('/admin/notifications-counts', [App\Http\Controllers\API\Admin\DashboardController::class, 'getNotificationsCounts']);
 
     // Profile update api
@@ -207,11 +203,7 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::post('/user/new-case', [App\Http\Controllers\API\User\MediationController::class, 'newCase']);
 
     // User notification api
-    Route::get('/user/notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getNotifications']);
-    Route::get('/user/case-updates-notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getCaseNotifications']);
-    Route::get('/user/document-updates-notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getDocsNotifications']);
-    Route::get('/user/session-updates-notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getSessionNotifications']);
-    Route::get('/user/account-updates-notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getAccountsNotifications']);
+    Route::post('/user/notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getNotifications']);
     Route::get('/user/notifications-counts', [App\Http\Controllers\API\User\DashboardController::class, 'getNotificationsCounts']);
 
     // User track api
@@ -272,11 +264,7 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::get('/mediator/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 
     // Mediator notification api
-    Route::get('/mediator/notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotifications']);
-    Route::get('/mediator/case-updates-notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getCaseNotifications']);
-    Route::get('/mediator/document-updates-notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getDocsNotifications']);
-    Route::get('/mediator/session-updates-notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getSessionNotifications']);
-    Route::get('/mediator/account-updates-notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getAccountsNotifications']);
+    Route::post('/mediator/notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotifications']);
     Route::get('/mediator/notifications-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotificationsCounts']);
 
     // Mediator case details view api
