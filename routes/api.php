@@ -188,8 +188,8 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::post('/user/cases/uploaddocument', [App\Http\Controllers\API\User\UploadController::class, 'documentUpload']);
 
     // Dashboard api : start //
-    Route::post('/user/dashboard/get-case-counts', [App\Http\Controllers\API\User\DashboardController::class, 'allCaseCounts']);
-    //Route::post('/user/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\User\DashboardController::class, 'getUpcomingSessions']);
+    Route::get('/user/dashboard/get-case-counts', [App\Http\Controllers\API\User\DashboardController::class, 'allCaseCounts']);
+    Route::get('/user/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\User\DashboardController::class, 'getUpcomingSessions']);
     // Dashboard api : end //
 
     Route::post('/user/cases/meeting-sessions', [App\Http\Controllers\API\User\CaseController::class, 'getMeetingSession']);
@@ -226,7 +226,7 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::get('/user/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
-//Route::post('/user/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\User\DashboardController::class, 'getUpcomingSessions']);
+
 
 Route::middleware(['apiauth', 'apimediator'])->group(function () {
 

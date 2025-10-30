@@ -490,36 +490,32 @@ class DashboardController extends Controller
 
 
     public function getUpcomingSessions(Request $request) {
+        try{
+            $token = $request->cookie('auth_token');
+            if (!$token) {
 
-        // try{
-        //     $token = $request->cookie('auth_token');
-        //     if (!$token) {
+                $result['success'] = false;
+                $result['message'] = 'Unauthorized: Missing token';
+                $result['error'] = 'Unauthorized: Missing token';
+                return response()->json($result, 401);
+            }
 
-        //         $result['success'] = false;
-        //         $result['message'] = 'Unauthorized: Missing token';
-        //         $result['error'] = 'Unauthorized: Missing token';
-        //         return response()->json($result, 401);
-        //     }
-
-        //     $JWT_KEY = env('JWT_KEY');
-        //     $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-        //     $userId = $jwtData->data->userid;
-
-            $userId = 50;
+            $JWT_KEY = env('JWT_KEY');
+            $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
+            $userId = $jwtData->data->userid;
 
             $today_date = Carbon::today();
             $sessionData = DB::table('manage_session')
             ->select('manage_session.*', 'user_involved_in_agreement.userPlanId', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
             ->join('user_involved_in_agreement', 'user_involved_in_agreement.userPlanId', '=', 'manage_session.case_id')
             ->where('user_involved_in_agreement.userId', $userId)
-            ->groupBy('user_involved_in_agreement.userPlanId')
-            ->orderBy('date_format', 'ASC')->get();
+            
+            ->orderBy('date_format', 'ASC')->distinct()->get();
 
             $dataArray = array();
             $finalArray = array();
             $sn = 1;
 
-            echo "<pre>";print_R($sessionData);exit;
 
             foreach ($sessionData as $value) {
                 if( $value->date_format > $today_date ){
@@ -594,13 +590,13 @@ class DashboardController extends Controller
             $result['data'] = $data;
             return response()->json($result, 200);
 
-        // } catch (Exception $e) {
+        } catch (Exception $e) {
 
-        //     $result['success'] = false;
-        //     $result['message'] = "Upcoming session fetching failed.";
-        //     $result['error'] = $e->getMessage();
-        //     return response()->json($result, 500);
-        // }
+            $result['success'] = false;
+            $result['message'] = "Upcoming session fetching failed.";
+            $result['error'] = $e->getMessage();
+            return response()->json($result, 500);
+        }
 
     }
     // Dashboard functions //
