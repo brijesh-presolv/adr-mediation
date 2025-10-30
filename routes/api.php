@@ -187,6 +187,11 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::post('/user/cases/rejected', [App\Http\Controllers\API\User\CaseController::class, 'rejected']);
     Route::post('/user/cases/uploaddocument', [App\Http\Controllers\API\User\UploadController::class, 'documentUpload']);
 
+    // Dashboard api : start //
+    Route::get('/user/dashboard/get-case-counts', [App\Http\Controllers\API\User\DashboardController::class, 'allCaseCounts']);
+    Route::get('/user/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\User\DashboardController::class, 'getUpcomingSessions']);
+    // Dashboard api : end //
+
     Route::post('/user/cases/meeting-sessions', [App\Http\Controllers\API\User\CaseController::class, 'getMeetingSession']);
     Route::post('/user/cases/download-session-details', [App\Http\Controllers\API\User\CaseController::class, 'sessionPdf']);
     Route::post('user/download-document', [App\Http\Controllers\API\DownloadDocument::class, 'downloadSecure']);
@@ -221,6 +226,8 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::get('/user/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
+
+
 Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
     Route::post('/mediator/cases/newreq', [App\Http\Controllers\API\Mediator\CaseController::class, 'newreq']);
@@ -228,10 +235,10 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/closed', [App\Http\Controllers\API\Mediator\CaseController::class, 'closed']);
     Route::post('/mediator/cases/rejected', [App\Http\Controllers\API\Mediator\CaseController::class, 'rejected']);
 
-    // Dashboard total counts api : start //
-    Route::post('/mediator/dashboard/get-case-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'allCaseCounts']);
-    Route::post('/mediator/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getUpcomingSessions']);
-    // Dashboard total counts api : end //
+    // Dashboard api : start //
+    Route::get('/mediator/dashboard/get-case-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'allCaseCounts']);
+    Route::get('/mediator/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getUpcomingSessions']);
+    // Dashboard api : end //
 
     Route::post('/mediator/cases/upload-files', [App\Http\Controllers\API\Mediator\UploadController::class, 'storeMultiFile']);
     Route::post('/mediator/cases/uploaddocument', [App\Http\Controllers\API\Mediator\UploadController::class, 'documentUpload']);

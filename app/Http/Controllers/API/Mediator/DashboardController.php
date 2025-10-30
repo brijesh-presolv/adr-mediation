@@ -695,7 +695,7 @@ class DashboardController extends Controller
         } catch (Exception $e) {
 
             $result['success'] = false;
-            $result['message'] = "Case counts process failed.";
+            $result['message'] = "Upcoming session fetching failed.";
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
