@@ -267,7 +267,7 @@ class MediationController extends Controller
                     $inv_id = $inv_id . "," . $v->id;
                 }
             }
-            Common_function::MedNotification($med->id, "SUBMIT_FORM", $userId, null, $inv_id, null, 1);
+            Common_function::MedNotification($med->id, "SUBMIT_FORM", $userId, null, $inv_id, null, 1, "success");
 
             $e = Email::send($d, $usr->email, env('EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
 
@@ -462,7 +462,7 @@ class MediationController extends Controller
                     }
                 }
 
-                Common_function::MedNotification($InvoledUser->userPlanId, "ONBOAR_USER", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 1);
+                Common_function::MedNotification($InvoledUser->userPlanId, "ONBOAR_USER", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 1, "success");
 
                 //fetch init parry
                 $mid = "M" . sprintf("%06d", $InvoledUser->userPlanId);

@@ -34,7 +34,8 @@ class Notification extends Model {
         'view',
         'view_mediator',
         'view_user',
-        'category'   
+        'category',
+        'action_type'
     ];
 
     public static function notificationData()
