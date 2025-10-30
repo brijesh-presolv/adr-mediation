@@ -92,6 +92,7 @@ class DashboardController extends Controller
                     $data[$key]['view_user'] = $values->view_user;
                     $data[$key]['category'] = $values->category;
                     $data[$key]['isRead'] = $values->isRead;
+                    $data[$key]['action_type'] = $values->action_type;
                     $data[$key]['ititle'] = $values->ititle;
                     $data[$key]['idescription'] = $values->idescription;
                     $data[$key]['casedata'] =  $casedata;

@@ -82,9 +82,9 @@ class UploadController extends Controller
 
             if ($request->shareMediator == 1) {
 
-                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 2);
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_MED", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 2, "document");
             } else {
-                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_ADMIN", $userId, null, $inv_id, null, 2);
+                Common_function::MedNotification($request->caseId, "SEND_ADDI_DOC_MED", $userId, null, $inv_id, null, 2, "document");
             }
 
             $uploadedFiles = [];
