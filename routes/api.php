@@ -226,7 +226,7 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::get('/user/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
-
+//Route::post('/user/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\User\DashboardController::class, 'getUpcomingSessions']);
 
 Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
@@ -236,8 +236,8 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::post('/mediator/cases/rejected', [App\Http\Controllers\API\Mediator\CaseController::class, 'rejected']);
 
     // Dashboard api : start //
-    Route::post('/mediator/dashboard/get-case-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'allCaseCounts']);
-    Route::post('/mediator/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getUpcomingSessions']);
+    Route::get('/mediator/dashboard/get-case-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'allCaseCounts']);
+    Route::get('/mediator/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getUpcomingSessions']);
     // Dashboard api : end //
 
     Route::post('/mediator/cases/upload-files', [App\Http\Controllers\API\Mediator\UploadController::class, 'storeMultiFile']);

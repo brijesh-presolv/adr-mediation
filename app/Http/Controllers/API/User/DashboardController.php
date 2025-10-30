@@ -509,13 +509,11 @@ class DashboardController extends Controller
 
             $today_date = Carbon::today();
             $sessionData = DB::table('manage_session')
-            ->select('manage_session.*', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
-            
-            ->leftjoin('user_involved_in_agreement', 'user_involved_in_agreement.userPlanId', '=', 'manage_session.case_id')
+            ->select('manage_session.*', 'user_involved_in_agreement.userPlanId', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
+            ->join('user_involved_in_agreement', 'user_involved_in_agreement.userPlanId', '=', 'manage_session.case_id')
             ->where('user_involved_in_agreement.userId', $userId)
-            ->orderby('date_format', 'ASC')->get();
-
-            $sessionData->groupBy('manage_session.case_id');
+            ->groupBy('user_involved_in_agreement.userPlanId')
+            ->orderBy('date_format', 'ASC')->get();
 
             $dataArray = array();
             $finalArray = array();
