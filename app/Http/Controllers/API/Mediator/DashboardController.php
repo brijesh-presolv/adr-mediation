@@ -22,6 +22,8 @@ use App\Models\BulkLog;
 use App\Models\Mediators_mediation_cases_status;
 use App\Models\Notification;
 use App\Models\WaTemplate;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use DB;
 use Illuminate\Support\Facades\File;
 use PDF;
