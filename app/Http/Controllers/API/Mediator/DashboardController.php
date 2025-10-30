@@ -277,6 +277,8 @@ class DashboardController extends Controller
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
 
+        
+
             $allCasesCount = 0;
             $allCasesCount = Mediators_mediation_cases_status::where('mediator_id', $userId)->count(); 
 
@@ -285,13 +287,13 @@ class DashboardController extends Controller
             
             $successRate = 0;
             $resolvedCases = Mediators_mediation_cases_status::where('mediator_id', $userId)
-                ->leftJoin("mediation_case", "mediation_case.id", "=", "Mediators_mediation_cases_status.mediation_case_id")
+                ->leftJoin("mediation_case", "mediation_case.id", "=", "mediators_mediation_cases_status.mediation_case_id")
                     ->whereIn('mediation_case.case_status', [6, 8])->count();
             $totalCases = Mediators_mediation_cases_status::where('mediator_id', $userId)
-                ->leftJoin("mediation_case", "mediation_case.id", "=", "Mediators_mediation_cases_status.mediation_case_id")
-                ->whereIn('mediation_case.case_status', [5, 6, 7, 8])->count();
+                ->leftJoin("mediation_case", "mediation_case.id", "=", "mediators_mediation_cases_status.mediation_case_id")
+                ->whereIn('mediation_case.case_status', [5,6,7,8])->count();
 
-            $successRate = ($resolvedCases /$totalCases ) * 100;
+            $successRate = ($resolvedCases / $totalCases ) * 100;
 
             $closedCasesCount = 0;
             $closedCasesCount = $totalCases;
