@@ -187,13 +187,13 @@ public $successStatus = 200;
                     }
                 }
 
-                Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id);
+                Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id, 4, "account");
 
                 $email = SendGrid::directEmailSend($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
 
             } else if ($user->role == '1') {
 
-                Common_function::MedNotification(null, "MED_REGI", null, null, null, $user->id);
+                Common_function::MedNotification(null, "MED_REGI", null, null, null, $user->id, 4, "account");
 
                 $email = SendGrid::directEmailSend($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
             }
