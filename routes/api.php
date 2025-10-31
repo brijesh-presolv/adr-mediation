@@ -122,7 +122,9 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
     Route::post('/admin/cases/close-case', [App\Http\Controllers\API\Admin\CaseController::class, 'closeCaseStatus']);
 
     // Get notifications api
-    Route::get('/admin/notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getNotifications']);
+    Route::post('/admin/notifications', [App\Http\Controllers\API\Admin\DashboardController::class, 'getNotifications']);
+    Route::get('/admin/notifications-statistics', [App\Http\Controllers\API\Admin\DashboardController::class, 'getNotificationsCounts']);
+    Route::Post('/admin/notification-mark-read', [App\Http\Controllers\API\Admin\DashboardController::class, 'notificatioMarkread']);
 
     // Profile update api
     Route::get('/admin/show-profile', [App\Http\Controllers\API\Admin\ProfileController::class, 'getProfileData']);
@@ -172,6 +174,7 @@ Route::middleware(['apiauth', 'apiadmin'])->group(function () {
 });
 
 
+
  // User API Routes
 Route::middleware(['apiauth', 'apiuser'])->group(function () {
 
@@ -180,6 +183,11 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::post('/user/cases/closed', [App\Http\Controllers\API\User\CaseController::class, 'closed']);
     Route::post('/user/cases/rejected', [App\Http\Controllers\API\User\CaseController::class, 'rejected']);
     Route::post('/user/cases/uploaddocument', [App\Http\Controllers\API\User\UploadController::class, 'documentUpload']);
+
+    // Dashboard api : start //
+    Route::get('/user/dashboard/get-case-counts', [App\Http\Controllers\API\User\DashboardController::class, 'allCaseCounts']);
+    Route::get('/user/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\User\DashboardController::class, 'getUpcomingSessions']);
+    // Dashboard api : end //
 
     Route::post('/user/cases/meeting-sessions', [App\Http\Controllers\API\User\CaseController::class, 'getMeetingSession']);
     Route::post('/user/cases/download-session-details', [App\Http\Controllers\API\User\CaseController::class, 'sessionPdf']);
@@ -196,7 +204,9 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::post('/user/new-case', [App\Http\Controllers\API\User\MediationController::class, 'newCase']);
 
     // User notification api
-    Route::get('/user/notifications', [App\Http\Controllers\API\User\MediationController::class, 'getNotifications']);
+    Route::post('/user/notifications', [App\Http\Controllers\API\User\DashboardController::class, 'getNotifications']);
+    Route::get('/user/notifications-statistics', [App\Http\Controllers\API\User\DashboardController::class, 'getNotificationsCounts']);
+    Route::Post('/user/notification-mark-read', [App\Http\Controllers\API\User\DashboardController::class, 'notificatioMarkread']);
 
     // User track api
     Route::post('/user/case-track', [App\Http\Controllers\API\User\MediationController::class, 'caseTrack']);
@@ -210,12 +220,19 @@ Route::middleware(['apiauth', 'apiuser'])->group(function () {
     Route::get('/user/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 });
 
+
+
 Route::middleware(['apiauth', 'apimediator'])->group(function () {
 
     Route::post('/mediator/cases/newreq', [App\Http\Controllers\API\Mediator\CaseController::class, 'newreq']);
     Route::post('/mediator/cases/ongoing', [App\Http\Controllers\API\Mediator\CaseController::class, 'ongoing']);
     Route::post('/mediator/cases/closed', [App\Http\Controllers\API\Mediator\CaseController::class, 'closed']);
     Route::post('/mediator/cases/rejected', [App\Http\Controllers\API\Mediator\CaseController::class, 'rejected']);
+
+    // Dashboard api : start //
+    Route::get('/mediator/dashboard/get-case-counts', [App\Http\Controllers\API\Mediator\DashboardController::class, 'allCaseCounts']);
+    Route::get('/mediator/dashboard/get-upcoming-sessions', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getUpcomingSessions']);
+    // Dashboard api : end //
 
     Route::post('/mediator/cases/upload-files', [App\Http\Controllers\API\Mediator\UploadController::class, 'storeMultiFile']);
     Route::post('/mediator/cases/uploaddocument', [App\Http\Controllers\API\Mediator\UploadController::class, 'documentUpload']);
@@ -249,12 +266,13 @@ Route::middleware(['apiauth', 'apimediator'])->group(function () {
     Route::get('/mediator/fetch-languages', [App\Http\Controllers\API\HomeController::class, 'getLanguages']);
 
     // Mediator notification api
-    Route::get('/mediator/notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotifications']);
+    Route::post('/mediator/notifications', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotifications']);
+    Route::get('/mediator/notifications-statistics', [App\Http\Controllers\API\Mediator\DashboardController::class, 'getNotificationsCounts']);
+    Route::Post('/mediator/notification-mark-read', [App\Http\Controllers\API\Mediator\DashboardController::class, 'notificatioMarkread']);
 
     // Mediator case details view api
     Route::post('/mediator/view-case-details', [App\Http\Controllers\API\Mediator\DashboardController::class, 'viewCaseDetails']);
 });
-
 
 // User otp api
 Route::post('/otp-verify', [App\Http\Controllers\API\UserController::class, 'otpVerify']);

@@ -33,7 +33,9 @@ class Notification extends Model {
         'userip',
         'view',
         'view_mediator',
-        'view_user'
+        'view_user',
+        'category',
+        'action_type'
     ];
 
     public static function notificationData()
@@ -87,6 +89,68 @@ class Notification extends Model {
                     ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
                     ->leftJoin('users', DB::raw('users.id'), '=', DB::raw('mednotification.reg_id'))
                     ->orderBy('mednotification.id', 'DESC')->limit(5)->get();
+
+        return $result;
+    }
+
+    public static function notificationDatabyctgry($category)
+    {
+
+         $query = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription' ,'users.email')
+                    ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->leftJoin('users', DB::raw('users.id'), '=', DB::raw('mednotification.reg_id'));
+
+                    if (!empty($category)) {
+                        $query->where('mednotification.category', $category);
+                    }
+                    $result = $query->orderBy('mednotification.id', 'DESC')
+                                    ->take(2000)
+                                    ->get();
+        return $result;
+    }
+    public static function mediatornotificationbyctgry($userId, $category)
+    {
+
+         $query = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
+                    ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->where('mednotification.mediator_id', $userId);
+
+                    if (!empty($category)) {
+                        $query->where('mednotification.category', $category);
+                    }
+                    $result = $query->orderBy('mednotification.id', 'DESC')
+                                    ->take(2000)
+                                    ->get();
+
+        return $result;
+    }
+
+    public static function usernotificationAPI($userId)
+    {
+
+         $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
+                    ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->whereRaw("FIND_IN_SET(?, mednotification.user_id)", [$userId])
+                    ->where('view_user', "!=", 2)
+                    ->orderBy('mednotification.id', 'DESC')->get();
+
+        return $result;
+    }
+
+    public static function usernotificationbyctgry($userId, $category)
+    {
+
+         $query = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
+                    ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->whereRaw("FIND_IN_SET(?, mednotification.user_id)", [$userId])
+                    ->where('view_user', "!=", 2);
+
+                    if (!empty($category)) {
+                        $query->where('mednotification.category', $category);
+                    }
+                    $result = $query->orderBy('mednotification.id', 'DESC')
+                                    ->take(2000)
+                                    ->get();
 
         return $result;
     }

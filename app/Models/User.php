@@ -178,13 +178,18 @@ class User extends Authenticatable
                     ->where('status', 1)
                     ->where('is_deleted', 0);
 
+                if (!empty($category)) {
+                    $query->where(function ($q) use ($category) {
+                        $q->where("mediation_details.no_of_arbitrations", "like", "%{$category}%");
+                    });
+                }
+
                 if (!empty($search)) {
 
                     $query->where(function ($q) use ($search) {
                         $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
-                        ->orWhere("mobile_number", "like", "%{$search}%")
-                        ->orWhere("mediation_details.no_of_arbitrations", "like", "%{$category}%");
+                        ->orWhere("mobile_number", "like", "%{$search}%");
                     });
                 }
 
@@ -215,13 +220,17 @@ class User extends Authenticatable
                     ->where('status', 0)
                     ->where('is_deleted', 0);
 
+                if (!empty($category)) {
+                    $query->where(function ($q) use ($category) {
+                        $q->where("mediation_details.no_of_arbitrations", "like", "%{$category}%");
+                    });
+                }
                 if (!empty($search)) {
 
                     $query->where(function ($q) use ($search) {
                         $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
-                        ->orWhere("mobile_number", "like", "%{$search}%")
-                        ->orWhere("mediation_details.no_of_arbitrations", "like", "%{$category}%");
+                        ->orWhere("mobile_number", "like", "%{$search}%");
                     });
                 }
 
@@ -251,13 +260,17 @@ class User extends Authenticatable
         ->where("role", "=", $role)
                     ->where('is_deleted', 1);
 
+                if (!empty($category)) {
+                    $query->where(function ($q) use ($category) {
+                        $q->where("mediation_details.no_of_arbitrations", "like", "%{$category}%");
+                    });
+                }
                 if (!empty($search)) {
 
                     $query->where(function ($q) use ($search) {
                         $q->where(DB::raw('concat(first_name," ",last_name)'), 'LIKE', "%{$search}%")
                         ->orWhere("email", "like", "%{$search}%")
-                        ->orWhere("mobile_number", "like", "%{$search}%")
-                        ->orWhere("mediation_details.no_of_arbitrations", "like", "%{$category}%");
+                        ->orWhere("mobile_number", "like", "%{$search}%");
                     });
                 }
 

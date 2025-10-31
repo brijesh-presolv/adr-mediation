@@ -245,6 +245,7 @@ class Zoom
         /*************************************/
         $Zoom_Account_User=env('Zoom_Account_User');
         $Zoom_mail=env('Zoom_mail');
+        $zoom_timezone=env('ZOOM_TIMEZONE');
 
         $curl = curl_init();
         $c_url = env('ZOOM_API_URL').'meetings/'.$zoom_id;

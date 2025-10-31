@@ -1958,4 +1958,168 @@ class MedCase extends Model
         return $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
     }
 
+
+    static function getTotalCases($userId)
+    {
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
+            ->select(
+                "mediation_case.id",
+                "mediation_case.confirm_status",
+                "mediation_case.case_status",
+                "users.first_name",
+                "users.last_name",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                'mediators_mediation_cases_status.created_at as admin_approved_date',
+                "mediators_mediation_cases_status.mediator_id as mediator_id",
+                "mediators_mediation_cases_status.status as mediator_status",
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
+            )
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
+            })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->where("mediation_case.bulk_flag", 0);
+
+            $query->where(function($query) use ($userId) {
+                $query->where('user_involved_in_agreement.userId', $userId);
+            });
+        return $query->count();
+    }
+
+     static function getOngoingCasesCount($userId)
+    {
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
+            ->select(
+                "mediation_case.id",
+                "mediation_case.confirm_status",
+                "mediation_case.case_status",
+                "mediation_case.bulk_flag",
+                "mediation_case.created_at",
+                "users.first_name",
+                "users.last_name",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                'mediators_mediation_cases_status.created_at as admin_approved_date',
+                "mediators_mediation_cases_status.mediator_id as mediator_id",
+                "mediators_mediation_cases_status.status as mediator_status",
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
+            )
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
+            })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->where("mediation_case.confirm_status", 1)
+            ->where("mediation_case.bulk_flag", 0);
+
+            $query->where(function($query) use ($userId) {
+                $query->where('user_involved_in_agreement.userId', $userId);
+            });
+
+
+        return $query->count();
+    }
+
+
+    static function getPendingCasesCount($userId)
+    {
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
+            ->select(
+                "mediation_case.id",
+                "mediation_case.batch_id",
+                "mediation_case.ref_id",
+                "mediation_case.confirm_status",
+                "mediation_case.case_status",
+                "mediation_case.bulk_flag",
+                "mediation_case.created_at",
+                "users.first_name",
+                "users.last_name",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                'mediators_mediation_cases_status.created_at as admin_approved_date',
+                "mediators_mediation_cases_status.mediator_id as mediator_id",
+                "mediators_mediation_cases_status.status as mediator_status",
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
+            )
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
+            })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->where("mediation_case.confirm_status", 0)
+            ->where("mediation_case.bulk_flag", 0);
+
+            $query->where(function($query) use ($userId) {
+                $query->where('user_involved_in_agreement.userId', $userId);
+            });
+        return $query->count();
+    }
+
+
+    static function getClosedCasesCount($userId)
+    {
+        $latestStatus = DB::table("mediators_mediation_cases_status as mmcs1")
+            ->select("mmcs1.mediation_case_id", DB::raw("MAX(mmcs1.id) as latest_id"))
+            ->groupBy("mmcs1.mediation_case_id");
+
+        $query = MedCase::with(['claimants:id,userPlanId,name,userEmail,isOnboarded', 'respondents:id,userPlanId,name,userEmail,isOnboarded'])
+            ->select(
+                "mediation_case.id",
+                "mediation_case.batch_id",
+                "mediation_case.ref_id",
+                "mediation_case.confirm_status",
+                "mediation_case.case_status",
+                "mediation_case.bulk_flag",
+                "mediation_case.created_at",
+                "users.first_name",
+                "users.last_name",
+                DB::raw("CONCAT(users.first_name,' ',users.last_name) as mediator_name"),
+                'mediators_mediation_cases_status.created_at as admin_approved_date',
+                "mediators_mediation_cases_status.mediator_id as mediator_id",
+                "mediators_mediation_cases_status.status as mediator_status",
+                "consent_disclosures.created_at as disclosures_created_at",
+                "batch.batch_name"
+            )
+            ->leftJoinSub($latestStatus, "latest_status", function ($join) {
+                $join->on("latest_status.mediation_case_id", "=", "mediation_case.id");
+            })
+            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.id", "=", "latest_status.latest_id")
+            ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
+            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
+            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            ->where("mediation_case.confirm_status", 2)
+            ->where("mediation_case.bulk_flag", 0);
+
+            $query->where(function($query) use ($userId) {
+                $query->where('user_involved_in_agreement.userId', $userId);
+            });
+
+
+            return $query->count();
+    }
+
 }

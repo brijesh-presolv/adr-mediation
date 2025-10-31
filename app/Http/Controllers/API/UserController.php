@@ -44,7 +44,7 @@ public $successStatus = 200;
      * @return \Illuminate\Http\Response 
      */ 
     public function login(Request $request){ 
-        //if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+
         if(Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])){ 
             $user = Auth::user(); 
 
@@ -86,7 +86,6 @@ public $successStatus = 200;
             $result['message'] = "User has logged in successfully.";
             $result['data'] = $data;
             $result['token'] = Token::createToken($data); 
-            //$result['expiry_token'] = 86400;
 
             return response()->json($result, $this->successStatus)
                                 ->cookie(
@@ -104,8 +103,8 @@ public $successStatus = 200;
         else{ 
 
             $result['success'] = false;
-            $result['message'] = "Unauthorized request.";
-            $result['error'] = "Unauthorized";
+            $result['message'] = "Email or password is incorrect.";
+            $result['error'] = "Authentication failed";
             return response()->json($result, 401);
         } 
     }
@@ -188,13 +187,13 @@ public $successStatus = 200;
                     }
                 }
 
-                Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id);
+                Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id, 4, "account");
 
                 $email = SendGrid::directEmailSend($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
 
             } else if ($user->role == '1') {
 
-                Common_function::MedNotification(null, "MED_REGI", null, null, null, $user->id);
+                Common_function::MedNotification(null, "MED_REGI", null, null, null, $user->id, 4, "account");
 
                 $email = SendGrid::directEmailSend($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
             }

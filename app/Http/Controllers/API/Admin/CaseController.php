@@ -37,6 +37,7 @@ use DateTimeZone;
 use Carbon\Carbon;
 use App\Http\Helpers\Zoom;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 
 class CaseController extends Controller 
@@ -713,7 +714,7 @@ class CaseController extends Controller
                     $inv_id = $inv_id . "," . $v->id;
                 }
             }
-            Common_function::MedNotification($caseid, "REJECTED_ADM", $userid, isset($mediator) ? $mediator->id : null, $inv_id, 1);
+            Common_function::MedNotification($caseid, "REJECTED_ADM", $userid, isset($mediator) ? $mediator->id : null, $inv_id, null, 1, "failure");
         
         
             $user = MedCase::find($caseid);
@@ -898,7 +899,7 @@ class CaseController extends Controller
                         ->where("mediators_mediation_cases_status.mediation_case_id", "=", $caseId)
                         ->where("mediators_mediation_cases_status.status", "=", 1)
                         ->first();
-                    Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 3);
+                    Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 3, "session");
 
                     if ($mediatorNoti) {
 
@@ -946,7 +947,7 @@ class CaseController extends Controller
                     }
                 }
 
-                Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 3);
+                Common_function::MedNotification($caseId, "SESS_SCHE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 3, "session");
               
                 $allParty = InvoledUser::where("userPlanId", $caseId)->get();
                 $party_ids = array();
@@ -2352,7 +2353,7 @@ class CaseController extends Controller
                         $inv_id = $inv_id . "," . $v->id;
                     }
                 }
-                Common_function::MedNotification($caseId, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 2);
+                Common_function::MedNotification($caseId, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 2, "document");
 
                 $this->send_settlement_agreement_party($caseId, $insert);
 
@@ -2508,19 +2509,19 @@ class CaseController extends Controller
 
                 if (Mediation_status_log::STATUS_WITHDRAWN == $status) {
                     
-                        Common_function::MedNotification($caseid, "WDRN_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null, null, 1);
+                        Common_function::MedNotification($caseid, "WDRN_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null, null, 1, "failure");
                     
                 } else if (Mediation_status_log::STATUS_RESOLVED == $status) {
                     
-                        Common_function::MedNotification($caseid, "RES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null, null, 1);
+                        Common_function::MedNotification($caseid, "RES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null, null, 1, "success");
                     
                 } else if (Mediation_status_log::STATUS_UNRESOLVED == $status) {
                     
-                        Common_function::MedNotification($caseid, "UNRES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null, null, 1);
+                        Common_function::MedNotification($caseid, "UNRES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null, null, 1, "failure");
                     
                 } else if (Mediation_status_log::STATUS_PARTIALLY_RESOLVED == $status) {
                     
-                        Common_function::MedNotification($caseid, "PAR_RES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null, null, 1);
+                        Common_function::MedNotification($caseid, "PAR_RES_BY_ADMIN", $userId, isset($mediator) ? $mediator->id : null, null, null, 1, "success");
                     
                 }
 
@@ -2565,7 +2566,7 @@ class CaseController extends Controller
                                 $inv_id = $inv_id . "," . $v->id;
                             }
                         }
-                        Common_function::MedNotification($caseid, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 1);
+                        Common_function::MedNotification($caseid, "SEND_SETT_AGRE_ADMIN", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 1, "document");
 
                         $this->send_settlement_agreement_party($caseid, $insert);
 
@@ -2873,8 +2874,19 @@ class CaseController extends Controller
             ->first();
         $data['caseId'] = $caseId;
         $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
+        Log::info('Session Data Count:', ['count' => $data["sessionData"]->count(), 'case_id' => $caseId]);
+        if ($data["sessionData"]->isEmpty()) {
+
+            $result['success'] = false;
+            $result['message'] = 'No session data available.';
+            $result['error'] = 'No session data available.';
+            return response()->json($result, 404);
+        }
         $pdf = PDF::loadView('pdf.view_session', $data);
-        return $pdf->download('session_CID' . sprintf('%06d', $caseId) . '.pdf');
+
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="session_CID'.sprintf('%06d', $caseId).'.pdf"');
 
     }
 

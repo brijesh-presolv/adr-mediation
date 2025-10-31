@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Mediator;
+namespace App\Http\Controllers\API\User;
 
 use Auth;
 use App\Http\Controllers\Controller;
@@ -61,7 +61,7 @@ class DashboardController extends Controller
             $item->view_mediator = 1;
             $item->save();
         }
-        $noficationdata = Notification::mediatornotificationbyctgry($userId, $category);
+        $noficationdata = Notification::usernotificationbyctgry($userId, $category);
 
         $data = array();
         $casedata=array();
@@ -109,7 +109,7 @@ class DashboardController extends Controller
         return response()->json($result, 200);
     }
 
-    public function getNotificationsCounts(Request $request)
+        public function getNotificationsCounts(Request $request)
     {
         try{
 
@@ -131,17 +131,17 @@ class DashboardController extends Controller
                 $item->view = 1;
                 $item->save();
             }
-            $notificationAll = Notification::mediatornotificationData($userId);
-            $noficationCaseUpdates = Notification::notificationDatabyctgry($userId, 1);
-            $noficationDocsUpdates = Notification::notificationDatabyctgry($userId, 2);
-            $noficationSessionUpdates = Notification::notificationDatabyctgry($userId, 3);
-            $noficationAccountUpdates = Notification::notificationDatabyctgry($userId, 4);
+            $notificationAll = Notification::usernotificationAPI($userId);
+            $noficationCaseUpdates = Notification::mediatornotificationbyctgry($userId, 1);
+            $noficationDocsUpdates = Notification::mediatornotificationbyctgry($userId, 2);
+            $noficationSessionUpdates = Notification::mediatornotificationbyctgry($userId, 3);
+            $noficationAccountUpdates = Notification::mediatornotificationbyctgry($userId, 4);
 
-            $notificationAllUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('isMediatorRead', "=", 0)->get();
-            $noficationCaseUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 1)->where('isMediatorRead', "=", 0)->get();
-            $noficationDocsUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 2)->where('isMediatorRead', "=", 0)->get();
-            $noficationSessionUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 3)->where('isMediatorRead', "=", 0)->get();
-            $noficationAccountUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 4)->where('isMediatorRead', "=", 0)->get();
+            $notificationAllUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('isUserRead', "=", 0)->get();
+            $noficationCaseUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 1)->where('isUserRead', "=", 0)->get();
+            $noficationDocsUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 2)->where('isUserRead', "=", 0)->get();
+            $noficationSessionUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 3)->where('isUserRead', "=", 0)->get();
+            $noficationAccountUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 4)->where('isUserRead', "=", 0)->get();
 
             $resultData['notifications']['all']=count($notificationAll);
             $resultData['notifications']['caseUpdates']=count($noficationCaseUpdates);
@@ -187,7 +187,7 @@ class DashboardController extends Controller
         $id=$request->input('id');
 
         $notification = Notification::find($id);
-        $notification->isMediatorRead = 1;
+        $notification->isUserRead = 1;
         $notification->save();
 
         $result['success'] = true;
@@ -196,102 +196,8 @@ class DashboardController extends Controller
         return response()->json($result, 200);
     }
 
-    public function viewCaseDetails(Request $request) {
-        //Input
-        $caseid = $request->input('caseid');
 
-        $case = MedCase::select("mediation_case.*", "users.first_name as mfirstname", "users.last_name as mlastname", "mediators_mediation_cases_status.mediator_id as mediator_id", "mediators_mediation_cases_status.status as mediator_status", DB::raw("CONCAT(users.first_name,' ', users.last_name) as mfullname"))
-            ->leftJoin("mediators_mediation_cases_status", "mediators_mediation_cases_status.mediation_case_id", "=", "mediation_case.id")
-            ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
-            ->where('mediation_case.id', '=', $caseid)
-            ->first();
-
-        $party_details = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
-            ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
-            ->where(['user_involved_in_agreement.userPlanid' => $case->id])->get();
-
-            // Party details //
-        $claimants = array();
-        $respondents = array();
-
-        $ckey = 1;
-        $rkey = 1;
-
-        foreach($party_details as $key => $party) {
-
-            if($party->isClaimant == 0){
-
-                $claimants[$ckey++] = [
-                    "name"=> $party->name,
-                    "email"=> $party->userEmail,
-                    "phone"=> $party->userPhone,
-                    "address"=> $party->address1,
-                    "address2"=> $party->address2,
-                    "city"=> $party->city,
-                    "pincode"=> $party->pincode,
-                    "state"=> $party->state,
-                    "country"=> $party->country,
-                ];
-
-            }
-
-            
-            
-            if($party->isClaimant != 0){
-
-                $respondents[$rkey++] = [
-                    "name"=> $party->name,
-                    "email"=> $party->userEmail,
-                    "phone"=> $party->userPhone,
-                    "address"=> $party->address1,
-                    "address2"=> $party->address2,
-                    "city"=> $party->city,
-                    "pincode"=> $party->pincode,
-                    "state"=> $party->state,
-                    "country"=> $party->country,
-                ];
-            }
-
-           
-        }
-        
-       
-
-        $case->claimants = $claimants;
-        $case->respondents = $respondents;
-        // Party details //
-
-        $case->invitation = InvitationFiles::where(['case_id' => $case->id])->orderByDesc('id')->get();
-
-        $case->appointment = InvitationFiles::where(['case_id' => $case->id])->where('file_name_mediator_appointment', '!=', null)->orderByDesc('id')->limit(1)->first();
-
-        $case->supporting_document = DB::table('manage_files')->select('manage_files.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
-            ->join('users', 'users.id', '=', 'manage_files.uploaded_by')
-            ->where('manage_files.case_id', $case->id)
-            ->get();
-
-        $case->settlement_document = DB::table('document_settlements')->select('document_settlements.*', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
-            ->join('users', 'users.id', '=', 'document_settlements.uploaded_by')
-            ->where('document_settlements.mediation_case_id', $case->id)
-            ->get();
-
-        //$case->mom = DB::table('session_mom')->select("file_name")->where('case_id', $case->id)->get();
-
-        $case->mom = DB::table('session_mom')->select('file_name', DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
-            ->join('users', 'users.id', '=', 'session_mom.uploaded_by')
-            ->where('case_id', $case->id)
-            ->get();
-
-
-        $result['success'] = true;
-        $result['message'] = "Case details fetched successfully.";
-        $result['data'] = $case;
-        return response()->json($result, 200);
-
-    }
-
-
-    // Dashboard functions : start //
+    // Dashboard functions //
     public function allCaseCounts(Request $request) {
         try{
             $token = $request->cookie('auth_token');
@@ -307,35 +213,23 @@ class DashboardController extends Controller
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
 
+        
             $allCasesCount = 0;
-            $allCasesCount = Mediators_mediation_cases_status::where('mediator_id', $userId)->count(); 
+            $allCasesCount = MedCase::getTotalCases($userId); 
 
-            $allActiveCasesCount = 0;
-            $allActiveCasesCount = Mediators_mediation_cases_status::where('mediator_id', $userId)->where('status', 1)->count();
-            
-            $successRate = 0;
-            $resolvedCases = Mediators_mediation_cases_status::where('mediator_id', $userId)
-                ->leftJoin("mediation_case", "mediation_case.id", "=", "mediators_mediation_cases_status.mediation_case_id")
-                    ->whereIn('mediation_case.case_status', [6, 8])->count();
-            $totalCases = Mediators_mediation_cases_status::where('mediator_id', $userId)
-                ->leftJoin("mediation_case", "mediation_case.id", "=", "mediators_mediation_cases_status.mediation_case_id")
-                ->whereIn('mediation_case.case_status', [5,6,7,8])->count();
+            $ongoingCasesCount = 0;
+            $ongoingCasesCount = MedCase::getOngoingCasesCount($userId); 
 
-
-            if($totalCases > 0){
-                $percentage = ($resolvedCases / $totalCases ) * 100;
-                $successRate = round($percentage, 2);
-            } else {
-                $successRate = 0;
-            }   
-            
+            $pendingCasesCount = 0;
+            $pendingCasesCount = MedCase::getPendingCasesCount($userId); 
 
             $closedCasesCount = 0;
-            $closedCasesCount = $totalCases;
+            $closedCasesCount = MedCase::getClosedCasesCount($userId); 
+
 
             $resultArray['totalCaseCount'] = $allCasesCount;
-            $resultArray['activeCaseCount'] = $allActiveCasesCount;
-            $resultArray['successRate'] = $successRate;
+            $resultArray['ongoingCaseCount'] = $ongoingCasesCount;
+            $resultArray['pendingCasesCount'] = $pendingCasesCount;
             $resultArray['closedCasesCount'] = $closedCasesCount;
 
             $result['success'] = true;
@@ -349,11 +243,12 @@ class DashboardController extends Controller
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
+
     }
 
 
     public function getUpcomingSessions(Request $request) {
-       try{
+        try{
             $token = $request->cookie('auth_token');
             if (!$token) {
 
@@ -365,20 +260,20 @@ class DashboardController extends Controller
 
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-           $userId = $jwtData->data->userid; 
-        
+            $userId = $jwtData->data->userid;
+
             $today_date = Carbon::today();
             $sessionData = DB::table('manage_session')
-            ->select('manage_session.*','mediators_mediation_cases_status.mediator_id', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
-            ->join('mediators_mediation_cases_status', 'mediators_mediation_cases_status.mediation_case_id', '=', 'manage_session.case_id')
-            ->where('mediators_mediation_cases_status.mediator_id', $userId)
-            ->orderby('date_format', 'ASC')->get();
-
-        
+            ->select('manage_session.*', 'user_involved_in_agreement.userPlanId', DB::raw("STR_TO_DATE(manage_session.session_date, '%d/%m/%Y') as date_format"))
+            ->join('user_involved_in_agreement', 'user_involved_in_agreement.userPlanId', '=', 'manage_session.case_id')
+            ->where('user_involved_in_agreement.userId', $userId)
+            
+            ->orderBy('date_format', 'ASC')->distinct()->get();
 
             $dataArray = array();
             $finalArray = array();
             $sn = 1;
+
 
             foreach ($sessionData as $value) {
                 if( $value->date_format > $today_date ){
@@ -453,10 +348,6 @@ class DashboardController extends Controller
             $result['data'] = $data;
             return response()->json($result, 200);
 
-
-
-
-
         } catch (Exception $e) {
 
             $result['success'] = false;
@@ -464,7 +355,8 @@ class DashboardController extends Controller
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
+
     }
-    // Dashboard functions : end //
+    // Dashboard functions //
    
 }
