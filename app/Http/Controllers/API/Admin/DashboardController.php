@@ -142,11 +142,11 @@ class DashboardController extends Controller
             $noficationSessionUpdates = Notification::notificationDatabyctgry(3);
             $noficationAccountUpdates = Notification::notificationDatabyctgry(4);
 
-            $notificationAllUnread = Notification::select('id')->where('isRead', "=", 0)->get();
-            $noficationCaseUpdatesUnread = Notification::select('id')->where('category', "=", 1)->where('isRead', "=", 0)->get();
-            $noficationDocsUpdatesUnread = Notification::select('id')->where('category', "=", 2)->where('isRead', "=", 0)->get();
-            $noficationSessionUpdatesUnread = Notification::select('id')->where('category', "=", 3)->where('isRead', "=", 0)->get();
-            $noficationAccountUpdatesUnread = Notification::select('id')->where('category', "=", 4)->where('isRead', "=", 0)->get();
+            $notificationAllUnread = Notification::select('id')->where('isAdminRead', "=", 0)->get();
+            $noficationCaseUpdatesUnread = Notification::select('id')->where('category', "=", 1)->where('isAdminRead', "=", 0)->get();
+            $noficationDocsUpdatesUnread = Notification::select('id')->where('category', "=", 2)->where('isAdminRead', "=", 0)->get();
+            $noficationSessionUpdatesUnread = Notification::select('id')->where('category', "=", 3)->where('isAdminRead', "=", 0)->get();
+            $noficationAccountUpdatesUnread = Notification::select('id')->where('category', "=", 4)->where('isAdminRead', "=", 0)->get();
 
             $resultData['notifications']['all']=count($notificationAll);
             $resultData['notifications']['caseUpdates']=count($noficationCaseUpdates);
@@ -170,6 +170,35 @@ class DashboardController extends Controller
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
+    }
+
+    public function notificatioMarkread(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id'   => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $id=$request->input('id');
+
+        $notification = Notification::find($id);
+        $notification->isAdminRead = 1;
+        $notification->save();
+
+        $result['success'] = true;
+        $result['message'] = "The notification has been marked as read";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
     }
 
 }

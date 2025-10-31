@@ -137,11 +137,11 @@ class DashboardController extends Controller
             $noficationSessionUpdates = Notification::mediatornotificationbyctgry($userId, 3);
             $noficationAccountUpdates = Notification::mediatornotificationbyctgry($userId, 4);
 
-            $notificationAllUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('isRead', "=", 0)->get();
-            $noficationCaseUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 1)->where('isRead', "=", 0)->get();
-            $noficationDocsUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 2)->where('isRead', "=", 0)->get();
-            $noficationSessionUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 3)->where('isRead', "=", 0)->get();
-            $noficationAccountUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 4)->where('isRead', "=", 0)->get();
+            $notificationAllUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('isUserRead', "=", 0)->get();
+            $noficationCaseUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 1)->where('isUserRead', "=", 0)->get();
+            $noficationDocsUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 2)->where('isUserRead', "=", 0)->get();
+            $noficationSessionUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 3)->where('isUserRead', "=", 0)->get();
+            $noficationAccountUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 4)->where('isUserRead', "=", 0)->get();
 
             $resultData['notifications']['all']=count($notificationAll);
             $resultData['notifications']['caseUpdates']=count($noficationCaseUpdates);
@@ -165,6 +165,35 @@ class DashboardController extends Controller
             $result['error'] = $e->getMessage();
             return response()->json($result, 500);
         }
+    }
+
+    public function notificatioMarkread(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id'   => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+
+        $id=$request->input('id');
+
+        $notification = Notification::find($id);
+        $notification->isUserRead = 1;
+        $notification->save();
+
+        $result['success'] = true;
+        $result['message'] = "The notification has been marked as read";
+        $result['data'] = $resultData;
+        return response()->json($result, 200);
     }
 
 
