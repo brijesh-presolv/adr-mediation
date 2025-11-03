@@ -123,9 +123,14 @@ class ProfileController extends Controller
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required',
                 'last_name' => 'required',
-                'mobile_number' => 'required',
+                'mobile_number' => 'required|string|max:11',
                 'email' => ['email', 'required', 'unique:users,email,'.$userId],
-                'username' => ['required', 'unique:users,username,'.$userId]
+                'username' => ['required', 'unique:users,username,'.$userId],
+                'pincode' => 'nullable|string|max:8',
+                'city' => 'nullable|string|max:100',
+                'state' => 'nullable|string|max:100',
+                'country' => 'nullable|string|max:100',
+                
             ]);
 
 
