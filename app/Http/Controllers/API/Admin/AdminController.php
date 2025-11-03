@@ -161,6 +161,7 @@ class AdminController extends Controller
 
                     $data[$key]['casedata'] =  $casedata;
                     $data[$key]['userdata'] =  $userdata;
+                    $data[$key]['cid'] =  'CID' . sprintf('%06d', $values->case_id);
                 }
             }
 
@@ -279,7 +280,7 @@ class AdminController extends Controller
 
                         $finalArray[$sn++] = [
                             'id' => $value->case_id,
-                            'caseid' => 'CID' . sprintf('%06d', $values->case_id),
+                            'caseid' => 'CID' . sprintf('%06d', $value->case_id),
                             'claimant' => $ip_user,
                             'respondant' => $rp_user,
                             'mediator' => $m_name,

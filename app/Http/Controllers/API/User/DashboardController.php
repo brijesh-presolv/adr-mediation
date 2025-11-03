@@ -331,7 +331,7 @@ class DashboardController extends Controller
 
                     $finalArray[$sn++] = [
                         'id' => $value->case_id,
-                        'caseid' => 'CID' . sprintf('%06d', $values->case_id),
+                        'caseid' => 'CID' . sprintf('%06d', $value->case_id),
                         'claimant' => $ip_user,
                         'respondant' => $rp_user,
                         'mediator' => $m_name,
