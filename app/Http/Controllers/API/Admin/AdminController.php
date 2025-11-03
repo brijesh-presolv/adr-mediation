@@ -278,7 +278,8 @@ class AdminController extends Controller
 
 
                         $finalArray[$sn++] = [
-                            'caseid' => $value->case_id,
+                            'id' => $value->case_id,
+                            'caseid' => 'CID' . sprintf('%06d', $values->case_id),
                             'claimant' => $ip_user,
                             'respondant' => $rp_user,
                             'mediator' => $m_name,
