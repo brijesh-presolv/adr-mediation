@@ -143,6 +143,7 @@ class AdminController extends Controller
             }
             $data = Notification::notificatioLatestData();
             $userdata = [];
+            $casedata = [];
 
             if(count($data) > 0) {
 
