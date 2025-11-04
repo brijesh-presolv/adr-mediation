@@ -76,6 +76,8 @@ class EmailController
 	 public static function sendmail($d, $to, $subsarr, $tempid, $a = '', $o = '')
     {
 
+        $emailSender= env('SENDGRID_SENDER');
+        $emailSenderName= env('SENDGRID_SENDER_NAME');
 
         $to=trim($to);
 
@@ -93,7 +95,7 @@ class EmailController
 
              $response = '';
         $email = new \SendGrid\Mail\Mail();
-        $email->setFrom('ukmediation@presolv360.com', 'Presolv360');
+        $email->setFrom($emailSender, $emailSenderName);
         $email->addTo($to, 'User');
          
         $email->setTemplateId($tempid);

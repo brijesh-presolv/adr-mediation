@@ -260,7 +260,7 @@ class ProfileController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'current_password' => 'required|string|min:6',
-                'password'     => 'required|string|min:8|confirmed', 
+                'password'     => 'required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/', 
                 // Laravel automatically checks new_password == password_confirmation
             ]);
 

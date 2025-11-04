@@ -1345,12 +1345,19 @@ class MedCase extends Model
             ->leftJoin("consent_disclosures", "consent_disclosures.mediation_case_id", "=", "mediation_case.id")
             ->leftJoin("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
             ->leftJoin("batch", "batch.id", "=", "mediation_case.batch_id")
-            ->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
+            //->join('user_involved_in_agreement', 'mediation_case.id', '=', 'user_involved_in_agreement.userPlanId')
             ->where("mediation_case.confirm_status", 0)
             ->where("mediation_case.bulk_flag", $bulk);
 
-            $query->where(function($query) use ($userId) {
+           /*  $query->where(function($query) use ($userId) {
                 $query->where('user_involved_in_agreement.userId', $userId);
+            }); */
+
+            $query->whereExists(function ($subQuery) use ($userId) {
+                $subQuery->select(DB::raw(1))
+                    ->from('user_involved_in_agreement')
+                    ->whereRaw('user_involved_in_agreement.userPlanId = mediation_case.id')
+                    ->where('user_involved_in_agreement.userId', $userId);
             });
 
         if ($batch_id) {
@@ -1432,8 +1439,15 @@ class MedCase extends Model
             ->where("mediation_case.confirm_status", 1)
             ->where("mediation_case.bulk_flag", $bulk);
 
-            $query->where(function($query) use ($userId) {
+            /* $query->where(function($query) use ($userId) {
                 $query->where('user_involved_in_agreement.userId', $userId);
+            }); */
+
+            $query->whereExists(function ($subQuery) use ($userId) {
+                $subQuery->select(DB::raw(1))
+                    ->from('user_involved_in_agreement')
+                    ->whereRaw('user_involved_in_agreement.userPlanId = mediation_case.id')
+                    ->where('user_involved_in_agreement.userId', $userId);
             });
 
         if ($batch_id) {
