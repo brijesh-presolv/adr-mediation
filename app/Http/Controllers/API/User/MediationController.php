@@ -231,7 +231,8 @@ class MediationController extends Controller
 
                         $add_resp = new InvoledUser();
                         $add_resp->name = isset($resp_data['name']) ? $resp_data['name'] : "";
-                        $add_resp->userId=isset($findUser->id) ? $findUser->id : 0;
+                        //$add_resp->userId=isset($findUser->id) ? $findUser->id : 0;
+                        $add_resp->userId = 0;
                         $add_resp->userEmail = isset($resp_data['email']) ? $resp_data['email'] : "";
                         $add_resp->userPhone = isset($resp_data['phone']) ? $resp_data['phone'] : "";
                         $add_resp->userPlanId = $med->id;
