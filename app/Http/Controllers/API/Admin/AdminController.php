@@ -197,7 +197,8 @@ class AdminController extends Controller
             )
             
             //->orderby('id', 'DESC')->take(15)->get();
-            ->orderby('date_formatt', 'ASC')->get();
+            ->orderby('date_formatt', 'ASC')
+            ->where('is_deleted', '=', 0)->get();
             $dataArray = array();
 
             $finalArray = array();
