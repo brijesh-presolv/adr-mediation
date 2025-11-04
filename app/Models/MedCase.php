@@ -1439,8 +1439,15 @@ class MedCase extends Model
             ->where("mediation_case.confirm_status", 1)
             ->where("mediation_case.bulk_flag", $bulk);
 
-            $query->where(function($query) use ($userId) {
+            /* $query->where(function($query) use ($userId) {
                 $query->where('user_involved_in_agreement.userId', $userId);
+            }); */
+
+            $query->whereExists(function ($subQuery) use ($userId) {
+                $subQuery->select(DB::raw(1))
+                    ->from('user_involved_in_agreement')
+                    ->whereRaw('user_involved_in_agreement.userPlanId = mediation_case.id')
+                    ->where('user_involved_in_agreement.userId', $userId);
             });
 
         if ($batch_id) {
