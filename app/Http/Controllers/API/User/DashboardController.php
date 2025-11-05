@@ -24,6 +24,7 @@ use App\Models\Notification;
 use App\Models\WaTemplate;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Illuminate\Support\Facades\Validator;
 use DB;
 use Illuminate\Support\Facades\File;
 use PDF;
