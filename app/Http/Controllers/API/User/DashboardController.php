@@ -193,7 +193,6 @@ class DashboardController extends Controller
 
         $result['success'] = true;
         $result['message'] = "The notification has been marked as read";
-        $result['data'] = $resultData;
         return response()->json($result, 200);
     }
 
