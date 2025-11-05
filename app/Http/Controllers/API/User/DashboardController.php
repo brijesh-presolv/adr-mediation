@@ -40,7 +40,7 @@ class DashboardController extends Controller
     use UploadTrait;
 
     
-    public function getNotifications()
+    public function getNotifications(Request $request)
     {
         $token = $request->cookie('auth_token');
         if (!$token) {
@@ -94,7 +94,7 @@ class DashboardController extends Controller
                     $data[$key]['view_mediator'] = $values->view_mediator;
                     $data[$key]['view_user'] = $values->view_user;
                     $data[$key]['category'] = $values->category;
-                    $data[$key]['isRead'] = $values->isRead;
+                    $data[$key]['isRead'] = $values->isUserRead;
                     $data[$key]['action_type'] = $values->action_type;
                     $data[$key]['ititle'] = $values->ititle;
                     $data[$key]['idescription'] = $values->idescription;
