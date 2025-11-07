@@ -279,7 +279,7 @@ class AdminController extends Controller
                         }
 
                         //24 hrs time format
-                        $date_object = DateTime::createFromFormat('g:i a', $myDate[3]);
+                        $date_object = Carbon::createFromFormat('g:i a', $myDate[3]);
                         $time_24_hour = $date_object->format('H:i');
 
                         $finalArray[$sn++] = [
