@@ -319,7 +319,7 @@ class DashboardController extends Controller
 
                     $myDate = explode("/", $value->session_date);
                     $finalDate = $myDate[0].'/'.$myDate[1].'/'.$myDate[2];
-                    $datee = Carbon::createFromFormat('d/m/Y', $finalDate)->format('d-M-Y');
+                    $datee = Carbon::createFromFormat('d/m/Y', $finalDate)->format('d-m-Y');
 
                     if($value->zoom_link_choice == "manual"){
                         $zoom_id = $value->zoom_id;
@@ -335,7 +335,7 @@ class DashboardController extends Controller
                         'claimant' => $ip_user,
                         'respondant' => $rp_user,
                         'mediator' => $m_name,
-                        'session' => $datee .' '.$myDate[3],
+                        'session' => $datee .' '.substr($myDate[3], 0, -2),
                         'zoom_id' => $zoom_id,
                         'zoom_link' => $zoom_link_final
                     ];

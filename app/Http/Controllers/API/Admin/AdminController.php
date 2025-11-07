@@ -261,7 +261,7 @@ class AdminController extends Controller
 
                         $myDate = explode("/", $value->session_date);
                         $finalDate = $myDate[0].'/'.$myDate[1].'/'.$myDate[2];
-                        $datee = Carbon::createFromFormat('d/m/Y', $finalDate)->format('d-m-y');
+                        $datee = Carbon::createFromFormat('d/m/Y', $finalDate)->format('d-m-Y');
                         
                         //$finalArray[$sn]['session'] = $datee .' '.$myDate[3];
                         
