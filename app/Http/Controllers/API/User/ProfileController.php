@@ -117,6 +117,7 @@ class ProfileController extends Controller
             $pincode = $request->input('pincode');
             $state = $request->input('state');
             $country = $request->input('country');
+            $country_code = $request->input('country_code');
             $signature_photo = $request->file('signature_photo');
             $new_password = $request->input('new_password');
 
@@ -158,6 +159,7 @@ class ProfileController extends Controller
             $dataToUpdate->city = $city;
             $dataToUpdate->state = $state;
             $dataToUpdate->country = $country;
+            $dataToUpdate->country_code = $country_code;
             $dataToUpdate->pincode = $pincode;
             $dataToUpdate->username = $username;
 

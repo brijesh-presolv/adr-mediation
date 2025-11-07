@@ -278,6 +278,9 @@ class AdminController extends Controller
                             // $finalArray[$sn]['zoom_link'] = $zoom_link;
                         }
 
+                        //24 hrs time format
+                        $date_object = DateTime::createFromFormat('g:i a', $myDate[3]);
+                        $time_24_hour = $date_object->format('H:i');
 
                         $finalArray[$sn++] = [
                             'id' => $value->case_id,
@@ -285,7 +288,7 @@ class AdminController extends Controller
                             'claimant' => $ip_user,
                             'respondant' => $rp_user,
                             'mediator' => $m_name,
-                            'session' => $datee .' '.substr($myDate[3], 0, -2),
+                            'session' => $datee .' '.$time_24_hour,
                             'zoom_id' => $zoom_id,
                             'zoom_link' => $zoom_link_final
                         ];
