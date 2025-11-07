@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Illuminate\Support\Facades\Validator;
 
 class DashboardController extends Controller
 {
@@ -89,7 +90,7 @@ class DashboardController extends Controller
                         $data[$key]['view_mediator'] = $values->view_mediator;
                         $data[$key]['view_user'] = $values->view_user;
                         $data[$key]['category'] = $values->category;
-                        $data[$key]['isRead'] = $values->isRead;
+                        $data[$key]['isRead'] = $values->isAdminRead;
                         $data[$key]['action_type'] = $values->action_type;
                         $data[$key]['ititle'] = $values->ititle;
                         $data[$key]['idescription'] = $values->idescription;
@@ -197,7 +198,6 @@ class DashboardController extends Controller
 
         $result['success'] = true;
         $result['message'] = "The notification has been marked as read";
-        $result['data'] = $resultData;
         return response()->json($result, 200);
     }
 

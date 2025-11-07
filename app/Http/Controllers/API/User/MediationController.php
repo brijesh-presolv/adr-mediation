@@ -169,8 +169,9 @@ class MediationController extends Controller
                             $add_claimant = DB::table('user_involved_in_agreement')->where('id', $involedUser[0]['id'])->update($dataToInsert);
                             
                         } else {
+                                $findClaimantUser = User::where(['email'=> $claimant_data['email'], 'role' => 0])->first();
                                 $add_claimant = new InvoledUser();
-                                $add_claimant->userId = $userId;
+                                $add_claimant->userId = isset($findClaimantUser->id) ? $findClaimantUser->id : 0;
                                 $add_claimant->userEmail = isset($claimant_data['email']) ? $claimant_data['email'] : "";
                                 $add_claimant->name = isset($claimant_data['name']) ? $claimant_data['name'] : "";
                                 $add_claimant->userPhone = isset($claimant_data['phone']) ? $claimant_data['phone'] : "";
@@ -222,12 +223,13 @@ class MediationController extends Controller
                             'pincode' => isset($resp_data['city']) ? $resp_data['city'] : "",
                             'state' => isset($resp_data['state']) ? $resp_data['state'] : "",
                             'country' => isset($resp_data['country']) ? $resp_data['country'] : "",
-                            'isClaimant' => $respUser['isClaimant']
+                            //'isClaimant' => $respUser['isClaimant']
+                            'isClaimant' => 1
                         ];
                         $add_resp = DB::table('user_involved_in_agreement')->where('id', $respUser['id'])->update($dataToRespInsert);
                 
                     } else {
-                        $findUser = User::where(['email'=> $resp_data['email'], 'role' => 0])->first();
+                       // $findUser = User::where(['email'=> $resp_data['email'], 'role' => 0])->first();
 
                         $add_resp = new InvoledUser();
                         $add_resp->name = isset($resp_data['name']) ? $resp_data['name'] : "";
@@ -242,7 +244,8 @@ class MediationController extends Controller
                         $add_resp->pincode = isset($resp_data['pincode']) ? $resp_data['pincode'] : "";
                         $add_resp->state = isset($resp_data['state']) ? $resp_data['state'] : "";
                         $add_resp->country = isset($resp_data['country']) ? $resp_data['country'] : "";
-                        $add_resp->isClaimant = $rkey + 1;
+                        //$add_resp->isClaimant = $rkey + 1;
+                        $add_resp->isClaimant = 1;
                         $add_resp->joinCode = $this->joinCode();
                         $add_resp->save();
                     }

@@ -24,6 +24,7 @@ use App\Models\Notification;
 use App\Models\WaTemplate;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Illuminate\Support\Facades\Validator;
 use DB;
 use Illuminate\Support\Facades\File;
 use PDF;
@@ -39,7 +40,7 @@ class DashboardController extends Controller
     use UploadTrait;
 
     
-    public function getNotifications()
+    public function getNotifications(Request $request)
     {
         $token = $request->cookie('auth_token');
         if (!$token) {
@@ -93,7 +94,7 @@ class DashboardController extends Controller
                     $data[$key]['view_mediator'] = $values->view_mediator;
                     $data[$key]['view_user'] = $values->view_user;
                     $data[$key]['category'] = $values->category;
-                    $data[$key]['isRead'] = $values->isRead;
+                    $data[$key]['isRead'] = $values->isMediatorRead;
                     $data[$key]['action_type'] = $values->action_type;
                     $data[$key]['ititle'] = $values->ititle;
                     $data[$key]['idescription'] = $values->idescription;
@@ -192,7 +193,6 @@ class DashboardController extends Controller
 
         $result['success'] = true;
         $result['message'] = "The notification has been marked as read";
-        $result['data'] = $resultData;
         return response()->json($result, 200);
     }
 
@@ -424,7 +424,7 @@ class DashboardController extends Controller
 
                     $myDate = explode("/", $value->session_date);
                     $finalDate = $myDate[0].'/'.$myDate[1].'/'.$myDate[2];
-                    $datee = Carbon::createFromFormat('d/m/Y', $finalDate)->format('d-M-Y');
+                    $datee = Carbon::createFromFormat('d/m/Y', $finalDate)->format('d-m-Y');
 
                     if($value->zoom_link_choice == "manual"){
                         $zoom_id = $value->zoom_id;
@@ -434,13 +434,17 @@ class DashboardController extends Controller
                         $zoom_link_final = $zoom_link;
                     }
 
+                    //24 hrs time format
+                    $date_object = DateTime::createFromFormat('g:i a', $myDate[3]);
+                    $time_24_hour = $date_object->format('H:i');
+
                     $finalArray[$sn++] = [
                         'id' => $value->case_id,
                         'caseid' => 'CID' . sprintf('%06d', $value->case_id),
                         'claimant' => $ip_user,
                         'respondant' => $rp_user,
                         'mediator' => $m_name,
-                        'session' => $datee .' '.$myDate[3],
+                        'session' => $datee .' '.$time_24_hour,
                         'zoom_id' => $zoom_id,
                         'zoom_link' => $zoom_link_final
                     ];
