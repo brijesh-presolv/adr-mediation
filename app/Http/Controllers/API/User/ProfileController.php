@@ -72,6 +72,7 @@ class ProfileController extends Controller
             $finaldata['pincode'] = $profileData->pincode;
             $finaldata['state'] = $profileData->state;
             $finaldata['country'] = $profileData->country;
+            $finaldata['country_code'] = $profileData->country_code;
             $finaldata['signature'] = $profileData->signature_photo;
 
             $result['success'] = true;
