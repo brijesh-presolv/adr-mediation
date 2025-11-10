@@ -85,7 +85,7 @@ use App\Models\User;
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>Case ID: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>Case ID: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>Date : {{$session_date}}</p>
