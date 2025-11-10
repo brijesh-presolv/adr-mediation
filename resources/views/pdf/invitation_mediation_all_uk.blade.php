@@ -146,7 +146,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%" style="">
         <tr>
             <td width="60%">
-                <p>Case ID: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>Case ID: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>Date : {{ date('d-m-Y') }}</p>
@@ -379,7 +379,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>Case ID: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>Case ID: CID{{ sprintf('%06d', $case->id) }}</p>
                 <p>வழக்கு ஐடி: எம்{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
@@ -625,7 +625,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>Case ID: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>Case ID: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p style="font-family:{{ $langfamilyfont }};">तारीख : {{ date('d-m-Y') }}</p>
@@ -829,7 +829,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>કેસ ID: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>કેસ ID: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>તારીખ: {{ date('d-m-Y') }}</p>
@@ -1054,7 +1054,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>ಕೇಸ್ ಐಡಿ: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>ಕೇಸ್ ಐಡಿ: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>ದಿನಾಂಕ: {{ date('d-m-Y') }}</p>
@@ -1298,7 +1298,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>കേസ് ഐഡി: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>കേസ് ഐഡി: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>തീയതി: {{ date('d-m-Y') }}</p>
@@ -1548,7 +1548,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>प्रकरण आयडी: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>प्रकरण आयडी: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>दिनांक: {{ date('d-m-Y') }}</p>
@@ -1785,7 +1785,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>కేస్: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>కేస్: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>తేదీ: {{ date('d-m-Y') }}</p>
@@ -2028,7 +2028,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>କେସ ଆଇଡି: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>କେସ ଆଇଡି: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>ତାରିଖ: {{ date('d-m-Y') }}</p>
@@ -2253,7 +2253,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>ਕੇਸ ID: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>ਕੇਸ ID: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>ਮਿਤੀ: {{ date('d-m-Y') }}</p>
@@ -2485,7 +2485,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>গোচৰ আইডি: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>গোচৰ আইডি: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>তাৰিখ: {{ date('d-m-Y') }}</p>
@@ -2718,7 +2718,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>কেস আইডি: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>কেস আইডি: CID{{ sprintf('%06d', $case->id) }}</p>
             </td>
             <td class="text-right">
                 <p>তারিখ: {{ date('d-m-Y') }}</p>
