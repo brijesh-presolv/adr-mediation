@@ -128,11 +128,12 @@ class DashboardController extends Controller
             $userId = $jwtData->data->userid;
 
             $view = Notification::where('view', 0)->get();
+            
             foreach ($view as $item) {
                 $item->view = 1;
                 $item->save();
             }
-            $notificationAll = Notification::mediatornotificationData($userId);
+            $notificationAll = Notification::mediatornotificationDataAPI($userId);
             $noficationCaseUpdates = Notification::notificationDatabyctgry($userId, 1);
             $noficationDocsUpdates = Notification::notificationDatabyctgry($userId, 2);
             $noficationSessionUpdates = Notification::notificationDatabyctgry($userId, 3);
@@ -435,7 +436,7 @@ class DashboardController extends Controller
                     }
 
                     //24 hrs time format
-                    $date_object = DateTime::createFromFormat('g:i a', $myDate[3]);
+                    $date_object = Carbon::createFromFormat('g:i a', $myDate[3]);
                     $time_24_hour = $date_object->format('H:i');
 
                     $finalArray[$sn++] = [
