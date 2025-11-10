@@ -2054,7 +2054,7 @@ class CaseController extends Controller
                 ->first();
 
             
-            $data['caseid'] = $caseid;
+            $data['caseid'] = "CID" . sprintf("%06d", $caseid);
             $data['email'] = $email;
             $data['mediator'] = $mediator;
 
