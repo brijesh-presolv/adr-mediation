@@ -2189,7 +2189,7 @@ class CaseController extends Controller
         $data["party"] = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
             ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
             ->where("user_involved_in_agreement.userPlanId", "=", $id)->get();
-        $pdf = PDF::loadView('pdf.mediator_appointment_letter', $data);
+        $pdf = PDF::loadView('pdf.mediator_appointment_letter_uk', $data);
         $name = Common_function::changeidprefix("",$id, "CID","_assignment.pdf");
         
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
@@ -2882,7 +2882,7 @@ class CaseController extends Controller
             $result['error'] = 'No session data available.';
             return response()->json($result, 404);
         }
-        $pdf = PDF::loadView('pdf.view_session', $data);
+        $pdf = PDF::loadView('pdf.view_session_uk', $data);
 
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
@@ -3172,27 +3172,21 @@ class CaseController extends Controller
          
 
         // Added for icici bank ITM layout //
-        if($data["case"]->batch_id == 63){
-            $pdf = PDF::loadView('pdf.invitation_mediation_icici', $data);
+
+        if($data['case']->bulk_flag == 1){
+            $pdf = PDF::loadView('pdf.invitation_mediation_all_uk', $data, [], [
+                'title' => 'ITM' . ' ' . $id,
+                'showWatermarkImage' => true, 
+                'wialpha' => 0.1, 
+                'wisize' => 'F', 
+                'wipos' => 'F', 
+                'mode' => 'utf-8',
+                'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                'autoLangToFont' => true,
+                'autoScriptToLang' => true
+            ]);
         } else {
-
-
-            if($data['case']->bulk_flag == 1){
-                $pdf = PDF::loadView('pdf.invitation_mediation_all', $data, [], [
-                    'title' => 'ITM' . ' ' . $id,
-                    'showWatermarkImage' => true, 
-                    'wialpha' => 0.1, 
-                    'wisize' => 'F', 
-                    'wipos' => 'F', 
-                    'mode' => 'utf-8',
-                    'SetAutoFont' => 'AUTOFONT_THAIVIET',
-                    'autoLangToFont' => true,
-                    'autoScriptToLang' => true
-                ]);
-            } else {
-                $pdf = PDF::loadView('pdf.invitation_mediation', $data); 
-            }
-            
+            $pdf = PDF::loadView('pdf.invitation_mediation_uk', $data); 
         }
        
        
