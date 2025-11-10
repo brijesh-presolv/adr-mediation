@@ -357,7 +357,7 @@ class MediationController extends Controller
                 ->where("mediators_mediation_cases_status.status", "=", 1)
                 ->first();
 
-            $data['caseid'] = $caseid;
+            $data['caseid'] = "CID" . sprintf("%06d", $caseid);
             $data['email'] = $email;
             $data['mediator'] = $mediator;
 
