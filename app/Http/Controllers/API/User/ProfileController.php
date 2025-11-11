@@ -76,7 +76,12 @@ class ProfileController extends Controller
             //$finaldata['signature'] = $profileData->signature_photo;
 
             $filenametoget = 'mediation/user/' . $userId . '/signature/' . $profileData->signature_photo;
-            $finaldata['signature'] = Storage::disk('s3')->get($filenametoget);
+            if (Storage::disk('s3')->exists($filenametoget)) {
+                $finaldata['signature'] = Storage::disk('s3')->get($filenametoget);
+            } else {
+                $finaldata['signature'] = "";  
+            }
+        
 
             $result['success'] = true;
             $result['message'] = "User profile data fetched successfully.";
