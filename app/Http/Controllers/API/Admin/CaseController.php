@@ -104,7 +104,7 @@ class CaseController extends Controller
                 $data[$key]['ref_id'] = $values->ref_id;
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
-                $data[$key]['created_at'] = $values->created_at ? date('d-m-Y', strtotime($values->created_at)) : '';
+                $data[$key]['created_at'] = $values->created_at;
                 $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
@@ -157,7 +157,7 @@ class CaseController extends Controller
                 $data[$key]['ref_id'] = $values->ref_id;
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
-                $data[$key]['created_at'] = $values->created_at ? date('d-m-Y', strtotime($values->created_at)) : '';
+                $data[$key]['created_at'] = $values->created_at;
                 $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
@@ -212,7 +212,7 @@ class CaseController extends Controller
                 $data[$key]['ref_id'] = $values->ref_id;
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
-                $data[$key]['created_at'] = $values->created_at ? date('d-m-Y', strtotime($values->created_at)) : '';
+                $data[$key]['created_at'] = $values->created_at;
                  $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
@@ -267,7 +267,7 @@ class CaseController extends Controller
                 $data[$key]['ref_id'] = $values->ref_id;
                 $data[$key]['confirm_status'] = $values->confirm_status;
                 $data[$key]['case_status'] = $values->case_status;
-                $data[$key]['created_at'] = $values->created_at ? date('d-m-Y', strtotime($values->created_at)) : '';
+                $data[$key]['created_at'] = $values->created_at;
                  $data[$key]['admin_approved_date'] = $admin_approved_date;
                 $data[$key]['mediator_name'] = $values->mediator_name;
                 $data[$key]['mediator_id'] = $values->mediator_id;
