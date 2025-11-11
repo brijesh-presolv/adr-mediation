@@ -1105,7 +1105,7 @@ class CaseController extends Controller
                 $data[$key]['caseid'] = $values->mediation_case_id;
                 $data[$key]['file_name'] = $dis_file_name;
                 $data[$key]['name'] = $values->first_name." ".$values->last_name;
-                $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['created_at'] = $values->created_at ? date('d-m-Y h:i A', strtotime($values->created_at)) : '';
 
             }
 
