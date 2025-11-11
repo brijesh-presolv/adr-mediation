@@ -184,7 +184,7 @@ class ProfileController extends Controller
                 $dataToUpdate->pincode = $pincode;
                 $dataToUpdate->isDone = 1;
             
-                if($request->hasFile('signature')) {
+                if($request->hasFile('signature_photo')) {
 
                     if ($dataToUpdate->signature_photo != null) {
                         $oldFilePath = 'mediation/mediator/' . $userId . '/signature/' . $dataToUpdate->signature_photo;
@@ -206,7 +206,7 @@ class ProfileController extends Controller
                     // $dataToUpdate->signature_photo = $name;
                 }
 
-                if($request->hasFile('profilePic')) {
+                if($request->hasFile('profile_pic')) {
 
                     if ($dataToUpdate->profile_pic != null) {
                 

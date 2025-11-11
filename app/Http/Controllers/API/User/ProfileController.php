@@ -172,7 +172,7 @@ class ProfileController extends Controller
             $dataToUpdate->username = $username;
 
 
-            if($request->hasFile('signature')) {
+            if($request->hasFile('signature_photo')) {
 
 
                 if ($dataToUpdate->signature_photo != null) {
