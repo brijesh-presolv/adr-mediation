@@ -73,7 +73,8 @@ class ProfileController extends Controller
             $finaldata['state'] = $profileData->state;
             $finaldata['country'] = $profileData->country;
             $finaldata['country_code'] = $profileData->country_code;
-            $finaldata['signature'] = $profileData->signature_photo;
+            //$finaldata['signature'] = $profileData->signature_photo;
+            $finaldata['signature'] = storage_path('app/public/user/'.$userId . '/signature/'.$profileData->signature_photo);
 
             $result['success'] = true;
             $result['message'] = "User profile data fetched successfully.";

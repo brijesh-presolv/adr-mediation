@@ -54,7 +54,6 @@ class ProfileController extends Controller
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
             $userId = $jwtData->data->userid;
-            
 
             $profileData = User::find($userId);
             $userProfileData = Mediation_Details::where("user_id", "=", $userId)->first();
@@ -72,7 +71,8 @@ class ProfileController extends Controller
             $finaldata['pincode'] = $profileData->pincode;
             $finaldata['state'] = $profileData->state;
             $finaldata['country'] = $profileData->country;
-            $finaldata['signature'] = $profileData->signature_photo;
+            //$finaldata['signature'] = $profileData->signature_photo;
+            $finaldata['signature'] = storage_path('app/public/mediator/'.$userId . '/signature/'.$profileData->signature_photo);
 
             $finaldata['area_of_specialization'] = $userProfileData ? json_decode($userProfileData->area_of_specialization ?? '[]', true) : [];
             $finaldata['no_of_arbitrations'] = $userProfileData->no_of_arbitrations ?? null;
