@@ -74,7 +74,9 @@ class ProfileController extends Controller
             $finaldata['country'] = $profileData->country;
             $finaldata['country_code'] = $profileData->country_code;
             //$finaldata['signature'] = $profileData->signature_photo;
-            $finaldata['signature'] = storage_path('app/public/user/'.$userId . '/signature/'.$profileData->signature_photo);
+
+            $filenametoget = 'mediation/user/' . $userId . '/signature/' . $profileData->signature_photo;
+            $finaldata['signature'] = Storage::disk('s3')->get($filenametoget);
 
             $result['success'] = true;
             $result['message'] = "User profile data fetched successfully.";
@@ -167,13 +169,28 @@ class ProfileController extends Controller
 
             if($request->hasFile('signature')) {
 
-                if($dataToUpdate->signature_photo != null) {
-                    Storage::disk('local')->delete('public/user/' . $userId . '/signature/' . $dataToUpdate->signature_photo);
+
+                if ($dataToUpdate->signature_photo != null) {
+
+                    $oldFilePath = 'mediation/user/' . $userId . '/signature/' . $dataToUpdate->signature_photo;
+                    Storage::disk('s3')->delete($oldFilePath);
                 }
                 $extension = $request->file('signature_photo')->getClientOriginalExtension();
                 $name = 'User_Signature' . sprintf('%06d', $userId) . time() . '.' . $extension;
-                Storage::disk('local')->put('public/user/' . $userId . '/signature/' . $name, file_get_contents($signature_photo));
+                $finalFilePath='mediation/user/' . $userId . '/signature/' . $name;
+                Storage::disk('s3')->put($finalFilePath, file_get_contents($signature_photo));
                 $dataToUpdate->signature_photo = $name;
+
+
+
+                // if($dataToUpdate->signature_photo != null) {
+                //     Storage::disk('local')->delete('public/user/' . $userId . '/signature/' . $dataToUpdate->signature_photo);
+                // }
+                // $extension = $request->file('signature_photo')->getClientOriginalExtension();
+                // $name = 'User_Signature' . sprintf('%06d', $userId) . time() . '.' . $extension;
+                // Storage::disk('local')->put('public/user/' . $userId . '/signature/' . $name, file_get_contents($signature_photo));
+                // $dataToUpdate->signature_photo = $name;
+                
             }
 
 
