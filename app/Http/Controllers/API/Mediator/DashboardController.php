@@ -134,10 +134,10 @@ class DashboardController extends Controller
                 $item->save();
             }
             $notificationAll = Notification::mediatornotificationDataAPI($userId);
-            $noficationCaseUpdates = Notification::notificationDatabyctgry($userId, 1);
-            $noficationDocsUpdates = Notification::notificationDatabyctgry($userId, 2);
-            $noficationSessionUpdates = Notification::notificationDatabyctgry($userId, 3);
-            $noficationAccountUpdates = Notification::notificationDatabyctgry($userId, 4);
+            $noficationCaseUpdates = Notification::mediatornotificationbyctgry($userId, 1);
+            $noficationDocsUpdates = Notification::mediatornotificationbyctgry($userId, 2);
+            $noficationSessionUpdates = Notification::mediatornotificationbyctgry($userId, 3);
+            $noficationAccountUpdates = Notification::mediatornotificationbyctgry($userId, 4);
 
             $notificationAllUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('isMediatorRead', "=", 0)->get();
             $noficationCaseUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 1)->where('isMediatorRead', "=", 0)->get();

@@ -133,10 +133,10 @@ class DashboardController extends Controller
                 $item->save();
             }
             $notificationAll = Notification::usernotificationAPI($userId);
-            $noficationCaseUpdates = Notification::mediatornotificationbyctgry($userId, 1);
-            $noficationDocsUpdates = Notification::mediatornotificationbyctgry($userId, 2);
-            $noficationSessionUpdates = Notification::mediatornotificationbyctgry($userId, 3);
-            $noficationAccountUpdates = Notification::mediatornotificationbyctgry($userId, 4);
+            $noficationCaseUpdates = Notification::usernotificationbyctgry($userId, 1);
+            $noficationDocsUpdates = Notification::usernotificationbyctgry($userId, 2);
+            $noficationSessionUpdates = Notification::usernotificationbyctgry($userId, 3);
+            $noficationAccountUpdates = Notification::usernotificationbyctgry($userId, 4);
 
             $notificationAllUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('isUserRead', "=", 0)->get();
             $noficationCaseUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 1)->where('isUserRead', "=", 0)->get();
