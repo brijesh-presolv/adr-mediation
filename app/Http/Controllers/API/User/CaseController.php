@@ -105,7 +105,7 @@ class CaseController extends Controller
         if(count($cases) > 0) {
         foreach ($cases as $key => $values) {
 
-            $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
+            $admin_approved_date = $values->admin_approved_date ? date('d-m-Y', strtotime($values->admin_approved_date)) : '';
             $id = $values->id;
             $keyInc = $key + 1;
 
@@ -173,7 +173,7 @@ class CaseController extends Controller
 
             foreach ($casesData as $key => $values) {
 
-                $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
+                $admin_approved_date = $values->admin_approved_date ? date('d-m-Y', strtotime($values->admin_approved_date)) : '';
                 $id = $values->id;
                 $keyInc = $key + 1;
 
@@ -241,7 +241,7 @@ class CaseController extends Controller
 
             foreach ($casesData as $key => $values) {
 
-                $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
+                $admin_approved_date = $values->admin_approved_date ? date('d-m-Y', strtotime($values->admin_approved_date)) : '';
                 $id = $values->id;
                 $keyInc = $key + 1;
 
@@ -312,7 +312,7 @@ class CaseController extends Controller
 
             foreach ($casesData as $key => $values) {
 
-                $admin_approved_date = date('d-m-Y', strtotime($values->admin_approved_date));
+                $admin_approved_date = $values->admin_approved_date ? date('d-m-Y', strtotime($values->admin_approved_date)) : '';
                 $id = $values->id;
                 $keyInc = $key + 1;
 
@@ -437,7 +437,7 @@ class CaseController extends Controller
             $id = $values->id;
             $data[$key]['id'] = $id;
             $data[$key]['caseid'] ='M' . sprintf('%06d', $values->case_id);
-            $data[$key]['created_at'] = $values->created_at;
+            $data[$key]['created_at'] = $values->created_at ? date('d-m-Y h:i A', strtotime($values->created_at)) : '';
             $data[$key]['session_date'] = $values->session_date;
             $data[$key]['zoom_link'] = $values->zoom_link;
             $data[$key]['zoom_id'] = $values->zoom_id;

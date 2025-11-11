@@ -710,7 +710,7 @@ class CaseController extends Controller
             $id = $values->id;
             $data[$key]['id'] = $id;
             $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->case_id);
-            $data[$key]['created_at'] = $values->created_at;
+            $data[$key]['created_at'] = $values->created_at ? date('d-m-Y h:i A', strtotime($values->created_at)) : '';
             $data[$key]['session_date'] = $values->session_date;
             $data[$key]['zoom_link'] = $values->zoom_link;
             $data[$key]['zoom_id'] = $values->zoom_id;
@@ -1783,7 +1783,7 @@ class CaseController extends Controller
                 $data[$key]['caseid'] = $values->mediation_case_id;
                 $data[$key]['file_name'] = $dis_file_name;
                 $data[$key]['name'] = $values->first_name." ".$values->last_name;
-                $data[$key]['created_at'] = $values->created_at;
+                $data[$key]['created_at'] = $values->created_at ? date('d-m-Y h:i A', strtotime($values->created_at)) : '';
 
             }
 
