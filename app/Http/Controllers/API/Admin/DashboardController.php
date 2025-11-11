@@ -83,8 +83,8 @@ class DashboardController extends Controller
                         $data[$key]['case_id'] ='CID' . sprintf('%06d', $caseid);
                         $data[$key]['reg_id'] = $values->reg_id;
                         $data[$key]['event'] = $values->event;
-                        $data[$key]['created_at'] = $values->created_at;
-                        $data[$key]['updated_at'] = $values->updated_at;
+                        $data[$key]['created_at'] = $values->created_at ? date('d-m-Y h:i A', strtotime($values->created_at)) : '';
+                        $data[$key]['updated_at'] = $values->updated_at ? date('d-m-Y h:i A', strtotime($values->updated_at)) : '';
                         $data[$key]['mediator_id'] = $values->mediator_id;
                         $data[$key]['user_id'] = $values->user_id;
                         $data[$key]['view_mediator'] = $values->view_mediator;
