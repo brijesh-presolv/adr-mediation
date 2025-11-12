@@ -93,35 +93,45 @@ class Notification extends Model {
         return $result;
     }
 
-    public static function notificationDatabyctgry($category)
+    public static function notificationDatabyctgry($category, $start, $length, $sortOrder)
     {
 
          $query = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription' ,'users.email')
                     ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
                     ->leftJoin('users', DB::raw('users.id'), '=', DB::raw('mednotification.reg_id'));
 
-                    if (!empty($category)) {
-                        $query->where('mednotification.category', $category);
-                    }
-                    $result = $query->orderBy('mednotification.id', 'DESC')
-                                    ->take(2000)
-                                    ->get();
+                if (!empty($category)) {
+                    $query->where('mednotification.category', $category);
+                }
+
+                if (!empty($sortOrder)) {
+                    $query->orderBy('mednotification.id', $sortOrder);
+                } else {
+                    $query->orderBy('mednotification.id', 'DESC');
+                }
+
+        $result = $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
         return $result;
     }
-    public static function mediatornotificationbyctgry($userId, $category)
+    public static function mediatornotificationbyctgry($userId, $category, $start, $length, $sortOrder)
     {
 
          $query = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
                     ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
                     ->where('mednotification.mediator_id', $userId);
 
-                    if (!empty($category)) {
-                        $query->where('mednotification.category', $category);
-                    }
-                    $result = $query->orderBy('mednotification.id', 'DESC')
-                                    ->take(2000)
-                                    ->get();
 
+                if (!empty($category)) {
+                    $query->where('mednotification.category', $category);
+                }
+
+                if (!empty($sortOrder)) {
+                    $query->orderBy('mednotification.id', $sortOrder);
+                } else {
+                    $query->orderBy('mednotification.id', 'DESC');
+                }
+
+        $result = $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
         return $result;
     }
 
@@ -145,13 +155,17 @@ class Notification extends Model {
                     ->whereRaw("FIND_IN_SET(?, mednotification.user_id)", [$userId])
                     ->where('view_user', "!=", 2);
 
-                    if (!empty($category)) {
-                        $query->where('mednotification.category', $category);
-                    }
-                    $result = $query->orderBy('mednotification.id', 'DESC')
-                                    ->take(2000)
-                                    ->get();
+                if (!empty($category)) {
+                    $query->where('mednotification.category', $category);
+                }
 
+                if (!empty($sortOrder)) {
+                    $query->orderBy('mednotification.id', $sortOrder);
+                } else {
+                    $query->orderBy('mednotification.id', 'DESC');
+                }
+
+        $result = $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
         return $result;
     }
 
