@@ -73,13 +73,23 @@ class ProfileController extends Controller
             $finaldata['country'] = $profileData->country;
             //$finaldata['signature'] = $profileData->signature_photo;
 
-            $filenametoget = 'mediation/mediator/' . $userId . '/signature/' . $profileData->signature_photo;
-            // if (Storage::disk('s3')->exists($filenametoget)) {
-            //     $finaldata['signature'] = Storage::disk('s3')->get($filenametoget);
-            // } else {
-            //     $finaldata['signature'] = "";
-            // }
-            $finaldata['signature'] = isset($profileData->signature_photo) ? Storage::disk('s3')->get($filenametoget) : "";
+            if (!empty($profileData->signature_photo)) {
+
+                $filePath = "mediation/mediator/{$userId}/signature/{$profileData->signature_photo}";
+
+                if (Storage::disk('s3')->exists($filePath)) {
+                    $temporarySignedUrl = Storage::disk('s3')->temporaryUrl(
+                        $filePath,
+                        Carbon::now()->addMinutes(10)
+                    );
+                    $finaldata['signature'] = $temporarySignedUrl;
+                }else{
+
+                    $finaldata['signature'] = "";  
+                }
+            }else{
+                $finaldata['signature'] = "";  
+            }
         
 
             $finaldata['area_of_specialization'] = $userProfileData ? json_decode($userProfileData->area_of_specialization ?? '[]', true) : [];
