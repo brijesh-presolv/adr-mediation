@@ -147,7 +147,7 @@ class Notification extends Model {
         return $result;
     }
 
-    public static function usernotificationbyctgry($userId, $category)
+    public static function usernotificationbyctgry($userId, $category, $start, $length, $sortOrder)
     {
 
          $query = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
