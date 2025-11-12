@@ -87,7 +87,7 @@ class ProfileController extends Controller
                  $finaldata['signature'] = "";  
              }
 
-            $finaldata['signature'] = isset($profileData->signature_photo) ? Storage::disk('s3')->get($filenametoget) : "";
+            //$finaldata['signature'] = isset($profileData->signature_photo) ? Storage::disk('s3')->get($filenametoget) : "";
         
 
             $result['success'] = true;
