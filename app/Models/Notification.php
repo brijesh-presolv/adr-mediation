@@ -140,7 +140,10 @@ class Notification extends Model {
 
          $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
                     ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
-                    ->whereRaw("FIND_IN_SET(?, mednotification.user_id)", [$userId])
+                    ->leftJoin('user_involved_in_agreement as uig', function ($join) {
+                        $join->whereRaw('FIND_IN_SET(uig.id, mednotification.user_id)');
+                    })
+                    ->where("uig.userId", $userId)
                     ->where('view_user', "!=", 2)
                     ->orderBy('mednotification.id', 'DESC')->get();
 
@@ -152,7 +155,10 @@ class Notification extends Model {
 
          $query = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
                     ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
-                    ->whereRaw("FIND_IN_SET(?, mednotification.user_id)", [$userId])
+                    ->leftJoin('users as u', function ($join) {
+                        $join->whereRaw('FIND_IN_SET(uig.id, mednotification.user_id)');
+                    })
+                    ->where("mednotification.userId", $userId)
                     ->where('view_user', "!=", 2);
 
                 if (!empty($category)) {
