@@ -75,17 +75,23 @@ class ProfileController extends Controller
             $finaldata['country_code'] = $profileData->country_code;
             //$finaldata['signature'] = $profileData->signature_photo;
 
-            $filenametoget = 'mediation/user/' . $userId . '/signature/' . $profileData->signature_photo;
-            if (Storage::disk('s3')->exists($filenametoget)) {
+            if (!empty($profileData->signature_photo)) {
 
-                //$finaldata['signature'] = Storage::disk('s3')->get($filenametoget);
-                $storagedisk = Storage::disk('s3');
-                $temporarySignedUrl = $storagedisk->getAwsTemporaryUrl($storagedisk->getDriver()->getAdapter(), $filenametoget, Carbon::now()->addMinutes(10), []);
-                $finaldata['signature'] =$temporarySignedUrl;
+                $filePath = "mediation/user/{$userId}/signature/{$profileData->signature_photo}";
 
-             } else {
-                 $finaldata['signature'] = "";  
-             }
+                if (Storage::disk('s3')->exists($filePath)) {
+                    $temporarySignedUrl = Storage::disk('s3')->temporaryUrl(
+                        $filePath,
+                        Carbon::now()->addMinutes(10)
+                    );
+                    $finaldata['signature'] = $temporarySignedUrl;
+                }else{
+
+                    $finaldata['signature'] = "";  
+                }
+            }else{
+                $finaldata['signature'] = "";  
+            }
 
             //$finaldata['signature'] = isset($profileData->signature_photo) ? Storage::disk('s3')->get($filenametoget) : "";
         
