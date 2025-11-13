@@ -115,7 +115,7 @@ class DashboardController extends Controller
         
         $result['success'] = true;
         $result['message'] = "User notifications fetched successfully.";
-        $result['data'] = $data;
+        $result['data'] = $resultData;
         return response()->json($result, 200);
     }
 
