@@ -135,17 +135,21 @@ class Notification extends Model {
         return $result;
     }
 
-    public static function usernotificationAPI($userId)
+    public static function usernotificationAPI($userId, $category=null)
     {
 
-         $result = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
+         $query = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
                     ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
                     ->leftJoin('user_involved_in_agreement as uig', function ($join) {
                         $join->whereRaw('FIND_IN_SET(uig.id, mednotification.user_id)');
                     })
                     ->where("uig.userId", $userId)
-                    ->where('view_user', "!=", 2)
-                    ->orderBy('mednotification.id', 'DESC')->get();
+                    ->where('view_user', "!=", 2);
+                if (!empty($category)) {
+                    $query->where('mednotification.category', $category);
+                }
+
+        $result = $query->orderBy('mednotification.id', 'DESC')->get();
 
         return $result;
     }
@@ -172,6 +176,26 @@ class Notification extends Model {
                 }
 
         $result = $query->paginate($length, ['*'], 'page', floor($start / $length) + 1);
+        return $result;
+    }
+
+    public static function userUnreadNotificationAPI($userId, $category=null)
+    {
+
+         $query = Notification::select('mednotification.*', 'ec.ititle', 'ec.idescription')
+                    ->leftJoin('event_codes as ec', DB::raw('ec.code'), '=', DB::raw('mednotification.event'))
+                    ->leftJoin('user_involved_in_agreement as uig', function ($join) {
+                        $join->whereRaw('FIND_IN_SET(uig.id, mednotification.user_id)');
+                    })
+                    ->where("uig.userId", $userId)
+                    ->where('view_user', "!=", 2)
+                    ->where("mednotification.isUserRead", 0);
+                if (!empty($category)) {
+                    $query->where('mednotification.category', $category);
+                }
+
+        $result = $query->orderBy('mednotification.id', 'DESC')->get();
+
         return $result;
     }
 
