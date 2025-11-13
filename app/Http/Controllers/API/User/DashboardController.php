@@ -141,29 +141,29 @@ class DashboardController extends Controller
                 $item->view = 1;
                 $item->save();
             }
-            $notificationAll = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->count();
-            $noficationCaseUpdates = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 1)->count();
-            $noficationDocsUpdates = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 2)->count();
-            $noficationSessionUpdates = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 3)->count();
-            $noficationAccountUpdates = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 4)->count();
+            $notificationAll = Notification::usernotificationAPI($userId);
+            $noficationCaseUpdates = Notification::usernotificationAPI($userId, 1);
+            $noficationDocsUpdates = Notification::usernotificationAPI($userId, 2);
+            $noficationSessionUpdates = Notification::usernotificationAPI($userId, 3);
+            $noficationAccountUpdates = Notification::usernotificationAPI($userId, 4);
 
-            $notificationAllUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('isUserRead', "=", 0)->count();
-            $noficationCaseUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 1)->where('isUserRead', "=", 0)->count();
-            $noficationDocsUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 2)->where('isUserRead', "=", 0)->count();
-            $noficationSessionUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 3)->where('isUserRead', "=", 0)->count();
-            $noficationAccountUpdatesUnread = Notification::select('id')->whereRaw("FIND_IN_SET(?, user_id)", [$userId])->where('view_user', "!=", 2)->where('category', "=", 4)->where('isUserRead', "=", 0)->count();
+            $notificationAllUnread = Notification::userUnreadNotificationAPI($userId);
+            $noficationCaseUpdatesUnread = Notification::userUnreadNotificationAPI($userId, 1);
+            $noficationDocsUpdatesUnread = Notification::userUnreadNotificationAPI($userId, 2);
+            $noficationSessionUpdatesUnread = Notification::userUnreadNotificationAPI($userId, 3);
+            $noficationAccountUpdatesUnread = Notification::userUnreadNotificationAPI($userId, 4);
 
-            $resultData['notifications']['all']=$notificationAll;
-            $resultData['notifications']['caseUpdates']=$noficationCaseUpdates;
-            $resultData['notifications']['docsUpdates']=$noficationDocsUpdates;
-            $resultData['notifications']['sessionUpdates']=$noficationSessionUpdates;
-            $resultData['notifications']['accountUpdates']=$noficationAccountUpdates;
+            $resultData['notifications']['all']=count($notificationAll);
+            $resultData['notifications']['caseUpdates']=count($noficationCaseUpdates);
+            $resultData['notifications']['docsUpdates']=count($noficationDocsUpdates);
+            $resultData['notifications']['sessionUpdates']=count($noficationSessionUpdates);
+            $resultData['notifications']['accountUpdates']=count($noficationAccountUpdates);
 
-            $resultData['notifications']['allUnread']=$notificationAllUnread;
-            $resultData['notifications']['caseUpdatesUnread']=$noficationCaseUpdatesUnread;
-            $resultData['notifications']['docsUpdatesUnread']=$noficationDocsUpdatesUnread;
-            $resultData['notifications']['sessionUpdatesUnread']=$noficationSessionUpdatesUnread;
-            $resultData['notifications']['accountUpdatesUnread']=$noficationAccountUpdatesUnread;
+            $resultData['notifications']['allUnread']=count($notificationAllUnread);
+            $resultData['notifications']['caseUpdatesUnread']=count($noficationCaseUpdatesUnread);
+            $resultData['notifications']['docsUpdatesUnread']=count($noficationDocsUpdatesUnread);
+            $resultData['notifications']['sessionUpdatesUnread']=count($noficationSessionUpdatesUnread);
+            $resultData['notifications']['accountUpdatesUnread']=count($noficationAccountUpdatesUnread);
 
             $result['success'] = true;
             $result['message'] = "Notifications fetched successfully.";
