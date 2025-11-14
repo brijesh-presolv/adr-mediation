@@ -629,7 +629,7 @@ class UsersController extends Controller
 
             if (!empty($user->signature_photo)) {
 
-                $filePath = "mediation/user/{$id}/signature/{$user->signature_photo}";
+                $filePath = "mediation/mediator/{$id}/signature/{$user->signature_photo}";
 
                 if (Storage::disk('s3')->exists($filePath)) {
                     $temporarySignedUrl = Storage::disk('s3')->temporaryUrl(
