@@ -251,4 +251,118 @@ class SendGrid
 
         return $response;
     }
+
+    public static function directEmailSendBrevo($d, $to, $templateId, $subs = NULL, $toName = NULL, $file = NULL) {
+
+
+        $apiKey = env('SENDGRID_API_KEY');
+        $emailSender= env('SENDGRID_SENDER');
+        $emailSenderName= env('SENDGRID_SENDER_NAME');
+        $emailReply= env('SENDGRID_SETREPLYTo');
+        $all_email = array();
+        $all_email[] = $to;
+
+
+        $arr_e['to'] = trim($to);
+        $arr_e['template_id'] = $templateId;
+        $arr_e['subject'] = '';
+        $arr_e['email_variables'] = json_encode($subs);
+        $arr_e['attachment'] = '';
+
+        if (is_array($file)) {
+
+            foreach ($file as $av) {
+                $arr_e['attachment'] .= parse_url($av)['path'] . ',';
+            }
+
+        } else {
+            $arr_e['attachment'] = parse_url($file)['path'];
+        }
+
+        $arr_e['event'] = $d['event'];
+
+        if(isset($d['case_id'])) {
+
+            $arr_e['case_id'] = $d['case_id'];
+        } else {
+            $arr_e['user_id'] = $d['userid'];
+        }
+
+        $directsendid=EmailDirectSend::insertGetId($arr_e);
+        $directemailsend=EmailDirectSend::find($directsendid);
+
+        $config = Configuration::getDefaultConfiguration()
+            ->setApiKey('api-key', env('BREVO_API_KEY'));
+
+        $apiInstance = new TransactionalEmailsApi(new Client(), $config);
+
+        $params = [];
+
+        foreach ($variables as $key => $value) {
+            if (!empty($value)) {
+                $params[$key] = $value;
+            }
+        }
+
+
+        $attachments = [];
+
+        if (!empty($file)) {
+
+            if (is_array($file)) {
+
+                foreach ($file as $attach_file) {
+
+                    if (Storage::disk('s3')->exists($attach_file)) {
+
+                        $rawData = Storage::disk('s3')->get($attach_file);
+                        $attachments[] = [
+                            'content' => base64_encode($rawData),
+                            'name'    => basename($attach_file)
+                        ];
+                    }
+                }
+
+            } else { 
+
+                if (Storage::disk('s3')->exists($file)) {
+
+                    $rawData = Storage::disk('s3')->get($file);
+                    $attachments[] = [
+                        'content' => base64_encode($rawData),
+                        'name'    => basename($file)
+                    ];
+                }
+            }
+        }
+
+
+        $sendSmtpEmail = new SendSmtpEmail([
+            'to' => [
+                ['email' => $to]
+            ],
+            'templateId' => $templateId,
+            'params' => $params,       // dynamic variables
+            'attachment' => $attachments, // PDF optional
+        ]);
+
+
+         try {
+
+            $result = $apiInstance->sendTransacEmail($sendSmtpEmail);
+            Log::info('Brevo: Email sent', ['to' => $to, 'sg_message_id' => $result['messageId']]);
+            return ['success' => true, 'data' => $result];
+
+         } catch (Exception $e) {
+
+            Log::error('SendGrid: Email send failed', ['to' => $to, 'message' => $e->getMessage(), ]);
+            echo 'Caught exception: ' . $e->getMessage() . "\n";
+            $directemailsend->is_sent = 0;
+            $directemailsend->updated_at = date('Y-m-d H:i:s');
+            $directemailsend->save();
+            
+         }
+
+        return $response;
+    }
 }
