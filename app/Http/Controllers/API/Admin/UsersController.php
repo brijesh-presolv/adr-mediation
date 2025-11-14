@@ -540,10 +540,49 @@ class UsersController extends Controller
     public function getuserdata($id, Request $request)
     {
         $user = User::find($id);
+
         if(!empty($user)){
 
 
-            $resultData['user'] = $user;
+            $finaldata['id'] = $id;
+            $finaldata['userid'] = $user->id;
+            $finaldata['first_name'] = $user->first_name;
+            $finaldata['last_name'] = $user->last_name;
+            $finaldata['email'] = $user->email;
+            $finaldata['username'] = $user->username;
+            $finaldata['mobile_number'] = $user->mobile_number;
+            $finaldata['country_code'] = $user->country_code;
+            $finaldata['organization'] = $user->organization;
+            $finaldata['address1'] = $user->address;
+            $finaldata['address2'] = $user->address1;
+            $finaldata['city'] = $user->city;
+            $finaldata['pincode'] = $user->pincode;
+            $finaldata['state'] = $user->state;
+            $finaldata['country'] = $user->country;
+            //$finaldata['signature'] = $user->signature_photo;
+
+
+
+        if (!empty($user->signature_photo)) {
+
+                $filePath = "mediation/user/{$id}/signature/{$user->signature_photo}";
+
+                if (Storage::disk('s3')->exists($filePath)) {
+                    $temporarySignedUrl = Storage::disk('s3')->temporaryUrl(
+                        $filePath,
+                        Carbon::now()->addMinutes(10)
+                    );
+                    $finaldata['signature'] = $temporarySignedUrl;
+                }else{
+
+                    $finaldata['signature'] = "";  
+                }
+            }else{
+                $finaldata['signature'] = "";  
+            }
+
+
+            $resultData['user'] = $finaldata;
 
             $result['success'] = true;
             $result['message'] = "Data fetch successfully.";
@@ -571,12 +610,14 @@ class UsersController extends Controller
         if(!empty($user)){
 
 
-            $finaldata['userid'] = $id;
+            $finaldata['id'] = $id;
+            $finaldata['userid'] = $user->id;
             $finaldata['first_name'] = $user->first_name;
             $finaldata['last_name'] = $user->last_name;
             $finaldata['email'] = $user->email;
             $finaldata['username'] = $user->username;
             $finaldata['mobile_number'] = $user->mobile_number;
+            $finaldata['country_code'] = $user->country_code;
             $finaldata['organization'] = $user->organization;
             $finaldata['address1'] = $user->address;
             $finaldata['address2'] = $user->address1;
@@ -584,7 +625,25 @@ class UsersController extends Controller
             $finaldata['pincode'] = $user->pincode;
             $finaldata['state'] = $user->state;
             $finaldata['country'] = $user->country;
-            $finaldata['signature'] = $user->signature_photo;
+            //$finaldata['signature'] = $user->signature_photo;
+
+            if (!empty($user->signature_photo)) {
+
+                $filePath = "mediation/user/{$id}/signature/{$user->signature_photo}";
+
+                if (Storage::disk('s3')->exists($filePath)) {
+                    $temporarySignedUrl = Storage::disk('s3')->temporaryUrl(
+                        $filePath,
+                        Carbon::now()->addMinutes(10)
+                    );
+                    $finaldata['signature'] = $temporarySignedUrl;
+                }else{
+
+                    $finaldata['signature'] = "";  
+                }
+            }else{
+                $finaldata['signature'] = "";  
+            }
 
             $finaldata['area_of_specialization'] = json_decode($user->area_of_specialization, true);
             $finaldata['no_of_arbitrations'] = $user->no_of_arbitrations;
