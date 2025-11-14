@@ -55,6 +55,9 @@ class DashboardController extends Controller
         $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
         $userId = $jwtData->data->userid;
         $category = $request->input('category', ''); 
+        $start   = $request->input('iDisplayStart', 0);   
+        $length  = $request->input('iDisplayLength', 10);
+        $sortOrder = $request->input('SortOrder', 'DESC');
 
         $view = Notification::where('view_mediator', 0)->where('mediator_id', $userId)->get();
 
@@ -62,7 +65,7 @@ class DashboardController extends Controller
             $item->view_mediator = 1;
             $item->save();
         }
-        $noficationdata = Notification::mediatornotificationbyctgry($userId, $category);
+        $noficationdata = Notification::mediatornotificationbyctgry($userId, $category, $start, $length, $sortOrder);
 
         $data = array();
         $casedata=array();
@@ -87,8 +90,8 @@ class DashboardController extends Controller
                     $data[$key]['case_id'] ='CID' . sprintf('%06d', $caseid);
                     $data[$key]['reg_id'] = $values->reg_id;
                     $data[$key]['event'] = $values->event;
-                    $data[$key]['created_at'] = $values->created_at;
-                    $data[$key]['updated_at'] = $values->updated_at;
+                    $data[$key]['created_at'] = $values->created_at ? date('d-m-Y h:i A', strtotime($values->created_at)) : '';
+                    $data[$key]['updated_at'] = $values->updated_at ? date('d-m-Y h:i A', strtotime($values->updated_at)) : '';
                     $data[$key]['mediator_id'] = $values->mediator_id;
                     $data[$key]['user_id'] = $values->user_id;
                     $data[$key]['view_mediator'] = $values->view_mediator;
@@ -104,9 +107,15 @@ class DashboardController extends Controller
             }
         }
         
+        $resultData['notifications']=$data;
+        $resultData['pagination']['total_count']=$noficationdata->total();
+        $resultData['pagination']['current_page']=$noficationdata->currentPage();
+        $resultData['pagination']['per_page']=$noficationdata->perPage();
+        $resultData['pagination']['total_page']=$noficationdata->lastPage();
+
         $result['success'] = true;
         $result['message'] = "User notifications fetched successfully.";
-        $result['data'] = $data;
+        $result['data'] = $resultData;
         return response()->json($result, 200);
     }
 
@@ -133,29 +142,29 @@ class DashboardController extends Controller
                 $item->view = 1;
                 $item->save();
             }
-            $notificationAll = Notification::mediatornotificationDataAPI($userId);
-            $noficationCaseUpdates = Notification::mediatornotificationbyctgry($userId, 1);
-            $noficationDocsUpdates = Notification::mediatornotificationbyctgry($userId, 2);
-            $noficationSessionUpdates = Notification::mediatornotificationbyctgry($userId, 3);
-            $noficationAccountUpdates = Notification::mediatornotificationbyctgry($userId, 4);
+            $notificationAll = Notification::select('id')->where('mediator_id', "=", $userId)->count();
+            $noficationCaseUpdates = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 1)->count();
+            $noficationDocsUpdates = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 2)->count();
+            $noficationSessionUpdates = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 3)->count();
+            $noficationAccountUpdates = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 4)->count();
 
-            $notificationAllUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('isMediatorRead', "=", 0)->get();
-            $noficationCaseUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 1)->where('isMediatorRead', "=", 0)->get();
-            $noficationDocsUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 2)->where('isMediatorRead', "=", 0)->get();
-            $noficationSessionUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 3)->where('isMediatorRead', "=", 0)->get();
-            $noficationAccountUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 4)->where('isMediatorRead', "=", 0)->get();
+            $notificationAllUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('isMediatorRead', "=", 0)->count();
+            $noficationCaseUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 1)->where('isMediatorRead', "=", 0)->count();
+            $noficationDocsUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 2)->where('isMediatorRead', "=", 0)->count();
+            $noficationSessionUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 3)->where('isMediatorRead', "=", 0)->count();
+            $noficationAccountUpdatesUnread = Notification::select('id')->where('mediator_id', "=", $userId)->where('category', "=", 4)->where('isMediatorRead', "=", 0)->count();
 
-            $resultData['notifications']['all']=count($notificationAll);
-            $resultData['notifications']['caseUpdates']=count($noficationCaseUpdates);
-            $resultData['notifications']['docsUpdates']=count($noficationSessionUpdates);
-            $resultData['notifications']['sessionUpdates']=count($noficationSessionUpdates);
-            $resultData['notifications']['accountUpdates']=count($noficationSessionUpdates);
+            $resultData['notifications']['all']=$notificationAll;
+            $resultData['notifications']['caseUpdates']=$noficationCaseUpdates;
+            $resultData['notifications']['docsUpdates']=$noficationDocsUpdates;
+            $resultData['notifications']['sessionUpdates']=$noficationSessionUpdates;
+            $resultData['notifications']['accountUpdates']=$noficationAccountUpdates;
 
-            $resultData['notifications']['allUnread']=count($notificationAllUnread);
-            $resultData['notifications']['caseUpdatesUnread']=count($noficationCaseUpdatesUnread);
-            $resultData['notifications']['docsUpdatesUnread']=count($noficationDocsUpdatesUnread);
-            $resultData['notifications']['sessionUpdatesUnread']=count($noficationSessionUpdatesUnread);
-            $resultData['notifications']['accountUpdatesUnread']=count($noficationAccountUpdatesUnread);
+            $resultData['notifications']['allUnread']=$notificationAllUnread;
+            $resultData['notifications']['caseUpdatesUnread']=$noficationCaseUpdatesUnread;
+            $resultData['notifications']['docsUpdatesUnread']=$noficationDocsUpdatesUnread;
+            $resultData['notifications']['sessionUpdatesUnread']=$noficationSessionUpdatesUnread;
+            $resultData['notifications']['accountUpdatesUnread']=$noficationAccountUpdatesUnread;
 
             $result['success'] = true;
             $result['message'] = "Notifications fetched successfully.";

@@ -72,7 +72,25 @@ class ProfileController extends Controller
             $finaldata['state'] = $profileData->state;
             $finaldata['country'] = $profileData->country;
             //$finaldata['signature'] = $profileData->signature_photo;
-            $finaldata['signature'] = storage_path('app/public/mediator/'.$userId . '/signature/'.$profileData->signature_photo);
+
+            if (!empty($profileData->signature_photo)) {
+
+                $filePath = "mediation/mediator/{$userId}/signature/{$profileData->signature_photo}";
+
+                if (Storage::disk('s3')->exists($filePath)) {
+                    $temporarySignedUrl = Storage::disk('s3')->temporaryUrl(
+                        $filePath,
+                        Carbon::now()->addMinutes(10)
+                    );
+                    $finaldata['signature'] = $temporarySignedUrl;
+                }else{
+
+                    $finaldata['signature'] = "";  
+                }
+            }else{
+                $finaldata['signature'] = "";  
+            }
+        
 
             $finaldata['area_of_specialization'] = $userProfileData ? json_decode($userProfileData->area_of_specialization ?? '[]', true) : [];
             $finaldata['no_of_arbitrations'] = $userProfileData->no_of_arbitrations ?? null;
@@ -178,24 +196,50 @@ class ProfileController extends Controller
                 $dataToUpdate->pincode = $pincode;
                 $dataToUpdate->isDone = 1;
             
-                if($request->hasFile('signature')) {
-                    if($dataToUpdate->signature_photo != null) {
-                        Storage::disk('local')->delete('public/mediator/' . $userId . '/signature/' . $dataToUpdate->signature_photo);
+                if($request->hasFile('signature_photo')) {
+
+                    if ($dataToUpdate->signature_photo != null) {
+                        $oldFilePath = 'mediation/mediator/' . $userId . '/signature/' . $dataToUpdate->signature_photo;
+                        Storage::disk('s3')->delete($oldFilePath);
                     }
+
                     $extension = $request->file('signature_photo')->getClientOriginalExtension();
                     $name = 'Mediator_Signature' . sprintf('%06d', $userId) . time() . '.' . $extension;
-                    Storage::disk('local')->put('public/mediator/' . $userId . '/signature/' . $name, file_get_contents($signature_photo));
+                    $finalFilePath='mediation/mediator/' . $userId . '/signature/' . $name;
+                    Storage::disk('s3')->put($finalFilePath, file_get_contents($signature_photo));
+                    
                     $dataToUpdate->signature_photo = $name;
+                    // if($dataToUpdate->signature_photo != null) {
+                    //     Storage::disk('local')->delete('public/mediator/' . $userId . '/signature/' . $dataToUpdate->signature_photo);
+                    // }
+                    // $extension = $request->file('signature_photo')->getClientOriginalExtension();
+                    // $name = 'Mediator_Signature' . sprintf('%06d', $userId) . time() . '.' . $extension;
+                    // Storage::disk('local')->put('public/mediator/' . $userId . '/signature/' . $name, file_get_contents($signature_photo));
+                    // $dataToUpdate->signature_photo = $name;
                 }
 
-                if($request->hasFile('profilePic')) {
-                    if($dataToUpdate->profile_pic != null) {
-                        Storage::disk('local')->delete('public/mediator/' . $userId . '/profile/' . $dataToUpdate->profile_pic);
+                if($request->hasFile('profile_pic')) {
+
+                    if ($dataToUpdate->profile_pic != null) {
+                
+                        $oldFilePath = 'mediation/mediator/' . $userId . '/profile/' . $user->signature_photo;
+                        Storage::disk('s3')->delete($oldFilePath);
                     }
-                    $extension = $request->file('profile_pic')->getClientOriginalExtension();
+                    $extension = $request->file('profilePic')->getClientOriginalExtension();
                     $profilename = 'Mediator_Profile_Pic' . sprintf('%06d', $userId) . time() . '.' . $extension;
-                    Storage::disk('local')->put('public/mediator/' . $userId . '/profile/' . $profilename, file_get_contents($profile_pic));
+                    $finalFilePath='mediation/mediator/' . $userId . '/profile/' . $profilename;
+                    Storage::disk('s3')->put($finalFilePath, file_get_contents($profile_pic));
                     $dataToUpdate->profile_pic = $profilename;
+
+
+
+                    // if($dataToUpdate->profile_pic != null) {
+                    //     Storage::disk('local')->delete('public/mediator/' . $userId . '/profile/' . $dataToUpdate->profile_pic);
+                    // }
+                    // $extension = $request->file('profile_pic')->getClientOriginalExtension();
+                    // $profilename = 'Mediator_Profile_Pic' . sprintf('%06d', $userId) . time() . '.' . $extension;
+                    // Storage::disk('local')->put('public/mediator/' . $userId . '/profile/' . $profilename, file_get_contents($profile_pic));
+                    // $dataToUpdate->profile_pic = $profilename;
                 } 
 
                 $dataToUpdate->save();
