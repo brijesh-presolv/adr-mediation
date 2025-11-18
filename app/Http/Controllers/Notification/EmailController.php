@@ -27,54 +27,62 @@ class EmailController
 
     public function send(){
 
+        $platform = DB::table('email_platform')
+                    ->where('status', 1)
+                    ->first();
+
+        if($platform->name == "Brevo"){
+
+            $this->sendEmailBrevo();
+
+        } else {
+
     	
-        $limit=500;
+            $limit=500;
 
-        $emails=EmailQue::where(['is_sent'=>0,'is_processing'=>0,'is_hold'=> null])->orderBy('updated_at','DESC')->limit($limit)->get();
-
-
-        if(count($emails)<1){
-            exit();
-        }
+            $emails=EmailQue::where(['is_sent'=>0,'is_processing'=>0,'is_hold'=> null])->orderBy('updated_at','DESC')->limit($limit)->get();
 
 
-        $emailproccess=[];
+            if(count($emails)<1){
+                exit();
+            }
 
-        foreach ($emails as $key => $value) {
+
+            $emailproccess=[];
+
+            foreach ($emails as $key => $value) {
+                
+                $emailproccess[]=$value->id;
+
+            }
+
+
+
+            $setprocess=EmailQue::whereIn('id', $emailproccess)->limit($limit)->update(['is_processing' => 1]);
+
+            //$emails=Email_que::where(['is_sent'=>0,'is_processing'=>1])->orderBy('updated_at','DESC')->limit($limit)->get();
+
+            foreach ($emails as $key => $value) {
             
-            $emailproccess[]=$value->id;
+                
+                $d = [
+                        'id'=>$value->id,
+                        'event' => $value->event,
+                        ($value->case_id != null) ? 'case_id' : 'user_id' => ($value->case_id != null) ? $value->case_id : $value->user_id,
+                        'type' => $value->case_type,
+                    ];
 
+                    $vars=json_decode($value->email_variables,true);
+
+                    $attachment=$value->attachment;
+
+                    $template=$value->template_id;
+
+                    $r=self::sendmail($d,$value->to,$vars,$template,$attachment);
+
+
+            }
         }
-
-
-
-    	$setprocess=EmailQue::whereIn('id', $emailproccess)->limit($limit)->update(['is_processing' => 1]);
-
-    	//$emails=Email_que::where(['is_sent'=>0,'is_processing'=>1])->orderBy('updated_at','DESC')->limit($limit)->get();
-
-    	foreach ($emails as $key => $value) {
-           
-    		
-    		$d = [
-    				'id'=>$value->id,
-                    'event' => $value->event,
-                    ($value->case_id != null) ? 'case_id' : 'user_id' => ($value->case_id != null) ? $value->case_id : $value->user_id,
-                    'type' => $value->case_type,
-                ];
-
-                $vars=json_decode($value->email_variables,true);
-
-                $attachment=$value->attachment;
-
-                $template=$value->template_id;
-
-                $r=self::sendmail($d,$value->to,$vars,$template,$attachment);
-
-
-    	}
-
-    	
-
     	
     }
 	
