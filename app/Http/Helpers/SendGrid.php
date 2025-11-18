@@ -20,7 +20,23 @@ class SendGrid
         $file = NULL
     ) {
 
+        $new_subs=NULL;
+        $server_name = $_SERVER['SERVER_NAME'];
+        if ($server_name === 'apiukmediation.presolv360.com') {
 
+            $new_subs = [];
+            if(count($subs)>0){
+                foreach ($subs as $key => $value) {
+
+                    $newKey = str_replace('-', '', $key);
+                    $new_subs[$newKey] = $value;
+                }
+            }
+
+        }else {
+            $new_subs = $subs;    
+        }
+       
         $all_email = array();
 
         $all_email[] = $to;
@@ -29,7 +45,7 @@ class SendGrid
             $arr_e['to'] = trim($all_email[$e]);
             $arr_e['template_id'] = $templateId;
             $arr_e['subject'] = '';
-            $arr_e['email_variables'] = json_encode($subs);
+            $arr_e['email_variables'] = json_encode($new_subs);
             $arr_e['attachment'] = '';
 
             if (is_array($file)) {
