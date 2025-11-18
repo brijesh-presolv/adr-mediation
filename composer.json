@@ -18,7 +18,8 @@
         "laravel/ui": "^3.2",
         "league/flysystem-aws-s3-v3": "~1.0",
         "rguedes/pdfmerger": "^1.0",
-        "sendgrid/sendgrid": "^7.9"
+        "sendgrid/sendgrid": "^7.9",
+        "sendinblue/api-v3-sdk": "^8.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
