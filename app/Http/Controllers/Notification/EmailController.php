@@ -12,6 +12,7 @@ use SendinBlue\Client\Configuration;
 use SendinBlue\Client\Api\TransactionalEmailsApi;
 use SendinBlue\Client\Model\SendSmtpEmail;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
 
 class EmailController
 {    
