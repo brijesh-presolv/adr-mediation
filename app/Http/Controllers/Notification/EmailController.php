@@ -7,6 +7,11 @@ use App\Http\Traits\UploadTrait;
 use App\Models\EmailQue;
 use App\Models\EmailTrack;
 use App\Models\System;
+use Illuminate\Support\Facades\Log;
+use SendinBlue\Client\Configuration;
+use SendinBlue\Client\Api\TransactionalEmailsApi;
+use SendinBlue\Client\Model\SendSmtpEmail;
+use GuzzleHttp\Client;
 
 class EmailController
 {    
@@ -255,6 +260,164 @@ class EmailController
                 if($in){
                 	return true;
                 }
+            }
+        }
+    }
+
+    // Send Email Via Brevo
+
+    public function sendEmailBrevo(){
+
+    	
+        $limit=500;
+
+        $emails=EmailQue::where(['is_sent'=>0,'is_processing'=>0,'is_hold'=> null])->orderBy('updated_at','DESC')->limit($limit)->get();
+
+        if(count($emails)<1){
+            exit();
+        }
+
+
+        $emailproccess=[];
+
+        foreach ($emails as $key => $value) {
+            
+            $emailproccess[]=$value->id;
+
+        }
+
+    	$setprocess=EmailQue::whereIn('id', $emailproccess)->limit($limit)->update(['is_processing' => 1]);
+
+    	foreach ($emails as $key => $value) {
+    		
+    		$d = [
+    				'id'=>$value->id,
+                    'event' => $value->event,
+                    ($value->case_id != null) ? 'case_id' : 'user_id' => ($value->case_id != null) ? $value->case_id : $value->user_id,
+                    'type' => $value->case_type,
+                ];
+
+                $vars=json_decode($value->email_variables,true);
+
+                $attachment=$value->attachment;
+
+                $template=$value->template_id;
+
+                $r=self::brevosendmail($d, $value->to, $template, $vars, $attachment);
+
+
+    	}
+
+    }
+    
+    public static function brevosendmail($d, $to, $templateId, $subs = NULL, $file = NULL) {
+
+        $apiKey = env('BREVO_API_KEY');
+
+        $config = Configuration::getDefaultConfiguration()
+            ->setApiKey('api-key', $apiKey);
+
+        $apiInstance = new TransactionalEmailsApi(new Client(), $config);
+
+        $params = $subs ?? [];
+        $attachments = [];
+
+        if (!empty($file)) {
+
+            if (is_array($file)) {
+
+                foreach ($file as $attach_file) {
+
+                    if (Storage::disk('s3')->exists($attach_file)) {
+
+                        $rawData = Storage::disk('s3')->get($attach_file);
+                        $attachments[] = [
+                            'content' => base64_encode($rawData),
+                            'name'    => basename($attach_file)
+                        ];
+                    }
+                }
+
+            } else { 
+
+                if (Storage::disk('s3')->exists($file)) {
+
+                    $rawData = Storage::disk('s3')->get($file);
+                    $attachments[] = [
+                        'content' => base64_encode($rawData),
+                        'name'    => basename($file)
+                    ];
+                }
+            }
+        }
+
+
+        $sendSmtpEmail = new SendSmtpEmail([
+            'to' => [
+                ['email' => $to]
+            ],
+            'templateId' => $templateId,
+            'params' => $params,       // dynamic variables
+        ]);
+
+        if (!empty($attachments)) {
+
+            $sendSmtpEmail['attachment'] = $attachments;
+        }
+
+        if ($to != '') {
+
+            $uemail = $to;
+
+            try {
+
+                $response = $apiInstance->sendTransacEmail($sendSmtpEmail);
+
+                Log::info('Brevo: Email sent', ['to' => $to, 'sg_message_id' => $response->getMessageId()]);
+                $messageId=$response->getMessageId();
+
+            $et= self::etrack_data($response, $d, $uemail);
+            if($et==true){
+                $setprocess=EmailQue::where(['id'=>$d['id'],'is_sent'=>0])->limit(1)->update(['messageId' => $messageId, 'is_processing' => 0,'is_sent'=>1]);
+            }
+
+            return $response;
+
+            } catch (Exception $e) {
+
+                Log::error('SendGrid: Email send failed', ['to' => $to, 'message' => $e->getMessage(), ]);
+                echo 'Caught exception: ' . $e->getMessage() . "\n";
+                self::etrack_data('', $d, $uemail, true);
+            }
+
+            return true;
+
+       }else{
+
+       }
+    }
+
+    public static function etrack_data($response, $d, $to, $ns = false)
+    {
+        if ($ns == true) {
+            $datainsert = ['sg_message_id' => 'false', 'event' => 'Not sent', (isset($d['case_id'])) ? 'case_id' : 'userid' => (isset($d['case_id'])) ? $d['case_id'] : $d['user_id'], 'casetype' => $d['type'], 'email' => $to, 'status' => '400', 'created_at' => date('Y-m-d H:i:s')];
+
+            EmailTrack::insert($datainsert);
+            return true;
+        }
+        //sent
+        $body = $response->body();
+        $messageId = $response->getMessageId() ?? null;
+
+        if ($messageId) {
+
+            // status not proving brevo -- using status 200
+            $datainsert = ['sg_message_id' => $messageId, 'event' => $d['event'],  (isset($d['case_id'])) ? 'case_id' : 'userid' => (isset($d['case_id'])) ? $d['case_id'] : $d['user_id'], 'casetype' => $d['type'], 'email' => $to, 'status' => "200", 'created_at' => date('Y-m-d H:i:s')];
+
+            $in=EmailTrack::insert($datainsert);
+
+            if($in){
+                return true;
             }
         }
     }
