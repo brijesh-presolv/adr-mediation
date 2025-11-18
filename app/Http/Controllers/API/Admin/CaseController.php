@@ -3143,7 +3143,7 @@ class CaseController extends Controller
 
                 foreach ($initiating_email as $ini_email) {
                     if($stop_ip == 0) {
-                        SendGrid::send($d1, $ini_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
+                        SendGrid::send($d1, $ini_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "CID" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
                     }
 
                 }
