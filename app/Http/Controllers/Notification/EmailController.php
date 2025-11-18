@@ -323,8 +323,10 @@ class EmailController
 
         $brevo_apiKey = env('BREVO_API_KEY');
 
+        Log::info('Brevo: Email', ['temp id' => $templateId, 'brevo_apiKey' => $brevo_apiKey]);
+
         $config = Configuration::getDefaultConfiguration()
-            ->setApiKey('api-key', $brevo_apiKey);
+            ->setApiKey('api-key', "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");
 
         $apiInstance = new TransactionalEmailsApi(new Client(), $config);
 
@@ -366,7 +368,7 @@ class EmailController
                 ['email' => $to]
             ],
             'templateId' => $templateId,
-            'params' => $params,       // dynamic variables
+            'params' => $params       // dynamic variables
         ]);
 
         if (!empty($attachments)) {
