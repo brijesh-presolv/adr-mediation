@@ -17,6 +17,7 @@ class EmailWebhookController extends Controller
 
     public function webhook(Request $request)
     {
+        Log::info('Webhook request received');
         Log::warning("Brevo Webhook All Input", $request->all());
 
         $token = $request->header('X-Brevo-Webhook-Token');
