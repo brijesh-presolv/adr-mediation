@@ -16,6 +16,7 @@ class EmailWebhookController extends Controller
 
     public function webhook(Request $request)
     {
+        Log::warning("Brevo Webhook without messageId", $request->all());
 
         $token = $request->header('X-Brevo-Webhook-Token');
 
@@ -32,7 +33,7 @@ class EmailWebhookController extends Controller
         // Safety check: messageId is required
         if (!$messageId) {
 
-            \Log::warning("Brevo Webhook without messageId", $request->all());
+            Log::warning("Brevo Webhook without messageId", $request->all());
             return response()->json(['error' => 'message-id missing'], 400);
         }
 
