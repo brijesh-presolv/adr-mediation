@@ -406,4 +406,4 @@ Route::get('reinitiate_reg_sms', [App\Http\Controllers\Notification\ReinitiateCo
 Route::get('reinitiate_session_sms', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate_session_sms']);
 
 
-Route::post('/brevo/webhook', [App\Http\Controllers\Webhook\EmailWebhookController::class, 'handle']);
+Route::post('/brevo/webhook', [App\Http\Controllers\Webhook\EmailWebhookController::class, 'webhook']);
