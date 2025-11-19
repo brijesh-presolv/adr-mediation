@@ -12,6 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        '/whatsapp_status'
+        '/whatsapp_status', 'brevo/webhook'
     ];
 }
