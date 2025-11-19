@@ -50,7 +50,7 @@ class BrevoMail
         $directemailsend=EmailDirectSend::find($directsendid);
 
         $config = Configuration::getDefaultConfiguration()
-            ->setApiKey('api-key', "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");
+            ->setApiKey('api-key', $apiKey);
 
         $apiInstance = new TransactionalEmailsApi(new Client(), $config);
 
