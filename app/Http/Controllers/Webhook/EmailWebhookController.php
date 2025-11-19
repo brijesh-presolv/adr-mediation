@@ -36,13 +36,15 @@ class EmailWebhookController extends Controller
             return response()->json(['error' => 'message-id missing'], 400);
         }
 
+        $emailtrackdata=EmailTrack::select('id')->where('sg_message_id', $messageId)->first();
+
         try {
                 EtrackData::create([
-                    'message_id' => $messageId,
-                    'event'      => $event,
+                    'etrackId' => "1",
                     'email'      => $email,
+                    'event'      => $event,
                     'timestamp' => $ts,
-                    'event_time' => now(),
+                    'created_at' => now(),
                 ]);
 
             \Log::info("Brevo Webhook Stored", [

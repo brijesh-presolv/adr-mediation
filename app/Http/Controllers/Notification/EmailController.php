@@ -326,12 +326,24 @@ class EmailController
         Log::info('Brevo: Email', ['temp id' => $templateId, 'brevo_apiKey' => $brevo_apiKey]);
 
         $config = Configuration::getDefaultConfiguration()
-            ->setApiKey('api-key', "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");
+            ->setApiKey('api-key', $brevo_apiKey);
 
         $apiInstance = new TransactionalEmailsApi(new Client(), $config);
 
-        $params = $subs ?? [];
+        $params = [];
+        if (is_array($subs)) {
+            $params = $subs;
+        } elseif (is_string($subs)) {
+            $params = json_decode($subs, true) ?? [];
+        } else {
+            $params = [];
+        }
+
+       // $params=['OTP_CODE' => '11111'];
+
         $attachments = [];
+
+        Log::info('Brevo: Email', ['params' => $params]);
 
         if (!empty($file)) {
 
@@ -362,13 +374,11 @@ class EmailController
             }
         }
 
-
+        $templateId = intval($templateId);
         $sendSmtpEmail = new SendSmtpEmail([
-            'to' => [
-                ['email' => $to]
-            ],
+            'to' => [['email' => $to]],
             'templateId' => $templateId,
-            'params' => $params       // dynamic variables
+            'params' => $params,      // dynamic variables
         ]);
 
         if (!empty($attachments)) {
@@ -417,7 +427,6 @@ class EmailController
             return true;
         }
         //sent
-        $body = $response->body();
         $messageId = $response->getMessageId() ?? null;
 
         if ($messageId) {
