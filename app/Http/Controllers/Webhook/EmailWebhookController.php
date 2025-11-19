@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\Curl;
 use App\Models\System;
 use App\Models\EtrackData;
-
+use App\Models\EmailQue;
+use App\Models\EmailTrack;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,8 @@ class EmailWebhookController extends Controller
 
     public function webhook(Request $request)
     {
-        Log::warning("Brevo Webhook without messageId", $request->all());
+        Log::info('Webhook request received');
+        Log::warning("Brevo Webhook All Input", $request->all());
 
         $token = $request->header('X-Brevo-Webhook-Token');
 
@@ -48,16 +50,16 @@ class EmailWebhookController extends Controller
                     'created_at' => now(),
                 ]);
 
-            \Log::info("Brevo Webhook Stored", [
+            Log::info("Brevo Webhook Stored", [
                 'message_id' => $messageId,
                 'event' => $event
             ]);
 
             return response()->json(['status' => 'ok'], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
-            \Log::error("Brevo Webhook Error", [
+            Log::error("Brevo Webhook Error", [
                 'error' => $e->getMessage()
             ]);
 
