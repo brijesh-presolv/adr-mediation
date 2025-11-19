@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Webhook;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\Curl;
+use Illuminate\Http\Request;
+use App\Http\Requests;
 use App\Models\System;
 use App\Models\EtrackData;
 use App\Models\EmailQue;
