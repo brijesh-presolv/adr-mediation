@@ -25,7 +25,9 @@ class EmailWebhookController extends Controller
         $token = $request->header('X-Brevo-Webhook-Token');
 
         if ($token !== env('BREVO_WEB_TOKEN')) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            
+            Log::error("Brevo Webhook Error", ['error' =>  'Webhook request unauthorized']);
+            return response()->json(['error' => 'Webhook request unauthorized'], 401);
         }
 
         // Get event info from Brevo
@@ -43,30 +45,32 @@ class EmailWebhookController extends Controller
 
         $emailtrackdata=EmailTrack::select('id')->where('sg_message_id', $messageId)->first();
 
+        if(empty($emailtrackdata)){
+
+            $etrackId=0;
+
+        }else{
+
+            $etrackId=$emailtrackdata->id;
+        }
+
         try {
                 EtrackData::create([
-                    'etrackId' => "1",
+                    'etrackId' => $etrackId,
                     'email'      => $email,
                     'event'      => $event,
                     'timestamp' => $ts,
                     'created_at' => now(),
                 ]);
 
-            Log::info("Brevo Webhook Stored", [
-                'message_id' => $messageId,
-                'event' => $event
-            ]);
+            Log::info("Brevo Webhook Stored", ['message_id' => $messageId, 'event' => $event]);
 
             return response()->json(['status' => 'ok'], 200);
 
         } catch (Exception $e) {
 
-            Log::error("Brevo Webhook Error", [
-                'error' => $e->getMessage()
-            ]);
+            Log::error("Brevo Webhook Error", ['error' => $e->getMessage()]);
 
-            // Always return 200 so Brevo does not retry forcibly
-            // We control retries using our own logic
             return response()->json(['status' => 'ok'], 200);
         }
     }
