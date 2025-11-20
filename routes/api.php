@@ -280,6 +280,8 @@ Route::post('/otp-verify', [App\Http\Controllers\API\UserController::class, 'otp
 // Forgot password api
 Route::post('/forgot-pwd', [App\Http\Controllers\API\UserController::class, 'forgotPassword']);
 
+Route::post('/otp-resend', [App\Http\Controllers\API\UserController::class, 'resendOtp']);
+
 
 
  
