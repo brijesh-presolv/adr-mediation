@@ -22,13 +22,13 @@ class EmailWebhookController extends Controller
         Log::info('Webhook request received');
         Log::warning("Brevo Webhook All Input", $request->all());
 
-        $token = $request->header('X-Brevo-Webhook-Token');
+        //$token = $request->header('X-Brevo-Webhook-Token');
 
-        if ($token !== env('BREVO_WEB_TOKEN')) {
+        /* if ($token !== env('BREVO_WEB_TOKEN')) {
             
             Log::error("Brevo Webhook Error", ['error' =>  'Webhook request unauthorized']);
             return response()->json(['error' => 'Webhook request unauthorized'], 401);
-        }
+        } */
 
         // Get event info from Brevo
         $event      = $request->input('event');
