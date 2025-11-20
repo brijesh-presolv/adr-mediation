@@ -56,13 +56,13 @@ class EmailWebhookController extends Controller
 
         try {
 
-            $user = new EtrackData();
-            $user->etrackId = $etrackId;
-            $user->email = $email;
-            $user->event = $event;
-            $user->timestamp = $ts;
-            $user->created_at = now();
-            $user->save();
+            DB::table('etrack_data')->insert([
+                'etrackId' => $etrackId,
+                'email'    => $email,
+                'event'    => $event,
+                'timestamp'=> $ts,
+                'created_at' => now(),  // optional
+            ]);
 
             Log::info("Brevo Webhook Stored", ['message_id' => $messageId, 'event' => $event]);
 
