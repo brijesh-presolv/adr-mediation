@@ -383,4 +383,71 @@ public $successStatus = 200;
 
     }
 
+    public function resendOtp(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            $errors = $validator->errors()->all(); 
+
+            $result['success'] = false;
+            $result['message'] = implode(', ', $errors);
+            $result['error'] = $validator->errors();
+            return response()->json($result, 422);
+        }
+        //Inputs
+        $email = $request->input('email');
+        $randotp=rand('100000', '999999');
+
+        $user = User::select('id', 'role', 'email', 'emailotp', 'smsotp')->where('email', $email)->first();
+        if(empty($user)){
+
+            $data['userid'] = $email;
+            $result['success'] = false;
+            $result['message'] = "User data not found";
+            $result['data'] = $data;
+            return response()->json($result, 404);
+        }
+        $usr = User::find($user->id);
+        $usr->emailotp = $randotp;
+        $usr->smsotp = $randotp;
+        $usr->updated_at = date("Y-m-d H:i:s");
+        if($usr->save()){
+
+            $d = [
+                'event' => 'VARIFY_EMAIL',
+                'userid' => $user->id,
+            ];
+
+            if ($user->role == '0') {
+
+                //$email = SendGrid::directEmailSend($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
+                $email = BrevoMail::directEmailSend($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER'), ['OTP_CODE' => strval($randotp)]);
+
+            } else if ($user->role == '1') {
+                //$email = SendGrid::directEmailSend($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
+                $email = BrevoMail::directEmailSend($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR'), ['OTP_CODE' => strval($randotp)], $user->name);
+
+            }
+            $data['userid'] = $user->email;
+
+            $result['success'] = true;
+            $result['message'] = "OTP resend successfully.";
+            $result['data'] = $data;
+            return response()->json($result, 200);
+            
+        }else{
+
+            $data['userid'] = $user->email;
+            $result['success'] = false;
+            $result['message'] = "OTP Re-generation failed.";
+            $result['data'] = $data;
+            return response()->json($result, 500);
+
+        }
+    }
+
 }
