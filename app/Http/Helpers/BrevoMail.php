@@ -88,7 +88,7 @@ class BrevoMail
             }
         }
 
-
+        $templateId = intval($templateId);
         $sendSmtpEmail = new SendSmtpEmail([
             'to' => [
                 ['email' => $to]
