@@ -20,6 +20,8 @@ class SendGrid
         $file = NULL
     ) {
 
+        $new_subs=NULL;
+        $server_name = $_SERVER['SERVER_NAME'];
         if ($server_name === 'apiukmediation.presolv360.com') {
 
             $new_subs = $subs;
