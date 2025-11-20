@@ -375,7 +375,7 @@ class DashboardController extends Controller
 
             $JWT_KEY = env('JWT_KEY');
             $jwtData = JWT::decode($token, new Key(base64_decode($JWT_KEY), 'HS512'));
-           $userId = $jwtData->data->userid; 
+            $userId = $jwtData->data->userid; 
         
             $today_date = Carbon::today();
             $sessionData = DB::table('manage_session')
@@ -388,7 +388,7 @@ class DashboardController extends Controller
 
             $dataArray = array();
             $finalArray = array();
-            $sn = 1;
+            $sn = 0;
 
             foreach ($sessionData as $value) {
                 if( $value->date_format > $today_date ){
@@ -467,9 +467,6 @@ class DashboardController extends Controller
             $result['message'] = "Upcoming sessions are fetched successfully.";
             $result['data'] = $data;
             return response()->json($result, 200);
-
-
-
 
 
         } catch (Exception $e) {

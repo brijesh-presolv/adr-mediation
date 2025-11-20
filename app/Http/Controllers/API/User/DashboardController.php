@@ -281,7 +281,7 @@ class DashboardController extends Controller
 
             $dataArray = array();
             $finalArray = array();
-            $sn = 1;
+            $sn = 0;
 
 
             foreach ($sessionData as $value) {
