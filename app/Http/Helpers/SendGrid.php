@@ -20,21 +20,20 @@ class SendGrid
         $file = NULL
     ) {
 
-        $new_subs=NULL;
-        $server_name = $_SERVER['SERVER_NAME'];
         if ($server_name === 'apiukmediation.presolv360.com') {
 
-            $new_subs = [];
-            if(count($subs)>0){
-                foreach ($subs as $key => $value) {
+            $new_subs = $subs;
 
+            if (is_array($subs) && count($subs) > 0) {
+                $new_subs=[];
+                foreach ($subs as $key => $value) {
                     $newKey = str_replace('-', '', $key);
                     $new_subs[$newKey] = $value;
                 }
             }
 
-        }else {
-            $new_subs = $subs;    
+        } else {
+            $new_subs = $subs;  // fallback for NULL
         }
        
         $all_email = array();
