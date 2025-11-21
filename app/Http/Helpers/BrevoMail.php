@@ -54,7 +54,17 @@ class BrevoMail
 
         $apiInstance = new TransactionalEmailsApi(new Client(), $config);
 
-        $params = $subs ?? [];
+        //$params = $subs ?? [];
+
+        $params = $subs;
+
+            if (is_array($subs) && count($subs) > 0) {
+                $params=[];
+                foreach ($subs as $key => $value) {
+                    $newKey = str_replace('-', '', $key);
+                    $params[$newKey] = $value;
+                }
+            }
 
 
         $attachments = [];

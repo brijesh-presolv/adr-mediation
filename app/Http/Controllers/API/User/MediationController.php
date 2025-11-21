@@ -273,7 +273,7 @@ class MediationController extends Controller
             }
             Common_function::MedNotification($med->id, "SUBMIT_FORM", $userId, null, $inv_id, null, 1, "success");
 
-            $e = Email::send($d, $usr->email, env('EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
+            $e = Email::send($d, $usr->email, env('UK_EMAIL_L1', ''), ['-caseId-' => $cid,], $usr->first_name . ' ' . $usr->last_name);
 
             $data['caseid'] = $med->id;
             $result['success'] = true;
@@ -475,7 +475,7 @@ class MediationController extends Controller
 
                 $party_name = $InvoledUser->name;
 
-                $e = Email::send($d, $InvoledUserP1->userEmail, env('L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''), ['-caseid-' => $mid, '-name-' => $party_name], $InvoledUserP1->name);
+                $e = Email::send($d, $InvoledUserP1->userEmail, env('UK_L7_UPON_SUCCESSFUL_ONBOARDING_OF_ANY_COUNTER_PARTY', ''), ['-caseid-' => $mid, '-name-' => $party_name], $InvoledUserP1->name);
                 
                 $data['code'] = $code;
                 $data['case'] = $case;
