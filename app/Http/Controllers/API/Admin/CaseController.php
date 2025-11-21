@@ -981,7 +981,7 @@ class CaseController extends Controller
 
                             if($medcase->stop_bulk_session_med == 0) {
 
-                                SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+                                SendGrid::send($d, $mediator->email, env('UK_L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
                             
                             }
                         }
@@ -1044,7 +1044,7 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         if ($email_id != "") {
-            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
+            SendGrid::send($d, $email_id, env('UK_L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, '-zoom_invitation_link-' => $url], $email_name);
         }
         
         return true;
@@ -1058,7 +1058,7 @@ class CaseController extends Controller
             'case_id' => $id,
         ];
         if ($email_id != "") {
-            SendGrid::send($d, $email_id, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, "-zoom_invitation_link-" => $invitation], $email_name);
+            SendGrid::send($d, $email_id, env('UK_L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $mid, "-insert_date-" => $date, "-type-" => $userType, "-zoom_invitation_link-" => $invitation], $email_name);
         }
 
         return true;
@@ -1702,13 +1702,13 @@ class CaseController extends Controller
                         $dd = InvoledUser::where('id', $d)->where('userPlanId', $deleted->case_id)->first();
                         if (isset($dd)) {
                             if ($dd->userEmail != null) {
-                                SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
+                                SendGrid::send($d1, $dd->userEmail, env('UK_L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
                             }
                         } else {
                             $dd = InvoledUser::where('userId', $d)->where('userPlanId', $deleted->case_id)->first();
                             if (isset($dd)) {
                                 if ($dd->userEmail != null) {
-                                    SendGrid::send($d1, $dd->userEmail, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
+                                    SendGrid::send($d1, $dd->userEmail, env('UK_L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Party"], $dd->name);
                                 }
                             }
                         }
@@ -1720,7 +1720,7 @@ class CaseController extends Controller
                 ];
                 if (isset($mediator)) {
                     if ($mediator->email != "") {
-                        SendGrid::send($d2, $mediator->email, env('L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Mediator"], $mediator->username);
+                        SendGrid::send($d2, $mediator->email, env('UK_L24_CANCELLING_OF_SESSION', ''), ["-cid-" => $caseid, "-date-" => $deleted->session_date, "-type-" => "Mediator"], $mediator->username);
                     }
                 }
 
@@ -2003,7 +2003,7 @@ class CaseController extends Controller
         
         if (!empty($sendEamils)) {
             foreach ($sendEamils as $email) {
-                SendGrid::send($d, $email, env('L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
+                SendGrid::send($d, $email, env('UK_L19_ADDITIONAL_DOC_ALL_PARTIES', ''), ["-caseid-" => $mid, "-party_name-" => "Party"], null, $filesE);
             }
         }
 
@@ -2214,7 +2214,7 @@ class CaseController extends Controller
                 
                 $party_name = $inv->name;
                 $id = Common_function::changeidprefix("",$id);
-                SendGrid::send($d, $inv->userEmail, env('L8_CASE_REJECTED', ''), ["-caseid-" => $id, "-responding-" => $party_name], $inv->name);
+                SendGrid::send($d, $inv->userEmail, env('UK_L8_CASE_REJECTED', ''), ["-caseid-" => $id, "-responding-" => $party_name], $inv->name);
             
             }
         }
@@ -2408,12 +2408,12 @@ class CaseController extends Controller
                 'event' => 'SEND_SETT_AGRE_MED',
                 'case_id' => $id,
             ];
-            SendGrid::send($d1, $mediator->email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+            SendGrid::send($d1, $mediator->email, env('UK_L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
 
         }
 
         foreach ($sendEamils as $email) {
-            SendGrid::send($d, $email, env('L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
+            SendGrid::send($d, $email, env('UK_L21_SETTLEMENT_AGREEMENT_ALL_PARTIES', ''), ["-caseid-" => $mid], null, $filesE);
         }
 
         return true;
@@ -2429,7 +2429,7 @@ class CaseController extends Controller
             'event' => 'MEDI_ADD_ADM',
             'case_id' => $id,
         ];
-        SendGrid::send($d, $user->email, env('L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $mid], $user->name);
+        SendGrid::send($d, $user->email, env('UK_L17_WHEN_ADMIN_SELECTS_MEDIATOR', ''), ["-caseid-" => $mid], $user->name);
 
         return true;
     }
@@ -2696,7 +2696,7 @@ class CaseController extends Controller
 
                 if($stop_close_ip == 0){
 
-                    SendGrid::send($d1, $inv->userEmail, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
+                    SendGrid::send($d1, $inv->userEmail, env('UK_L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-type-" => "Party"], $inv->name);
                 }
             } else {
                 if ($inv->name != "") {
@@ -2712,7 +2712,7 @@ class CaseController extends Controller
                 if ($email != "") {
                     if($stop_close_rp == 0){
 
-                        SendGrid::send($d2, $email, env('L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                        SendGrid::send($d2, $email, env('UK_L14_COMMUNICATION_OF_WITHDRAWAL_TO_OTHER_PARTIES', ''), ["-caseid-" => $mid, "-partyname-" => $initiating_party, "-type-" => "Party"], $inv->name);
                     }
                 }
             }
@@ -2723,7 +2723,7 @@ class CaseController extends Controller
 
             if($stop_close_med == 0){
 
-                SendGrid::send($d3, $mediator->email, env('L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+                SendGrid::send($d3, $mediator->email, env('UK_L13_WITHDRAWAL_OF_CASE', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
             }
 
             
@@ -2757,14 +2757,14 @@ class CaseController extends Controller
             if ($inv->userEmail != "") {
                 if($stop_close_ip == 0) {
 
-                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                    SendGrid::send($d, $inv->userEmail, env('UK_L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
                 }
             }
         }
         if ($mediator) {
             if($stop_close_med == 0){
                 
-                SendGrid::send($d, $mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+                SendGrid::send($d, $mediator->email, env('UK_L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
             }
         }
         return true;
@@ -2795,14 +2795,14 @@ class CaseController extends Controller
             if ($inv->userEmail != "") {
                 if($stop_close_ip == 0) {
 
-                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                    SendGrid::send($d, $inv->userEmail, env('UK_L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
                 }
             }
         }
         if ($mediator) {
             if($stop_close_med == 0){
                 
-                SendGrid::send($d, $mediator->email, env('L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+                SendGrid::send($d, $mediator->email, env('UK_L15_CASE_RESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
             }
         }
         return true;
@@ -2835,14 +2835,14 @@ class CaseController extends Controller
             if ($inv->userEmail != "") {
                 if($stop_close_ip == 0) {
 
-                    SendGrid::send($d, $inv->userEmail, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
+                    SendGrid::send($d, $inv->userEmail, env('UK_L15_CASE_UNRESOLVED', ''), ["-caseid-" => $mid, "-responding-" => $initiating_party, "-type-" => "Party"], $inv->name);
                 }
             }
         }
         if ($mediator) {
             if($stop_close_med == 0){
 
-                SendGrid::send($d, $mediator->email, env('L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
+                SendGrid::send($d, $mediator->email, env('UK_L15_CASE_UNRESOLVED', ''), ["-caseid-" => $id, "-responding-" => $initiating_party, "-type-" => "Mediator"], $mediator->username);
             }
         }
         return true;
@@ -3122,13 +3122,13 @@ class CaseController extends Controller
                 $responding_phone[] = $inv->userPhone;
                 $responding_party_name[] = $inv->name;
                 if ($inv->userEmail != "" && $stop_rp == 0) {
-                    SendGrid::send($d2, $inv->userEmail, env('L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
+                    SendGrid::send($d2, $inv->userEmail, env('UK_L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
                 }
                 
                 //***************** */ L10 session email go ******************//
                 if ($bulk_flag == 1) {
                     if ($inv->userEmail != "") {
-                        SendGrid::send($d, $inv->userEmail, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
+                        SendGrid::send($d, $inv->userEmail, env('UK_L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
                     }
                 }
                 //***************** */ L10 session email go ******************//
@@ -3143,7 +3143,7 @@ class CaseController extends Controller
 
                 foreach ($initiating_email as $ini_email) {
                     if($stop_ip == 0) {
-                        SendGrid::send($d1, $ini_email, env('L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "CID" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
+                        SendGrid::send($d1, $ini_email, env('UK_L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "CID" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
                     }
 
                 }
