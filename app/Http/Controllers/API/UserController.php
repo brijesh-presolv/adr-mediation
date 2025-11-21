@@ -191,16 +191,16 @@ public $successStatus = 200;
 
                 Common_function::MedNotification(null, "USER_REGI", null, null, null, $user->id, 4, "account");
 
-                $email = SendGrid::directEmailSend($d, $user->email, env('UK_EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
-                //$email = BrevoMail::directEmailSend($d, $user->email, 3, ['OTP_CODE' => strval($user->emailotp)]);
+                //$email = SendGrid::directEmailSend($d, $user->email, env('UK_EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
+                $email = BrevoMail::directEmailSend($d, $user->email, env('UK_EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
 
 
             } else if ($user->role == '1') {
 
                 Common_function::MedNotification(null, "MED_REGI", null, null, null, $user->id, 4, "account");
 
-                $email = SendGrid::directEmailSend($d, $user->email, env('UK_EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
-                //$email = BrevoMail::directEmailSend($d, $user->email, 3, ['OTP_CODE' => strval($user->emailotp)], $user->name);
+                //$email = SendGrid::directEmailSend($d, $user->email, env('UK_EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
+                $email = BrevoMail::directEmailSend($d, $user->email, env('UK_EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
             }
 
             $data['userid'] = $user->id;
@@ -367,7 +367,7 @@ public $successStatus = 200;
                 'userid' => $usr->id,
             ];
 
-            Email::directEmailSend($d, $usr->email, env('UK_EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
+            BrevoMail::directEmailSend($d, $usr->email, env('UK_EMAIL2_OF_FORGOTPASSWORD', ''), ['-type-' => $type, '-pwd-' => $pwd], $usr->first_name . ' ' . $usr->last_name);
 
             $result['success'] = true;
             $result['message'] = "New password sent on email.";
@@ -425,11 +425,11 @@ public $successStatus = 200;
             if ($user->role == '0') {
 
                 //$email = SendGrid::directEmailSend($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
-                $email = BrevoMail::directEmailSend($d, $user->email, env('EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
+                $email = BrevoMail::directEmailSend($d, $user->email, env('UK_EMAIL4_RESENDOTP_OF_USER', ''), ['-otp-' => strval($user->emailotp)]);
 
             } else if ($user->role == '1') {
                 //$email = SendGrid::directEmailSend($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
-                $email = BrevoMail::directEmailSend($d, $user->email, env('EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
+                $email = BrevoMail::directEmailSend($d, $user->email, env('UK_EMAIL5_RESENDOTP_OF_MEDIATOR', ''), ['-otp-' => strval($user->emailotp)], $user->name);
 
             }
             $data['userid'] = $user->email;
