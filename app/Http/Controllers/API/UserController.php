@@ -57,7 +57,7 @@ public $successStatus = 200;
 
                 $data['userid'] = $user->id;
                 $data['role'] = $user->role;
-                $data['eotp'] = $user->emailotp;
+                //$data['eotp'] = $user->emailotp;
                 $data['isEverified'] = 0;
                 $result['success'] = false;
                 $result['message'] = "Please completed your email verification.";
@@ -386,7 +386,8 @@ public $successStatus = 200;
     public function resendOtp(Request $request) {
 
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
+            'email'  => 'nullable|email',
+            'userid' => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -400,12 +401,29 @@ public $successStatus = 200;
         }
         //Inputs
         $email = $request->input('email');
+        $userid = $request->input('userid');
+
+        if (!$email && !$userid) {
+
+            $result['success'] = false;
+            $result['message'] =  "Please provide either email or userid.";
+            $result['error'] =  "Please provide either email or userid.";
+            return response()->json($result, 422);
+        }
+
         $randotp=rand('100000', '999999');
 
-        $user = User::select('id', 'role', 'email', 'emailotp', 'smsotp')->where('email', $email)->first();
+        $userQuery = User::select('id', 'name', 'role', 'email', 'emailotp', 'smsotp');
+
+        if ($request->email) {
+            $user = $userQuery->where('email', $request->email)->first();
+        } else {
+            $user = $userQuery->where('id', $request->userid)->first();
+        }
+
         if(empty($user)){
 
-            $data['userid'] = $email;
+            $data['email'] = $email;
             $result['success'] = false;
             $result['message'] = "User data not found";
             $result['data'] = $data;
