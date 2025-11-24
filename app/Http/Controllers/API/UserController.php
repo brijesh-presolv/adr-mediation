@@ -413,7 +413,7 @@ public $successStatus = 200;
 
         $randotp=rand('100000', '999999');
 
-        $userQuery = User::select('id', 'name', 'role', 'email', 'emailotp', 'smsotp');
+        $userQuery = User::select('id', 'role', 'email', 'emailotp', 'smsotp');
 
         if ($request->email) {
             $user = $userQuery->where('email', $request->email)->first();
