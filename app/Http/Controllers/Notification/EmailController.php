@@ -13,6 +13,7 @@ use SendinBlue\Client\Api\TransactionalEmailsApi;
 use SendinBlue\Client\Model\SendSmtpEmail;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class EmailController
 {    
