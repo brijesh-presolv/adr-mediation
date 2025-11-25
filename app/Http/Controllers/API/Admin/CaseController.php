@@ -98,7 +98,7 @@ class CaseController extends Controller
                 $keyInc = $key + 1;
 
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] = env('PLATFORM_PREFIX') . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
@@ -151,7 +151,7 @@ class CaseController extends Controller
                 $keyInc = $key + 1;
 
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] = env('PLATFORM_PREFIX') . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
@@ -206,7 +206,7 @@ class CaseController extends Controller
                 $keyInc = $key + 1;
 
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] = env('PLATFORM_PREFIX') . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
@@ -261,7 +261,7 @@ class CaseController extends Controller
                 $keyInc = $key + 1;
 
                 $data[$key]['id'] = $id;
-                $data[$key]['caseid'] ='CID' . sprintf('%06d', $values->id);
+                $data[$key]['caseid'] = env('PLATFORM_PREFIX') . sprintf('%06d', $values->id);
                 $data[$key]['keyInc'] = $keyInc;
                 $data[$key]['batch_id'] = $values->batch_id;
                 $data[$key]['ref_id'] = $values->ref_id;
@@ -904,7 +904,7 @@ class CaseController extends Controller
 
                     if ($mediatorNoti) {
 
-                        $id = "M" . sprintf("%06d", $caseId);
+                        $id = env('PLATFORM_PREFIX') . sprintf("%06d", $caseId);
 
                         if($zoom_choice == "manually_zoom") {
                             if($medcase->stop_bulk_session_med == 0) {
@@ -976,7 +976,7 @@ class CaseController extends Controller
                         ->where("mediators_mediation_cases_status.status", "=", 1)
                         ->first();
                     if ($mediator) {
-                        $id = "M" . sprintf("%06d", $caseId);
+                        $id = env('PLATFORM_PREFIX') . sprintf("%06d", $caseId);
 
                         if(!isset($request->fsData['zoom_choice'])){
 
@@ -1039,7 +1039,7 @@ class CaseController extends Controller
 
     public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone, $userType){
 
-        $mid = "M" . sprintf("%06d", $id);
+        $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $id);
         $d = [
             'event' => 'SESS_SCHE',
             'case_id' => $id,
@@ -1053,7 +1053,7 @@ class CaseController extends Controller
 
     public function sned_session_invitation($url, $id, $email_id, $email_name, $date, $userPhone, $invitation, $userType)
     {
-        $mid = "M" . sprintf("%06d", $id);
+        $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $id);
         $d = [
             'event' => 'SESS_SCHE',
             'case_id' => $id,
@@ -1097,7 +1097,7 @@ class CaseController extends Controller
                     $dis_file_name = $values->file_name;
                     $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
                 } else {
-                    $dis_file_name = "M" . sprintf("%06d", $caseId) . "_party.pdf";
+                    $dis_file_name = env('PLATFORM_PREFIX') . sprintf("%06d", $caseId) . "_party.pdf";
                     $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
                 }
 
@@ -1307,7 +1307,7 @@ class CaseController extends Controller
                 $dis_file_name = $data->file_name;
                 $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
             } else {
-                $dis_file_name = "M" . sprintf("%06d", $caseId) . "_party.pdf";
+                $dis_file_name = env('PLATFORM_PREFIX') . sprintf("%06d", $caseId) . "_party.pdf";
                 $exist_file = storage_path() . '/app/public/mediation/' . $caseId . '/' . $dis_file_name;
             }
             
@@ -1688,7 +1688,7 @@ class CaseController extends Controller
                     ->where("mediators_mediation_cases_status.mediation_case_id", "=", $deleted->case_id)
                     ->where("mediators_mediation_cases_status.status", "=", 1)
                     ->first();
-                $caseid = "M" . sprintf("%06d", $deleted->case_id);
+                $caseid = env('PLATFORM_PREFIX') . sprintf("%06d", $deleted->case_id);
                 $d1 = [
                     'event' => 'SESS_CEN_PARTY',
                     'case_id' => $deleted->case_id,
@@ -1989,7 +1989,7 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-        $mid = "M" . sprintf("%06d", $id);
+        $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $id);
         $sendEamils = array();
 
         $d = [
@@ -2055,7 +2055,7 @@ class CaseController extends Controller
                 ->first();
 
             
-            $data['caseid'] = "CID" . sprintf("%06d", $caseid);
+            $data['caseid'] = env('PLATFORM_PREFIX') . sprintf("%06d", $caseid);
             $data['email'] = $email;
             $data['mediator'] = $mediator;
 
@@ -2110,7 +2110,7 @@ class CaseController extends Controller
                     ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
                     ->where(['user_involved_in_agreement.userPlanid' => $caseid])->get();
 
-                $mid = "M" . sprintf("%06d", $caseid);
+                $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $caseid);
 
                 if ($inv[0]->address1 != null || $inv[0]->useraddress != null) {
                     $medcase = MedCase::find($caseid);
@@ -2389,7 +2389,7 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-        $mid = "M" . sprintf("%06d", $id);
+        $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $id);
         $sendEamils = array();
         $filesE = array();
         $d = [
@@ -2424,7 +2424,7 @@ class CaseController extends Controller
     public function send_mediatorAdd($id, $mediator_id)
     {
         $user = User::where("id", $mediator_id)->first();
-        $mid = "M" . sprintf("%06d", $id);
+        $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $id);
 
         $d = [
             'event' => 'MEDI_ADD_ADM',
@@ -2665,7 +2665,7 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-        $mid = "M" . sprintf("%06d", $id);
+        $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $id);
 
         $initiating_party = "";
         $initiating_phone = [];
@@ -2741,7 +2741,7 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-        $mid = "CID" . sprintf("%06d", $id);
+        $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $id);
         $initiating_party = "";
         $d = [
             'event' => 'RESO_ADM',
@@ -2779,7 +2779,7 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.mediation_case_id", "=", $id)
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
-        $mid = "CID" . sprintf("%06d", $id);
+        $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $id);
         $initiating_party = "";
         $d = [
             'event' => 'PAR_RES_BY_ADMIN',
@@ -2819,7 +2819,7 @@ class CaseController extends Controller
             ->where("mediators_mediation_cases_status.status", "=", 1)
             ->first();
 
-        $mid = "M" . sprintf("%06d", $id);
+        $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $id);
         $initiating_party = "";
         $d = [
             'event' => 'UNRESO_ADM',
@@ -3123,13 +3123,13 @@ class CaseController extends Controller
                 $responding_phone[] = $inv->userPhone;
                 $responding_party_name[] = $inv->name;
                 if ($inv->userEmail != "" && $stop_rp == 0) {
-                    SendGrid::send($d2, $inv->userEmail, env('UK_L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
+                    SendGrid::send($d2, $inv->userEmail, env('UK_L4_INVITATION_TO_COUNTER_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => env('PLATFORM_PREFIX') . sprintf("%06d", $id), "-link-" => $inv->joinCode, "-initiating-" => $initiating_party], $inv->name, $finalFilePath);
                 }
                 
                 //***************** */ L10 session email go ******************//
                 if ($bulk_flag == 1) {
                     if ($inv->userEmail != "") {
-                        SendGrid::send($d, $inv->userEmail, env('UK_L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => "M" . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
+                        SendGrid::send($d, $inv->userEmail, env('UK_L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => env('PLATFORM_PREFIX') . sprintf("%06d", $id), "-insert_date-" => $zoom_date_temp, "-type-" => "Party", '-zoom_invitation_link-' => $zoom_link_temp], $inv->name);
                     }
                 }
                 //***************** */ L10 session email go ******************//
@@ -3144,7 +3144,7 @@ class CaseController extends Controller
 
                 foreach ($initiating_email as $ini_email) {
                     if($stop_ip == 0) {
-                        SendGrid::send($d1, $ini_email, env('UK_L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => "CID" . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
+                        SendGrid::send($d1, $ini_email, env('UK_L5_INVITATION_TO_INITI_PARTIES_FOR_ONBOARDING', ''), ["-caseid-" => env('PLATFORM_PREFIX') . sprintf("%06d", $id), "-responding-" => $responding_party], $inv->name, $finalFilePath);
                     }
 
                 }
