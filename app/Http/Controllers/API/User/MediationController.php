@@ -261,7 +261,7 @@ class MediationController extends Controller
                 'case_id' => $med->id,
             ];
 
-            $cid = "M" . sprintf("%06d", $med->id);
+            $cid = env('PLATFORM_PREFIX') . sprintf("%06d", $med->id);
             $inv_id = "";
             $inv = InvoledUser::select('id')->where('userPlanId', $med->id)->get();
             foreach ($inv as $v) {
@@ -357,7 +357,7 @@ class MediationController extends Controller
                 ->where("mediators_mediation_cases_status.status", "=", 1)
                 ->first();
 
-            $data['caseid'] = "CID" . sprintf("%06d", $caseid);
+            $data['caseid'] = env('PLATFORM_PREFIX') . sprintf("%06d", $caseid);
             $data['email'] = $email;
             $data['mediator'] = $mediator;
 
@@ -469,7 +469,7 @@ class MediationController extends Controller
                 Common_function::MedNotification($InvoledUser->userPlanId, "ONBOAR_USER", $userId, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id, null, 1, "success");
 
                 //fetch init parry
-                $mid = "M" . sprintf("%06d", $InvoledUser->userPlanId);
+                $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $InvoledUser->userPlanId);
 
                 $InvoledUserP1 = InvoledUser::where(['isClaimant' => '0', 'userPlanId' => $InvoledUser->userPlanId])->first();
 
