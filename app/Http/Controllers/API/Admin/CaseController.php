@@ -340,11 +340,12 @@ class CaseController extends Controller
 
 
             if ($mediator_id != null) {
+
                 $inv = InvoledUser::select('user_involved_in_agreement.*', 'users.address as useraddress', 'users.address1 as useraddress1', 'users.pincode as userpincode', 'users.city as usercity', 'users.state as userstate', 'users.country as usercountry')
                     ->leftJoin("users", "users.id", "=", "user_involved_in_agreement.userId")
                     ->where(['user_involved_in_agreement.userPlanid' => $caseid])->get();
 
-                $mid = "M" . sprintf("%06d", $caseid);
+                $mid = env('PLATFORM_PREFIX') . sprintf("%06d", $caseid);
 
 
 
@@ -456,7 +457,7 @@ class CaseController extends Controller
                         //send invitation
                         $invmodel->save();
 
-                        if ($this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med)) {
+                        if ($this->sned_invitation($caseid, $invitation, $medCas->bulk_flag, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med)) {
                             $finaldata['discussion'] = $discussion_text;
                             $finaldata['caseid'] = $caseid;
                             $result['data'] = $finaldata;
