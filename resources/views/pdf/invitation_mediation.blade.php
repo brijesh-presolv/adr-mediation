@@ -106,7 +106,7 @@ $ldate = $lastdate->format('d-m-Y');
     <table cellspacing="0" cellpadding="10" width="100%" style="">
         <tr>
             <td width="60%">
-                <p>Case ID: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>Case ID: M{{ sprintf('%06d', $case->id) }} | Ref ID: {{$case->ref_id}}</p>
             </td>
             <td class="text-right">
                 <p>Date : {{ date('d-m-Y') }}</p>
@@ -275,12 +275,21 @@ $ldate = $lastdate->format('d-m-Y');
         appointing party shall submit the signed Letter of Authority by way of an email addressed to Presolv360 at
         admin@presolv360.com with the subject “Letter of Authority | (Case ID) | (Name of the Appointing Party)”.</p>
 
-    <p style="">7. A mediator / conciliator from the panel of mediators / conciliators will be appointed, and such appointment
-        shall be based on the mediator’s / conciliator’s competence, knowledge and ability to deal with subject matter
-        of the dispute between the parties.</p>
+    <p style="">7. The Institution can also be requested to provide a list of available mediators from its panel of mediators, by way of an email 
+        addressed to admin@presolv360.com with the subject "Request for List of Available Mediators | (Case ID)". The parties shall mutually appoint a mediator from the said list, failing which, the aforesaid mediator shall be confirmed.</p>
 
-    <p style="">8. Upon acceptance of the appointment by the mediator / conciliator, the parties shall be notified of the
-        appointment.</p>
+    <p style="">8. To access the case management system, the Respondent(s) shall complete the following process: </p>
+    <p style='margin-left:15px;margin-bottom: 0px;'>
+        a. Create your account using your registered email ID by <a href="https://mediation.presolv360.com/login">clicking here</a>.
+    </p>
+
+    <p style='margin-left:15px;margin-bottom: 0px;'>
+        b. For authentication purposes, a unique join code will be required. The same is provided separately.
+    </p>
+
+    <p style='margin-left:15px;margin-bottom: 0px;'>
+         c. For any assistance to access the case management system, kindly address an email to admin@presolv360.com and mention your Case ID in the subject line.
+    </p>
 
     <p style="">9. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
 
