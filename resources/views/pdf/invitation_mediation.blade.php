@@ -124,82 +124,14 @@ $ldate = $lastdate->format('d-m-Y');
                 Opposite / Responding Party:
             </th>
         </tr>
-
         <tr>
-            <td></td>
-            <td></td>
-        </tr>
-
-        
-
-        @foreach ($party as $key => $p)
-        <tr>
-            <td>
-                <!-- @if ($key == 0) -->
-                <?php $inparty = User::find($p->userId); ?>
-                    @if ($p->isClaimant == 0)
-                        <p>{{ isset($inparty->organization) ? $inparty->organization . ' through its authorized representative ' . $p->name : $p->name }}
-                        </p>
-                    @endif
-                <!-- @endif -->
-            </td>
-            <td>
-                <!-- @if ($key != 0) -->
-                    @if ($p->isClaimant != 0)
-                        @if ($p->name != '')
-                            @if ($p->name != '')
-                                <p>{{ $p->name }}</p>
-                            @endif
-                            @if ($p->address1 != '')
-                                <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }},
-                                    {{ $p->pincode }}
-                                </p>
-                                <p>{{ $p->state }} {{ $p->country }}</p>
-                            @endif
-                            @if ($p->fulladdress != '')
-                                <p>{{ $p->fulladdress }} </p>
-                            @endif
-                            @if ($p->userEmail != '')
-                                <p>{{ $p->userEmail }}</p>
-                            @endif
-                            @if ($p->userPhone != '')
-                                <p>{{ $p->userPhone }}</p>
-                            @endif
-                            <br>
-                        @endif
-
-                        @if ($p->name == '')
-                            @if ($p->userEmail != '')
-                                <p>{{ $p->userEmail }}</p>
-                            @endif
-                            @if ($p->userPhone != '')
-                                <p>{{ $p->userPhone }}</p>
-                            @endif
-                            <br>
-                        @endif
-                    @endif
-                <!-- @endif -->
-
-
-                @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
-                <p>{{$case->otherRespondentDetails}}</p>
-                @endif
-                
-            </td>
-                
-        </tr>
-
-        
-        @endforeach
-
-        <!--- new structure : START ------------------>
-        <!-- <tr>
-            @foreach ($party as $key => $p)
-            <td>
+            <td >
+                @foreach ($party as $key => $p)
                     <?php
                     $inparty = User::find($p->userId); ?>
                     @if ($p->isClaimant == 0)
-                       
+                        <p>{{ isset($inparty->organization) ? $inparty->organization . ' through its authorized representative ' . $p->name : $p->name }}
+                        </p>
                         @if ($p->address1 != null)
                             <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }}, {{ $p->pincode }}</p>
                             <p>{{ $p->state }} {{ $p->country }}</p>
@@ -211,6 +143,14 @@ $ldate = $lastdate->format('d-m-Y');
                             <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
                         @endif
 
+                        <!-- @if ($p->userEmail != null)
+                        <p>{{$p->userEmail}}</p>
+                        @endif
+
+                        @if ($p->userPhone != null)
+                        <p>{{$p->userPhone}}</p>
+                        @endif -->
+                        <br> <br>
 
                         @if ($p->userpname != null)
                         <p>{{$p->userpname}}</p>
@@ -228,8 +168,59 @@ $ldate = $lastdate->format('d-m-Y');
                 {{-- <p>{{$party[0]->userEmail}}</p>
                 <p>{{$party[0]->userPhone}}</p> --}}
             </td>
-        </tr> -->
-        <!--- new structure : END -------------------->
+            <td style="page-break-inside: auto !important;">
+
+                @foreach ($party as $key => $p)
+                    @if ($key != 0)
+                        @if ($p->isClaimant != 0)
+                            @if ($p->name != '')
+                                @if ($p->name != '')
+                                    <p>{{ $p->name }}</p>
+                                @endif
+                                @if ($p->address1 != '')
+                                    <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }},
+                                        {{ $p->pincode }}
+                                    </p>
+                                    <p>{{ $p->state }} {{ $p->country }}</p>
+                                @endif
+                                @if ($p->fulladdress != '')
+                                    <p>{{ $p->fulladdress }} </p>
+                                @endif
+                                @if ($p->userEmail != '')
+                                    <p>{{ $p->userEmail }}</p>
+                                @endif
+                                @if ($p->userPhone != '')
+                                    <p>{{ $p->userPhone }}</p>
+                                @endif
+                                <br>
+                            @endif
+                        @endif
+                    @endif
+                @endforeach
+                <!-- @if ($case->otherRespondentDetails != '' && $case->otherRespondentDetails != null)
+                    <p>{{ $case->otherRespondentDetails }}</p>
+                @endif -->
+                <br>
+                @foreach ($party as $key => $p)
+                    @if ($key != 0)
+                        @if ($p->isClaimant != 0)
+                            @if ($p->name == '')
+                                @if ($p->userEmail != '')
+                                    <p>{{ $p->userEmail }}</p>
+                                @endif
+                                @if ($p->userPhone != '')
+                                    <p>{{ $p->userPhone }}</p>
+                                @endif
+                                <br>
+                            @endif
+                        @endif
+                    @endif
+                @endforeach
+                @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
+                <p>{{$case->otherRespondentDetails}}</p>
+                @endif
+            </td>
+        </tr>
 
         @if ($case->discussion != '' && $case->discussion != null)
         <tr>
@@ -239,6 +230,8 @@ $ldate = $lastdate->format('d-m-Y');
             </td>
         </tr>
         @endif
+
+
     </table>
 
     <p>1. Desirous of arriving at an amicable resolution, the Applicant(s) / Initiating Party has sought an amicable
@@ -286,15 +279,15 @@ $ldate = $lastdate->format('d-m-Y');
         addressed to admin@presolv360.com with the subject "Request for List of Available Mediators | (Case ID)". The parties shall mutually appoint a mediator from the said list, failing which, the aforesaid mediator shall be confirmed.</p>
 
     <p style="">8. To access the case management system, the Respondent(s) shall complete the following process: </p>
-    <p style='margin-left:15px;'>
+    <p style='margin-left:15px;margin-bottom: 0px;'>
         a. Create your account using your registered email ID by <a href="https://mediation.presolv360.com/login">clicking here</a>.
     </p>
 
-    <p style='margin-left:15px;'>
+    <p style='margin-left:15px;margin-bottom: 0px;'>
         b. For authentication purposes, a unique join code will be required. The same is provided separately.
     </p>
 
-    <p style='margin-left:15px;'>
+    <p style='margin-left:15px;margin-bottom: 0px;'>
          c. For any assistance to access the case management system, kindly address an email to admin@presolv360.com and mention your Case ID in the subject line.
     </p>
 
