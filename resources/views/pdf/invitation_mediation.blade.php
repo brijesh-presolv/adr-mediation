@@ -279,15 +279,15 @@ $ldate = $lastdate->format('d-m-Y');
         addressed to admin@presolv360.com with the subject "Request for List of Available Mediators | (Case ID)". The parties shall mutually appoint a mediator from the said list, failing which, the aforesaid mediator shall be confirmed.</p>
 
     <p style="">8. To access the case management system, the Respondent(s) shall complete the following process: </p>
-    <p style='margin-left:15px;margin-bottom: 0px;'>
+    <p style='margin-left:15px; margin-bottom: 0px !important; margin-top: 0px !important;'>
         a. Create your account using your registered email ID by <a href="https://mediation.presolv360.com/login">clicking here</a>.
     </p>
 
-    <p style='margin-left:15px;margin-bottom: 0px;'>
+    <p style='margin-left:15px; margin-bottom: 0px !important; margin-top: 0px !important;'>
         b. For authentication purposes, a unique join code will be required. The same is provided separately.
     </p>
 
-    <p style='margin-left:15px;margin-bottom: 0px;'>
+    <p style='margin-left:15px; margin-bottom: 0px !important; margin-top: 0px !important;'>
          c. For any assistance to access the case management system, kindly address an email to admin@presolv360.com and mention your Case ID in the subject line.
     </p>
 
