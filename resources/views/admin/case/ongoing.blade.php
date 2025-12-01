@@ -390,6 +390,21 @@
                         <input type="hidden" name="caseId" id="caseIdF1" value="">
                         <div id="file_select"></div>
                         <br><br>
+
+
+                        <!---- Document Type Drondown : START ----->
+                        <div class="form-group">
+                            <label>Document Type</label>
+                            <select name="documentType" id="documentType">
+                                <option value="">Please Select</option>
+                                <option value="rl">Referral Letter</option>
+                                <option value="laa">Letter of Authority for Applicant (s)</option>
+                                <option value="lar">Letter of Authority for Respondent (s)</option>
+                                <option value="o">Other</option>
+                            </select>
+                        </div>
+                        <!---- Document Type Drondown : END ------->
+
                         <div id="mediatorDocs"></div>
                         <br>
                         <span>Share With @lang('case.session_party'):</span>
@@ -3207,6 +3222,7 @@
             let TotalFiles = $('#files')[0].files.length;
             let files = $('#files')[0];
             let party = [];
+            let docType = "";
             $("input:checkbox[name=docs_party_ids]:checked").each(function() {
                 party.push($(this).val());
             });
@@ -3216,9 +3232,14 @@
             for (let i = 0; i < TotalFiles; i++) {
                 formData.append('files' + i, files.files[i]);
             }
+
+            $('#documentType').on('change', function() {
+                docType = $(this).val();
+            })
             formData.append('TotalFiles', TotalFiles);
             formData.append('docs_party_ids', party);
             formData.append('shareMediator', shareMediator);
+            formData.append('docType', docType);
 
             $.ajax({
                 type: 'POST',
