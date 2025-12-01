@@ -457,6 +457,18 @@
                         <input type="file" name="files[]" id="filesForBulk" class="dropify" data-height="150"
                             multiple />
                         <br>
+                        <!---- Document Type Drondown : START ----->
+                        <div class="form-group">
+                            <label>Document Type</label>
+                            <select name="documentType" id="documentType">
+                                <option value="">Please Select</option>
+                                <option value="rl">Referral Letter</option>
+                                <option value="laa">Letter of Authority for Applicant (s)</option>
+                                <option value="lar">Letter of Authority for Respondent (s)</option>
+                                <option value="o">Other</option>
+                            </select>
+                        </div>
+                        <!---- Document Type Drondown : END ------->
                         <input type="submit" id="submit" name="addSupportingDocs"
                             class="btn btn-sm btn-primary mt-3">
                         <br>
@@ -3235,7 +3247,7 @@
 
             $('#documentType').on('change', function() {
                 docType = $(this).val();
-            })
+            });
             formData.append('TotalFiles', TotalFiles);
             formData.append('docs_party_ids', party);
             formData.append('shareMediator', shareMediator);
@@ -3289,11 +3301,16 @@
             let TotalFiles = $('#filesForBulk')[0].files.length;
             let files = $('#filesForBulk')[0];
             var filesall = [];
+            let docType = "";
             for (let i = 0; i < TotalFiles; i++) {
                 formData.append('files' + i, files.files[i]);
                 filesall[i] = files.files[i];
             }
+            $('#documentType').on('change', function() {
+                docType = $(this).val();
+            });
             formData.append('TotalFiles', TotalFiles);
+            formData.append('docType', docType);
             swal({
                 title: "@lang('case.are_you_sure')",
                 text: withdrawcountTotal.toString() + " Cases selected",
