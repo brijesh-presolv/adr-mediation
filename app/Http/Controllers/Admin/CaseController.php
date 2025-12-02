@@ -880,18 +880,18 @@ class CaseController extends Controller
                     //$filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
                     
                     if($request->documentType == "rl"){
-                        $filename = "Ref_Letter_".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                        $filename = "Ref_Letter_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     }else if($request->documentType == "laa"){
-                        $filename = "LOA_A_".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                        $filename = "LOA_A_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     }else if($request->documentType == "lar"){
-                        $filename = "LOA_R_".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                        $filename = "LOA_R_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     }else if($request->documentType == "o"){
-                        $filename = "supportingdoc".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                        $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     }else {
-                        $filename = "supportingdoc".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                        $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     }
                     
-                    
+                    //$filename = "supportingdoc".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
 
 
