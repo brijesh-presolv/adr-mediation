@@ -53,6 +53,7 @@ Route::get('/ivr/remined/acceptcase', [App\Http\Controllers\IvrController::class
 
 
 Route::post('download-document', [App\Http\Controllers\DownloadDocument::class, 'downloadSecure'])->name('downloadSecure');
+Route::post('preview-document', [App\Http\Controllers\DownloadDocument::class, 'previewDoc'])->name('previewDoc');
 
 Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('user.dashboard');
@@ -335,7 +336,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     // check vapt file content
     Route::post('checkPdfContent', [App\Http\Controllers\Admin\DashboardController::class, 'checkPdfContent'])->name('admin.checkPdfContent');
-
 
 });
 
