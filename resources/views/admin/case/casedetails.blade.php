@@ -323,7 +323,7 @@
 
                                     <a href="javascript:void(0);" data-folder="supportingDocument" class="previewDoc"
                                     data-url="{{ $v->file_name }}" data-id="{{ $case->id }}" data-userid="{{ Auth::user()->id }}"
-                                    style="margin-left: 10px;">View</a>
+                                    style="margin-left: 10px;">Preview</a>
 
                                 </td>
                             </tr>
@@ -665,14 +665,18 @@
             $(document).on("click", ".previewDoc", function() {
                 var id = $(this).data("id");
                 var filename = $(this).data("url");
+                var userid = $(this).data("userid");
                 var csrf = document.querySelector('meta[name="csrf-token"]').content;
                 var cc = $(this);
+                var parentFolder = $(this).data("folder");
                 $.ajax({
                      url: '{{ route('previewDoc') }}',
                     method: "POST",
                     data: {
                         id: id,
                         urlpath: filename,
+                        parentFolder: parentFolder,
+                        user_id: userid,
                         _token: csrf
                     },
                     beforeSend: function () {
@@ -694,7 +698,7 @@
                     // pdflink.click();
                     // document.body.removeChild(pdflink);
                     // $(".loading_form").hide();
-                    cc.html('Preview');
+                    //cc.html('Preview');
                     //captureopendata(htext, comm, intr, id, type);
                     },
 
