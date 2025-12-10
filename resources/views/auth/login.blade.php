@@ -57,10 +57,12 @@
             padding-top: 6px !important;
             padding-bottom: 6px !important;
             font-size: 12px !important;
+            font-family: 'Poppins', sans-serif !important;
         }
 
         .form-label {
             font-size: 12px !important;
+            font-family: 'Poppins', sans-serif !important;
 
         }
 
@@ -163,9 +165,9 @@
 
                 <!-- Privacy Policy -->
                 <div class="mb-2 rdivmain">
-                    <label class="flex items-start gap-2 text-gray-700 form-label check_privacypolicy">
+                    <label class="flex items-start gap-2 text-gray-700 form-label  check_privacypolicy">
                         <input type="checkbox" name="is_agree" id="check_privacypolicy" required class="mt-1">
-                        <span>
+                        <span class=" form-label">
                             I have read and agree to the
                             <a href="https://presolv360.com/terms_conditions" target="_blank" class="text-[#0B5386] ">Terms & Conditions</a>,
                             <a href="https://presolv360.com/privacy_policy" target="_blank" class="text-[#0B5386] ">Privacy Policy</a> and
@@ -194,9 +196,18 @@
                 <!-- Forgot Password -->
                 <div class="mt-4 text-center">
                     <button type="button"
-                            class="text-[#0B5386] font-medium hover:underline"
+                            class="text-[#0B5386] text-sm hover:underline"
                             data-toggle="modal" data-target="#myModal">
                         @lang('site.forgotpassword')
+                    </button>
+                </div>
+
+                <!-- Forgot username -->
+                <div class="text-center">
+                    <button type="button"
+                            class="text-[#0B5386] text-sm hover:underline"
+                            data-toggle="modal" data-target="#myModal2">
+                        @lang('site.forgotusername')
                     </button>
                 </div>
 
@@ -222,10 +233,10 @@
                     <button type="button" class="close text-xl" data-dismiss="modal">&times;</button>
                 </div>
                     <label class="block mb-2">
-                        <span class="text-gray-700 font-sm form-label">@lang('site.Enter Email')</span>
+                        <span class="text-gray-700 font-sm form-label">@lang('site.Enter Username')</span>
                         <input type="email" name="email_pass_reset" id="email_pass_reset"
                                class="form-input mt-1 w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#0B5386]"
-                               placeholder="example@gmail.com" required>
+                               placeholder="Username" required>
                         <span id="forgotPassMessage" class="block mt-1 text-xs" style="color:red;"></span>
                     </label>
 
@@ -245,6 +256,45 @@
                 
                     <label class="block mb-4">
                         <span class="text-gray-700 font-sm form-label">For any query contact <a href="mailto: smadmin@presolv360.com">smadmin@presolv360.com</a></span>
+                    </label>
+            </div>
+        </div>
+    </div>
+
+        <!-- ============================= -->
+    <!--     FORGOT Username MODAL     -->
+    <!-- ============================= -->
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-6 rounded-xl shadow-lg">
+
+                <div class="flex justify-between items-center mb-2">
+                    <h5 class="text-xl font-semibold text-[#0B5386]">Forgot Username</h5>
+                    <button type="button" class="close text-xl" data-dismiss="modal">&times;</button>
+                </div>
+                    <label class="block mb-2">
+                        <span class="text-gray-700 font-medium form-label">@lang('site.Enter Email')*</span>
+                        <input type="email" name="forgot_username_reset" id="forgot_username_reset"
+                               class="form-input mt-1 w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#0B5386] fgmobile"
+                               placeholder="Email" required>
+
+                        <span id="forgotUsernamMessage" class="block mt-1 text-xs" style="color:red;"></span>
+                    </label>
+
+                    <div class="flex">
+                        <button id="load3"
+                            class="py-1.5 px-4 rounded text-sm font-medium text-white
+                                bg-[#0B5386]
+                                shadow-sm shadow-[#0B5386]/30
+                                hover:bg-[#094568]
+                                hover:shadow-md hover:shadow-[#0B5386]/40
+                                transition-all duration-200 ease-in-out
+                                " data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">Reset Username</button>
+                        </button>
+                    </div>
+                
+                    <label class="block mb-4">
+                        <span class="text-gray-700 font-sm form-label">For any query contact <a href="mailto:info@presolve360.com">info@presolv360.com</a></span>
                     </label>
             </div>
         </div>
