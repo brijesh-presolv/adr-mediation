@@ -273,7 +273,7 @@
                     <button type="button" class="close text-xl" data-dismiss="modal">&times;</button>
                 </div>
                     <label class="block mb-2">
-                        <span class="text-gray-700 font-medium form-label">@lang('site.Enter Email')*</span>
+                        <span class="text-gray-700 font-medium form-label">@lang('site.Enter Email')</span>
                         <input type="email" name="forgot_username_reset" id="forgot_username_reset"
                                class="form-input mt-1 w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#0B5386] fgmobile"
                                placeholder="Email" required>
@@ -376,7 +376,7 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                  },
-                data:{'email':str},
+                data:{'username':str},
                 success:function(d){
 
                     d=JSON.parse(d);
@@ -392,8 +392,6 @@
                     console.log(e);
                     swal("Failed!", "Wrong username entered!", "warning");
                 }
-
-
                 });
 
             }
@@ -403,10 +401,53 @@
                 $('#myModal').modal('hide');
 
                 swal("Failed!", "Please enter an Username!", "warning");
-
             }
         });
 
+        $('#load3').on('click', function() {
+
+            var str=document.getElementById('forgot_username_reset').value;
+
+            if(str!=='') {
+
+                var $this = $(this);
+                $this.button('loading');
+
+                $.ajax({
+
+                url:DOMAIN+'/forgotusername',
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data:{'email':str},
+                success:function(d){
+                    d=JSON.parse(d);
+                    if(d.response=='success'){
+                    swal("Success!", "Your Username Has Been Sent To Your Registered Email Id. Please Check Your Registered Email Id!", "success");
+                    } else{
+                    swal("Failed!", "Wrong email entered!", "warning");
+                    }
+
+                },
+                error:function(e){
+
+                    console.log(e);
+                    swal("Failed!", "Wrong email entered!", "warning");
+                }
+
+
+                });
+
+            }
+            else
+            {
+                $this.button('reset');
+                $('#myModal2').modal('hide');
+                swal("Failed!", "Please enter an Email Id!", "warning");
+            }
+
+        });
 
     </script>
 
