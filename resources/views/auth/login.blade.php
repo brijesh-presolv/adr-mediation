@@ -1,421 +1,372 @@
-@extends('layouts.home')
-@section('title', 'Login')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Presolv360</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="msapplication-TileImage" content="{{url('/assert/')}}/img/DisputeManagement.jpg" />
 
-@section('content')
+    <meta name="description" content="Online Dispute Resolution platform to conduct arbitration, mediation, conciliation digitally." />
 
-<style type="text/css">
-    input::placeholder{
-        font-size: 14px;
-    }
+    <meta name="keywords" content="ODR, ADR, Online Dispute Resolution, Alternative Dispute Resolution, Out of Court Settlement, Arbitration, Mediation, Conciliation, Online Arbitration, Online Negotiation, Money Recovery, Legaltech, ODR India" />
 
-    .floatdiv{
-        position: absolute;
-        right: 4%;
-        top:22%;
-        max-width: 450px;
-        box-shadow: none;
-        z-index: 1;
-        background: #f3f3f3;
-        border-radius: 5px;
-    }
+    <meta property="og:keywords" content="ODR, ADR, Online Dispute Resolution, Alternative Dispute Resolution, Out of Court Settlement, Arbitration, Mediation, Conciliation, Online Arbitration, Online Negotiation, Money Recovery, Legaltech, ODR India" />
+    <meta property="og:description" content="Online Dispute Resolution platform to conduct arbitration, mediation, conciliation digitally." />
+    <meta property="og:image" content="{{url('/assert/')}}/img/DisputeManagement.jpg" />
+    <meta property="og:image:secure_url" content="https://www.presolv360.com/public/images/DisputeManagement.jpg" />
+    <meta property="og:url" content="https://www.presolv360.com">
+    <meta property="og:title" content=" {{ config('app.name', 'Medtiator') }} | Dispute resolution made easy" />
+    <meta property="og:type" content="article" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-    .rdiv{
-        padding-right:0 !important;
-    padding-left: 17px;
-    }
-    .rdivmain{
-        margin-top: 10px;
-    }
+    <!-- Standard Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{url('/assert/')}}/img/icon.png" />
+    <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="{{url('/assert/')}}/css/sweetalert2.css">
+    <link rel="stylesheet" href="{{url('/assert/')}}/css/style_slide.css">
+    <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/css/home.css">
+    <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/OwlCarousel/dist/assets/owl.carousel.min.css">
+    <link rel="stylesheet" type="text/css" href="{{url('/assert/')}}/OwlCarousel/dist/assets/owl.theme.default.css">
 
-    .page-banner{
-        min-height: 571px;
-    }
-
-    .dwidth{
-        width: 50%!important;
-    }
-
-    .dwidth2{
-        width: 49%!important;
-    }
-
-    @media(min-width: 1700px){
-        .floatdiv {
-            right: 13%;
+    <style>
+        .alert-bubble {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 18px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+            animation: bounce 1s infinite;
         }
-    }
-
-
-    @media(max-width: 768px){
-
-        #email1{
-            margin-bottom: 10px;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
         }
 
-        .page-banner{
-            min-height: 300px!important;
+                .grecaptcha-badge {
+            visibility: hidden;
+            height: 0px!important;
         }
 
+        .form-input {
+            padding-top: 6px !important;
+            padding-bottom: 6px !important;
+            font-size: 12px !important;
+        }
 
+        .form-label {
+            font-size: 12px !important;
 
-        .loginbtn {
-    max-width: 100%;
-}
+        }
 
+        /* Reduce label & small text size */
+        .form-small {
+            font-size: 12px !important;
+        }
 
-.crbgtext {
-    right: 32%;
-    top: 30%;
-}
+        /* Reduce spacing between fields */
+        .form-gap {
+            margin-bottom: 8px !important;
+        }
 
-        
-        .floatdiv{
-        position: relative;
-        max-width: 100%;
-            margin: 10px;
-    background: #ffff;
-    }
+        /* Reduce container size */
+        .form-box {
+            max-width: 480px !important;
+            padding: 16px !important;
+        }
 
-    .dwidth{
-        width: 100%;
-    }
+        /* Reduce heading */
+        .form-title {
+            font-size: 20px !important;
+        }
+    </style>
 
-    .dwidth2{
-        width: 100%;
-    }
+    <!-- Bootstrap for Modal (required) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
 
-    .btnmobiles{
-        display: none;
-    }
-}
+  <body class="min-h-screen flex flex-col justify-center relative bg-gradient-to-br from-[#eef3f7] via-[#f7f9fb] to-[#ffffff]">
 
+    <!-- Logo -->
+    <div class="absolute top-6 left-6 md:left-12 flex items-center">
+        <a href="/">
+            <img src="{{url('/assert/')}}/img/logo.png" class="h-10" class="img-fluid home-logo">
+        </a>
+    </div>
 
-@media(max-width: 400px){
+  <!-- Login Box With More Top Space -->
+  <div class="flex-grow flex items-center justify-center px-4">
+        <div class="w-full max-w-md border border-[#c8d6e2] rounded-xl p-8">
 
-.page-banner {
-    min-height: 200px!important;
-}
+            <!-- Title -->
+            <div class="flex flex-col items-center mb-2">
+                <h4 class="text-1xl font-semibold text-[#0B5386] text-center form-title">Login to your account</h4>
+                <p class="text-gray-600 text-sm text-center">Enter your details to login.</p>
+            </div>
 
-.page-banner .crbgtextlogin {
-    right: 24%;
-    top: 12%;
-}
+            <!-- Login Form -->
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
 
-.dwidth2 {
-    width: 92%!important;
-}
-.dwidth {
-    width: 92%!important;
-}
+                <!-- Email -->
+                <div class="mb-2">
+                <span class="text-gray-700 font-sm form-label">@lang('site.email')*</span>
+                <input 
+                    type="email" id="email1" name="email"
+                    class="form-input mt-1 w-full px-4 py-2 border border-gray-300 rounded-md 
+                        focus:ring-2 focus:ring-[#0B5386] @error('email') border-red-500 @enderror"
+                    placeholder="example@gmail.com" required>
+                    @error('email')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-.mobtns{
-        text-align: left;
-}
+                <!-- Password -->
+                <div class="mb-3">
+                    <span class="text-gray-700 font-sm form-label">@lang('site.password')*</span>
+                    <!-- Input + Eye -->
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            name="password"
+                            id="exampleInputPassword1"
+                            class="form-input w-full px-4 py-2 pr-10 border border-gray-300 bg-white rounded-md 
+                                focus:ring-2 focus:ring-[#0B5386] @error('password') border-red-500 @enderror txtmobile "
+                            placeholder="••••••••" 
+                            required
+                        />
 
-.mobtns .btn{
-    margin-left: 0px!important;
-}
+                        <!-- Eye Icon -->
+                        <span 
+                            class="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500"
+                            onclick="togglePassword()">
+                                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 
+                                        2.943 9.542 7-1.274 4.057-5.065 7-9.542 
+                                        7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                        </span>
+                    </div>
+                    @error('password')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-#name{
-    margin-bottom: 15px;
-}
+                <!-- Privacy Policy -->
+                <div class="mb-2 rdivmain">
+                    <label class="flex items-start gap-2 text-gray-700 form-label check_privacypolicy">
+                        <input type="checkbox" name="is_agree" id="check_privacypolicy" required class="mt-1">
+                        <span>
+                            I have read and agree to the
+                            <a href="https://presolv360.com/terms_conditions" target="_blank" class="text-[#0B5386] ">Terms & Conditions</a>,
+                            <a href="https://presolv360.com/privacy_policy" target="_blank" class="text-[#0B5386] ">Privacy Policy</a> and
+                            <a href="https://presolv360.com/cookie_policy" target="_blank" class="text-[#0B5386] ">Cookie Policy</a>.
+                        </span>
+                    </label>
+                    @error('password')
+                       <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-#mobile{
-    margin-bottom: 15px;
-}
+                <!-- Login Button -->
+                <div class="flex justify-center">
+                    <button 
+                        class="py-1.5 px-4 w-32 rounded-lg text-sm font-medium text-white
+                            bg-[#0B5386]
+                            shadow-md shadow-[#0B5386]/30
+                            hover:bg-[#094568]
+                            hover:shadow-lg hover:shadow-[#0B5386]/40
+                            transition-all duration-300 ease-in-out
+                            ulogin">
+                        Submit
+                    </button>
+                </div>
 
-.loginpage .form-horizontal .form-group {
-    margin-bottom: 7px;
-}
-#organization, #username1, #password{
-    margin-bottom: 5px;
-}
+                <!-- Forgot Password -->
+                <div class="mt-4 text-center">
+                    <button type="button"
+                            class="text-[#0B5386] font-medium hover:underline"
+                            data-toggle="modal" data-target="#myModal">
+                        @lang('site.forgotpassword')
+                    </button>
+                </div>
 
+                <!-- Create Account -->
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    Don’t have an account?
+                    <a href="{{ route('register') }}" class="text-[#0B5386] font-medium hover:underline">Create account</a>
+                </p>
 
-}
+            </form>
+        </div>
+    </div>
 
-@media(max-width: 360px){
+    <!-- ============================= -->
+    <!--     FORGOT PASSWORD MODAL     -->
+    <!-- ============================= -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content p-6 rounded-xl shadow-lg">
 
-   .Createac .btn-warning {
-    width: 100% !important;
-    margin-bottom: 10px;
-}
-}
+                <div class="flex justify-between items-center mb-2">
+                    <h5 class="text-xl font-semibold text-[#0B5386]">Forgot Password</h5>
+                    <button type="button" class="close text-xl" data-dismiss="modal">&times;</button>
+                </div>
+                    <label class="block mb-2">
+                        <span class="text-gray-700 font-sm form-label">@lang('site.Enter Email')</span>
+                        <input type="email" name="email_pass_reset" id="email_pass_reset"
+                               class="form-input mt-1 w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#0B5386]"
+                               placeholder="example@gmail.com" required>
+                        <span id="forgotPassMessage" class="block mt-1 text-xs" style="color:red;"></span>
+                    </label>
 
-.loginpage{
-    padding-top: 150px;
-    padding-bottom: 150px;
-}
-
-.loginpage{
-    background: whitesmoke;
-    
-}
-</style>
-
-
-
- <!-- <ol class="breadcrumb  bcrm" style="">
-    
-   <div class="container">
-                        <li style="
-    float: left;
-    margin-right: 10px;
-"><a href="https://presolv360.com/">Home /</a></li> <li class="active">Login/ Create Account</li>
-                    </div></ol> -->
-
-
-    <div id="aboutone-section" class="aboutone-section container-fluid no-padding blog-page-content loginpage">
-        <!-- Container -->
-        <div class="container ">
+                    <div class="flex">
+                        <button id="load2"
+                            class="py-1.5 px-4 rounded text-sm font-medium text-white
+                                bg-[#0B5386]
+                                shadow-sm shadow-[#0B5386]/30
+                                hover:bg-[#094568]
+                                hover:shadow-md hover:shadow-[#0B5386]/40
+                                transition-all duration-200 ease-in-out
+                                ">
+                            Reset Password
+                        </button>
+                    </div>
 
                 
-                    <div class="row">
-
-                        <div class="col-md-7 mx-auto" >
-
-                            <div class="card bxshadow">
-                    <div class="card-body">
-                            <!-- Nav tabs -->
-
-                                                        <ul class="nav nav-tabs loginmobile">
-                                <li class=""><a href="{{route('login')}}" class="active">@lang('site.login')</a></li>
-                                <li class=""><a href="{{route('register')}}"  class="">@lang('site.createaccount')</a></li>
-                            </ul>
-                            <!-- Tab panes -->
-                            <div class="tab-content ">
-                                <div class="tab-pane active" id="Login">
-                                <br>
-                                <form role="form" class="form-horizontal loginformsection" method="POST" action="login">
-                                        @csrf
-                                        <div class="form-group formmobile row">
-                                            <!-- <label for="email" class="col-md-1 control-label" style="margin-right: 20px;">
-                                                Username</label> -->
-                                            <div class="col-sm-12">
-                                                <label for="email" class="control-label" style="margin-right: 20px;">@lang('site.email')
-                                                </label>
-                                                <input type="email" class="form-control txtmobile @error('email') is-invalid @enderror" id="email1" placeholder="Email" name="email" value=""required/>
-                                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="form-group formmobile row">
-                                            <!-- <label for="exampleInputPassword1" class="col-md-1 control-label" style="margin-right: 20px;">
-                                                Password</label> -->
-                                            <div class="col-sm-12">
-                                                <label for="exampleInputPassword1" class="control-label" style="margin-right: 20px;">
-                                                @lang('site.password')</label>
-                                                <input type="password" class="form-control txtmobile mb-2 @error('password') is-invalid @enderror" id="exampleInputPassword1" placeholder="Password" name="password" value="" required/>
-                                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <!---- Added for terms-condition checkbox : START ---->
-                                        <div class="form-group row">
-                                            <div class="col-sm-12 ml25">
-                                                <label class="" style="margin-right: 10px; float: left">
-                                                    <input type="checkbox" name="is_agree" value="1" required="">
-                                                </label>
-                                                <label class="col-sm-11" style="padding: 0; font-size: 14px;">
-                                                By clicking this, you are confirming that you have read, understood and agree to <a href="https://presolv360.com/terms_conditions">Terms and conditions</a>, <a href="https://presolv360.com/privacy_policy">Privacy Policy</a> and <a href="https://presolv360.com/cookie_policy" >Cookie Policy</a>.
-                                                </label>
-                                    
-                                            </div>
-                                        </div>
-                                        <!---- Added for terms-condition checkbox : END ------>
-                                    
-                                        <div class="row mobtns">
-                                            <div class="col-md-12" style="display:inline-block; text-align: center;">
-                                                <button type="submit" class="btn btn-warning btn-lg btnmobile mt-2 dwidth" style="background-color: #FFA600;border: 1px;">
-                                                    Submit</button>
-                                            </div>
-
-                                            <div class="col-md-12">
-
-                                                <div class="row mt-3">
-                                                <div class="col-md-12">
-                                                    <!--  <center><p>OR</p></center> -->
-                                                </div>
-                                                   
-                                                    <div class="col-md-6">
-                                                        <button type="button" class="btn btn-warning btn-block " style="background-color:#0B5386;width:80%; " data-toggle="modal" data-target="#myModal">@lang('site.forgotpassword')</button>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <button type="button" class="btn btn-warning btn-block" style="background-color: #0B5386;border: 1px;width:80%;"    data-toggle="modal" data-target="#myModal2">@lang('site.forgotusername')</button>
-                                                    </div>
-                                                </div>
-                                                 
-
-                                            </div>
-                       
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <!--<div id="OR" class="d-none">
-                                OR</div>-->
-                        </div>
-
-                    </div>
-                </div>
+                    <label class="block mb-4">
+                        <span class="text-gray-700 font-sm form-label">For any query contact <a href="mailto: smadmin@presolv360.com">smadmin@presolv360.com</a></span>
+                    </label>
             </div>
         </div>
     </div>
-    <!-- model for resetpassword -->
-                                <div class="modal fade" id="myModal" role="dialog">
-                                    <div class="modal-dialog modal-xs"  >
-                                        <div class="modal-content frgpmobile">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">@lang('site.forgotpassword')</h4>
-                                            </div>
-                                            <div class="modal-body">
 
-                                                <div class="form-group ">
-                                                    <label for="email" class="d-sm-none ">@lang('site.Enter Username')</label>
-                                                    <input type="text" class="form-control fgmobile" id="username_reset" name="username_reset" placeholder="Username" >
-                                                </div>
-                                                <button type="button" class="btn btn-primary btn-lg" id="load2" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">@lang('site.Reset Password')</button>
-                                                <br/>
+  <!-- Footer -->
+  <footer class="absolute bottom-4 left-4 text-gray-600 text-sm">
+    Presolv360 © <?=date('Y');?> All rights reserved.
+  </footer>
 
-                                                <div>For any query contact <a href="mailto:info@presolv360.com">info@presolv360.com</a></div>
-                                            </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="{{url('/assert/')}}/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.js"></script>
+    <script src="{{url('/assert/')}}/js/brand-slider.js"></script>
+    <script src="{{url('/assert/')}}/js/main.js"></script>
+    <script src="{{url('/assert/')}}/js/site.js"></script>
+    <script src="{{url('/assert/')}}/js/slick.js"></script>
+    <script src="{{url('/assert/')}}/js/sweetalert2.js"></script>
+    <script src="{{url('/assert/')}}/js/tailwind.js"></script>
 
-                                        </div>
+    <script type="text/javascript">
 
-                                    </div>
-                                </div>
-                                
-                                <!--End model for resetpassword -->
-                                
-                                
-                                
-                                <div class="modal fade" id="myModal2" role="dialog">
-                                    <div class="modal-dialog modal-xs">
-                                        <div class="modal-content frgpmobile">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">Forgot Username</h4>
-                                            </div>
-                                            <div class="modal-body">
+        $(window).load(function() {
 
-                                                <div class="form-group">
-                                                    <label for="email" class="d-sm-none ">@lang('site.Enter Email')</label>
-                                                    <input type="text" class="form-control fgmobile" id="forgot_username_reset" name="forgot_username_reset" placeholder="Email" >
-                                                </div>
-                                                <button type="button" class="btn btn-primary btn-lg" id="load3" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please Wait..">@lang('site.Reset Username')</button>
-                                                <br/>
+                    $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $(".loader").fadeOut("slow");
 
-                                                <div>For any query contact <a href="mailto:info@presolv360.com">info@presolv360.com</a></div>
-                                            </div>
+        var hash = window.location.hash;
 
-                                        </div>
+        })
+    </script>
 
-                                    </div>
-                                </div>
+    <!-- Password Show/Hide Script -->
+    <script>
 
+        var DOMAIN = "{{url('/')}}";
 
-   <style type="text/css">
-       .btn-warning {
-             width: 182px;
-             box-shadow: none;
-             border: none;
+        function togglePassword() {
 
-        }
-        .grecaptcha-badge { 
-    visibility: hidden;
-    height: 0px!important;
-}
+            const password = document.getElementById("exampleInputPassword1");
+            const eyeIcon = document.getElementById("eyeIcon");
 
-    .loginformsection .btnsection .btn-group-lg > .btn, .btn-lg {
-        font-size: 17px;
-    }
-    .pdr20{
-        padding-right: 20px;
-    }
-    .ml3{
-        margin-left: 3px;
-    }
-
-    .close{
-        position: absolute;
-        right: 5%;
-    }
-
-    .rform .form-control{
-        font-size: 13px;
-    }
-
-   
-
-    .rform input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-  font-size: 11px;
-}
-.rform input::-moz-placeholder { /* Firefox 19+ */
-  font-size: 11px;
-}
-.rform input::-ms-input-placeholder { /* IE 10+ */
-  font-size: 11px;
-}
-
-@media only screen and (min-width: 768px) {
-
-     .rform .pl5{
-        padding-left: 5px;
-    }
-
-    .rform .pr5{
-        padding-right: 5px;
-    }
-
-
-}
-
-
-    @media only screen and (max-width: 600px) {
-        
-        .ml25{
-            margin-left: 25px;
+            if (password.type === "password") {
+                password.type = "text";
+                eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7
+                    a10.056 10.056 0 012.263-3.592M9.88 9.88a3 3 0 
+                    104.243 4.243M3 3l18 18" />
+                `;
+            } else {
+                password.type = "password";
+                eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 
+                    8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7
+                    -4.477 0-8.268-2.943-9.542-7z" />
+                `;
+            }
         }
 
-        .ml3 {
-    margin-left: 25px;
-}
-    }
+        $('#load2').on('click', function() {
 
-    
-    
-   </style>
+            var str=document.getElementById('email_pass_reset').value;
 
-   <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback" async defer></script>
+            if(str!=='') {
+                var $this = $(this);
+                //$this.button('loading');
+                $.ajax({
 
-        <script type="text/javascript">
-            var onloadCallback = function() {
-    grecaptcha.execute();
-};
+                url:DOMAIN+'/forgotpassword',
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                 },
+                data:{'email':str},
+                success:function(d){
 
-function setResponse(response) { 
-    document.getElementById('captcha-response').value = response; 
-}
-        </script>
-        
-@endsection('content')
+                    d=JSON.parse(d);
+                    if(d.response=='success'){
+                    swal("Success!", "Your Password Has Been Updated. Please Check Your Registered Email Id!", "success");
+                }else{
 
-@section('extra-js')
+                    swal("Failed!", "Wrong username entered!", "warning");
+                }
+                },
+                error:function(e){
 
+                    console.log(e);
+                    swal("Failed!", "Wrong username entered!", "warning");
+                }
+
+
+                });
+
+            }
+            else
+            {
+                $this.button('reset');
+                $('#myModal').modal('hide');
+
+                swal("Failed!", "Please enter an Username!", "warning");
+
+            }
+        });
+
+
+    </script>
+
+
+    @section('extra-js')
     @if(session()->has('warning'))
         <script>
-
-
-            
             swal("Warning!", "{{ session()->get('warning') }}", "warning");
         </script>
     @endif
-@endsection
+
+</body>
+</html>
