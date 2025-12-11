@@ -280,9 +280,9 @@
                     <input type="checkbox" name="is_agree" class="mt-1 form-input" required>
                     <span class="">
                     I have read and agree to the
-                        <a href="https://presolv360.com/terms_conditions" target="_blank" class="text-[#0B5386]">Terms & Conditions</a>,
-                        <a href="https://presolv360.com/privacy_policy" target="_blank" class="text-[#0B5386]">Privacy Policy</a> and
-                        <a href="https://presolv360.com/cookie_policy" target="_blank" class="text-[#0B5386]">Cookie Policy</a>.
+                        <a href="https://presolv360.com/terms-conditions" target="_blank" class="text-[#0B5386]">Terms & Conditions</a>,
+                        <a href="https://presolv360.com/privacy-policy" target="_blank" class="text-[#0B5386]">Privacy Policy</a> and
+                        <a href="https://presolv360.com/cookie-policy" target="_blank" class="text-[#0B5386]">Cookie Policy</a>.
                      </span>
                 </div>
 
