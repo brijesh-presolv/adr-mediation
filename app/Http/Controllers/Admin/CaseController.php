@@ -878,7 +878,20 @@ class CaseController extends Controller
                 if ($request->hasFile('files' . $x)) {
                     $file = $request->file('files' . $x);
                     //$filename = pathinfo(str_replace(" ", "_", $file->getClientOriginalName()), PATHINFO_FILENAME) . "_date_" . date("Y_m_d_H_i_s_a") . "." . $file->extension();
-                    $filename = "supportingdoc".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    
+                    if($request->documentType == "rl"){
+                        $filename = "Ref_Letter_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    }else if($request->documentType == "laa"){
+                        $filename = "LOA_A_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    }else if($request->documentType == "lar"){
+                        $filename = "LOA_R_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    }else if($request->documentType == "o"){
+                        $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    }else {
+                        $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    }
+                    
+                    //$filename = "supportingdoc".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     //$savePath = 'mediation_documents/mediation/' . $request->caseId . '/supportingDocument';
 
 
@@ -898,6 +911,7 @@ class CaseController extends Controller
                         $insert[$x]['file_name'] = $filename;
                         $insert[$x]['access'] = $inv_id;
                         $insert[$x]['mediator_access'] = isset($request->shareMediator) ? $request->shareMediator : 1;
+                        $insert[$x]['document_type'] = $request->documentType;
                         $insert[$x]['uploaded_by'] = Auth::user()->id;
                         $insert[$x]['case_id'] = $request->caseId;
                         // $insert[$x]['path'] = $path;
