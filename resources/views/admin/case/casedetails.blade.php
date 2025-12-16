@@ -321,6 +321,10 @@
                                             class="secureDownload" data-userid="{{ Auth::user()->id }}">Download</a>
                                     @endif
 
+                                    <a href="javascript:void(0);" data-folder="supportingDocument" class="previewDoc"
+                                    data-url="{{ $v->file_name }}" data-id="{{ $case->id }}" data-userid="{{ Auth::user()->id }}"
+                                    style="margin-left: 10px;">Preview</a>
+
                                 </td>
                             </tr>
                             <?php } ?>
@@ -423,6 +427,22 @@
 
         </div>
     </div>
+
+    <div id="viewdoc" class="mdladcm modal fade viewdocmodal" tabindex="-1" role="dialog"
+    aria-labelledby="viewdocmodal">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close closedocmodal" data-dismiss="modal">&times;</button>
+                <input type="hidden" id="genid">
+            </div>
+            <div class="modal-body docbox" style="text-align: center;">
+            </div>
+        </div>
+
+    </div>
+</div>
 @endsection
 
 @section('footer')
@@ -631,6 +651,55 @@
                                 });
                             }, 100); // cleanup
                         }
+                    },
+
+                    error: function(err) {
+                        console.log(err);
+                    },
+                });
+            });
+
+
+            
+
+            $(document).on("click", ".previewDoc", function() {
+                var id = $(this).data("id");
+                var filename = $(this).data("url");
+                var userid = $(this).data("userid");
+                var csrf = document.querySelector('meta[name="csrf-token"]').content;
+                var cc = $(this);
+                var parentFolder = $(this).data("folder");
+                $.ajax({
+                     url: '{{ route('previewDoc') }}',
+                    method: "POST",
+                    data: {
+                        id: id,
+                        urlpath: filename,
+                        parentFolder: parentFolder,
+                        user_id: userid,
+                        _token: csrf
+                    },
+                    beforeSend: function () {
+                        cc.html('Loading..');
+                    },
+                    xhrFields: {
+                    responseType: "blob", // to avoid binary data being mangled on charset conversion
+                    },
+                    success: function (blob, status, xhr) {
+                    var URL = window.URL || window.webkitURL;
+                    var url = URL.createObjectURL(blob);
+                    // $('#pdfViewer').attr("src",url);
+                    $('#viewdoc').modal('show');
+                    $('.docbox').html('<iframe id="pdfViewer" src="' + url + '" frameborder="0" width="100%" height="700px"></iframe>');
+                    // var pdflink = document.createElement('a');
+                    // pdflink.href = url;
+                    // pdflink.target = '_blank';
+                    // document.body.appendChild(pdflink);
+                    // pdflink.click();
+                    // document.body.removeChild(pdflink);
+                    // $(".loading_form").hide();
+                    //cc.html('Preview');
+                    //captureopendata(htext, comm, intr, id, type);
                     },
 
                     error: function(err) {
