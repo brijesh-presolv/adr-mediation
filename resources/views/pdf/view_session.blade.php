@@ -110,54 +110,65 @@ $ldate = $lastdate->format('d-m-Y');
             </th>
         </tr>
         <tr>
-            <td >
-                <p>{{isset($inparty->organization) ? $inparty->organization : $party[0]->name}}</p>
-                <p>{{$party[0]->address1}} {{$party[0]->address2}}, {{$party[0]->city}}, {{$party[0]->pincode}}</p>
-                <p>{{$party[0]->state}} {{$party[0]->country}}</p>
-                <p>{{$party[0]->userEmail}}</p>
-                <p>{{$party[0]->userPhone}}</p>
+            <td>
+                @foreach($party as $key=>$p)
+                    @if ($p->isClaimant == 0)
+                    <!-- <p>{{isset($inparty->organization) ? $inparty->organization : $p->name}}</p> -->
+                    <p>{{$p->name}}</p>
+                    <p>{{$p->address1}} {{$p->address2}}, {{$p->city}}, {{$p->pincode}}</p>
+                    <p>{{$p->state}} {{$p->country}}</p>
+                    <p>{{$p->userEmail}}</p>
+                    <p>{{$p->userPhone}}</p>
+                    <br>
+                    @endif
+                @endforeach
             </td>
-            <td >
+            <td>
 
                 @foreach($party as $key=>$p)
-                @if($key!=0)
-                @if ($p->name != "")  
-                @if($p->name != "")
-                <p>{{$p->name}}</p>
-                @endif
-                @if($p->address1 != "")
-                <p>{{$p->address1}} {{$p->address2}}, {{$p->city}}, {{$p->pincode}}</p>
-                <p>{{$p->state}} {{$p->country}}</p>
-                @endif
-                @if($p->fulladdress != "")
-                <p>{{$p->fulladdress}} </p>
-                @endif
-                @if($p->userEmail != "")
-                <p>{{$p->userEmail}}</p>
-                @endif
-                @if($p->userPhone != "")
-                <p>{{$p->userPhone}}</p>
-                @endif
-                <br>
-                @endif
-                @endif
+                    @if($key!=0)
+                        @if ($p->isClaimant != 0)
+                            @if ($p->name != "")  
+                                <p>{{$p->name}}</p>
+                            @endif
+
+                            @if($p->address1 != "")
+                            <p>{{$p->address1}} {{$p->address2}}, {{$p->city}}, {{$p->pincode}}</p>
+                            <p>{{$p->state}} {{$p->country}}</p>
+                            @endif
+
+                            @if($p->fulladdress != "")
+                            <p>{{$p->fulladdress}} </p>
+                            @endif
+
+                            @if($p->userEmail != "")
+                            <p>{{$p->userEmail}}</p>
+                            @endif
+
+                            @if($p->userPhone != "")
+                            <p>{{$p->userPhone}}</p>
+                            @endif
+                            <br> 
+                        @endif
+                    @endif
                 @endforeach
-                @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
-                <p>{{$case->otherRespondentDetails}}</p>
-                @endif
-                <br>
+
+                    @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
+                    <p>{{$case->otherRespondentDetails}}</p>
+                    @endif
+                    <br>
                 @foreach($party as $key=>$p)
-                @if($key!=0)
-                @if ($p->name == "") 
-                @if($p->userEmail != "")
-                <p>{{$p->userEmail}}</p>
-                @endif
-                @if($p->userPhone != "")
-                <p>{{$p->userPhone}}</p>
-                @endif
-                <br>
-                @endif
-                @endif
+                    @if($key!=0)
+                        @if($p->name == "") 
+                            @if($p->userEmail != "")
+                            <p>{{$p->userEmail}}</p>
+                            @endif
+                            @if($p->userPhone != "")
+                            <p>{{$p->userPhone}}</p>
+                            @endif
+                            <br>
+                        @endif
+                    @endif
                 @endforeach
             </td>
         </tr>
