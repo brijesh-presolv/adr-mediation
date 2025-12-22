@@ -30,6 +30,13 @@
         height: 35px;
         border: 1px solid #dee2e6;
     }
+
+    #documentType {
+        height: 40px;
+        border: 2px solid #E5E5E5;
+        border-radius: 6px;
+        color: #777;
+    }
 </style>
 
     <section class="tabs-section">
@@ -394,12 +401,14 @@
 
                         <!---- Document Type Drondown : START ----->
                         <div class="form-group">
-                            <label>Document Type</label>
+                            <label>Document Type</label>&nbsp;&nbsp;
                             <select name="documentType" id="documentType">
                                 <option value="">Please Select</option>
                                 <option value="rl">Referral Letter</option>
                                 <option value="laa">Letter of Authority for Applicant (s)</option>
                                 <option value="lar">Letter of Authority for Respondent (s)</option>
+                                <option value="settle">Settlement Report</option>
+                                <option value="fail">Failure Report</option>
                                 <option value="o">Other</option>
                             </select>
                         </div>
