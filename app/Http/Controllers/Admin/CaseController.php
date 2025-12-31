@@ -885,10 +885,14 @@ class CaseController extends Controller
                         $filename = "LOA_A_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     }else if($request->documentType == "lar"){
                         $filename = "LOA_R_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    }else if($request->documentType == "settle"){
+                        $filename = "Settlement_Report_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                    }else if($request->documentType == "fail"){
+                        $filename = "Failure_Report_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     }else if($request->documentType == "o"){
-                        $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                        $filename = "Supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     }else {
-                        $filename = "supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
+                        $filename = "Supportingdoc_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
                     }
                     
                     //$filename = "supportingdoc".($f_count)."_M" .sprintf('%06d', $request->caseId). "." . $file->extension();
