@@ -6,7 +6,7 @@ definitions:
 
 pipelines:
   branches:
-    master:
+    live_2025:
       - step:
           name: SonarQube Analysis
           caches:
@@ -32,33 +32,26 @@ pipelines:
               PROJECT_KEY="mediation"
               SONAR_URL="https://sonarqube.presolv360.com"
               
-              # Fetch data from SonarQube
-              ANALYSIS_RESULT=$(curl -s -u "${SONAR_TOKEN}:" "${SONAR_URL}/api/qualitygates/project_status?projectKey=${PROJECT_KEY}" || echo '{}')
-              MEASURES=$(curl -s -u "${SONAR_TOKEN}:" "${SONAR_URL}/api/measures/component?component=${PROJECT_KEY}&metricKeys=bugs,vulnerabilities,code_smells,coverage,duplicated_lines_density" || echo '{}')
+              ANALYSIS_RESULT=$(curl -s -u "${SONAR_TOKEN}:" "${SONAR_URL}/api/qualitygates/project_status?projectKey=${PROJECT_KEY}")
+              MEASURES=$(curl -s -u "${SONAR_TOKEN}:" "${SONAR_URL}/api/measures/component?component=${PROJECT_KEY}&metricKeys=bugs,vulnerabilities,code_smells,coverage,duplicated_lines_density,security_hotspots")
               
-              # Parse with safe defaults
               STATUS=$(echo "$ANALYSIS_RESULT" | jq -r '.projectStatus.status // "UNKNOWN"')
-              BUGS=$(echo "$MEASURES" | jq -r '(.component.measures // [])[] | select(.metric=="bugs") | .value' 2>/dev/null || echo "0")
-              VULNS=$(echo "$MEASURES" | jq -r '(.component.measures // [])[] | select(.metric=="vulnerabilities") | .value' 2>/dev/null || echo "0")
-              SMELLS=$(echo "$MEASURES" | jq -r '(.component.measures // [])[] | select(.metric=="code_smells") | .value' 2>/dev/null || echo "0")
-              COVERAGE=$(echo "$MEASURES" | jq -r '(.component.measures // [])[] | select(.metric=="coverage") | .value' 2>/dev/null || echo "N/A")
-              DUPES=$(echo "$MEASURES" | jq -r '(.component.measures // [])[] | select(.metric=="duplicated_lines_density") | .value' 2>/dev/null || echo "N/A")
+              BUGS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="bugs") | .value' 2>/dev/null)
+              VULNS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="vulnerabilities") | .value' 2>/dev/null)
+              SMELLS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="code_smells") | .value' 2>/dev/null)
+              COVERAGE=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="coverage") | .value' 2>/dev/null)
+              DUPES=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value' 2>/dev/null)
+              HOTSPOTS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="security_hotspots") | .value' 2>/dev/null)
               
-              # Set defaults if empty
               BUGS=${BUGS:-0}
               VULNS=${VULNS:-0}
               SMELLS=${SMELLS:-0}
-              COVERAGE=${COVERAGE:-N/A}
-              DUPES=${DUPES:-N/A}
+              COVERAGE=${COVERAGE:-0}
+              DUPES=${DUPES:-0}
+              HOTSPOTS=${HOTSPOTS:-0}
               
-              # Status icon
-              if [ "$STATUS" = "OK" ]; then
-                STATUS_ICON="✅"
-              else
-                STATUS_ICON="❌"
-              fi
+              if [ "$STATUS" = "OK" ]; then STATUS_ICON="✅"; else STATUS_ICON="❌"; fi
               
-              # Build comment
               COMMENT="## ${STATUS_ICON} SonarQube Analysis Report
 
               **Quality Gate:** ${STATUS}
@@ -68,12 +61,12 @@ pipelines:
               | Bugs | ${BUGS} |
               | Vulnerabilities | ${VULNS} |
               | Code Smells | ${SMELLS} |
+              | Security Hotspots | ${HOTSPOTS} |
               | Coverage | ${COVERAGE}% |
               | Duplications | ${DUPES}% |
 
               [View Full Report](${SONAR_URL}/dashboard?id=${PROJECT_KEY})"
               
-              # Post comment to PR
               curl -X POST \
                 -H "Authorization: Bearer ${BB_AUTH_TOKEN}" \
                 -H "Content-Type: application/json" \
