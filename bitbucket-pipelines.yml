@@ -32,30 +32,40 @@ pipelines:
               PROJECT_KEY="mediation"
               SONAR_URL="https://sonarqube.presolv360.com"
               
+              echo "Fetching SonarQube results..."
+              
               ANALYSIS_RESULT=$(curl -s -u "${SONAR_TOKEN}:" "${SONAR_URL}/api/qualitygates/project_status?projectKey=${PROJECT_KEY}")
               MEASURES=$(curl -s -u "${SONAR_TOKEN}:" "${SONAR_URL}/api/measures/component?component=${PROJECT_KEY}&metricKeys=bugs,vulnerabilities,code_smells,coverage,duplicated_lines_density,security_hotspots")
               
+              echo "Parsing results..."
+              
               STATUS=$(echo "$ANALYSIS_RESULT" | jq -r '.projectStatus.status // "UNKNOWN"')
-              BUGS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="bugs") | .value' 2>/dev/null)
-              VULNS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="vulnerabilities") | .value' 2>/dev/null)
-              SMELLS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="code_smells") | .value' 2>/dev/null)
-              COVERAGE=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="coverage") | .value' 2>/dev/null)
-              DUPES=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value' 2>/dev/null)
-              HOTSPOTS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="security_hotspots") | .value' 2>/dev/null)
+              BUGS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="bugs") | .value // "0"' 2>/dev/null || echo "0")
+              VULNS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="vulnerabilities") | .value // "0"' 2>/dev/null || echo "0")
+              SMELLS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="code_smells") | .value // "0"' 2>/dev/null || echo "0")
+              COVERAGE=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="coverage") | .value // "0"' 2>/dev/null || echo "0")
+              DUPES=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="duplicated_lines_density") | .value // "0"' 2>/dev/null || echo "0")
+              HOTSPOTS=$(echo "$MEASURES" | jq -r '.component.measures[] | select(.metric=="security_hotspots") | .value // "0"' 2>/dev/null || echo "0")
               
-              BUGS=${BUGS:-0}
-              VULNS=${VULNS:-0}
-              SMELLS=${SMELLS:-0}
-              COVERAGE=${COVERAGE:-0}
-              DUPES=${DUPES:-0}
-              HOTSPOTS=${HOTSPOTS:-0}
+              if [ -z "$BUGS" ]; then BUGS="0"; fi
+              if [ -z "$VULNS" ]; then VULNS="0"; fi
+              if [ -z "$SMELLS" ]; then SMELLS="0"; fi
+              if [ -z "$COVERAGE" ]; then COVERAGE="0"; fi
+              if [ -z "$DUPES" ]; then DUPES="0"; fi
+              if [ -z "$HOTSPOTS" ]; then HOTSPOTS="0"; fi
               
-              if [ "$STATUS" = "OK" ]; then STATUS_ICON="✅"; else STATUS_ICON="❌"; fi
+              if [ "$STATUS" = "OK" ]; then
+                STATUS_ICON="✅"
+              else
+                STATUS_ICON="❌"
+              fi
+              
+              echo "Building comment..."
               
               COMMENT="## ${STATUS_ICON} SonarQube Analysis Report
-
+              
               **Quality Gate:** ${STATUS}
-
+              
               | Metric | Value |
               |--------|-------|
               | Bugs | ${BUGS} |
@@ -64,11 +74,15 @@ pipelines:
               | Security Hotspots | ${HOTSPOTS} |
               | Coverage | ${COVERAGE}% |
               | Duplications | ${DUPES}% |
-
+              
               [View Full Report](${SONAR_URL}/dashboard?id=${PROJECT_KEY})"
+              
+              echo "Posting comment to PR..."
               
               curl -X POST \
                 -H "Authorization: Bearer ${BB_AUTH_TOKEN}" \
                 -H "Content-Type: application/json" \
                 -d "$(jq -n --arg body "$COMMENT" '{content: {raw: $body}}')" \
                 "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID}/comments"
+              
+              echo "Done!"
