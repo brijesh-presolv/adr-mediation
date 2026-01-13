@@ -2519,8 +2519,7 @@ $page_break_css = 'page-break-before: always;';
     </p>
 
     <p>ਨੋਟ: ਇਹ ਇੱਕ ਸਿਸਟਮ ਦੁਆਰਾ ਜਨਰੇਟ ਕੀਤੀ ਗਈ ਸੂਚਨਾ ਹੈ ਅਤੇ ਇਸ ਲਈ ਹਸਤਾਖਰ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ।
-
-</p>
+    </p>
 
 
     <table cellspacing="0" cellpadding="10" width="100%">
