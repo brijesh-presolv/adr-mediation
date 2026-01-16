@@ -2016,16 +2016,28 @@ class CaseController extends Controller
             */
 
             if($data['case']->bulk_flag == 1){
+                // $pdf = PDF::loadView('pdf.invitation_mediation_all', $data, [], [
+                //     'title' => 'ITM' . ' ' . $id,
+                //     'showWatermarkImage' => true, 
+                //     'wialpha' => 0.1, 
+                //     'wisize' => 'F', 
+                //     'wipos' => 'F', 
+                //     'mode' => 'utf-8',
+                //     'SetAutoFont' => 'AUTOFONT_THAIVIET',
+                //     'autoLangToFont' => true,
+                //     'autoScriptToLang' => true
+                // ]);
+
                 $pdf = PDF::loadView('pdf.invitation_mediation_all', $data, [], [
-                    'title' => 'ITM' . ' ' . $id,
+                    'title' => 'ITM' . $id,
+                    'mode' => 'utf-8',
+                    'default_font' => 'dejavusans',
+                    'autoLangToFont' => true,
+                    'autoScriptToLang' => true,
                     'showWatermarkImage' => true, 
                     'wialpha' => 0.1, 
                     'wisize' => 'F', 
-                    'wipos' => 'F', 
-                    'mode' => 'utf-8',
-                    'SetAutoFont' => 'AUTOFONT_THAIVIET',
-                    'autoLangToFont' => true,
-                    'autoScriptToLang' => true
+                    'wipos' => 'F'
                 ]);
             } else {
                 $pdf = PDF::loadView('pdf.invitation_mediation', $data); 
