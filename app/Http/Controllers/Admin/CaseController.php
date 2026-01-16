@@ -2032,11 +2032,9 @@ class CaseController extends Controller
                     'title' => 'ITM' . $id,
                     'mode' => 'utf-8',
                     'default_font' => 'dejavusans',
-                    'autoLangToFont' => true,
-                    'autoScriptToLang' => true,
-                    'showWatermarkImage' => true, 
-                    'wialpha' => 0.1, 
-                    'wisize' => 'F', 
+                    'showWatermarkImage' => true,
+                    'wialpha' => 0.1,
+                    'wisize' => 'F',
                     'wipos' => 'F'
                 ]);
             } else {
