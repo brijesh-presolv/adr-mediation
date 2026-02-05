@@ -14,7 +14,11 @@ class MedCase extends Model
 
     protected $table = 'mediation_case';
     protected $fillable = ['userid', 'disputeCategory', 'natureOfAgreement', 'agreementDate', 
-    'noOfParties', 'amount', 'proposedSolution', 'issue', 'confirm_status', 'case_status', 'documentPath', 'withdraw', 'otherRespondentDetails', 'request_letter', 'batch_id', 'ref_id', 'bulk_flag', 'discussion', 'poc_name', 'poc_email', 'poc_contact', 'itm_lang', 'payToken', 'PayLink', 'PayLinkExpire', 
+    'noOfParties', 'amount', 'proposedSolution', 'issue', 'confirm_status', 'case_status', 'documentPath', 
+    'withdraw', 'otherRespondentDetails', 'request_letter', 'batch_id', 'ref_id', 'bulk_flag', 
+    'discussion', 'poc_name', 'poc_email', 'poc_contact', 'itm_lang', 'zoom_date',
+    'zoom_time', 'zoom_link', 'enterprise', 'payToken', 'PayLink', 
+    'PayLinkExpire', 
     'restructure_offer_1', 'restructure_offer_2', 'restructure_offer_3', 'stop_itm_ip', 'stop_itm_rp', 'stop_itm_med', 
     'stop_close_ip', 'stop_close_rp', 'stop_close_med', 'sub_user_id', 'stop_bulk_session_ip', 'stop_bulk_session_rp', 'stop_bulk_session_med',
     'stop_bulk_upload_ip', 'stop_bulk_upload_rp', 'stop_bulk_upload_med'];

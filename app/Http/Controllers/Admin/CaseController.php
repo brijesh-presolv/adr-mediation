@@ -3784,6 +3784,7 @@ class CaseController extends Controller
                 }
             }
             $csv = mb_convert_encoding($csv, 'UTF-8', 'UTF-8');
+            
             foreach ($csv as $k => $value) {
                 // dd( count(explode(',', $value[15])) + 1);
                 // exit;
@@ -3882,7 +3883,11 @@ class CaseController extends Controller
 
                 //dd($data);
                // dd($request->subuser);
+              // DB::enableQueryLog();
                 $med = MedCase::create($data);
+
+            //    dd(DB::getQueryLog());
+            //     echo $med;exit;
 
                 $iniParty = InvoledUser::where(['userPlanid' => $med->id, 'userId' => $claimantid])->first();
 
