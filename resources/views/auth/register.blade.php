@@ -144,7 +144,7 @@
                     <div>
                         <input type="email" id="email" name="email" placeholder="Email*"
                             class=" form-input w-full px-4 py-2 border border-gray-300 bg-white rounded-md focus:ring-2 focus:ring-[#0B5386] @error('email') border-red-500 @enderror remail"
-                            maxlength="40" required autocomplete="email" placeholder="@lang('site.email')*"/>
+                            maxlength="80" required autocomplete="email" placeholder="@lang('site.email')*"/>
                         <span id="emailMessage" style="font-size: 12px;"></span>
                         @error('email')
                         <p class="text-red-600 text-sm">{{ $message }}</p>
