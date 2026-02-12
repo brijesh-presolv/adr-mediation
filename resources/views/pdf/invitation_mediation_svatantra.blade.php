@@ -387,7 +387,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>प्रकरण आयडी: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>प्रकरण आयडी: M{{ sprintf('%06d', $case->id) }} | संदर्भ क्रमांक: {{$case->ref_id}}</p>
             </td>
             <td class="text-right">
                 <p>दिनांक: {{ date('d-m-Y') }}</p>
