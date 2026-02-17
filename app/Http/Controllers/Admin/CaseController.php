@@ -1959,6 +1959,17 @@ class CaseController extends Controller
                         'wipos' => 'F'
                     ]);
 
+                } else if (str_contains(strtolower($batch_info['batch_name']), "moneyview")) {
+                    $pdf = PDF::loadView('pdf.invitation_mediation_moneyview', $data, [], [
+                        'title' => 'ITM' . $id,
+                        'mode' => 'utf-8',
+                        'default_font' => 'dejavusans',
+                        'showWatermarkImage' => true,
+                        'wialpha' => 0.1,
+                        'wisize' => 'F',
+                        'wipos' => 'F'
+                    ]);
+
                 } else {
                     $pdf = PDF::loadView('pdf.invitation_mediation_all', $data, [], [
                         'title' => 'ITM' . $id,
