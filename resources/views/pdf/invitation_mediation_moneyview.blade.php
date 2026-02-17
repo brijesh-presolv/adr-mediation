@@ -254,7 +254,7 @@ $ldate = $lastdate->format('d-m-Y');
         Mediation Institution by various Courts in India. Presolv360 administers mediation proceedings on its platform,
         and empanels independent, qualified mediators with the required competence, knowledge and expertise on its panel
         of mediators. The mediation / conciliation shall be governed by and conducted in accordance with Presolv360’s
-        Dispute Resolution Rules (Rules), a copy of which can be found <a
+        Dispute Resolution Rules ("Rules"), a copy of which can be found <a
             href="https://drive.google.com/file/d/1a5GkQA0KX_4-gUDf25D0uU7Rt_1S8DDl/view?usp=sharing">here</a>.
         Presolv360 provides administrative support to all the parties concerned and the mediator for conducting the
         mediation proceedings and has no interest in the outcome of the dispute and there exists no conflict of
