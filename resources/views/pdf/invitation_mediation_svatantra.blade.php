@@ -639,7 +639,7 @@ $page_break_css = 'page-break-before: always;';
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
-                <p>କେସ ଆଇଡି: M{{ sprintf('%06d', $case->id) }}</p>
+                <p>କେସ ଆଇଡି: M{{ sprintf('%06d', $case->id) }} | Ref ID: {{$case->ref_id}}</p>
             </td>
             <td class="text-right">
                 <p>ତାରିଖ: {{ date('d-m-Y') }}</p>
