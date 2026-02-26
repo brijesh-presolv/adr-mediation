@@ -1020,6 +1020,10 @@ $page_break_css = 'page-break-before: always;';
     <!-- </p> -->
 
     <p style='font-family:{{ $langfamilyfont }}; margin-left:15px;'>
+        {{ $primary_rp_name }} ने {{ $case->enterprise }} से {{ $case->disputeCategory }} क्रमांक {{ $case->ref_id }} का ऋण लिया था और 
+        अभी तक {{ $case->amount }} रुपये का बकाया नहीं चुकाया है। {{ $case->enterprise }} इस मामले को मान्यता प्राप्त स्वतंत्र संस्था, Presolv360 की सहायता से सौहार्दपूर्ण ढंग से हल करना चाहता है; यदि ऐसा नहीं हो पाता है, तो Presolv360 ("संस्था") द्वारा अपने विवाद समाधान नियमों के अनुसार इलेक्ट्रॉनिक रूप से संचालित मध्यस्थता द्वारा मामले का समाधान किया जाएगा। इस मामले को तुरंत हल करने और बंद करने के लिए, 
+        कृपया {{ $case->poc_name }} पर {{ $case->poc_contact }} से संपर्क करें। आप {{ $case->enterprise }} को वीडियो कॉन्फ्रेंस के माध्यम से बैठक में भाग लेकर अपना ऋण चुका सकते हैं।
+        {{ $case->zoom_date }} को सुबह {{ $case->zoom_time }} बजे से शाम {{ $case->zoom_link }} बजे के बीच इस ज़ूम लिंक पर क्लिक करके:
     </p>
 
     <p style="font-family:{{ $langfamilyfont }};">3. Presolv360 
