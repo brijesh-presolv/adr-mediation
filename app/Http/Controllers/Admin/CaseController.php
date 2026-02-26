@@ -1148,7 +1148,7 @@ class CaseController extends Controller
 
 
     /******************* Add Session Code : START  ****************************************/
-    public function addSession(Request $request)
+    public function addSession_bkp_26022026(Request $request)
     {
         //dd($request->all());
         
@@ -1583,6 +1583,371 @@ class CaseController extends Controller
         }
         return true;
     }
+
+
+
+
+
+ 
+
+public function addSession(Request $request)
+{
+    //dd($request->all());
+
+    // Normalize fsData to always be an array
+    $fsData = is_array($request->fsData) ? $request->fsData : [];
+
+    /*************************Zoom API : START *******************************/
+    if($request->zoom_choice == "directly_zoom" || ($fsData['zoom_choice'] ?? null) == "directly_zoom") {
+        $time_zoom = ($sess_time = strtotime($fsData['sessionTime'] ?? null)) ? date("H:i:s", $sess_time) : date("H:i:s", strtotime($request->sessionTime));
+        $end_time = ($sess_time = strtotime($fsData['sessionTime'] ?? null)) ? date("H:i:s", $sess_time + 60*60) : date("H:i:s", strtotime($request->sessionTime) + 60*60);
+        $date1 = ($fsData['sessionDate'] ?? null) ? str_replace('/', '-', $fsData['sessionDate']) : str_replace('/', '-', $request->sessionDate);
+        $date = date('Y-m-d', strtotime($date1));
+        $total = $date.' '.$time_zoom;
+        $end_total = $date.' '.$end_time;
+        $date_format_api =  date("Y-m-d\TH:i:s", strtotime($total));
+        $end_date_format_api =  date("Y-m-d\TH:i:s", strtotime($end_total));
+
+        $note = ($fsData['note'] ?? null) ? $fsData['note'] : $request->note;
+
+        $create_zoom_meeting_response = Zoom::createZoomMeeting($request->caseId, $note, $date_format_api, $end_date_format_api);
+        $create_zoom_meeting = json_decode($create_zoom_meeting_response, true);
+        // Get zoom api invitation : START //
+        $zoom_invitation_response = Zoom::zoomInvitation($create_zoom_meeting['id']);
+        $zoom_invitation = json_decode($zoom_invitation_response, true);
+        /****************************************Zoom API : END **************************/
+
+        /**** Get Zoom URL from invitation ********/
+        $zoom_string = $zoom_invitation['invitation'];
+        preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $zoom_string, $zoom_match);
+        /**** Get Zoom URL from invitation ********/
+
+        $created_zoom_link = $zoom_match[0][0];
+        $created_zoom_id = $create_zoom_meeting['id'];
+        $inserted_zoom_choice = "direct";
+    } else {
+        $created_zoom_link = "";
+        $created_zoom_id = ($fsData['zoomId'] ?? null) ? $fsData['zoomId'] : $request->zoomId;
+        $inserted_zoom_choice = "manual";
+    }
+
+    if(isset($fsData['sessionTime'])){
+        $time = date("g:i A", strtotime($fsData['sessionTime']));
+        $display_date_time = str_replace('/', '-', $fsData['sessionDate']) . " " . $time;
+    } else {
+        $time = date("g:i A", strtotime($request->sessionTime));
+        $display_date_time = str_replace('/', '-', $request->sessionDate) . " " . $time;
+    }
+
+    $d = [
+        'event' => 'SESS_SCHE',
+        'case_id' => $request->caseId,
+    ];
+    $medcase = MedCase::find($request->caseId);
+
+    if (isset($request->session_party_ids)) {
+        $dataToInsert = [
+            'case_id' => $request->caseId,
+            'session_date' => $request->sessionDate . "/" . $time,
+            'note' => $request->note,
+            'zoom_id' => $created_zoom_id,
+            'zoom_link' => $created_zoom_link,
+            'zoom_link_choice' => $inserted_zoom_choice,
+            'session_party_ids' => json_encode($request->session_party_ids),
+            'scheduled_by' => Auth::user()->id,
+            'participant_whtsapp' => 0
+        ];
+        $insertData = DB::table('manage_session')->insert($dataToInsert);
+
+        if ($insertData) {
+            $inv_id = "";
+            foreach ($request->session_party_ids as $party_id) {
+                $party = InvoledUser::where("userPlanId", $request->caseId)->where("id", $party_id)->first();
+
+                if ($inv_id == "") {
+                    $inv_id = $party->id;
+                } else {
+                    $inv_id = $inv_id . "," . $party->id;
+                }
+
+                if($request->zoom_choice == "manually_zoom" || ($fsData['zoom_choice'] ?? null) == "manually_zoom") {
+                    if(($fsData['zoom_choice'] ?? null) == "manually_zoom"){
+                        if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        }
+                    } elseif($request->zoom_choice == "manually_zoom"){
+                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                    }
+                } else if($request->zoom_choice == "directly_zoom" || ($fsData['zoom_choice'] ?? null) == "directly_zoom") {
+                    if(($fsData['zoom_choice'] ?? null) == "directly_zoom" && $party->isClaimant != 0){
+                        if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                        } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                        }
+                    } elseif($request->zoom_choice == "directly_zoom"){
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                    }
+                }
+            }
+
+            $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+            Common_function::MedNotification($request->caseId, "SESS_SCHE_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+
+            if ($mediatorNoti) {
+                $id = "M" . sprintf("%06d", $request->caseId);
+
+                if($request->zoom_choice == "manually_zoom") {
+                    if($medcase->stop_bulk_session_med == 0) {
+                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
+                    }
+                } else if($request->zoom_choice == "directly_zoom") {
+                    if($medcase->stop_bulk_session_med == 0) {
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
+                    }
+                }
+            }
+
+            if($is_send){
+                return json_encode(['code' => 200, 'response' => 'success']);
+            }
+        } else {
+            return json_encode(['code' => 200, 'response' => 'error']);
+        }
+    } else {
+        $mediatorNoti = Mediators_mediation_cases_status::select("email", "username", "mobile_number", "users.id")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+            ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+            ->where("mediators_mediation_cases_status.status", "=", 1)
+            ->first();
+        $inv_id = "";
+        $inv = InvoledUser::select('id')->where('userPlanId', $request->caseId)->get();
+        foreach ($inv as $v) {
+            if ($inv_id == "") {
+                $inv_id = $v->id;
+            } else {
+                $inv_id = $inv_id . "," . $v->id;
+            }
+        }
+        if (isset($_POST['log_id']) && isset($_POST['allcids'])) {
+            if ($_POST['log_id'] == "" && $_POST['allcids'] != "") {
+                $params['allcids'] = json_encode(explode(',', $_POST['allcids']));
+                $log = BulkLog::create([
+                    "selected_ids" => $params['allcids'],
+                    "uploaded_by" => Auth::user()->id,
+                    "total_row" => isset($_POST['total_row']) ? $_POST['total_row'] : "",
+                    "log_type" => isset($_POST['log_type']) ? $_POST['log_type'] : "",
+                    "updated_at" => date('Y-m-d H:i:s'),
+                ]);
+                $log_id = $log->id;
+                Common_function::MedNotification($_POST['allcids'], "SESS_SCHE_ADMIN", Auth::user()->id, isset($mediatorNoti) ? $mediatorNoti->id : null, $inv_id);
+            }
+        }
+
+        $allParty = InvoledUser::where("userPlanId", $request->caseId)->get();
+        $party_ids = array();
+        $party_ids_bulk = array();
+        foreach ($allParty as $party) {
+            if(isset($fsData['sessionDate']) && $fsData['sessionDate'] != ""){
+                if($party->isClaimant != 0){
+                    $party_ids_bulk[] = $party->id;
+                }
+            } else {
+                $party_ids[] = $party->id;
+            }
+        }
+
+        $dataToInsert = [
+            'case_id' => $request->caseId,
+            'session_date' => ($request->sessionDate != null) ? $request->sessionDate : ($fsData['sessionDate'] ?? '') . "/" . $time,
+            'note' => ($request->note != null) ? $request->note : ($fsData['note'] ?? null),
+            'zoom_id' => $created_zoom_id,
+            'zoom_link' => $created_zoom_link,
+            'zoom_link_choice' => $inserted_zoom_choice,
+            'session_party_ids' => (!empty($party_ids_bulk)) ? json_encode($party_ids_bulk) : json_encode($party_ids),
+            'scheduled_by' => Auth::user()->id,
+            'participant_whtsapp' => $fsData['participant_whtsapp'] ?? 0
+        ];
+
+        $manage_session = DB::table('manage_session')->insert($dataToInsert);
+        if ($manage_session) {
+            $mediator = Mediators_mediation_cases_status::select("email", "username", "mobile_number")->join("users", "users.id", "=", "mediators_mediation_cases_status.mediator_id")
+                ->where("mediators_mediation_cases_status.mediation_case_id", "=", $request->caseId)
+                ->where("mediators_mediation_cases_status.status", "=", 1)
+                ->first();
+            if ($mediator) {
+                $id = "M" . sprintf("%06d", $request->caseId);
+
+                if(!isset($fsData['zoom_choice'])){
+                    if($medcase->stop_bulk_session_med == 0) {
+                        SendGrid::send($d, $mediator->email, env('L10_SCHEDULING_OF_SESSION', ''), ["-caseid-" => $id, "-insert_date-" => $request->sessionDate . "/" . $time, "-type-" => "Mediator"], $mediator->username);
+
+                        $varjson = ['caseid' => $id, 'sessionDateTime' => $request->sessionDate . "/" . $time, 'zoomid' => $request->zoomId];
+                        $var = ['-cid-', '-dt-', '-link-'];
+                        $var1 = [$id, $request->sessionDate . "/" . $time, $request->zoomId];
+
+                        $template_name = WaTemplate::getRandomTemplate('L10');
+                        $content1 = WaTemplate::getcontent($template_name);
+                        $content = str_replace($var, $var1, $content1);
+                        $dwa1 = [
+                            'caseid' => $request->caseId,
+                            'contact' =>  $mediator->mobile_number,
+                            'content' => ['text' => $content],
+                            'event' => 'SESS_SCHE',
+                            'varjson' => $varjson,
+                            'haptik_tmp' => $template_name,
+                        ];
+                        $access = Whatsapp::sendWamessage($dwa1);
+                    }
+                }
+            }
+
+            foreach ($allParty as $party) {
+                if(($fsData['zoom_choice'] ?? null) == "manually_zoom") {
+                    if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                        $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId : ($fsData['zoomId'] ?? null), $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
+                    } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                        $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId : ($fsData['zoomId'] ?? null), $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
+                    }
+                } else if(($fsData['zoom_choice'] ?? null) == "directly_zoom") {
+                    if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                    } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                    }
+                }
+
+                if(($fsData['participant_whtsapp'] ?? 0) == 1) {
+                    if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
+                        $latest_session = DB::table('manage_session')->select('*')->orderBy('id', 'desc')->first();
+                        $id = "M" . sprintf("%06d", $request->caseId);
+                        $varjson2 = ['datetime' => ($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
+                        $var2 = ['-datetime-'];
+                        $var2 = [($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
+                        $content2 = WaTemplate::getcontent('lmed_wa_consent_accept');
+                        $content1 = str_replace($var2, $var2, $content2);
+                        $dwa2 = [
+                            'caseid' => $request->caseId,
+                            'contact' =>  $party->userPhone,
+                            'content' => ['text' => $content1],
+                            'event' => 'WA_Session_Consent',
+                            'varjson' => $varjson2,
+                            'haptik_tmp' => 'lmed_wa_consent_accept',
+                        ];
+                        $access = Whatsapp::sendWamessage($dwa2);
+                        $latestque = WhatsAppQue::select("*")->orderBy('id', 'desc')->first();
+                        $dataToInsert = [
+                            'wa_que_id' => $latestque->id,
+                            'manage_session_id' => $latest_session->id,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+                        $manage_session = DB::table('wa_consent_manage')->insert($dataToInsert);
+                    } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
+                        $latest_session = DB::table('manage_session')->select('*')->orderBy('id', 'desc')->first();
+                        $id = "M" . sprintf("%06d", $request->caseId);
+                        $varjson2 = ['datetime' => ($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
+                        $var2 = ['-datetime-'];
+                        $var2 = [($request->sessionDate != null) ? $request->sessionDate : $display_date_time];
+                        $content2 = WaTemplate::getcontent('lmed_wa_consent_accept');
+                        $content1 = str_replace($var2, $var2, $content2);
+                        $dwa2 = [
+                            'caseid' => $request->caseId,
+                            'contact' =>  $party->userPhone,
+                            'content' => ['text' => $content1],
+                            'event' => 'WA_Session_Consent',
+                            'varjson' => $varjson2,
+                            'haptik_tmp' => 'lmed_wa_consent_accept',
+                        ];
+                        $access = Whatsapp::sendWamessage($dwa2);
+                        $latestque = WhatsAppQue::select("*")->orderBy('id', 'desc')->first();
+                        $dataToInsert = [
+                            'wa_que_id' => $latestque->id,
+                            'manage_session_id' => $latest_session->id,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+                        $manage_session = DB::table('wa_consent_manage')->insert($dataToInsert);
+                    }
+                }
+            }
+
+            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                $success_log = BulkLog::find($_POST['log_id']);
+                if ($success_log->inserted_row == null) {
+                    $success_log->inserted_row = $request->caseId;
+                    $success_log->save();
+                } else {
+                    if (isset($_POST['insertRow'])) {
+                        $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                        $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                        $success_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+            } else if (isset($log_id)) {
+                $success_log = BulkLog::find($log_id);
+                if ($success_log->inserted_row == null) {
+                    $success_log->inserted_row = $request->caseId;
+                    $success_log->save();
+                } else {
+                    if (isset($_POST['insertRow'])) {
+                        $insert_row = $_POST['insertRow'] . "," . $request->caseId;
+                        $success_log->inserted_row = json_encode(explode(',', $insert_row));
+                        $success_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'success', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+            } else {
+                return json_encode(['code' => 200, 'response' => 'success', 'caseid' => $request->caseId]);
+            }
+        } else {
+            if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
+                $faild_log = BulkLog::find($_POST['log_id']);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->caseId;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+                        $faild_row = $_POST['faildRow'] . "," . $request->id;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $_POST['log_id'], 'caseid' => $request->caseId]);
+            } else if (isset($log_id)) {
+                $faild_log = BulkLog::find($log_id);
+                if ($faild_log->failed_row == null) {
+                    $faild_log->failed_row = $request->caseId;
+                    $faild_log->save();
+                } else {
+                    if (isset($_POST['faildRow'])) {
+                        $faild_row = $_POST['faildRow'] . "," . $request->caseId;
+                        $faild_log->failed_row = json_encode(explode(',', $faild_row));
+                        $faild_log->save();
+                    }
+                }
+                return json_encode(['code' => 200, 'response' => 'error', 'log_id' => $log_id, 'caseid' => $request->caseId]);
+            } else {
+                return json_encode(['code' => 200, 'response' => 'error', 'caseid' => $request->caseId]);
+            }
+        }
+    }
+
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
     /******************* Add Session Code : END  ****************************************/
 
     public function sessionPdf($id)
