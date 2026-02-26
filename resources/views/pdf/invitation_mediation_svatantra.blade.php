@@ -851,6 +851,227 @@ $page_break_css = 'page-break-before: always;';
    
     @endif
 
+    @if($itm_lang == "hindi")
+
+    <!-------------- HINDI ------------------------------------------------------------------------------------->
+    @php
+        $langfamilyfont = 'freeserif, Open Sans, Arial, Arial, sans-serif, Verdana';
+    @endphp
+    <center style="{{$page_break_css}}">
+        <div class="text-center">
+            <img src='{{ URL("assert/img/Logo1.png") }}' style='width: 120px;'>
+        </div>
+    </center>
+
+
+    <h2 class="text-center" style="font-family:{{ $langfamilyfont }};">मध्यस्थता/समझौता (Mediation/Conciliation)   करने का निमंत्रण</h2>
+
+    <h4 class="text-center">
+        <!-- Included in the list of institutions <a
+            href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
+            here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution
+        (ODR) and  -->
+        Empaneled as a Mediation Institution by various Courts in India</h4>
+
+    <p class="text-center"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
+            href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
+
+    <br>
+
+    <table cellspacing="0" cellpadding="10" width="100%">
+        <tr>
+            <td width="60%">
+                <p>Case ID: M{{ sprintf('%06d', $case->id) }} | Ref ID: {{$case->ref_id}}</p>
+            </td>
+            <td class="text-right">
+                <p style="font-family:{{ $langfamilyfont }};">तारीख : {{ date('d-m-Y') }}</p>
+            </td>
+        </tr>
+    </table>
+    <br>
+
+    <table class="table_" cellspacing="0" cellpadding="10" width="100%">
+        <tr>
+            <th width="50%">
+                Applicant(s) / Initiating Party:
+            </th>
+            <th>
+                Opposite / Responding Party:
+            </th>
+        </tr>
+        <tr>
+            <td>
+                @foreach ($party as $key => $p)
+                    <?php
+                    $inparty = User::find($p->userId); ?>
+                    @if ($p->isClaimant == 0)
+                        <p>{{ isset($inparty->organization) ? $inparty->organization . ' through its authorized representative ' . $p->name : $p->name }}
+                        </p>
+                        @if ($p->address1 != null)
+                            <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }}, {{ $p->pincode }}</p>
+                            <p>{{ $p->state }} {{ $p->country }}</p>
+                        @elseif($p->fulladdress != null)
+                            <p>{{ $p->fulladdress }}</p>
+                        @else
+                            <p>{{ $p->useraddress }} {{ $p->useraddress1 }}, {{ $p->usercity }},
+                                {{ $p->userpincode }}</p>
+                            <p>{{ $p->userstate }} {{ $p->usercountry }}</p>
+                        @endif
+
+                        <!-- @if ($p->userEmail != null)
+                        <p>{{$p->userEmail}}</p>
+                        @endif
+
+                        @if ($p->userPhone != null)
+                        <p>{{$p->userPhone}}</p>
+                        @endif -->
+                        <br> <br>
+
+                        @if ($p->userpname != null)
+                        <p>{{$p->userpname}}</p>
+                        @endif
+
+                        @if ($p->userpemail != null)
+                        <p>{{$p->userpemail}}</p>
+                        @endif
+
+                        @if ($p->userpcontact != null)
+                        <p>{{$p->userpcontact}}</p>
+                        @endif
+                    @endif
+                @endforeach
+                {{-- <p>{{$party[0]->userEmail}}</p>
+                <p>{{$party[0]->userPhone}}</p> --}}
+            </td>
+            <td>
+
+                @foreach ($party as $key => $p)
+                    @if ($key != 0)
+                        @if ($p->isClaimant != 0)
+                            @if ($p->name != '')
+                                @if ($p->name != '')
+                                    <p>{{ $p->name }}</p>
+                                @endif
+                                @if ($p->address1 != '')
+                                    <p>{{ $p->address1 }} {{ $p->address2 }}, {{ $p->city }},
+                                        {{ $p->pincode }}
+                                    </p>
+                                    <p>{{ $p->state }} {{ $p->country }}</p>
+                                @endif
+                                @if ($p->fulladdress != '')
+                                    <p>{{ $p->fulladdress }} </p>
+                                @endif
+                                @if ($p->userEmail != '')
+                                    <p>{{ $p->userEmail }}</p>
+                                @endif
+                                @if ($p->userPhone != '')
+                                    <p>{{ $p->userPhone }}</p>
+                                @endif
+                                <br>
+                            @endif
+                        @endif
+                    @endif
+                @endforeach
+                <!-- @if ($case->otherRespondentDetails != '' && $case->otherRespondentDetails != null)
+                    <p>{{ $case->otherRespondentDetails }}</p>
+                @endif -->
+                <br>
+                @foreach ($party as $key => $p)
+                    @if ($key != 0)
+                        @if ($p->isClaimant != 0)
+                            @if ($p->name == '')
+                                @if ($p->userEmail != '')
+                                    <p>{{ $p->userEmail }}</p>
+                                @endif
+                                @if ($p->userPhone != '')
+                                    <p>{{ $p->userPhone }}</p>
+                                @endif
+                                <br>
+                            @endif
+                        @endif
+                    @endif
+                @endforeach
+                @if($case->otherRespondentDetails != "" && $case->otherRespondentDetails != null)
+                <p>{{$case->otherRespondentDetails}}</p>
+                @endif
+            </td>
+        </tr>
+
+        @if ($case->discussion != '' && $case->discussion != null)
+        <tr>
+            <td>
+                <p>Contact of discussion</p>
+                <p>{{$case->discussion}}</p>
+            </td>
+        </tr>
+        @endif
+
+
+    </table>
+
+    <br />
+    
+    <p style="font-family:{{ $langfamilyfont }};">1. सौहार्दपूर्ण समाधान पर पहुंचने की इच्छा रखते हुए, आवेदक/आरंभकर्ता पक्ष ने विवाद का सौहार्दपूर्ण समाधान मांगा है और Presolv360 के साथ अनुरोध पंजीकृत किया है।</p>
+  
+    <p>2. As per the Applicant(s) / Initiating Party:</p>
+    
+    <!-- <p style='margin-left:15px;'> -->
+        <?php //echo nl2br($case->issue); ?>
+    <!-- </p> -->
+
+    <p style='font-family:{{ $langfamilyfont }}; margin-left:15px;'>
+    </p>
+
+    <p style="font-family:{{ $langfamilyfont }};">3. Presolv360 
+        <!-- ऑनलाइन Dispute समाधान  (“ODR”) सहित वैकल्पिक Dispute समाधान (“ADR”) सेवाएं प्रदान करने वाली संस्थाओं की सूची में शामिल है और इसे  -->
+        भारत में विभिन्न न्यायालयों द्वारा मध्यस्थता (Mediation) संस्थान के रूप में भी सूचीबद्ध किया गया है। Presolv360 अपने प्लेटफ़ॉर्म पर मध्यस्थता (Mediation) कार्यवाही का प्रबंधन करता है, और मध्यस्थों (Mediators) के अपने पैनल पर आवश्यक योग्यता, ज्ञान और विशेषज्ञता वाले स्वतंत्र, योग्य मध्यस्थों (Mediators)को सूचीबद्ध करता है। मध्यस्थता / सुलह (Mediation/Conciliation) Presolv360 के Dispute समाधान नियमों के अनुसार संचालित   की जाएगी, जिसकी एक प्रति यहाँ पाई जा सकती है। Presolv360 मध्यस्थता कार्यवाही के संचालन के लिए सभी संबंधित पक्षों और मध्यस्थ (Mediators)  को प्रशासनिक सहायता प्रदान करता है और विवाद के परिणाम में इसकी कोई रुचि नहीं है और इसमें कोई हितों का टकराव नहीं है।</p>
+    
+    <p style="font-family:{{ $langfamilyfont }};">4. जबकि यह प्रक्रिया पूरी तरह से गोपनीय है, मध्यस्थता/सुलह (Mediation/Conciliation)  की कार्यवाही गैर-भागीदारी की स्थिति में या विवाद के अनसुलझे रहने की स्थिति में उपलब्ध किसी भी कानूनी उपाय के प्रति ‘बिना किसी पूर्वाग्रह के’ है। यह सबसे अधिक लाभकारी प्रक्रियाओं में से एक बन गई है, जिसमें सभी संदर्भों की सफलता दर 90% से अधिक है।</p>
+    
+    <p style="font-family:{{ $langfamilyfont }};">5. विपक्षी/प्रतिसाद देने वाला पक्ष मध्यस्थता/समाधान के लिए आमंत्रण प्राप्त होने के सात (7) 
+        कार्य दिवसों के भीतर Presolv360 को <a href="mailto:admin@presolv360.com">admin@presolv360.com</a> पर ईमेल के माध्यम से उक्त आमंत्रण को स्वीकार या अस्वीकार करेगा, 
+        अन्यथा मध्यस्थता/समाधान (Mediation/Conciliation) को नॉन-स्टार्टर माना जाएगा।</p>
+    
+    <p style="font-family:{{ $langfamilyfont }};">6. दावेदार और प्रतिवादी एक अधिकृत प्रतिनिधि द्वारा प्रतिनिधित्व या सहायता के लिए चुन सकते हैं, 
+        इस मामले में नियुक्ति करने वाली पार्टी प्राधिकरण का एक पत्र प्रस्तुत करेगी, जिसका प्रारूप यहां उपलब्ध है। नियुक्त करने वाली पार्टी Presolv360 को संबोधित एक 
+        ईमेल के माध्यम से <a href="mailto:admin@presolv360.com">admin@presolv360.com</a> पर “Letter of Authority | (Case ID) | (Name of the Appointing Party)”|</p>
+    
+    <p style="font-family:{{ $langfamilyfont }};">7. संस्था से अपने मध्यस्थों के पैनल में उपलब्ध मध्यस्थों की सूची प्रदान करने का अनुरोध भी किया जा सकता है। इसके लिए admin@presolv360.com पर “Request for List of Available Mediators | (Case ID)” विषय (subject) के साथ ईमेल भेजना होगा। पक्षकार उक्त सूची में से आपसी सहमति से एक मध्यस्थ (Mediator) की नियुक्ति करेंगे। यदि ऐसा करने में विफल रहते हैं, तो उपर्युक्त मध्यस्थ (Mediator) की पुष्टि कर दी जाएगी।</p>
+
+    <p style="font-family:{{ $langfamilyfont }};">8. केस प्रबंधन प्रणाली तक पहुँच प्राप्त करने के लिए, प्रतिवादी (Respondent/Respondents) को निम्नलिखित प्रक्रिया पूर्ण करनी होगी: </p>
+    <p style="font-family:{{ $langfamilyfont }};">a. “यहाँ क्लिक करें” के माध्यम से अपने पंजीकृत ईमेल आईडी का उपयोग करके अपना खाता बनाएँ। </p>
+    <p style="font-family:{{ $langfamilyfont }};">b. प्रमाणीकरण के उद्देश्य से एक विशिष्ट जॉइन कोड आवश्यक होगा। यह कोड अलग से प्रदान किया गया है। </p>
+    <p style="font-family:{{ $langfamilyfont }};">c. केस प्रबंधन प्रणाली तक पहुँच प्राप्त करने में किसी भी प्रकार की सहायता के लिए, कृपया admin@presolv360.com पर ईमेल भेजें और विषय पंक्ति में अपना Case ID अवश्य उल्लेख करें।</p>
+
+
+
+    <p style="font-family:{{ $langfamilyfont }};">9. मध्यस्थों/समाधानकर्ताओं  (mediator / conciliator) के पैनल से एक मध्यस्थ/समाधानकर्ता की नियुक्ति की जाएगी, और ऐसी नियुक्ति मध्यस्थ/समाधानकर्ता (mediator / conciliator)  की योग्यता, ज्ञान और पक्षों के बीच विवाद के विषय-वस्तु से निपटने की क्षमता पर आधारित होगी।</p>
+    
+    <p style="font-family:{{ $langfamilyfont }};">10. मध्यस्थ/समाधानकर्ता द्वारा नियुक्ति स्वीकार किए जाने पर, पक्षों को नियुक्ति की सूचना दी जाएगी।</p>
+
+    <p style="font-family:{{ $langfamilyfont }};">11. यदि किसी पक्ष को श्रवण दोष के मामले में भारतीय सांकेतिक भाषा (आईएसएल) दुभाषिया की सहायता की 
+        आवश्यकता है, तो <a href="mailto:admin@presolv360.com">admin@presolv360.com</a> पर "Request for Interpreter | (Case ID)"   विषय के साथ एक ईमेल लिखें, और यह सुविधा Presolv360 
+        द्वारा प्रदान की जाएगी।</p>
+    
+    <p style="font-family:{{ $langfamilyfont }};"><b>नोट: यह सिस्टम द्वारा जनरेटेड नोटिस है, इसलिए इस पर हस्ताक्षर की आवश्यकता नहीं है।</b></p>
+    
+    <table cellspacing="0" cellpadding="10" width="100%">
+        <tr>
+            <td>
+                <p>To:</p>
+                <p>Opposite / Responding Party</p>
+            </td>
+            <td>
+                <p>Copy to:</p>
+                <p>Applicant(s) / Initiating Party</p>
+            </td>
+        </tr>
+    </table>
+    
+    <!-------------- HINDI ------------------------------------------------------------------------------------->
+
+    @endif
+
 
     @endforeach
     
