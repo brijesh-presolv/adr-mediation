@@ -89,6 +89,8 @@ $ldate = $lastdate->format('d-m-Y');
         <div class="text-center">
             @php
                 $logoPath = str_replace('\\', '/', public_path("images/Logo1.png"));
+
+                echo $logoPath;exit;
             @endphp
             <img src="{{ $logoPath }}" style="width: 120px;">
         </div>
