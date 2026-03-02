@@ -1,6 +1,5 @@
 <?php
-echo "imgpath--->".URL("assert/img/Logo1.png"); 
-exit;
+
 use App\Models\User;
 
 $meddate = new DateTime($case->crated_at);
@@ -88,7 +87,11 @@ $ldate = $lastdate->format('d-m-Y');
     <div class="main_sec">
     <center>
         <div class="text-center">
-            <img src='{{ URL("assert/img/Logo1.png") }}' style='width: 120px;'>
+            @php
+                $logo = base64_encode(file_get_contents(URL("assert/img/Logo1.png")));
+            @endphp
+            <!-- <img src='{{ URL("assert/img/Logo1.png") }}' style='width: 120px;'> -->
+            <img src="data:image/png;base64,{{ $logo }}" style="width: 120px;">
         </div>
     </center>
 
