@@ -2349,7 +2349,11 @@ public function addSession(Request $request)
 
                 
             } else {
-                $pdf = PDF::loadView('pdf.invitation_mediation', $data); 
+                //$pdf = PDF::loadView('pdf.invitation_mediation', $data); 
+                $pdf = PDF::loadView('pdf.invitation_mediation', $data, [], [
+                'imgDPI' => 96,
+                'tempDir' => storage_path('app'),
+                ]);
             }
             
         }
