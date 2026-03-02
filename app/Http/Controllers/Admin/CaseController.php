@@ -2352,10 +2352,20 @@ public function addSession(Request $request)
                 
                 //$pdf = PDF::loadView('pdf.invitation_mediation', $data); 
                 $pdf = PDF::loadView('pdf.invitation_mediation', $data, [], [
-                'imgDPI' => 96,
-                'tempDir' => storage_path('app'),
-                'allowAnnotationFiles' => false,
-                ]);
+    'imgDPI' => 96,
+    'tempDir' => storage_path('app'),
+    'allowAnnotationFiles' => false,
+    'margin_top' => 40,  // ← add this to make room for header
+    'margin_header' => 5,
+]);
+
+$mpdf = $pdf->getMpdf();
+$logoBase64 = base64_encode(file_get_contents(base_path('assets/images/Logo1.png')));
+$mpdf->SetHTMLHeader('
+    <div style="text-align:center;">
+        <img src="data:image/png;base64,' . $logoBase64 . '" style="width:120px;">
+    </div>
+');
             }
             
         }

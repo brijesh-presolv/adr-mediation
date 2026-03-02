@@ -19,10 +19,10 @@ $ldate = $lastdate->format('d-m-Y');
 <head>
     <title> {{ config('app.name', 'Medtiator') }} | Invitation of Mediation / Conciliation</title>
     <style type="text/css">
-        @page {
+        /* @page {
             header: page-header;
             footer: page-footer;
-        }
+        } */
 
         .pt-5 {
             padding-top: 5rem;
@@ -90,14 +90,7 @@ $ldate = $lastdate->format('d-m-Y');
              @php
             $logoSrc = 'data:image/png;base64,' . base64_encode(file_get_contents(base_path('assets/images/properties/8.jpg')));
         @endphp
-        <div style="
-        width: 120px; 
-        height: 120px; 
-        background-image: url('{{ $logoSrc }}');
-        background-size: contain;
-        background-repeat: no-repeat;
-        margin: 0 auto;
-    "></div>
+        
         </div>
     </center>
 
