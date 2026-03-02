@@ -2349,6 +2349,7 @@ public function addSession(Request $request)
 
                 
             } else {
+                dd(file_exists(base_path('assets/images/Logo1.png')));
                 //$pdf = PDF::loadView('pdf.invitation_mediation', $data); 
                 $pdf = PDF::loadView('pdf.invitation_mediation', $data, [], [
                 'imgDPI' => 96,
