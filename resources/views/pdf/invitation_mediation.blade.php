@@ -1,5 +1,6 @@
 <?php
-
+echo "imgpath--->".URL("assert/img/Logo1.png"); 
+exit;
 use App\Models\User;
 
 $meddate = new DateTime($case->crated_at);

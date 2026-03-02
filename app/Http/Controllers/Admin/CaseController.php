@@ -2360,8 +2360,8 @@ public function addSession(Request $request)
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
         
-       //$local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
-       //return $local_store;
+       $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+       return $local_store;
 
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
@@ -2570,7 +2570,7 @@ public function addSession(Request $request)
             /*************** ITM For ongoing cases while updating ***********************************/
             /********** ITM code comment out while updating the case : 18/12/2024 **************************/
 
-            /*
+            
             if($med->case_status == 1) {
 
                     $invitation = $this->invitation_mediate($id);
@@ -2723,7 +2723,7 @@ public function addSession(Request $request)
             }
 
 
-            */
+            
             /*************** ITM For ongoing cases while updating ***********************************/
 
             $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get();
