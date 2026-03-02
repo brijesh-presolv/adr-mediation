@@ -88,7 +88,7 @@ $ldate = $lastdate->format('d-m-Y');
     <center>
         <div class="text-center">
              @php
-            $logoSrc = 'data:image/png;base64,' . base64_encode(file_get_contents(base_path('assets/images/Logo1.png')));
+            $logoSrc = 'data:image/png;base64,' . base64_encode(file_get_contents(base_path('assets/images/properties/8.jpg')));
         @endphp
         <img src="{{ $logoSrc }}" style="width: 120px;">
         </div>
