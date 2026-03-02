@@ -90,9 +90,9 @@ $ldate = $lastdate->format('d-m-Y');
             @php
                 $logoPath = str_replace('\\', '/', public_path("images/Logo1.png"));
 
-                echo $logoPath;exit;
+               
             @endphp
-            <img src="{{ $logoPath }}" style="width: 120px;">
+            <img src="https://testmed.presolv360.com/public/images/Logo1.png" style="width: 120px;">
         </div>
     </center>
 
