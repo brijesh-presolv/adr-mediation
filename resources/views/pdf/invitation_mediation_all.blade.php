@@ -621,11 +621,7 @@ $page_break_css = 'page-break-before: always;';
     @endphp
     <center style="{{$page_break_css}}">
         <div class="text-center">
-            @php
-                $logo = base64_encode(file_get_contents(public_path("images/Logo1.png")));
-            @endphp
-            <!-- <img src="{{ public_path('images/Logo1.png') }}" style='width: 120px;'> -->
-            <img src="data:image/png;base64,{{ $logo }}" style="width: 120px;">
+            <img src='{{ URL("assert/img/Logo1.png") }}' style='width: 120px;'>
         </div>
     </center>
 
@@ -1589,11 +1585,7 @@ $page_break_css = 'page-break-before: always;';
 
     <center style="{{$page_break_css}}">
         <div class="text-center">
-            @php
-                $logo = base64_encode(file_get_contents(public_path("images/Logo1.png")));
-            @endphp
-            <!-- <img src="{{ public_path('images/Logo1.png') }}" style='width: 120px;'> -->
-            <img src="data:image/png;base64,{{ $logo }}" style="width: 120px;">
+            <img src='{{ URL("assert/img/Logo1.png") }}' style='width: 120px;'>
         </div>
     </center>
 

@@ -2349,23 +2349,7 @@ public function addSession(Request $request)
 
                 
             } else {
-                
-                //$pdf = PDF::loadView('pdf.invitation_mediation', $data); 
-                $pdf = PDF::loadView('pdf.invitation_mediation', $data, [], [
-    'imgDPI' => 96,
-    'tempDir' => storage_path('app'),
-    'allowAnnotationFiles' => false,
-    'margin_top' => 40,  // ← add this to make room for header
-    'margin_header' => 5,
-]);
-
-$mpdf = $pdf->getMpdf();
-$logoBase64 = base64_encode(file_get_contents(base_path('assets/images/Logo1.png')));
-$mpdf->SetHTMLHeader('
-    <div style="text-align:center;">
-        <img src="data:image/png;base64,' . $logoBase64 . '" style="width:120px;">
-    </div>
-');
+                $pdf = PDF::loadView('pdf.invitation_mediation', $data); 
             }
             
         }
@@ -2376,8 +2360,8 @@ $mpdf->SetHTMLHeader('
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;
         $finalFilePath = $savePath . '/' . $name;
         
-       $local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
-       return $local_store;
+       //$local_store = Storage::disk('local')->put('public/mediation/' . $data["case"]->id . '/' .  $name, $pdf->output());
+       //return $local_store;
 
         $uploadS3 = $this->uploadOnAWSDirect($finalFilePath, $savePath, $pdf);
         return $name;
@@ -2586,7 +2570,7 @@ $mpdf->SetHTMLHeader('
             /*************** ITM For ongoing cases while updating ***********************************/
             /********** ITM code comment out while updating the case : 18/12/2024 **************************/
 
-            
+            /*
             if($med->case_status == 1) {
 
                     $invitation = $this->invitation_mediate($id);
@@ -2739,7 +2723,7 @@ $mpdf->SetHTMLHeader('
             }
 
 
-            
+            */
             /*************** ITM For ongoing cases while updating ***********************************/
 
             $InvoledUser = InvoledUser::where(['userPlanId' => $med->id])->get();
