@@ -88,7 +88,7 @@ $ldate = $lastdate->format('d-m-Y');
     <center>
         <div class="text-center">
             @php
-                $logo = base64_encode(file_get_contents(URL("assert/img/Logo1.png")));
+                $logo = base64_encode(file_get_contents(public_path("assets/images/Logo1.png")));
             @endphp
             <!-- <img src='{{ URL("assert/img/Logo1.png") }}' style='width: 120px;'> -->
             <img src="data:image/png;base64,{{ $logo }}" style="width: 120px;">
