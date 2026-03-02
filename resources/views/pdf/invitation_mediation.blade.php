@@ -88,11 +88,11 @@ $ldate = $lastdate->format('d-m-Y');
     <center>
         <div class="text-center">
             @php
-                $logoPath = str_replace('\\', '/', public_path("images/Logo1.png"));
-
-               
+                $logoPath = base_path('assets/images/Logo1.png');
+                $logoData = base64_encode(file_get_contents($logoPath));
+                $logoSrc  = 'data:image/png;base64,' . $logoData;
             @endphp
-            <img src="https://testmed.presolv360.com/public/images/Logo1.png" style="width: 120px;">
+        <img src="{{ $logoSrc }}" style="width: 120px;">
         </div>
     </center>
 
