@@ -2354,6 +2354,7 @@ public function addSession(Request $request)
                 $pdf = PDF::loadView('pdf.invitation_mediation', $data, [], [
                 'imgDPI' => 96,
                 'tempDir' => storage_path('app'),
+                'allowAnnotationFiles' => false,
                 ]);
             }
             
