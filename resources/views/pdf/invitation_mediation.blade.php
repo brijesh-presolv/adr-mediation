@@ -94,10 +94,13 @@ $ldate = $lastdate->format('d-m-Y');
 
     <h2 class="text-center" style="margin-top: 0px !important;">Invitation to Mediate / Conciliate</h2>
 
-    <h4 class="text-center" style="margin-bottom: 0px !important; margin-top: 0px !important;font-size:14px !important;">Included in the list of institutions <a
+    <h4 class="text-center" style="margin-bottom: 0px !important; margin-top: 0px !important;font-size:14px !important;">
+        <!-- Included in the list of institutions <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
             here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution
-        (ODR) and empaneled as a Mediation Institution by various Courts in India</h4>
+        (ODR) and empaneled as a Mediation Institution by various Courts in India -->
+        Empaneled as a Mediation Institution by various Courts in India
+    </h4>
 
     <p class="text-center" style="page-break-after:avoid;margin-top: 0px !important;font-size:14px !important; margin-bottom: 0px !important;"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
             href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
