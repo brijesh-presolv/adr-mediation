@@ -864,20 +864,17 @@ $page_break_css = 'page-break-before: always;';
     </center>
 
 
-    <h2 class="text-center" style="font-family:{{ $langfamilyfont }};">मध्यस्थता/समझौता (Mediation/Conciliation)   करने का निमंत्रण</h2>
+    <p class="text-center" style="font-family:{{ $langfamilyfont }};font-size:30px; margin-bottom: 0px; margin-top: 0px !important;">मध्यस्थता/समझौता (Mediation/Conciliation)   करने का निमंत्रण</p>
 
-    <h4 class="text-center">
+    <p class="text-center">
         <!-- Included in the list of institutions <a
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
             here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution
         (ODR) and  -->
-        Empaneled as a Mediation Institution by various Courts in India</h4>
+        Empaneled as a Mediation Institution by various Courts in India</p>
 
-    <p class="text-center"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
+    <p class="text-center" stype="font-size:14px; margin-bottom: 0px !important; margin-top: 0px !important;"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
             href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
-
-    <br>
-
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td width="60%">
@@ -888,7 +885,6 @@ $page_break_css = 'page-break-before: always;';
             </td>
         </tr>
     </table>
-    <br>
 
     <table class="table_" cellspacing="0" cellpadding="10" width="100%">
         <tr>
@@ -1009,8 +1005,6 @@ $page_break_css = 'page-break-before: always;';
 
     </table>
 
-    <br />
-    
     <p style="font-family:{{ $langfamilyfont }};">1. सौहार्दपूर्ण समाधान पर पहुंचने की इच्छा रखते हुए, आवेदक/आरंभकर्ता पक्ष ने विवाद का सौहार्दपूर्ण समाधान मांगा है और Presolv360 के साथ अनुरोध पंजीकृत किया है।</p>
   
     <p>2. As per the Applicant(s) / Initiating Party:</p>
