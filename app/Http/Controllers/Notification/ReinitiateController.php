@@ -788,6 +788,92 @@ class ReinitiateController extends Controller
     }
     // retrigger session sms //
 
+
+
+    // whatsapp and ITM attachment for HDFC B34
+    public function reinitiate_hdfc_b34()
+    {
+
+        $allData = DB::table('reinitiate_noti_hdfc_b34')->where('is_whtsapp_sent', 0)->where('is_pdf_sent', 0)->limit(100)->get();
+
+        foreach($allData as $data) {
+
+
+            $varjson = ['initiating' => $data->org, 'caseid' => "M" . sprintf("%06d", $data->caseid)];
+            $var = ['-ip-', '-cid-'];
+            $var1 = [$data->org, "M" . sprintf("%06d", $data->caseid)];
+    
+            $template_name = WaTemplate::getRandomTemplate('ITML4');
+
+            $content1 = WaTemplate::getcontent($template_name);
+            $content = str_replace($var, $var1, $content1);
+            $dwa1 = [
+                'caseid' => $data->caseid,
+                'contact' =>  $data->phone,
+                'content' => ['text' => $content],
+                'event' => 'ACPTARB_ADM_RES',
+                'varjson' => $varjson,
+                'haptik_tmp' => $template_name,
+    
+            ];
+
+            $access1 = Whatsapp::sendWamessage($dwa1);
+
+            if($access1) {
+                $is_update_wa = DB::table('reinitiate_noti_hdfc_b34')->where('caseid', $data->caseid)->update(['is_whtsapp_sent' => 1]);
+
+                if($is_update_wa) {
+                    echo $template_name ." added for case id =" .$data->caseid;
+                    echo "<br/>";
+                }
+                
+            }
+
+            // attachment
+
+            $invitation = 'Invitaton_med_M' . sprintf('%06d', $data->caseid) . '.pdf';
+
+             
+
+            $finalFilePath = 'mediation_documents/mediation/' . $data->caseid . '/' . $invitation;
+            $whatsappSend = Storage::disk('s3')->url($finalFilePath);
+
+
+
+            $varjson_file = ['caseid' => "M" . sprintf("%06d", $data->caseid)];
+            $var_file = ['-caseid-'];
+            $var1_file = ["M" . sprintf("%06d", $data->caseid)];
+
+            $pdf_template_name = WaTemplate::getRandomTemplate('PDF');
+
+            $content1_file = WaTemplate::getcontent($pdf_template_name);
+            $content_file = str_replace($var_file, $var1_file, $content1_file);
+            $dwa2 = [
+                'caseid' => $data->caseid,
+                'contact' =>  $data->phone,
+                'content' => ['media' => ['url' => $whatsappSend, 'caption' => $content_file]],
+                'event' => 'ACPTARB_ADM_RES',
+                'varjson' => $varjson_file,
+                'haptik_tmp' =>  $pdf_template_name,
+
+            ];
+            
+            $access2 = Whatsapp::sendWamessage($dwa2);
+
+
+            if($access2) {
+                $is_update_pdf = DB::table('reinitiate_noti_axis_b36')->where('caseid', $data->caseid)->update(['is_pdf_sent' => 1]);
+
+                if($is_update_pdf) {
+                    echo "attachment template added for case id =" .$data->caseid;
+                    echo "<br/>";
+                }
+               
+            }
+            
+        }
+    }
+
        
 }
 
