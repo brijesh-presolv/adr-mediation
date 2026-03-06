@@ -862,7 +862,7 @@ class ReinitiateController extends Controller
 
 
             if($access2) {
-                $is_update_pdf = DB::table('reinitiate_noti_axis_b36')->where('caseid', $data->caseid)->update(['is_pdf_sent' => 1]);
+                $is_update_pdf = DB::table('reinitiate_noti_hdfc_b34')->where('caseid', $data->caseid)->update(['is_pdf_sent' => 1]);
 
                 if($is_update_pdf) {
                     echo "attachment template added for case id =" .$data->caseid;
