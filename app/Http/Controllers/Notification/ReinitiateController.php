@@ -831,7 +831,7 @@ class ReinitiateController extends Controller
 
             // attachment
 
-            $invitation = 'Invitaton_med_M' . sprintf('%06d', $data->caseid) . '.pdf';
+            $invitation = 'Invitation_mediate_M' . sprintf('%06d', $data->caseid) . '.pdf';
 
              
 
