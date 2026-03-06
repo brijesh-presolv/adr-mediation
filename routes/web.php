@@ -407,3 +407,6 @@ Route::get('reinitiate_session_sms', [App\Http\Controllers\Notification\Reinitia
 
 
 Route::post('/brevo/webhook', [App\Http\Controllers\Webhook\EmailWebhookController::class, 'webhook']);
+
+// for reinitate whatsapp
+Route::get('reinitiate_hdfc_b34', [App\Http\Controllers\Notification\ReinitiateController::class, 'reinitiate_hdfc_b34']);
