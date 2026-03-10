@@ -1148,7 +1148,7 @@ class CaseController extends Controller
 
 
     /******************* Add Session Code : START  ****************************************/
-    public function addSession_bkp_26022026(Request $request)
+    public function addSession(Request $request)
     {
         //dd($request->all());
         
@@ -1590,7 +1590,7 @@ class CaseController extends Controller
 
  
 
-public function addSession(Request $request)
+public function addSession_after_php(Request $request)
 {
     //dd($request->all());
 
