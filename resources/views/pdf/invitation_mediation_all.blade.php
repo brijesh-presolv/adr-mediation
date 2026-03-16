@@ -337,8 +337,14 @@ $page_break_css = 'page-break-before: always;';
          c. For any assistance to access the case management system, kindly address an email to admin@presolv360.com and mention your Case ID in the subject line.
     </p>
 
+    <p>9. A mediator / conciliator from the panel of mediators / conciliators will be appointed, and such appointment shall be based on the mediator’s / conciliator’s competence, knowledge and ability to deal with subject matter of the dispute between the parties.
+    </p>
 
-    <p>9. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email 
+    <p>10. Upon acceptance of the appointment by the mediator / conciliator, the parties shall be notified of the appointment.
+    </p>
+
+
+    <p>11. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email 
         addressed to <a href="mailto:admin@presolv360.com">admin@presolv360.com</a> with the subject "Request for Interpreter | (Case ID)", and this facility will be provided 
         by Presolv360.</p>
 

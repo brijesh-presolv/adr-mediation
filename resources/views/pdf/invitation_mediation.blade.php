@@ -294,7 +294,13 @@ $ldate = $lastdate->format('d-m-Y');
          c. For any assistance to access the case management system, kindly address an email to admin@presolv360.com and mention your Case ID in the subject line.
     </p>
 
-    <p style="">9. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
+    <p style="">9. A mediator / conciliator from the panel of mediators / conciliators will be appointed, and such appointment shall be based on the mediator’s / conciliator’s competence, knowledge and ability to deal with subject matter of the dispute between the parties.
+    </p>
+
+    <p style="">10.	Upon acceptance of the appointment by the mediator / conciliator, the parties shall be notified of the appointment.
+    </p>
+
+    <p style="">11. If any party requires assistance of an Indian Sign Language (ISL) interpreter in case of hearing impairment, write an email addressed to admin@presolv360.com with the subject "Request for Interpreter | (Case ID)", and this facility will be provided by Presolv360.</p>
 
     <p style=""><b>Note: This is a system generated notice and hence does not require signature.</b></p>
     <table cellspacing="0" cellpadding="10" width="100%" style="">
