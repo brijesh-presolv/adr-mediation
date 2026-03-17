@@ -355,7 +355,7 @@ Route::get('notification/whatsapp/sendMtalkz', [App\Http\Controllers\Notificatio
 
 
 // Session Reminder
-//Route::get('reminder/session_reminder', [App\Http\Controllers\Admin\ReminderController::class, 'index'])->name('sessionReminder');
+Route::get('reminder/session_reminder', [App\Http\Controllers\Admin\ReminderController::class, 'index'])->name('sessionReminder');
 
 Route::get('/payment/success', [App\Http\Controllers\API\PaymentController::class, 'paymentSuccess']);
 Route::post('/payment/webhook', [App\Http\Controllers\API\PaymentController::class, 'paymentWebhook']);
