@@ -874,6 +874,35 @@ class ReinitiateController extends Controller
         }
     }
 
+
+    //reinitiate sms for Fusion Finance Limited batch : start //
+    public function reinitiate_fusion_sms()
+    {
+
+        $allData = DB::table('reinitiate_sms_fusion')->where('is_sms_sent', 0)->limit(100)->get();
+
+        $initiating_party = "Fusion Finance Ltd.";
+
+        foreach($allData as $data) {
+            $id = $data->caseid;
+            $phone = $data->phone;
+            $smsvar = ['--caseid--', '--ipname--'];
+            $smsvar1 = [Common_function::getsixdigitid('sc', $id), $initiating_party];
+            $varjsonSms = ['caseid' => Common_function::changeidprefix("",$id), 'ipname' => $initiating_party];
+            
+            Common_function::sendsmsNotification($id, $phone, $varjsonSms, $smsvar, $smsvar1, 'MEDL4', 'ACPTARB_ADM_RES_SMS', 'L4_Med_case_approve_sms');
+                 
+
+            $is_update_sms = DB::table('reinitiate_sms_fusion')->where('caseid', $data->caseid)->update(['is_sms_sent' => 1]);
+
+            if($is_update_sms) {
+                echo "sms sent for case id =" .$data->caseid;
+                echo "<br/>";
+            }
+        }
+    }
+    //reinitiate sms for Fusion Finance Limited batch : end //
+
        
 }
 
