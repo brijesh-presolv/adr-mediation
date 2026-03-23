@@ -35,7 +35,8 @@ class ReminderController extends Controller
     {
         $date = \Carbon\Carbon::today();
         $date = $date->format('d/m/Y');
-        $two_days = \Carbon\Carbon::today()->addDays(2);
+        //$two_days = \Carbon\Carbon::today()->addDays(2);
+        $two_days = \Carbon\Carbon::today()->addDays(1);
         $two_days = $two_days->format('d/m/Y');
 
         $query1 = "SELECT *
