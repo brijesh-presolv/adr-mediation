@@ -49,7 +49,7 @@ class ReminderController extends Controller
         $query1 = "SELECT *
              FROM manage_session
              WHERE 
-             (is_reminder_sent = 0 OR is_final_reminder = 0)
+             is_reminder_sent = 0
              AND (session_date LIKE '%$two_days%')   
              AND is_deleted = 0
              LIMIT 50";
