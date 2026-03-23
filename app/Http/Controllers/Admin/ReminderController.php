@@ -39,13 +39,20 @@ class ReminderController extends Controller
         $two_days = \Carbon\Carbon::today()->addDays(1);
         $two_days = $two_days->format('d/m/Y');
 
+        // $query1 = "SELECT *
+        //     FROM manage_session
+        //     WHERE 
+        //     (is_reminder_sent = 0 OR is_final_reminder = 0)
+        //     AND (session_date LIKE '%$date%' OR session_date LIKE '%$two_days%')   
+        //     AND is_deleted = 0
+        //     LIMIT 50";
         $query1 = "SELECT *
-            FROM manage_session
-            WHERE 
-            (is_reminder_sent = 0 OR is_final_reminder = 0)
-            AND (session_date LIKE '%$date%' OR session_date LIKE '%$two_days%')   
-            AND is_deleted = 0
-            LIMIT 50";
+             FROM manage_session
+             WHERE 
+             (is_reminder_sent = 0 OR is_final_reminder = 0)
+             AND (session_date LIKE '%$two_days%')   
+             AND is_deleted = 0
+             LIMIT 50";
 
         //echo $query1;exit;
         $getSessionArray = DB::select($query1);
