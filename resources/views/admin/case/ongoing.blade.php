@@ -971,8 +971,28 @@
 
     <!------- MOM Section ------------------------------->
     <div id="Session-mom" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel1">
+        
         <div class="modal-dialog">
-            <div class="modal-content">
+            
+            <div class="modal-content" style="position: relative;">
+                <!-- Overlay Loader -->
+            <div id="modal-overlay" style="
+                display: none;
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%; height: 100%;
+                background: rgba(255,255,255,0.85);
+                z-index: 9999;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                border-radius: 5px;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Please wait...</p>
+            </div>
+            <!-- End Overlay Loader -->
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel1">Minutes of the Meeting</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -3958,10 +3978,17 @@
 
         // MOM template show 
         $('#Session-mom').on('show.bs.modal', function(event) {
+            // Show overlay immediately when modal opens
+        $('#modal-overlay').css('display', 'flex');
+
+           
+            
+            
             var button = $(event.relatedTarget);
             var SessId = button.data('id');
             var CaseId = button.data('caseid');
             var Sn = button.data('sn');
+
             $.ajax({
                 type: "POST",
                 url: "{{ route('admin.case.ShowMomSessionData') }}",
@@ -3970,6 +3997,8 @@
                     caseid : CaseId
                 },
                 dataType: "JSON",
+                
+                
                 success: function(response) {
                     
                     var data = response.party_array;
@@ -4012,8 +4041,20 @@
                         </div>`;
                             $("#MomPartyDocs").append(text);
                     });
-                }
+
+                     // Hide overlay after 2 seconds
+                    setTimeout(function() {
+                        $('#modal-overlay').hide();
+                    }, 2000);
+                },
+                error: function(xhr, status, error) {
+            console.error('AJAX Error:', status, error);
+            setTimeout(function() {
+                $('#modal-overlay').hide();
+            }, 2000);
+        }
             });
+            
         });
         // MOM template show 
 
