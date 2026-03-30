@@ -4009,7 +4009,8 @@
                     $('#rp_mom').attr('value', response.rp_name);
                     
                     $('#minutes_mom').val(response.minutes);
-                    $('#next_steps').attr('value', response.next);
+                    //$('#next_steps').attr('value', response.next);
+                    $('#next_steps').val(response.next);
 
                     $('#med_name').attr('value', response.mediator);
 
