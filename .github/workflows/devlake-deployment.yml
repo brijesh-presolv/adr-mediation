@@ -1,0 +1,24 @@
+name: DevLake Deployment Tracking
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - live_2025
+
+jobs:
+  notify-devlake:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify DevLake of Deployment
+        run: |
+          curl -s -X POST https://devlake.presolv360.com/api/plugins/webhook/1/deployments \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"commit_sha\": \"${{ github.event.pull_request.merge_commit_sha }}\",
+              \"repo_url\": \"${{ github.event.repository.html_url }}\",
+              \"start_time\": \"${{ github.event.pull_request.merged_at }}\",
+              \"end_time\": \"${{ github.event.pull_request.merged_at }}\",
+              \"environment\": \"PRODUCTION\"
+            }"
