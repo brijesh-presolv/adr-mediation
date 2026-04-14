@@ -21,6 +21,12 @@
         <h1 class="box-title m-b-0" style="margin-bottom: -12px;font-weight:800;font-size:85px;font-family: 'Poppins', sans-serif;"><span style="color: #075284;"></span><span style="margin-bottom: 20px;font-weight:800;font-size:70px;color: #075284;">Presolv</span><span style="color: #f6ac4c;">360</span></h1>
         <!-- <h3 class="box-title m-b-0" style="margin-bottom: 150px;font-weight:800;font-size:25px;"><span style="color: #727374;">RESOLVE &amp; EVOLVE</span></h3> -->
  <!--<img src="https://presolv360.com/public/images/logo12.png" alt=""> </center>-->
+<p>Register an existing dispute and opt for e-arbitration or e-mediation</p>
+
+<?php
+$server_url = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+?>
+ <a href="<?php echo $server_url;?>/#howitwork">Get Started</a>
 </center>
 </div>
 </div>
