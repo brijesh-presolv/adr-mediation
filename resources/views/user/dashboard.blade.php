@@ -36,9 +36,10 @@
 <p>Register an existing dispute and opt for e-arbitration or e-mediation</p>
 
 <?php
-$server_url = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+//$server_url = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 ?>
- <a class="button-custom" href="<?php echo $server_url;?>/#howitwork">Get Started</a>
+ <a class="button-custom" href="<?php echo url('/');?>/#howitwork">Get Started</a>
+
 </center>
 </div>
 </div>
