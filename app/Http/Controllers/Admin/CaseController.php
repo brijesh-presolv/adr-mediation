@@ -1246,13 +1246,13 @@ class CaseController extends Controller
                         if($request->fsData['zoom_choice'] == "manually_zoom"){
 
                             if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
-                                $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                                $is_send = $this->sned_session($request->zoomId, $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
                             } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
-                                $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                                $is_send = $this->sned_session($request->zoomId, $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
                             }
                             
                         }elseif($request->zoom_choice == "manually_zoom"){
-                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
                         }
                        
                     } else if($request->zoom_choice == "directly_zoom" || $request->fsData['zoom_choice'] == "directly_zoom") {
@@ -1260,15 +1260,15 @@ class CaseController extends Controller
                             /**** Zoom Invitation ************/
 
                             if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
-                                $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                                $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
                             } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
-                                $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                                $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
                             }
                             
                             /**** Zoom Invitation ************/
                         }elseif($request->zoom_choice == "directly_zoom"){
                             /**** Zoom Invitation ************/
-                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
                             /**** Zoom Invitation ************/
                         }
                     
@@ -1304,12 +1304,12 @@ class CaseController extends Controller
 
                     if($request->zoom_choice == "manually_zoom") {
                         if($medcase->stop_bulk_session_med == 0) {
-                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $medcase->itm_lang, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
                         }
                     } else if($request->zoom_choice == "directly_zoom") {
                     /**** Zoom Invitation ************/
                         if($medcase->stop_bulk_session_med == 0) {
-                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
                         }
                     /**** Zoom Invitation ************/
                     }
@@ -1424,9 +1424,9 @@ class CaseController extends Controller
                     if($request->fsData['zoom_choice'] == "manually_zoom") {
 
                         if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
-                            $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
+                            $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
                         } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
-                            $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
+                            $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId  : $request->fsData['zoomId'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
                         }
 
 
@@ -1438,9 +1438,9 @@ class CaseController extends Controller
                      /**** Zoom Invitation ************/
 
                      if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
                      } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
                      }
                      
                      /**** Zoom Invitation ************/
@@ -1673,22 +1673,22 @@ public function addSession(Request $request)
                 if($request->zoom_choice == "manually_zoom" || ($fsData['zoom_choice'] ?? null) == "manually_zoom") {
                     if(($fsData['zoom_choice'] ?? null) == "manually_zoom"){
                         if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
-                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
                         } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
-                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                            $is_send = $this->sned_session($request->zoomId, $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
                         }
                     } elseif($request->zoom_choice == "manually_zoom"){
-                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
+                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time, $party->userPhone, "Party");
                     }
                 } else if($request->zoom_choice == "directly_zoom" || ($fsData['zoom_choice'] ?? null) == "directly_zoom") {
                     if(($fsData['zoom_choice'] ?? null) == "directly_zoom" && $party->isClaimant != 0){
                         if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
-                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
                         } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
-                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                            $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
                         }
                     } elseif($request->zoom_choice == "directly_zoom"){
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $request->sessionDate . "/" . $time_zoom, $party->userPhone, $created_zoom_link, "Party");
                     }
                 }
             }
@@ -1704,11 +1704,11 @@ public function addSession(Request $request)
 
                 if($request->zoom_choice == "manually_zoom") {
                     if($medcase->stop_bulk_session_med == 0) {
-                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
+                        $is_send = $this->sned_session($request->zoomId, $request->caseId, $medcase->itm_lang, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, "Mediator");
                     }
                 } else if($request->zoom_choice == "directly_zoom") {
                     if($medcase->stop_bulk_session_med == 0) {
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $mediatorNoti->email, $mediatorNoti->username, $display_date_time, $mediatorNoti->mobile_number, $created_zoom_link, "Mediator");
                     }
                 }
             }
@@ -1809,15 +1809,15 @@ public function addSession(Request $request)
             foreach ($allParty as $party) {
                 if(($fsData['zoom_choice'] ?? null) == "manually_zoom") {
                     if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
-                        $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId : ($fsData['zoomId'] ?? null), $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
+                        $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId : ($fsData['zoomId'] ?? null), $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
                     } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
-                        $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId : ($fsData['zoomId'] ?? null), $request->caseId, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
+                        $is_send = $this->sned_session(($request->zoomId != null) ? $request->zoomId : ($fsData['zoomId'] ?? null), $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, ($request->sessionDate != null) ? $request->sessionDate : $display_date_time, $party->userPhone, "Party");
                     }
                 } else if(($fsData['zoom_choice'] ?? null) == "directly_zoom") {
                     if($medcase->stop_bulk_session_ip == 1 && $party->isClaimant != 0) {
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
                     } else if($medcase->stop_bulk_session_rp == 1 && $party->isClaimant == 0) {
-                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
+                        $is_send = $this->sned_session_invitation($create_zoom_meeting['id'], $request->caseId, $medcase->itm_lang, $party->userEmail, $party->name, $display_date_time, $party->userPhone, $created_zoom_link, "Party");
                     }
                 }
 
@@ -3173,7 +3173,7 @@ public function addSession(Request $request)
         }
     }
 
-    public function sned_session($url, $id, $email_id, $email_name, $date, $userPhone, $userType)
+    public function sned_session($url, $id, $itm_lang = "", $email_id, $email_name, $date, $userPhone, $userType)
     {
         $mid = "M" . sprintf("%06d", $id);
         $d = [
@@ -3198,7 +3198,32 @@ public function addSession(Request $request)
 
         if ($userPhone != "") {
 
+            // For marathi whatsapp template : START //
+            if (strpos($itm_lang, 'marathi') !== false) {
+                    
 
+                $varjson_mh = ['sessionDteaTime' => $date, 'caseid' => $mid, 'zoomid' => $url];;
+                $var_mh = ['-dt-', '-cid-', '-link-'];
+                $var1_mh = [$date, $mid, $url];
+
+                $template_marathi = WaTemplate::getRandomTemplate('L10MH');
+
+                $content1_mh = WaTemplate::getcontent($template_marathi);
+                $content_mh = str_replace($var_mh, $var1_mh, $content1_mh);
+                $dwa1_mh = [
+                    'caseid' => $id,
+                    'contact' =>  $userPhone,
+                    'content' => ['text' => $content_mh],
+                    'event' => 'SESS_SCHE',
+                    'varjson' => $varjson_mh,
+                    'haptik_tmp' => $template_marathi,
+
+                ];
+                
+
+                $access = Whatsapp::sendWaSmessage($dwa1_mh);
+            } 
+            // For marathi whatsapp template : END //
            
 
 
@@ -6334,7 +6359,7 @@ public function addSession(Request $request)
 
 
     /******************** Custom Send Session Zoom  **********************/
-    public function sned_session_invitation($url, $id, $email_id, $email_name, $date, $userPhone, $invitation, $userType)
+    public function sned_session_invitation($url, $id, $itm_lang = "", $email_id, $email_name, $date, $userPhone, $invitation, $userType)
     {
         $mid = "M" . sprintf("%06d", $id);
         $d = [
@@ -6357,6 +6382,33 @@ public function addSession(Request $request)
         }
 
         if ($userPhone != "") {
+
+            // For marathi whatsapp template : START //
+            if (strpos($itm_lang, 'marathi') !== false) {
+                    
+
+                $varjson_mh = ['caseid' => $mid, 'sessionDteaTime' => $date, 'zoomid' => $invitation];
+                $var_mh = ['-cid-', '-dt-', '-link-'];
+                $var1_mh = [$mid, $date, $invitation];
+
+                $template_marathi = WaTemplate::getRandomTemplate('L10MH');
+
+                $content1_mh = WaTemplate::getcontent($template_marathi);
+                $content_mh = str_replace($var_mh, $var1_mh, $content1_mh);
+                $dwa1_mh = [
+                    'caseid' => $id,
+                    'contact' =>  $userPhone,
+                    'content' => ['text' => $content_mh],
+                    'event' => 'SESS_SCHE',
+                    'varjson' => $varjson_mh,
+                    'haptik_tmp' => $template_marathi,
+
+                ];
+                
+
+                $access = Whatsapp::sendWaSmessage($dwa1_mh);
+            } 
+            // For marathi whatsapp template : END //
 
             $varjson = ['caseid' => $mid, 'sessionDteaTime' => $date, 'zoomid' => $invitation];
             $var = ['-cid-', '-dt-', '-link-'];
