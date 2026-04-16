@@ -300,7 +300,7 @@ class CaseController extends Controller
             // $invmodel->save();
             //send invitation
             $invmodel->save();
-            if ($this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med)) {
+            if ($this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->itm_lang, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med)) {
                 if (isset($_POST['log_id']) && $_POST['log_id'] != "") {
                     $success_log = BulkLog::find($_POST['log_id']);
                     // dd($success_log);
@@ -2827,7 +2827,7 @@ public function addSession(Request $request)
         }
     }
 
-    public function sned_invitation($id, $invitation, $bulk_flag = 0, $stop_ip = 0, $stop_rp = 0, $stop_med = 0)
+    public function sned_invitation($id, $invitation, $bulk_flag = 0, $itm_lang = "", $stop_ip = 0, $stop_rp = 0, $stop_med = 0)
     {
         $involedUser = InvoledUser::select('user_involved_in_agreement.*', 'users.organization')->leftjoin('users', 'users.id', '=', 'user_involved_in_agreement.userId')->where("userPlanId", $id)->get();
 
@@ -2936,13 +2936,20 @@ public function addSession(Request $request)
                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $id)->first();
                 
                 
-                // if ($bulk_flag == 1) {
+                 if ($bulk_flag == 1) {
+
+                // For marathi whatsapp template : START //
+                if (strpos($itm_lang, 'marathi') !== false) {
+                    $template_marathi = WaTemplate::getRandomTemplate('L4MH');
+                } 
                 
                 //     $template_name = WaTemplate::getRandomTemplate('L4L10REF');
-                // } else {
+                // For marathi whatsapp template : START //
+                } 
+                else {
                 
                     $template_name = WaTemplate::getRandomTemplate('ITML4');
-                //}
+                }
 
                 
 
@@ -2979,8 +2986,40 @@ public function addSession(Request $request)
                    
                     $content1 = WaTemplate::getcontent($template_name);
                     $l4_mediation_party2_tem=$template_name;
+
+                    // For marathi whatsapp template : START //
+                    if (strpos($itm_lang, 'marathi') !== false) {
+                        $varjson_mh = ["initiating" => $initiating_party, 'caseid' => "M" . sprintf("%06d", $id)];
+                        $var_mh = ['-ip-','-cid-'];
+                        $var1_mh = [$initiating_party, "M" . sprintf("%06d", $id)];
+                    
+                   
+                        $content1_mh = WaTemplate::getcontent($template_marathi);
+                        $l4_mediation_party2_tem_mh=$template_marathi;
+                    }
+                    // For marathi whatsapp template : END //
                 } 
                 
+
+                // For marathi whatsapp template : START //
+                if (strpos($itm_lang, 'marathi') !== false) {
+                    $content_mh = str_replace($var_mh, $var1_mh, $content1_mh);
+
+                
+                    $dwa1_mh = [
+                        'caseid' => $inv->userPlanId,
+                        'contact' =>  $phone,
+                        'content' => ['text' => $content_mh],
+                        'event' => 'ACPTARB_ADM_RES',
+                        'varjson' => $varjson_mh,
+                        'haptik_tmp' => $l4_mediation_party2_tem_mh
+                    ];
+
+                    if($stop_rp == 0) {
+                        $access = Whatsapp::sendWaStopmessage($dwa1_mh);
+                    }
+                }
+                // For marathi whatsapp template : END //
 
                 
                 $content = str_replace($var, $var1, $content1);
@@ -5988,7 +6027,7 @@ public function addSession(Request $request)
 
                 // start for re-approve ------------
 
-                $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med);
+                $this->sned_invitation($request->id, $invitation, $medCas->bulk_flag, $medCas->itm_lang, $medCas->stop_itm_ip, $medCas->stop_itm_rp, $medCas->stop_itm_med);
                 // end for re-approve ------------
 
 
