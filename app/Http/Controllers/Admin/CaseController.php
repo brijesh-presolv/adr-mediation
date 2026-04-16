@@ -2936,7 +2936,7 @@ public function addSession(Request $request)
                 $responding_partyforbot = InvoledUser::where('isClaimant', '!=', 0)->where('userPlanId', $id)->first();
                 
                 
-                 if ($bulk_flag == 1) {
+                if ($bulk_flag == 1) {
 
                 // For marathi whatsapp template : START //
                 if (strpos($itm_lang, 'marathi') !== false) {
@@ -2946,10 +2946,10 @@ public function addSession(Request $request)
                 //     $template_name = WaTemplate::getRandomTemplate('L4L10REF');
                 // For marathi whatsapp template : START //
                 } 
-                else {
+                //else {
                 
                     $template_name = WaTemplate::getRandomTemplate('ITML4');
-                }
+                //}
 
                 
 
