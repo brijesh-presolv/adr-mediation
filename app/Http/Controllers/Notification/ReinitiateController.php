@@ -722,11 +722,11 @@ class ReinitiateController extends Controller
 
     // retrigger register case sms //
     public function reinitiate_reg_sms() {
-        $allData = DB::table('reinitiate_sms')->where('is_sms_sent', 0)->limit(100)->get();
+        $allData = DB::table('reinitiate_sms_2704')->where('is_sms_sent', 0)->limit(100)->get();
 
         
        
-        $initiating_party = "Kotak Mahindra Pvt Ltd";
+        $initiating_party = "Svatantra Micro Housing";
 
         foreach($allData as $data) {
             $smsvar = ['--caseid--', '--ipname--'];
@@ -737,7 +737,7 @@ class ReinitiateController extends Controller
              
 
             //if($access1) {
-                $is_update_wa = DB::table('reinitiate_sms')->where('caseid', $data->caseid)->update(['is_sms_sent' => 1]);
+                $is_update_wa = DB::table('reinitiate_sms_2704')->where('caseid', $data->caseid)->update(['is_sms_sent' => 1]);
 
                 if($is_update_wa) {
                     echo "sms sent for case id =" .$data->caseid;
