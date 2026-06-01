@@ -19,3 +19,5 @@ yarn-error.log
 /webhook/whatsapp_log_latest
 /webhook/sms_log_latest
 /public/images
+Dockerfile
+docker-compose.yml
