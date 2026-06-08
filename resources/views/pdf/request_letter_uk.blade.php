@@ -3,13 +3,21 @@ $meddate = new DateTime($case->updated_at);
 
 $meddate = $meddate->format('d-m-Y');
 
+// IP data
+$ip_name = "";
+if($ini->organization != null) {
+ $ip_name = $ini->organization;   
+} else {
+ $ip_name = $ini->name;
+}
+
 ?>
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title> {{ config('app.name', 'Medtiator') }} | Request Letter</title>
+    <title> Request Letter</title>
     <style type="text/css">
         @page {
             header: page-header;
@@ -64,14 +72,22 @@ $meddate = $meddate->format('d-m-Y');
 
 <body>
 
+    
 
-    <br><br>
+    <center>
+        <div class="text-center mt-4">
+            <img src='{{ URL('assert/img/adrlogo.png') }}' style='width: 120px;'>
+            <br>
+
+        </div>
+    </center>
+
+
+    <p>Date: {{ $meddate }} </p>
+
+
     <p>
-        @if ($ini->organization != null)
-            {{ $ini->organization }}
-        @else
-            {{ $ini->name }}
-        @endif
+        {{$ip_name}}
         <br>
         @if ($ini->address1 != null)
             {{ $ini->address1 }}
@@ -86,28 +102,59 @@ $meddate = $meddate->format('d-m-Y');
                 {{ $ini->userPhone }}
             @endif
     </p>
-    <p>Date: {{ $meddate }} </p>
+    
 
-    <p>To,
-        <br>Presolv360 Administrator,
+    <p>To: [AOI Administrator] </p>
+    
+    <h4>Subject: Request Letter</h4>
 
-        <br><a href="mailto:admin@presolv360.com">admin@presolv360.com</a>
+    <p>Dear [Name],</p>
+
+    <p>We write to you regarding the dispute that has arisen between {{$ip_name}} and <b>{{ $res->name }}</b> concerning 
+        [Brief Description]. In the interests of providing for each party the 
+        opportunity to resolve the dispute amicably, we request that the parties attempt to resolve this matter through an 
+        online alternative dispute resolution (ADR) process administered via AOI (the “Platform”).
     </p>
 
-    <p>Dear Sir,</p>
-    <h4>Sub: Request letter</h4>
-
-
-    <p style="text-indent: 4em;">Desirous of arriving at an amicable resolution of our dispute with
-        <b>{{ $res->name }}</b>, and with a view to provide each party full opportunity to participate in the
-        resolution of the dispute, fairly and conveniently, we request Presolv360 to provide administrative assistance
-        in respect of the dispute between the parties.</p>
-    <p style="text-indent: 4em;">We acknowledge that Presolv360 is a neutral institution whose role is limited to
-        providing administrative support in respect of the said proceedings, has no interest in the outcome of
-        the dispute and there is no conflict of interest. We understand that the said proceedings will be carried out by
-        an independent, qualified and competent mediator from the panel of mediators on behalf of all the parties.
+    <p>The {{$ip_name}} preferred process is [Mediation/Arbitration/Conciliation], and the details of both parties are as follows: 
     </p>
-    <br>
+
+    <p>
+        @if ($ini->address1 != null)
+            {{ $ini->address1 }}
+            <br> {{ $ini->address2 }} <br> {{ $ini->city }}, {{ $ini->pincode }}
+            <br> {{ $ini->state }}, {{ $ini->country }}
+        @endif
+        <br>
+        @if ($ini->userEmail != null)
+            {{ $ini->userEmail }}
+            <br>
+            @endif @if ($ini->userPhone != null)
+                {{ $ini->userPhone }}
+            @endif
+    </p>
+
+    <p>
+        @if ($res->address1 != null)
+            {{ $res->address1 }}
+            <br> {{ $res->address2 }} <br> {{ $res->city }}, {{ $res->pincode }}
+            <br> {{ $res->state }}, {{ $res->country }}
+        @endif
+        <br>
+        @if ($res->userEmail != null)
+            {{ $res->userEmail }}
+            <br>
+            @endif @if ($res->userPhone != null)
+                {{ $res->userPhone }}
+            @endif
+    </p>
+
+    <p>The {{$ip_name}} agrees to engage in the resolution of the dispute in good faith and to comply with the 
+        Platform’s rules and the laws and regulations of the relevant overseeing body. 
+    </p>
+
+    <p>This request is made without prejudice to the {{$ip_name}} rights and remedies arising from the dispute.</p>
+
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
             <td>
@@ -118,8 +165,8 @@ $meddate = $meddate->format('d-m-Y');
                 @else
                     <p>Sd/-</p>
                 @endif
-                <p>{{ $ini->name }}</p>
-                <p>Authorized Representative</p>
+                <p>[Name]</p>
+                <p>Authorised Representative of {{$ip_name}}</p>
             </td>
         </tr>
     </table>

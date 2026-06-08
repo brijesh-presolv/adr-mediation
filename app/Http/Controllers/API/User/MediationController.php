@@ -295,7 +295,10 @@ class MediationController extends Controller
         $data["ini"] = InvoledUser::select('user_involved_in_agreement.*', 'usr.organization', 'usr.signature_photo')
             ->leftJoin('users as usr', DB::raw('usr.id'), '=', DB::raw('user_involved_in_agreement.userId'))
             ->where("userPlanId", "=", $id)->where('isClaimant', 0)->first();
-        $data["res"] = InvoledUser::where("userPlanId", "=", $id)->where('isClaimant', '<>', 0)->first();
+        //$data["res"] = InvoledUser::where("userPlanId", "=", $id)->where('isClaimant', '<>', 0)->first();
+        $data["res"] = InvoledUser::select('user_involved_in_agreement.*', 'usr.organization', 'usr.signature_photo')
+            ->leftJoin('users as usr', DB::raw('usr.id'), '=', DB::raw('user_involved_in_agreement.userId'))
+            ->where("userPlanId", "=", $id)->where('isClaimant', '<>', 0)->first();
         $pdf = PDF::loadView('pdf.request_letter_uk', $data);
         $name = 'request_letter_CID' . sprintf('%06d', $data["case"]->id) . time() . '.pdf';
         $savePath = 'mediation_documents/mediation/' . $data["case"]->id;

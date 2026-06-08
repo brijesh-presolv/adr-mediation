@@ -7,7 +7,7 @@ $meddate = $meddate->format('d-m-Y');
 <html>
 
 <head>
-    <title> {{ config('app.name', 'Medtiator') }} | Consent And Disclosures</title>
+    <title> Consent And Disclosures</title>
     <style type="text/css">
         @page {
             header: page-header;
@@ -33,6 +33,84 @@ $meddate = $meddate->format('d-m-Y');
 </head>
 
 <body>
+    <h3 style="text-decoration: underline;">CONSENT AND DISCLOSURE DOCUMENT</h3>
+    <p style="font-style: italic;">This Consent and Disclosure Document ("Document") is provided to you by ADR ODR International in connection with your 
+        use of the ADR ODR International Case Management Platform. You are required to read this Document carefully and to 
+        provide your affirmative consent before participating in any dispute resolution proceedings.
+    </p>
+    
+    <p style="text-decoration: underline;">1. Identity and Role of ADR ODR International</p>
+    <p style="text-indent: 1em;">1.1  ADR ODR International is an Alternative Dispute Resolution (ADR) organisation registered in England and Wales. We operate the Preesolve360 UK Platform as a neutral online case management service facilitating negotiation, mediation, arbitration, and conciliation.</p>
+    <p style="text-indent: 1em;">1.2  ADR ODR International is not a law firm and does not provide legal advice. Nothing in these proceedings or on this Platform constitutes legal advice.</p>
+    <p style="text-indent: 1em;">1.3  The technical infrastructure of the Platform is provided by Presolv360 ("Technology Partner"), a leading online dispute resolution platform. Presolv360 operates as a data processor for ADR ODR International and does not administer or determine disputes.</p>
+
+    <p style="text-decoration: underline;">2. Nature of the Process</p>
+    <p style="text-indent: 1em;">2.1  You acknowledge and understand that the dispute resolution process offered through the Platform is an alternative to litigation in the courts.</p>
+    <p style="text-indent: 1em;">2.2  Mediation is a voluntary, confidential, without-prejudice process. A mediator facilitates communication and negotiation but does not make binding decisions. Any settlement is reached by agreement of the Parties.</p>
+    <p style="text-indent: 1em;">2.3  Arbitration is a binding adjudicative process. By agreeing to arbitration, you agree to be bound by the arbitrator's Award, which is final and enforceable as a judgment of the courts of England and Wales.</p>
+    <p style="text-indent: 1em;">2.4  Negotiation is an informal direct process facilitated by the Platform. Any outcome requires the agreement of all Parties.</p>
+    <p style="text-indent: 1em;">2.5  Conciliation may involve proposals by a Neutral, but no settlement is binding unless accepted in writing by all Parties.</p>
+    
+    <p style="text-decoration: underline;">3. Voluntariness and Right to Withdraw</p>
+    <p style="text-indent: 1em;">3.1  Participation in mediation and negotiation is voluntary. You may withdraw from mediation or negotiation at any time without giving reasons, provided you notify the Platform in writing.</p>
+    <p style="text-indent: 1em;">3.2  Where you have entered into a binding arbitration agreement, withdrawal from arbitration proceedings after commencement is not permitted without the consent of the other Party or an order of the arbitral tribunal or a court of competent jurisdiction.</p>
+    <p style="text-indent: 1em;">3.3  Your right to bring a claim in court is not extinguished by using the Platform, except where you have entered into a binding arbitration agreement or signed a binding Settlement Agreement.</p>
+
+    <p style="text-decoration: underline;">4. Confidentiality</p>
+    <p style="text-indent: 1em;">4.1  All information disclosed in proceedings on the Platform — including documents, submissions, and communications — is confidential and shall not be disclosed to third parties, save as required by law or as necessary to enforce an Award or Settlement Agreement.</p>
+    <p style="text-indent: 1em;">4.2  Mediation is conducted on a without-prejudice basis. Offers, concessions, and statements made in mediation cannot be used as evidence in any subsequent court or arbitral proceedings.</p>
+    <p style="text-indent: 1em;">4.3  By participating in proceedings, you agree to be bound by the confidentiality obligations set out in Rule 14 of the Dispute Resolution Rules.</p>
+
+    <p style="text-decoration: underline;">5. Data Protection and Privacy Disclosure</p>
+    <p style="text-indent: 1em;">5.1  ADR ODR International is a data controller under the UK GDPR and Data Protection Act 2018. We collect and process your personal data to: administer Case proceedings; communicate with you; fulfil our legal and regulatory obligations; and maintain accurate records.</p>
+    <p style="text-indent: 1em;">5.2  Our lawful bases for processing are: (a) performance of a contract (facilitating the dispute resolution process); (b) compliance with legal obligations; and (c) legitimate interests (secure and effective operation of the Platform).</p>
+    <p style="text-indent: 1em;">5.3  Your personal data will be shared with: (a) the other Party and the Neutral, to the extent necessary for the proceedings; (b) our Technology Partner (Presolv360) as data processor; and (c) regulatory bodies, courts, or law enforcement where required by law.</p>
+    <p style="text-indent: 1em;">5.4  We will not sell your personal data or use it for marketing purposes without your explicit consent.</p>
+    <p style="text-indent: 1em;">5.5  Your personal data will be retained for as long as necessary to administer the Case and to comply with applicable legal retention obligations. Case records are typically retained for six (6) years from the conclusion of proceedings.</p>
+    <p style="text-indent: 1em;">5.6  You have the following rights under UK GDPR: right of access; right to rectification; right to erasure (in limited circumstances); right to restrict processing; right to data portability; right to object; and rights in relation to automated decision-making. To exercise these rights, contact us at disputes@adrodr.international.</p>
+    <p style="text-indent: 1em;">5.7  You have the right to complain to the Information Commissioner's Office (ICO) at www.ico.org.uk / 0303 123 1113.</p>
+
+    <p style="text-decoration: underline;">6. Technology and Security Disclosure</p>
+    <p style="text-indent: 1em;">6.1  All proceedings, communications, and documents are managed through a secure, encrypted online platform. The Platform uses industry-standard security protocols, including SSL/TLS encryption for data in transit and encryption at rest.</p>
+    <p style="text-indent: 1em;">6.2  The Platform is operated in partnership with Presolv360, which maintains ISO-certified security standards and GDPR-compliant data processing practices.</p>
+    <p style="text-indent: 1em;">6.3  Hearings and sessions may be conducted via secure video conference. You are responsible for ensuring that your participation environment is private and confidential.</p>
+    <p style="text-indent: 1em;">6.4  In the event of a technical failure, the Platform will endeavour to restore services promptly and to preserve all Case data. We are not liable for interruptions caused by events outside our reasonable control.</p>
+
+    <p style="text-decoration: underline;">7. Legal Effect of Outcomes</p>
+    <p style="text-indent: 1em;">7.1  A Settlement Agreement signed by all Parties through the Platform is legally binding and enforceable as a contract under the law of England and Wales.</p>
+    <p style="text-indent: 1em;">7.2  An Award made by an arbitrator under the Dispute Resolution Rules is final and binding, and may be enforced as a judgment of the courts of England and Wales pursuant to Section 66 of the Arbitration Act 1996.</p>
+    <p style="text-indent: 1em;">7.3  You are strongly encouraged to seek independent legal advice before signing any Settlement Agreement or agreeing to be bound by an arbitral Award.</p>
+
+    <p style="text-decoration: underline;">8. Conflicts of Interest</p>
+    <p style="text-indent: 1em;">8.1  All Neutrals appointed to your Case are required to disclose any actual or potential conflicts of interest before accepting appointment.</p>
+    <p style="text-indent: 1em;">8.2  If you become aware of any circumstances that might affect the Neutral's impartiality, you must notify the Platform immediately.</p>
+    <p style="text-indent: 1em;">8.3  ADR ODR International also discloses that: (a) it has a commercial relationship with Presolv360 as its technology provider; and (b) fees paid by Parties contribute to the operational costs of the Platform. These relationships do not affect the independence of the Parties' proceedings or the Neutral.</p>   
+
+    <p style="text-decoration: underline;">9. Regulatory Status and Accreditation</p>
+    <p style="text-indent: 1em;">9.1  ADR ODR International operates as an ADR entity in accordance with the Alternative Dispute Resolution for Consumer Disputes (Competent Authorities and Information) Regulations 2015 (where applicable) and relevant UK guidance.</p>
+    <p style="text-indent: 1em;">9.2  Neutrals appointed through the Platform hold appropriate professional qualifications and accreditations, including where applicable membership of the Civil Mediation Council, the Chartered Institute of Arbitrators, or equivalent recognised professional bodies.</p>
+    <p style="text-indent: 1em;">9.3  ADR ODR International is committed to transparency, impartiality, effectiveness, and legality in all its processes, in accordance with the quality standards applicable to ADR providers in the UK.</p>  
+
+    <p style="text-decoration: underline;">10. User Acknowledgement and Consent</p>
+    <p>By proceeding to register and participate on the Platform, you confirm that:</p>
+    <ul>
+        <li>You have read and understood this Consent and Disclosure Document;</li>
+        <li>You have read and agree to the Terms and Conditions, Dispute Resolution Rules, Privacy Policy, and Cookie Policy;</li>
+        <li>You understand the nature, effect, and limitations of the dispute resolution process you have selected;</li>
+        <li>You consent to the collection and processing of your personal data as described above and in the Privacy Policy;</li>
+        <li>You consent to the conduct of proceedings electronically, including the submission of documents and participation in video-conference sessions;</li>
+        <li>You understand that mediation outcomes require your voluntary agreement and that arbitration outcomes are legally binding;</li>
+        <li>You have been advised to seek independent legal advice and have had the opportunity to do so;</li>
+        <li>You are 18 years of age or older (or are a duly authorised representative of a legal entity); and</li>
+        <li>You agree that electronic acceptance of these documents has the same legal effect as a hand-signed signature.</li>
+    </ul>
+    
+    <p style="text-decoration: underline;">11. How to Contact Us</p>
+    <p>For questions about this Document or the proceedings, please contact: ADR ODR International, ADR ODR International, 11 Langland Crescent, Stanmore, Middlesex, HA7 1NE United Kingdom</p>
+    <p>Email: info@adrodrinternational.com</p>
+</body>
+
+<!-- <body>
     <center>
         <div class="text-center mt-4">
             <img src='{{ URL('assert/img/plogo.png') }}' style='width: 120px;'>
@@ -225,6 +303,6 @@ $meddate = $meddate->format('d-m-Y');
         <br /><small>{{ $consent_disclosures->first_name }}
             {{ $consent_disclosures->last_name }}</small><br />Mediator
     </h4>
-</body>
+</body> -->
 
 </html>

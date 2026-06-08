@@ -8,7 +8,7 @@ use App\Models\User;
 <html>  
 
 <head>
-    <title> {{ config('app.name', 'Medtiator') }} | Invitation of Mediation / Conciliation</title>
+    <title> Minutes of Meeting </title>
     <style type="text/css">
         @page {
             header: page-header;
@@ -65,7 +65,7 @@ use App\Models\User;
 
     <center>
         <div class="text-center">
-            <img src='{{ URL("assert/img/plogo.png") }}' style='width: 120px;'>
+            <img src='{{ URL("assert/img/adrlogo.png") }}' style='width: 120px;'>
             <br>
         </div>
     </center>
