@@ -79,8 +79,8 @@ class System extends Model
 
     static function getdatabyid($id) {
         
-           $qq="select * from system where id=".$id;
-            return $case = DB::select($qq);
+           $qq="select * from system where id=?";
+            return $case = DB::select($qq, [$id]);
       }
 
       static function changeSystemStatus() {

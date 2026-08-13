@@ -30,10 +30,10 @@ class WhatsappBotReport extends Model {
                     GROUP_CONCAT(DISTINCT restructure_option) AS Restructure_Option,
                     GROUP_CONCAT(DISTINCT reply) AS Reply
                 FROM whatsapp_bot_report
-                WHERE caseid BETWEEN $from AND $to
+                WHERE caseid BETWEEN ? AND ?
                 GROUP BY caseid, respondent_name, respondent_email, claimant_name, claimant_email";
         
-                $result = DB::select($query);
+                $result = DB::select($query, [$from, $to]);
 
         return $result;
     }

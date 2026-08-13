@@ -59,8 +59,8 @@ class User extends Authenticatable
     // Get User Data : START //
     static function getUserdetails($userid) {
         
-        $query = "SELECT id,role,email,last_name,organization,mobile_number,address,address1,city,pincode,state,country,isActive,created_at,updated_at,email_verified_at,smsotp,username,profile_pic from users where id = ".$userid;
-        $details = DB::select($query);
+        $query = "SELECT id,role,email,last_name,organization,mobile_number,address,address1,city,pincode,state,country,isActive,created_at,updated_at,email_verified_at,smsotp,username,profile_pic from users where id = ?";
+        $details = DB::select($query, [$userid]);
         return $details[0];
     }
     // Get User Data : END //

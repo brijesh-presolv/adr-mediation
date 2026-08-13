@@ -126,10 +126,13 @@ $db_var = new mysqli($db_host, $db_username, $db_password,$db_name);
             $failedReason = $value1['failedReason'];
 
             $query = "INSERT INTO sms_status (request_id,user_id,sender_id,date,receiver,status,status_description,failedReason, response_data,sent_time,delivered_time,updated_time,created_at) 
-                     VALUES ('" . $requestID . "','" . $userId . "','" . $senderId . "','" . $date . "','" . $receiver . "','" . $status . "','" . $desc . "','" . $failedReason . "','" . $fh . "','" . $datetime . "','" . $datetime . "','" . $datetime . "','" . $datetime . "')";
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
              //echo "queru-->". $query;
             // exit;
-             $result = $db_var->query($query) or die(mysqli_error($db_var));
+             $stmt = $db_var->prepare($query) or die(mysqli_error($db_var));
+             $stmt->bind_param("sssssssssssss", $requestID, $userId, $senderId, $date, $receiver, $status, $desc, $failedReason, $fh, $datetime, $datetime, $datetime, $datetime);
+             $stmt->execute();
+             $result = $stmt;
             // $result = mysqli_query($db_var, $query);
 
            
