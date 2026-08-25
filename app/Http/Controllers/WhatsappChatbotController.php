@@ -17,7 +17,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-use App\Http\Controllers\API\PaymentController;
 
 
 class WhatsappChatbotController extends Controller
@@ -55,7 +54,6 @@ class WhatsappChatbotController extends Controller
                                         $var1 = [$caseData->PayLink];
                                         $content1 = WaTemplate::getcontent('med_bot_paynow2');
                                         $haptik_tmp="med_bot_paynow2";
-                                       // $payresult=PaymentController::WApayNowProcess($caseData->id, $caseData->PayLink);
 
                                     }
                                     if($data->message=="Why did I get this?"){

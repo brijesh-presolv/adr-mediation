@@ -35,15 +35,6 @@ return [
         'webhook_token' => env('BREVO_WEB_TOKEN'),
     ],
 
-    'instamojo' => [
-        'api_key' => env('INSTAMOJO_API_KEY'),
-        'auth_token' => env('INSTAMOJO_AUTH_TOKEN'),
-        // Defaults to the TEST endpoint on purpose: this preserves the behaviour
-        // the hardcoded code had, and an unset variable must never silently
-        // charge real money. Set INSTAMOJO_API_URL explicitly to go live.
-        'api_url' => env('INSTAMOJO_API_URL', 'https://test.instamojo.com/api/1.1/'),
-    ],
-
     'msg91' => [
         'auth_key' => env('SMS_AUTH_KEY'),
         'sender_id' => env('SMS_SENDER_ID', 'Prsolv'),

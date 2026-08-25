@@ -24,7 +24,6 @@ use App\Models\SettlementPayment;
 use App\Models\ManageSession;
 use App\Models\UserStopWhatsapp;
 
-use App\Http\Controllers\API\PaymentController;
 
 class WhatsappChatbotController extends Controller
 {   
@@ -72,7 +71,6 @@ class WhatsappChatbotController extends Controller
                                         $content1 = WaTemplate::getcontent('med_bot_paynow2');
                                         $haptik_tmp="med_bot_paynow2";
                                         $eventname="WHATSAPP_BOT_PAY";
-                                       // $payresult=PaymentController::WApayNowProcess($caseData->id, $caseData->PayLink);
                                        
 
                                     }
