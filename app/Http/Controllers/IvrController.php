@@ -103,20 +103,20 @@ class IvrController extends Controller
 
                 $data['template'] =  $respondent .' you are invited for mediation by '. $claimant.' for resolving your dispute. Presolv three sixty is an independent institution that will help the parties with this case. More information has been sent to you on the contact details provided by ' . $claimant;
 
-                $data['auth'] = "MED360AUTH";
+                $data['auth'] = config('services.ivr.auth');
 
                 $data['event'] = "ACPTMED_ADM";
 
                 $data['app'] = "P360MED";
 
-                $data['pivrid'] = "61f7db108353a316";
+                $data['pivrid'] = config('services.ivr.respondent_id');
 
                 $data['caseid'] = $case->id;
 
-                $url = "https://presolv360.com/functions/myopout.php";
+                $url = config('services.ivr.api_url');
 
 
-                $res = Curl::getdata($url, $data, 'POST', 'MED360AUTH');
+                $res = Curl::getdata($url, $data, 'POST', config('services.ivr.auth'));
             } 
         }
 
@@ -200,19 +200,19 @@ class IvrController extends Controller
 
                 $data['template'] = $respondent .' aapko '. $claimant.' ne madhyastha ke liye aamantrit kiya hai taaki aapka vivaad suljha sake. Presolv three sixty ek nishpaksh sanstha hai jo parties ki sahayta karegi. Adhik jaankari aapke '. $claimant.' ke saath registered contact details par bheji gayi hai.';
 
-                $data['auth'] = "MED360AUTH";
+                $data['auth'] = config('services.ivr.auth');
 
                 $data['event'] = "ACPTMED_ADM";
 
                 $data['app'] = "P360MED";
 
-                $data['pivrid'] = "6299fe7601f5d759";
+                $data['pivrid'] = config('services.ivr.claimant_id');
 
                 $data['caseid'] = $case->id;
 
-                $url = "https://presolv360.com/functions/myopout.php";
+                $url = config('services.ivr.api_url');
 
-                $res = Curl::getdata($url, $data, 'POST', 'MED360AUTH');
+                $res = Curl::getdata($url, $data, 'POST', config('services.ivr.auth'));
             }
         }
 

@@ -17,7 +17,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-use App\Http\Controllers\API\PaymentController;
 
 
 class WhatsappChatbotController extends Controller
@@ -55,7 +54,6 @@ class WhatsappChatbotController extends Controller
                                         $var1 = [$caseData->PayLink];
                                         $content1 = WaTemplate::getcontent('med_bot_paynow2');
                                         $haptik_tmp="med_bot_paynow2";
-                                       // $payresult=PaymentController::WApayNowProcess($caseData->id, $caseData->PayLink);
 
                                     }
                                     if($data->message=="Why did I get this?"){
@@ -338,10 +336,10 @@ class WhatsappChatbotController extends Controller
       
         try {
 
-            $url = "https://mediation.presolv360.com/api/whatsappconsentreply";
-            $auth =  'MED360WHATSAPPBOT';
+            $url = config('services.whatsapp_bot.consent_reply_url');
+            $auth = config('services.whatsapp_bot.auth');
             $data = [
-                "auth" => "MED360WHATSAPPBOT",
+                "auth" => config('services.whatsapp_bot.auth'),
             ];
             $data = json_encode($data);
             $type = "POST";

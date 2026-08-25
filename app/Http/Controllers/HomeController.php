@@ -216,10 +216,10 @@ class HomeController extends Controller
 
             $u = $request->post();
 
-            $authKey = env('SMS_AUTH_KEY', '');
+            $authKey = config('services.msg91.auth_key');
             $flowId = env('SMS_FLOW_KEY', '');
             $url = env('SMS_FLOW_API', '');
-            $senderId = "Prsolv";
+            $senderId = config('services.msg91.sender_id');
 
             $usr = User::where(['username' => $u['id']])->first();
             $d = [

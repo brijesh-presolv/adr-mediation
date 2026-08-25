@@ -1728,12 +1728,12 @@ class MediationController extends Controller
             ->first();
 
         $data = [];
-        $data['auth'] = "MED360AUTH";
+        $data['auth'] = config('services.ivr.auth');
         $data['app'] = "P360MED";
         $data['caseid'] = $id;
-        $url = "https://presolv360.com/functions/ivrtrack.php";
+        $url = config('services.ivr.track_url');
 
-        $ivr = json_decode(Curl::getdata($url, $data, 'POST', 'MED360AUTH'), true);
+        $ivr = json_decode(Curl::getdata($url, $data, 'POST', config('services.ivr.auth')), true);
         if ($ivr['code'] != '200') {
             $ivr = [];
         } else {

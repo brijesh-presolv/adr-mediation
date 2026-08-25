@@ -10,9 +10,9 @@ class Zoom
     public static function generateZoomToken()
     {
         ini_set('memory_limit', -1);
-        $key = env('ZOOM_API_KEY');
-        $secret = env('ZOOM_API_SECRET');
-        
+        $key = config('services.zoom.client_id');
+        $secret = config('services.zoom.client_secret');
+
         $payload = [
             'iss' => $key,
             'exp' => strtotime('+1 minute'),
@@ -26,31 +26,24 @@ class Zoom
     public static function generateAuthToken() {
         $curl = curl_init();
 
-        $client_id = env('ZOOM_API_KEY');
-        $client_secret = env('ZOOM_API_SECRET');
-        $server_name = $_SERVER['SERVER_NAME']; // or use env('APP_ENV')
-        if ($server_name === 'mediation.presolv360.com') {
+        $client_id = config('services.zoom.client_id');
+        $client_secret = config('services.zoom.client_secret');
 
-            $basic_Zoom_Auth="ZzVCSEtQaVJydW5JUUtyRHFubjZnOmI4VGcyNDE1a0hmZ2o3bFhzZzUxeG42ZkFBUjg3RUtx";
-        }else {
-
-            $basic_Zoom_Auth=base64_encode("{$client_id}:{$client_secret}");     
-        }
-
-        
+        $basic_Zoom_Auth = base64_encode("{$client_id}:{$client_secret}");
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://zoom.us/oauth/token?grant_type=account_credentials&account_id='.env('ZOOM_OAUTH_ACCOUNT_ID'),
+        CURLOPT_URL => 'https://zoom.us/oauth/token?grant_type=account_credentials&account_id='.config('services.zoom.account_id'),
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
         CURLOPT_TIMEOUT => 0,
         CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'POST',
         CURLOPT_HTTPHEADER => array(
             'Authorization: Basic '.$basic_Zoom_Auth,
-            //'Cookie: TS01f92dc5=019f2012cab8ac3a8d11c6a71c9fc04c07c1327b114284b1b8ec203c0263e10d9a320016a7c65c8e09400d50ecc6e4cf81161012c8; TS01fdc528=019f2012cab8ac3a8d11c6a71c9fc04c07c1327b114284b1b8ec203c0263e10d9a320016a7c65c8e09400d50ecc6e4cf81161012c8; __cf_bm=kqUg8c0CldB4lb.j8qWQpaA6ULDvmO85saYytCtzmws-1697113968-0-ATt+SPMOwEH7DawLzRbfUjJ1LcYJCURxAm+anfz91Dn7UNO48vxNwpVpe8cXK1UDMIiwli8K42hLWWc9viTlpyY=; _zm_chtaid=217; _zm_csp_script_nonce=UO_o_hEASHGJ6J2LUMrNig; _zm_ctaid=QwDW2FgzSkepzmmd6HK3iQ.1697110165187.5ed1c18f8f05c0a583711d73b0b8e052; _zm_currency=USD; _zm_mtk_guid=3c1112b8f4074e5bb93b7baec09669f3; _zm_page_auth=us02_c_FfRk9NCiS3GB__nj4R0mgA; _zm_ssid=us02_c_88rplQ0cR_OIa6693LFFbg; _zm_visitor_guid=3c1112b8f4074e5bb93b7baec09669f3; cred=5C662D8C7E06D6B1612CDFE81097A933'
         ),
         ));
 
@@ -89,7 +82,7 @@ class Zoom
                     "agenda": "'.$note.'",
                     "default_password": false,
                     "duration": 60,
-                    "password": "123456",
+                    "password": '.json_encode((string) config('services.zoom.meeting_password')).',
                     "pre_schedule": false,
                     "recurrence": {
                         "end_date_time": "'.$end_date_format_api.'",
@@ -262,7 +255,7 @@ class Zoom
         "schedule_for": "'.$Zoom_mail.'",
         "agenda": "'.$note.'",
         "duration": 60,
-        "password": "123456",
+        "password": '.json_encode((string) config('services.zoom.meeting_password')).',
         "pre_schedule": false,
         "recurrence": {
             "end_date_time": "'.$end_date_format_api.'",
