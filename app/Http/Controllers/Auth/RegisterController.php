@@ -181,10 +181,10 @@ class RegisterController extends Controller
             'event' => 'VARIFY_EMAIL',
             'userid' => $user->id,
         ];
-        $authKey = env('SMS_AUTH_KEY', '');
+        $authKey = config('services.msg91.auth_key');
         $flowId = env('SMS_FLOW_KEY', '');
         $url = env('SMS_FLOW_API', '');
-        $senderId = "Prsolv";
+        $senderId = config('services.msg91.sender_id');
         $mobileNumber = "+91" . $user->mobile_number;
 
         $ch = curl_init();

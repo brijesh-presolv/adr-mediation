@@ -80,36 +80,17 @@ class Whatsapp
         }
         // dd(date('Y-m-d H:i:s'));
 
-        $url = "https://api.karix.io/message/";
+        $url = config('services.karix.api_url');
 
-        //sandbox testing
-        $auth = base64_encode("7f88f3bf-478a-45d9-aa82-08ca650a3838:1f244c14-7ee9-4cf8-90d1-96c49e9a38bd");
-
-        //for live number
-        //$auth = base64_encode(WAUTH);
+        $auth = base64_encode(config('services.karix.auth'));
 
         $data = [
             "channel" => "whatsapp",
-            "source" => "+13253077759",
+            "source" => config('services.karix.source'),
             "destination" => [$d['contact']],
             "content" => $d['content'],
             "events_url" => route('whatsapp_status'),
         ];
-        // $eventUrl = route('whatsapp_status');
-
-        // $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
-
-        // $data = [
-        //     "channel" => "whatsapp",
-        //     "source" => "+918591275735",
-        //     "destination" => [$d['contact']],
-        //     // "destination" => $d['contact'],
-        //     "content" => $d['content'],
-        //     "events_url" => route('whatsapp_status'),
-        // ];
-
-        //+918591275735 - live no.
-        //+13253077759 - sandbox no.
 
         $data = json_encode($data);
 
@@ -243,24 +224,17 @@ class Whatsapp
             return true;
         }
 
-        $url = "https://api.karix.io/message/";
+        $url = config('services.karix.api_url');
 
-        //sandbox testing
-        $auth = base64_encode("7f88f3bf-478a-45d9-aa82-08ca650a3838:1f244c14-7ee9-4cf8-90d1-96c49e9a38bd");
-
-        //for live number
-        //$auth = base64_encode(WAUTH);
+        $auth = base64_encode(config('services.karix.auth'));
 
         $data = [
             "channel" => "whatsapp",
-            "source" => "+13253077759",
+            "source" => config('services.karix.source'),
             "destination" => [$d['contact']],
             "content" => $d['content'],
-            "events_url" => "https://presolv360.com/functions/whatsapp_status.php",
+            "events_url" => route('whatsapp_status'),
         ];
-
-        //+918591275735 - live no.
-        //+13253077759 - sandbox no.
 
         $data = json_encode($data);
 

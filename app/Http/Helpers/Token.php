@@ -1,27 +1,32 @@
 <?php
+
 namespace App\Http\Helpers;
 
-use Illuminate\Http\Request;
 use Firebase\JWT\JWT;
+use RuntimeException;
 
-class Token {
+class Token
+{
+	public static function createToken($d)
+	{
+		$secret = config('jwt.key');
 
-	public static function createToken($d) {
-				$DOMAIN='http://360_new.com';
-				$ADJWTSECRET='MXc0KG5eaTFmb2g3JXNuZ2wxdzQobl5pMWZvaDclc25nbGUxIyY2Zmg0a2R0KTQpc2tjZ21lMSMmNmZoNGtkdCk0KXNrY2dtaGxmKHh1c2Rycm1fLWI=';
+		if (empty($secret)) {
+			throw new RuntimeException('JWT_KEY is not configured.');
+		}
+
 		$currentTimestamp = time();
-		$expire = $currentTimestamp + (60 * 60 * 24);
+		$expire = $currentTimestamp + config('jwt.ttl');
+
 		$data = array(
 			'iat' => $currentTimestamp,
-			'jti' => base64_encode(openssl_random_pseudo_bytes(32)),
-			'iss' => $DOMAIN,
+			'jti' => base64_encode(random_bytes(32)),
+			'iss' => config('jwt.issuer'),
 			'nbf' => $currentTimestamp,
 			'exp' => $expire,
-			'data' =>$d
+			'data' => $d
 		);
-		$token = JWT::encode($data, base64_decode($ADJWTSECRET), 'HS512'); 
-		return $token;
+
+		return JWT::encode($data, base64_decode($secret), config('jwt.algo'));
 	}
 }
-
-?>

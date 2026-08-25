@@ -323,9 +323,9 @@ class EmailController
     
     public static function brevosendmail($d, $to, $templateId, $subs = NULL, $file = NULL) {
 
-        $brevo_apiKey = env('BREVO_API_KEY');
+        $brevo_apiKey = config('services.brevo.api_key');
 
-        Log::info('Brevo: Email', ['temp id' => $templateId, 'brevo_apiKey' => $brevo_apiKey]);
+        Log::info('Brevo: Email', ['temp id' => $templateId]);
 
         $config = Configuration::getDefaultConfiguration()
             ->setApiKey('api-key', $brevo_apiKey);

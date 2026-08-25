@@ -338,10 +338,10 @@ class WhatsappChatbotController extends Controller
       
         try {
 
-            $url = "https://mediation.presolv360.com/api/whatsappconsentreply";
-            $auth =  'MED360WHATSAPPBOT';
+            $url = config('services.whatsapp_bot.consent_reply_url');
+            $auth = config('services.whatsapp_bot.auth');
             $data = [
-                "auth" => "MED360WHATSAPPBOT",
+                "auth" => config('services.whatsapp_bot.auth'),
             ];
             $data = json_encode($data);
             $type = "POST";

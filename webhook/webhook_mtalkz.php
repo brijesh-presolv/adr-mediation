@@ -1,12 +1,16 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
 
 error_reporting(E_ALL);
 $projectpath = $_SERVER['DOCUMENT_ROOT'];
 include_once $projectpath . '/config/constants.php';
 include_once $projectpath . '/app/Http/Helpers/Curl.php';
+
+// Read credentials from .env instead of embedding them in this file.
+require_once __DIR__ . '/../vendor/autoload.php';
+Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->safeLoad();
 
  //$myFile = "whatsapp_log_latest/log_new.txt";
  $json = file_get_contents('php://input');
@@ -122,12 +126,12 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
    
                 
    
-                      //$url = "https://mediation.presolv360.com/api/medwhatsappbotlog";
-                      $url = "https://mediation.presolv360.com/api/medwhatsappbotlogmtalkz";
+                      //$url = $_ENV['WHATSAPP_BOT_LOG_URL'] ?? '';
+                      $url = $_ENV['WHATSAPP_BOT_LOG_URL_MTALKZ'] ?? '';
 
                      
                      
-                      $auth = base64_encode("1b634896-7d26-4f4d-aa15-8f9313fc9849:4e211b4d-a4d0-477f-98b9-a82ea6fafe89");
+                      $auth = base64_encode($_ENV['KARIX_AUTH'] ?? '');
    
                       $data = json_encode($formdata);
                       $type = "POST";
@@ -138,7 +142,7 @@ include_once $projectpath . '/app/Http/Helpers/Curl.php';
                       
                      $ch = curl_init();
                      curl_setopt($ch, CURLOPT_URL, $url);
-                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
                      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
                      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);

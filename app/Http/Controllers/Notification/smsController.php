@@ -127,10 +127,10 @@ class smsController extends Controller
 
         $res = "";
         $url = "https://control.msg91.com/api/sendhttp.php";
-        $authKey = env('SMS_AUTH_KEY');
+        $authKey = config('services.msg91.auth_key');
         $mobile_Number = $c;
         // $mobile_Number = '8866822947';
-        $senderId = "Prsolv";
+        $senderId = config('services.msg91.sender_id');
         $route = "4";
         $postData = array(
             'authkey' => $authKey,

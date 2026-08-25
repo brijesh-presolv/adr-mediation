@@ -1428,44 +1428,6 @@ class PaymentController extends Controller
 
                     }
 
-                  /* if($mobile!=""){
-                        
-                    $authKey = "353508AnLLLst4qR62ce8822P1";
-                    $mobileNumber = "+91" . $mobile;
-                    $senderId = "Prsolv";
-                    $otp = "Your Presolv360 OTP is: ".$otp;
-                    $message = urlencode($otp);
-                    $route = "4";
-                    $postData = array(
-                        'authkey' => $authKey,
-                        'mobiles' => $mobileNumber,
-                        'message' => $message,
-                        'sender' => $senderId,
-                        'route' => $route,
-                        'DLT_TE_ID'=>'1207161665402749813'
-                    );
-                    $url = "https://control.msg91.com/api/sendhttp.php";
-                    $ch = curl_init();
-                    curl_setopt_array($ch, array(
-                        CURLOPT_URL => $url,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_POST => true,
-                        CURLOPT_POSTFIELDS => $postData
-                    ));
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                    $output = curl_exec($ch);
-        
-        
-                    if (curl_errno($ch)) {
-      
-                      echo 'error:' . curl_error($ch);
-                    }
-        
-                    curl_close($ch);
-  
-                  } */
-
                   if($respondentdata->userPhone !=""){
 
                     $authKey = env('SMS_AUTH_KEY', '');

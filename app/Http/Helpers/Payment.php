@@ -1,65 +1,55 @@
 <?php
 namespace App\Http\Helpers;
+
 use Illuminate\Http\Request;
 use Instamojo\Instamojo;
 
 class Payment
 {
-    
+    /**
+     * Base URL of the Instamojo API, without a trailing slash.
+     */
+    private static function apiUrl()
+    {
+        return rtrim(config('services.instamojo.api_url'), '/');
+    }
+
+    /**
+     * Auth headers every Instamojo call needs.
+     */
+    private static function authHeaders()
+    {
+        return [
+            'X-Api-Key: ' . config('services.instamojo.api_key'),
+            'X-Auth-Token: ' . config('services.instamojo.auth_token'),
+        ];
+    }
+
     public static function initiatePayment2($purpose, $amount, $customer_name, $customer_email){
 
-        //echo "brijesh";die();
-        
-        /* $api = new Instamojo(
+        $api = new \Instamojo\Instamojo(
             config('services.instamojo.api_key'),
             config('services.instamojo.auth_token'),
             config('services.instamojo.api_url')
-        ); */
-        $api = new \Instamojo\Instamojo(
-            env('INSTAMOJO_API_KEY'),
-            env('INSTAMOJO_AUTH_TOKEN'),
-            env('INSTAMOJO_API_URL'),
         );
-
-        $api_key = 'test_9b8475938aff089a4ef92d54c84';
-        $api_secret = 'test_26cd070ad5fad603f539df68411';
-        // Use the getInstamojo static method to create an instance of Instamojo
-      //  $api = Instamojo::getInstamojo($api_key, $api_secret);
-     // $api = new Instamojo($api_key, $api_secret, 'https://www.instamojo.com/api/1.1/');
-     $api_url = 'https://www.instamojo.com/api/1.1/'; // Make sure to use the correct API version
-
-     // Create an instance of Instamojo using the constructor
-    // $api = new Instamojo($api_key, $api_secret, $api_url);
-     $api = new \Instamojo\Instamojo(
-                    config('test_9b8475938aff089a4ef92d54c84'),
-                    config('test_26cd070ad5fad603f539df68411'),
-                    config('https://www.instamojo.com/api/1.1/')
-        
-                );
-        
-         
-        
-
-
-        
 
         try {
 
             $response = $api->paymentRequestCreate([
-                'purpose' => 'Order Payment',
-                'amount' => 100,
-                'buyer_name' => "brijesh",
+                'purpose' => $purpose,
+                'amount' => $amount,
+                'buyer_name' => $customer_name,
                 'send_email' => true,
-                'email' => "brijesh@presolv360.com",
+                'email' => $customer_email,
                 //'redirect_url' => route('payment.success'),
                 'webhook' => route('payment.webhook'), // Optional for capturing payment status
             ]);
 
-            
+
             //$payment_url = $response['longurl'];
             //return response()->json(['payment_url' => $payment_url]);
             return $response;
-            
+
         } catch (\Exception $e) {
            // return response()->json(['error' => $e->getMessage()], 500);
             return $e->getMessage();
@@ -67,45 +57,31 @@ class Payment
         }
     }
 
-    public static function initiatePayment($purpose, $amount, $customer_name, $customer_email){
-
-        $api_key = 'test_9b8475938aff089a4ef92d54c84';
-        $auth_token = 'test_26cd070ad5fad603f539df68411';
-         //$redirect_url = base_url("/settlementpaymentdraf");
-        // $redirect_url = url('/settlementpaymentdraf');
-
-           // LIVE
-      /*  $api_key = '4d8c29684d420ec185fe68a268f0da39';
-        $auth_token = '6c4e92388c7430fb5f825f1580014bbd'; */
+    public static function initiatePayment($purpose, $amount, $customer_name, $customer_email, $customer_phone = ''){
 
         $ch = curl_init();
-        $testpay_url='https://test.instamojo.com/api/1.1/payment-requests/';
 
-           curl_setopt($ch, CURLOPT_URL, "https://test.instamojo.com/api/1.1/payment-requests/");
+           curl_setopt($ch, CURLOPT_URL, self::apiUrl() . "/payment-requests/");
            curl_setopt($ch, CURLOPT_HEADER, FALSE);
            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-           curl_setopt($ch, CURLOPT_HTTPHEADER,
-                       array("X-Api-Key:$api_key",
-                             "X-Auth-Token:$auth_token"));
+           curl_setopt($ch, CURLOPT_HTTPHEADER, self::authHeaders());
            $payload = Array(
                'purpose' => $purpose,
-               'amount' => "100",
-               'phone' => '9029289887',
-               'buyer_name' => 'Brijesh Prasad',
-               //'redirect_url' => $redirect_url,
+               'amount' => $amount,
+               'phone' => $customer_phone,
+               'buyer_name' => $customer_name,
                'redirect_url' => route('payment.success'),
                'send_email' => FALSE,
                'send_sms' => true,
                'webhook' => route('payment.webhook'),
-               'email' => 'brijesh@presolv360.com',
+               'email' => $customer_email,
                'allow_repeated_payments' => false
            );
            curl_setopt($ch, CURLOPT_POST, true);
            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload));
            $response = curl_exec($ch);
-          // print_r($response);die();
-           curl_close($ch); 
+           curl_close($ch);
            $response=json_decode($response, true);
 
             if($response['success']){
@@ -130,26 +106,16 @@ class Payment
 
     public static function paymentStatus($payment_request_id){
 
-        $api_key = 'test_9b8475938aff089a4ef92d54c84';
-        $auth_token = 'test_26cd070ad5fad603f539df68411';
-
-        //$api_endpoint = "https://api.instamojo.com/v2/payment-requests/{$payment_request_id}/";
-        $api_endpoint = "https://test.instamojo.com/v2/payment-requests/{$payment_request_id}/";
-
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://test.instamojo.com/api/1.1/payment-requests/'.$payment_request_id);
+        curl_setopt($ch, CURLOPT_URL, self::apiUrl() . '/payment-requests/' . $payment_request_id);
         curl_setopt($ch, CURLOPT_HEADER, FALSE);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'X-Api-Key: ' . $api_key,
-            'X-Auth-Token: ' . $auth_token,
-        ]); 
+        curl_setopt($ch, CURLOPT_HTTPHEADER, self::authHeaders());
         $response = curl_exec($ch);
-        curl_close($ch); 
-        
+        curl_close($ch);
+
            $response=json_decode($response, true);
-          // print_r($response);die();
 
            if (isset($response['success']) && $response['success'] == true) {
 
