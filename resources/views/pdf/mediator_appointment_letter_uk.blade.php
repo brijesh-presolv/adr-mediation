@@ -75,7 +75,7 @@ if(isset($case->created_at) && $case->created_at != ""){
 
     <center>
         <div class="text-center mt-4">
-            <img src='{{ URL('assert/img/adrlogo.png') }}' style='width: 120px;'>
+            <img src='{{ URL("assert/img/adrlogo.png") }}' style='width: 120px;'>
             <br>
 
         </div>
@@ -93,11 +93,10 @@ if(isset($case->created_at) && $case->created_at != ""){
             href="https://drive.google.com/file/d/1T7D2z6Y0eeRuXCdCHjiYjg2AQ4qYEQ6P/view?usp=sharing">(extract available
             here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution
         (ODR) and empaneled as a Mediation Institution by various Courts in India</p>
-    <p class="text-center"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
-            href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
+   
     <p class="text-center">Case ID: M{{ sprintf('%06d', $case->id) }} | Date: {{ $meddate }}</p> <br>
     <h2 class="text-center">Appointment Letter</h2><br>
-    {{-- <p class="text-center">(See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules)</p><br> --}}
+    
     <p>Dear {{ $mediator->first_name }} {{ $mediator->last_name }},</p>
     <h4>Sub: Appointment to act as Mediator </h4> -->
 
@@ -206,19 +205,8 @@ if(isset($case->created_at) && $case->created_at != ""){
 
 
 
-    <!-- <p style="text-indent: 4em;">Desirous of arriving at an amicable resolution,
-        <b>{{ isset($inparty->organization) ? $inparty->organization : $party[0]->name }}</b> has approached Presolv360
-        to facilitate a mutually acceptable resolution through online mediation.
-    </p>
-    <p style="text-indent: 4em;">Presolv360 is included in the list of institutions offering Alternative Dispute
-        Resolution ("ADR") services including through Online Dispute Resolution ("ODR") and is also empaneled as a Mediation Institution by various Courts in India. Presolv360 administers mediation
-        proceedings on its platform, and empanels independent, qualified mediators with the required competence,
-        knowledge and expertise on its panel of mediators. The mediation / conciliation shall be governed by and
-        conducted in accordance with Presolv360’s Dispute Resolution Rules, a copy of which can be found <a
-            href="https://drive.google.com/file/d/1a5GkQA0KX_4-gUDf25D0uU7Rt_1S8DDl/view?usp=sharing">here.</a>
-        Presolv360 provides administrative support to all the parties concerned and the mediator for conducting the
-        mediation proceedings and has no interest in the outcome of the dispute and there exists no conflict of
-        interest.</p>
+    <!-- 
+   
     <p style="text-indent: 4em;">We have been requested to provide administrative assistance in respect of the dispute
         between the aforesaid parties. The mediation proceedings shall be carried out by an independent, qualified and
         competent mediator from the panel of mediators on behalf of all the parties.</p>

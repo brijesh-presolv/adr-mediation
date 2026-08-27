@@ -42,7 +42,7 @@ $meddate = $meddate->format('d-m-Y');
     <p style="text-decoration: underline;">1. Identity and Role of ADR ODR International</p>
     <p style="text-indent: 1em;">1.1  ADR ODR International is an Alternative Dispute Resolution (ADR) organisation registered in England and Wales. We operate the Preesolve360 UK Platform as a neutral online case management service facilitating negotiation, mediation, arbitration, and conciliation.</p>
     <p style="text-indent: 1em;">1.2  ADR ODR International is not a law firm and does not provide legal advice. Nothing in these proceedings or on this Platform constitutes legal advice.</p>
-    <p style="text-indent: 1em;">1.3  The technical infrastructure of the Platform is provided by Presolv360 ("Technology Partner"), a leading online dispute resolution platform. Presolv360 operates as a data processor for ADR ODR International and does not administer or determine disputes.</p>
+    
 
     <p style="text-decoration: underline;">2. Nature of the Process</p>
     <p style="text-indent: 1em;">2.1  You acknowledge and understand that the dispute resolution process offered through the Platform is an alternative to litigation in the courts.</p>
@@ -64,7 +64,7 @@ $meddate = $meddate->format('d-m-Y');
     <p style="text-decoration: underline;">5. Data Protection and Privacy Disclosure</p>
     <p style="text-indent: 1em;">5.1  ADR ODR International is a data controller under the UK GDPR and Data Protection Act 2018. We collect and process your personal data to: administer Case proceedings; communicate with you; fulfil our legal and regulatory obligations; and maintain accurate records.</p>
     <p style="text-indent: 1em;">5.2  Our lawful bases for processing are: (a) performance of a contract (facilitating the dispute resolution process); (b) compliance with legal obligations; and (c) legitimate interests (secure and effective operation of the Platform).</p>
-    <p style="text-indent: 1em;">5.3  Your personal data will be shared with: (a) the other Party and the Neutral, to the extent necessary for the proceedings; (b) our Technology Partner (Presolv360) as data processor; and (c) regulatory bodies, courts, or law enforcement where required by law.</p>
+    <p style="text-indent: 1em;">5.3  Your personal data will be shared with: (a) the other Party and the Neutral, to the extent necessary for the proceedings; and (b) regulatory bodies, courts, or law enforcement where required by law.</p>
     <p style="text-indent: 1em;">5.4  We will not sell your personal data or use it for marketing purposes without your explicit consent.</p>
     <p style="text-indent: 1em;">5.5  Your personal data will be retained for as long as necessary to administer the Case and to comply with applicable legal retention obligations. Case records are typically retained for six (6) years from the conclusion of proceedings.</p>
     <p style="text-indent: 1em;">5.6  You have the following rights under UK GDPR: right of access; right to rectification; right to erasure (in limited circumstances); right to restrict processing; right to data portability; right to object; and rights in relation to automated decision-making. To exercise these rights, contact us at disputes@adrodr.international.</p>
@@ -72,9 +72,8 @@ $meddate = $meddate->format('d-m-Y');
 
     <p style="text-decoration: underline;">6. Technology and Security Disclosure</p>
     <p style="text-indent: 1em;">6.1  All proceedings, communications, and documents are managed through a secure, encrypted online platform. The Platform uses industry-standard security protocols, including SSL/TLS encryption for data in transit and encryption at rest.</p>
-    <p style="text-indent: 1em;">6.2  The Platform is operated in partnership with Presolv360, which maintains ISO-certified security standards and GDPR-compliant data processing practices.</p>
-    <p style="text-indent: 1em;">6.3  Hearings and sessions may be conducted via secure video conference. You are responsible for ensuring that your participation environment is private and confidential.</p>
-    <p style="text-indent: 1em;">6.4  In the event of a technical failure, the Platform will endeavour to restore services promptly and to preserve all Case data. We are not liable for interruptions caused by events outside our reasonable control.</p>
+    <p style="text-indent: 1em;">6.2  Hearings and sessions may be conducted via secure video conference. You are responsible for ensuring that your participation environment is private and confidential.</p>
+    <p style="text-indent: 1em;">6.3  In the event of a technical failure, the Platform will endeavour to restore services promptly and to preserve all Case data. We are not liable for interruptions caused by events outside our reasonable control.</p>
 
     <p style="text-decoration: underline;">7. Legal Effect of Outcomes</p>
     <p style="text-indent: 1em;">7.1  A Settlement Agreement signed by all Parties through the Platform is legally binding and enforceable as a contract under the law of England and Wales.</p>
@@ -84,7 +83,7 @@ $meddate = $meddate->format('d-m-Y');
     <p style="text-decoration: underline;">8. Conflicts of Interest</p>
     <p style="text-indent: 1em;">8.1  All Neutrals appointed to your Case are required to disclose any actual or potential conflicts of interest before accepting appointment.</p>
     <p style="text-indent: 1em;">8.2  If you become aware of any circumstances that might affect the Neutral's impartiality, you must notify the Platform immediately.</p>
-    <p style="text-indent: 1em;">8.3  ADR ODR International also discloses that: (a) it has a commercial relationship with Presolv360 as its technology provider; and (b) fees paid by Parties contribute to the operational costs of the Platform. These relationships do not affect the independence of the Parties' proceedings or the Neutral.</p>   
+    <p style="text-indent: 1em;">8.3  ADR ODR International also discloses that: (a) it has a commercial relationship; and (b) fees paid by Parties contribute to the operational costs of the Platform. These relationships do not affect the independence of the Parties' proceedings or the Neutral.</p>   
 
     <p style="text-decoration: underline;">9. Regulatory Status and Accreditation</p>
     <p style="text-indent: 1em;">9.1  ADR ODR International operates as an ADR entity in accordance with the Alternative Dispute Resolution for Consumer Disputes (Competent Authorities and Information) Regulations 2015 (where applicable) and relevant UK guidance.</p>
@@ -118,7 +117,7 @@ $meddate = $meddate->format('d-m-Y');
 
         </div>
     </center><br><br>
-    <p class="text-center"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
+   
     {{-- <p class="text-center">Case ID: M{{sprintf('%06d', $case->id)}}  |  Date: {{$meddate}}</p> --}}
     <table cellspacing="0" cellpadding="10" width="100%">
         <tr>
@@ -129,10 +128,7 @@ $meddate = $meddate->format('d-m-Y');
     {{-- <htmlpageheader name="page-header" > --}}
     <h3 class="text-center"><u>Mediator’s Consent and Disclosures by {{$consent_disclosures->first_name}} {{$consent_disclosures->last_name}}</u></h3>
     {{-- </htmlpageheader> --}}    
-    {{-- <p class="text-center">
-        See Rule 6 of Section 3 of Presolv360’s Dispute Resolution Rules (“Rules”) read with the Arbitrators’ and
-        Mediators’ Code of Conduct and Disclosure Rules (“Code”)
-    </p> --}}
+    
     {{-- {{dd($consent_disclosures)}} --}}
     {{-- <u>Details of the Dispute</u>
     <table width="100%" border="1" cellspacing="0" cellpadding="10">
@@ -213,7 +209,7 @@ $meddate = $meddate->format('d-m-Y');
         </tr>   
         <tr>
             <td width='50%'><p>Email</p></td> 
-            <td width='50%'><a href="mailto:admin@presolv360.com">admin@presolv360.com</a></td>
+            <td width='50%'><a href=""></a></td>
         </tr>
         <tr>
             <td width='50%'><p>Experience</p> </td> <td width='50%'>{{$consent_disclosures->particulars1}}</td>
@@ -291,8 +287,8 @@ $meddate = $meddate->format('d-m-Y');
     <p>&#10004; I confirm that the details provided above are true, accurate, current and complete and acknowledge that
         a copy of the consent and disclosures will be provided to the parties.</p>
     <p>&#10004; By checking this box, I accept and agree to conduct the mediation in accordance with the Rules and
-        confirm that I shall abide by the <a href="https://drive.google.com/file/d/1M6dHbOuIQv4OZlhgyRFiDu75CsSKeZUI/view">Code</a>, <a href="https://presolv360.com/terms_conditions">Terms & Conditions</a> and <a
-            href="https://presolv360.com/privacy_policy">Privacy Policy</a>.</p>
+        confirm that I shall abide by the <a href="https://drive.google.com/file/d/1M6dHbOuIQv4OZlhgyRFiDu75CsSKeZUI/view">Code</a>, <a href="">Terms & Conditions</a> and <a
+            href="">Privacy Policy</a>.</p>
     <br />
     <p>Date: {{ $meddate }}</p><br /> <br /><br />
     <h4 class="text-right">
