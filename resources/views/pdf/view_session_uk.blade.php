@@ -88,7 +88,7 @@ $ldate = $lastdate->format('d-m-Y');
     <body>
 
     <center><div class="text-center">
-            <img src='{{URL("assert/img/plogo.png")}}' style='width: 120px;'>
+            <img src='{{ URL("assert/img/adrlogo.png") }}' style='width: 120px;'>
             <br><br><br>
         </div>
     </center>

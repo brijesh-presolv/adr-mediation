@@ -76,7 +76,7 @@ if($ini->organization != null) {
 
     <center>
         <div class="text-center mt-4">
-            <img src='{{ URL('assert/img/adrlogo.png') }}' style='width: 120px;'>
+            <img src='{{ URL("assert/img/adrlogo.png") }}' style='width: 120px;'>
             <br>
 
         </div>
