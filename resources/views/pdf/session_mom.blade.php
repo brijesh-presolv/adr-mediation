@@ -77,8 +77,8 @@ use App\Models\User;
             here)</a> offering Alternative Dispute Resolution (ADR) services including through Online Dispute Resolution
         (ODR) and empaneled as a Mediation Institution by various Courts in India</h4>
 
-    <p class="text-center"><a href="https://mediation.presolv360.com/">https://mediation.presolv360.com/</a> | <a
-            href="mailto:admin@presolv360.com">admin@presolv360.com</a></p>
+    <p class="text-center"><a href="#"></a> <a
+            href="#"></a></p>
 
     <br>
 
@@ -218,13 +218,13 @@ use App\Models\User;
 
     <br />
     
-    <p>The captioned matter was referred to Presolv360 to facilitate a mutually acceptable resolution
+    <!-- <p>The captioned matter was referred to Presolv360 to facilitate a mutually acceptable resolution
     via online mediation. Accordingly, Invitation to Mediate dated {{$itm_date}} was circulated to
     all the parties. {{$session_mom->mediator}} was appointed as the Mediator from the panel of mediators
     and acceptance and consent, alongwith the requisite disclosures, was circulated to all the
     parties. Presolv360 Administrator contacted all the parties based on the information available
     and informed the parties about the mediation proceedings, explaining the process for
-    onboarding and next steps to be taken.</p>
+    onboarding and next steps to be taken.</p> -->
     
     <p>To arrive at an amicable resolution between the parties, a private mediation session was
         scheduled on {{$session_date}} at {{$session_time}} via video conferencing.</p>
@@ -258,7 +258,7 @@ use App\Models\User;
         <tr>
             <td>
                 <p>Sincerely,</p>
-                <p>Presolv360 Administrator</p>
+                <!-- <p>Presolv360 Administrator</p> -->
             </td>
             
         </tr>

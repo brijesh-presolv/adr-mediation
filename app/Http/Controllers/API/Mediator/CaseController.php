@@ -1448,7 +1448,7 @@ class CaseController extends Controller
             ->first();
         $data['caseId'] = $caseId;
         $data["sessionData"] = DB::table('manage_session')->where('case_id', $caseId)->get();
-        $pdf = PDF::loadView('pdf.view_session', $data);
+        $pdf = PDF::loadView('pdf.view_session_uk', $data);
         if(count($data["sessionData"]) == 0){
 
             $result['success'] = false;
@@ -1456,7 +1456,7 @@ class CaseController extends Controller
             $result['error'] = "No session data available.";
             return response()->json($result, 500);
         }
-        $pdf = PDF::loadView('pdf.view_session', $data);
+        $pdf = PDF::loadView('pdf.view_session_uk', $data);
 
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
