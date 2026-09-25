@@ -278,9 +278,8 @@ Route::post('/forgot-pwd', [App\Http\Controllers\API\UserController::class, 'for
 
 Route::post('/otp-resend', [App\Http\Controllers\API\UserController::class, 'resendOtp']);
 
-
-
- 
+ //notification
+Route::get('notification/email/send', [App\Http\Controllers\Notification\EmailController::class, 'send']);
 
 
 
