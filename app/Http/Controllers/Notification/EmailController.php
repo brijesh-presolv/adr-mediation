@@ -201,7 +201,7 @@ class EmailController
 
  
             
-            // $sg = new \SendGrid('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');
+            // $sg = new \SendGrid();
 
 
             // try {
